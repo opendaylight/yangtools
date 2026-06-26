@@ -118,33 +118,12 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      */
     boolean containsMethod(String methodName);
 
-    List<GeneratedPropertyBuilder> getProperties();
-
     /**
      * Returns the YANG definition of this type, if available.
      *
      * @return YANG source definition, or empty when unavailable.
      */
     Optional<YangSourceDefinition> getYangSourceDefinition();
-
-    /**
-     * Add new Generated Property definition for Generated Transfer Object Builder and returns Generated Property
-     * Builder for specifying Property.<br>
-     * Name of Property cannot be <code>null</code>, if it is <code>null</code> the method SHOULD throw
-     * {@link IllegalArgumentException}.
-     *
-     * @param name Name of Property
-     * @return <code>new</code> instance of Generated Property Builder.
-     */
-    GeneratedPropertyBuilder addProperty(String name);
-
-    /**
-     * Check whether GeneratedTOBuilder contains property with name <code>name</code>.
-     *
-     * @param name of property which existence is checked
-     * @return true if property <code>name</code> exists in list of properties.
-     */
-    boolean containsProperty(String name);
 
     /**
      * Set a string that contains a human-readable textual description of type definition.

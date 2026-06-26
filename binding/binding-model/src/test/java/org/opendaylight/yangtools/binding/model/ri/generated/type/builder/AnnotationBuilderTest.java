@@ -117,64 +117,6 @@ class AnnotationBuilderTest {
     }
 
     @Test
-    void generatedPropertyAnnotationTest() {
-        final var genTOBuilder = new CodegenGeneratedTypeBuilder(
-            JavaTypeName.create("org.opendaylight.controller", "AnnotInterface"));
-
-        final var propertyBuilder = genTOBuilder.addProperty("simpleProperty");
-        propertyBuilder.setReturnType(Types.typeForClass(Integer.class));
-        final var annotManAttr = propertyBuilder.addAnnotation(
-                "org.springframework.jmx.export.annotation", "ManagedAttribute");
-
-        annotManAttr.addParameter("description", "\"The Name Attribute\"");
-        annotManAttr.addParameter("currencyTimeLimit", "20");
-        annotManAttr.addParameter("defaultValue", "\"bar\"");
-        annotManAttr.addParameter("persistPolicy", "\"OnUpdate\"");
-
-        final var annotManProp = propertyBuilder.addAnnotation(
-                "org.springframework.jmx.export.annotation", "ManagedOperation");
-
-        annotManProp.addParameters("types", List.of("\"val1\"", "\"val2\"", "\"val3\""));
-
-        final var genTransObj = genTOBuilder.build();
-
-        assertNotNull(genTransObj);
-        assertNotNull(genTransObj.getAnnotations());
-        assertNotNull(genTransObj.getProperties());
-        assertNotNull(genTransObj.getProperties().get(0));
-        assertNotNull(genTransObj.getProperties().get(0).getAnnotations());
-        final var annotations = genTransObj.getProperties().get(0).getAnnotations();
-        assertEquals(2, annotations.size());
-
-        int annotCount = 0;
-        for (var annotation : annotations) {
-            if (annotation.packageName().equals("org.springframework.jmx.export.annotation")
-                    && annotation.simpleName().equals("ManagedAttribute")) {
-                annotCount++;
-                assertEquals(4, annotation.getParameters().size());
-
-                assertNotNull(annotation.getParameter("description"));
-                assertNotNull(annotation.getParameter("currencyTimeLimit"));
-                assertNotNull(annotation.getParameter("defaultValue"));
-                assertNotNull(annotation.getParameter("persistPolicy"));
-                assertEquals("\"The Name Attribute\"", annotation.getParameter("description").getValue());
-                assertEquals("20", annotation.getParameter("currencyTimeLimit").getValue());
-                assertEquals("\"bar\"", annotation.getParameter("defaultValue").getValue());
-                assertEquals("\"OnUpdate\"", annotation.getParameter("persistPolicy").getValue());
-            }
-            if (annotation.packageName().equals("org.springframework.jmx.export.annotation")
-                    && annotation.simpleName().equals("ManagedOperation")) {
-                annotCount++;
-
-                assertEquals(1, annotation.getParameters().size());
-                assertNotNull(annotation.getParameter("types"));
-                assertEquals(3, annotation.getParameter("types").getValues().size());
-            }
-        }
-        assertEquals(2, annotCount);
-    }
-
-    @Test
     void generatedTransfeObjectAnnotationTest() {
         final var genTypeBuilder = new CodegenGeneratedTypeBuilder(
             JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"));
