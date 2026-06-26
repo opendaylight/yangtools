@@ -67,7 +67,6 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
             bb.newLine();
 
             // default constructor
-            final var archetype = archetype();
             openDefaultCtor(bb, archetype, props);
             for (var propName : props.keySet()) {
                 bb.str("this._").str(propName).str(" = _").str(propName).eS();
@@ -119,7 +118,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
                 .nl()
                 .at().eol(override)
                 .str("public final boolean equals(Object obj)").oB()
-                    .str("return this == obj || obj instanceof ").str(archetype().simpleName()).str(" other");
+                    .str("return this == obj || obj instanceof ").str(archetype.simpleName()).str(" other");
             for (var propName : props.keySet()) {
                 bb
                     .nl()
@@ -168,7 +167,6 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
             }
 
             // default constructor
-            final var archetype = archetype();
             openDefaultCtor(bb, archetype, props);
             bb.str("super(");
             final var sit = superProps.keySet().stream().sorted().iterator();
@@ -257,13 +255,12 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
     }
 
     private BlockBuilder body(final boolean topLevel) {
-        final var archetype = archetype();
         final var simpleName = archetype.simpleName();
 
         final var bb = newBodyBuilder(archetype.statement(), archetype.typeDefinition(), topLevel)
             .str("public").str(modifiers(archetype, topLevel)).str("class ").str(simpleName).frg(implFragment()).oB()
                 .eol("@java.io.Serial")
-                .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS()
+                .str("private static final long serialVersionUID = ").jLong(archetype.serialVersionUID()).eS()
                 .nl();
 
         final var bits = archetype.typeDefinition().getBits();

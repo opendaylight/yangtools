@@ -48,7 +48,6 @@ final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArche
 
     @Override
     BlockBuilder body() {
-        final var archetype = archetype();
         final var simpleName = archetype.simpleName();
 
         final var bb = newBodyBuilder(archetype.statement(), archetype.typeDefinition())

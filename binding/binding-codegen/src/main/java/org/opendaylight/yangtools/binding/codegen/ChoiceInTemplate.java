@@ -40,15 +40,13 @@ final class ChoiceInTemplate extends ArchetypeTemplate<ChoiceInArchetype> {
 
     @Override
     BlockBuilder body() {
-        final var type = archetype();
-
-        return newBodyBuilder(type.statement())
-            .str("public interface ").str(type.simpleName()).str(" extends ")
-                .gen(importedName(CHOICE_IN), importedName(type.choiceIn())).oB()
+        return newBodyBuilder(archetype.statement())
+            .str("public interface ").str(archetype.simpleName()).str(" extends ")
+                .gen(importedName(CHOICE_IN), importedName(archetype.choiceIn())).oB()
                 .eol("/**")
                 .eol(" * The YANG identifier of the {@code choice} represented by this class.")
                 .eol(" */")
-                .frg(qnameConstant(type))
+                .frg(qnameConstant(archetype))
             .cB();
     }
 }

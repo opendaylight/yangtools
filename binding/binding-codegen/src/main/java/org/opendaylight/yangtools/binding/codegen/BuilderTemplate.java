@@ -104,24 +104,27 @@ final class BuilderTemplate extends BaseTemplate {
     //        implementations of its methods
     final @NonNull LegacyArchetype targetType;
 
+    private final @NonNull LegacyArchetype archetype;
+
     @NonNullByDefault
-    private BuilderTemplate(final GeneratedClass javaType, final LegacyArchetype type, final LegacyArchetype targetType,
-            final Set<BuilderGeneratedProperty> properties, final @Nullable ParameterizedType augmentType,
-            final @Nullable KeyArchetype keyType) {
-        super(javaType, type);
+    private BuilderTemplate(final GeneratedClass javaType, final LegacyArchetype archetype,
+            final LegacyArchetype targetType, final Set<BuilderGeneratedProperty> properties,
+            final @Nullable ParameterizedType augmentType, final @Nullable KeyArchetype keyType) {
+        super(javaType);
+        this.archetype = requireNonNull(archetype);
         this.targetType = requireNonNull(targetType);
         this.properties = requireNonNull(properties);
         this.augmentType = augmentType;
         this.keyType = keyType;
     }
 
-    private @NonNull LegacyArchetype archetype() {
-        return (LegacyArchetype) type();
+    @Override
+    LegacyArchetype type() {
+        return archetype;
     }
 
     @Override
     BlockBuilder body() {
-        final var archetype = archetype();
         final var simpleName = archetype.simpleName();
 
         final var bb = newBlockBuilder()
@@ -674,7 +677,7 @@ final class BuilderTemplate extends BaseTemplate {
             argumentCheck = newBlockBuilder()
                 .str("if (values != null)").oB()
                     .str("for (").str(importedName(actualType)).str(" value : values)").oB()
-                        .blk(checkFieldValue((LegacyArchetype) type(), field, restrictions, actualType, "value"))
+                        .blk(checkFieldValue(type(), field, restrictions, actualType, "value"))
                     .cB()
                 .cB();
         } else {
@@ -726,7 +729,7 @@ final class BuilderTemplate extends BaseTemplate {
             bb
                 .eol("if (values != null)").oB()
                     .str("for (").str(importedName(actualType)).str(" value : values.values())").oB()
-                        .blk(checkFieldValue(archetype(), field, restrictions, actualType, "value"))
+                        .blk(checkFieldValue(archetype, field, restrictions, actualType, "value"))
                     .cB()
                 .cB();
         }
@@ -738,8 +741,6 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     private @NonNull BlockBuilder generateSimpleSetter(final BuilderGeneratedProperty field, final Type actualType) {
-        final var archetype = archetype();
-
         final var bb = newBlockBuilder();
         final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {

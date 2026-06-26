@@ -56,7 +56,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 /**
  * Template for generating JAVA interfaces.
  */
-sealed class InterfaceTemplate extends ArchetypeTemplate<@NonNull LegacyArchetype> permits DataRootTemplate {
+sealed class InterfaceTemplate<T extends @NonNull LegacyArchetype> extends ArchetypeTemplate<T>
+        permits DataRootTemplate {
     @NonNullByDefault
     record Builder(LegacyArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
@@ -65,8 +66,8 @@ sealed class InterfaceTemplate extends ArchetypeTemplate<@NonNull LegacyArchetyp
         }
 
         @Override
-        public InterfaceTemplate build() {
-            return new InterfaceTemplate(type, root);
+        public InterfaceTemplate<LegacyArchetype> build() {
+            return new InterfaceTemplate<>(type, root);
         }
     }
 
@@ -89,7 +90,7 @@ sealed class InterfaceTemplate extends ArchetypeTemplate<@NonNull LegacyArchetyp
     private @Nullable TypeAnalysis typeAnalysis;
 
     @NonNullByDefault
-    InterfaceTemplate(final LegacyArchetype type, final DataRootArchetype root) {
+    InterfaceTemplate(final T type, final DataRootArchetype root) {
         super(GeneratedClass.of(type), type, root);
 
         consts = type.getConstantDefinitions();
@@ -103,15 +104,13 @@ sealed class InterfaceTemplate extends ArchetypeTemplate<@NonNull LegacyArchetyp
     }
 
     private @NonNull TypeAnalysis loadTypeAnalysis() {
-        final var analysis = TypeAnalysis.of(archetype());
+        final var analysis = TypeAnalysis.of(archetype);
         typeAnalysis = analysis;
         return analysis;
     }
 
     @Override
     final BlockBuilder body() {
-        final var archetype = archetype();
-
         final var bb = newBlockBuilder()
             .blk(wrapToDocumentation(formatDataForJavaDoc(archetype)))
             .blk(generateAnnotations(archetype.getAnnotations()))
@@ -451,7 +450,7 @@ sealed class InterfaceTemplate extends ArchetypeTemplate<@NonNull LegacyArchetyp
     }
 
     private @Nullable BlockBuilder generateJavaDataContainerMethods() {
-        if (archetype().getImplements().stream()
+        if (archetype.getImplements().stream()
                 .noneMatch(iface -> iface.name().equals(BindingTypes.JAVA_DATACONTAINER.name()))) {
             return null;
         }

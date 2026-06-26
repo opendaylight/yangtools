@@ -114,13 +114,12 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
      */
     @NonNullByDefault
     private BlockBuilder generateBody(final boolean isInnerClass) {
-        final var archetype = archetype();
         final var statement = archetype.statement();
 
         final var bb = newBodyBuilder(statement, statement.typeStatement().typeDefinition(), !isInnerClass)
             .frg(generateClassDeclaration(isInnerClass)).oB()
                 .eol("@java.io.Serial")
-                .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS()
+                .str("private static final long serialVersionUID = ").jLong(archetype.serialVersionUID()).eS()
                  // inner classes
                 .blk(generateInnerClasses(root, archetype.enclosedTypes()));
 
@@ -160,8 +159,6 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
      */
     @NonNullByDefault
     private BlockBuilder generateClassDeclaration(final boolean isInnerClass) {
-        final var archetype = archetype();
-
         final var bb = newBlockBuilder()
             .str("public ");
         if (isInnerClass) {
@@ -426,7 +423,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
 
     @NonNullByDefault
     private BlockBuilder parentConstructor() {
-        final var importedSuper = importedName(archetype().getSuperType());
+        final var importedSuper = importedName(archetype.getSuperType());
 
         return newBlockBuilder()
             .eol("/**")

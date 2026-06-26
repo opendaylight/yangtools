@@ -420,7 +420,6 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
     }
 
     private BlockBuilder body(final boolean topLevel) {
-        final var archetype = archetype();
         final var simpleName = archetype.simpleName();
         final var valueType = archetype.valueType();
         final var importedType = importedName(valueType);
@@ -431,7 +430,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
             .str("public").str(topLevel ? " " : "static ").str("class ").str(simpleName).frg(implFragment(importedType))
                 .oB()
                 .eol("@java.io.Serial")
-                .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS();
+                .str("private static final long serialVersionUID = ").jLong(archetype.serialVersionUID()).eS();
 
         archetype.typeDefinition().getUnits().ifPresent(units ->
             bb.str("public static final String UNITS = ").jString(units).eS());

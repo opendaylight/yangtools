@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_SUFFIX;
@@ -85,20 +84,16 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         .addIgnoredStatement(ReferenceStatement.DEF)
         .build();
 
-    private final @NonNull Archetype archetype;
-
     @NonNullByDefault
-    BaseTemplate(final GeneratedClass javaType, final Archetype archetype) {
+    BaseTemplate(final GeneratedClass javaType) {
         super(javaType);
-        this.archetype = requireNonNull(archetype);
     }
 
     /**
      * {@return the type this template is bound to}
      */
-    final @NonNull Archetype type() {
-        return archetype;
-    }
+    // FIXME: remove this method
+    abstract @NonNull Archetype type();
 
     @Override
     final void generateTo(final Appendable out) throws IOException {
