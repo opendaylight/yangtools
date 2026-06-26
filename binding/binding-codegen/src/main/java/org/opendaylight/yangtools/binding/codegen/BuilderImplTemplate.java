@@ -47,14 +47,11 @@ final class BuilderImplTemplate extends BaseTemplate {
     private static final @NonNull JavaTypeName ABSTRACT_ENTRY_OBJECT = JavaTypeName.create(AbstractEntryObject.class);
 
     private final @NonNull BuilderTemplate builder;
-    private final @NonNull LegacyArchetype type;
 
     @NonNullByDefault
-    BuilderImplTemplate(final BuilderTemplate builder, final LegacyArchetype type) {
-        // FIXME: we should be delegating access to these fields to builder
-        super(builder.javaType().getNestedClass(type));
-        this.type = requireNonNull(type);
-        this.builder = builder;
+    BuilderImplTemplate(final GeneratedClass.Nested javaType, final BuilderTemplate builder) {
+        super(javaType);
+        this.builder = requireNonNull(builder);
     }
 
     @Override
@@ -64,11 +61,11 @@ final class BuilderImplTemplate extends BaseTemplate {
         final var keyType = builder.keyType;
         final var augmentType = builder.augmentType;
         final var properties = builder.properties;
-        final var builderType = builder.archetype;
 
         final var implIface = importedName(targetType);
         final var override = importedName(OVERRIDE);
-        final var simpleName = type.simpleName();
+        final var simpleName = typeName().simpleName();
+        final var builderName = importedName(builder.typeName());
 
         final var bb = newBlockBuilder();
 
@@ -102,7 +99,7 @@ final class BuilderImplTemplate extends BaseTemplate {
 
         bb
             .nl()
-            .str(simpleName).str("(final ").str(importedName(builderType)).str(" base)").oB();
+            .str(simpleName).str("(final ").str(builderName).str(" base)").oB();
 
         if (augmentType != null) {
             bb.str("super(base." + BuilderTemplate.AUGMENTATION_FIELD);
@@ -137,11 +134,11 @@ final class BuilderImplTemplate extends BaseTemplate {
             //       construct the key into a 'key' local variable, so that generateCopyKeys() below can reference it
             bb
                 .nl()
-                .str("private static ").str(importedNonNull(keyType)).str(" extractKey(final ")
-                    .str(importedName(builderType)).str(" base)").oB()
-                        .str("final var key = base." + KEY_AWARE_KEY_NAME).eol("();")
-                        .eol("return key != null ? key")
-                        .str("    : new ").str(importedName(keyType)).str("(");
+                .str("private static ").str(importedNonNull(keyType)).str(" extractKey(").str(builderName).str(" base)")
+                    .oB()
+                    .str("final var key = base." + KEY_AWARE_KEY_NAME).eol("();")
+                    .eol("return key != null ? key")
+                    .str("    : new ").str(importedName(keyType)).str("(");
 
             // Note: keys have at least one component
             final var it = BuilderTemplate.keyConstructorArgs(keyType).iterator();
