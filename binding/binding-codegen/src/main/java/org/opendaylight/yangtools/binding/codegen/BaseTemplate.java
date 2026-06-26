@@ -9,15 +9,9 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.QNAMEOF_METHOD_NAME;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.YANGDATANAMEOF_METHOD_NAME;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.nameInModuleOf;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
 import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_SUFFIX;
-import static org.opendaylight.yangtools.binding.contract.Naming.NAME_STATIC_FIELD_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.QNAME_STATIC_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.extractAugmentationTarget;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.isNotificationBody;
@@ -36,7 +30,6 @@ import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -50,7 +43,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.DocUtils;
-import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -143,40 +135,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     // Helper patterns
     static final @NonNull String fieldName(final GeneratedProperty property) {
         return "_" + property.getName();
-    }
-
-    @NonNullByDefault
-    final String emitConstant(final Constant constant) {
-        final var name = constant.getName();
-        final var type = constant.getType();
-
-        return switch (name) {
-            case NAME_STATIC_FIELD_NAME -> emitNameConstant(name, type, (YangDataName) constant.getValue());
-            case QNAME_STATIC_FIELD_NAME -> emitQNameConstant(name, type, (String) constant.getValue());
-            default -> "public static final " + importedName(type) + ' ' + name + " = " + constant.getValue() + ";\n";
-        };
-    }
-
-    @NonNullByDefault
-    private String emitNameConstant(final String name, final Type type, final YangDataName yangDataName) {
-        final var yangModuleInfo = yangModuleInfoOf(yangDataName.module());
-        return """
-            /**
-             * Yang Data template name of the statement represented by this class.
-             */
-            public static final\s""" + importedNonNull(type) + ' ' + name + " = " + importedName(yangModuleInfo)
-                + '.' + YANGDATANAMEOF_METHOD_NAME + "(\"" + yangDataName.name() + "\");\n";
-    }
-
-    @NonNullByDefault
-    final String emitQNameConstant(final String name, final Type type, final String localName) {
-        final var yangModuleInfo = nameInModuleOf(archetype);
-        return """
-            /**
-             * YANG identifier of the statement represented by this class.
-             */
-            public static final\s""" + importedNonNull(type) + ' ' + name + " = " + importedName(yangModuleInfo)
-                + '.' + QNAMEOF_METHOD_NAME + "(\"" + localName + "\");\n";
     }
 
     /**

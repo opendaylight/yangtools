@@ -8,7 +8,12 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.QNAMEOF_METHOD_NAME;
+import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.YANGDATANAMEOF_METHOD_NAME;
+import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.NAME_STATIC_FIELD_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.QNAME_STATIC_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForNonnull;
 import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForRequire;
@@ -42,6 +47,7 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
@@ -205,6 +211,41 @@ sealed class InterfaceTemplate extends ArchetypeTemplate<@NonNull LegacyArchetyp
             }
         }
         return bb;
+    }
+
+    @NonNullByDefault
+    private String emitConstant(final Constant constant) {
+        final var name = constant.getName();
+        final var type = constant.getType();
+
+        return switch (name) {
+            case NAME_STATIC_FIELD_NAME -> emitNameConstant(name, type, (YangDataName) constant.getValue());
+            case QNAME_STATIC_FIELD_NAME -> emitQNameConstant(name, type, (String) constant.getValue());
+            default -> "public static final " + importedName(type) + ' ' + name + " = " + constant.getValue() + ";\n";
+        };
+    }
+
+    @NonNullByDefault
+    private String emitNameConstant(final String name, final Type type, final YangDataName yangDataName) {
+        final var yangModuleInfo = yangModuleInfoOf(yangDataName.module());
+        return """
+            /**
+             * Yang Data template name of the statement represented by this class.
+             */
+            public static final\s""" + importedNonNull(type) + ' ' + name + " = " + importedName(yangModuleInfo)
+                + '.' + YANGDATANAMEOF_METHOD_NAME + "(\"" + yangDataName.name() + "\");\n";
+    }
+
+
+    @NonNullByDefault
+    private String emitQNameConstant(final String name, final Type type, final String localName) {
+        final var yangModuleInfo = yangModuleInfoOf(root.statement().localQNameModule());
+        return """
+            /**
+             * YANG identifier of the statement represented by this class.
+             */
+            public static final\s""" + importedNonNull(type) + ' ' + name + " = " + importedName(yangModuleInfo)
+                + '.' + QNAMEOF_METHOD_NAME + "(\"" + localName + "\");\n";
     }
 
     final @NonNull BlockBuilder generateDefaultImplementedInterface() {
