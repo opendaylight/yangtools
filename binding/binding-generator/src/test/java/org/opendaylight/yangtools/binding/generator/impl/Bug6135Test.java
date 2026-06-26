@@ -22,7 +22,7 @@ class Bug6135Test {
             YangParserTestUtils.parseYangResource("/bug6135.yang"));
         assertEquals(5, generateTypes.size());
 
-        LegacyArchetype genInterface = null;
+        LegacyArchetype<?> genInterface = null;
         for (var type : generateTypes) {
             if (type.simpleName().equals("TestLeafrefData")) {
                 genInterface = assertInstanceOf(LegacyArchetype.class, type);

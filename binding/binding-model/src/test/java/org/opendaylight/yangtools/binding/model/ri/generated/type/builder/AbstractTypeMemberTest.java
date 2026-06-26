@@ -13,19 +13,27 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
+@ExtendWith(MockitoExtension.class)
 class AbstractTypeMemberTest {
+    @Mock
+    private EffectiveStatement<?, ?> statement;
+
     @Test
     void testMethodsForAbstractTypeMemberBuilder() {
         final var methodSignatureBuilderImpl = new MethodSignatureBuilderImpl("TestProperty")
             .setReturnType(Types.STRING);
-        final var typeBuilderImpl = new CodegenGeneratedTypeBuilder(
-            JavaTypeName.create("org.opendaylight.yangtools.test", "TestType"));
-        final var typeBuilderImpl2 = new CodegenGeneratedTypeBuilder(
-            JavaTypeName.create("org.opendaylight.yangtools.test", "TestType2"));
+        final var typeBuilderImpl = new CodegenGeneratedTypeBuilder<>(
+            JavaTypeName.create("org.opendaylight.yangtools.test", "TestType"), statement);
+        final var typeBuilderImpl2 = new CodegenGeneratedTypeBuilder<>(
+            JavaTypeName.create("org.opendaylight.yangtools.test", "TestType2"), statement);
         methodSignatureBuilderImpl.setComment(TypeMemberComment.contractOf("test comment"));
         methodSignatureBuilderImpl.setFinal(true);
         methodSignatureBuilderImpl.setStatic(true);

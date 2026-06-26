@@ -15,13 +15,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 
 public final class DefaultAugmentRuntimeType extends AbstractCompositeRuntimeType<AugmentEffectiveStatement>
         implements AugmentRuntimeType {
-    public DefaultAugmentRuntimeType(final LegacyArchetype bindingType, final AugmentEffectiveStatement statement,
-            final List<RuntimeType> children) {
+    public DefaultAugmentRuntimeType(final LegacyArchetype<AugmentEffectiveStatement> bindingType,
+            final AugmentEffectiveStatement statement, final List<RuntimeType> children) {
         super(bindingType, statement, children);
     }
 
     @Override
-    public LegacyArchetype javaType() {
-        return (LegacyArchetype) super.javaType();
+    public LegacyArchetype<AugmentEffectiveStatement> javaType() {
+        return (LegacyArchetype<AugmentEffectiveStatement>) super.javaType();
     }
 }

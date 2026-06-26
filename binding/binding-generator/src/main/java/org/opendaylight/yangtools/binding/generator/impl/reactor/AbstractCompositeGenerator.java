@@ -468,7 +468,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     }
 
     @NonNullByDefault
-    static final void addAugmentable(final GeneratedTypeBuilder builder) {
+    static final void addAugmentable(final GeneratedTypeBuilder<?> builder) {
         builder.addImplementsType(BindingTypes.augmentable(builder.typeRef()));
     }
 

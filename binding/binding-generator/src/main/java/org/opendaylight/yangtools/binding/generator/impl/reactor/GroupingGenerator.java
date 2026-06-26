@@ -69,14 +69,15 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
     }
 
     @Override
-    LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
+    LegacyArchetype<GroupingEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory) {
+        final var statement = statement();
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName(), statement);
         builder.addImplementsType(BindingTypes.GROUPING);
         addUsesInterfaces(builder, builderFactory);
         addGetterMethods(builder, builderFactory);
 
         annotateDeprecatedIfNecessary(builder);
-        builderFactory.addCodegenInformation(currentModule(), statement(), builder);
+        builderFactory.addCodegenInformation(currentModule(), statement, builder);
 
         return builder.build();
     }

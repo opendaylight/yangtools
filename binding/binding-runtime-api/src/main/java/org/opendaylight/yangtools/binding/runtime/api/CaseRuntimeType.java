@@ -15,8 +15,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
  */
 public interface CaseRuntimeType extends AugmentableRuntimeType, DataRuntimeType {
     @Override
-    CaseEffectiveStatement statement();
+    default CaseEffectiveStatement statement() {
+        return javaType().statement();
+    }
 
     @Override
-    LegacyArchetype javaType();
+    LegacyArchetype<CaseEffectiveStatement> javaType();
 }

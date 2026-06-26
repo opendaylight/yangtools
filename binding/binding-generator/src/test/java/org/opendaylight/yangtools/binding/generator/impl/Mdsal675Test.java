@@ -183,7 +183,7 @@ class Mdsal675Test {
         return assertArchetype(genTypesMap, className, Anyxml.class);
     }
 
-    private static LegacyArchetype assertGenType(final Map<String, Archetype> genTypesMap, final String className) {
+    private static LegacyArchetype<?> assertGenType(final Map<String, Archetype> genTypesMap, final String className) {
         return assertArchetype(genTypesMap, className, LegacyArchetype.class);
     }
 
@@ -194,7 +194,7 @@ class Mdsal675Test {
         return assertInstanceOf(clazz, ret);
     }
 
-    private static void assertYangDataGenType(final LegacyArchetype yangDataType, final Type contentType,
+    private static void assertYangDataGenType(final LegacyArchetype<?> yangDataType, final Type contentType,
             final List<String> getterMethods) {
         assertImplements(yangDataType, BindingTypes.yangData(yangDataType));
         INTERFACE_METHODS.forEach((name, type) -> assertHasMethod(yangDataType, name, type));
@@ -203,7 +203,7 @@ class Mdsal675Test {
         }
     }
 
-    private static void assertYangDataGenType(final LegacyArchetype yangDataType, final LegacyArchetype groupType,
+    private static void assertYangDataGenType(final LegacyArchetype<?> yangDataType, final LegacyArchetype<?> groupType,
             final Type contentType, final List<String> getterMethods) {
         assertImplements(yangDataType, BindingTypes.yangData(yangDataType));
         assertImplements(yangDataType, groupType);
@@ -213,13 +213,13 @@ class Mdsal675Test {
         }
     }
 
-    private static void assertHasMethod(final LegacyArchetype genType, final String methodName,
+    private static void assertHasMethod(final LegacyArchetype<?> genType, final String methodName,
             final Type returnType) {
         assertThat(genType.getMethodDefinitions())
             .anyMatch(method -> methodName.equals(method.getName()) && returnType.equals(method.getReturnType()));
     }
 
-    private static void assertImplements(final LegacyArchetype genType, final Type implementedType) {
+    private static void assertImplements(final LegacyArchetype<?> genType, final Type implementedType) {
         assertThat(genType.getImplements()).contains(implementedType);
     }
 }

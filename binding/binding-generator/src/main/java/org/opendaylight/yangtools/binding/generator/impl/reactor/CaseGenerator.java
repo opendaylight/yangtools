@@ -41,8 +41,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
     }
 
     @Override
-    LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
-
+    LegacyArchetype<CaseEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory) {
         // We also are implementing target choice's type. This is tricky, as we need to cover two distinct cases:
         // - being a child of a choice (i.e. normal definition)
         // - being a child of an augment (i.e. augmented into a choice)
@@ -62,7 +61,8 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
         // Most generators have a parent->child dependency due to parent methods' return types and therefore children
         // must not request parent's type. That is not true for choice->case relationship and hence we do not need to
         // go through DefaultType here
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var statement = statement();
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName(), statement);
         // Note: this needs to be the first type we mention as we are relying on that fact for global runtime type
         //       choice/case indexing.
         builder.addImplementsType(choice.getArchetype(builderFactory));
@@ -78,7 +78,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
 
         annotateDeprecatedIfNecessary(builder);
         final var module = currentModule();
-        builderFactory.addCodegenInformation(module, statement(), builder);
+        builderFactory.addCodegenInformation(module, statement, builder);
         builder.setModuleName(module.statement().argument().getLocalName());
 
         return builder.build();
@@ -91,7 +91,8 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
             @Override
             CaseRuntimeType build(final Archetype type, final CaseEffectiveStatement statement,
                     final List<RuntimeType> childTypes, final List<AugmentRuntimeType> augmentTypes) {
-                return new DefaultCaseRuntimeType((LegacyArchetype) type, statement, childTypes, augmentTypes);
+                return new DefaultCaseRuntimeType((LegacyArchetype<CaseEffectiveStatement>) type, statement, childTypes,
+                    augmentTypes);
             }
         };
     }

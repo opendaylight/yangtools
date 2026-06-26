@@ -38,7 +38,7 @@ class PresenceContainerTest {
     private static Module module;
 
     @Mock
-    private LegacyArchetype type;
+    private LegacyArchetype<?> type;
 
     @BeforeAll
     static void beforeClass() {

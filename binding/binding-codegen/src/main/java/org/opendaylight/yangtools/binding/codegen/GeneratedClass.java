@@ -54,7 +54,8 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
             this.enclosingClass = requireNonNull(enclosingClass);
         }
 
-        private Nested(final GeneratedClass enclosingClass, final JavaTypeName name, final LegacyArchetype targetType) {
+        private Nested(final GeneratedClass enclosingClass, final JavaTypeName name,
+                final LegacyArchetype<?> targetType) {
             super(name, targetType);
             this.enclosingClass = requireNonNull(enclosingClass);
         }
@@ -124,7 +125,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
             super(genType);
         }
 
-        private TopLevel(final JavaTypeName builderName, final String implName, final LegacyArchetype targetType) {
+        private TopLevel(final JavaTypeName builderName, final String implName, final LegacyArchetype<?> targetType) {
             super(builderName, implName, targetType);
         }
 
@@ -187,14 +188,14 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     private final JavaTypeName name;
 
     // for BuilderTemplate's TopLevel class
-    private GeneratedClass(final JavaTypeName builderName, final String implName, final LegacyArchetype targetType) {
+    private GeneratedClass(final JavaTypeName builderName, final String implName, final LegacyArchetype<?> targetType) {
         name = requireNonNull(builderName);
         nestedClasses = Map.of(implName, new Nested(this, builderName.createEnclosed(implName), targetType));
         conflictingNames = Set.of();
     }
 
     // for BuilderImplTemplate's Nested class
-    private GeneratedClass(final JavaTypeName name, final LegacyArchetype targetType) {
+    private GeneratedClass(final JavaTypeName name, final LegacyArchetype<?> targetType) {
         this.name = requireNonNull(name);
         nestedClasses = Map.of();
         final var set = collectAccessibleTypes(targetType);
@@ -219,7 +220,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     }
 
     private static void collectAccessibleTypes(final HashSet<String> set, final Archetype type) {
-        if (type instanceof LegacyArchetype legacy) {
+        if (type instanceof LegacyArchetype<?> legacy) {
             for (var impl : legacy.getImplements()) {
                 if (impl instanceof Archetype archetype) {
                     appendEnclosedTypes(set, archetype);
@@ -248,7 +249,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     }
 
     static GeneratedClass.TopLevel of(final JavaTypeName builderName, final String implSimpleName,
-            final LegacyArchetype targetType) {
+            final LegacyArchetype<?> targetType) {
         return new TopLevel(builderName, implSimpleName, targetType);
     }
 

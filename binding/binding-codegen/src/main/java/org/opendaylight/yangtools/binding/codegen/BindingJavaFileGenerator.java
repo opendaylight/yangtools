@@ -108,7 +108,7 @@ final class BindingJavaFileGenerator {
                 case EnumTypeObjectArchetype etao -> generateFile(new EnumTypeObjectTemplate.Builder(etao, root));
                 case ScalarTypeObjectArchetype stao -> generateFile(new ScalarTypeObjectTemplate.Builder(stao, root));
                 case UnionTypeObjectArchetype utao -> generateFile(new UnionTypeObjectTemplate.Builder(utao, root));
-                case LegacyArchetype legacy -> {
+                case LegacyArchetype<?> legacy -> {
                     generateBuilder(legacy);
                     generateFile(new InterfaceTemplate.Builder(legacy, root));
                 }
@@ -122,7 +122,7 @@ final class BindingJavaFileGenerator {
         }
     }
 
-    private void generateBuilder(final LegacyArchetype type) {
+    private void generateBuilder(final LegacyArchetype<?> type) {
         // FIXME: express this in GeneratedType hierarchy as a marker interface
         for (var iface : type.getImplements()) {
             if (BUILDER_INTERFACES.contains(iface.name())) {

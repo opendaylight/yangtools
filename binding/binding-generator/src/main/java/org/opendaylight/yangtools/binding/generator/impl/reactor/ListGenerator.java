@@ -57,8 +57,9 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
     }
 
     @Override
-    LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
+    LegacyArchetype<ListEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory) {
+        final var statement = statement();
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName(), statement);
         addImplementsChildOf(builder);
         addUsesInterfaces(builder, builderFactory);
         addConcreteInterfaceMethods(builder);
@@ -78,7 +79,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
 
         annotateDeprecatedIfNecessary(builder);
         final var module = currentModule();
-        builderFactory.addCodegenInformation(module, statement(), builder);
+        builderFactory.addCodegenInformation(module, statement, builder);
         builder.setModuleName(module.statement().argument().getLocalName());
 
         return builder.build();

@@ -11,17 +11,26 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-public final class RuntimeGeneratedTypeBuilder extends AbstractGeneratedTypeBuilder<GeneratedTypeBuilder>
-        implements GeneratedTypeBuilder {
+public final class RuntimeGeneratedTypeBuilder<S extends EffectiveStatement<?, ?>>
+        extends AbstractGeneratedTypeBuilder<GeneratedTypeBuilder<S>, S> implements GeneratedTypeBuilder<S> {
+    private static final class RuntimeLegacyArchetype<S extends EffectiveStatement<?, ?>>
+            extends AbstractGeneratedType<S> {
+        @NonNullByDefault
+        RuntimeLegacyArchetype(final RuntimeGeneratedTypeBuilder<S> builder) {
+            super(builder);
+        }
+    }
+
     @NonNullByDefault
-    public RuntimeGeneratedTypeBuilder(final JavaTypeName typeName) {
-        super(typeName);
+    public RuntimeGeneratedTypeBuilder(final JavaTypeName typeName, final S statement) {
+        super(typeName, statement);
     }
 
     @Override
-    public LegacyArchetype build() {
-        return new GeneratedTypeImpl(this);
+    public LegacyArchetype<S> build() {
+        return new RuntimeLegacyArchetype<>(this);
     }
 
     @Override
@@ -40,13 +49,7 @@ public final class RuntimeGeneratedTypeBuilder extends AbstractGeneratedTypeBuil
     }
 
     @Override
-    protected RuntimeGeneratedTypeBuilder thisInstance() {
+    protected RuntimeGeneratedTypeBuilder<S> thisInstance() {
         return this;
-    }
-
-    private static final class GeneratedTypeImpl extends AbstractGeneratedType {
-        GeneratedTypeImpl(final RuntimeGeneratedTypeBuilder builder) {
-            super(builder);
-        }
     }
 }

@@ -208,12 +208,12 @@ public class BuilderGeneratorTest {
                 "idGroupContainer", "idList", "idUnion", "idUnionDef"), sortedProperties);
     }
 
-    private static LegacyArchetype mockAugment(final LegacyArchetype genType) {
+    private static LegacyArchetype<?> mockAugment(final LegacyArchetype<?> genType) {
         doReturn(List.of(BindingTypes.augmentable(genType))).when(genType).getImplements();
         return genType;
     }
 
-    private static LegacyArchetype mockGenTypeMoreMeth(final String methodeName) {
+    private static LegacyArchetype<?> mockGenTypeMoreMeth(final String methodeName) {
         final var genType = spy(LegacyArchetype.class);
         doReturn(TYPE_NAME).when(genType).name();
         doReturn(TEST).when(genType).simpleName();
@@ -224,15 +224,15 @@ public class BuilderGeneratorTest {
         return genType;
     }
 
-    private static BlockBuilder genToString(final LegacyArchetype genType) {
-        return new InterfaceTemplate(genType, mock(DataRootArchetype.class)).generateBindingToString();
+    private static BlockBuilder genToString(final LegacyArchetype<?> genType) {
+        return new InterfaceTemplate<>(genType, mock(DataRootArchetype.class)).generateBindingToString();
     }
 
-    private static BlockBuilder genHashCode(final LegacyArchetype genType) {
-        return new InterfaceTemplate(genType, mock(DataRootArchetype.class)).generateBindingHashCode();
+    private static BlockBuilder genHashCode(final LegacyArchetype<?> genType) {
+        return new InterfaceTemplate<>(genType, mock(DataRootArchetype.class)).generateBindingHashCode();
     }
 
-    private static LegacyArchetype mockGenType(final String methodeName) {
+    private static LegacyArchetype<?> mockGenType(final String methodeName) {
         final var genType = spy(LegacyArchetype.class);
         doReturn(TYPE_NAME).when(genType).name();
         doReturn(TEST).when(genType).simpleName();

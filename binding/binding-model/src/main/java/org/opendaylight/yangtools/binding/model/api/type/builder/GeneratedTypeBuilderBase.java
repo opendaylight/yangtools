@@ -130,6 +130,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      *
      * @param description a string that contains a human-readable textual description of type definition.
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @NonNullByDefault
     void setDescription(String description);
 
@@ -138,6 +139,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      *
      * @param moduleName the name of the module
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @NonNullByDefault
     void setModuleName(String moduleName);
 
@@ -148,6 +150,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      *
      * @param reference a textual cross-reference to an external document.
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @NonNullByDefault
     void setReference(String reference);
 
@@ -161,5 +164,5 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
     /**
      * {@return a new immutable {@link LegacyArchetype} instance}
      */
-    @NonNull LegacyArchetype build();
+    @NonNull LegacyArchetype<?> build();
 }

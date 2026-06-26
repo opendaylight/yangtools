@@ -17,15 +17,23 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
+@ExtendWith(MockitoExtension.class)
 class AnnotationBuilderTest {
+    @Mock
+    private EffectiveStatement<?, ?> statement;
+
     @Test
     void generatedTypeAnnotationTest() {
-        final var genTypeBuilder = new CodegenGeneratedTypeBuilder(
-            JavaTypeName.create("org.opendaylight.controller", "AnnotInterface"));
+        final var genTypeBuilder = new CodegenGeneratedTypeBuilder<>(
+            JavaTypeName.create("org.opendaylight.controller", "AnnotInterface"), statement);
 
         genTypeBuilder.addAnnotation("javax.management", "MXBean");
         final var annotDesc = genTypeBuilder.addAnnotation("javax.management", "Description");
@@ -60,8 +68,8 @@ class AnnotationBuilderTest {
 
     @Test
     void methodSignatureAnnotationTest() {
-        final var genTypeBuilder = new CodegenGeneratedTypeBuilder(
-            JavaTypeName.create("org.opendaylight.controller", "TransferObject"));
+        final var genTypeBuilder = new CodegenGeneratedTypeBuilder<>(
+            JavaTypeName.create("org.opendaylight.controller", "TransferObject"), statement);
 
         final var methodBuilder = genTypeBuilder.addMethod("simpleMethod");
         methodBuilder.setReturnType(Types.typeForClass(Integer.class));
@@ -118,8 +126,8 @@ class AnnotationBuilderTest {
 
     @Test
     void generatedTransfeObjectAnnotationTest() {
-        final var genTypeBuilder = new CodegenGeneratedTypeBuilder(
-            JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"));
+        final var genTypeBuilder = new CodegenGeneratedTypeBuilder<>(
+            JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"), statement);
 
         genTypeBuilder.addAnnotation("javax.management", "MBean");
         final var annotNotify = genTypeBuilder.addAnnotation("javax.management", "NotificationInfo");
