@@ -46,7 +46,6 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 /**
@@ -64,17 +63,16 @@ final class BuilderTemplate extends BaseTemplate {
             final var targetName = type.name();
             final var simpleName = targetName.simpleName();
             final var builderName = targetName.createSibling(simpleName + Naming.BUILDER_SUFFIX);
-            final var implName = builderName.createEnclosed(simpleName + "Impl");
-
-            // FIXME: the entire TypeBuilder dance here is to provide input to GeneratedClass.of(type), taking
-            //        the extremely long route: we really would like to instantiate a GeneratedClass here and not pass
-            //        not have a GeneratedType for the Builder nor its implementation at all
-            final var builderType = new CodegenGeneratedTypeBuilder(builderName)
-                .addEnclosedType(new CodegenGeneratedTypeBuilder(implName).addImplementsType(type).build())
-                .build();
-
+            final var implName = simpleName + "Impl";
+            final var javaType = GeneratedClass.of(builderName, implName, type);
             final var analysis = TypeAnalysis.of(type);
-            return new BuilderTemplate(GeneratedClass.of(builderType), builderType, type, analysis.properties(),
+
+            // FIXME: there are three cases here:
+            //        - non-augmentable
+            //        - augmentable
+            //        - entry object (implies augmentable)
+            //        we should have three separate classes instead of @Nullable fields for the latter two cases
+            return new BuilderTemplate(javaType, javaType.getNestedClass(implName), type, analysis.properties(),
                 analysis.augmentType(), BindingTypes.extractEntryObjectKey(type));
         }
     }
@@ -104,14 +102,14 @@ final class BuilderTemplate extends BaseTemplate {
     //        implementations of its methods
     final @NonNull LegacyArchetype targetType;
 
-    final @NonNull LegacyArchetype archetype;
+    private final GeneratedClass.@NonNull Nested implJavaType;
 
     @NonNullByDefault
-    private BuilderTemplate(final GeneratedClass javaType, final LegacyArchetype archetype,
+    private BuilderTemplate(final GeneratedClass.TopLevel javaType, final GeneratedClass.Nested implJavaType,
             final LegacyArchetype targetType, final Set<BuilderGeneratedProperty> properties,
             final @Nullable ParameterizedType augmentType, final @Nullable KeyArchetype keyType) {
         super(javaType);
-        this.archetype = requireNonNull(archetype);
+        this.implJavaType = requireNonNull(implJavaType);
         this.targetType = requireNonNull(targetType);
         this.properties = requireNonNull(properties);
         this.augmentType = augmentType;
@@ -163,7 +161,7 @@ final class BuilderTemplate extends BaseTemplate {
             .eol(" *")
             .str(" * @param base ").str(targetTypeName).eol(" from which the builder should be initialized")
             .eol(" */")
-            .indented("public ", generateCopyConstructor(targetType, archetype.enclosedTypes().getFirst()))
+            .indented("public ", generateCopyConstructor(targetType))
             .nl()
             .blk(generateMethodFieldsFrom())
             .nl()
@@ -174,8 +172,6 @@ final class BuilderTemplate extends BaseTemplate {
             bb.nl().blk(generateAugmentation());
         }
 
-        final var implType = (LegacyArchetype) archetype.enclosedTypes().getFirst();
-
         return bb
             .nl()
             .blk(generateSetters())
@@ -184,10 +180,10 @@ final class BuilderTemplate extends BaseTemplate {
             .str(" * {@return A new {@link ").str(targetTypeName).eol("} instance}")
             .eol(" */")
             .str("public ").str(importedNonNull(targetType)).str(" build()").oB()
-                .str("return new ").str(importedName(implType)).eol("(this);")
+                .str("return new ").str(importedName(implJavaType.name())).eol("(this);")
             .cB()
             .nl()
-            .blk(new BuilderImplTemplate(this, implType).body())
+            .blk(new BuilderImplTemplate(implJavaType, this).body())
             .cB();
     }
 
@@ -243,7 +239,7 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Generate constructor with argument of given type.
      */
-    private @NonNull BlockBuilder generateConstructorFromIfc(final LegacyArchetype genType) {
+    private @NonNull BlockBuilder generateConstructorFromIfc(final @NonNull LegacyArchetype genType) {
         final var bb = newBlockBuilder();
         if (hasNonDefaultMethods(genType)) {
             final var typeName = importedName(genType);
@@ -363,7 +359,7 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     @NonNullByDefault
-    private BlockBuilder generateCopyConstructor(final Type fromType, final Type implType) {
+    private BlockBuilder generateCopyConstructor(final Type fromType) {
         return newBlockBuilder()
             .str(simpleName()).str("(final ").str(importedName(fromType)).str(" base)").jBlock(bb -> {
                 if (augmentType != null) {
@@ -676,7 +672,7 @@ final class BuilderTemplate extends BaseTemplate {
             argumentCheck = newBlockBuilder()
                 .str("if (values != null)").oB()
                     .str("for (").str(importedName(actualType)).str(" value : values)").oB()
-                        .blk(checkFieldValue(archetype, field, restrictions, actualType, "value"))
+                        .blk(checkFieldValue(targetType, field, restrictions, actualType, "value"))
                     .cB()
                 .cB();
         } else {
@@ -728,7 +724,7 @@ final class BuilderTemplate extends BaseTemplate {
             bb
                 .eol("if (values != null)").oB()
                     .str("for (").str(importedName(actualType)).str(" value : values.values())").oB()
-                        .blk(checkFieldValue(archetype, field, restrictions, actualType, "value"))
+                        .blk(checkFieldValue(targetType, field, restrictions, actualType, "value"))
                     .cB()
                 .cB();
         }
@@ -760,7 +756,7 @@ final class BuilderTemplate extends BaseTemplate {
         if (restrictions != null) {
             bb
                 .str("if (value != null)").oB()
-                    .blk(checkFieldValue(archetype, field, restrictions, actualType, "value"))
+                    .blk(checkFieldValue(targetType, field, restrictions, actualType, "value"))
                 .cB();
         }
         return bb

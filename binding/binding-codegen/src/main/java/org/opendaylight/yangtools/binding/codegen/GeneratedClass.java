@@ -54,6 +54,11 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
             this.enclosingClass = requireNonNull(enclosingClass);
         }
 
+        private Nested(final GeneratedClass enclosingClass, final JavaTypeName name, final LegacyArchetype targetType) {
+            super(name, targetType);
+            this.enclosingClass = requireNonNull(enclosingClass);
+        }
+
         @Override
         boolean importCheckedType(final JavaTypeName type) {
             // Defer to enclosing type, which needs to re-run its checks
@@ -119,6 +124,10 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
             super(genType);
         }
 
+        private TopLevel(final JavaTypeName builderName, final String implName, final LegacyArchetype targetType) {
+            super(builderName, implName, targetType);
+        }
+
         // FIXME: this method should not be exposed
         @Deprecated
         Stream<JavaTypeName> imports() {
@@ -177,23 +186,41 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     private final Set<String> conflictingNames;
     private final JavaTypeName name;
 
-    GeneratedClass(final Archetype genType) {
+    // for BuilderTemplate's TopLevel class
+    private GeneratedClass(final JavaTypeName builderName, final String implName, final LegacyArchetype targetType) {
+        name = requireNonNull(builderName);
+        nestedClasses = Map.of(implName, new Nested(this, builderName.createEnclosed(implName), targetType));
+        conflictingNames = Set.of();
+    }
+
+    // for BuilderImplTemplate's Nested class
+    private GeneratedClass(final JavaTypeName name, final LegacyArchetype targetType) {
+        this.name = requireNonNull(name);
+        nestedClasses = Map.of();
+        conflictingNames = collectAccessibleTypes(targetType);
+    }
+
+    private GeneratedClass(final Archetype genType) {
         name = genType.name();
 
         nestedClasses = genType.enclosedTypes().stream()
             .collect(Collectors.toUnmodifiableMap(Archetype::simpleName, type -> new Nested(this, type)));
 
-        final var cb = new HashSet<String>();
         if (genType instanceof EnumTypeObjectArchetype enumeration) {
-            cb.addAll(enumeration.valueToConstant().values());
+            conflictingNames = Set.copyOf(enumeration.valueToConstant().values());
+        } else {
+            conflictingNames = collectAccessibleTypes(genType);
         }
-        // TODO: perhaps we can do something smarter to actually access the types
-        collectAccessibleTypes(cb, genType);
-
-        conflictingNames = Set.copyOf(cb);
     }
 
-    private void collectAccessibleTypes(final HashSet<String> set, final Archetype type) {
+    private static Set<String> collectAccessibleTypes(final Archetype type) {
+        final var cb = new HashSet<String>();
+        // TODO: perhaps we can do something smarter to actually access the types
+        collectAccessibleTypes(cb, type);
+        return Set.copyOf(cb);
+    }
+
+    private static void collectAccessibleTypes(final HashSet<String> set, final Archetype type) {
         if (type instanceof LegacyArchetype archetype) {
             for (var impl : archetype.getImplements()) {
                 if (impl instanceof Archetype genType) {
@@ -216,6 +243,11 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     //        - return a Block
     static GeneratedClass.TopLevel of(final Archetype genType) {
         return new TopLevel(genType);
+    }
+
+    static GeneratedClass.TopLevel of(final JavaTypeName builderName, final String implSimpleName,
+            final LegacyArchetype targetType) {
+        return new TopLevel(builderName, implSimpleName, targetType);
     }
 
     /**
@@ -312,7 +344,11 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     // FIXME: the three callers look like they could just iterate over this.nestedClasses, as they seem to derive their
     //        argument to this method from type.getEnclosedTypes()
     final Nested getNestedClass(final Archetype type) {
-        return verifyNotNull(nestedClasses.get(type.simpleName()));
+        return getNestedClass(type.simpleName());
+    }
+
+    final Nested getNestedClass(final String simpleName) {
+        return verifyNotNull(nestedClasses.get(requireNonNull(simpleName)));
     }
 
     final boolean checkAndImportType(final JavaTypeName type) {
