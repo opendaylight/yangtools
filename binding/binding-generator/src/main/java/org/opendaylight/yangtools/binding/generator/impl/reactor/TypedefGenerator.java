@@ -15,10 +15,10 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultTypedefRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.runtime.api.TypedefRuntimeType;
@@ -76,8 +76,8 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
     }
 
     @Override
-    GeneratedTransferObject<?> createDerivedType(final TypeBuilderFactory builderFactory,
-            final GeneratedTransferObject<?> baseType) {
+    TypeObjectArchetype.OfClass<?> createDerivedType(final TypeBuilderFactory builderFactory,
+            final TypeObjectArchetype.OfClass<?> baseType) {
         final var typeName = typeName();
         final var statement = statement();
         final var typedef = statement.typeDefinition();

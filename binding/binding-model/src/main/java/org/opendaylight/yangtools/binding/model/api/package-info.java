@@ -13,7 +13,7 @@
  *       specifier of a variable declaration.</li>
  *   <li>{@link Archetype} refers to a Java class or interface. It can either be a top-level or a nested class or
  *       interface.</li>
- *   <li>{@link GeneratedTransferObject} refers to a {@link Archetype}, which is a concrete class. These are generated
+ *   <li>{@link TypeObjectArchetype} refers to a {@link Archetype}, which is a concrete class. These are generated
  *       to encapsulate the YANG type hierarchy as expressed by 'typedef' and 'type' statement use. If it has a
  *       superclass, it is also referred to as an {@code Extended Type}.</li>
  * </ul>

@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -43,10 +43,10 @@ class GeneratedTypesBitsTest {
         int setByteLeafMethodParamNum = 0;
 
         for (var genType : genTypes) {
-            if (genType instanceof GeneratedTransferObject genTO) {
-                if (genTO.simpleName().equals("ByteType")) {
+            if (genType instanceof TypeObjectArchetype<?> archetype) {
+                if (archetype.simpleName().equals("ByteType")) {
                     byteTypeFound = true;
-                    final var bits = assertInstanceOf(BitsTypeObjectArchetype.class, genTO);
+                    final var bits = assertInstanceOf(BitsTypeObjectArchetype.class, archetype);
                     assertNull(bits.superType());
                     final var def = bits.typeDefinition();
                     assertEquals(QName.create("urn:simple:bits:demo", "2013-06-11", "byte-type"), def.getQName());

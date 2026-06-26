@@ -31,7 +31,7 @@ public record BitsTypeObjectArchetype(
         JavaTypeName name,
         TypeEffectiveStatement.MandatoryIn<?, ?> statement,
         BitsTypeDefinition typeDefinition,
-        @Nullable BitsTypeObjectArchetype superType) implements GeneratedTransferObject<BitsTypeObject> {
+        @Nullable BitsTypeObjectArchetype superType) implements TypeObjectArchetype.OfClass<BitsTypeObject> {
     static final JavaTypeName SERIALIZABLE = JavaTypeName.create(Serializable.class);
 
     public BitsTypeObjectArchetype {
