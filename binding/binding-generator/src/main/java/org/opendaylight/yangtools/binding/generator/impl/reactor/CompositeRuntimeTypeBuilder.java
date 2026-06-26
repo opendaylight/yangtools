@@ -26,7 +26,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
-abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R extends CompositeRuntimeType> {
+abstract class CompositeRuntimeTypeBuilder<
+        A extends Archetype.WithStatement<S>,
+        S extends EffectiveStatement<?, ?>,
+        R extends CompositeRuntimeType> {
     private final List<AugmentRuntimeType> augmentTypes = new ArrayList<>();
     private final List<RuntimeType> childTypes = new ArrayList<>();
     private final @NonNull S statement;
@@ -37,7 +40,7 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
     }
 
     @NonNullByDefault
-    final CompositeRuntimeTypeBuilder<S, R> populate(final AugmentResolver resolver,
+    final CompositeRuntimeTypeBuilder<A, S, R> populate(final AugmentResolver resolver,
             final AbstractCompositeGenerator<S, R> generator) {
         resolver.enter(generator);
         try {
@@ -48,12 +51,12 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
         return this;
     }
 
-    final @NonNull R build(final @NonNull Archetype generatedType) {
-        return build(generatedType, statement, childTypes, augmentTypes);
+    final @NonNull R build(final @NonNull Archetype archetype) {
+        return build((A) archetype, statement, childTypes, augmentTypes);
     }
 
-    abstract @NonNull R build(Archetype type, S statement, List<RuntimeType> children,
-        List<AugmentRuntimeType> augments);
+    // FIXME: assume LegacyArchetype<S> and do not expose statement
+    abstract @NonNull R build(A archetype, S statement, List<RuntimeType> children, List<AugmentRuntimeType> augments);
 
     final @NonNull List<CaseRuntimeType> getCaseChilden() {
         return childTypes.stream()

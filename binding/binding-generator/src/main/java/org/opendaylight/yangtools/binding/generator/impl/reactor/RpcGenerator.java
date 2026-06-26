@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 /**
  * Generator corresponding to a {@code rpc} statement.
  */
-final class RpcGenerator extends AbstractInvokableGenerator<RpcEffectiveStatement, RpcRuntimeType> {
+final class RpcGenerator extends AbstractInvokableGenerator<RpcArchetype, RpcEffectiveStatement, RpcRuntimeType> {
     @NonNullByDefault
     RpcGenerator(final RpcEffectiveStatement statement, final ModuleGenerator parent) {
         super(statement, parent);
@@ -43,13 +43,13 @@ final class RpcGenerator extends AbstractInvokableGenerator<RpcEffectiveStatemen
     }
 
     @Override
-    CompositeRuntimeTypeBuilder<RpcEffectiveStatement, RpcRuntimeType> createBuilder(
+    CompositeRuntimeTypeBuilder<RpcArchetype, RpcEffectiveStatement, RpcRuntimeType> createBuilder(
             final RpcEffectiveStatement statement) {
         return new InvokableRuntimeTypeBuilder<>(statement) {
             @Override
-            RpcRuntimeType build(final Archetype generatedType, final RpcEffectiveStatement statement,
+            RpcRuntimeType build(final RpcArchetype archetype, final RpcEffectiveStatement statement,
                     final List<RuntimeType> childTypes) {
-                return new DefaultRpcRuntimeType(generatedType, statement, childTypes);
+                return new DefaultRpcRuntimeType(archetype, childTypes);
             }
         };
     }

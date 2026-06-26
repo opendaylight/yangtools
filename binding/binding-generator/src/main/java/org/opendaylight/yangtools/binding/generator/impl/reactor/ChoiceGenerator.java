@@ -13,7 +13,6 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultChoiceRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
@@ -27,7 +26,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * Generator corresponding to a {@code choice} statement.
  */
 final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffectiveStatement, ChoiceRuntimeType> {
-    static final class ChoiceBuilder extends CompositeRuntimeTypeBuilder<ChoiceEffectiveStatement, ChoiceRuntimeType> {
+    static final class ChoiceBuilder
+            extends CompositeRuntimeTypeBuilder<ChoiceInArchetype, ChoiceEffectiveStatement, ChoiceRuntimeType> {
         private final List<CaseRuntimeType> augmentedCases = new ArrayList<>();
 
         ChoiceBuilder(final ChoiceEffectiveStatement statement) {
@@ -50,11 +50,8 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
         }
 
         @Override
-        ChoiceRuntimeType build(final Archetype type, final ChoiceEffectiveStatement statement,
+        ChoiceRuntimeType build(final ChoiceInArchetype archetype, final ChoiceEffectiveStatement statement,
                 final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-            if (!(type instanceof ChoiceInArchetype archetype)) {
-                throw new VerifyException("Unexpected type " + type);
-            }
             if (!augments.isEmpty()) {
                 throw new VerifyException("Unexpected augments " + augments);
             }

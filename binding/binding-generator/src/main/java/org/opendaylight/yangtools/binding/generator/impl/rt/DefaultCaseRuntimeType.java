@@ -14,16 +14,11 @@ import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 
-public final class DefaultCaseRuntimeType extends AbstractAugmentableRuntimeType<CaseEffectiveStatement>
+public final class DefaultCaseRuntimeType
+        extends AbstractAugmentableRuntimeType<LegacyArchetype<CaseEffectiveStatement>, CaseEffectiveStatement>
         implements CaseRuntimeType {
-    public DefaultCaseRuntimeType(final LegacyArchetype<CaseEffectiveStatement> bindingType,
-            final CaseEffectiveStatement statement, final List<RuntimeType> children,
-            final List<AugmentRuntimeType> augments) {
-        super(bindingType, statement, children, augments);
-    }
-
-    @Override
-    public LegacyArchetype<CaseEffectiveStatement> javaType() {
-        return (LegacyArchetype<CaseEffectiveStatement>) super.javaType();
+    public DefaultCaseRuntimeType(final LegacyArchetype<CaseEffectiveStatement> archetype,
+            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+        super(archetype, children, augments);
     }
 }

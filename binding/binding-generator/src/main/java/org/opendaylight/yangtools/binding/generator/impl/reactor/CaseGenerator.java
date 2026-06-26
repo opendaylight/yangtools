@@ -12,7 +12,6 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultCaseRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -85,14 +84,14 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
     }
 
     @Override
-    CompositeRuntimeTypeBuilder<CaseEffectiveStatement, CaseRuntimeType> createBuilder(
-            final CaseEffectiveStatement statement) {
+    CompositeRuntimeTypeBuilder<LegacyArchetype<CaseEffectiveStatement>, CaseEffectiveStatement, CaseRuntimeType>
+            createBuilder(final CaseEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
-            CaseRuntimeType build(final Archetype type, final CaseEffectiveStatement statement,
-                    final List<RuntimeType> childTypes, final List<AugmentRuntimeType> augmentTypes) {
-                return new DefaultCaseRuntimeType((LegacyArchetype<CaseEffectiveStatement>) type, statement, childTypes,
-                    augmentTypes);
+            CaseRuntimeType build(final LegacyArchetype<CaseEffectiveStatement> archetype,
+                    final CaseEffectiveStatement statement, final List<RuntimeType> childTypes,
+                    final List<AugmentRuntimeType> augmentTypes) {
+                return new DefaultCaseRuntimeType(archetype, childTypes, augmentTypes);
             }
         };
     }

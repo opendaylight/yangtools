@@ -12,7 +12,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultInputRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.InputRuntimeType;
@@ -41,13 +41,14 @@ final class InputGenerator extends OperationContainerGenerator<InputEffectiveSta
     }
 
     @Override
-    CompositeRuntimeTypeBuilder<InputEffectiveStatement, InputRuntimeType> createBuilder(
-            final InputEffectiveStatement statement) {
+    CompositeRuntimeTypeBuilder<LegacyArchetype<InputEffectiveStatement>, InputEffectiveStatement, InputRuntimeType>
+            createBuilder(final InputEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
-            InputRuntimeType build(final Archetype type, final InputEffectiveStatement statement,
-                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultInputRuntimeType(type, statement, children, augments);
+            InputRuntimeType build(final LegacyArchetype<InputEffectiveStatement> archetype,
+                    final InputEffectiveStatement statement, final List<RuntimeType> children,
+                    final List<AugmentRuntimeType> augments) {
+                return new DefaultInputRuntimeType(archetype, children, augments);
             }
         };
     }

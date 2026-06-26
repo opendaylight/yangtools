@@ -17,18 +17,20 @@ import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-abstract class InvokableRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R extends CompositeRuntimeType>
-        extends CompositeRuntimeTypeBuilder<S, R> {
+abstract class InvokableRuntimeTypeBuilder<
+        A extends Archetype.WithStatement<S>,
+        S extends EffectiveStatement<?, ?>,
+        R extends CompositeRuntimeType> extends CompositeRuntimeTypeBuilder<A, S, R> {
     InvokableRuntimeTypeBuilder(final S statement) {
         super(statement);
     }
 
     @Override
-    final R build(final Archetype type, final S statement, final List<RuntimeType> children,
+    final R build(final A archetype, final S statement, final List<RuntimeType> children,
             final List<AugmentRuntimeType> augments) {
         verify(augments.isEmpty(), "Unexpected augments %s", augments);
-        return build(type, statement, children);
+        return build(archetype, statement, children);
     }
 
-    abstract @NonNull R build(Archetype type, S statement, List<RuntimeType> children);
+    abstract @NonNull R build(A archetype, S statement, List<RuntimeType> children);
 }
