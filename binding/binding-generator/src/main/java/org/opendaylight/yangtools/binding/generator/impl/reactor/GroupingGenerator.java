@@ -106,7 +106,8 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
                 // Groupings cannot be targeted by 'augment'
                 if (augments.isEmpty()) {
-                    return new DefaultGroupingRuntimeType(type, statement, children, vectors);
+                    return new DefaultGroupingRuntimeType((LegacyArchetype<GroupingEffectiveStatement>) type, children,
+                        vectors);
                 }
                 throw new VerifyException("Unexpected augments " + augments);
             }

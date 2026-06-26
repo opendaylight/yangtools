@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.InputRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.InvokableRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.OutputRuntimeType;
@@ -17,13 +17,13 @@ import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 abstract sealed class AbstractInvokableRuntimeType<S extends EffectiveStatement<?, ?>>
-        extends AbstractCompositeRuntimeType<S> implements InvokableRuntimeType
+        extends AbstractCompositeRuntimeType<LegacyArchetype<S>, S> implements InvokableRuntimeType
         permits DefaultActionRuntimeType, DefaultRpcRuntimeType {
     private final @NonNull InputRuntimeType input;
     private final @NonNull OutputRuntimeType output;
 
-    AbstractInvokableRuntimeType(final Archetype bindingType, final S statement, final List<RuntimeType> children) {
-        super(bindingType, statement, children);
+    AbstractInvokableRuntimeType(final LegacyArchetype<S> archetype, final List<RuntimeType> children) {
+        super(archetype, children);
         input = child(children, InputRuntimeType.class);
         output = child(children, OutputRuntimeType.class);
     }

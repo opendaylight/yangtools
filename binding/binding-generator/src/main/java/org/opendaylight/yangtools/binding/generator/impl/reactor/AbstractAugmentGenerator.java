@@ -216,8 +216,7 @@ abstract class AbstractAugmentGenerator
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
                 // 'augment' cannot be targeted by augment
                 verify(augments.isEmpty(), "Unexpected augments %s", augments);
-                return new DefaultAugmentRuntimeType((LegacyArchetype<AugmentEffectiveStatement>) type, statement,
-                    children);
+                return new DefaultAugmentRuntimeType((LegacyArchetype<AugmentEffectiveStatement>) type, children);
             }
         };
     }

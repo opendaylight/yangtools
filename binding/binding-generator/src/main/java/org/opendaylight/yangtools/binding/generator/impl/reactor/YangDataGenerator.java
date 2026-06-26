@@ -128,7 +128,7 @@ abstract sealed class YangDataGenerator
             @Override
             YangDataRuntimeType build(final Archetype type, final YangDataEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultYangDataRuntimeType(type, statement, children);
+                return new DefaultYangDataRuntimeType((LegacyArchetype<YangDataEffectiveStatement>) type, children);
             }
         };
     }

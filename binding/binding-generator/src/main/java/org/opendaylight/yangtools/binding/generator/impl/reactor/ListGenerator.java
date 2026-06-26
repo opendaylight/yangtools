@@ -122,8 +122,9 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
             @Override
             ListRuntimeType build(final Archetype type, final ListEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                // FIXME: the key here is not rebased correctly :(
-                return new DefaultListRuntimeType(type, statement, children, augments, keyRuntimeType());
+                return new DefaultListRuntimeType((LegacyArchetype<ListEffectiveStatement>) type, children, augments,
+                    // FIXME: the key here is not rebased correctly :(
+                    keyRuntimeType());
             }
         };
     }

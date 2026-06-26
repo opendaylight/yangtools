@@ -98,7 +98,8 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
             @Override
             ActionRuntimeType build(final Archetype generatedType, final ActionEffectiveStatement statement,
                     final List<RuntimeType> childTypes) {
-                return new DefaultActionRuntimeType(generatedType, statement, childTypes);
+                return new DefaultActionRuntimeType((LegacyArchetype<ActionEffectiveStatement>) generatedType,
+                    childTypes);
             }
         };
     }

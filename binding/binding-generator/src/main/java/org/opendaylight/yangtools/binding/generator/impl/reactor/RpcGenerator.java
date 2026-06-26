@@ -12,6 +12,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultRpcRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.RpcRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -49,7 +50,7 @@ final class RpcGenerator extends AbstractInvokableGenerator<RpcEffectiveStatemen
             @Override
             RpcRuntimeType build(final Archetype generatedType, final RpcEffectiveStatement statement,
                     final List<RuntimeType> childTypes) {
-                return new DefaultRpcRuntimeType(generatedType, statement, childTypes);
+                return new DefaultRpcRuntimeType((LegacyArchetype<RpcEffectiveStatement>) generatedType, childTypes);
             }
         };
     }

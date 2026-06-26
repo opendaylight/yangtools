@@ -87,7 +87,8 @@ abstract class AbstractNotificationGenerator
             @Override
             NotificationRuntimeType build(final Archetype type, final NotificationEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultNotificationRuntimeType(type, statement, children, augments);
+                return new DefaultNotificationRuntimeType((LegacyArchetype<NotificationEffectiveStatement>) type,
+                    children, augments);
             }
         };
     }

@@ -74,10 +74,11 @@ final class NotificationBodyGenerator
             NotificationBodyRuntimeType build(final Archetype type, final NotificationEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
                 // uninstantiated: cannot be targeted by 'augment'
-                if (augments.isEmpty()) {
-                    return new DefaultNotificationBodyRuntimeType(type, statement, children);
+                if (!augments.isEmpty()) {
+                    throw new VerifyException("Unexpected augments " + augments);
                 }
-                throw new VerifyException("Unexpected augments " + augments);
+                return new DefaultNotificationBodyRuntimeType((LegacyArchetype<NotificationEffectiveStatement>) type,
+                    children);
             }
         };
     }

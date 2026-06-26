@@ -52,6 +52,7 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
         return build(generatedType, statement, childTypes, augmentTypes);
     }
 
+    // FIXME: assume LegacyArchetype<S> and do not expose statement
     abstract @NonNull R build(Archetype type, S statement, List<RuntimeType> children,
         List<AugmentRuntimeType> augments);
 

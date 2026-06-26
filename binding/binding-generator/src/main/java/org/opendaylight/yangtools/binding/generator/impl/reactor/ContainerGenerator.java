@@ -71,7 +71,8 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
             @Override
             ContainerRuntimeType build(final Archetype type, final ContainerEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultContainerRuntimeType(type, statement, children, augments);
+                return new DefaultContainerRuntimeType((LegacyArchetype<ContainerEffectiveStatement>) type, children,
+                    augments);
             }
         };
     }

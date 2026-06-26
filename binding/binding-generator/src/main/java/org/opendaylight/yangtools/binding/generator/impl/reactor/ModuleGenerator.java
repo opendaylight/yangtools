@@ -110,7 +110,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
                     }
                 }
 
-                return new DefaultModuleRuntimeType(type, statement, children, yangDataChildren);
+                return new DefaultModuleRuntimeType((DataRootArchetype) type, children, yangDataChildren);
             }
         };
     }

@@ -91,7 +91,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
             @Override
             CaseRuntimeType build(final Archetype type, final CaseEffectiveStatement statement,
                     final List<RuntimeType> childTypes, final List<AugmentRuntimeType> augmentTypes) {
-                return new DefaultCaseRuntimeType((LegacyArchetype<CaseEffectiveStatement>) type, statement, childTypes,
+                return new DefaultCaseRuntimeType((LegacyArchetype<CaseEffectiveStatement>) type, childTypes,
                     augmentTypes);
             }
         };
