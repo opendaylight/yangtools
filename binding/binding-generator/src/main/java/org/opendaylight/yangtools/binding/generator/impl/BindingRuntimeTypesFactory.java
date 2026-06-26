@@ -69,7 +69,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
     }
 
     static @NonNull BindingRuntimeTypes createTypes(final @NonNull EffectiveModelContext modelContext) {
-        final var moduleGens = new GeneratorReactor(modelContext).execute(TypeBuilderFactory.runtime());
+        final var moduleGens = new GeneratorReactor(modelContext).execute(TypeBuilderFactory.RUNTIME);
 
         final var sw = Stopwatch.createStarted();
         final var factory = new BindingRuntimeTypesFactory();

@@ -61,7 +61,7 @@ public final class DefaultBindingGenerator implements BindingGenerator {
             .collect(Collectors.toUnmodifiableSet());
 
         final var result = new ArrayList<Archetype>();
-        for (var gen : new GeneratorReactor(context).execute(TypeBuilderFactory.codegen()).values()) {
+        for (var gen : new GeneratorReactor(context).execute(TypeBuilderFactory.CODEGEN).values()) {
             if (filter.contains(gen.statement())) {
                 addTypes(result, gen);
             }
