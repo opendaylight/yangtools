@@ -12,19 +12,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.GroupingRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 
-public final class DefaultGroupingRuntimeType extends AbstractCompositeRuntimeType<GroupingEffectiveStatement>
+public final class DefaultGroupingRuntimeType
+        extends AbstractCompositeRuntimeType<LegacyArchetype<GroupingEffectiveStatement>, GroupingEffectiveStatement>
         implements GroupingRuntimeType {
     private final @Nullable Object directUsers;
 
-    public DefaultGroupingRuntimeType(final Archetype bindingType, final GroupingEffectiveStatement statement,
+    public DefaultGroupingRuntimeType(final LegacyArchetype<GroupingEffectiveStatement> archetype,
             final List<RuntimeType> children, final List<? extends CompositeRuntimeType> directUsers) {
-        super(bindingType, statement, children);
+        super(archetype, children);
         this.directUsers = switch (directUsers.size()) {
             case 0 -> null;
             case 1 -> Objects.requireNonNull(directUsers.getFirst());
