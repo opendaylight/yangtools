@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -512,7 +511,7 @@ abstract class AbstractTypeObjectGenerator<
     final TypeObjectArchetype<?> createTypeImpl(final TypeBuilderFactory builderFactory) {
         if (baseGen != null) {
             final var baseType = baseGen.getGeneratedType(builderFactory);
-            if (!(baseType instanceof GeneratedTransferObject<?> gto)) {
+            if (!(baseType instanceof TypeObjectArchetype.OfClass<?> gto)) {
                 throw new VerifyException("Unexpected base type " + baseType);
             }
             return createDerivedType(builderFactory, gto);
@@ -533,6 +532,7 @@ abstract class AbstractTypeObjectGenerator<
         };
     }
 
-    abstract @NonNull GeneratedTransferObject<?> createDerivedType(@NonNull TypeBuilderFactory builderFactory,
-        @NonNull GeneratedTransferObject<?> baseType);
+    @NonNullByDefault
+    abstract TypeObjectArchetype.OfClass<?> createDerivedType(TypeBuilderFactory builderFactory,
+        TypeObjectArchetype.OfClass<?> baseType);
 }

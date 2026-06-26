@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -192,14 +191,14 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             }
         }
         // FIXME: this is equivalent to genTo.isTypedef() so we should be able to unify the two concepts -- but really
-        //        that soulds like it should be handled in those templates ... perhaps we should receive these from
+        //        that sounds like it should be handled in those templates ... perhaps we should receive these from
         //        the caller as 'List<JavaTypeName> seeAlso'?
-        if (stmt instanceof TypedefEffectiveStatement && type instanceof GeneratedTransferObject<?> genTO) {
-            final var augType = genTO.getSuperType();
-            if (augType != null) {
+        if (stmt instanceof TypedefEffectiveStatement && type instanceof TypeObjectArchetype.OfClass<?> toArchetype) {
+            final var superType = toArchetype.getSuperType();
+            if (superType != null) {
                 sb
                     .append("\n\n")
-                    .append("@see ").append(augType.simpleName());
+                    .append("@see ").append(superType.simpleName());
             }
         }
     }
