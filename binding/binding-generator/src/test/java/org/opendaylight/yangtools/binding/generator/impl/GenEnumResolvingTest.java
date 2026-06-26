@@ -26,7 +26,7 @@ class GenEnumResolvingTest {
 
         assertEquals(9, genTypes.size());
 
-        LegacyArchetype genInterface = null;
+        LegacyArchetype<?> genInterface = null;
         for (var type : genTypes) {
             if (type.simpleName().equals("Interface")) {
                 genInterface = assertInstanceOf(LegacyArchetype.class, type);
@@ -93,7 +93,7 @@ class GenEnumResolvingTest {
         assertNotNull(genTypes);
         assertEquals(27, genTypes.size());
 
-        LegacyArchetype genInterface = null;
+        LegacyArchetype<?> genInterface = null;
         for (var type : genTypes) {
             if (type.simpleName().equals("Interface") && type.packageName().equals(
                 "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces")) {

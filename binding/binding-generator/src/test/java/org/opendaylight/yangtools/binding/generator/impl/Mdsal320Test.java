@@ -33,7 +33,7 @@ class Mdsal320Test {
         final var foo = generateTypes.stream()
             .filter(type -> type.canonicalName().equals("org.opendaylight.yang.gen.v1.urn.odl.yt320.norev.Foo"))
             .findFirst()
-            .map(LegacyArchetype.class::cast)
+            .map(type -> (LegacyArchetype<?>) type)
             .orElseThrow();
 
         assertThat(foo.getImplements()).anySatisfy(type -> type.name().equals(BindingTypes.JAVA_DATACONTAINER));

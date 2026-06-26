@@ -15,8 +15,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
  */
 public interface AugmentRuntimeType extends CompositeRuntimeType, DataRuntimeType {
     @Override
-    AugmentEffectiveStatement statement();
+    default AugmentEffectiveStatement statement() {
+        return javaType().statement();
+    }
 
     @Override
-    LegacyArchetype javaType();
+    LegacyArchetype<AugmentEffectiveStatement> javaType();
 }

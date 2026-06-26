@@ -56,17 +56,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 /**
  * Template for generating JAVA interfaces.
  */
-sealed class InterfaceTemplate<T extends @NonNull LegacyArchetype> extends ArchetypeTemplate<T>
+sealed class InterfaceTemplate<T extends @NonNull LegacyArchetype<?>> extends ArchetypeTemplate<T>
         permits DataRootTemplate {
     @NonNullByDefault
-    record Builder(LegacyArchetype type, DataRootArchetype root) implements Template.Builder {
+    record Builder(LegacyArchetype<?> type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
             requireNonNull(root);
         }
 
         @Override
-        public InterfaceTemplate<LegacyArchetype> build() {
+        public InterfaceTemplate<LegacyArchetype<?>> build() {
             return new InterfaceTemplate<>(type, root);
         }
     }
@@ -170,7 +170,7 @@ sealed class InterfaceTemplate<T extends @NonNull LegacyArchetype> extends Arche
     }
 
     @NonNullByDefault
-    private String formatDataForJavaDoc(final LegacyArchetype type) {
+    private String formatDataForJavaDoc(final LegacyArchetype<?> type) {
         final var sb = new StringBuilder();
         final var comment = type.getComment();
         if (comment != null) {

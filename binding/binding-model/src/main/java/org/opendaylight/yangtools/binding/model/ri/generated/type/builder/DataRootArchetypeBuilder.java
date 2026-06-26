@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -21,14 +18,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 /**
  * Builder for {@link DataRootArchetype}.
  */
-public final class DataRootArchetypeBuilder extends AbstractGeneratedTypeBuilder<DataRootArchetype.Builder>
+public final class DataRootArchetypeBuilder
+        extends AbstractGeneratedTypeBuilder<DataRootArchetype.Builder, ModuleEffectiveStatement>
         implements DataRootArchetype.Builder {
-    private final @NonNull ModuleEffectiveStatement statement;
-
     @NonNullByDefault
     public DataRootArchetypeBuilder(final JavaTypeName typeName, final ModuleEffectiveStatement statement) {
-        super(typeName);
-        this.statement = requireNonNull(statement);
+        super(typeName, statement);
         addImplementsType(BindingTypes.dataRoot(TypeRef.of(typeName)));
     }
 

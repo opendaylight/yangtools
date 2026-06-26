@@ -31,11 +31,12 @@ import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-abstract class AbstractGeneratedType implements LegacyArchetype {
+abstract class AbstractGeneratedType<S extends EffectiveStatement<?, ?>> implements LegacyArchetype<S> {
     private final @NonNull JavaTypeName name;
+    private final @NonNull S statement;
     private final @NonNull List<AnnotationType> annotations;
     private final @NonNull List<Type> implementsTypes;
     private final @NonNull List<Constant> constants;
@@ -44,8 +45,9 @@ abstract class AbstractGeneratedType implements LegacyArchetype {
     private final @Nullable YangSourceDefinition definition;
     private final @Nullable TypeComment comment;
 
-    AbstractGeneratedType(final AbstractGeneratedTypeBuilder<?> builder) {
+    AbstractGeneratedType(final AbstractGeneratedTypeBuilder<?, S> builder) {
         name = builder.typeName();
+        statement = builder.statement;
         comment = builder.getComment();
         annotations = toUnmodifiableAnnotations(builder.getAnnotations());
         implementsTypes = makeUnmodifiable(builder.getImplementsTypes());
@@ -53,6 +55,11 @@ abstract class AbstractGeneratedType implements LegacyArchetype {
         methodSignatures = toUnmodifiableMethods(builder.getMethodDefinitions());
         enclosedTypes = List.copyOf(builder.getEnclosedTypes());
         definition = builder.getYangSourceDefinition().orElse(null);
+    }
+
+    @Override
+    public final S statement() {
+        return statement;
     }
 
     protected static final <T> @NonNull List<T> makeUnmodifiable(final List<T> list) {
@@ -71,17 +78,6 @@ abstract class AbstractGeneratedType implements LegacyArchetype {
             case 2 -> Set.copyOf(set);
             default -> Collections.unmodifiableSet(set);
         };
-    }
-
-    private static List<Archetype> toUnmodifiableEnclosedTypes(
-            final List<GeneratedTypeBuilder> enclosedGenTypeBuilders) {
-        final var enclosedTypesList = new ArrayList<Archetype>(enclosedGenTypeBuilders.size());
-        for (var builder : enclosedGenTypeBuilders) {
-            if (builder != null) {
-                enclosedTypesList.add(builder.build());
-            }
-        }
-        return makeUnmodifiable(enclosedTypesList);
     }
 
     protected static final @NonNull List<AnnotationType> toUnmodifiableAnnotations(

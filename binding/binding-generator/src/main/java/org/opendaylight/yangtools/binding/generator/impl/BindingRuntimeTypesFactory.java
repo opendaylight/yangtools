@@ -12,7 +12,6 @@ import static com.google.common.base.Verify.verify;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.SetMultimap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -52,17 +51,18 @@ final class BindingRuntimeTypesFactory implements Mutable {
     private static final Logger LOG = LoggerFactory.getLogger(BindingRuntimeTypesFactory.class);
 
     // Modules, indexed by their QNameModule
-    private final Map<QNameModule, ModuleRuntimeType> modules = new HashMap<>();
+    private final HashMap<QNameModule, ModuleRuntimeType> modules = new HashMap<>();
     // Identities, indexed by their QName
-    private final Map<QName, IdentityRuntimeType> identities = new HashMap<>();
+    private final HashMap<QName, IdentityRuntimeType> identities = new HashMap<>();
     // All known types, indexed by their JavaTypeName
-    private final Map<JavaTypeName, RuntimeType> allTypes = new HashMap<>();
+    private final HashMap<JavaTypeName, RuntimeType> allTypes = new HashMap<>();
     // All known 'choice's to their corresponding cases
-    private final SetMultimap<JavaTypeName, CaseRuntimeType> choiceToCases = HashMultimap.create();
+    private final HashMultimap<JavaTypeName, CaseRuntimeType> choiceToCases = HashMultimap.create();
     // All case to cases mapping, values are the cases that can substitute case that is the key
-    private final Multimap<LegacyArchetype, CaseRuntimeType> caseToSubstitutionCases = HashMultimap.create();
+    private final HashMultimap<LegacyArchetype<?>, CaseRuntimeType> caseToSubstitutionCases = HashMultimap.create();
     // All augment to augments mapping where values are augments that can substitute augment that is the key
-    private final Multimap<LegacyArchetype, AugmentRuntimeType> augmentToSubstitutionAugments = HashMultimap.create();
+    private final HashMultimap<LegacyArchetype<?>, AugmentRuntimeType> augmentToSubstitutionAugments =
+        HashMultimap.create();
 
     private BindingRuntimeTypesFactory() {
         // Hidden on purpose
@@ -163,7 +163,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
      * @param caseToChildrenStmts map of case to its corresponding children
      */
     private void collectSubstsForCase(final Map<CaseRuntimeType, List<EffectiveStatement<?, ?>>> caseToChildrenStmts) {
-        final var localToSubstitutions = HashMultimap.<LegacyArchetype, CaseRuntimeType>create();
+        final var localToSubstitutions = HashMultimap.<LegacyArchetype<?>, CaseRuntimeType>create();
         for (final var entry : choiceToCases.entries()) {
             final var choice = entry.getKey();
             // CaseRuntimeTypes associated with this choice
@@ -198,7 +198,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
      * @param local                current {@link CaseRuntimeType} for which substitutions we are looking for
      * @param candidates           available cases from one particular choice
      */
-    private static void addSubstitutionalCases(final Multimap<LegacyArchetype, CaseRuntimeType> localToSubstitutions,
+    private static void addSubstitutionalCases(final Multimap<LegacyArchetype<?>, CaseRuntimeType> localToSubstitutions,
             final CaseRuntimeType local, final Collection<CaseRuntimeType> candidates,
             final Map<CaseRuntimeType, List<EffectiveStatement<?, ?>>> caseToChildrenStmts) {
         final var localType = local.javaType();

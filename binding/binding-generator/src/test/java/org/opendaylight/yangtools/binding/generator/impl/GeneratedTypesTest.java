@@ -36,8 +36,8 @@ class GeneratedTypesTest {
         assertNotNull(genTypes);
         assertEquals(3, genTypes.size());
 
-        var simpleContainer = assertInstanceOf(LegacyArchetype.class, genTypes.get(1));
-        var nestedContainer = assertInstanceOf(LegacyArchetype.class, genTypes.get(2));
+        var simpleContainer = (LegacyArchetype<?>) genTypes.get(1);
+        var nestedContainer = (LegacyArchetype<?>) genTypes.get(2);
         for (var t : genTypes) {
             if ("SimpleContainer".equals(t.simpleName())) {
                 simpleContainer = assertInstanceOf(LegacyArchetype.class, t);
@@ -118,8 +118,8 @@ class GeneratedTypesTest {
         assertNotNull(genTypes);
         assertEquals(3, genTypes.size());
 
-        var simpleContainer = assertInstanceOf(LegacyArchetype.class, genTypes.get(1));
-        var nestedContainer = assertInstanceOf(LegacyArchetype.class, genTypes.get(2));
+        var simpleContainer = (LegacyArchetype<?>) genTypes.get(1);
+        var nestedContainer = (LegacyArchetype<?>) genTypes.get(2);
         for (var t : genTypes) {
             if ("SimpleContainer".equals(t.simpleName())) {
                 simpleContainer = assertInstanceOf(LegacyArchetype.class, t);
@@ -228,7 +228,7 @@ class GeneratedTypesTest {
                     assertEquals("Byte", properties.getFirst().getReturnType().simpleName());
                     assertTrue(properties.getFirst().isReadOnly());
                 }
-                case LegacyArchetype archetype -> {
+                case LegacyArchetype<?> archetype -> {
                     if (archetype.simpleName().equals("ListParentContainer")) {
                         listParentContainerMethodsCount = archetype.getMethodDefinitions().size();
                     } else if (archetype.simpleName().equals("SimpleList")) {

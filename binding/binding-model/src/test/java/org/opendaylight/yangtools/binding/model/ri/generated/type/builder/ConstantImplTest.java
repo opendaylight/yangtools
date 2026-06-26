@@ -13,13 +13,21 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
+@ExtendWith(MockitoExtension.class)
 class ConstantImplTest {
+    @Mock
+    private EffectiveStatement<?, ?> statement;
+
     @Test
     void testMethodsOfConstantImpl() {
-        final var type = new CodegenGeneratedTypeBuilder(
-            JavaTypeName.create("org.opendaylight.yangtools.test.v1", "BaseType"))
+        final var type = new CodegenGeneratedTypeBuilder<>(
+            JavaTypeName.create("org.opendaylight.yangtools.test.v1", "BaseType"), statement)
             .build();
         final var constImpl = new ConstantImpl(type, "IpAddress", "127.0.0.1");
         final var constImpl2 = new ConstantImpl(type, "IpAddress", "127.0.0.1");
@@ -32,7 +40,7 @@ class ConstantImplTest {
         assertEquals("IpAddress", constImpl.getName());
         assertEquals("127.0.0.1", constImpl.getValue());
         assertEquals("""
-            Constant [type=GeneratedTypeImpl{name=org.opendaylight.yangtools.test.v1.BaseType}, \
+            Constant [type=CodegenLegacyArchetype{name=org.opendaylight.yangtools.test.v1.BaseType}, \
             name=IpAddress, value=127.0.0.1]""", constImpl.toString());
         assertEquals(constImpl.hashCode(), constImpl2.hashCode());
         assertNotNull(constImpl.getType());

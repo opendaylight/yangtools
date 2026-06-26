@@ -36,13 +36,13 @@ class GeneratedTypesLeafrefTest {
         assertEquals(55, genTypes.size());
 
         KeyArchetype gtIfcKey = null;
-        LegacyArchetype gtIfc = null;
-        LegacyArchetype gtNetworkLink = null;
-        LegacyArchetype gtSource = null;
-        LegacyArchetype gtDest = null;
-        LegacyArchetype gtTunnel = null;
+        LegacyArchetype<?> gtIfc = null;
+        LegacyArchetype<?> gtNetworkLink = null;
+        LegacyArchetype<?> gtSource = null;
+        LegacyArchetype<?> gtDest = null;
+        LegacyArchetype<?> gtTunnel = null;
         KeyArchetype gtTunnelKey = null;
-        LegacyArchetype gtTopology = null;
+        LegacyArchetype<?> gtTopology = null;
         for (final Type type : genTypes) {
             String name = type.simpleName();
             if ("InterfaceKey".equals(name)
