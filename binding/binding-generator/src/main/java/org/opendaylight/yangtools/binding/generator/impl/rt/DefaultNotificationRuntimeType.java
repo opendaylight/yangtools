@@ -8,17 +8,18 @@
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
-public final class DefaultNotificationRuntimeType extends AbstractAugmentableRuntimeType<NotificationEffectiveStatement>
+public final class DefaultNotificationRuntimeType extends AbstractAugmentableRuntimeType<
+        LegacyArchetype<NotificationEffectiveStatement>,
+        NotificationEffectiveStatement>
         implements NotificationRuntimeType {
-    public DefaultNotificationRuntimeType(final Archetype bindingType,
-            final NotificationEffectiveStatement statement, final List<RuntimeType> children,
-            final List<AugmentRuntimeType> augments) {
-        super(bindingType, statement, children, augments);
+    public DefaultNotificationRuntimeType(final LegacyArchetype<NotificationEffectiveStatement> archetype,
+            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+        super(archetype, children, augments);
     }
 }

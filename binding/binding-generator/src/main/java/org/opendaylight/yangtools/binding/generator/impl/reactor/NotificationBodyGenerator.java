@@ -13,7 +13,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationBodyRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.WildcardType;
@@ -67,16 +66,19 @@ final class NotificationBodyGenerator
     }
 
     @Override
-    CompositeRuntimeTypeBuilder<NotificationEffectiveStatement, NotificationBodyRuntimeType> createBuilder(
-            final NotificationEffectiveStatement statement) {
+    CompositeRuntimeTypeBuilder<
+            LegacyArchetype<NotificationEffectiveStatement>,
+            NotificationEffectiveStatement,
+            NotificationBodyRuntimeType> createBuilder(final NotificationEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
-            NotificationBodyRuntimeType build(final Archetype type, final NotificationEffectiveStatement statement,
-                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                // uninstantiated: cannot be targeted by 'augment'
+            NotificationBodyRuntimeType build(final LegacyArchetype<NotificationEffectiveStatement> archetype,
+                    final NotificationEffectiveStatement statement, final List<RuntimeType> children,
+                    final List<AugmentRuntimeType> augments) {
                 if (augments.isEmpty()) {
-                    return new DefaultNotificationBodyRuntimeType(type, statement, children);
+                    return new DefaultNotificationBodyRuntimeType(archetype, children);
                 }
+                // uninstantiated: cannot be targeted by 'augment'
                 throw new VerifyException("Unexpected augments " + augments);
             }
         };

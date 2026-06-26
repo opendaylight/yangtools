@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultYangDataRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -122,13 +121,16 @@ abstract sealed class YangDataGenerator
     }
 
     @Override
-    final CompositeRuntimeTypeBuilder<YangDataEffectiveStatement, YangDataRuntimeType> createBuilder(
-            final YangDataEffectiveStatement statement) {
+    final CompositeRuntimeTypeBuilder<
+            LegacyArchetype<YangDataEffectiveStatement>,
+            YangDataEffectiveStatement, YangDataRuntimeType> createBuilder(
+                final YangDataEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
-            YangDataRuntimeType build(final Archetype type, final YangDataEffectiveStatement statement,
-                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultYangDataRuntimeType(type, statement, children);
+            YangDataRuntimeType build(final LegacyArchetype<YangDataEffectiveStatement> archetype,
+                    final YangDataEffectiveStatement statement, final List<RuntimeType> children,
+                    final List<AugmentRuntimeType> augments) {
+                return new DefaultYangDataRuntimeType(archetype, children);
             }
         };
     }

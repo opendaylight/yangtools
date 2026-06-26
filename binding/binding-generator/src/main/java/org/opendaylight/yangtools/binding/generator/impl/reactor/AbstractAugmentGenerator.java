@@ -21,7 +21,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAugmentRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -208,16 +207,18 @@ abstract class AbstractAugmentGenerator
     }
 
     @Override
-    CompositeRuntimeTypeBuilder<AugmentEffectiveStatement, AugmentRuntimeType> createBuilder(
-            final AugmentEffectiveStatement statement) {
+    CompositeRuntimeTypeBuilder<
+            LegacyArchetype<AugmentEffectiveStatement>,
+            AugmentEffectiveStatement,
+            AugmentRuntimeType> createBuilder(final AugmentEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
-            AugmentRuntimeType build(final Archetype type, final AugmentEffectiveStatement statement,
-                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+            AugmentRuntimeType build(final LegacyArchetype<AugmentEffectiveStatement> archetype,
+                    final AugmentEffectiveStatement statement, final List<RuntimeType> children,
+                    final List<AugmentRuntimeType> augments) {
                 // 'augment' cannot be targeted by augment
                 verify(augments.isEmpty(), "Unexpected augments %s", augments);
-                return new DefaultAugmentRuntimeType((LegacyArchetype<AugmentEffectiveStatement>) type, statement,
-                    children);
+                return new DefaultAugmentRuntimeType(archetype, children);
             }
         };
     }
