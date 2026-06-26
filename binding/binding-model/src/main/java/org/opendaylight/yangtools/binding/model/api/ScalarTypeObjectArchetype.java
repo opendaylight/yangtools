@@ -31,7 +31,7 @@ public record ScalarTypeObjectArchetype(
         @NonNull TypeDefinition<?> typeDefinition,
         @NonNull ConcreteType valueType,
         @Nullable Restrictions restrictions,
-        @Nullable ScalarTypeObjectArchetype getSuperType) implements GeneratedTransferObject<ScalarTypeObject<?>> {
+        @Nullable ScalarTypeObjectArchetype getSuperType) implements TypeObjectArchetype.OfClass<ScalarTypeObject<?>> {
     public ScalarTypeObjectArchetype {
         requireNonNull(name);
         requireNonNull(statement);

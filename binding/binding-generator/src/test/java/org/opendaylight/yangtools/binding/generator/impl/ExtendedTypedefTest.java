@@ -16,8 +16,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -33,15 +33,15 @@ class ExtendedTypedefTest {
         UnionTypeObjectArchetype unionTypedef = null;
         ScalarTypeObjectArchetype typedefFromImport = null;
         for (var type : genTypes) {
-            if (type instanceof GeneratedTransferObject gto) {
+            if (type instanceof TypeObjectArchetype<?> archetype) {
                 if (type.simpleName().equals("SimpleTypedef4")) {
-                    simpleTypedef4 = assertInstanceOf(ScalarTypeObjectArchetype.class, gto);
+                    simpleTypedef4 = assertInstanceOf(ScalarTypeObjectArchetype.class, archetype);
                 } else if (type.simpleName().equals("ExtendedTypedefUnion")) {
-                    extendedTypedefUnion = assertInstanceOf(UnionTypeObjectArchetype.class, gto);
+                    extendedTypedefUnion = assertInstanceOf(UnionTypeObjectArchetype.class, archetype);
                 } else if (type.simpleName().equals("UnionTypedef")) {
-                    unionTypedef = assertInstanceOf(UnionTypeObjectArchetype.class, gto);
+                    unionTypedef = assertInstanceOf(UnionTypeObjectArchetype.class, archetype);
                 } else if (type.simpleName().equals("TypedefFromImport")) {
-                    typedefFromImport = assertInstanceOf(ScalarTypeObjectArchetype.class, gto);
+                    typedefFromImport = assertInstanceOf(ScalarTypeObjectArchetype.class, archetype);
                 }
             }
         }
