@@ -61,8 +61,7 @@ abstract class AbstractTypeAwareGenerator<
     }
 
     @Override
-    final TypeObjectArchetype.OfClass<?> createDerivedType(final TypeBuilderFactory builderFactory,
-            final TypeObjectArchetype.OfClass<?> baseType) {
+    final TypeObjectArchetype.OfClass<?> createDerivedType(final TypeObjectArchetype.OfClass<?> baseType) {
         throw new UnsupportedOperationException();
     }
 

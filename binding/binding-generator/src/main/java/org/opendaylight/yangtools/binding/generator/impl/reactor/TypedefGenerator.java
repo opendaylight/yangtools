@@ -76,8 +76,7 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
     }
 
     @Override
-    TypeObjectArchetype.OfClass<?> createDerivedType(final TypeBuilderFactory builderFactory,
-            final TypeObjectArchetype.OfClass<?> baseType) {
+    TypeObjectArchetype.OfClass<?> createDerivedType(final TypeObjectArchetype.OfClass<?> baseType) {
         final var typeName = typeName();
         final var statement = statement();
         final var typedef = statement.typeDefinition();
