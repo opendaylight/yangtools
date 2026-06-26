@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationR
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -50,10 +50,11 @@ abstract class AbstractNotificationGenerator
     }
 
     @Override
-    final LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
+    final LegacyArchetype<NotificationEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory) {
+        final var statement = statement();
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName(), statement);
         builder.addImplementsType(BindingTypes.DATA_OBJECT);
-        builder.addImplementsType(notificationType(builder, builderFactory));
+        builder.addImplementsType(notificationType(builder.typeRef(), builderFactory));
 
         final var orig = getOriginal();
         if (equals(orig)) {
@@ -68,7 +69,7 @@ abstract class AbstractNotificationGenerator
 
         addQNameConstant(builder, localName());
 
-        builderFactory.addCodegenInformation(currentModule(), statement(), builder);
+        builderFactory.addCodegenInformation(currentModule(), statement, builder);
         annotateDeprecatedIfNecessary(builder);
 
         return builder.build();
@@ -91,5 +92,6 @@ abstract class AbstractNotificationGenerator
         };
     }
 
-    abstract Type notificationType(GeneratedTypeBuilder builder, TypeBuilderFactory builderFactory);
+    @NonNullByDefault
+    abstract Type notificationType(TypeRef self, TypeBuilderFactory builderFactory);
 }

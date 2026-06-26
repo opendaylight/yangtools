@@ -49,9 +49,10 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
     }
 
     @Override
-    LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory, final Archetype input,
-            final Archetype output) {
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
+    LegacyArchetype<ActionEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory,
+            final Archetype input, final Archetype output) {
+        final var statement = statement();
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName(), statement);
         addImplementedType(builderFactory, builder, input, output);
         builder.addAnnotation(FUNCTIONAL_INTERFACE);
         defaultImplementedInterace(builder);
@@ -59,13 +60,13 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
         addQNameConstant(builder, statement().argument());
 
         annotateDeprecatedIfNecessary(builder);
-        builderFactory.addCodegenInformation(currentModule(), statement(), builder);
+        builderFactory.addCodegenInformation(currentModule(), statement, builder);
 
         return builder.build();
     }
 
     @NonNullByDefault
-    private void addImplementedType(final TypeBuilderFactory builderFactory, final GeneratedTypeBuilder builder,
+    private void addImplementedType(final TypeBuilderFactory builderFactory, final GeneratedTypeBuilder<?> builder,
             final Archetype input, final Archetype output) {
         final var parent = getParent();
         final var parentType = TypeRef.of(parent.typeName());

@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
  */
 @Beta
 public non-sealed interface DataRootArchetype
-        extends Archetype.WithStatement<ModuleEffectiveStatement>, LegacyArchetype {
+        extends Archetype.WithStatement<ModuleEffectiveStatement>, LegacyArchetype<ModuleEffectiveStatement> {
     /**
      * A builder of {@link DataRootArchetype} instances.
      */

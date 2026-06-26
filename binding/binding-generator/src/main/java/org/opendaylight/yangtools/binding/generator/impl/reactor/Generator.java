@@ -236,7 +236,7 @@ public abstract class Generator implements Iterable<Generator> {
         return helper;
     }
 
-    final void addImplementsChildOf(final GeneratedTypeBuilder builder) {
+    final void addImplementsChildOf(final GeneratedTypeBuilder<?> builder) {
         AbstractCompositeGenerator<?, ?> ancestor = getParent();
         while (true) {
             // choice/case hierarchy does not factor into 'ChildOf' hierarchy, hence we need to skip them
@@ -265,7 +265,7 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder Target builder
      */
     @NonNullByDefault
-    static final void addConcreteInterfaceMethods(final GeneratedTypeBuilder builder) {
+    static final void addConcreteInterfaceMethods(final GeneratedTypeBuilder<?> builder) {
         defaultImplementedInterace(builder);
         builder.addImplementsType(ParameterizedType.of(BindingTypes.JAVA_DATACONTAINER, builder.typeRef()));
     }

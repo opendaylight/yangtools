@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import com.google.common.annotations.Beta;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
@@ -29,11 +29,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 public enum TypeBuilderFactory implements Immutable {
     CODEGEN {
         @Override
-        GeneratedTypeBuilder newGeneratedTypeBuilder(final JavaTypeName identifier) {
-            return new CodegenGeneratedTypeBuilder(identifier);
+        <S extends EffectiveStatement<?, ?>> GeneratedTypeBuilder<S> newGeneratedTypeBuilder(
+                final JavaTypeName typeName, final S statement) {
+            return new CodegenGeneratedTypeBuilder<>(typeName, statement);
         }
 
         @Override
+        @Deprecated(since = "16.0.0", forRemoval = true)
         void addCodegenInformation(final ModuleGenerator module, final EffectiveStatement<?, ?> stmt,
                 final GeneratedTypeBuilderBase<?> builder) {
             if (stmt instanceof DocumentedNode documented) {
@@ -51,20 +53,23 @@ public enum TypeBuilderFactory implements Immutable {
     },
     RUNTIME {
         @Override
-        GeneratedTypeBuilder newGeneratedTypeBuilder(final JavaTypeName identifier) {
-            return new RuntimeGeneratedTypeBuilder(identifier);
+        <S extends EffectiveStatement<?, ?>> GeneratedTypeBuilder<S> newGeneratedTypeBuilder(
+                final JavaTypeName typeName, final S statement) {
+            return new RuntimeGeneratedTypeBuilder<>(typeName, statement);
         }
 
         @Override
+        @Deprecated(since = "16.0.0", forRemoval = true)
         void addCodegenInformation(final ModuleGenerator module, final EffectiveStatement<?, ?> stmt,
                 final GeneratedTypeBuilderBase<?> builder) {
             // No-op
         }
     };
 
-    @NonNullByDefault
-    abstract GeneratedTypeBuilder newGeneratedTypeBuilder(JavaTypeName identifier);
+    abstract <S extends EffectiveStatement<?, ?>> @NonNull GeneratedTypeBuilder<S> newGeneratedTypeBuilder(
+        @NonNull JavaTypeName typeName, @NonNull S statement);
 
-    abstract void addCodegenInformation(ModuleGenerator module, EffectiveStatement<?, ?> stmt,
-        GeneratedTypeBuilderBase<?> builder);
+    @Deprecated(since = "16.0.0", forRemoval = true)
+    abstract void addCodegenInformation(@NonNull ModuleGenerator module, @NonNull EffectiveStatement<?, ?> stmt,
+        @NonNull GeneratedTypeBuilderBase<?> builder);
 }

@@ -48,15 +48,16 @@ public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
     private final ImmutableSortedMap<String, ModuleRuntimeType> modulesByPackage;
     private final ImmutableMap<QName, IdentityRuntimeType> identities;
     private final ImmutableMap<JavaTypeName, RuntimeType> types;
-    private final ImmutableListMultimap<LegacyArchetype, CaseRuntimeType> caseToSubstitutionCases;
-    private final ImmutableListMultimap<LegacyArchetype, AugmentRuntimeType> augmentToSubstitutionAugments;
+    private final ImmutableListMultimap<LegacyArchetype<?>, CaseRuntimeType> caseToSubstitutionCases;
+    private final ImmutableListMultimap<LegacyArchetype<?>, AugmentRuntimeType> augmentToSubstitutionAugments;
 
     public DefaultBindingRuntimeTypes(final EffectiveModelContext modelContext,
             final Map<QNameModule, ModuleRuntimeType> modules, final Map<JavaTypeName, RuntimeType> types,
             final Map<QName, IdentityRuntimeType> identities,
             final SetMultimap<JavaTypeName, CaseRuntimeType> choiceToCases,
-            final Multimap<LegacyArchetype, CaseRuntimeType> caseToSubstitutionCases,
-            final Multimap<LegacyArchetype, AugmentRuntimeType> augmentToSubstitutionAugments) {
+            // FIXME: use JavaTypeName, as Archetypes compare as their name
+            final Multimap<LegacyArchetype<?>, CaseRuntimeType> caseToSubstitutionCases,
+            final Multimap<LegacyArchetype<?>, AugmentRuntimeType> augmentToSubstitutionAugments) {
         this.modelContext = requireNonNull(modelContext);
         this.identities = ImmutableMap.copyOf(identities);
         this.types = ImmutableMap.copyOf(types);

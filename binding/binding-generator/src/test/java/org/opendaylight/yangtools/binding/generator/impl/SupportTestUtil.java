@@ -26,7 +26,7 @@ final class SupportTestUtil {
         // Hidden on purpose
     }
 
-    static void containsMethods(final LegacyArchetype genType, final NameTypePattern... searchedSignsWhat) {
+    static void containsMethods(final LegacyArchetype<?> genType, final NameTypePattern... searchedSignsWhat) {
         containsMethods(genType.getMethodDefinitions(), searchedSignsWhat);
     }
 
@@ -75,7 +75,7 @@ final class SupportTestUtil {
         return sb.toString();
     }
 
-    static void containsInterface(final String interfaceNameSearched, final LegacyArchetype genType) {
+    static void containsInterface(final String interfaceNameSearched, final LegacyArchetype<?> genType) {
         for (var caseCImplement : genType.getImplements()) {
             if (resolveFullNameOfReturnType(caseCImplement).equals(interfaceNameSearched)) {
                 return;
@@ -85,7 +85,7 @@ final class SupportTestUtil {
     }
 
     @NonNullByDefault
-    static void assertEntryObject(final LegacyArchetype type, final JavaTypeName expectedKeyType) {
+    static void assertEntryObject(final LegacyArchetype<?> type, final JavaTypeName expectedKeyType) {
         final var key = BindingTypes.extractEntryObjectKey(type);
         assertNotNull(key);
         assertEquals(expectedKeyType, key.name());

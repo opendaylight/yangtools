@@ -10,12 +10,16 @@ package org.opendaylight.yangtools.binding.model.api.type.builder;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Generated Type Builder interface is helper interface for building and defining the {@link LegacyArchetype}.
+ *
+ * @param <S> EffectiveStatement type
  */
-public sealed interface GeneratedTypeBuilder extends GeneratedTypeBuilderBase<GeneratedTypeBuilder>
+public sealed interface GeneratedTypeBuilder<S extends EffectiveStatement<?, ?>>
+        extends GeneratedTypeBuilderBase<GeneratedTypeBuilder<S>>
         permits CodegenGeneratedTypeBuilder, RuntimeGeneratedTypeBuilder {
     @Override
-    LegacyArchetype build();
+    LegacyArchetype<S> build();
 }

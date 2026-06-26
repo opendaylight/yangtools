@@ -33,15 +33,15 @@ class BindingGeneratorImplTest {
         final var generateTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
                 "/binding-generator-impl-test/choice-test.yang"));
 
-        LegacyArchetype choiceTestData = null;
-        LegacyArchetype myRootContainer = null;
-        LegacyArchetype myList = null;
-        LegacyArchetype myContainer = null;
-        LegacyArchetype myList2 = null;
-        LegacyArchetype myContainer2 = null;
+        LegacyArchetype<?> choiceTestData = null;
+        LegacyArchetype<?> myRootContainer = null;
+        LegacyArchetype<?> myList = null;
+        LegacyArchetype<?> myContainer = null;
+        LegacyArchetype<?> myList2 = null;
+        LegacyArchetype<?> myContainer2 = null;
 
         for (var type : generateTypes) {
-            if (type instanceof LegacyArchetype archetype) {
+            if (type instanceof LegacyArchetype<?> archetype) {
                 switch (type.simpleName()) {
                     case "ChoiceTestData" -> choiceTestData = archetype;
                     case "Myrootcontainer" -> myRootContainer = archetype;
@@ -109,7 +109,7 @@ class BindingGeneratorImplTest {
         final var generateTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
                 "/binding-generator-impl-test/notification-test.yang"));
 
-        LegacyArchetype foo = null;
+        LegacyArchetype<?> foo = null;
         for (var type : generateTypes) {
             if (type.simpleName().equals("Foo")) {
                 foo = assertInstanceOf(LegacyArchetype.class, type);

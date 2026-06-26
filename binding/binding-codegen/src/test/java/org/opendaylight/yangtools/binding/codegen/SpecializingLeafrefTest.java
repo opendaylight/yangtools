@@ -271,7 +271,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
         assertEquals(returnType, returnTypeByMethodName(generated, getterName));
     }
 
-    private static LegacyArchetype typeByName(final String name) {
+    private static LegacyArchetype<?> typeByName(final String name) {
         for (var type : types) {
             if (type.simpleName().equals(name)) {
                 return assertInstanceOf(LegacyArchetype.class, type);
@@ -280,7 +280,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
         return null;
     }
 
-    private static Type returnTypeByMethodName(final LegacyArchetype type, final String name) {
+    private static Type returnTypeByMethodName(final LegacyArchetype<?> type, final String name) {
         for (var m : type.getMethodDefinitions()) {
             if (m.getName().equals(name)) {
                 return m.getReturnType();

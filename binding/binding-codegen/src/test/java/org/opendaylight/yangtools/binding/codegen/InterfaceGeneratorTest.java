@@ -93,7 +93,7 @@ class InterfaceGeneratorTest {
             """, genType);
     }
 
-    private static @NonNull LegacyArchetype mockGenType(final MethodSignature methSign) {
+    private static @NonNull LegacyArchetype<?> mockGenType(final MethodSignature methSign) {
         final var genType = spy(LegacyArchetype.class);
         doReturn(TYPE_NAME).when(genType).name();
         doReturn(TEST).when(genType).simpleName();
@@ -120,7 +120,7 @@ class InterfaceGeneratorTest {
     }
 
     @NonNullByDefault
-    private static void assertInterface(final String expected, final LegacyArchetype genType) {
+    private static void assertInterface(final String expected, final LegacyArchetype<?> genType) {
         final var sb = new StringBuilder();
         new InterfaceTemplate.Builder(genType, mock(DataRootArchetype.class)).build().generateTo(sb);
         assertEquals(expected, sb.toString());

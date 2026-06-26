@@ -56,7 +56,7 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
     }
 
     @Override
-    final LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
+    final LegacyArchetype<S> createTypeImpl(final TypeBuilderFactory builderFactory) {
         if (getParent() instanceof ActionGenerator actionParent && actionParent.isAddedByUses()) {
             //        final ActionDefinition orig = findOrigAction(parentSchema, action).get();
             //        // Original definition may live in a different module, make sure we account for that
@@ -68,7 +68,8 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
             throw new UnsupportedOperationException("Lookup in original");
         }
 
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
+        final var statement = statement();
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName(), statement);
         builder.addImplementsType(baseInterface);
         addAugmentable(builder);
 
@@ -80,7 +81,7 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
 
         annotateDeprecatedIfNecessary(builder);
         final var module = currentModule();
-        builderFactory.addCodegenInformation(module, statement(), builder);
+        builderFactory.addCodegenInformation(module, statement, builder);
         builder.setModuleName(module.statement().argument().getLocalName());
 
         return builder.build();

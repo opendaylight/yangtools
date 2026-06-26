@@ -149,7 +149,7 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
         }
 
         final var item = createItem(caseClass, childClass, child.statement());
-        if (child instanceof ContainerLikeRuntimeType containerLike) {
+        if (child instanceof ContainerLikeRuntimeType<?, ?> containerLike) {
             return child instanceof ContainerRuntimeType container && container.statement().presenceStatement() == null
                 ? new StructuralContainerCodecPrototype(item, container, factory)
                 : new ContainerLikeCodecPrototype(item, containerLike, factory);
