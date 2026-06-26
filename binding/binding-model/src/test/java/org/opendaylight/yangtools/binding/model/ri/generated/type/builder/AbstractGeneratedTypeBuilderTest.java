@@ -19,17 +19,6 @@ class AbstractGeneratedTypeBuilderTest {
         new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
 
     @Test
-    void addPropertyIllegalArgumentTest() {
-        assertThrows(IllegalArgumentException.class, () -> generatedTypeBuilder.addProperty(null));
-    }
-
-    @Test
-    void addPropertyIllegalArgumentTest2() {
-        generatedTypeBuilder.addProperty("myName");
-        assertThrows(IllegalArgumentException.class, () -> generatedTypeBuilder.addProperty("myName"));
-    }
-
-    @Test
     void addImplementsTypeIllegalArgumentTest() {
         generatedTypeBuilder.addImplementsType(Types.typeForClass(Serializable.class));
         final var conflict = Types.typeForClass(Serializable.class);

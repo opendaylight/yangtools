@@ -9,10 +9,8 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.UNION_TYPE_OBJECT;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Collections2;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -175,22 +173,5 @@ public final class SerialVersionHelper {
             hash = hash << 8 | hashBytes[i] & 0xFF;
         }
         return hash;
-    }
-
-    @Deprecated(since = "16.0.0", forRemoval = true)
-    public static long computeSerialVersion(final LegacyArchetype to) {
-        final var svb = new SerialVersionHelper(to.name()).setAbstract(true);
-
-        for (var iface : Collections2.filter(to.getImplements(), item -> !UNION_TYPE_OBJECT.equals(item))) {
-            svb.addInterface(iface.name());
-        }
-        for (var property : to.getProperties()) {
-            svb.addField(property.getName());
-        }
-        for (var method : to.getMethodDefinitions()) {
-            svb.addMethod(method.getName(), method.getAccessModifier());
-        }
-
-        return svb.computeSerialVersion();
     }
 }

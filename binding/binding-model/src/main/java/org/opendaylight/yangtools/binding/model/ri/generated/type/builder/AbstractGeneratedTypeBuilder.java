@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
@@ -37,7 +36,6 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
     private List<Constant> constants = List.of();
     private List<MethodSignatureBuilder> methodDefinitions = List.of();
     private List<Archetype> enclosedTypes = List.of();
-    private List<GeneratedPropertyBuilder> properties = List.of();
     private @Nullable TypeComment comment;
     private YangSourceDefinition yangSourceDefinition;
 
@@ -149,36 +147,8 @@ public abstract sealed class AbstractGeneratedTypeBuilder<T extends GeneratedTyp
         return false;
     }
 
-    @Override
-    public GeneratedPropertyBuilder addProperty(final String name) {
-        checkArgument(name != null, "Parameter name can't be null");
-        checkArgument(!containsProperty(name),
-            "This generated type already contains property with the same name.");
-
-        final GeneratedPropertyBuilder builder = new GeneratedPropertyBuilderImpl(name);
-        builder.setAccessModifier(AccessModifier.PUBLIC);
-        properties = LazyCollections.lazyAdd(properties, builder);
-        return builder;
-    }
-
-    @Override
-    public boolean containsProperty(final String name) {
-        checkArgument(name != null, "Parameter name can't be null");
-        for (final GeneratedPropertyBuilder property : properties) {
-            if (name.equals(property.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public Type getParent() {
         return null;
-    }
-
-    @Override
-    public List<GeneratedPropertyBuilder> getProperties() {
-        return properties;
     }
 
     @Override

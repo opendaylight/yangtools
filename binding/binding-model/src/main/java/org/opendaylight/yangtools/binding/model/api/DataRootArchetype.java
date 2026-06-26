@@ -74,10 +74,4 @@ public non-sealed interface DataRootArchetype
     default List<Constant> getConstantDefinitions() {
         return List.of();
     }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    default List<GeneratedProperty> getProperties() {
-        return List.of();
-    }
 }

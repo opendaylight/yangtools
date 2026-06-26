@@ -45,10 +45,6 @@ public final class Types {
 
     @Beta
     public static final @NonNull ConcreteType OBJECT = typeForClass(Object.class);
-    @Beta
-    public static final @NonNull ConcreteType PRIMITIVE_INT = typeForClass(int.class);
-    @Beta
-    public static final @NonNull ConcreteType PRIMITIVE_LONG = typeForClass(long.class);
 
     private static final @NonNull ConcreteType LIST_TYPE = typeForClass(List.class);
     private static final @NonNull ConcreteType LISTENABLE_FUTURE = typeForClass(ListenableFuture.class);
@@ -95,17 +91,6 @@ public final class Types {
     @Deprecated(since = "15.1.0", forRemoval = true)
     public static @NonNull ConcreteType objectType() {
         return OBJECT;
-    }
-
-    /**
-     * Returns an instance of {@link ConcreteType} which represents JAVA <code>int</code> type.
-     *
-     * @return <code>ConcreteType</code> instance which represents JAVA <code>int</code>
-     * @deprecated use {@link #OBJECT}
-     */
-    @Deprecated(since = "15.1.0", forRemoval = true)
-    public static @NonNull ConcreteType primitiveIntType() {
-        return PRIMITIVE_INT;
     }
 
     /**

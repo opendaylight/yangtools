@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.ArrayList;
@@ -43,7 +41,6 @@ abstract class AbstractGeneratedType implements LegacyArchetype {
     private final @NonNull List<Constant> constants;
     private final @NonNull List<MethodSignature> methodSignatures;
     private final @NonNull List<Archetype> enclosedTypes;
-    private final @NonNull List<GeneratedProperty> properties;
     private final @Nullable YangSourceDefinition definition;
     private final @Nullable TypeComment comment;
 
@@ -55,24 +52,7 @@ abstract class AbstractGeneratedType implements LegacyArchetype {
         constants = makeUnmodifiable(builder.getConstants());
         methodSignatures = toUnmodifiableMethods(builder.getMethodDefinitions());
         enclosedTypes = List.copyOf(builder.getEnclosedTypes());
-        properties = toUnmodifiableProperties(builder.getProperties());
         definition = builder.getYangSourceDefinition().orElse(null);
-    }
-
-    AbstractGeneratedType(final @NonNull JavaTypeName typeName, final TypeComment comment,
-            final List<AnnotationTypeBuilder> annotationBuilders, final boolean isAbstract,
-            final List<Type> implementsTypes, final List<GeneratedTypeBuilder> enclosedGenTypeBuilders,
-            final List<Constant> constants, final List<MethodSignatureBuilder> methodBuilders,
-            final List<GeneratedPropertyBuilder> propertyBuilders) {
-        name = requireNonNull(typeName);
-        this.comment = comment;
-        annotations = toUnmodifiableAnnotations(annotationBuilders);
-        this.implementsTypes = makeUnmodifiable(implementsTypes);
-        this.constants = makeUnmodifiable(constants);
-        methodSignatures = toUnmodifiableMethods(methodBuilders);
-        enclosedTypes = toUnmodifiableEnclosedTypes(enclosedGenTypeBuilders);
-        properties = toUnmodifiableProperties(propertyBuilders);
-        definition = null;
     }
 
     protected static final <T> @NonNull List<T> makeUnmodifiable(final List<T> list) {
@@ -171,11 +151,6 @@ abstract class AbstractGeneratedType implements LegacyArchetype {
     }
 
     @Override
-    public final List<GeneratedProperty> getProperties() {
-        return properties;
-    }
-
-    @Override
     public final YangSourceDefinition yangSourceDefinition() {
         return definition;
     }
@@ -208,7 +183,6 @@ abstract class AbstractGeneratedType implements LegacyArchetype {
         addToStringAttribute(helper, "enclosedTypes", enclosedTypes);
         addToStringAttribute(helper, "constants", constants);
         addToStringAttribute(helper, "methods", methodSignatures);
-        addToStringAttribute(helper, "properties", properties);
 
         return helper;
     }

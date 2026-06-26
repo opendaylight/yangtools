@@ -90,11 +90,6 @@ public non-sealed interface LegacyArchetype extends Archetype {
     @NonNull List<MethodSignature> getMethodDefinitions();
 
     /**
-     * {@return List of Properties that are declared for Generated Transfer Object}
-     */
-    @NonNull List<GeneratedProperty> getProperties();
-
-    /**
      * {@return YANG source definition, or {@code null} when unavailable}
      */
     default @Nullable YangSourceDefinition yangSourceDefinition() {
