@@ -18,9 +18,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
+import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -139,11 +139,11 @@ class BitAndUnionTOEnclosingTest {
         BitsTypeObjectArchetype bitLeaf = null;
         UnionTypeObjectArchetype unionLeaf = null;
         for (var genType : parentContainer.enclosedTypes()) {
-            if (genType instanceof GeneratedTransferObject gto) {
-                if (gto.simpleName().equals("BitLeaf")) {
-                    bitLeaf = assertInstanceOf(BitsTypeObjectArchetype.class, gto);
-                } else if (gto.simpleName().equals("UnionLeaf")) {
-                    unionLeaf = assertInstanceOf(UnionTypeObjectArchetype.class, gto);
+            if (genType instanceof TypeObjectArchetype<?> archetype) {
+                if (archetype.simpleName().equals("BitLeaf")) {
+                    bitLeaf = assertInstanceOf(BitsTypeObjectArchetype.class, archetype);
+                } else if (archetype.simpleName().equals("UnionLeaf")) {
+                    unionLeaf = assertInstanceOf(UnionTypeObjectArchetype.class, archetype);
                 }
             }
         }

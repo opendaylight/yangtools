@@ -19,7 +19,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -73,9 +72,6 @@ record TypeAnalysis(
                     if (augmentableType != null) {
                         augmentType = BindingTypes.augmentation(augmentableType);
                     }
-                }
-                case GeneratedTransferObject<?> gto -> {
-                    // no-op
                 }
                 case LegacyArchetype ifc -> {
                     for (var implMethod : ifc.getMethodDefinitions()) {

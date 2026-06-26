@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -61,8 +61,8 @@ abstract class AbstractTypeAwareGenerator<
     }
 
     @Override
-    final GeneratedTransferObject<?> createDerivedType(final TypeBuilderFactory builderFactory,
-            final GeneratedTransferObject<?> baseType) {
+    final TypeObjectArchetype.OfClass<?> createDerivedType(final TypeBuilderFactory builderFactory,
+            final TypeObjectArchetype.OfClass<?> baseType) {
         throw new UnsupportedOperationException();
     }
 

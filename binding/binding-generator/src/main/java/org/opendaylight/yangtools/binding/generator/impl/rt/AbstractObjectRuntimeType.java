@@ -8,13 +8,14 @@
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.GeneratedTransferObject;
+import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
+// FIXME: this class seems to be unused
 abstract class AbstractObjectRuntimeType<S extends EffectiveStatement<?, ?>>
-        extends StmtRuntimeType<S, GeneratedTransferObject<?>> {
+        extends StmtRuntimeType<S, TypeObjectArchetype<?>> {
     @NonNullByDefault
-    AbstractObjectRuntimeType(final GeneratedTransferObject<?> bindingType, final S statement) {
+    AbstractObjectRuntimeType(final TypeObjectArchetype<?> bindingType, final S statement) {
         super(bindingType, statement);
     }
 }
