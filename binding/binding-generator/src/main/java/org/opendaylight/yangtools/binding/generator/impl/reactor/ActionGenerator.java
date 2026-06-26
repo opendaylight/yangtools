@@ -27,7 +27,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 /**
  * Generator corresponding to a {@code action} statement.
  */
-final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveStatement, ActionRuntimeType> {
+final class ActionGenerator extends AbstractInvokableGenerator<
+        LegacyArchetype<ActionEffectiveStatement>,
+        ActionEffectiveStatement,
+        ActionRuntimeType> {
     private static final @NonNull JavaTypeName FUNCTIONAL_INTERFACE = JavaTypeName.create(FunctionalInterface.class);
 
     @NonNullByDefault
@@ -92,13 +95,13 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
     }
 
     @Override
-    CompositeRuntimeTypeBuilder<ActionEffectiveStatement, ActionRuntimeType> createBuilder(
-            final ActionEffectiveStatement statement) {
+    CompositeRuntimeTypeBuilder<LegacyArchetype<ActionEffectiveStatement>, ActionEffectiveStatement, ActionRuntimeType>
+            createBuilder(final ActionEffectiveStatement statement) {
         return new InvokableRuntimeTypeBuilder<>(statement) {
             @Override
-            ActionRuntimeType build(final Archetype generatedType, final ActionEffectiveStatement statement,
-                    final List<RuntimeType> childTypes) {
-                return new DefaultActionRuntimeType(generatedType, statement, childTypes);
+            ActionRuntimeType build(final LegacyArchetype<ActionEffectiveStatement> archetype,
+                    final ActionEffectiveStatement statement, final List<RuntimeType> childTypes) {
+                return new DefaultActionRuntimeType(archetype, childTypes);
             }
         };
     }

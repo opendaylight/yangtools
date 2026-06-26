@@ -12,7 +12,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultContainerRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -65,13 +64,17 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     }
 
     @Override
-    CompositeRuntimeTypeBuilder<ContainerEffectiveStatement, ContainerRuntimeType> createBuilder(
-            final ContainerEffectiveStatement statement) {
+    CompositeRuntimeTypeBuilder<
+            LegacyArchetype<ContainerEffectiveStatement>,
+            ContainerEffectiveStatement,
+            ContainerRuntimeType> createBuilder(final ContainerEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
-            ContainerRuntimeType build(final Archetype type, final ContainerEffectiveStatement statement,
-                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultContainerRuntimeType(type, statement, children, augments);
+            ContainerRuntimeType build(final LegacyArchetype<ContainerEffectiveStatement> archetype,
+                    final ContainerEffectiveStatement statement, final List<RuntimeType> children,
+                    final List<AugmentRuntimeType> augments) {
+                return new DefaultContainerRuntimeType(archetype, children,
+                    augments);
             }
         };
     }

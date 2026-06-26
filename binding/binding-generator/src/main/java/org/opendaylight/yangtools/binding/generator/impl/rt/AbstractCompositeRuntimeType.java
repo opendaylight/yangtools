@@ -26,15 +26,15 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
-abstract class AbstractCompositeRuntimeType<S extends EffectiveStatement<?, ?>> extends StmtRuntimeType<S, Archetype>
-        implements CompositeRuntimeType {
+abstract class AbstractCompositeRuntimeType<A extends Archetype.WithStatement<S>, S extends EffectiveStatement<?, ?>>
+        extends AbstractRuntimeType<S, A> implements CompositeRuntimeType {
     private static final RuntimeType[] EMPTY = new RuntimeType[0];
 
     private final ImmutableMap<JavaTypeName, GeneratedRuntimeType> byClass;
     private final Object bySchemaTree;
 
-    AbstractCompositeRuntimeType(final Archetype bindingType, final S statement, final List<RuntimeType> children) {
-        super(bindingType, statement);
+    AbstractCompositeRuntimeType(final A archetype, final List<RuntimeType> children) {
+        super(archetype);
 
         byClass = children.stream()
             .filter(GeneratedRuntimeType.class::isInstance)
@@ -58,6 +58,11 @@ abstract class AbstractCompositeRuntimeType<S extends EffectiveStatement<?, ?>> 
                 yield tmp;
             }
         };
+    }
+
+    @Override
+    public final S statement() {
+        return javaType().statement();
     }
 
     @Override

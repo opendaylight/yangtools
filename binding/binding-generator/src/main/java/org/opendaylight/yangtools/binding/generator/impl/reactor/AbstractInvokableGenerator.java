@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 abstract sealed class AbstractInvokableGenerator<
+        A extends Archetype.WithStatement<S>,
         S extends SchemaTreeEffectiveStatement<?>,
         R extends CompositeRuntimeType> extends CompositeSchemaTreeGenerator<S, R>
         permits RpcGenerator, ActionGenerator {
@@ -37,14 +38,14 @@ abstract sealed class AbstractInvokableGenerator<
     }
 
     @Override
-    final Archetype createTypeImpl(final TypeBuilderFactory builderFactory) {
+    final A createTypeImpl(final TypeBuilderFactory builderFactory) {
         return createTypeImpl(builderFactory,
             getChild(InputEffectiveStatement.class).getGeneratedType(builderFactory),
             getChild(OutputEffectiveStatement.class).getGeneratedType(builderFactory));
     }
 
     @NonNullByDefault
-    abstract Archetype createTypeImpl(TypeBuilderFactory builderFactory, Archetype input, Archetype output);
+    abstract A createTypeImpl(TypeBuilderFactory builderFactory, Archetype input, Archetype output);
 
     @NonNullByDefault
     private <T extends EffectiveStatement<?, ?>> AbstractExplicitGenerator<T, ?> getChild(final Class<T> type) {

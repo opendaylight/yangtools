@@ -18,14 +18,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Abstract base class for {@link AbstractCompositeRuntimeType}s which support augmentations.
+ *
+ * @param <A> archetype type
+ * @param <S> statement type
  */
-abstract class AbstractAugmentableRuntimeType<S extends EffectiveStatement<?, ?>>
-        extends AbstractCompositeRuntimeType<S> implements AugmentableRuntimeType {
+abstract class AbstractAugmentableRuntimeType<A extends Archetype.WithStatement<S>, S extends EffectiveStatement<?, ?>>
+        extends AbstractCompositeRuntimeType<A, S> implements AugmentableRuntimeType {
     private final @NonNull ImmutableList<AugmentRuntimeType> augments;
 
-    AbstractAugmentableRuntimeType(final Archetype bindingType, final S statement, final List<RuntimeType> children,
+    AbstractAugmentableRuntimeType(final A archetype, final List<RuntimeType> children,
             final List<AugmentRuntimeType> augments) {
-        super(bindingType, statement, children);
+        super(archetype, children);
         this.augments = ImmutableList.copyOf(augments);
     }
 

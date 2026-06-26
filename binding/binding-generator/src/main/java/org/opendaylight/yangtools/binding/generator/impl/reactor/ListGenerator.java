@@ -13,7 +13,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultListRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -116,14 +115,15 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
     }
 
     @Override
-    CompositeRuntimeTypeBuilder<ListEffectiveStatement, ListRuntimeType> createBuilder(
-            final ListEffectiveStatement statement) {
+    CompositeRuntimeTypeBuilder<LegacyArchetype<ListEffectiveStatement>, ListEffectiveStatement, ListRuntimeType>
+            createBuilder(final ListEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
-            ListRuntimeType build(final Archetype type, final ListEffectiveStatement statement,
-                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+            ListRuntimeType build(final LegacyArchetype<ListEffectiveStatement> archetype,
+                    final ListEffectiveStatement statement, final List<RuntimeType> children,
+                    final List<AugmentRuntimeType> augments) {
                 // FIXME: the key here is not rebased correctly :(
-                return new DefaultListRuntimeType(type, statement, children, augments, keyRuntimeType());
+                return new DefaultListRuntimeType(archetype, children, augments, keyRuntimeType());
             }
         };
     }
