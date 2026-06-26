@@ -44,8 +44,9 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     }
 
     @Override
-    LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
+    LegacyArchetype<ContainerEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory) {
+        final var statement = statement();
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName(), statement);
         addImplementsChildOf(builder);
         addAugmentable(builder);
         addUsesInterfaces(builder, builderFactory);
@@ -57,7 +58,7 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
 
         annotateDeprecatedIfNecessary(builder);
         final var module = currentModule();
-        builderFactory.addCodegenInformation(module, statement(), builder);
+        builderFactory.addCodegenInformation(module, statement, builder);
         builder.setModuleName(module.statement().argument().getLocalName());
 
         return builder.build();

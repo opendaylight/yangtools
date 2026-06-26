@@ -46,16 +46,17 @@ final class NotificationBodyGenerator
     }
 
     @Override
-    LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
+    LegacyArchetype<NotificationEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory) {
         final var typeName = typeName();
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName);
+        final var statement = statement();
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName, statement);
         builder.addImplementsType(BindingTypes.notificationBody(TypeRef.of(typeName())));
         defineImplementedInterfaceMethod(builder, WildcardType.ofName(builder.typeName()));
         addUsesInterfaces(builder, builderFactory);
         addGetterMethods(builder, builderFactory);
 
         annotateDeprecatedIfNecessary(builder);
-        builderFactory.addCodegenInformation(currentModule(), statement(), builder);
+        builderFactory.addCodegenInformation(currentModule(), statement, builder);
 
         return builder.build();
     }

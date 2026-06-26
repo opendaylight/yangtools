@@ -157,9 +157,9 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
     private final StackManipulation startEvent;
     private final DataNodeContainer schema;
     private final Class<?> type;
-    private final LegacyArchetype genType;
+    private final LegacyArchetype<?> genType;
 
-    private DataContainerStreamerGenerator(final CodecContextFactory registry, final LegacyArchetype genType,
+    private DataContainerStreamerGenerator(final CodecContextFactory registry, final LegacyArchetype<?> genType,
             final DataNodeContainer schema, final Class<?> type, final StackManipulation startEvent) {
         this.registry = requireNonNull(registry);
         this.genType = requireNonNull(genType);
@@ -192,7 +192,7 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
 
         return CodecPackage.STREAMER.generateClass(loader, type,
             // FIXME: cast to GeneratedType: we really should adjust getTypeWithSchema()
-            new DataContainerStreamerGenerator<>(registry, (LegacyArchetype) typeAndSchema.javaType(),
+            new DataContainerStreamerGenerator<>(registry, (LegacyArchetype<?>) typeAndSchema.javaType(),
                 (DataNodeContainer) schema, type, startEvent));
     }
 
@@ -359,18 +359,18 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
                 method);
     }
 
-    private static ImmutableMap<String, Type> collectAllProperties(final LegacyArchetype type) {
+    private static ImmutableMap<String, Type> collectAllProperties(final LegacyArchetype<?> type) {
         final Map<String, Type> props = new HashMap<>();
         collectAllProperties(type, props);
         return ImmutableMap.copyOf(props);
     }
 
-    private static void collectAllProperties(final LegacyArchetype type, final Map<String, Type> hashMap) {
+    private static void collectAllProperties(final LegacyArchetype<?> type, final Map<String, Type> hashMap) {
         for (var definition : type.getMethodDefinitions()) {
             hashMap.put(definition.getName(), definition.getReturnType());
         }
         for (var parent : type.getImplements()) {
-            if (parent instanceof LegacyArchetype generated) {
+            if (parent instanceof LegacyArchetype<?> generated) {
                 collectAllProperties(generated, hashMap);
             }
         }

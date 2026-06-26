@@ -28,14 +28,14 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class BitAndUnionTOEnclosingTest {
     private static List<Archetype> genTypes = null;
-    private static LegacyArchetype parentContainer = null;
+    private static LegacyArchetype<?> parentContainer = null;
 
     @BeforeAll
     static void loadTestResources() {
         genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource("/bit_and_union.yang"));
 
         for (var genType : genTypes) {
-            if (genType.simpleName().equals("ParentContainer") && genType instanceof LegacyArchetype archetype) {
+            if (genType.simpleName().equals("ParentContainer") && genType instanceof LegacyArchetype<?> archetype) {
                 parentContainer = archetype;
             }
         }

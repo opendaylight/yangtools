@@ -149,10 +149,11 @@ abstract class AbstractAugmentGenerator
     }
 
     @Override
-    final LegacyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName());
+    final LegacyArchetype<AugmentEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory) {
+        final var statement = statement();
+        final var builder = builderFactory.newGeneratedTypeBuilder(typeName(), statement);
 
-        YangSourceDefinition.of(currentModule().statement(), statement()).ifPresent(builder::setYangSourceDefinition);
+        YangSourceDefinition.of(currentModule().statement(), statement).ifPresent(builder::setYangSourceDefinition);
         builder.addImplementsType(BindingTypes.augmentation(targetGenerator().getGeneratedType(builderFactory)));
         addUsesInterfaces(builder, builderFactory);
         addConcreteInterfaceMethods(builder);
@@ -174,7 +175,7 @@ abstract class AbstractAugmentGenerator
 
     @NonNullByDefault
     final AugmentRuntimeType runtimeTypeIn(final AugmentResolver resolver, final EffectiveStatement<?, ?> stmt) {
-        if (!(stmt instanceof SchemaTreeAwareEffectiveStatement aware)) {
+        if (!(stmt instanceof SchemaTreeAwareEffectiveStatement<?, ?> aware)) {
             throw new VerifyException("Unexpected target statement " + stmt);
         }
         return verifyNotNull(createInternalRuntimeType(resolver, effectiveIn(aware)));
@@ -215,7 +216,8 @@ abstract class AbstractAugmentGenerator
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
                 // 'augment' cannot be targeted by augment
                 verify(augments.isEmpty(), "Unexpected augments %s", augments);
-                return new DefaultAugmentRuntimeType((LegacyArchetype) type, statement, children);
+                return new DefaultAugmentRuntimeType((LegacyArchetype<AugmentEffectiveStatement>) type, statement,
+                    children);
             }
         };
     }

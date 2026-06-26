@@ -18,5 +18,5 @@ public interface CaseRuntimeType extends AugmentableRuntimeType, DataRuntimeType
     CaseEffectiveStatement statement();
 
     @Override
-    LegacyArchetype javaType();
+    LegacyArchetype<CaseEffectiveStatement> javaType();
 }

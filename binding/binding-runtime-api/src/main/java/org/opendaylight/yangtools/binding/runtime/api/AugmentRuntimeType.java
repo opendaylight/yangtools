@@ -18,5 +18,5 @@ public interface AugmentRuntimeType extends CompositeRuntimeType, DataRuntimeTyp
     AugmentEffectiveStatement statement();
 
     @Override
-    LegacyArchetype javaType();
+    LegacyArchetype<AugmentEffectiveStatement> javaType();
 }

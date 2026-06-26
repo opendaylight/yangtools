@@ -10,31 +10,43 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.Serializable;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
+@ExtendWith(MockitoExtension.class)
 class AbstractGeneratedTypeBuilderTest {
-    private final CodegenGeneratedTypeBuilder generatedTypeBuilder =
-        new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
+    @Mock
+    private EffectiveStatement<?, ?> statement;
+
+    private CodegenGeneratedTypeBuilder<?> builder;
+
+    @BeforeEach
+    void beforeEach() {
+        builder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
+    }
 
     @Test
     void addImplementsTypeIllegalArgumentTest() {
-        generatedTypeBuilder.addImplementsType(Types.typeForClass(Serializable.class));
+        builder.addImplementsType(Types.typeForClass(Serializable.class));
         final var conflict = Types.typeForClass(Serializable.class);
-        assertThrows(IllegalArgumentException.class, () -> generatedTypeBuilder.addImplementsType(conflict));
+        assertThrows(IllegalArgumentException.class, () -> builder.addImplementsType(conflict));
     }
 
     @Test
     void addConstantIllegalArgumentTest() {
-        generatedTypeBuilder.addConstant(Types.STRING, "myName", "Value");
-        assertThrows(IllegalArgumentException.class,
-            () -> generatedTypeBuilder.addConstant(Types.BOOLEAN, "myName", true));
+        builder.addConstant(Types.STRING, "myName", "Value");
+        assertThrows(IllegalArgumentException.class, () -> builder.addConstant(Types.BOOLEAN, "myName", true));
     }
 
     @Test
     void addAnnotationIllegalArgumentTest() {
-        generatedTypeBuilder.addAnnotation("my.package", "myName");
-        assertThrows(IllegalArgumentException.class, () -> generatedTypeBuilder.addAnnotation("my.package", "myName"));
+        builder.addAnnotation("my.package", "myName");
+        assertThrows(IllegalArgumentException.class, () -> builder.addAnnotation("my.package", "myName"));
     }
 }

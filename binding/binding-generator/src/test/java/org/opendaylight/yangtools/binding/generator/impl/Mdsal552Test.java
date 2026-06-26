@@ -32,7 +32,7 @@ class Mdsal552Test {
         final var baz = types.stream()
                 .filter(type -> BAZ.equals(type.name()))
                 .findFirst()
-                .map(LegacyArchetype.class::cast)
+                .map(type -> (LegacyArchetype<?>) type)
                 .orElseThrow();
         final var bazGetRef = baz.getMethodDefinitions().stream()
                 .filter(method -> method.getName().equals("getRef"))
@@ -42,7 +42,7 @@ class Mdsal552Test {
         final var input = types.stream()
                 .filter(type -> BAR_INPUT.equals(type.name()))
                 .findFirst()
-                .map(LegacyArchetype.class::cast)
+                .map(type -> (LegacyArchetype<?>) type)
                 .orElseThrow();
         final var inputGetRef = input.getMethodDefinitions().stream()
                 .filter(method -> method.getName().equals("getRef"))

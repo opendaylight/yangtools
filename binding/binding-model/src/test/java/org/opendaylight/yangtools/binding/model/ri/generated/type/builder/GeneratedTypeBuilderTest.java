@@ -16,15 +16,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.Serializable;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
+@ExtendWith(MockitoExtension.class)
 class GeneratedTypeBuilderTest {
+    @Mock
+    private EffectiveStatement<?, ?> statement;
+
     @Test
     void addConstantTest() {
-        var generatedTypeBuilder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
+        var generatedTypeBuilder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
+            statement);
 
         // assertNotNull(generatedTypeBuilder.addComment("My comment ..."));
 
@@ -82,24 +91,28 @@ class GeneratedTypeBuilderTest {
 
     @Test
     void addConstantIllegalArgumentTest() {
-        final var builder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
+        final var builder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(IllegalArgumentException.class,
             () -> builder.addConstant(Types.typeForClass(String.class), null, "myConstantValue"));
     }
 
     @Test
     void addConstantIllegalArgumentTest2() {
-        final var builder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
+        final var builder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(IllegalArgumentException.class,
             () -> builder.addConstant((Type) null, "myConstantName", "myConstantValue"));
     }
 
     @Test
     void generatedTypeBuilderEqualsAndHashCodeTest() {
-        final var generatedTypeBuilder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
-        final var generatedTypeBuilder2 = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
-        final var generatedTypeBuilder3 = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName2"));
-        final var generatedTypeBuilder4 = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package2", "MyName"));
+        final var generatedTypeBuilder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
+            statement);
+        final var generatedTypeBuilder2 = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
+            statement);
+        final var generatedTypeBuilder3 = new CodegenGeneratedTypeBuilder<>(
+            JavaTypeName.create("my.package", "MyName2"), statement);
+        final var generatedTypeBuilder4 = new CodegenGeneratedTypeBuilder<>(
+            JavaTypeName.create("my.package2", "MyName"), statement);
 
         assertFalse(generatedTypeBuilder.equals(null));
         assertFalse(generatedTypeBuilder.equals(new Object()));
@@ -114,13 +127,14 @@ class GeneratedTypeBuilderTest {
 
     @Test
     void addMethodIllegalArgumentTest() {
-        final var builder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
+        final var builder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(IllegalArgumentException.class, () -> builder.addMethod(null));
     }
 
     @Test
     void addMethodTest() {
-        var generatedTypeBuilder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
+        var generatedTypeBuilder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
+            statement);
 
         var methodBuilder = generatedTypeBuilder.addMethod("myMethodName").setReturnType(Types.BOOLEAN);
         var methodBuilder2 = generatedTypeBuilder.addMethod("myMethodName2").setReturnType(Types.STRING);
@@ -146,13 +160,14 @@ class GeneratedTypeBuilderTest {
 
     @Test
     void addImplementsTypeIllegalArgumentTest() {
-        final var builder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
+        final var builder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(NullPointerException.class, () -> builder.addImplementsType((Type) null));
     }
 
     @Test
     void addImplementsTypeTest() {
-        var generatedTypeBuilder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
+        var generatedTypeBuilder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
+            statement);
 
         assertEquals(generatedTypeBuilder,
                 generatedTypeBuilder.addImplementsType(Types.typeForClass(Serializable.class)));
@@ -170,13 +185,14 @@ class GeneratedTypeBuilderTest {
 
     @Test
     void addEnclosingTransferObjectIllegalArgumentTest2() {
-        final var builder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
+        final var builder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(NullPointerException.class, () -> builder.addEnclosedType(null));
     }
 
     @Test
     void generatedTypeTest() {
-        var generatedTypeBuilder = new CodegenGeneratedTypeBuilder(JavaTypeName.create("my.package", "MyName"));
+        var generatedTypeBuilder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
+            statement);
 
         generatedTypeBuilder.setDescription("My description ...");
         generatedTypeBuilder.setModuleName("myModuleName");

@@ -40,7 +40,7 @@ record TypeAnalysis(
      * to the type, expressed as properties.
      */
     @NonNullByDefault
-    static TypeAnalysis of(final LegacyArchetype type) {
+    static TypeAnalysis of(final LegacyArchetype<?> type) {
         final var methods = new LinkedHashSet<MethodSignature>();
         methods.addAll(type.getMethodDefinitions());
         final var augmentType = collectImplementedMethods(type, methods, type.getImplements());
@@ -58,7 +58,7 @@ record TypeAnalysis(
      * @return {@link ParameterizedType} of the implemented {@link Augmentation}, {@code null} if the type is not an
      *         augmentation.
      */
-    private static @Nullable ParameterizedType collectImplementedMethods(final @NonNull LegacyArchetype type,
+    private static @Nullable ParameterizedType collectImplementedMethods(final @NonNull LegacyArchetype<?> type,
             final @NonNull Set<MethodSignature> methods, final @NonNull List<Type> implementedIfcs) {
         if (implementedIfcs.isEmpty()) {
             return null;
@@ -73,7 +73,7 @@ record TypeAnalysis(
                         augmentType = BindingTypes.augmentation(augmentableType);
                     }
                 }
-                case LegacyArchetype ifc -> {
+                case LegacyArchetype<?> ifc -> {
                     for (var implMethod : ifc.getMethodDefinitions()) {
                         if (JavaFileTemplate.hasOverrideAnnotation(implMethod)) {
                             methods.add(implMethod);

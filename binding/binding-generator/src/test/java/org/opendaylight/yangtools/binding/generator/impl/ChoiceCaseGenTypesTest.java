@@ -31,7 +31,7 @@ class ChoiceCaseGenTypesTest {
         // test for file choice-monitoring
         final var locks = "org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.choice.monitoring.rev130701."
                 + "netconf.state.datastores.datastore.locks";
-        LegacyArchetype genType = null;
+        LegacyArchetype<?> genType = null;
 
         // choice
         assertChoice(genTypes, "LockType", locks);
@@ -167,12 +167,12 @@ class ChoiceCaseGenTypesTest {
         assertEquals(1, choices.size());
     }
 
-    private static LegacyArchetype checkGeneratedType(final List<Archetype> genTypes, final String simpleName,
+    private static LegacyArchetype<?> checkGeneratedType(final List<Archetype> genTypes, final String simpleName,
             final String pkgName, final int occurences) {
-        LegacyArchetype searchedGenType = null;
+        LegacyArchetype<?> searchedGenType = null;
         int searchedGenTypeCounter = 0;
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype archetype) {
+            if (genType instanceof LegacyArchetype<?> archetype) {
                 if (archetype.simpleName().equals(simpleName) && archetype.packageName().equals(pkgName)) {
                     searchedGenType = archetype;
                     searchedGenTypeCounter++;
@@ -186,7 +186,7 @@ class ChoiceCaseGenTypesTest {
 
     }
 
-    private static LegacyArchetype checkGeneratedType(final List<Archetype> genTypes, final String simpleName,
+    private static LegacyArchetype<?> checkGeneratedType(final List<Archetype> genTypes, final String simpleName,
             final String pkgName) {
         return checkGeneratedType(genTypes, simpleName, pkgName, 1);
     }
