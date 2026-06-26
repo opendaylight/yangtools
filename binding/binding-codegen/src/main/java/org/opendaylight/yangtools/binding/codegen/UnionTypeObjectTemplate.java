@@ -114,13 +114,12 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
      */
     @NonNullByDefault
     private BlockBuilder generateBody(final boolean isInnerClass) {
-        final var archetype = archetype();
         final var statement = archetype.statement();
 
         final var bb = newBodyBuilder(statement, statement.typeStatement().typeDefinition(), !isInnerClass)
             .frg(generateClassDeclaration(isInnerClass)).oB()
                 .eol("@java.io.Serial")
-                .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS()
+                .str("private static final long serialVersionUID = ").jLong(archetype.serialVersionUID()).eS()
                  // inner classes
                 .blk(generateInnerClasses(root, archetype.enclosedTypes()));
 
@@ -160,8 +159,6 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
      */
     @NonNullByDefault
     private BlockBuilder generateClassDeclaration(final boolean isInnerClass) {
-        final var archetype = archetype();
-
         final var bb = newBlockBuilder()
             .str("public ");
         if (isInnerClass) {
@@ -201,7 +198,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             return null;
         }
 
-        final var simpleName = type().simpleName();
+        final var simpleName = archetype.simpleName();
         final var bb = newBlockBuilder().nl();
         final var it = finalProperties.iterator();
         while (true) {
@@ -293,7 +290,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
 
         final var bb = newBlockBuilder();
         final var it = parentProperties.iterator();
-        final var simpleName = type().simpleName();
+        final var simpleName = archetype.simpleName();
         while (true) {
             final var prop = it.next();
             final var fieldName = fieldName(prop);
@@ -383,7 +380,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
 
     @NonNullByDefault
     private BlockBuilder copyConstructor() {
-        final var simpleName = type().simpleName();
+        final var simpleName = archetype.simpleName();
 
         return newBlockBuilder().txt("""
                   /**
@@ -426,7 +423,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
 
     @NonNullByDefault
     private BlockBuilder parentConstructor() {
-        final var importedSuper = importedName(archetype().getSuperType());
+        final var importedSuper = importedName(archetype.getSuperType());
 
         return newBlockBuilder()
             .eol("/**")
@@ -434,7 +431,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             .eol(" *")
             .eol(" * @param source Source object")
             .eol(" */")
-            .str("public ").str(type().simpleName()).str("(").str(importedSuper).str(" source)").oB()
+            .str("public ").str(archetype.simpleName()).str("(").str(importedSuper).str(" source)").oB()
                 .eol("super(source);")
             .cB();
     }

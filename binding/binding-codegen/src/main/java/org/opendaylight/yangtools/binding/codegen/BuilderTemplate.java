@@ -104,25 +104,27 @@ final class BuilderTemplate extends BaseTemplate {
     //        implementations of its methods
     final @NonNull LegacyArchetype targetType;
 
+    final @NonNull LegacyArchetype archetype;
+
     @NonNullByDefault
-    private BuilderTemplate(final GeneratedClass javaType, final LegacyArchetype type, final LegacyArchetype targetType,
-            final Set<BuilderGeneratedProperty> properties, final @Nullable ParameterizedType augmentType,
-            final @Nullable KeyArchetype keyType) {
-        super(javaType, type);
+    private BuilderTemplate(final GeneratedClass javaType, final LegacyArchetype archetype,
+            final LegacyArchetype targetType, final Set<BuilderGeneratedProperty> properties,
+            final @Nullable ParameterizedType augmentType, final @Nullable KeyArchetype keyType) {
+        super(javaType);
+        this.archetype = requireNonNull(archetype);
         this.targetType = requireNonNull(targetType);
         this.properties = requireNonNull(properties);
         this.augmentType = augmentType;
         this.keyType = keyType;
     }
 
-    private @NonNull LegacyArchetype archetype() {
-        return (LegacyArchetype) type();
+    private @NonNull String simpleName() {
+        return typeName().simpleName();
     }
 
     @Override
     BlockBuilder body() {
-        final var archetype = archetype();
-        final var simpleName = archetype.simpleName();
+        final var simpleName = simpleName();
 
         final var bb = newBlockBuilder()
             .blk(wrapToDocumentation(createDescription().toRawString()))
@@ -251,7 +253,7 @@ final class BuilderTemplate extends BaseTemplate {
                 .eol(" *")
                 .str(" * @param arg ").str(typeName).eol(" from which the builder should be initialized")
                 .eol(" */")
-                .str("public ").str(type().simpleName()).str("(").str(typeName).str(" arg)").oB()
+                .str("public ").str(simpleName()).str("(").str(typeName).str(" arg)").oB()
                     .blk(printConstructorPropertySetter(genType))
                 .cB()
                 .newLine();
@@ -344,7 +346,7 @@ final class BuilderTemplate extends BaseTemplate {
 
         return newBlockBuilder()
             .str("private static final class LazyEmpty").oB()
-                .str("static final ").str(nonnullTarget).str(" INSTANCE = new ").str(type().simpleName())
+                .str("static final ").str(nonnullTarget).str(" INSTANCE = new ").str(simpleName())
                     .eol("().build();")
                  .nl()
                  .str("private LazyEmpty()").oB()
@@ -363,7 +365,7 @@ final class BuilderTemplate extends BaseTemplate {
     @NonNullByDefault
     private BlockBuilder generateCopyConstructor(final Type fromType, final Type implType) {
         return newBlockBuilder()
-            .str(type().simpleName()).str("(final ").str(importedName(fromType)).str(" base)").jBlock(bb -> {
+            .str(simpleName()).str("(final ").str(importedName(fromType)).str(" base)").jBlock(bb -> {
                 if (augmentType != null) {
                     bb
                         .eol("final var aug = base.augmentations();")
@@ -674,7 +676,7 @@ final class BuilderTemplate extends BaseTemplate {
             argumentCheck = newBlockBuilder()
                 .str("if (values != null)").oB()
                     .str("for (").str(importedName(actualType)).str(" value : values)").oB()
-                        .blk(checkFieldValue((LegacyArchetype) type(), field, restrictions, actualType, "value"))
+                        .blk(checkFieldValue(archetype, field, restrictions, actualType, "value"))
                     .cB()
                 .cB();
         } else {
@@ -691,7 +693,7 @@ final class BuilderTemplate extends BaseTemplate {
             .eol(" * @param values desired value")
             .eol(" * @return this builder")
             .eol(" */")
-            .str("public ").str(type().simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
+            .str("public ").str(simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
                 .str(importedReturnType(field)).str(" values)").oB()
                 .blk(argumentCheck)
                 .str("this.").str(fieldName(field)).eol(" = values;")
@@ -719,14 +721,14 @@ final class BuilderTemplate extends BaseTemplate {
                  * @return this builder
                  */
                 """)
-            .str("public ").str(type().simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
+            .str("public ").str(simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
                 .str(importedReturnType(field)).str(" values)").oB();
 
         if (restrictions != null) {
             bb
                 .eol("if (values != null)").oB()
                     .str("for (").str(importedName(actualType)).str(" value : values.values())").oB()
-                        .blk(checkFieldValue(archetype(), field, restrictions, actualType, "value"))
+                        .blk(checkFieldValue(archetype, field, restrictions, actualType, "value"))
                     .cB()
                 .cB();
         }
@@ -738,8 +740,6 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     private @NonNull BlockBuilder generateSimpleSetter(final BuilderGeneratedProperty field, final Type actualType) {
-        final var archetype = archetype();
-
         final var bb = newBlockBuilder();
         final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {
@@ -755,7 +755,7 @@ final class BuilderTemplate extends BaseTemplate {
             .eol(" * @param value desired value")
             .eol(" * @return this builder")
             .eol(" */")
-            .str("public ").str(archetype.simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
+            .str("public ").str(simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
                 .str(importedReturnType(field)).str(" value)").oB();
         if (restrictions != null) {
             bb
@@ -786,7 +786,7 @@ final class BuilderTemplate extends BaseTemplate {
                        * @return this builder
                        */
                       """)
-                .str("public ").str(type().simpleName()).str(" withKey(final ").str(importedName(keyType))
+                .str("public ").str(simpleName()).str(" withKey(final ").str(importedName(keyType))
                     .str(" key)").oB()
                     .eol("this.key = key;")
                     .eol("return this;")
@@ -809,7 +809,7 @@ final class BuilderTemplate extends BaseTemplate {
                       """)
                 .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentation} is null")
                 .eol(" */")
-                .str("public ").str(type().simpleName()).str(" addAugmentation(").str(augmentTypeRef)
+                .str("public ").str(simpleName()).str(" addAugmentation(").str(augmentTypeRef)
                     .str(" augmentation)").oB()
                     .str("if (!(this." + AUGMENTATION_FIELD + " instanceof ").str(hashMapRef).str("))").oB()
                         .str("this." + AUGMENTATION_FIELD + " = new ").str(hashMapRef).eol("<>();")
@@ -829,7 +829,7 @@ final class BuilderTemplate extends BaseTemplate {
                        * @return this builder
                        */
                       """)
-                .str("public ").str(type().simpleName()).str(" removeAugmentation(").str(importedName(CLASS))
+                .str("public ").str(simpleName()).str(" removeAugmentation(").str(importedName(CLASS))
                     .str("<? extends ").str(augmentTypeRef).str("> augmentationType)").oB()
                     .str("if (this." + AUGMENTATION_FIELD  + " instanceof ").str(hashMapRef).str(")").oB()
                         .eol("this." + AUGMENTATION_FIELD + ".remove(augmentationType);")

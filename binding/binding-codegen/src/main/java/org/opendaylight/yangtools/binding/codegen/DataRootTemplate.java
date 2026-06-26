@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 /**
  * Template for {@link DataRoot} specializations.
  */
-final class DataRootTemplate extends InterfaceTemplate {
+final class DataRootTemplate extends InterfaceTemplate<@NonNull DataRootArchetype> {
     @NonNullByDefault
     record Builder(DataRootArchetype type) implements Template.Builder {
         Builder {
@@ -44,8 +44,6 @@ final class DataRootTemplate extends InterfaceTemplate {
 
     @Override
     BlockBuilder generateConstants() {
-        final var archetype = (DataRootArchetype) archetype();
-
         // pre-compute constants: split out for future isolation
         final var nonNullByDefault = importedName(NONNULL_BY_DEFAULT);
         final var rootMeta = importedName(ROOT_META);

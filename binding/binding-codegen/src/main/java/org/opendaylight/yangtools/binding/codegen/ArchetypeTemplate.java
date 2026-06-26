@@ -37,15 +37,12 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
         "@javax.annotation.processing.Generated(\"mdsal-binding-generator\")";
 
     final DataRootArchetype root;
+    final T archetype;
 
     ArchetypeTemplate(final GeneratedClass javaType, final T archetype, final DataRootArchetype root) {
-        super(javaType, archetype);
+        super(javaType);
+        this.archetype = requireNonNull(archetype);
         this.root = requireNonNull(root);
-    }
-
-    @SuppressWarnings("unchecked")
-    final T archetype() {
-        return (T) type();
     }
 
     /**
@@ -91,7 +88,7 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
         if (comment != null) {
             sb.append(comment.getJavadoc());
         }
-        appendSnippet(sb, archetype(), module, stmt, node);
+        appendSnippet(sb, archetype, module, stmt, node);
 
         final var str = sb.toString();
         if (str.isBlank()) {
@@ -114,11 +111,11 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
     /**
      * Return a BlockFragment appending the {@code QNAME} field initialized via {@code YangModuleInfo.qnameOf(String)}.
      *
-     * @param archetype the archetype
+     * @param qnameArchetype the archetype
      * @return a {@link BlockFragment}
      */
-    final BlockFragment qnameConstant(final Archetype.WithQName<?> archetype) {
-        final var qname = archetype.qnameConstant();
+    final BlockFragment qnameConstant(final Archetype.WithQName<?> qnameArchetype) {
+        final var qname = qnameArchetype.qnameConstant();
         final var module = root.statement().localQNameModule();
         verify(module.equals(qname.getModule()));
 

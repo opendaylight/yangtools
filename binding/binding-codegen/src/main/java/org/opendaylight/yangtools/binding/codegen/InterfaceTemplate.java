@@ -56,7 +56,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 /**
  * Template for generating JAVA interfaces.
  */
-sealed class InterfaceTemplate extends ArchetypeTemplate<@NonNull LegacyArchetype> permits DataRootTemplate {
+sealed class InterfaceTemplate<T extends @NonNull LegacyArchetype> extends ArchetypeTemplate<T>
+        permits DataRootTemplate {
     @NonNullByDefault
     record Builder(LegacyArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
@@ -65,8 +66,8 @@ sealed class InterfaceTemplate extends ArchetypeTemplate<@NonNull LegacyArchetyp
         }
 
         @Override
-        public InterfaceTemplate build() {
-            return new InterfaceTemplate(type, root);
+        public InterfaceTemplate<LegacyArchetype> build() {
+            return new InterfaceTemplate<>(type, root);
         }
     }
 
@@ -89,7 +90,7 @@ sealed class InterfaceTemplate extends ArchetypeTemplate<@NonNull LegacyArchetyp
     private @Nullable TypeAnalysis typeAnalysis;
 
     @NonNullByDefault
-    InterfaceTemplate(final LegacyArchetype type, final DataRootArchetype root) {
+    InterfaceTemplate(final T type, final DataRootArchetype root) {
         super(GeneratedClass.of(type), type, root);
 
         consts = type.getConstantDefinitions();
@@ -103,20 +104,18 @@ sealed class InterfaceTemplate extends ArchetypeTemplate<@NonNull LegacyArchetyp
     }
 
     private @NonNull TypeAnalysis loadTypeAnalysis() {
-        final var analysis = TypeAnalysis.of(archetype());
+        final var analysis = TypeAnalysis.of(archetype);
         typeAnalysis = analysis;
         return analysis;
     }
 
     @Override
     final BlockBuilder body() {
-        final var archetype = archetype();
-
         final var bb = newBlockBuilder()
             .blk(wrapToDocumentation(formatDataForJavaDoc(archetype)))
             .blk(generateAnnotations(archetype.getAnnotations()))
             .eol(generatedAnnotation())
-            .str("public interface ").str(type().simpleName());
+            .str("public interface ").str(archetype.simpleName());
 
         // We can have three shapes here to ensure reasonable separation from inner members:
         //
@@ -251,7 +250,7 @@ sealed class InterfaceTemplate extends ArchetypeTemplate<@NonNull LegacyArchetyp
     final @NonNull BlockBuilder generateDefaultImplementedInterface() {
         // Note: we cannot use importedName() or short name due to shadowing explained in MDSAL-365
         // FIXME: use selfRef()
-        final var fqcn = type().canonicalName();
+        final var fqcn = archetype.canonicalName();
 
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
@@ -451,7 +450,7 @@ sealed class InterfaceTemplate extends ArchetypeTemplate<@NonNull LegacyArchetyp
     }
 
     private @Nullable BlockBuilder generateJavaDataContainerMethods() {
-        if (archetype().getImplements().stream()
+        if (archetype.getImplements().stream()
                 .noneMatch(iface -> iface.name().equals(BindingTypes.JAVA_DATACONTAINER.name()))) {
             return null;
         }
@@ -569,7 +568,7 @@ sealed class InterfaceTemplate extends ArchetypeTemplate<@NonNull LegacyArchetyp
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
             // FIXME: selfref instead of canonicalName
-            .str("default boolean javaEQ(").str(type().canonicalName()).str(" obj)").jBlock(bb -> {
+            .str("default boolean javaEQ(").str(archetype.canonicalName()).str(" obj)").jBlock(bb -> {
                 if (props.isEmpty() && !augmentable) {
                     bb.str(importedName(JU_OBJECTS)).eol(".requireNonNull(obj);");
                     bb.eol("return true;");
@@ -635,7 +634,7 @@ sealed class InterfaceTemplate extends ArchetypeTemplate<@NonNull LegacyArchetyp
             return bb.str("this");
         }
         // FIXME: use selfRef()
-        return bb.str(type().canonicalName()).str(".class");
+        return bb.str(archetype.canonicalName()).str(".class");
     }
 
     // FIXME: return a Block

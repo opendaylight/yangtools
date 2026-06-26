@@ -39,24 +39,24 @@ final class IdentityTemplate extends ArchetypeTemplate<IdentityArchetype> {
 
     @Override
     BlockBuilder body() {
-        final var type = archetype();
-        final var typeName = type.simpleName();
+        final var typeName = archetype.simpleName();
         final var clazz = importedName(CLASS);
         final var object = importedName(Types.objectType());
         final var override = importedName(OVERRIDE);
         final var codeHelpers = importedName(CODEHELPERS);
-        final var stmt = type.statement();
+        final var stmt = archetype.statement();
 
         return newBodyBuilder(stmt, stmt.toSchemaNode())
             .str("public interface ").str(typeName).str(" extends ").frg(this::appendInterfaces).oB()
                 .eol("/**")
                 .eol(" * The name of the {@code identity} represented by this class.")
                 .eol(" */")
-                .frg(qnameConstant(type))
+                .frg(qnameConstant(archetype))
                 .eol("/**")
                 .str(" * Singleton value representing the {@link ").str(typeName).eol("} identity.")
                 .eol(" */")
-                .str(importedNonNull(type)).str(" " + VALUE_STATIC_FIELD_NAME + " = new ").str(typeName).str("()").oB()
+                .str(importedNonNull(archetype)).str(" " + VALUE_STATIC_FIELD_NAME + " = new ").str(typeName).str("()")
+                    .oB()
                     .eol("@java.io.Serial")
                     .eol("private static final long serialVersionUID = 1L;")
                     .nl()
@@ -92,7 +92,7 @@ final class IdentityTemplate extends ArchetypeTemplate<IdentityArchetype> {
     }
 
     private void appendInterfaces(final BlockBuilder bb) {
-        final var it = archetype().interfaces().iterator();
+        final var it = archetype.interfaces().iterator();
         bb.str(importedName(it.next()));
         while (it.hasNext()) {
             bb.str(", ").str(importedName(it.next()));

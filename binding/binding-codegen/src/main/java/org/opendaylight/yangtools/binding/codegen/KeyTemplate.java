@@ -46,9 +46,8 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
 
     @Override
     BlockBuilder body() {
-        final var type = (KeyArchetype) type();
-        final var typeName = type.simpleName();
-        final var entryObject = importedName(type.entryObject());
+        final var typeName = archetype.simpleName();
+        final var entryObject = importedName(archetype.entryObject());
 
         return newBlockBuilder()
             // FIXME: take advantage of javadocBlock() to add a module reference and a snippet
@@ -65,16 +64,14 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
 
     // Split out to keep indentation in check
     private void classBody(final BlockBuilder bb) {
-        final var type = (KeyArchetype) type();
-
         bb
             .eol("@java.io.Serial")
-            .str("private static final long serialVersionUID = ").jLong(type.serialVersionUID()).eS()
+            .str("private static final long serialVersionUID = ").jLong(archetype.serialVersionUID()).eS()
             .newLine();
 
         // Fields
         // FIXME: generate checker methods for each property
-        final var props = type.getProperties();
+        final var props = archetype.getProperties();
         for (var prop : props) {
             bb.str("private final ").str(importedNonNull(prop.getReturnType())).sp().str(fieldName(prop)).eS();
         }
@@ -91,8 +88,8 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
         }
         bb
             .eol(" */")
-            .str("public ").str(type.simpleName()).str("(").str(asNonNullArgumentsDeclaration(sortedProps)).str(")")
-                .oB();
+            .str("public ").str(archetype.simpleName()).str("(").str(asNonNullArgumentsDeclaration(sortedProps))
+                .str(")").oB();
         for (var prop : sortedProps) {
             final var fieldName = fieldName(prop);
             bb.str("this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(")

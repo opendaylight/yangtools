@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.common.QName;
 
-
 /**
  * Template for a {@link YangFeature} class generated for a {@code feature} statement.
  */
@@ -45,10 +44,9 @@ final class FeatureTemplate extends ArchetypeTemplate<FeatureArchetype> {
 
     @Override
     BlockBuilder body() {
-        final var type = archetype();
-        final var simpleName = type.simpleName();
+        final var simpleName = archetype.simpleName();
         final var rootName = importedName(root.name());
-        final var stmt = type.statement();
+        final var stmt = archetype.statement();
 
         return newBodyBuilder(stmt, stmt.toSchemaNode())
             .at().eol(importedName(NONNULL_BY_DEFAULT))
@@ -61,11 +59,11 @@ final class FeatureTemplate extends ArchetypeTemplate<FeatureArchetype> {
                         .eol("/**")
                         .eol(" * The name of the {@code feature} represented by this class.")
                         .eol(" */")
-                        .str("public static final ").frg(qnameConstant(type))
+                        .str("public static final ").frg(qnameConstant(archetype))
                         .eol("/**")
                         .eol(" * The singleton instance.")
                         .eol(" */")
-                        .str("public static final ").str(importedNonNull(type))
+                        .str("public static final ").str(importedNonNull(archetype))
                             .str(" " + VALUE_STATIC_FIELD_NAME + " = new ").str(simpleName).eol("();")
                         .nl()
                         .str("private ").str(simpleName).str("()").oB()

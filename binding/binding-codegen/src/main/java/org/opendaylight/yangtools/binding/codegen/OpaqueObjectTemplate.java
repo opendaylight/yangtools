@@ -40,19 +40,18 @@ final class OpaqueObjectTemplate extends ArchetypeTemplate<OpaqueObjectArchetype
 
     @Override
     BlockBuilder body() {
-        final var type = archetype();
-        final var simpleName = type.simpleName();
-        final var stmt = switch (type) {
+        final var simpleName = archetype.simpleName();
+        final var stmt = switch (archetype) {
             case OpaqueObjectArchetype.Anydata anydata -> "anydata";
             case OpaqueObjectArchetype.Anyxml anyxml -> "anyxml";
         };
 
-        return newBodyBuilder(type.statement())
+        return newBodyBuilder(archetype.statement())
             .str("public interface ").str(simpleName).str(" extends ").gen(importedName(OPAQUE_OBJECT), simpleName).oB()
                 .eol("/**")
                 .str(" * The YANG identifier of the {@code ").str(stmt).eol("} represented by this class.")
                 .eol(" */")
-                .frg(qnameConstant(type))
+                .frg(qnameConstant(archetype))
                 .nl()
                 .at().eol(importedName(OVERRIDE))
                 .str("default ").gen(importedName(CLASS), simpleName).str(" implementedInterface()").oB()

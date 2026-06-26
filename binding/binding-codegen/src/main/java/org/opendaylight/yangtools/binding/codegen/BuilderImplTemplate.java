@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX;
@@ -46,11 +47,13 @@ final class BuilderImplTemplate extends BaseTemplate {
     private static final @NonNull JavaTypeName ABSTRACT_ENTRY_OBJECT = JavaTypeName.create(AbstractEntryObject.class);
 
     private final @NonNull BuilderTemplate builder;
+    private final @NonNull LegacyArchetype type;
 
     @NonNullByDefault
     BuilderImplTemplate(final BuilderTemplate builder, final LegacyArchetype type) {
         // FIXME: we should be delegating access to these fields to builder
-        super(builder.javaType().getNestedClass(type), type);
+        super(builder.javaType().getNestedClass(type));
+        this.type = requireNonNull(type);
         this.builder = builder;
     }
 
@@ -61,9 +64,8 @@ final class BuilderImplTemplate extends BaseTemplate {
         final var keyType = builder.keyType;
         final var augmentType = builder.augmentType;
         final var properties = builder.properties;
-        final var builderType = builder.type();
+        final var builderType = builder.archetype;
 
-        final var type = type();
         final var implIface = importedName(targetType);
         final var override = importedName(OVERRIDE);
         final var simpleName = type.simpleName();

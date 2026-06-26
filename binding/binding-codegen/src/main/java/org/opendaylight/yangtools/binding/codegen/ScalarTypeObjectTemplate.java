@@ -127,7 +127,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
                 .nl()
                 .at().eol(override)
                 .str("public final boolean equals(").str(importedName(OBJECT)).str(" obj)").oB()
-                    .str("return this == obj || obj instanceof ").str(type().simpleName()).str(" other && ");
+                    .str("return this == obj || obj instanceof ").str(archetype.simpleName()).str(" other && ");
             if (valueType.isArray()) {
                 bb.str(importedName(JU_ARRAYS)).eol(".equals(_value, other._value);");
             } else {
@@ -183,7 +183,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
                 .eol(" *")
                 .eol(" * @param source Source object")
                 .eol(" */")
-                .str("public ").str(type().simpleName()).str("(").str(importedSuper).str(" source)").oB()
+                .str("public ").str(archetype.simpleName()).str("(").str(importedSuper).str(" source)").oB()
                     .eol("super(source);");
             valueCheckers.appendInvocations(bb, javaType(), "getValue()");
             bb.cB();
@@ -420,7 +420,6 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
     }
 
     private BlockBuilder body(final boolean topLevel) {
-        final var archetype = archetype();
         final var simpleName = archetype.simpleName();
         final var valueType = archetype.valueType();
         final var importedType = importedName(valueType);
@@ -431,7 +430,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
             .str("public").str(topLevel ? " " : "static ").str("class ").str(simpleName).frg(implFragment(importedType))
                 .oB()
                 .eol("@java.io.Serial")
-                .str("private static final long serialVersionUID = ").jLong(archetype().serialVersionUID()).eS();
+                .str("private static final long serialVersionUID = ").jLong(archetype.serialVersionUID()).eS();
 
         archetype.typeDefinition().getUnits().ifPresent(units ->
             bb.str("public static final String UNITS = ").jString(units).eS());
