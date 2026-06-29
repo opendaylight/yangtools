@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -19,28 +20,22 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 
 @NonNullByDefault
-class YT1896Test {
+class SourceLinkageResolverTest {
     private static final Unqualified FOO = Unqualified.of("foo");
     private static final Unqualified FOO_SUB = Unqualified.of("foo-sub");
+    private static final Unqualified BAR = Unqualified.of("bar");
+    private static final Unqualified BAZ = Unqualified.of("baz");
 
-    // module bar {
-    //   namespace "urn:bar";
-    //   prefix bar;
-    // }
-    private static final SourceInfo.Module BAR_INFO = SourceInfo.Module.builder()
-        .setName(Unqualified.of("bar"))
-        .setNamespace(XMLNamespace.of("urn:bar"))
-        .setPrefix(Unqualified.of("bar"))
-        .build();
-    //  module foo {
-    //    namespace "urn:foo";
-    //    prefix foo;
+    // module foo {
+    //   namespace "urn:foo";
+    //   prefix foo;
     //
-    //    include foo-sub;
+    //   include foo-sub;
     // }
     private static final SourceInfo.Module FOO_INFO = SourceInfo.Module.builder()
         .setName(FOO)
@@ -48,11 +43,43 @@ class YT1896Test {
         .setPrefix(FOO)
         .addInclude(new Include(FOO_SUB, null))
         .build();
-
+    // submodule foo-sub {
+    //   belongs-to foo {
+    //     prefix foo;
+    //   }
+    // }
     private static final SourceInfo.Submodule FOO_SUB_INFO = SourceInfo.Submodule.builder()
         .setName(FOO_SUB)
         .setBelongsTo(new BelongsTo(FOO, FOO, null))
         .build();
+    // module bar {
+    //   namespace "urn:bar";
+    //   prefix bar;
+    // }
+    private static final SourceInfo.Module BAR_INFO = SourceInfo.Module.builder()
+        .setName(BAR)
+        .setNamespace(XMLNamespace.of("urn:bar"))
+        .setPrefix(BAR)
+        .build();
+    // module baz {
+    //   namespace "urn:baz";
+    //   prefix baz;
+    //   import foo {
+    //     prefix foo;
+    //   }
+    // }
+    private static final SourceInfo.Module BAZ_INFO = SourceInfo.Module.builder()
+        .setName(BAZ)
+        .setNamespace(XMLNamespace.of("urn:baz"))
+        .setPrefix(BAZ)
+        .addImport(new Import(FOO, FOO, null, null))
+        .build();
+
+    @Test
+    void emptySourcesResolvesToEmpty() throws Exception {
+        assertEquals(List.of(), SourceLinkageResolver.resolveInvolvedSources(Set.of(), Set.of()));
+        assertEquals(List.of(), SourceLinkageResolver.resolveInvolvedSources(Set.of(), Set.of(BAZ_INFO.newRef())));
+    }
 
     @Test
     @Disabled("FIXME: YANGTOOLS-1896: fix the issue and enable this test")
@@ -71,6 +98,7 @@ class YT1896Test {
         assertOnlyBarResolved(FOO_SUB_INFO);
     }
 
+    // FIXME: inline the above three test cases into a parameterized test once we can enable the test cases
     private static void assertOnlyBarResolved(final SourceInfo... libraryInfos) throws Exception {
         // main source: a module with no dependencies
         final var barRef = BAR_INFO.newRef();
@@ -80,5 +108,19 @@ class YT1896Test {
             Arrays.stream(libraryInfos).map(SourceInfo::newRef).collect(Collectors.toUnmodifiableSet()));
         assertEquals(1, resolved.size());
         assertSame(barRef, resolved.getFirst().infoRef());
+    }
+
+    @Test
+    void referencedWithSubmodule() throws Exception {
+        final var fooRef = FOO_INFO.newRef();
+        final var fooSubRef = FOO_SUB_INFO.newRef();
+        final var bazRef = BAZ_INFO.newRef();
+
+        final var resolved = SourceLinkageResolver.resolveInvolvedSources(Set.of(bazRef),
+            Set.of(fooSubRef, fooRef));
+        assertEquals(3, resolved.size());
+        assertSame(fooSubRef, resolved.get(0).infoRef());
+        assertSame(fooRef, resolved.get(1).infoRef());
+        assertSame(bazRef, resolved.get(2).infoRef());
     }
 }
