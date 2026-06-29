@@ -11,8 +11,9 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.base.VerifyException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
@@ -54,17 +55,81 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> {
         }
     }
 
+    /**
+     * A requirement to {@code belongs-to} a source.
+     */
+    @NonNullByDefault
+    sealed interface BelongsToRequirement permits UnresolvedBelongsTo, ResolvedDependency.ResolvedBelongsTo {
+        // Marker interface
+    }
+
+    /**
+     * A requirement to import a source.
+     */
+    @NonNullByDefault
+    sealed interface ImportRequirement permits UnresolvedImport, ResolvedDependency.ResolvedImport {
+        // Marker interface
+    }
+
+    /**
+     * A requirement to include a source.
+     */
+    @NonNullByDefault
+    sealed interface IncludeRequirement permits UnresolvedInclude, ResolvedDependency.ResolvedInclude {
+        // Marker interface
+    }
+
+    /**
+     * A {@link BelongsToRequirement} that is not resolved.
+     */
+    private static final class UnresolvedBelongsTo implements BelongsToRequirement {
+        static final UnresolvedBelongsTo INSTANCE = new UnresolvedBelongsTo();
+
+        private UnresolvedBelongsTo() {
+            // Hidden on purpose
+        }
+    }
+
+    /**
+     * An {@link ImportRequirement} that is not resolved.
+     */
+    private static final class UnresolvedImport implements ImportRequirement {
+        static final UnresolvedImport INSTANCE = new UnresolvedImport();
+
+        private UnresolvedImport() {
+            // Hidden on purpose
+        }
+    }
+
+    /**
+     * An {@link IncludeRequirement} that is not resolved.
+     */
+    private static final class UnresolvedInclude implements IncludeRequirement {
+        static final UnresolvedInclude INSTANCE = new UnresolvedInclude();
+
+        private UnresolvedInclude() {
+            // Hidden on purpose
+        }
+    }
+
     // these retain insertion order
-    private final ImmutableMap.Builder<Include, ResolvedSourceBuilder<?>> includes = new ImmutableMap.Builder<>();
-    private final ImmutableMap.Builder<Import, ResolvedSourceBuilder<?>> imports = new ImmutableMap.Builder<>();
+    private final LinkedHashMap<Import, ImportRequirement> imports = new LinkedHashMap<>();
+    private final LinkedHashMap<Include, IncludeRequirement> includes = new LinkedHashMap<>();
     private final @NonNull R infoRef;
 
-    private ResolvedBelongsTo belongsTo;
+    private BelongsToRequirement belongsTo = UnresolvedBelongsTo.INSTANCE;
     private ResolvedSourceInfo buildFinished;
 
     @NonNullByDefault
     private ResolvedSourceBuilder(final R infoRef) {
         this.infoRef = requireNonNull(infoRef);
+        final var info = infoRef.info();
+        for (var dep : info.imports()) {
+            imports.put(dep, UnresolvedImport.INSTANCE);
+        }
+        for (var dep : info.includes()) {
+            includes.put(dep, UnresolvedInclude.INSTANCE);
+        }
     }
 
     final @NonNull R infoRef() {
@@ -91,8 +156,14 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> {
      */
     @NonNullByDefault
     final void resolveImport(final Import dependency, final ResolvedSourceBuilder<?> importedModule) {
+        if (!(importedModule instanceof ForModule forModule)) {
+            throw new VerifyException("bad imported source " + importedModule);
+        }
         ensureBuilderOpened();
-        imports.put(dependency, importedModule);
+        final var ref = forModule.infoRef();
+        final var info = ref.info();
+        final var resolved = new ResolvedImport(dependency, ref.ref(), info.moduleName().getModule());
+        imports.replace(dependency, UnresolvedImport.INSTANCE, resolved);
     }
 
     /**

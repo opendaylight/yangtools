@@ -30,7 +30,7 @@ public sealed interface ResolvedDependency extends Immutable {
             BelongsTo dependency,
             // FIXME: SourceRef.ToModule
             SourceRef sourceRef,
-            QNameModule parentModuleQname) implements ResolvedDependency {
+            QNameModule parentModuleQname) implements ResolvedDependency, ResolvedSourceBuilder.BelongsToRequirement {
         public ResolvedBelongsTo {
             requireNonNull(dependency);
             requireNonNull(sourceRef);
@@ -45,7 +45,7 @@ public sealed interface ResolvedDependency extends Immutable {
             Import dependency,
             // FIXME: SourceRef.ToModule
             SourceRef sourceRef,
-            QNameModule qname) implements ResolvedDependency {
+            QNameModule qname) implements ResolvedDependency, ResolvedSourceBuilder.ImportRequirement {
         public ResolvedImport {
             requireNonNull(dependency);
             requireNonNull(sourceRef);
@@ -60,7 +60,7 @@ public sealed interface ResolvedDependency extends Immutable {
             Include dependency,
             // FIXME: SourceRef.ToSubmodule
             SourceRef sourceRef,
-            QNameModule qname) implements ResolvedDependency {
+            QNameModule qname) implements ResolvedDependency, ResolvedSourceBuilder.IncludeRequirement {
         public ResolvedInclude {
             requireNonNull(dependency);
             requireNonNull(sourceRef);
