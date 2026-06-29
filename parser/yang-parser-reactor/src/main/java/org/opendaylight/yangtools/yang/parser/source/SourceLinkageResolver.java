@@ -118,9 +118,26 @@ public final class SourceLinkageResolver {
         mapSources(mainSources);
         mapSources(libSources);
         mapSubmodulesToParents();
-        reuniteMainSubmodulesWithParents();
 
-        tryResolveDependencies();
+        // Ensures that every submodule in main-sources has it's parent module present among main-sources as well.
+        // We iterate by offset to enable expansion of the mainSources list
+        for (int i = 0; i < mainSources.size(); i++) {
+            if (mainSources.get(i).info() instanceof SourceInfo.Submodule sourceInfo) {
+                final var parentId = submoduleToParentMap.get(sourceInfo.sourceId());
+                final var parentCtx = allSources.get(parentId);
+
+                // Only add if not already in the list
+                if (!mainSources.contains(parentCtx)) {
+                    mainSources.add(parentCtx);
+                }
+            }
+        }
+
+        // process all currently-required sources
+        for (var mainSource : mainSources) {
+            tryResolveDependenciesOf(mainSource);
+        }
+
         tryResolveBelongsTo();
         tryResolveSiblings();
 
@@ -161,30 +178,6 @@ public final class SourceLinkageResolver {
             allSources.putIfAbsent(sourceId, source);
 
             allSourcesMapped.put(sourceId.name(), sourceId);
-        }
-    }
-
-    private void tryResolveDependencies() throws ReactorException {
-        for (var mainSource : mainSources) {
-            tryResolveDependenciesOf(mainSource);
-        }
-    }
-
-    /**
-     * Ensures that every submodule in main-sources has it's parent module present among main-sources as well.
-     */
-    private void reuniteMainSubmodulesWithParents() {
-        // use classic for loop to enable expansion of the mainSources list
-        for (int i = 0; i < mainSources.size(); i++) {
-            if (mainSources.get(i).info() instanceof SourceInfo.Submodule sourceInfo) {
-                final var parentId = submoduleToParentMap.get(sourceInfo.sourceId());
-                final var parentCtx = allSources.get(parentId);
-
-                // Only add if not already in the list
-                if (!mainSources.contains(parentCtx)) {
-                    mainSources.add(parentCtx);
-                }
-            }
         }
     }
 
