@@ -7,16 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.source;
 
-import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
@@ -33,14 +35,35 @@ import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.Resolved
  * Constructs a {@link ResolvedSourceInfo} of a Source containing the linkage details about imports, includes,
  * belongsTo.
  */
-abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> {
+abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements Mutable {
     /**
      * A {@link ResolvedSourceBuilder} for a module.
      */
+    @NonNullByDefault
     static final class ForModule extends ResolvedSourceBuilder<SourceInfoRef.OfModule> {
-        @NonNullByDefault
         ForModule(final SourceInfoRef.OfModule infoRef) {
             super(infoRef);
+        }
+
+        @Override
+        SourceInfo.Module sourceInfo() {
+            return infoRef().info();
+        }
+
+        @Override
+        QNameModule definingModule() {
+            return sourceInfo().moduleName().getModule();
+        }
+
+        @Override
+        void resolveBelongsTo(final BelongsTo dependency, final ForModule module) {
+            throw new VerifyException("Attempted to resolve belongs-to in non-submodule" + this);
+        }
+
+        @Override
+        ResolvedSourceInfo buildProduct(final List<ResolvedImport> resolvedImports,
+                final List<ResolvedInclude> resolveIncludes) {
+            return ResolvedSourceInfo.ofModule(infoRef(), resolvedImports, resolveIncludes);
         }
     }
 
@@ -48,19 +71,56 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> {
      * A {@link ResolvedSourceBuilder} for a submodule.
      */
     static final class ForSubmodule extends ResolvedSourceBuilder<SourceInfoRef.OfSubmodule> {
+        private @Nullable ResolvedBelongsTo belongsTo;
+
         @NonNullByDefault
         ForSubmodule(final SourceInfoRef.OfSubmodule infoRef) {
             super(infoRef);
         }
+
+        private @NonNull ResolvedBelongsTo belongsTo() {
+            final var local = belongsTo;
+            if (local == null) {
+                throw new VerifyException("Unresolved belongs-to in " + this);
+            }
+            return local;
+        }
+
+        @Override
+        SourceInfo.Submodule sourceInfo() {
+            return infoRef().info();
+        }
+
+        @Override
+        void resolveBelongsTo(final BelongsTo dependency, final ForModule module) {
+            final var local = belongsTo;
+            if (local != null) {
+                throw new VerifyException("Attempted to re-resolve belongs-to from " + local + " to " + module);
+            }
+            final var moduleRef = module.infoRef();
+            belongsTo = new ResolvedBelongsTo(dependency, moduleRef.ref(), moduleRef.info().moduleName().getModule());
+        }
+
+        @Override
+        QNameModule definingModule() {
+            // A submodule's QNameModule is composed of parent's namespace + its own Revision (or null if absent)
+            return QNameModule.ofRevision(belongsTo().parentModuleQname().namespace(), sourceInfo().latestRevision());
+        }
+
+        @Override
+        ResolvedSourceInfo buildProduct(final List<ResolvedImport> resolvedImports,
+                final List<ResolvedInclude> resolveIncludes) {
+            return ResolvedSourceInfo.ofSubmodule(infoRef(), belongsTo(), resolvedImports, resolveIncludes);
+        }
     }
 
     // these retain insertion order
-    private final ImmutableMap.Builder<Include, ResolvedSourceBuilder<?>> includes = new ImmutableMap.Builder<>();
-    private final ImmutableMap.Builder<Import, ResolvedSourceBuilder<?>> imports = new ImmutableMap.Builder<>();
+    private final ImmutableMap.Builder<Include, ResolvedSourceBuilder.ForSubmodule> includes =
+        new ImmutableMap.Builder<>();
+    private final ImmutableMap.Builder<Import, ResolvedSourceBuilder.ForModule> imports = new ImmutableMap.Builder<>();
     private final @NonNull R infoRef;
 
-    private ResolvedBelongsTo belongsTo;
-    private ResolvedSourceInfo buildFinished;
+    private @Nullable ResolvedSourceInfo product;
 
     @NonNullByDefault
     private ResolvedSourceBuilder(final R infoRef) {
@@ -75,9 +135,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> {
         return sourceInfo().sourceId();
     }
 
-    final @NonNull SourceInfo sourceInfo() {
-        return infoRef.info();
-    }
+    abstract @NonNull SourceInfo sourceInfo();
 
     final @NonNull YangVersion yangVersion() {
         return sourceInfo().yangVersion();
@@ -87,38 +145,52 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> {
      * Adds a {@link ResolvedSourceBuilder} of an imported module.
      *
      * @param dependency the {@link Import} being satisfied
-     * @param importedModule ResolvedSourceBuilder of the imported module.
+     * @param link ResolvedSourceBuilder of the imported module.
      */
     @NonNullByDefault
-    final void resolveImport(final Import dependency, final ResolvedSourceBuilder<?> importedModule) {
+    final void resolveImport(final Import dependency, final ResolvedSourceBuilder<?> link) {
+        if (!(link instanceof ForModule module)) {
+            throw new VerifyException(
+                "Attempted to resolve import " + dependency + " with non-module " + link);
+        }
         ensureBuilderOpened();
-        imports.put(dependency, importedModule);
+        imports.put(dependency, module);
     }
 
     /**
      * Adds a {@link ResolvedSourceBuilder} of an included submodule.
      *
      * @param dependency the {@link Include} dependency being satisfied
-     * @param includedSubmodule ResolvedSourceBuilder of the included submodule.
+     * @param link ResolvedSourceBuilder of the included submodule.
      */
     @NonNullByDefault
-    final void resolveInclude(final Include dependency, final ResolvedSourceBuilder<?> includedSubmodule) {
+    final void resolveInclude(final Include dependency, final ResolvedSourceBuilder<?> link) {
+        if (!(link instanceof ForSubmodule submodule)) {
+            throw new VerifyException(
+                "Attempted to resolve import " + dependency + " with non-submodule " + link);
+        }
         ensureBuilderOpened();
-        includes.put(dependency, includedSubmodule);
+        includes.put(dependency, submodule);
     }
 
     /**
      * Adds a {@link ResolvedSourceBuilder} of the parent module this submodule belongs to.
      *
      * @param dependency the {@link BelongsTo} being satistifed
-     * @param belongsToModule {@link ResolvedSourceBuilder} of the parent module.
+     * @param link {@link ResolvedSourceBuilder} of the parent module.
      */
     @NonNullByDefault
-    final void resolveBelongsTo(final BelongsTo dependency, final ResolvedSourceBuilder<?> belongsToModule) {
+    final void resolveBelongsTo(final BelongsTo dependency, final ResolvedSourceBuilder<?> link) {
+        if (!(link instanceof ForModule module)) {
+            throw new VerifyException(
+                "Attempted to resolve belongs-to " + dependency + " with non-module " + link);
+        }
         ensureBuilderOpened();
-        belongsTo = new ResolvedBelongsTo(dependency, belongsToModule.infoRef.ref(),
-            belongsToModule.resolveQnameModule());
+        resolveBelongsTo(dependency, module);
     }
+
+    @NonNullByDefault
+    abstract void resolveBelongsTo(BelongsTo dependency, ForModule module);
 
     /**
      * Builds a finalized {@link ResolvedSourceInfo} using the map of already-resolved sources.
@@ -130,25 +202,24 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> {
     final ResolvedSourceInfo build(final Map<SourceInfoRef, ResolvedSourceInfo> allResolved) {
         requireNonNull(allResolved);
 
-        final var finished = buildFinished;
-        if (finished != null) {
-            return finished;
+        final var local = product;
+        if (local != null) {
+            return local;
         }
-
-        // TODO: for submodules this should be the 'belongsTo' prefix
-        final var prefix = sourceInfo() instanceof SourceInfo.Module module ? module.prefix() : null;
-
-        final var result = new ResolvedSourceInfo(infoRef, resolveQnameModule(), resolveImports(allResolved),
-            resolveIncludes(), prefix, belongsTo);
-        buildFinished = result;
+        final var result = buildProduct(resolveImports(allResolved), resolveIncludes());
+        product = result;
         return result;
     }
 
-    private List<ResolvedImport> resolveImports(final Map<SourceInfoRef, ResolvedSourceInfo> allResolved) {
+    abstract @NonNull ResolvedSourceInfo buildProduct(@NonNull List<ResolvedImport> resolvedImports,
+        @NonNull List<ResolvedInclude> resolveIncludes);
+
+    private @NonNull List<ResolvedImport> resolveImports(final Map<SourceInfoRef, ResolvedSourceInfo> allResolved) {
         final var map = imports.build();
         final var result = new ArrayList<ResolvedImport>(map.size());
 
         for (var entry : map.entrySet()) {
+            final var requirement = entry.getKey();
             final var importedModule = entry.getValue();
 
             final var impContext = importedModule.infoRef();
@@ -158,36 +229,42 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> {
                 throw new IllegalStateException("Unresolved import %s of module %s".formatted(
                     importedModule.sourceId(), sourceId()));
             }
-            result.add(new ResolvedImport(entry.getKey(), resolved.infoRef().ref(), resolved.qnameModule()));
+
+            final var resolvedRef = resolved.infoRef();
+            if (!(resolvedRef instanceof SourceInfoRef.OfModule moduleRef)) {
+                throw new VerifyException(
+                    "Attempted to resolve import " + requirement + " with non-module " + resolvedRef);
+            }
+
+            result.add(new ResolvedImport(requirement, moduleRef.ref(), resolved.qnameModule()));
         }
 
         return result;
     }
 
-    private List<ResolvedInclude> resolveIncludes() {
+    private @NonNull List<ResolvedInclude> resolveIncludes() {
         final var map = includes.build();
         final var result = new ArrayList<ResolvedInclude>(map.size());
 
         for (var entry : map.entrySet()) {
             final var builder = entry.getValue();
-            result.add(new ResolvedInclude(entry.getKey(), builder.infoRef().ref(), builder.resolveQnameModule()));
+            result.add(new ResolvedInclude(entry.getKey(), builder.infoRef().ref(), builder.definingModule()));
         }
 
         return result;
     }
 
-    private QNameModule resolveQnameModule() {
-        final var sourceInfo = sourceInfo();
-        if (sourceInfo instanceof SourceInfo.Module moduleInfo) {
-            return QNameModule.ofRevision(moduleInfo.namespace(), moduleInfo.latestRevision());
-        }
-        // Submodule's QNameModule is composed of parents Namespace + its own Revision (or null, if absent)
-        verifyNotNull(belongsTo, "Cannot resolve QNameModule of a submodule %s. Missing belongs-to",
-            sourceInfo.sourceId());
-        return QNameModule.ofRevision(belongsTo.parentModuleQname().namespace(), sourceInfo.latestRevision());
-    }
+    abstract @NonNull QNameModule definingModule();
 
     private void ensureBuilderOpened() {
-        verify(buildFinished == null, "Builder for source %s was already closed", sourceId());
+        final var local = product;
+        if (local != null) {
+            throw new VerifyException("Attempted to modify " + this + " with product " + local);
+        }
+    }
+
+    @Override
+    public final String toString() {
+        return MoreObjects.toStringHelper(this).add("ref", infoRef).toString();
     }
 }
