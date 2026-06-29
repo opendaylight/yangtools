@@ -52,7 +52,7 @@ public final class SourceLinkageResolver {
     /**
      * Comparator to keep groups of modules with the same name ordered by their revision (latest first).
      */
-    private static final Comparator<SourceIdentifier> BY_REVISION = Comparator.comparing(
+    private static final Comparator<SourceIdentifier> SI_BY_REVISION = Comparator.comparing(
         SourceIdentifier::revision,
         Comparator.nullsLast(Revision::compareTo).reversed()
     );
@@ -67,13 +67,13 @@ public final class SourceLinkageResolver {
      * them ordered by Revision.
      */
     private final SortedSetMultimap<Unqualified, SourceIdentifier> allSourcesMapped =
-        Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(BY_REVISION));
+        Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(SI_BY_REVISION));
 
     /**
      * Map of involved sources with the same name.
      */
     private final SortedSetMultimap<Unqualified, SourceIdentifier> involvedSourcesGrouped =
-        Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(BY_REVISION));
+        Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(SI_BY_REVISION));
 
     /**
      * Map of involved sources ordered according to the resolution order (LinkedHashMap keeps the insertion order).
