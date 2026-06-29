@@ -33,33 +33,53 @@ import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.Resolved
  * Constructs a {@link ResolvedSourceInfo} of a Source containing the linkage details about imports, includes,
  * belongsTo.
  */
-final class ResolvedSourceBuilder {
+abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> {
+    /**
+     * A {@link ResolvedSourceBuilder} for a module.
+     */
+    static final class ForModule extends ResolvedSourceBuilder<SourceInfoRef.OfModule> {
+        @NonNullByDefault
+        ForModule(final SourceInfoRef.OfModule infoRef) {
+            super(infoRef);
+        }
+    }
+
+    /**
+     * A {@link ResolvedSourceBuilder} for a submodule.
+     */
+    static final class ForSubmodule extends ResolvedSourceBuilder<SourceInfoRef.OfSubmodule> {
+        @NonNullByDefault
+        ForSubmodule(final SourceInfoRef.OfSubmodule infoRef) {
+            super(infoRef);
+        }
+    }
+
     // these retain insertion order
-    private final ImmutableMap.Builder<Include, ResolvedSourceBuilder> includes = new ImmutableMap.Builder<>();
-    private final ImmutableMap.Builder<Import, ResolvedSourceBuilder> imports = new ImmutableMap.Builder<>();
-    private final @NonNull SourceInfoRef infoRef;
+    private final ImmutableMap.Builder<Include, ResolvedSourceBuilder<?>> includes = new ImmutableMap.Builder<>();
+    private final ImmutableMap.Builder<Import, ResolvedSourceBuilder<?>> imports = new ImmutableMap.Builder<>();
+    private final @NonNull R infoRef;
 
     private ResolvedBelongsTo belongsTo;
     private ResolvedSourceInfo buildFinished;
 
     @NonNullByDefault
-    ResolvedSourceBuilder(final SourceInfoRef infoRef) {
+    private ResolvedSourceBuilder(final R infoRef) {
         this.infoRef = requireNonNull(infoRef);
     }
 
-    @NonNull SourceInfoRef infoRef() {
+    final @NonNull R infoRef() {
         return infoRef;
     }
 
-    @NonNull SourceIdentifier sourceId() {
+    final @NonNull SourceIdentifier sourceId() {
         return sourceInfo().sourceId();
     }
 
-    @NonNull SourceInfo sourceInfo() {
+    final @NonNull SourceInfo sourceInfo() {
         return infoRef.info();
     }
 
-    @NonNull YangVersion yangVersion() {
+    final @NonNull YangVersion yangVersion() {
         return sourceInfo().yangVersion();
     }
 
@@ -70,7 +90,7 @@ final class ResolvedSourceBuilder {
      * @param importedModule ResolvedSourceBuilder of the imported module.
      */
     @NonNullByDefault
-    void resolveImport(final Import dependency, final ResolvedSourceBuilder importedModule) {
+    final void resolveImport(final Import dependency, final ResolvedSourceBuilder<?> importedModule) {
         ensureBuilderOpened();
         imports.put(dependency, importedModule);
     }
@@ -82,7 +102,7 @@ final class ResolvedSourceBuilder {
      * @param includedSubmodule ResolvedSourceBuilder of the included submodule.
      */
     @NonNullByDefault
-    void resolveInclude(final Include dependency, final ResolvedSourceBuilder includedSubmodule) {
+    final void resolveInclude(final Include dependency, final ResolvedSourceBuilder<?> includedSubmodule) {
         ensureBuilderOpened();
         includes.put(dependency, includedSubmodule);
     }
@@ -94,7 +114,7 @@ final class ResolvedSourceBuilder {
      * @param belongsToModule {@link ResolvedSourceBuilder} of the parent module.
      */
     @NonNullByDefault
-    void resolveBelongsTo(final BelongsTo dependency, final ResolvedSourceBuilder belongsToModule) {
+    final void resolveBelongsTo(final BelongsTo dependency, final ResolvedSourceBuilder<?> belongsToModule) {
         ensureBuilderOpened();
         belongsTo = new ResolvedBelongsTo(dependency, belongsToModule.infoRef.ref(),
             belongsToModule.resolveQnameModule());
@@ -107,7 +127,7 @@ final class ResolvedSourceBuilder {
      * @return ResolvedSourceInfo of this source
      */
     @NonNullByDefault
-    ResolvedSourceInfo build(final Map<SourceInfoRef, ResolvedSourceInfo> allResolved) {
+    final ResolvedSourceInfo build(final Map<SourceInfoRef, ResolvedSourceInfo> allResolved) {
         requireNonNull(allResolved);
 
         final var finished = buildFinished;
