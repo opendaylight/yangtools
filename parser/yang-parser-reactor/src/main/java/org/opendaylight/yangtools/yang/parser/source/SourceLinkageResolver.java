@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.source;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SortedSetMultimap;
 import java.util.ArrayDeque;
@@ -78,7 +79,7 @@ public final class SourceLinkageResolver {
     /**
      * Map of involved sources ordered according to the resolution order (LinkedHashMap keeps the insertion order).
      */
-    private final Map<SourceIdentifier, ResolvedSourceBuilder> involvedSourcesMap = new LinkedHashMap<>();
+    private final Map<SourceIdentifier, ResolvedSourceBuilder<?>> involvedSourcesMap = new LinkedHashMap<>();
 
     private final Map<SourceIdentifier, SourceIdentifier> submoduleToParentMap = new HashMap<>();
 
@@ -86,7 +87,7 @@ public final class SourceLinkageResolver {
      * Map of submodules which include other submodules of the same parent module.
      */
     // FIXME: would a HashTable work better?
-    private final Map<ResolvedSourceBuilder, Map<Include, SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
+    private final Map<ResolvedSourceBuilder<?>, Map<Include, SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
 
     @NonNullByDefault
     private SourceLinkageResolver(final Set<SourceInfoRef> withMainSources, final Set<SourceInfoRef> withLibSources) {
@@ -263,8 +264,17 @@ public final class SourceLinkageResolver {
             }
 
             if (allResolved) {
+                // FIXME: improve the population logic here: the nested lookup and population of
+                //        'involvedSourcesGrouped' is quite counter-productive. Furthermore, if we could operate
+                //        directly on current being SourceInfoRef, or better, the builder itself, we should be able to
+                //        reduce some of the trouble.
                 final var newResolved = involvedSourcesMap.computeIfAbsent(current, key -> {
-                    final var builder = new ResolvedSourceBuilder(allSources.get(key));
+                    final var currentSource = allSources.get(key);
+                    final var builder = switch (currentSource) {
+                        case null -> throw new VerifyException("no source for " + key);
+                        case SourceInfoRef.OfModule infoRef -> new ResolvedSourceBuilder.ForModule(infoRef);
+                        case SourceInfoRef.OfSubmodule infoRef -> new ResolvedSourceBuilder.ForSubmodule(infoRef);
+                    };
                     involvedSourcesGrouped.put(key.name(), key);
                     return builder;
                 });
