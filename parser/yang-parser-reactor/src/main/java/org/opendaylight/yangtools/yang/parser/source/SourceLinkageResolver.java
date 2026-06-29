@@ -165,7 +165,7 @@ public final class SourceLinkageResolver {
 
     private void tryResolveDependencies() throws ReactorException {
         for (var mainSource : mainSources) {
-            tryResolveDependenciesOf(mainSource.info().sourceId());
+            tryResolveDependenciesOf(mainSource);
         }
     }
 
@@ -191,7 +191,8 @@ public final class SourceLinkageResolver {
      * Resolves Imports and non-sibling includes. Includes of siblings are only identified here and will be resolved
      * separately.
      */
-    private void tryResolveDependenciesOf(final SourceIdentifier rootId) throws SomeModifiersUnresolvedException {
+    private void tryResolveDependenciesOf(final SourceInfoRef root) throws SomeModifiersUnresolvedException {
+        final var rootId = root.info().sourceId();
         if (involvedSourcesMap.containsKey(rootId)) {
             return;
         }
