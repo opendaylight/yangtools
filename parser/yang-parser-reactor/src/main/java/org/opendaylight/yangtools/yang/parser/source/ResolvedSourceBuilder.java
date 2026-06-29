@@ -66,43 +66,39 @@ final class ResolvedSourceBuilder {
     /**
      * Adds a {@link ResolvedSourceBuilder} of an imported module.
      *
-     * @param dependency the import dependency being satisfied
+     * @param dependency the {@link Import} being satisfied
      * @param importedModule ResolvedSourceBuilder of the imported module.
-     * @return this instance.
      */
     @NonNullByDefault
-    ResolvedSourceBuilder resolveImport(final Import dependency, final ResolvedSourceBuilder importedModule) {
+    void resolveImport(final Import dependency, final ResolvedSourceBuilder importedModule) {
         ensureBuilderOpened();
         imports.put(dependency, importedModule);
-        return this;
     }
 
     /**
      * Adds a {@link ResolvedSourceBuilder} of an included submodule.
      *
+     * @param dependency the {@link Include} dependency being satisfied
      * @param includedSubmodule ResolvedSourceBuilder of the included submodule.
-     * @return this instance.
      */
     @NonNullByDefault
-    ResolvedSourceBuilder resolveInclude(final Include dependency, final ResolvedSourceBuilder includedSubmodule) {
+    void resolveInclude(final Include dependency, final ResolvedSourceBuilder includedSubmodule) {
         ensureBuilderOpened();
         includes.put(dependency, includedSubmodule);
-        return this;
     }
 
     /**
      * Adds a {@link ResolvedSourceBuilder} of the parent module this submodule belongs to.
      *
-     * @param dependency the {@link BelongsTo}
+     * @param dependency the {@link BelongsTo} being satistifed
      * @param belongsToModule {@link ResolvedSourceBuilder} of the parent module.
      * @return this instance.
      */
     @NonNullByDefault
-    ResolvedSourceBuilder resolveBelongsTo(final BelongsTo dependency, final ResolvedSourceBuilder belongsToModule) {
+    void resolveBelongsTo(final BelongsTo dependency, final ResolvedSourceBuilder belongsToModule) {
         ensureBuilderOpened();
         belongsTo = new ResolvedBelongsTo(dependency, belongsToModule.infoRef.ref(),
             belongsToModule.resolveQnameModule());
-        return this;
     }
 
     /**
