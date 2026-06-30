@@ -219,8 +219,29 @@ public final class SourceLinkageResolver {
             resolvedSubmodule.resolveBelongsTo(belongsTo, resolvedParent);
         }
 
-        tryResolveSiblings();
+        // all other dependencies have been resolved: it is now time to deal with circular includes among submodules
+        final var siblingEntries = unresolvedSiblingsMap.entrySet().iterator();
+        while (siblingEntries.hasNext()) {
+            final var siblingEntry = siblingEntries.next();
+            final var resolvedSource = siblingEntry.getKey();
+            final var siblings = siblingEntry.getValue();
 
+            for (var includeEntry : siblings.entrySet()) {
+                final var sibling = includeEntry.getValue();
+                final var resolvedSibling = involvedSourcesMap.get(sibling);
+                if (resolvedSibling == null) {
+                    final var sourceId = resolvedSource.sourceId();
+                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                        new InferenceException(sourceId.toReference(),
+                            "Included submodule %s of module %s was not resolved", sibling, sourceId));
+                }
+                resolvedSource.resolveInclude(includeEntry.getKey(), resolvedSibling);
+            }
+            siblingEntries.remove();
+        }
+
+        // we are all done: build the result
+        // FIXME: this intermediate map should not be needed
         final var allResolved =
             LinkedHashMap.<SourceInfoRef, ResolvedSourceInfo>newLinkedHashMap(involvedSourcesMap.size());
         for (var involvedSource : involvedSourcesMap.values()) {
@@ -431,34 +452,6 @@ public final class SourceLinkageResolver {
         }
 
         return CompleteResolution.INSTANCE;
-    }
-
-    /**
-     * Includes of the same parent module can form circular dependencies. That's why we need
-     * to process them differently - after all other dependencies have been resolved.
-     *
-     * @throws InferenceException if an included module is not found
-     */
-    private void tryResolveSiblings() {
-        final var iterator = unresolvedSiblingsMap.entrySet().iterator();
-
-        while (iterator.hasNext()) {
-            final var entry = iterator.next();
-            final var resolvedSource = entry.getKey();
-            final var siblings = entry.getValue();
-
-            for (var includeEntry : siblings.entrySet()) {
-                final var sibling = includeEntry.getValue();
-                final var resolvedSibling = involvedSourcesMap.get(sibling);
-                if (resolvedSibling == null) {
-                    final var sourceId = resolvedSource.sourceId();
-                    throw new InferenceException(sourceId.toReference(),
-                        "Included submodule %s of module %s was not resolved", sibling, sourceId);
-                }
-                resolvedSource.resolveInclude(includeEntry.getKey(), resolvedSibling);
-            }
-            iterator.remove();
-        }
     }
 
     private Include asIncludedSibling(final SourceIdentifier current, final SourceDependency dependency,
