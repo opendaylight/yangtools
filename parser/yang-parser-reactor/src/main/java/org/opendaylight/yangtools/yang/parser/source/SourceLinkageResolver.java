@@ -191,7 +191,34 @@ public final class SourceLinkageResolver {
             tryResolveDependenciesOf(mainSource);
         }
 
-        tryResolveBelongsTo();
+        // iterate of submodules and link each of them to its resolved parent
+        for (var entry : submoduleToParentMap.entrySet()) {
+            final var submoduleId = entry.getKey();
+            final var parentId = entry.getValue();
+
+            final var resolvedSubmodule = involvedSourcesMap.get(submoduleId);
+            if (resolvedSubmodule == null) {
+                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, submoduleId,
+                    new InferenceException(submoduleId.toReference(), "Submodule %s was not resolved", submoduleId));
+            }
+
+            // FIXME: ensure this through type safety
+            final var submoduleInfo = (SourceInfo.Submodule) resolvedSubmodule.sourceInfo();
+            final var resolvedParent = involvedSourcesMap.get(parentId);
+            if (resolvedParent == null) {
+                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, submoduleId,
+                    new InferenceException(submoduleId.toReference(),
+                        "Parent module %s of submodule %s was not resolved", parentId, submoduleId));
+            }
+
+            // double-check that the parent does satisfy this belongs-to
+            final var belongsTo = submoduleInfo.belongsTo();
+            // FIXME: better message and/or better exception
+            verify(belongsTo.isSatisfiedBy(parentId));
+
+            resolvedSubmodule.resolveBelongsTo(belongsTo, resolvedParent);
+        }
+
         tryResolveSiblings();
 
         final var allResolved =
@@ -408,41 +435,10 @@ public final class SourceLinkageResolver {
     }
 
     /**
-     * Iterates over submodules and links them to their resolved parents. Throws exception if the parent isn't found
-     * among the resolved sources.
-     *
-     * @throws InferenceException if a resolution error occurs
-     */
-    private void tryResolveBelongsTo() {
-        for (var entry : submoduleToParentMap.entrySet()) {
-            final var submoduleId = entry.getKey();
-            final var parentId = entry.getValue();
-
-            final var resolvedSubmodule = involvedSourcesMap.get(submoduleId);
-            if (resolvedSubmodule == null) {
-                throw new InferenceException(submoduleId.toReference(), "Submodule %s was not resolved", submoduleId);
-            }
-
-            // FIXME: ensure this through type safety
-            final var submoduleInfo = (SourceInfo.Submodule) resolvedSubmodule.sourceInfo();
-            final var resolvedParent = involvedSourcesMap.get(parentId);
-            if (resolvedParent == null) {
-                throw new InferenceException(submoduleId.toReference(),
-                    "Parent module %s of submodule %s was not resolved", parentId, submoduleId);
-            }
-
-            // FIXME: better message and/or better exception
-            //double-check that the parent does satisfy this belongs-to
-            final var belongsTo = submoduleInfo.belongsTo();
-            verify(belongsTo.isSatisfiedBy(parentId));
-
-            resolvedSubmodule.resolveBelongsTo(belongsTo, resolvedParent);
-        }
-    }
-
-    /**
      * Includes of the same parent module can form circular dependencies. That's why we need
      * to process them differently - after all other dependencies have been resolved.
+     *
+     * @throws InferenceException if an included module is not found
      */
     private void tryResolveSiblings() {
         final var iterator = unresolvedSiblingsMap.entrySet().iterator();
