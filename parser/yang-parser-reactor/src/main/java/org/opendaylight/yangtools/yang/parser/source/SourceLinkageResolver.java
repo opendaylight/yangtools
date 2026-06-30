@@ -144,10 +144,8 @@ public final class SourceLinkageResolver {
         final var allResolved =
             LinkedHashMap.<SourceInfoRef, ResolvedSourceInfo>newLinkedHashMap(involvedSourcesMap.size());
         for (var involvedSource : involvedSourcesMap.values()) {
-            final var fullyResolved = involvedSource.build(allResolved);
-            allResolved.put(involvedSource.infoRef(), fullyResolved);
+            allResolved.put(involvedSource.infoRef(), involvedSource.build());
         }
-
         return List.copyOf(allResolved.values());
     }
 

@@ -7,14 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.source;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
-import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -114,10 +116,9 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         }
     }
 
-    // these retain insertion order
-    private final ImmutableMap.Builder<Include, ResolvedSourceBuilder.ForSubmodule> includes =
-        new ImmutableMap.Builder<>();
-    private final ImmutableMap.Builder<Import, ResolvedSourceBuilder.ForModule> imports = new ImmutableMap.Builder<>();
+    // these retain insertion order, but also allow nulls, which we use to validate resolution attempts
+    private final @NonNull LinkedHashMap<@NonNull Import, ResolvedSourceBuilder.@Nullable ForModule> imports;
+    private final @NonNull LinkedHashMap<@NonNull Include, ResolvedSourceBuilder.@Nullable ForSubmodule> includes;
     private final @NonNull R infoRef;
 
     private @Nullable ResolvedSourceInfo product;
@@ -125,6 +126,10 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
     @NonNullByDefault
     private ResolvedSourceBuilder(final R infoRef) {
         this.infoRef = requireNonNull(infoRef);
+
+        final var info = infoRef.info();
+        imports = prepareDependencies(info.imports());
+        includes = prepareDependencies(info.includes());
     }
 
     final @NonNull R infoRef() {
@@ -154,7 +159,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
                 "Attempted to resolve import " + dependency + " with non-module " + link);
         }
         ensureBuilderOpened();
-        imports.put(dependency, module);
+        resolveDependency(imports, dependency, module);
     }
 
     /**
@@ -170,7 +175,22 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
                 "Attempted to resolve import " + dependency + " with non-submodule " + link);
         }
         ensureBuilderOpened();
-        includes.put(dependency, submodule);
+        resolveDependency(includes, dependency, submodule);
+    }
+
+    private static <K, V> void resolveDependency(final @NonNull LinkedHashMap<K, @Nullable V> map, final @NonNull K key,
+            final @NonNull V value) {
+        final var requirement = requireNonNull(key);
+        final var resolved = requireNonNull(value);
+        if (map.replace(requirement, null, resolved)) {
+            // replace succeeded: this is the first resolution
+            return;
+        }
+
+        // replace failed: the key is either non-existent or has already been resolved
+        final var prev = map.get(requirement);
+        throw prev == null ? new VerifyException("Attempted to resolve unspecified " + requirement)
+            : new VerifyException("Attempted to override import " + requirement + " from " + prev + " to " + resolved);
     }
 
     /**
@@ -195,64 +215,25 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
     /**
      * Builds a finalized {@link ResolvedSourceInfo} using the map of already-resolved sources.
      *
-     * @param allResolved all the sources which were already resolved
      * @return ResolvedSourceInfo of this source
      */
     @NonNullByDefault
-    final ResolvedSourceInfo build(final Map<SourceInfoRef, ResolvedSourceInfo> allResolved) {
-        requireNonNull(allResolved);
-
+    final ResolvedSourceInfo build() {
         final var local = product;
         if (local != null) {
             return local;
         }
-        final var result = buildProduct(resolveImports(allResolved), resolveIncludes());
+        final var result = buildProduct(
+            resolveDependencies(imports, (requirement, builder) ->
+                new ResolvedImport(requirement, builder.infoRef().ref(), builder.definingModule())),
+            resolveDependencies(includes, (requirement, builder) ->
+                new ResolvedInclude(requirement, builder.infoRef().ref(), builder.definingModule())));
         product = result;
         return result;
     }
 
     abstract @NonNull ResolvedSourceInfo buildProduct(@NonNull List<ResolvedImport> resolvedImports,
         @NonNull List<ResolvedInclude> resolveIncludes);
-
-    private @NonNull List<ResolvedImport> resolveImports(final Map<SourceInfoRef, ResolvedSourceInfo> allResolved) {
-        final var map = imports.build();
-        final var result = new ArrayList<ResolvedImport>(map.size());
-
-        for (var entry : map.entrySet()) {
-            final var requirement = entry.getKey();
-            final var importedModule = entry.getValue();
-
-            final var impContext = importedModule.infoRef();
-            final var resolved = allResolved.get(impContext);
-            if (resolved == null) {
-                // FIXME: better exception
-                throw new IllegalStateException("Unresolved import %s of module %s".formatted(
-                    importedModule.sourceId(), sourceId()));
-            }
-
-            final var resolvedRef = resolved.infoRef();
-            if (!(resolvedRef instanceof SourceInfoRef.OfModule moduleRef)) {
-                throw new VerifyException(
-                    "Attempted to resolve import " + requirement + " with non-module " + resolvedRef);
-            }
-
-            result.add(new ResolvedImport(requirement, moduleRef.ref(), resolved.qnameModule()));
-        }
-
-        return result;
-    }
-
-    private @NonNull List<ResolvedInclude> resolveIncludes() {
-        final var map = includes.build();
-        final var result = new ArrayList<ResolvedInclude>(map.size());
-
-        for (var entry : map.entrySet()) {
-            final var builder = entry.getValue();
-            result.add(new ResolvedInclude(entry.getKey(), builder.infoRef().ref(), builder.definingModule()));
-        }
-
-        return result;
-    }
 
     abstract @NonNull QNameModule definingModule();
 
@@ -266,5 +247,28 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
     @Override
     public final String toString() {
         return MoreObjects.toStringHelper(this).add("ref", infoRef).toString();
+    }
+
+    private static <K, V> @NonNull LinkedHashMap<@NonNull K, @Nullable V> prepareDependencies(
+            final @NonNull Set<@NonNull K> keys) {
+        final var ret = LinkedHashMap.<@NonNull K, @Nullable V>newLinkedHashMap(keys.size());
+        for (var key : keys) {
+            ret.put(requireNonNull(key), null);
+        }
+        return ret;
+    }
+
+    private static <K, V, R> @NonNull List<R> resolveDependencies(final LinkedHashMap<@NonNull K, @Nullable V> map,
+            final @NonNull BiFunction<@NonNull K, @NonNull V, @NonNull R> function) {
+        final var tmp = new ArrayList<R>(map.size());
+        for (var entry : map.entrySet()) {
+            final var dependency = entry.getKey();
+            final var resolved = entry.getValue();
+            if (resolved == null) {
+                throw new VerifyException("Unresolved dependency " + dependency);
+            }
+            tmp.add(verifyNotNull(function.apply(dependency, resolved)));
+        }
+        return List.copyOf(tmp);
     }
 }
