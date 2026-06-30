@@ -202,26 +202,17 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
 
             // the module the source belongs to
             final var sourceInfo = infoRef.info();
-            final QNameModule definingModule;
-            switch (sourceInfo) {
-                case SourceInfo.Module info -> {
-                    definingModule = resolvedInfo.qnameModule();
-                    // Reject any source whose namespace would collide with YIN and could define constructs which
-                    // conflict with YANG specification: 'typedef uint8', 'extension list' and similar
-                    if (YangConstants.RFC6020_YIN_NAMESPACE.equals(definingModule.namespace())) {
-                        // FIXME: better exception
-                        throw new IllegalArgumentException(
-                            "Source " + info.sourceId() + " resolves to reserved namespace "
-                                + YangConstants.RFC6020_YIN_NAMESPACE);
-                    }
+            final var definingModule = resolvedInfo.definingModule();
+            putPrefix(prefixToModule, resolvedInfo.prefix(), definingModule);
 
-                    putPrefix(prefixToModule, info.prefix(), definingModule);
-                }
-                case SourceInfo.Submodule info -> {
-                    // FIXME: missing @NonNull: this should be ensured through class hierarchy
-                    final var belongsTo = resolvedInfo.belongsTo();
-                    definingModule = belongsTo.parentModuleQname();
-                    putPrefix(prefixToModule, belongsTo.dependency().prefix(), definingModule);
+            if (sourceInfo instanceof SourceInfo.Module) {
+                // Reject any source whose namespace would collide with YIN and could define constructs which conflict
+                // with YANG specification: 'typedef uint8', 'extension list' and similar
+                if (YangConstants.RFC6020_YIN_NAMESPACE.equals(definingModule.namespace())) {
+                    // FIXME: better exception
+                    throw new IllegalArgumentException(
+                        "Source " + sourceInfo.sourceId() + " resolves to reserved namespace "
+                            + YangConstants.RFC6020_YIN_NAMESPACE);
                 }
             }
 
@@ -250,10 +241,9 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
                 .collect(Collectors.toUnmodifiableSet());
 
             // belongs-to applies only to submodules
-            final var belongsTo = resolvedInfo.belongsTo();
-            if (belongsTo != null) {
-                source.setLinkage(importedModules, includedSubmodules, belongsTo.dependency().prefix(),
-                    contextFor(linkedSources, belongsTo.sourceRef()));
+            if (resolvedInfo instanceof ResolvedSourceInfo.Submodule resolvedSubmodule) {
+                source.setLinkage(importedModules, includedSubmodules, resolvedSubmodule.prefix(),
+                    contextFor(linkedSources, resolvedSubmodule.belongsToRef()));
                 continue;
             }
 
