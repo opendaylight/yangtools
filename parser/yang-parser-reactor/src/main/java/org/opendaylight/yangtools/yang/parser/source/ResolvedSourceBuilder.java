@@ -34,12 +34,23 @@ import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.Resolved
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
 
 /**
- * Constructs a {@link ResolvedSourceInfo} of a Source containing the linkage details about imports, includes,
- * belongsTo.
+ * The state required to construct a {@link ResolvedSourceInfo} for a particular {@link SourceInfoRef}. There should be
+ * exactly one instance of this class for each {@link SourceInfoRef} in a particular {@link SourceLinkageResolver}
+ * instance.
+ *
+ * <p>This class is marked as {@link Mutable} because it has internal state, but once {@link #buildProduct(List, List)}
+ * succeeds, it really becomes immutable.
+ *
+ * <p>This class is an implementation detail of {@link SourceLinkageResolver} and is expected to be used in the context
+ * of a single thread executing {@link SourceLinkageResolver#resolveInvolvedSources(Set, Set)}.
  */
+// TODO: this is not exactly a builder, as the build() product is explicitly retained and we update the state tracked
+//       here as we resolve inter-dependencies. A better name would be 'SourceLinkage' or something similar.
+// TODO: reconsider subclass naming: we are always referring to the types in qualified fashion, so SourceLinkage.Module
+//       should work nicely while taking up fewer characters.
 abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements Mutable {
     /**
-     * A {@link ResolvedSourceBuilder} for a module.
+     * A {@link ResolvedSourceBuilder} for a YANG {@code module}.
      */
     @NonNullByDefault
     static final class ForModule extends ResolvedSourceBuilder<SourceInfoRef.OfModule> {
@@ -70,9 +81,12 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
     }
 
     /**
-     * A {@link ResolvedSourceBuilder} for a submodule.
+     * A {@link ResolvedSourceBuilder} for a YANG {@code submodule}.
      */
     static final class ForSubmodule extends ResolvedSourceBuilder<SourceInfoRef.OfSubmodule> {
+        // FIXME: internal state here: we go from unresolved -> resolvedBelongsTo -> built, and we would like to throw
+        //        away internal state when the product is built -- so that definingModule() has either bounded validity
+        //        time or seamlessly switches to using ResolvedSourceInfo.definingModule()
         private @Nullable ResolvedBelongsTo belongsTo;
 
         @NonNullByDefault
@@ -116,11 +130,25 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         }
     }
 
-    // these retain insertion order, but also allow nulls, which we use to validate resolution attempts
-    private final @NonNull LinkedHashMap<@NonNull Import, ResolvedSourceBuilder.@Nullable ForModule> imports;
-    private final @NonNull LinkedHashMap<@NonNull Include, ResolvedSourceBuilder.@Nullable ForSubmodule> includes;
+    // the SourceInfoRef this object is attempting to resolve
     private final @NonNull R infoRef;
 
+    // Internal tracking of dependencies:
+    //
+    // These maps have iteration order matching the corresponding SourceInfo dependency iteration order and initially
+    // contain null for each dependency. This allows us to enforce that each dependency is resolved exactly once before
+    // becoming satisfied as well as detect attempts to resolve the wrong dependency.
+    //
+    // A further boon is that to know which dependencies are unsatisfied, we just do
+    // Maps.filterValues(map, Objects::isNull). We can actually have that view materialized, as the maps are guaranteed
+    // to not change structurally after construction and thus they can be safely iterated over without risking a CME.
+    //
+    // FIXME: we would like to blow up these maps when product becomes non-null -- but that also includes
+    //        ForSubmodule.belongsTo so that change will probably force some amount of restructuring
+    private final @NonNull LinkedHashMap<@NonNull Import, ResolvedSourceBuilder.@Nullable ForModule> imports;
+    private final @NonNull LinkedHashMap<@NonNull Include, ResolvedSourceBuilder.@Nullable ForSubmodule> includes;
+
+    // the single object this class produces on each invocation of build()
     private @Nullable ResolvedSourceInfo product;
 
     @NonNullByDefault
