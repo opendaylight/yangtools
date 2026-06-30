@@ -54,7 +54,27 @@ final class SourceLinkageBuilder {
     }
 
     Map<ResolvedSourceInfo, StatementStreamSource.Factory> build() throws ReactorException, SourceSyntaxException {
-        // FIXME: do not materialize libSources until needed
+        // FIXME: do not materialize libSources until needed, but that needs to be subject to two things:
+        //        - an incremental build protocol as outlined in the TODO near
+        //             SourceLinkageResolver.resolveInvolvedSources
+        //        - policy decision on how to approach selection from libSources with respect to error handling
+        //
+        //         The error handling impact is best explained in terms of an example. Imagine we have
+        //           - an import-with-revision not satisfied by anything in mainSources
+        //           - libSources containing (disguised) conflicting sources
+        //         How far do we process libSources? We can pick at least from:
+        //           - search until a match is found, leaving the libSource error hidden, with the error behaviour being
+        //             defined in terms of which libSource we encounter first
+        //           - we can process all libSources and report the libSources error
+        //         The former leads to better performance, the latter leads to better consistency.
+        //
+        //         Also note that ReactorSource typically has at least a guess at what SourceIdentifier it holds, which
+        //         can be a differentiating factor:
+        //           - search consider only matching ReactorSources for initial resolution, and
+        //           - if we fail to find a source, we fully expand the library and report all errors, including
+        //             previously-missed conflicts
+        //
+        //         I think the above should sufficiently define the protocol so that error reporting is consistent.
         final var libReactorSources = HashSet.<ReactorSource>newHashSet(libSources.size());
         for (final var buildSource : libSources) {
             final ReactorSource reactorSource;
