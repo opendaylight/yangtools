@@ -9,13 +9,15 @@ package org.opendaylight.yangtools.yang.parser.source;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.VerifyException;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedBelongsTo;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
@@ -23,35 +25,139 @@ import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.Resolved
 /**
  * DTO containing all the linkage information which needs to be supplied to a RootStatementContext. This info will be
  * used to construct linkage substatements like imports, includes, belongs-to etc...
- */
-// FIXME: specialize for module/submodule
-public record ResolvedSourceInfo(
-        @NonNull SourceInfoRef infoRef,
-        // TODO: rename to 'definingModule'?
-        @NonNull QNameModule qnameModule,
-        @NonNull List<ResolvedImport> imports,
-        @NonNull List<ResolvedInclude> includes,
-        @NonNull Unqualified prefix,
-        @Nullable ResolvedBelongsTo belongsTo) {
-    @NonNullByDefault
-    public ResolvedSourceInfo {
-        requireNonNull(infoRef);
-        requireNonNull(qnameModule);
-        imports = List.copyOf(imports);
-        includes = List.copyOf(includes);
-        requireNonNull(prefix);
+*/
+@NonNullByDefault
+public abstract sealed class ResolvedSourceInfo {
+    /**
+     * A {@link ResolvedSourceInfo} for a {@link SourceInfoRef.OfModule}.
+     */
+    public static final class Module extends ResolvedSourceInfo {
+        private final SourceInfoRef.OfModule infoRef;
+
+        Module(final SourceInfoRef.OfModule infoRef, final List<ResolvedImport> imports,
+                final List<ResolvedInclude> includes) {
+            super(imports, includes);
+            this.infoRef = requireNonNull(infoRef);
+        }
+
+        @Override
+        public SourceInfoRef.OfModule infoRef() {
+            return infoRef;
+        }
+
+        @Override
+        public Unqualified prefix() {
+            return infoRef.info().prefix();
+        }
+
+        @Override
+        public QNameModule definingModule() {
+            return infoRef.info().moduleName().getModule();
+        }
+
+        @Override
+        public int hashCode() {
+            return infoRef.hashCode();
+        }
+
+        @Override
+        public boolean equals(final @Nullable Object obj) {
+            return obj == this || obj instanceof Module other && infoRef.equals(other.infoRef);
+        }
+
+        @Override
+        public String toString() {
+            return MoreObjects.toStringHelper(ResolvedSourceInfo.class).add("infoRef", infoRef).toString();
+        }
     }
 
-    static @NonNull ResolvedSourceInfo ofModule(final SourceInfoRef.@NonNull OfModule module,
-            final @NonNull List<ResolvedImport> imports, final @NonNull List<ResolvedInclude> includes) {
-        final var info = module.info();
-        return new ResolvedSourceInfo(module, info.moduleName().getModule(), imports, includes, info.prefix(), null);
+    /**
+     * A {@link ResolvedSourceInfo} for a {@link SourceInfoRef.OfSubmodule}.
+     */
+    public static final class Submodule extends ResolvedSourceInfo {
+        private final SourceInfoRef. OfSubmodule infoRef;
+        private final ResolvedBelongsTo belongsTo;
+
+        Submodule(final SourceInfoRef.OfSubmodule infoRef, final ResolvedBelongsTo belongsTo,
+                final List<ResolvedImport> imports, final List<ResolvedInclude> includes) {
+            super(imports, includes);
+            this.infoRef = requireNonNull(infoRef);
+            this.belongsTo = requireNonNull(belongsTo);
+
+            final var expectedDep = infoRef.info().belongsTo();
+            final var actualDep = belongsTo.dependency();
+            if (!expectedDep.equals(actualDep)) {
+                throw new VerifyException("Expecting " + expectedDep + " actual " + actualDep);
+            }
+        }
+
+        @Override
+        public SourceInfoRef.OfSubmodule infoRef() {
+            return infoRef;
+        }
+
+        public SourceRef.ToModule belongsToRef() {
+            return belongsTo.sourceRef();
+        }
+
+        @Override
+        public Unqualified prefix() {
+            return belongsTo.dependency().prefix();
+        }
+
+        @Override
+        public QNameModule definingModule() {
+            return belongsTo.parentModuleQname();
+        }
+
+        @Override
+        public int hashCode() {
+            return infoRef.hashCode() + belongsTo.hashCode();
+        }
+
+        @Override
+        public boolean equals(final @Nullable Object obj) {
+            return obj == this || obj instanceof Submodule other
+                && infoRef.equals(other.infoRef) && belongsTo.equals(other.belongsTo);
+        }
+
+        @Override
+        public String toString() {
+            return MoreObjects.toStringHelper(ResolvedSourceInfo.class)
+               .add("infoRef", infoRef)
+               .add("belongsTo", belongsTo)
+               .toString();
+        }
     }
 
-    static @NonNull ResolvedSourceInfo ofSubmodule(final SourceInfoRef.@NonNull OfSubmodule submodule,
-            final @NonNull ResolvedBelongsTo belongsTo, final @NonNull List<ResolvedImport> imports,
-            final @NonNull List<ResolvedInclude> includes) {
-        return new ResolvedSourceInfo(submodule, belongsTo.parentModuleQname(), imports, includes,
-            belongsTo.dependency().prefix(), belongsTo);
+    private final List<ResolvedImport> imports;
+    private final List<ResolvedInclude> includes;
+
+    private ResolvedSourceInfo(final List<ResolvedImport> imports, final List<ResolvedInclude> includes) {
+        this.imports = List.copyOf(imports);
+        this.includes = List.copyOf(includes);
     }
+
+    public abstract SourceInfoRef infoRef();
+
+    public abstract QNameModule definingModule();
+
+    public abstract Unqualified prefix();
+
+    public final List<ResolvedImport> imports() {
+        return imports;
+    }
+
+    public final List<ResolvedInclude> includes() {
+        return includes;
+    }
+
+    @Override
+    public abstract int hashCode();
+
+    @Override
+    public abstract boolean equals(@Nullable Object obj);
+
+    @Override
+    public abstract String toString();
 }
