@@ -89,6 +89,10 @@ public final class DefaultYangLibResolver implements YangLibResolver {
     @Override
     public EffectiveModelContext resolveModuleSet(final YangLibModuleSet moduleSet)
             throws IOException, YangParserException {
+        // FIXME: Refactor this method to bypass ResolvedSourceBuilder: when it comes to linkage resolution, that class
+        //        implies quite a few ambiguities and involves a chunk of heuristics to deal with them.
+        //        YangLibModuleSet is a rigid structure, so all that complexity is not needed here: all we want to do
+        //        is to establish a properly-linked BuildGlobalContext and invoke buildEffective() on it
         final var act = reactor.newBuild(textToIR, textToDOM);
         final var features = ImmutableSet.<QName>builder();
 
