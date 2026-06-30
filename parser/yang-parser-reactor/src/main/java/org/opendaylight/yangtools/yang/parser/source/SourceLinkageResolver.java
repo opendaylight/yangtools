@@ -152,7 +152,25 @@ public final class SourceLinkageResolver {
     private List<ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
         mapSources(mainSources);
         mapSources(libSources);
-        mapSubmodulesToParents();
+
+        // map all sources to their respective parents
+        for (var source : allSources.values()) {
+            if (source instanceof SourceInfoRef.OfSubmodule submodule) {
+                final var submoduleInfo = submodule.info();
+                final var belongsTo = submoduleInfo.belongsTo();
+                final var parentName = belongsTo.name();
+                final var parentId = findSatisfied(allSourcesMapped, parentName, belongsTo);
+                final var submoduleId = submoduleInfo.sourceId();
+                if (parentId != null) {
+                    submoduleToParentMap.put(submoduleId, parentId);
+                    continue;
+                }
+
+                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, submoduleId,
+                    new InferenceException(refOf(submoduleId, belongsTo.sourceRef()),
+                        "Module %s from belongs-to was not found", parentName.getLocalName()));
+            }
+        }
 
         // Ensures that every submodule in main-sources has it's parent module present among main-sources as well.
         // We iterate by offset to enable expansion of the mainSources list
@@ -182,25 +200,6 @@ public final class SourceLinkageResolver {
             allResolved.put(involvedSource.infoRef(), involvedSource.build());
         }
         return List.copyOf(allResolved.values());
-    }
-
-    private void mapSubmodulesToParents() throws SomeModifiersUnresolvedException {
-        for (var source : allSources.values()) {
-            if (source.info() instanceof SourceInfo.Submodule submoduleInfo) {
-                final var belongsTo = submoduleInfo.belongsTo();
-                final var parentName = belongsTo.name();
-                final var parentId = findSatisfied(allSourcesMapped, parentName, belongsTo);
-                final var submoduleId = submoduleInfo.sourceId();
-                if (parentId != null) {
-                    submoduleToParentMap.put(submoduleId, parentId);
-                    continue;
-                }
-
-                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, submoduleId,
-                    new InferenceException(refOf(submoduleId, belongsTo.sourceRef()),
-                        "Module %s from belongs-to was not found", parentName.getLocalName()));
-            }
-        }
     }
 
     private void mapSources(final Collection<SourceInfoRef> sources) {
