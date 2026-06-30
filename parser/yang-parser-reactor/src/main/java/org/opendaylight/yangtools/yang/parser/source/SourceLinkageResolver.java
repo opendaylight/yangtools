@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Belongs
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -93,35 +92,58 @@ public final class SourceLinkageResolver {
         Comparator.nullsLast(Revision::compareTo).reversed()
     );
 
+    // FIXME: this field should be replaced by four fields:
+    //        - LinkedHashSet<ResolvedSourceBuilder.ForModule> requiredModules
+    //        - LinkedHashSet<ResolvedSourceBuilder.ForSubmodule> requiredSubmodules
+    //        - HashSet<SourceIdentifier, ResolvedSourceBuilder.ForModule> modulesByName
+    //        - HashSet<QNameModule, ResolvedSourceBuilder.ForModule> modulesByNamespace
+    //        The latter two are derived from requiredModules by YANG semantics and our implementation constraints:
+    //        - as per RFC6020 every import-by-revision has to resolve to the same module, and
+    //        - as per our implementation constraint, XMLNamespace can be mapped multiple types via RevisionUnion (i.e.
+    //          @Nullable Revision) as long such combination is introduced by a single module
     private final List<SourceInfoRef> mainSources = new ArrayList<>();
+    // FIXME: this should be 'HashSet<SourceInfoRef> untouchedLibSources' and we should have one place where we lazily
+    //        move things from untouchedLibSources to either requiredModules or requiredSubmodules
     private final List<SourceInfoRef> libSources = new ArrayList<>();
-
+    // FIXME: eliminate this field: it is eagerly instantiated and should nicely decompose to requiredModules and
+    //        requiredSubmodules noted above, but and its users
     private final Map<SourceIdentifier, SourceInfoRef> allSources = new HashMap<>();
 
     /**
      * Map of all sources with the same name. They are stored in a TreeSet with a Revision-Comparator which will keep
      * them ordered by Revision.
      */
+    // FIXME: link directly to ResolvedSourceBuilder: this map exists to ensure we can find all mainSources items by
+    //        their SourceInfoRef
     private final SortedSetMultimap<Unqualified, SourceIdentifier> allSourcesMapped =
         Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(BY_REVISION));
 
     /**
      * Map of involved sources with the same name.
      */
+    // FIXME: this seems to be similar to allSourcesMapped: how is it different in lieu of the associated FIXME?
     private final SortedSetMultimap<Unqualified, SourceIdentifier> involvedSourcesGrouped =
         Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(BY_REVISION));
 
     /**
      * Map of involved sources ordered according to the resolution order (LinkedHashMap keeps the insertion order).
      */
+    // FIXME: this field should be replaced with 'List<ResolvedSourceInfo> resolvedSources', which is populated as soon
+    //        as a ResolvedSourceBuilder is known to have been fully resolved: that is what the tail of
+    //        resolveInvolvedSources() does
     private final Map<SourceIdentifier, ResolvedSourceBuilder<?>> involvedSourcesMap = new LinkedHashMap<>();
 
+    // FUXME: this is state internal to resolveInvolvedSources(): reconcile its semantics:
+    //          - is this a per-invocation thing?
+    //          - it this a ResolvedSourceBuilder.ForSubmodule thing?
+    //        in any case, we should not be operating on SourceIdentifier
     private final Map<SourceIdentifier, SourceIdentifier> submoduleToParentMap = new HashMap<>();
 
     /**
      * Map of submodules which include other submodules of the same parent module.
      */
-    // FIXME: would a HashTable work better?
+    // FIXME: move this to ResolvedSourceBuilder<?>, eliminating one level of indirection -- improving lifecycle
+    //        and perhaps making this a possible intermediate in ResolvedSourceBuilder.includes resolution process
     private final Map<ResolvedSourceBuilder<?>, Map<Include, SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
 
     @NonNullByDefault
@@ -133,23 +155,46 @@ public final class SourceLinkageResolver {
     /**
      * Processes all main sources and library sources. Finds out which ones are involved and resolves dependencies
      * between them.
+     *
      * @param mainSources sources used as the base for the Schema Context. All of them have to be resolved and included
      *                    in the output of the {@link SourceLinkageResolver}
      * @param libSources dependencies of the main sources, as well as other library sources. Unreferenced (unused)
      *                   sources will be omitted from the output of the {@link SourceLinkageResolver}
      * @return list of resolved sources
-     * @throws SourceSyntaxException if the sources fail to provide the necessary {@link SourceInfo}
      * @throws ReactorException if the source files couldn't be loaded or parsed
      */
     @NonNullByDefault
     public static List<ResolvedSourceInfo> resolveInvolvedSources(final Set<SourceInfoRef> mainSources,
-            final Set<SourceInfoRef> libSources) throws ReactorException, SourceSyntaxException {
+        // TODO: Here we are receiving an eagerly-instantiated set of library sources, which runs contrary to what
+        //       our primary user, SourceLinkageBuilder.build(), wants to do.
+        //
+        //       What we really want to have is a conversation around a set of initial sources and then have a
+        //       method which returns a result similar to Resolution -- with List<ResolvedSourceInfo> being
+        //       the terminal result indicating everything has been resolved.
+        //
+        //       The most notable aspect of that is that the protocol used to find modules and submodules becomes more
+        //       visible: it will no longer be an implementation detail of SourceLinkageResolver, but becomes something
+        //       implemented as a component interaction, in MVC speak:
+        //       - SourceLinkageResolver is the model
+        //       - SourceLinkageBuilder is both the controller and the user
+        //       - the ADT equivalent of Resolution returned by the replacement for this method is the view
+        //
+        //       The algorithm continues to invoke the replacement method, e.g. continueResolution(), until:
+        //       - a solution is found such that all mainSources and their dependencies are resolved, in which case
+        //         the result is returned (as noted above)
+        //       - a semantic invariant violation is found, in which case a ReactorException is thrown
+        //       - the method invocation fails to make forward progress, in which case a ReactorException is thrown
+            final Set<SourceInfoRef> libSources) throws ReactorException {
         return mainSources.isEmpty() ? List.of()
             : new SourceLinkageResolver(mainSources, libSources).resolveInvolvedSources();
     }
 
     @NonNullByDefault
     private List<ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
+        // FIXME: this is eager population of 'allSources' and 'allSourcesMapped':
+        //        - processing of mainSources should happen in the constructor
+        //        - libSources should be processed only once needed -- and this method should be the one to know when
+        //          and how exactly that happens
         mapSources(mainSources);
         mapSources(libSources);
 
@@ -188,6 +233,11 @@ public final class SourceLinkageResolver {
 
         // process all currently-required sources
         for (var mainSource : mainSources) {
+            // FIXME: Inline this method to allow splitting 'must resolve' and 'we are doing things with allSources et
+            //        al.' so that the iteration loop can execute the equivalent of 'mapSources(libSources)' step above
+            //        multiple times, each time pulling in only the libSources we need.
+            //        A follow-up to that will probably be 'we know when we will not bring any more modules in', so that
+            //        import-without-revision linkage can established.
             tryResolveDependenciesOf(mainSource);
         }
 
@@ -241,7 +291,7 @@ public final class SourceLinkageResolver {
         }
 
         // we are all done: build the result
-        // FIXME: this intermediate map should not be needed
+        // FIXME: just assert (or prove) there are no unresolved items and return a copy of resourcedSources (see above)
         final var allResolved =
             LinkedHashMap.<SourceInfoRef, ResolvedSourceInfo>newLinkedHashMap(involvedSourcesMap.size());
         for (var involvedSource : involvedSourcesMap.values()) {
