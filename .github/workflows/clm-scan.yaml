@@ -60,7 +60,7 @@ jobs:
     steps:
       - name: Notify job start
         # yamllint disable-line rule:line-length
-        uses: lfit/gerrit-review-action@a5de1d5bf17c2603ae81544dc2a455017b454ec8 # v1.1.1
+        uses: lfit/gerrit-review-action@a1c036a59b94c8ab89de26d378f6a28cc7378b13 # v1.1.2
         with:
           host: ${{ vars.GERRIT_SERVER }}
           username: ${{ vars.GERRIT_SSH_USER }}
@@ -88,7 +88,7 @@ jobs:
           delay: "0s"
 
       - name: Setup Java
-        uses: actions/setup-java@ad2b38190b15e4d6bdf0c97fb4fca8412226d287 # v5.3.0
+        uses: actions/setup-java@1bcf9fb12cf4aa7d266a90ae39939e61372fe520 # v5.4.0
         with:
           distribution: temurin
           java-version: "21"
@@ -120,7 +120,7 @@ jobs:
         uses: im-open/workflow-conclusion@8eac7f17381a6917bc04fec3e2c92e70ebc37526 # v3.0.0
       - name: Report workflow conclusion
         # yamllint disable-line rule:line-length
-        uses: lfit/gerrit-review-action@a5de1d5bf17c2603ae81544dc2a455017b454ec8 # v1.1.1
+        uses: lfit/gerrit-review-action@a1c036a59b94c8ab89de26d378f6a28cc7378b13 # v1.1.2
         with:
           host: ${{ vars.GERRIT_SERVER }}
           username: ${{ vars.GERRIT_SSH_USER }}
