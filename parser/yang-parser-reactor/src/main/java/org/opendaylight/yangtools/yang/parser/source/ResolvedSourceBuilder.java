@@ -63,9 +63,9 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         }
 
         @Override
-        ResolvedSourceInfo buildProduct(final List<ResolvedImport> resolvedImports,
+        ResolvedSourceInfo.Module buildProduct(final List<ResolvedImport> resolvedImports,
                 final List<ResolvedInclude> resolveIncludes) {
-            return ResolvedSourceInfo.ofModule(infoRef(), resolvedImports, resolveIncludes);
+            return new ResolvedSourceInfo.Module(infoRef(), resolvedImports, resolveIncludes);
         }
     }
 
@@ -110,9 +110,9 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         }
 
         @Override
-        ResolvedSourceInfo buildProduct(final List<ResolvedImport> resolvedImports,
+        ResolvedSourceInfo.Submodule buildProduct(final List<ResolvedImport> resolvedImports,
                 final List<ResolvedInclude> resolveIncludes) {
-            return ResolvedSourceInfo.ofSubmodule(infoRef(), belongsTo(), resolvedImports, resolveIncludes);
+            return new ResolvedSourceInfo.Submodule(infoRef(), belongsTo(), resolvedImports, resolveIncludes);
         }
     }
 
