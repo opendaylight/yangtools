@@ -25,12 +25,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
@@ -52,6 +52,39 @@ import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageExcep
  * and linked together according to their dependencies (includes, imports, belongs-to)
  */
 public final class SourceLinkageResolver {
+    /**
+     * The result of a single attempt to resolve dependencies of a {@link SourceInfoRef}.
+     */
+    private sealed interface Resolution {
+        // marker interface
+    }
+
+    /**
+     * A {@link Resolution} indicating a {@link SourceInfoRef} has been completely resolved and internal resolver state
+     * updated to reflect that fact.
+     */
+    @NonNullByDefault
+    private static final class CompleteResolution implements Resolution {
+        static final CompleteResolution INSTANCE = new CompleteResolution();
+
+        private CompleteResolution() {
+            // hidden on purpose
+        }
+    }
+
+    /**
+     * A {@link Resolution} indicating that an attempt to resolve a {@link SourceInfoRef} has encountered dependencies
+     * which it cannot resolve.
+     *
+     * @param unresolved dependencies that could not be resolved, guaranteed to distinct objects
+     */
+    @NonNullByDefault
+    private record IncompleteResolution(List<SourceIdentifier> unresolved) implements Resolution {
+        IncompleteResolution {
+            requireNonNull(unresolved);
+        }
+    }
+
     /**
      * Comparator to keep groups of modules with the same name ordered by their revision (latest first).
      */
@@ -217,91 +250,107 @@ public final class SourceLinkageResolver {
             if (currentSource == null) {
                 throw new VerifyException("Cannot find source for " + current);
             }
-            final var currentInfo = currentSource.info();
-            final var dependencies = new LinkedHashSet<SourceDependency>();
-            dependencies.addAll(currentInfo.imports());
-            dependencies.addAll(currentInfo.includes());
 
-            // try to resolve dependencies
-            final var resolvedDependencies = new HashMap<SourceDependency, Unqualified>();
-            final var unresolvedDependencies = new LinkedHashSet<SourceIdentifier>();
-            final var includedSiblings = new LinkedHashMap<Include, SourceIdentifier>();
+            final Resolution resolution;
+            try {
+                resolution = resolveDependencies(currentSource);
+            } catch (StatementSourceException e) {
+                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current, e);
+            }
 
-            for (var dependency : dependencies) {
-                final var dependencyName = dependency.name();
+            switch (resolution) {
+                case CompleteResolution completed -> {
+                    // Current was fully processed
+                    inProgress.remove(current);
+                    visitedSources.add(current);
+                }
+                case IncompleteResolution(var unresolvedDependencies) -> {
+                    // Need to process unresolved dependencies first.
+                    // Requeue current so it gets another chance after it's dependencies get resolved.
+                    workChain.addFirst(current);
 
-                // Find the best match (by revision) among all modules
-                final var match = findSatisfied(allSourcesMapped, dependencyName, dependency);
-                if (match == null) {
-                    // Dependency is missing
-                    if (dependency instanceof Import) {
-                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                            new InferenceException(refOf(current, dependency.sourceRef()),
-                                "Imported module %s was not found", dependencyName.getLocalName()));
+                    for (var dep : unresolvedDependencies) {
+                        // Check circular dependency
+                        if (inProgress.contains(dep)) {
+                            throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
+                                new InferenceException(current.toReference(),
+                                    "Found circular dependency between modules %s and %s",
+                                    current.name().getLocalName(), dep.name().getLocalName()));
+                        }
+
+                        // Not processed yet, add to queue
+                        if (!visitedSources.contains(dep)) {
+                            workChain.addFirst(dep);
+                        }
                     }
-
-                    // FIXME: also handling of BelongsTo?
-                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                        new InferenceException(refOf(current, dependency.sourceRef()),
-                            "Included submodule %s was not found", dependencyName.getLocalName()));
-                }
-
-                // if the match was already resolved, just move on
-                if (involvedSourcesMap.containsKey(match)) {
-                    resolvedDependencies.put(dependency, dependencyName);
-                    continue;
-                }
-
-                final var includedSibling = asIncludedSibling(current, dependency, match);
-                if (includedSibling != null) {
-                    // If this is an include of a sibling submodule, don't add it as unresolved dependency.
-                    // It will be resolved later in a different way.
-                    includedSiblings.put(includedSibling, match);
-                    continue;
-                }
-
-                // Dependency exists but was not fully resolved yet - mark as unresolved
-                unresolvedDependencies.add(match);
-            }
-
-            if (unresolvedDependencies.isEmpty()) {
-                // Current was fully processed
-                linkResolvedSource(currentSource, resolvedDependencies, includedSiblings);
-                inProgress.remove(current);
-                visitedSources.add(current);
-                continue;
-            }
-
-            // Need to process unresolved dependencies first.
-            // Requeue current so it gets another chance after it's dependencies get resolved.
-            workChain.addFirst(current);
-
-            for (var dep : unresolvedDependencies) {
-                // Check circular dependency
-                if (inProgress.contains(dep)) {
-                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                        new InferenceException(current.toReference(),
-                            "Found circular dependency between modules %s and %s",
-                            current.name().getLocalName(), dep.name().getLocalName()));
-                }
-
-                // Not processed yet, add to queue
-                if (!visitedSources.contains(dep)) {
-                    workChain.addFirst(dep);
                 }
             }
         }
     }
 
-    private void linkResolvedSource(final @NonNull SourceInfoRef source,
-            final HashMap<SourceDependency, Unqualified> resolvedDependencies,
-            final LinkedHashMap<Include, SourceIdentifier> includedSiblings) throws SomeModifiersUnresolvedException {
+    /**
+     * Resolve a source's dependencies.
+     *
+     * @param source the source to resolve
+     * @return a dependency {@link Resolution}
+     * @throws StatementSourceException if a resolution error occurs
+     */
+    @NonNullByDefault
+    private Resolution resolveDependencies(final SourceInfoRef source) {
+        final var currentInfo = source.info();
+        final var sourceId = currentInfo.sourceId();
+        final var dependencies = new LinkedHashSet<SourceDependency>();
+        dependencies.addAll(currentInfo.imports());
+        dependencies.addAll(currentInfo.includes());
+
+        // try to resolve dependencies
+        final var resolved = new HashMap<SourceDependency, Unqualified>();
+        final var unresolved = new LinkedHashSet<SourceIdentifier>();
+        final var includedSiblings = new LinkedHashMap<Include, SourceIdentifier>();
+
+        for (var dependency : dependencies) {
+            final var dependencyName = dependency.name();
+
+            // Find the best match (by revision) among all modules
+            final var match = findSatisfied(allSourcesMapped, dependencyName, dependency);
+            if (match == null) {
+                // Dependency is missing
+                if (dependency instanceof Import) {
+                    throw new InferenceException(refOf(sourceId, dependency.sourceRef()),
+                        "Imported module %s was not found", dependencyName.getLocalName());
+                }
+                // FIXME: also handling of BelongsTo?
+                throw new InferenceException(refOf(sourceId, dependency.sourceRef()),
+                        "Included submodule %s was not found", dependencyName.getLocalName());
+            }
+
+            // if the match was already resolved, just move on
+            if (involvedSourcesMap.containsKey(match)) {
+                resolved.put(dependency, dependencyName);
+                continue;
+            }
+
+            final var includedSibling = asIncludedSibling(sourceId, dependency, match);
+            if (includedSibling != null) {
+                // If this is an include of a sibling submodule, don't add it as unresolved dependency.
+                // It will be resolved later in a different way.
+                includedSiblings.put(includedSibling, match);
+                continue;
+            }
+
+            // Dependency exists but was not fully resolved yet - mark as unresolved
+            unresolved.add(match);
+        }
+
+        // no unresolved dependencies: we have fully-resolved this source, now link it into state
+        if (!unresolved.isEmpty()) {
+            return new IncompleteResolution(List.copyOf(unresolved));
+        }
+
         // FIXME: improve the population logic here: the nested lookup and population of
         //        'involvedSourcesGrouped' is quite counter-productive. Furthermore, if we could operate
         //        directly on current being SourceInfoRef, or better, the builder itself, we should be able to
         //        reduce some of the trouble.
-        final var sourceId = source.info().sourceId();
-
         final var newResolved = involvedSourcesMap.computeIfAbsent(sourceId, key -> {
             final var builder = switch (source) {
                 case SourceInfoRef.OfModule infoRef -> new ResolvedSourceBuilder.ForModule(infoRef);
@@ -311,11 +360,14 @@ public final class SourceLinkageResolver {
             return builder;
         });
 
-        for (var resolvedDep : resolvedDependencies.entrySet()) {
+        for (var resolvedDep : resolved.entrySet()) {
             final var dep = resolvedDep.getKey();
             // Find the best match for this dependency among the resolved modules
-            final var satisfiedDepId = requireNonNull(findSatisfied(
-                involvedSourcesGrouped, resolvedDep.getValue(), dep));
+            final var satisfiedDepId = findSatisfied(involvedSourcesGrouped, resolvedDep.getValue(), dep);
+            if (satisfiedDepId == null) {
+                throw new VerifyException("Failed to find " + resolvedDep.getValue() + " as " + dep);
+            }
+
             final var depModule = involvedSourcesMap.get(satisfiedDepId);
 
             final var currentVersion = newResolved.yangVersion();
@@ -324,23 +376,20 @@ public final class SourceLinkageResolver {
             switch (dep) {
                 case Import importDep -> {
                     // Version 1 sources must not import-by-revision Version 1.1 modules
-                    if (importDep.revision() != null && currentVersion == YangVersion.VERSION_1) {
-                        if (dependencyVersion != YangVersion.VERSION_1) {
-                            throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
-                                new YangVersionLinkageException(refOf(sourceId, importDep.sourceRef()),
-                                    "Cannot import by revision version %s module %s", dependencyVersion,
-                                        resolvedDep.getValue().getLocalName()));
-                        }
+                    if (importDep.revision() != null && currentVersion == YangVersion.VERSION_1
+                        && dependencyVersion != YangVersion.VERSION_1) {
+                        throw new YangVersionLinkageException(refOf(sourceId, importDep.sourceRef()),
+                            "Cannot import by revision version %s module %s", dependencyVersion,
+                            resolvedDep.getValue().getLocalName());
                     }
                     newResolved.resolveImport(importDep, depModule);
                 }
                 case Include includeDep -> {
                     if (currentVersion != dependencyVersion) {
-                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
-                            new YangVersionLinkageException(refOf(sourceId, dep.sourceRef()),
-                                "Cannot include a version %s submodule %s in a version %s module %s",
-                                dependencyVersion, resolvedDep.getValue().getLocalName(), currentVersion,
-                                sourceId.name().getLocalName()));
+                        throw new YangVersionLinkageException(refOf(sourceId, dep.sourceRef()),
+                            "Cannot include a version %s submodule %s in a version %s module %s",
+                            dependencyVersion, resolvedDep.getValue().getLocalName(), currentVersion,
+                            sourceId.name().getLocalName());
                     }
                     newResolved.resolveInclude(includeDep, depModule);
                 }
@@ -354,16 +403,20 @@ public final class SourceLinkageResolver {
             // map all the included siblings of this submodule
             unresolvedSiblingsMap.computeIfAbsent(newResolved, k -> new HashMap<>()).putAll(includedSiblings);
         }
+
+        return CompleteResolution.INSTANCE;
     }
 
     /**
      * Iterates over submodules and links them to their resolved parents. Throws exception if the parent isn't found
      * among the resolved sources.
+     *
+     * @throws InferenceException if a resolution error occurs
      */
     private void tryResolveBelongsTo() {
         for (var entry : submoduleToParentMap.entrySet()) {
-            final SourceIdentifier submoduleId = entry.getKey();
-            final SourceIdentifier parentId = entry.getValue();
+            final var submoduleId = entry.getKey();
+            final var parentId = entry.getValue();
 
             final var resolvedSubmodule = involvedSourcesMap.get(submoduleId);
             if (resolvedSubmodule == null) {
