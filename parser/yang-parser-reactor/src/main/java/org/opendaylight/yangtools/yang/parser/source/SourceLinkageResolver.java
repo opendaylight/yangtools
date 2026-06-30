@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -210,7 +211,17 @@ public final class SourceLinkageResolver {
 
             inProgress.add(current);
 
-            final var dependencies = getDependenciesOf(current);
+            // acquire the source corresponding to 'current' and establish its dependencies
+            final var currentSource = allSources.get(current);
+            if (currentSource == null) {
+                throw new VerifyException("Cannot find source for " + current);
+            }
+            final var currentInfo = currentSource.info();
+            final var dependencies = new LinkedHashSet<SourceDependency>();
+            dependencies.addAll(currentInfo.imports());
+            dependencies.addAll(currentInfo.includes());
+
+            // try to resolve dependencies
             final var resolvedDependencies = new HashMap<SourceDependency, Unqualified>();
             final var unresolvedDependencies = new ArrayList<SourceIdentifier>();
             final var includedSiblings = new LinkedHashMap<Include, SourceIdentifier>();
@@ -260,9 +271,7 @@ public final class SourceLinkageResolver {
                 //        directly on current being SourceInfoRef, or better, the builder itself, we should be able to
                 //        reduce some of the trouble.
                 final var newResolved = involvedSourcesMap.computeIfAbsent(current, key -> {
-                    final var currentSource = allSources.get(key);
                     final var builder = switch (currentSource) {
-                        case null -> throw new VerifyException("no source for " + key);
                         case SourceInfoRef.OfModule infoRef -> new ResolvedSourceBuilder.ForModule(infoRef);
                         case SourceInfoRef.OfSubmodule infoRef -> new ResolvedSourceBuilder.ForSubmodule(infoRef);
                     };
@@ -411,17 +420,13 @@ public final class SourceLinkageResolver {
         return currentParent != null && currentParent.equals(theirParent) ? sibling : null;
     }
 
-    private @Nullable SourceInfo lookupSourceInfo(final SourceIdentifier sourceId) {
-        final var reactorSource = allSources.get(sourceId);
-        return reactorSource == null ? null : reactorSource.info();
-    }
-
     private @Nullable SourceIdentifier findSatisfyingParentForSubmodule(final SourceIdentifier submoduleId) {
-        if (!(lookupSourceInfo(submoduleId) instanceof SourceInfo.Submodule submodule)) {
+        final var infoRef = allSources.get(requireNonNull(submoduleId));
+        if (!(infoRef instanceof SourceInfoRef.OfSubmodule submoduleRef)) {
             return null;
         }
 
-        final var submoduleBelongsTo = submodule.belongsTo();
+        final var submoduleBelongsTo = submoduleRef.info().belongsTo();
         final var satisfied = findSatisfied(involvedSourcesGrouped, submoduleBelongsTo.name(), submoduleBelongsTo);
         if (satisfied != null) {
             return satisfied;
@@ -437,14 +442,6 @@ public final class SourceLinkageResolver {
             }
         }
         return null;
-    }
-
-    private Set<SourceDependency> getDependenciesOf(final SourceIdentifier id) {
-        final var sourceInfo = lookupSourceInfo(id);
-        final var dependencies = new HashSet<SourceDependency>();
-        dependencies.addAll(sourceInfo.imports());
-        dependencies.addAll(sourceInfo.includes());
-        return dependencies;
     }
 
     @NonNullByDefault
