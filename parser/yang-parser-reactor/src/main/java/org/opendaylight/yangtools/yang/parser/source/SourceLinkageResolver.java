@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -223,9 +224,8 @@ public final class SourceLinkageResolver {
 
             // try to resolve dependencies
             final var resolvedDependencies = new HashMap<SourceDependency, Unqualified>();
-            final var unresolvedDependencies = new ArrayList<SourceIdentifier>();
+            final var unresolvedDependencies = new LinkedHashSet<SourceIdentifier>();
             final var includedSiblings = new LinkedHashMap<Include, SourceIdentifier>();
-            boolean allResolved = true;
 
             for (var dependency : dependencies) {
                 final var dependencyName = dependency.name();
@@ -262,91 +262,97 @@ public final class SourceLinkageResolver {
 
                 // Dependency exists but was not fully resolved yet - mark as unresolved
                 unresolvedDependencies.add(match);
-                allResolved = false;
             }
 
-            if (allResolved) {
-                // FIXME: improve the population logic here: the nested lookup and population of
-                //        'involvedSourcesGrouped' is quite counter-productive. Furthermore, if we could operate
-                //        directly on current being SourceInfoRef, or better, the builder itself, we should be able to
-                //        reduce some of the trouble.
-                final var newResolved = involvedSourcesMap.computeIfAbsent(current, key -> {
-                    final var builder = switch (currentSource) {
-                        case SourceInfoRef.OfModule infoRef -> new ResolvedSourceBuilder.ForModule(infoRef);
-                        case SourceInfoRef.OfSubmodule infoRef -> new ResolvedSourceBuilder.ForSubmodule(infoRef);
-                    };
-                    involvedSourcesGrouped.put(key.name(), key);
-                    return builder;
-                });
-
-                for (var resolvedDep : resolvedDependencies.entrySet()) {
-                    final var dep = resolvedDep.getKey();
-                    // Find the best match for this dependency among the resolved modules
-                    final var satisfiedDepId = requireNonNull(findSatisfied(
-                        involvedSourcesGrouped, resolvedDep.getValue(), dep));
-                    final var depModule = involvedSourcesMap.get(satisfiedDepId);
-
-                    final var currentVersion = newResolved.yangVersion();
-                    final var dependencyVersion = depModule.yangVersion();
-
-                    switch (dep) {
-                        case Import importDep -> {
-                            // Version 1 sources must not import-by-revision Version 1.1 modules
-                            if (importDep.revision() != null && currentVersion == YangVersion.VERSION_1) {
-                                if (dependencyVersion != YangVersion.VERSION_1) {
-                                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE,
-                                        current,
-                                        new YangVersionLinkageException(refOf(current, importDep.sourceRef()),
-                                            "Cannot import by revision version %s module %s", dependencyVersion,
-                                                resolvedDep.getValue().getLocalName()));
-                                }
-                            }
-                            newResolved.resolveImport(importDep, depModule);
-                        }
-                        case Include includeDep -> {
-                            if (currentVersion != dependencyVersion) {
-                                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                                    new YangVersionLinkageException(refOf(current, dep.sourceRef()),
-                                        "Cannot include a version %s submodule %s in a version %s module %s",
-                                        dependencyVersion, resolvedDep.getValue().getLocalName(), currentVersion,
-                                        current.name().getLocalName()));
-                            }
-                            newResolved.resolveInclude(includeDep, depModule);
-                        }
-                        case BelongsTo belongsToDep -> {
-                            // FIXME: verify() this never happens or document
-                        }
-                    }
-                }
-
-                if (!includedSiblings.isEmpty()) {
-                    // map all the included siblings of this submodule
-                    unresolvedSiblingsMap.computeIfAbsent(newResolved, k -> new HashMap<>()).putAll(includedSiblings);
-                }
+            if (unresolvedDependencies.isEmpty()) {
                 // Current was fully processed
+                linkResolvedSource(currentSource, resolvedDependencies, includedSiblings);
                 inProgress.remove(current);
                 visitedSources.add(current);
+                continue;
+            }
 
-            } else {
-                // Need to process unresolved dependencies first.
-                // Requeue current so it gets another chance after it's dependencies get resolved.
-                workChain.addFirst(current);
+            // Need to process unresolved dependencies first.
+            // Requeue current so it gets another chance after it's dependencies get resolved.
+            workChain.addFirst(current);
 
-                for (var dep : unresolvedDependencies) {
-                    // Check circular dependency
-                    if (inProgress.contains(dep)) {
-                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                            new InferenceException(current.toReference(),
-                                "Found circular dependency between modules %s and %s",
-                                current.name().getLocalName(), dep.name().getLocalName()));
-                    }
+            for (var dep : unresolvedDependencies) {
+                // Check circular dependency
+                if (inProgress.contains(dep)) {
+                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
+                        new InferenceException(current.toReference(),
+                            "Found circular dependency between modules %s and %s",
+                            current.name().getLocalName(), dep.name().getLocalName()));
+                }
 
-                    // Not processed yet, add to queue
-                    if (!visitedSources.contains(dep)) {
-                        workChain.addFirst(dep);
-                    }
+                // Not processed yet, add to queue
+                if (!visitedSources.contains(dep)) {
+                    workChain.addFirst(dep);
                 }
             }
+        }
+    }
+
+    private void linkResolvedSource(final @NonNull SourceInfoRef source,
+            final HashMap<SourceDependency, Unqualified> resolvedDependencies,
+            final LinkedHashMap<Include, SourceIdentifier> includedSiblings) throws SomeModifiersUnresolvedException {
+        // FIXME: improve the population logic here: the nested lookup and population of
+        //        'involvedSourcesGrouped' is quite counter-productive. Furthermore, if we could operate
+        //        directly on current being SourceInfoRef, or better, the builder itself, we should be able to
+        //        reduce some of the trouble.
+        final var sourceId = source.info().sourceId();
+
+        final var newResolved = involvedSourcesMap.computeIfAbsent(sourceId, key -> {
+            final var builder = switch (source) {
+                case SourceInfoRef.OfModule infoRef -> new ResolvedSourceBuilder.ForModule(infoRef);
+                case SourceInfoRef.OfSubmodule infoRef -> new ResolvedSourceBuilder.ForSubmodule(infoRef);
+            };
+            involvedSourcesGrouped.put(key.name(), key);
+            return builder;
+        });
+
+        for (var resolvedDep : resolvedDependencies.entrySet()) {
+            final var dep = resolvedDep.getKey();
+            // Find the best match for this dependency among the resolved modules
+            final var satisfiedDepId = requireNonNull(findSatisfied(
+                involvedSourcesGrouped, resolvedDep.getValue(), dep));
+            final var depModule = involvedSourcesMap.get(satisfiedDepId);
+
+            final var currentVersion = newResolved.yangVersion();
+            final var dependencyVersion = depModule.yangVersion();
+
+            switch (dep) {
+                case Import importDep -> {
+                    // Version 1 sources must not import-by-revision Version 1.1 modules
+                    if (importDep.revision() != null && currentVersion == YangVersion.VERSION_1) {
+                        if (dependencyVersion != YangVersion.VERSION_1) {
+                            throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                                new YangVersionLinkageException(refOf(sourceId, importDep.sourceRef()),
+                                    "Cannot import by revision version %s module %s", dependencyVersion,
+                                        resolvedDep.getValue().getLocalName()));
+                        }
+                    }
+                    newResolved.resolveImport(importDep, depModule);
+                }
+                case Include includeDep -> {
+                    if (currentVersion != dependencyVersion) {
+                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                            new YangVersionLinkageException(refOf(sourceId, dep.sourceRef()),
+                                "Cannot include a version %s submodule %s in a version %s module %s",
+                                dependencyVersion, resolvedDep.getValue().getLocalName(), currentVersion,
+                                sourceId.name().getLocalName()));
+                    }
+                    newResolved.resolveInclude(includeDep, depModule);
+                }
+                case BelongsTo belongsToDep -> {
+                    // FIXME: verify() this never happens or document
+                }
+            }
+        }
+
+        if (!includedSiblings.isEmpty()) {
+            // map all the included siblings of this submodule
+            unresolvedSiblingsMap.computeIfAbsent(newResolved, k -> new HashMap<>()).putAll(includedSiblings);
         }
     }
 
