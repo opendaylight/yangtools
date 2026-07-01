@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -191,8 +192,7 @@ public final class SourceLinkageResolver {
             : new SourceLinkageResolver(mainSources, libSources).resolveInvolvedSources();
     }
 
-    @NonNullByDefault
-    private List<ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
+    private @NonNull List<@NonNull ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
         // FIXME: this is eager population of 'allSources' and 'allSourcesMapped':
         //        - processing of mainSources should happen in the constructor
         //        - libSources should be processed only once needed -- and this method should be the one to know when
@@ -233,14 +233,87 @@ public final class SourceLinkageResolver {
             }
         }
 
-        // process all currently-required sources
+        // resolve imports and non-sibling includes for all required sources. Sibling includes are identified, but are
+        // resolved later (at end of this method).
         for (var mainSource : mainSources) {
-            // FIXME: Inline this method to allow splitting 'must resolve' and 'we are doing things with allSources et
-            //        al.' so that the iteration loop can execute the equivalent of 'mapSources(libSources)' step above
-            //        multiple times, each time pulling in only the libSources we need.
-            //        A follow-up to that will probably be 'we know when we will not bring any more modules in', so that
-            //        import-without-revision linkage can established.
-            tryResolveDependenciesOf(mainSource);
+            final var rootId = mainSource.info().sourceId();
+
+            // FIXME: This requires the mainSource to complete resolution once we start and in order to achieve that
+            //        we track its unresolved dependencies locally, and try to resolve them first by pushing them to
+            //        workChain.
+            //
+            //        This means that while we are iterating over mainSource, the actual resolution order does not match
+            //        that order and we can encounter a source which was already resolved by having descended into all
+            //        dependency.
+            //
+            //        This check ensures we skip such sources: the corresponding entry we are checking here is created
+            //        in resolveDependencies() just after we have determined all dependencies are resolved.
+            if (involvedSourcesMap.containsKey(rootId)) {
+                continue;
+            }
+
+            // Sources already fully resolved
+            final var visitedSources = new HashSet<SourceIdentifier>();
+
+            // Sources currently being resolved (active dependency path)
+            final var inProgress = new HashSet<SourceIdentifier>();
+
+            // Sources that need processing
+            final var workChain = new ArrayDeque<SourceIdentifier>();
+            workChain.add(rootId);
+
+            while (true) {
+                final var current = workChain.pollFirst();
+                if (current == null) {
+                    break;
+                }
+                if (visitedSources.contains(current)) {
+                    continue;
+                }
+
+                inProgress.add(current);
+
+                // acquire the source corresponding to 'current' and establish its dependencies
+                final var currentSource = allSources.get(current);
+                if (currentSource == null) {
+                    throw new VerifyException("Cannot find source for " + current);
+                }
+
+                final Resolution resolution;
+                try {
+                    resolution = resolveDependencies(currentSource);
+                } catch (StatementSourceException e) {
+                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current, e);
+                }
+
+                switch (resolution) {
+                    case CompleteResolution completed -> {
+                        // Current was fully processed
+                        inProgress.remove(current);
+                        visitedSources.add(current);
+                    }
+                    case IncompleteResolution(var unresolvedDependencies) -> {
+                        // Need to process unresolved dependencies first.
+                        // Requeue current so it gets another chance after it's dependencies get resolved.
+                        workChain.addFirst(current);
+
+                        for (var dep : unresolvedDependencies) {
+                            // Check circular dependency
+                            if (inProgress.contains(dep)) {
+                                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
+                                    new InferenceException(current.toReference(),
+                                        "Found circular dependency between modules %s and %s",
+                                        current.name().getLocalName(), dep.name().getLocalName()));
+                            }
+
+                            // Not processed yet, add to queue
+                            if (!visitedSources.contains(dep)) {
+                                workChain.addFirst(dep);
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         // iterate of submodules and link each of them to its resolved parent
@@ -310,80 +383,6 @@ public final class SourceLinkageResolver {
             allSources.putIfAbsent(sourceId, source);
 
             allSourcesMapped.put(sourceId.name(), sourceId);
-        }
-    }
-
-    /**
-     * Resolves Imports and non-sibling includes. Includes of siblings are only identified here and will be resolved
-     * separately.
-     */
-    private void tryResolveDependenciesOf(final SourceInfoRef root) throws SomeModifiersUnresolvedException {
-        final var rootId = root.info().sourceId();
-        if (involvedSourcesMap.containsKey(rootId)) {
-            return;
-        }
-
-        // Sources already fully resolved
-        final var visitedSources = new HashSet<SourceIdentifier>();
-
-        // Sources currently being resolved (active dependency path)
-        final var inProgress = new HashSet<SourceIdentifier>();
-
-        // Sources that need processing
-        final var workChain = new ArrayDeque<SourceIdentifier>();
-        workChain.add(rootId);
-
-        while (true) {
-            final var current = workChain.pollFirst();
-            if (current == null) {
-                break;
-            }
-            if (visitedSources.contains(current)) {
-                continue;
-            }
-
-            inProgress.add(current);
-
-            // acquire the source corresponding to 'current' and establish its dependencies
-            final var currentSource = allSources.get(current);
-            if (currentSource == null) {
-                throw new VerifyException("Cannot find source for " + current);
-            }
-
-            final Resolution resolution;
-            try {
-                resolution = resolveDependencies(currentSource);
-            } catch (StatementSourceException e) {
-                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current, e);
-            }
-
-            switch (resolution) {
-                case CompleteResolution completed -> {
-                    // Current was fully processed
-                    inProgress.remove(current);
-                    visitedSources.add(current);
-                }
-                case IncompleteResolution(var unresolvedDependencies) -> {
-                    // Need to process unresolved dependencies first.
-                    // Requeue current so it gets another chance after it's dependencies get resolved.
-                    workChain.addFirst(current);
-
-                    for (var dep : unresolvedDependencies) {
-                        // Check circular dependency
-                        if (inProgress.contains(dep)) {
-                            throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current,
-                                new InferenceException(current.toReference(),
-                                    "Found circular dependency between modules %s and %s",
-                                    current.name().getLocalName(), dep.name().getLocalName()));
-                        }
-
-                        // Not processed yet, add to queue
-                        if (!visitedSources.contains(dep)) {
-                            workChain.addFirst(dep);
-                        }
-                    }
-                }
-            }
         }
     }
 
