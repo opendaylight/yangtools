@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "303aa8ed_ab60b497",
+        "filename": "yang/yang-repo-spi/src/main/java/org/opendaylight/yangtools/yang/model/repo/spi/SourceLinkage.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 101,
+      "author": {
+        "id": 9173
+      },
+      "writtenOn": "2026-07-01T09:50:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fd2a0139_f7ecb801",
+      "range": {
+        "startLine": 100,
+        "startChar": 8,
+        "endLine": 101,
+        "endChar": 26
+      },
+      "revId": "9eec376fc40c6bbff50af9e7fa500a5230a32454",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "4daf5b91_7d9526e9",
@@ -47,6 +71,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "123f5244_fda443c2",
+        "filename": "yang/yang-repo-spi/src/main/java/org/opendaylight/yangtools/yang/model/repo/spi/SourceLinkage.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 9173
+      },
+      "writtenOn": "2026-07-01T09:50:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "4daf5b91_7d9526e9",
+      "range": {
+        "startLine": 187,
+        "startChar": 16,
+        "endLine": 187,
+        "endChar": 40
+      },
+      "revId": "9eec376fc40c6bbff50af9e7fa500a5230a32454",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "0d16ac57_028cdc83",
@@ -60,6 +108,30 @@
       "writtenOn": "2026-07-01T08:42:03Z",
       "side": 1,
       "message": "ArrayListMultimap instead?",
+      "range": {
+        "startLine": 224,
+        "startChar": 29,
+        "endLine": 224,
+        "endChar": 40
+      },
+      "revId": "9eec376fc40c6bbff50af9e7fa500a5230a32454",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3d19947a_eecf3e54",
+        "filename": "yang/yang-repo-spi/src/main/java/org/opendaylight/yangtools/yang/model/repo/spi/SourceLinkage.java",
+        "patchSetId": 10
+      },
+      "lineNbr": 224,
+      "author": {
+        "id": 9173
+      },
+      "writtenOn": "2026-07-01T09:50:07Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0d16ac57_028cdc83",
       "range": {
         "startLine": 224,
         "startChar": 29,
