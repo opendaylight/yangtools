@@ -15,7 +15,6 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.SortedSetMultimap;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -96,9 +95,11 @@ public final class SourceLinkageResolver {
     // FIXME: this field should be replaced by four fields:
     //        - LinkedHashSet<ResolvedSourceBuilder.ForModule> requiredModules
     //        - LinkedHashSet<ResolvedSourceBuilder.ForSubmodule> requiredSubmodules
-    //        - HashSet<SourceIdentifier, ResolvedSourceBuilder.ForModule> modulesByName
-    //        - HashSet<QNameModule, ResolvedSourceBuilder.ForModule> modulesByNamespace
-    //        The latter two are derived from requiredModules by YANG semantics and our implementation constraints:
+    //        which track the fact a source is required while keeping modules separate from submodules
+    //
+    //        - HashMap<SourceIdentifier, ResolvedSourceBuilder.ForModule> modulesBySourceId
+    //        - HashMap<QNameModule, ResolvedSourceBuilder.ForModule> modulesByNamespace
+    //        which are derived from requiredModules by YANG semantics and our implementation constraints:
     //        - as per RFC6020 every import-by-revision has to resolve to the same module, and
     //        - as per our implementation constraint, XMLNamespace can be mapped multiple types via RevisionUnion (i.e.
     //          @Nullable Revision) as long such combination is introduced by a single module
@@ -117,7 +118,11 @@ public final class SourceLinkageResolver {
      * them ordered by Revision.
      */
     // FIXME: link directly to ResolvedSourceBuilder: this map exists to ensure we can find all mainSources items by
-    //        their SourceInfoRef
+    //        their name when search for them
+    // FIXME: overall it seems we want to differentiate the set for
+    //        - modules, which cannot have conflicting SourceIdentifiers as implied by modulesBySourceId
+    //        - submodules, which can have naming conflicts as long as the conflicting submodules belong to
+    //          differently-named modules
     private final SortedSetMultimap<Unqualified, SourceIdentifier> allSourcesMapped =
         Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(BY_REVISION));
 
@@ -197,8 +202,12 @@ public final class SourceLinkageResolver {
         //        - processing of mainSources should happen in the constructor
         //        - libSources should be processed only once needed -- and this method should be the one to know when
         //          and how exactly that happens
-        mapSources(mainSources);
-        mapSources(libSources);
+        for (var source : mainSources) {
+            addRequiredSource(source);
+        }
+        for (var source : libSources) {
+            addRequiredSource(source);
+        }
 
         // map all sources to their respective parents
         for (var source : allSources.values()) {
@@ -375,15 +384,35 @@ public final class SourceLinkageResolver {
         return List.copyOf(allResolved.values());
     }
 
-    private void mapSources(final Collection<SourceInfoRef> sources) {
-        for (var source : sources) {
-            final var sourceId = source.info().sourceId();
-
-            // FIXME: verify no duplicates
-            allSources.putIfAbsent(sourceId, source);
-
-            allSourcesMapped.put(sourceId.name(), sourceId);
+    @NonNullByDefault
+    private void addRequiredSource(final SourceInfoRef source) {
+        switch (source) {
+            case SourceInfoRef.OfModule module -> addRequiredModule(module);
+            case SourceInfoRef.OfSubmodule submodule -> addRequiredSubmodule(submodule);
         }
+    }
+
+    @NonNullByDefault
+    private void addRequiredModule(final SourceInfoRef.OfModule module) {
+        // FIXME: populate
+        //        - requiredModules
+        //        - modulesByNamespace
+        //        - modulesBySourceId
+        populateLegacyMaps(module);
+    }
+
+    @NonNullByDefault
+    private void addRequiredSubmodule(final SourceInfoRef.OfSubmodule submodule) {
+        // FIXME: populate requiredSubmodules
+        populateLegacyMaps(submodule);
+    }
+
+    // FIXME: remove this method once we do not need the two maps
+    @NonNullByDefault
+    private void populateLegacyMaps(final SourceInfoRef source) {
+        final var sourceId = source.info().sourceId();
+        allSources.putIfAbsent(sourceId, source);
+        allSourcesMapped.put(sourceId.name(), sourceId);
     }
 
     /**
