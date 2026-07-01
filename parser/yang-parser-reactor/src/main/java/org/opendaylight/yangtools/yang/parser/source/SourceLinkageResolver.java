@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SortedSetMultimap;
 import java.util.ArrayDeque;
@@ -27,6 +28,7 @@ import java.util.TreeSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -92,17 +94,18 @@ public final class SourceLinkageResolver {
         Comparator.nullsLast(Revision::compareTo).reversed()
     );
 
-    // FIXME: this field should be replaced by four fields:
-    //        - LinkedHashSet<ResolvedSourceBuilder.ForModule> requiredModules
-    //        - LinkedHashSet<ResolvedSourceBuilder.ForSubmodule> requiredSubmodules
-    //        which track the fact a source is required while keeping modules separate from submodules
-    //
-    //        - HashMap<SourceIdentifier, ResolvedSourceBuilder.ForModule> modulesBySourceId
-    //        - HashMap<QNameModule, ResolvedSourceBuilder.ForModule> modulesByNamespace
-    //        which are derived from requiredModules by YANG semantics and our implementation constraints:
-    //        - as per RFC6020 every import-by-revision has to resolve to the same module, and
-    //        - as per our implementation constraint, XMLNamespace can be mapped multiple types via RevisionUnion (i.e.
-    //          @Nullable Revision) as long such combination is introduced by a single module
+    // The set of sources that are required to be resolved, separated into modules and submodules. We are using
+    // insertion order to ensure predictable ordering.
+    private final LinkedHashSet<ResolvedSourceBuilder.ForModule> requiredModules = new LinkedHashSet<>();
+    private final LinkedHashSet<ResolvedSourceBuilder.ForSubmodule> requiredSubmodules = new LinkedHashSet<>();
+
+    // As per RFC6020, every import-by-revision has to resolve to the same module
+    private final HashMap<SourceIdentifier, ResolvedSourceBuilder.ForModule> modulesBySourceId = new HashMap<>();
+    // As per our implementation constraint, XMLNamespace can be mapped multiple types via RevisionUnion (i.e.
+    // @Nullable Revision) as long such combination is introduced by a single module
+    private final HashMap<QNameModule, ResolvedSourceBuilder.ForModule> modulesByNamespace = new HashMap<>();
+
+    // FIXME: this field should be replaced by the above four fields
     private final List<SourceInfoRef> mainSources = new ArrayList<>();
     // FIXME: this should be 'HashSet<SourceInfoRef> untouchedLibSources' and we should have one place where we lazily
     //        move things from untouchedLibSources to either requiredModules or requiredSubmodules
@@ -244,7 +247,8 @@ public final class SourceLinkageResolver {
 
         // resolve imports and non-sibling includes for all required sources. Sibling includes are identified, but are
         // resolved later (at end of this method).
-        for (var mainSource : mainSources) {
+        for (var builder : Iterables.concat(requiredModules, requiredSubmodules)) {
+            final var mainSource = builder.infoRef();
             final var rootId = mainSource.info().sourceId();
 
             // FIXME: This requires the mainSource to complete resolution once we start and in order to achieve that
@@ -394,16 +398,31 @@ public final class SourceLinkageResolver {
 
     @NonNullByDefault
     private void addRequiredModule(final SourceInfoRef.OfModule module) {
-        // FIXME: populate
-        //        - requiredModules
-        //        - modulesByNamespace
-        //        - modulesBySourceId
+        final var builder = new ResolvedSourceBuilder.ForModule(module);
+        verify(requiredModules.add(builder));
+
+        final var namespace = builder.definingModule();
+        final var prevByNamespace = modulesByNamespace.putIfAbsent(namespace, builder);
+        if (prevByNamespace != null) {
+            // FIXME: better exception
+            throw new VerifyException(module + " conflicts with " + prevByNamespace + " on " + namespace);
+        }
+
+        final var sourceId = builder.sourceId();
+        final var prevBySourceId = modulesBySourceId.putIfAbsent(sourceId, builder);
+        if (prevBySourceId != null) {
+            // FIXME: better exception
+            throw new VerifyException(module + " conflicts with " + prevBySourceId + " on " + sourceId);
+        }
+
         populateLegacyMaps(module);
     }
 
     @NonNullByDefault
     private void addRequiredSubmodule(final SourceInfoRef.OfSubmodule submodule) {
-        // FIXME: populate requiredSubmodules
+        final var builder = new ResolvedSourceBuilder.ForSubmodule(submodule);
+        verify(requiredSubmodules.add(builder));
+
         populateLegacyMaps(submodule);
     }
 
