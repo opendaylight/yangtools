@@ -16,6 +16,24 @@
       "message": "Attemplted contain typo.",
       "revId": "d077a403af8eaee71ceff272f33c58f788f69b23",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b15515b1_b8ff7a5b",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-06T23:00:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "606ab266_dd32f92d",
+      "revId": "d077a403af8eaee71ceff272f33c58f788f69b23",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
