@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "cf35cc01_54ba6e81",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 299,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-06T07:50:43Z",
+      "side": 1,
+      "message": "we should filter by Objects::isNull, since these are \"missing\" dependencies",
+      "revId": "e8add64b8df71009796145eaf941db53e07da641",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
