@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import org.eclipse.jdt.annotation.NonNull;
@@ -103,10 +104,10 @@ public final class SourceLinkageResolver {
     //        - as per RFC6020 every import-by-revision has to resolve to the same module, and
     //        - as per our implementation constraint, XMLNamespace can be mapped multiple types via RevisionUnion (i.e.
     //          @Nullable Revision) as long such combination is introduced by a single module
-    private final List<SourceInfoRef> mainSources = new ArrayList<>();
+    private final ArrayList<@NonNull SourceInfoRef> mainSources;
     // FIXME: this should be 'HashSet<SourceInfoRef> untouchedLibSources' and we should have one place where we lazily
     //        move things from untouchedLibSources to either requiredModules or requiredSubmodules
-    private final List<SourceInfoRef> libSources = new ArrayList<>();
+    private final ArrayList<@NonNull SourceInfoRef> libSources;
     // FIXME: eliminate this field: it is eagerly instantiated and should nicely decompose to requiredModules and
     //        requiredSubmodules noted above, but the SourceIdentifier as a key is making things hazy: what exactly
     //        is the SourceIdentifier? how does it work with conflicting submodules (and which lack a revision
@@ -155,9 +156,9 @@ public final class SourceLinkageResolver {
     private final Map<ResolvedSourceBuilder<?>, Map<Include, SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
 
     @NonNullByDefault
-    private SourceLinkageResolver(final Set<SourceInfoRef> withMainSources, final Set<SourceInfoRef> withLibSources) {
-        mainSources.addAll(requireNonNull(withMainSources));
-        libSources.addAll(requireNonNull(withLibSources));
+    private SourceLinkageResolver(final Set<SourceInfoRef> mainSources, final Set<SourceInfoRef> libSources) {
+        this.mainSources = new ArrayList<>(mainSources.stream().map(Objects::requireNonNull).toList());
+        this.libSources = new ArrayList<>(libSources.stream().map(Objects::requireNonNull).toList());
     }
 
     /**
@@ -205,9 +206,14 @@ public final class SourceLinkageResolver {
         for (var source : mainSources) {
             addRequiredSource(source);
         }
+        mainSources.clear();
+        mainSources.trimToSize();
+
         for (var source : libSources) {
             addRequiredSource(source);
         }
+        libSources.clear();
+        libSources.trimToSize();
 
         // map all sources to their respective parents
         for (var source : allSources.values()) {
