@@ -13,6 +13,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SortedSetMultimap;
+import com.google.common.collect.Table;
+import com.google.common.collect.Tables;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,11 +26,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Mutable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.RevisionUnion;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
@@ -86,6 +92,101 @@ public final class SourceLinkageResolver {
     }
 
     /**
+     * Internal state encapsulation between {@link SourceLinkageResolver#resolveInvolvedSources(Set, Set)}
+     * and the associated resolver instance.
+     */
+    private static final class Requirements implements Mutable {
+        /*
+         * YANG modules that need to be resolved
+         */
+        @NonNullByDefault
+        private final LinkedHashMap<SourceInfoRef.OfModule, ResolvedSourceBuilder.ForModule> requiredModules =
+            new LinkedHashMap<>();
+        /*
+         * YANG submodules that need to be resolved
+         */
+        @NonNullByDefault
+        private final LinkedHashMap<SourceInfoRef.OfSubmodule, ResolvedSourceBuilder.ForSubmodule> requiredSubmodules =
+            new LinkedHashMap<>();
+        // As per RFC6020, every import-by-revision has to resolve to the same module. We are using a table, as that
+        // also allows us quickly find all modules with the same name -- and have them ordered with latest revision
+        // first.
+        private final Table<@NonNull Unqualified, @NonNull RevisionUnion, SourceInfoRef.OfModule> modulesByName =
+            Tables.newCustomTable( new HashMap<>(), () -> new TreeMap<>(Comparator.reverseOrder()));
+        // As per our implementation constraint, XMLNamespace can be mapped multiple types via RevisionUnion (i.e.
+        // @Nullable Revision) as long such combination is introduced by a single module
+        private final HashMap<QNameModule, SourceInfoRef.@Nullable OfModule> modulesByNamespace = new HashMap<>();
+
+        // FIXME: eliminate this field: it is eagerly instantiated and should nicely decompose to requiredModules and
+        //        requiredSubmodules noted above, but the SourceIdentifier as a key is making things hazy: what exactly
+        //        is the SourceIdentifier? how does it work with conflicting submodules (and which lack a revision
+        //        statement?
+        final HashMap<SourceIdentifier, SourceInfoRef> allSources = new HashMap<>();
+        /**
+         * Map of all sources with the same name. They are stored in a TreeSet with a Revision-Comparator which will keep
+         * them ordered by Revision.
+         */
+        // FIXME: link directly to ResolvedSourceBuilder: this map exists to ensure we can find all mainSources items by
+        //        their name when search for them
+        // FIXME: overall it seems we want to differentiate the set for
+        //        - modules, which cannot have conflicting SourceIdentifiers as implied by modulesBySourceId
+        //        - submodules, which can have naming conflicts as long as the conflicting submodules belong to
+        //          differently-named modules
+        private final SortedSetMultimap<Unqualified, SourceIdentifier> allSourcesMapped =
+            Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(BY_REVISION));
+
+        /**
+         * Add a {@link SourceInfoRef} as something that needs to be resolved
+         * @param source the {@link SourceInfoRef}
+         * @throws ReactorException if requiring the {code source} would violate an invariant
+         */
+        void addRequiredSource(final SourceInfoRef source) throws ReactorException {
+            try {
+                switch (source) {
+                    case SourceInfoRef.OfModule module -> addRequiredModule(module);
+                    case SourceInfoRef.OfSubmodule submodule -> addRequiredSubmodule(submodule);
+                }
+            } catch (InferenceException e) {
+                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE,
+                    source.info().sourceId(), e);
+            }
+        }
+
+        private void addRequiredModule(final SourceInfoRef.OfModule module) {
+            final var info = module.info();
+            final var namespace = info.moduleName().getModule();
+            final var sourceId = info.sourceId();
+
+            final var prevByNamespace = modulesByNamespace.putIfAbsent(namespace, module);
+            if (prevByNamespace != null) {
+                throw new InferenceException(sourceId.toReference(), "%s conflicts with %s on %s", module,
+                        prevByNamespace, namespace);
+            }
+
+            final var prevBySourceId = modulesByName.row(sourceId.name())
+                .putIfAbsent(RevisionUnion.of(sourceId.revision()), module);
+            if (prevBySourceId != null) {
+                throw new InferenceException(sourceId.toReference(), "%s conflicts with %s on %s", module,
+                    prevBySourceId, sourceId);
+            }
+
+            populateLegacyMaps(module);
+        }
+
+        private void addRequiredSubmodule(final SourceInfoRef.OfSubmodule submodule) {
+            // FIXME: populate requiredSubmodules
+            populateLegacyMaps(submodule);
+        }
+
+        // FIXME: remove this method once we do not need the two maps
+        private void populateLegacyMaps(final SourceInfoRef source) {
+            final var sourceId = source.info().sourceId();
+            allSources.putIfAbsent(sourceId, source);
+            allSourcesMapped.put(sourceId.name(), sourceId);
+        }
+    }
+
+    /**
      * Comparator to keep groups of modules with the same name ordered by their revision (latest first).
      */
     private static final Comparator<SourceIdentifier> BY_REVISION = Comparator.comparing(
@@ -93,39 +194,13 @@ public final class SourceLinkageResolver {
         Comparator.nullsLast(Revision::compareTo).reversed()
     );
 
-    // FIXME: this field should be replaced by four fields:
-    //        - LinkedHashSet<ResolvedSourceBuilder.ForModule> requiredModules
-    //        - LinkedHashSet<ResolvedSourceBuilder.ForSubmodule> requiredSubmodules
-    //        which track the fact a source is required while keeping modules separate from submodules
-    //
-    //        - HashMap<SourceIdentifier, ResolvedSourceBuilder.ForModule> modulesBySourceId
-    //        - HashMap<QNameModule, ResolvedSourceBuilder.ForModule> modulesByNamespace
-    //        which are derived from requiredModules by YANG semantics and our implementation constraints:
-    //        - as per RFC6020 every import-by-revision has to resolve to the same module, and
-    //        - as per our implementation constraint, XMLNamespace can be mapped multiple types via RevisionUnion (i.e.
-    //          @Nullable Revision) as long such combination is introduced by a single module
-    private final ArrayList<@NonNull SourceInfoRef> mainSources;
+    /**
+     * Internal state tracking actual resolution resuirements.
+     */
+    private final @NonNull Requirements requirements;
     // FIXME: this should be 'HashSet<SourceInfoRef> untouchedLibSources' and we should have one place where we lazily
     //        move things from untouchedLibSources to either requiredModules or requiredSubmodules
     private final ArrayList<@NonNull SourceInfoRef> libSources;
-    // FIXME: eliminate this field: it is eagerly instantiated and should nicely decompose to requiredModules and
-    //        requiredSubmodules noted above, but the SourceIdentifier as a key is making things hazy: what exactly
-    //        is the SourceIdentifier? how does it work with conflicting submodules (and which lack a revision
-    //        statement?
-    private final Map<SourceIdentifier, SourceInfoRef> allSources = new HashMap<>();
-
-    /**
-     * Map of all sources with the same name. They are stored in a TreeSet with a Revision-Comparator which will keep
-     * them ordered by Revision.
-     */
-    // FIXME: link directly to ResolvedSourceBuilder: this map exists to ensure we can find all mainSources items by
-    //        their name when search for them
-    // FIXME: overall it seems we want to differentiate the set for
-    //        - modules, which cannot have conflicting SourceIdentifiers as implied by modulesBySourceId
-    //        - submodules, which can have naming conflicts as long as the conflicting submodules belong to
-    //          differently-named modules
-    private final SortedSetMultimap<Unqualified, SourceIdentifier> allSourcesMapped =
-        Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(BY_REVISION));
 
     /**
      * Map of involved sources with the same name.
@@ -156,8 +231,8 @@ public final class SourceLinkageResolver {
     private final Map<ResolvedSourceBuilder<?>, Map<Include, SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
 
     @NonNullByDefault
-    private SourceLinkageResolver(final Set<SourceInfoRef> mainSources, final Set<SourceInfoRef> libSources) {
-        this.mainSources = new ArrayList<>(mainSources.stream().map(Objects::requireNonNull).toList());
+    private SourceLinkageResolver(final Requirements requirements, final Set<SourceInfoRef> libSources) {
+        this.requirements = requireNonNull(requirements);
         this.libSources = new ArrayList<>(libSources.stream().map(Objects::requireNonNull).toList());
     }
 
@@ -194,8 +269,16 @@ public final class SourceLinkageResolver {
         //       - a semantic invariant violation is found, in which case a ReactorException is thrown
         //       - the method invocation fails to make forward progress, in which case a ReactorException is thrown
             final Set<SourceInfoRef> libSources) throws ReactorException {
-        return mainSources.isEmpty() ? List.of()
-            : new SourceLinkageResolver(mainSources, libSources).resolveInvolvedSources();
+        if (mainSources.isEmpty()) {
+            return List.of();
+        }
+
+        final var requirements = new Requirements();
+        for (var source : mainSources) {
+            requirements.addRequiredSource(source);
+        }
+
+        return new SourceLinkageResolver(requirements, libSources).resolveInvolvedSources();
     }
 
     private @NonNull List<@NonNull ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
@@ -203,25 +286,19 @@ public final class SourceLinkageResolver {
         //        - processing of mainSources should happen in the constructor
         //        - libSources should be processed only once needed -- and this method should be the one to know when
         //          and how exactly that happens
-        for (var source : mainSources) {
-            addRequiredSource(source);
-        }
-        mainSources.clear();
-        mainSources.trimToSize();
-
         for (var source : libSources) {
-            addRequiredSource(source);
+            requirements.addRequiredSource(source);
         }
         libSources.clear();
         libSources.trimToSize();
 
         // map all sources to their respective parents
-        for (var source : allSources.values()) {
+        for (var source : requirements.allSources.values()) {
             if (source instanceof SourceInfoRef.OfSubmodule submodule) {
                 final var submoduleInfo = submodule.info();
                 final var belongsTo = submoduleInfo.belongsTo();
                 final var parentName = belongsTo.name();
-                final var parentId = findSatisfied(allSourcesMapped, parentName, belongsTo);
+                final var parentId = findSatisfied(requirements.allSourcesMapped, parentName, belongsTo);
                 final var submoduleId = submoduleInfo.sourceId();
                 if (parentId != null) {
                     submoduleToParentMap.put(submoduleId, parentId);
@@ -388,37 +465,6 @@ public final class SourceLinkageResolver {
             allResolved.put(involvedSource.infoRef(), involvedSource.build());
         }
         return List.copyOf(allResolved.values());
-    }
-
-    @NonNullByDefault
-    private void addRequiredSource(final SourceInfoRef source) {
-        switch (source) {
-            case SourceInfoRef.OfModule module -> addRequiredModule(module);
-            case SourceInfoRef.OfSubmodule submodule -> addRequiredSubmodule(submodule);
-        }
-    }
-
-    @NonNullByDefault
-    private void addRequiredModule(final SourceInfoRef.OfModule module) {
-        // FIXME: populate
-        //        - requiredModules
-        //        - modulesByNamespace
-        //        - modulesBySourceId
-        populateLegacyMaps(module);
-    }
-
-    @NonNullByDefault
-    private void addRequiredSubmodule(final SourceInfoRef.OfSubmodule submodule) {
-        // FIXME: populate requiredSubmodules
-        populateLegacyMaps(submodule);
-    }
-
-    // FIXME: remove this method once we do not need the two maps
-    @NonNullByDefault
-    private void populateLegacyMaps(final SourceInfoRef source) {
-        final var sourceId = source.info().sourceId();
-        allSources.putIfAbsent(sourceId, source);
-        allSourcesMapped.put(sourceId.name(), sourceId);
     }
 
     /**
