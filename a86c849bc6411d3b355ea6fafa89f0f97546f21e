@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a0ff259f_252be4ce",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:00:29Z",
+      "side": 1,
+      "message": "Commit message errors: \"lacking in document\" and \"coming out of this the realization\"",
+      "revId": "a86c849bc6411d3b355ea6fafa89f0f97546f21e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "812a9c93_a133c73f",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 44,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:00:29Z",
+      "side": 1,
+      "message": "is \"expected\" to be used",
+      "revId": "a86c849bc6411d3b355ea6fafa89f0f97546f21e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3a7f8747_2ea2b5a8",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 89,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:00:29Z",
+      "side": 1,
+      "message": "seamlessly",
+      "revId": "a86c849bc6411d3b355ea6fafa89f0f97546f21e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
