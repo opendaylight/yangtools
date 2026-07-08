@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5646ec3a_cae3e900",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T10:07:35Z",
+      "side": 1,
+      "message": "\"contain\" is better",
+      "parentUuid": "0760b42e_46aae6d9",
+      "revId": "e244359cdebceb48e06f66f15e8428a8fa9f8264",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "9437f977_51f53855",
@@ -35,6 +53,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3e34d55f_09b4b61f",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T10:07:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9437f977_51f53855",
+      "revId": "e244359cdebceb48e06f66f15e8428a8fa9f8264",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "93d7f6e9_19dfc2a7",
@@ -48,6 +84,24 @@
       "writtenOn": "2026-07-08T07:53:14Z",
       "side": 1,
       "message": "The comment here is misleading, since the IF below does the exact opposite. Reword or move after the if statement",
+      "revId": "e244359cdebceb48e06f66f15e8428a8fa9f8264",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9cf38658_c166d5c3",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T10:07:35Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "93d7f6e9_19dfc2a7",
       "revId": "e244359cdebceb48e06f66f15e8428a8fa9f8264",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
