@@ -16,6 +16,23 @@
       "message": "recheck",
       "revId": "c3cf56a4a6e54f5ffcaf89022c52d99c3d7dc468",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5f9ad3bd_7ec06440",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceInfo.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T07:25:43Z",
+      "side": 1,
+      "message": "MoreObjects.toStringHelper(ResolvedSourceInfo.class) could use \"Module.class\" instead. Same in submodule.",
+      "revId": "c3cf56a4a6e54f5ffcaf89022c52d99c3d7dc468",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
