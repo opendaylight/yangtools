@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.source;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
+import com.google.common.collect.ImmutableSet;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
@@ -122,5 +124,38 @@ class SourceLinkageResolverTest {
         assertSame(fooSubRef, resolved.get(0).infoRef());
         assertSame(fooRef, resolved.get(1).infoRef());
         assertSame(bazRef, resolved.get(2).infoRef());
+    }
+
+    @Test
+    void wildcardImportResolvesToLatest() throws Exception {
+        final var noRevRef = SourceInfo.Module.builder()
+            .setName(FOO)
+            .setNamespace(XMLNamespace.of("foo"))
+            .setPrefix(FOO)
+            .build()
+            .newRef();
+        final var revRef = SourceInfo.Module.builder()
+            .setName(FOO)
+            .setNamespace(XMLNamespace.of("foo"))
+            .setPrefix(FOO)
+            .addRevision(Revision.of("2026-07-12"))
+            .build()
+            .newRef();
+        final var bazRef = BAZ_INFO.newRef();
+
+        // We have two revisions of 'foo' and 'baz': we should resolve all three and baz should be importing
+        // the one with revision
+        final var resolved = SourceLinkageResolver.resolveInvolvedSources(ImmutableSet.of(bazRef, noRevRef, revRef),
+            Set.of());
+        assertEquals(3, resolved.size());
+        assertSame(revRef, resolved.get(0).infoRef());
+        assertSame(noRevRef, resolved.get(2).infoRef());
+
+        final var baz = resolved.get(1);
+        assertSame(bazRef, baz.infoRef());
+
+        final var bazImports = baz.imports();
+        assertEquals(1, bazImports.size());
+        assertSame(revRef.ref(), bazImports.getFirst().sourceRef());
     }
 }
