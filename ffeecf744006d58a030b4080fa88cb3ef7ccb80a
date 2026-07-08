@@ -1,0 +1,242 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "881887f2_19e88918",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:35:23Z",
+      "side": 1,
+      "message": "missing end period",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "6d781ac6_fad0f3a6",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:35:23Z",
+      "side": 1,
+      "message": "missing end period",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "66ec911d_5482eed8",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:35:23Z",
+      "side": 1,
+      "message": "no need for \"final\"",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "e25cfcc5_683e7d18",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:35:23Z",
+      "side": 1,
+      "message": "Could be NoDependencies{} to keep it consistent",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a2687e30_2587a68a",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:35:23Z",
+      "side": 1,
+      "message": "combined a combined",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3904418e_1262db75",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:35:23Z",
+      "side": 1,
+      "message": "filtering \"out\"",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "25e538c1_4d216c2c",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:35:23Z",
+      "side": 1,
+      "message": "from {@link #SomeDependencies(Set)}",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "19677698_50a65264",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:35:23Z",
+      "side": 1,
+      "message": "The argument \"resolved\" is called \"builder\" in the abstract method. Let\u0027s align it so it\u0027s not confusing.",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "792b26da_f50b3d21",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:35:23Z",
+      "side": 1,
+      "message": "The message will say \"Attempted to override import\" even if the dependency is include. Change to \"Attempted to override dependency\" or similar.",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d73b8481_0d403a79",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 341,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:35:23Z",
+      "side": 1,
+      "message": "indicating",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "25f81863_43cf5b93",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 419,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:35:23Z",
+      "side": 1,
+      "message": "missing end period",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "39e47cac_f201d30e",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:35:23Z",
+      "side": 1,
+      "message": "same here",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fa9633a9_794d6d70",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:35:23Z",
+      "side": 1,
+      "message": "same here",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "739002ce_8a9a00e2",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:35:23Z",
+      "side": 1,
+      "message": "Move the annotation above, just like in missingImports() - to keep it consistent",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
