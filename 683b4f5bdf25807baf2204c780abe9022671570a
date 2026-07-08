@@ -87,6 +87,24 @@
       "parentUuid": "37b81162_212f7a8c",
       "revId": "683b4f5bdf25807baf2204c780abe9022671570a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "3f8f2658_05499d23",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T11:27:40Z",
+      "side": 1,
+      "message": "Addressed by adding an explicit @Nullable to the workQueue declaration.",
+      "parentUuid": "a4d90d6f_8a3936e1",
+      "revId": "683b4f5bdf25807baf2204c780abe9022671570a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
