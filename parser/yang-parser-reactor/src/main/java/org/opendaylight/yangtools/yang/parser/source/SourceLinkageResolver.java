@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -44,7 +45,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -99,14 +99,14 @@ public final class SourceLinkageResolver {
     );
 
     /**
-     * Comparator ordering {@link SourceInfoRef}s by their {@link SourceRef#correctId()} so that
+     * Comparator ordering {@link ResolvedSourceBuilder}s by their {@link ResolvedSourceBuilder#sourceId()} so that
      * {@link SourceIdentifier#name()}s are encountered in their natural order and the corresponding
      * {@link SourceIdentifier#revision()}s are encountered in reverse order, that is newest revision first.
      */
     @NonNullByDefault
-    private static final Comparator<SourceInfoRef> INFOREF_BY_SOURCEID = (left, right) -> {
-        final var leftId = left.ref().correctId();
-        final var rightId = right.ref().correctId();
+    private static final Comparator<ResolvedSourceBuilder<?>> BUILDER_BY_SOURCEID = (left, right) -> {
+        final var leftId = left.sourceId();
+        final var rightId = right.sourceId();
         final var cmp = leftId.name().compareTo(rightId.name());
         return cmp != 0 ? cmp
             // swapped arguments to get the reversed comparison
@@ -116,29 +116,26 @@ public final class SourceLinkageResolver {
     /**
      * The set of required module sources. We are using insertion order to ensure predictable ordering.
      */
-    // FIXME: store ResolvedSourceBuilder.ForModule here once we eliminate involvedSourcesMap
-    @NonNullByDefault
-    private final LinkedHashSet<SourceInfoRef.OfModule> requiredModules = new LinkedHashSet<>();
+    private final @NonNull LinkedHashMap<SourceInfoRef.OfModule, ResolvedSourceBuilder.ForModule> requiredModules =
+        new LinkedHashMap<>();
     /**
      * The set of required submodule sources, indexed by the name of the module they claim to belong to. Predictable
      * iteration order is provided via {@link #requiredSubmodules()}.
      */
-    // FIXME: store ResolvedSourceBuilder.ForSubmodule here once we eliminate involvedSourcesMap
     @NonNullByDefault
-    private final HashMultimap<Unqualified, SourceInfoRef.OfSubmodule> requiredSubmodules = HashMultimap.create();
+    private final HashMultimap<Unqualified, ResolvedSourceBuilder.ForSubmodule> requiredSubmodules =
+        HashMultimap.create();
 
     // As per RFC6020, every import-by-revision has to resolve to the same module. We are using a table, as that also
     // allows us quickly find all modules with the same name -- and have them ordered with latest revision first.
-    @NonNullByDefault
-    private final Table<Unqualified, RevisionUnion, SourceInfoRef.@Nullable OfModule> modulesByName =
-        Tables.<Unqualified, RevisionUnion, SourceInfoRef.@Nullable OfModule>newCustomTable(new HashMap<>(),
+    private final @NonNull Table<Unqualified, RevisionUnion, ResolvedSourceBuilder.ForModule> modulesByName =
+        Tables.<Unqualified, RevisionUnion, ResolvedSourceBuilder.ForModule>newCustomTable(new HashMap<>(),
             () -> new TreeMap<>(Comparator.reverseOrder()));
 
     // Our implementation constraints are looser than RFC6020/RFC7895/RFC7950/RFC8525 in that each module can be
     // implemented with multiple revisions, as long as each XMLNamespace/Revision combination is introduced by exactly
     // one source.
-    @NonNullByDefault
-    private final HashMap<QNameModule, SourceInfoRef.@Nullable OfModule> modulesByNamespace = new HashMap<>();
+    private final @NonNull HashMap<QNameModule, ResolvedSourceBuilder.ForModule> modulesByNamespace = new HashMap<>();
 
     // FIXME: eliminate this field: it is eagerly instantiated and should nicely decompose to requiredModules and
     //        requiredSubmodules noted above, but the SourceIdentifier as a key is making things hazy: what exactly
@@ -191,15 +188,23 @@ public final class SourceLinkageResolver {
     }
 
     /**
-     * {@return the set of required submodule sources, in order dictated by {@link #INFOREF_BY_SOURCEID}}.
+     * {@return the set of required module sources in the order in which they became required}.
      */
     @NonNullByDefault
-    private List<SourceInfoRef.OfSubmodule> requiredSubmodules() {
+    private List<ResolvedSourceBuilder.ForModule> requiredModules() {
+        return List.copyOf(requiredModules.values());
+    }
+
+    /**
+     * {@return the set of required submodule sources, in order dictated by {@link #BUILDER_BY_SOURCEID}}.
+     */
+    @NonNullByDefault
+    private List<ResolvedSourceBuilder.ForSubmodule> requiredSubmodules() {
         final var values = requiredSubmodules.values();
         return switch (values.size()) {
             case 0 -> List.of();
             case 1 -> List.of(values.iterator().next());
-            default -> values.stream().sorted(INFOREF_BY_SOURCEID).toList();
+            default -> values.stream().sorted(BUILDER_BY_SOURCEID).toList();
         };
     }
 
@@ -327,7 +332,7 @@ public final class SourceLinkageResolver {
 
         // ensures every required submodule has its parent module present in required modules as well
         for (var submodule : requiredSubmodules()) {
-            final var sourceInfo = submodule.info();
+            final var sourceInfo = submodule.sourceInfo();
             final var parentId = submoduleToParentMap.get(sourceInfo.sourceId());
             if (parentId == null) {
                 throw new VerifyException(submodule + " does not have a parent");
@@ -341,15 +346,15 @@ public final class SourceLinkageResolver {
             }
 
             // only add to requirements if it is not present
-            if (!requiredModules.contains(parentModule)) {
+            if (!requiredModules.containsKey(parentModule)) {
                 addRequiredModule(parentModule);
             }
         }
 
         // resolve imports and non-sibling includes for all required sources. Sibling includes are identified, but are
         // resolved later (at end of this method).
-        for (var mainSource : Iterables.concat(requiredModules, requiredSubmodules())) {
-            final var rootId = mainSource.info().sourceId();
+        for (var mainSource : Iterables.concat(requiredModules.values(), requiredSubmodules())) {
+            final var rootId = mainSource.sourceId();
 
             // FIXME: This requires the mainSource to complete resolution once we start and in order to achieve that
             //        we track its unresolved dependencies locally, and try to resolve them first by pushing them to
@@ -492,9 +497,40 @@ public final class SourceLinkageResolver {
         return List.copyOf(allResolved.values());
     }
 
+    // resolve all import-by-revision statements, expanding requiredModules with libSources as needed
+    private void resolveImportByRevision(final Set<SourceInfoRef> libSources) {
+        boolean retry;
+        do {
+            retry = false;
+            for (var builder : Iterables.concat(requiredModules(), requiredSubmodules())) {
+                for (var dependency : builder.missingImports()) {
+                    final var revision = dependency.revision();
+                    if (revision == null || resolveImportByRevision(builder, dependency, revision)) {
+                        continue;
+                    }
+
+                    // FIXME: find among libSources, bring in, resolve and mark the fact we have modified modules
+                }
+            }
+        } while (retry);
+    }
+
+    @NonNullByDefault
+    private boolean resolveImportByRevision(final ResolvedSourceBuilder<?> builder, final Import dependency,
+            final Revision revision) {
+        final var existing = modulesByName.get(dependency.name(), revision);
+        if (existing == null) {
+            return false;
+        }
+        builder.resolveImport(dependency, existing);
+        return true;
+    }
+
     @NonNullByDefault
     private void addRequiredModule(final SourceInfoRef.OfModule module) throws ReactorException {
-        if (!requiredModules.add(module)) {
+        final var builder = new ResolvedSourceBuilder.ForModule(module);
+        final var prev = requiredModules.putIfAbsent(module, builder);
+        if (prev != null) {
             throw new VerifyException("Attempted to add already-required " + module);
         }
 
@@ -507,7 +543,7 @@ public final class SourceLinkageResolver {
         //       SourceInfoRefs involved and have SourceLinkageBuilder map them back to ReactorSource/BuildSource and
         //       their corresponding location
 
-        final var prevByNamespace = modulesByNamespace.putIfAbsent(namespace, module);
+        final var prevByNamespace = modulesByNamespace.putIfAbsent(namespace, builder);
         if (prevByNamespace != null) {
             throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
                 new InferenceException(sourceId.toReference(),
@@ -516,7 +552,7 @@ public final class SourceLinkageResolver {
         }
 
         final var prevBySourceId = modulesByName.row(sourceId.name())
-            .putIfAbsent(RevisionUnion.of(sourceId.revision()), module);
+            .putIfAbsent(RevisionUnion.of(sourceId.revision()), builder);
         if (prevBySourceId != null) {
             throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
                 new InferenceException(sourceId.toReference(),
@@ -532,9 +568,14 @@ public final class SourceLinkageResolver {
 
     @NonNullByDefault
     private void addRequiredSubmodule(final SourceInfoRef.OfSubmodule submodule) {
-        if (!requiredSubmodules.get(submodule.info().belongsTo().name()).add(submodule)) {
-            throw new VerifyException("Attempted to add already-required " + submodule);
+        final var siblings = requiredSubmodules.get(submodule.info().belongsTo().name());
+        // TODO: yeah, not exactly scalable, but works
+        for (var sibling : siblings) {
+            if (submodule.equals(sibling.infoRef())) {
+                throw new VerifyException("Attempted to add already-required " + submodule);
+            }
         }
+        verify(siblings.add(new ResolvedSourceBuilder.ForSubmodule(submodule)));
     }
 
     // FIXME: remove this method once we do not need the two maps
@@ -609,6 +650,8 @@ public final class SourceLinkageResolver {
         // FIXME: improve the population logic here: the nested lookup and population of 'involvedSourcesGrouped'
         //        is quite counter-productive. Furthermore, if we could operate directly on current being SourceInfoRef,
         //        or better yet, on the builder itself, we should be able to reduce some of the trouble.
+
+
         final var newResolved = involvedSourcesMap.computeIfAbsent(sourceId, key -> {
             final var builder = switch (source) {
                 case SourceInfoRef.OfModule infoRef -> new ResolvedSourceBuilder.ForModule(infoRef);
