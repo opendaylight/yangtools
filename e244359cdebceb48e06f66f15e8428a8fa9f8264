@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0760b42e_46aae6d9",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 79,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T07:53:14Z",
+      "side": 1,
+      "message": "guaranteed to \"be\" distinct objects",
+      "revId": "e244359cdebceb48e06f66f15e8428a8fa9f8264",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9437f977_51f53855",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 262,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T07:53:14Z",
+      "side": 1,
+      "message": "unused variable \"completed\"",
+      "revId": "e244359cdebceb48e06f66f15e8428a8fa9f8264",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "93d7f6e9_19dfc2a7",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T07:53:14Z",
+      "side": 1,
+      "message": "The comment here is misleading, since the IF below does the exact opposite. Reword or move after the if statement",
+      "revId": "e244359cdebceb48e06f66f15e8428a8fa9f8264",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
