@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "b2215c2d_801037bb",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 6
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:08:59Z",
+      "side": 1,
+      "message": "Commit message error: This \"will brings\" all the",
+      "revId": "683b4f5bdf25807baf2204c780abe9022671570a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "caac301f_c647b59b",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T08:08:59Z",
+      "side": 1,
+      "message": "why was @NonNullByDefault replaced with these 2 @NonNulls? NonNullByDefault seems cleaner and consistent with the one above.",
+      "revId": "683b4f5bdf25807baf2204c780abe9022671570a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
