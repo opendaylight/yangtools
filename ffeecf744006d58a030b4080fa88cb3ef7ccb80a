@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "91e7f7d0_12a86a7d",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T12:44:25Z",
+      "side": 1,
+      "message": "that would be superfluous, see https://bugs.openjdk.org/browse/JDK-8075778",
+      "parentUuid": "881887f2_19e88918",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6d781ac6_fad0f3a6",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-07-08T08:35:23Z",
       "side": 1,
       "message": "missing end period",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aa409f5a_ec2fcb79",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 163,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T12:44:25Z",
+      "side": 1,
+      "message": "that would be superfluous, see https://bugs.openjdk.org/browse/JDK-8075778",
+      "parentUuid": "6d781ac6_fad0f3a6",
       "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
