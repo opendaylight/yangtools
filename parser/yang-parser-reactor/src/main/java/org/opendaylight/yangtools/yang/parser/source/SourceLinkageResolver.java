@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SortedSetMultimap;
@@ -43,6 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -96,13 +98,34 @@ public final class SourceLinkageResolver {
         Comparator.nullsLast(Revision::compareTo).reversed()
     );
 
-    // The set of sources that are required to be resolved, separated into modules and submodules. We are using
-    // insertion order to ensure predictable ordering.
-    // FIXME: store ResolvedSourceBuilders here once we eliminate involvedSourcesMap
+    /**
+     * Comparator ordering {@link SourceInfoRef}s by their {@link SourceRef#correctId()} so that
+     * {@link SourceIdentifier#name()}s are encountered in their natural order and the corresponding
+     * {@link SourceIdentifier#revision()}s are encountered in reverse order, that is newest revision first.
+     */
+    @NonNullByDefault
+    private static final Comparator<SourceInfoRef> INFOREF_BY_SOURCEID = (left, right) -> {
+        final var leftId = left.ref().correctId();
+        final var rightId = right.ref().correctId();
+        final var cmp = leftId.name().compareTo(rightId.name());
+        return cmp != 0 ? cmp
+            // swapped arguments to get the reversed comparison
+            : Revision.compare(rightId.revision(), leftId.revision());
+    };
+
+    /**
+     * The set of required module sources. We are using insertion order to ensure predictable ordering.
+     */
+    // FIXME: store ResolvedSourceBuilder.ForModule here once we eliminate involvedSourcesMap
     @NonNullByDefault
     private final LinkedHashSet<SourceInfoRef.OfModule> requiredModules = new LinkedHashSet<>();
+    /**
+     * The set of required submodule sources, indexed by the name of the module they claim to belong to. Predictable
+     * iteration order is provided via {@link #requiredSubmodules()}.
+     */
+    // FIXME: store ResolvedSourceBuilder.ForSubmodule here once we eliminate involvedSourcesMap
     @NonNullByDefault
-    private final LinkedHashSet<SourceInfoRef.OfSubmodule> requiredSubmodules = new LinkedHashSet<>();
+    private final HashMultimap<Unqualified, SourceInfoRef.OfSubmodule> requiredSubmodules = HashMultimap.create();
 
     // As per RFC6020, every import-by-revision has to resolve to the same module. We are using a table, as that also
     // allows us quickly find all modules with the same name -- and have them ordered with latest revision first.
@@ -131,24 +154,23 @@ public final class SourceLinkageResolver {
     //        their name when search for them
     // FIXME: overall it seems we want to differentiate the set for
     //        - modules, which cannot have conflicting SourceIdentifiers as implied by modulesBySourceId
-    //        - submodules, which can have naming conflicts as long as the conflicting submodules belong to
-    //          differently-named modules
+    //        - submodules, which can have naming conflicts as long as the conflicting submodules end up being mapped to
+    //          distinct modules by the resolution logic, as tracked in requiredSubmodules -- but that is a difficult
+    //          topic, as we currently handle only the case when the modules have different names
     private final SortedSetMultimap<Unqualified, SourceIdentifier> allSourcesMapped =
         Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(BY_REVISION));
 
     /**
      * Map of involved sources with the same name.
      */
-    // FIXME: this seems to be similar to allSourcesMapped: how is it different in lieu of the associated FIXME?
+    // FIXME: replace users of this map with lookups to modulesByName and requiredSubmodules
     private final SortedSetMultimap<Unqualified, SourceIdentifier> involvedSourcesGrouped =
         Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(BY_REVISION));
 
     /**
      * Map of involved sources ordered according to the resolution order (LinkedHashMap keeps the insertion order).
      */
-    // FIXME: this field should be replaced with 'List<ResolvedSourceInfo> resolvedSources', which is populated as soon
-    //        as a ResolvedSourceBuilder is known to have been fully resolved: that is what the tail of
-    //        resolveInvolvedSources() does
+    // FIXME: replace users of this map with lookups into requiredModules and requiredSubmodules
     private final Map<SourceIdentifier, ResolvedSourceBuilder<?>> involvedSourcesMap = new LinkedHashMap<>();
 
     // FIXME: this is state internal to resolveInvolvedSources(): reconcile its semantics:
@@ -166,6 +188,19 @@ public final class SourceLinkageResolver {
 
     private SourceLinkageResolver() {
         // hidden on purpose
+    }
+
+    /**
+     * {@return the set of required submodule sources, in order dictated by {@link #INFOREF_BY_SOURCEID}}.
+     */
+    @NonNullByDefault
+    private List<SourceInfoRef.OfSubmodule> requiredSubmodules() {
+        final var values = requiredSubmodules.values();
+        return switch (values.size()) {
+            case 0 -> List.of();
+            case 1 -> List.of(values.iterator().next());
+            default -> values.stream().sorted(INFOREF_BY_SOURCEID).toList();
+        };
     }
 
     /**
@@ -219,8 +254,54 @@ public final class SourceLinkageResolver {
     @NonNullByDefault
     private List<ResolvedSourceInfo> resolveInvolvedSources(final Set<SourceInfoRef> libSources)
             throws ReactorException {
-        // FIXME: this is eager population of 'allSources' and 'allSourcesMapped': libSources should be processed only
-        //        once needed -- and this method should be the one to know when and how exactly that happens
+        // FIXME: the order of operations is wrong here:
+        //          1) we populate 'allSources' and 'allSourcesMapped' with libSources
+        //          2) we resolve belongs-to dependencies based on 'allSources', including those introduced in 1)
+        //          3) we expand the set of required modules based on 2)
+        //          4) we perform a single pass over required sources and resolve each recursively, populating auxiliary
+        //             maps, e.g. 'involvedSourcesMap', as a side effect
+        //
+        // What we need to achieve consistent linkage along three axis:
+        //   - imported module
+        //   - included submodule
+        //   - parent module
+        // such that the set of requiredModules and requiredSubmodules, as populated at the entry into this method, is
+        // completely resolved.
+        // If any linkage is found to be unsatisfied, we need to consult libSources to find the
+        // minimal set of sources that result in such linkage.
+        //
+        // In order this, we need to resolve the following five cases:
+        //   - import-by-revision, which is an exact match
+        //   - import-without-revision, which is a wildcard match
+        //   - include-by-revision, which is an exact match
+        //   - include-without-revision, which is a wildcard match
+        //   - belongs-to, which is a wildcard match
+        //
+        // YANG leaves the semantics of resolving import-without-revision and include-without-revision in presence of
+        // multiple candidates undefined, but we define them as resolving to the latest revision available. Notably we
+        // do not consider newer versions in libSources unless they are explicitly made required.
+        //
+        // Furthermore YANG semantics of belongs-to statement does not provide any guidance in case of multiple
+        // revisions being involved, but it specifies that the mapping must be consistent with include statement.
+        //
+        // The approach we take here is to work in order of decreasing certainty and contribution to invariants:
+        //   - import-by-revision
+        //   - include-by-revision
+        //   - import-without-revision
+        //   - include-without-reviesion
+        //   - belongs-to
+        // so that their invariants are established in this order. If a step ends up introducing new invariants to a
+        // previous step, we restart that step. For example, if a libSource satisfying an include-by-revision introduces
+        // new import-by-revision dependencies, we restart the algorithm.
+        //
+        // This also means that import-without-revision and include-without-revision resolution can naturally happen
+        // multiple times. For import-without-revision subsequent resolution result must have a newer revision. For
+        // include-without-revision the situation is somewhat more complicated, as explained next.
+        //
+        // The most problematic is belongs-to, as it is inherently inaccurate, but impacts the set of required modules
+        // and constrains the set of sources which can satisfy include dependencies. Here we want to do some unspecified
+        // magic to take transitive include linkage to guide which module to pick.
+
         for (var source : libSources) {
             populateLegacyMaps(source);
         }
@@ -245,7 +326,7 @@ public final class SourceLinkageResolver {
         }
 
         // ensures every required submodule has its parent module present in required modules as well
-        for (var submodule : requiredSubmodules) {
+        for (var submodule : requiredSubmodules()) {
             final var sourceInfo = submodule.info();
             final var parentId = submoduleToParentMap.get(sourceInfo.sourceId());
             if (parentId == null) {
@@ -267,7 +348,7 @@ public final class SourceLinkageResolver {
 
         // resolve imports and non-sibling includes for all required sources. Sibling includes are identified, but are
         // resolved later (at end of this method).
-        for (var mainSource : Iterables.concat(requiredModules, requiredSubmodules)) {
+        for (var mainSource : Iterables.concat(requiredModules, requiredSubmodules())) {
             final var rootId = mainSource.info().sourceId();
 
             // FIXME: This requires the mainSource to complete resolution once we start and in order to achieve that
@@ -398,7 +479,11 @@ public final class SourceLinkageResolver {
         }
 
         // we are all done: build the result
-        // FIXME: just assert (or prove) there are no unresolved items and return a copy of resourcedSources (see above)
+        // FIXME: just assert (or prove) there are no unresolved items and return a copy of a
+        //        'List<ResolvedSourceInfo> resolvedSources' field, which is populated as soon as a
+        //        ResolvedSourceBuilder is known to have been fully resolved: that is what the tail of
+        //        resolveInvolvedSources() does and we want to return the result in the order in which the sources have
+        //        been resolved.
         final var allResolved =
             LinkedHashMap.<SourceInfoRef, ResolvedSourceInfo>newLinkedHashMap(involvedSourcesMap.size());
         for (var involvedSource : involvedSourcesMap.values()) {
@@ -447,7 +532,7 @@ public final class SourceLinkageResolver {
 
     @NonNullByDefault
     private void addRequiredSubmodule(final SourceInfoRef.OfSubmodule submodule) {
-        if (!requiredSubmodules.add(submodule)) {
+        if (!requiredSubmodules.get(submodule.info().belongsTo().name()).add(submodule)) {
             throw new VerifyException("Attempted to add already-required " + submodule);
         }
     }
