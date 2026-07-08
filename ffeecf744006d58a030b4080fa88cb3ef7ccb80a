@@ -106,6 +106,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "500fe6d6_1f1658ca",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T14:51:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "cc577e34_2c473232",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e25cfcc5_683e7d18",
@@ -294,6 +312,24 @@
       "writtenOn": "2026-07-08T08:35:23Z",
       "side": 1,
       "message": "The message will say \"Attempted to override import\" even if the dependency is include. Change to \"Attempted to override dependency\" or similar.",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e05bf9a3_393c16b2",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 316,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T14:51:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "792b26da_f50b3d21",
       "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
