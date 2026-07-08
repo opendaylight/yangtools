@@ -33,6 +33,24 @@
       "message": "why was @NonNullByDefault replaced with these 2 @NonNulls? NonNullByDefault seems cleaner and consistent with the one above.",
       "revId": "683b4f5bdf25807baf2204c780abe9022671570a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "37b81162_212f7a8c",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 195,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T10:15:50Z",
+      "side": 1,
+      "message": "it is, but it applies to the entire method and gets picked up into workChain declaration, causing a bogus dead code warning at \u0027current \u003d\u003d null\u0027.",
+      "parentUuid": "caac301f_c647b59b",
+      "revId": "683b4f5bdf25807baf2204c780abe9022671570a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
