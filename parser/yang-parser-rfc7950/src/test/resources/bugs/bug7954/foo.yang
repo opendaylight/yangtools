@@ -1,0 +1,12 @@
+module foo {
+    namespace foo-ns;
+    prefix foo-prefix;
+
+    revision 2017-03-14;
+
+    container my-cont {
+        leaf my-leaf {
+            type string;
+        }
+    }
+}
