@@ -16,6 +16,24 @@
       "message": "iterate \"over\" submodules",
       "revId": "044b413dd09046ef78d3cd92efbfaac6e49a8251",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "d1001c28_fe575a69",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T10:11:28Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c27f299b_23edca94",
+      "revId": "044b413dd09046ef78d3cd92efbfaac6e49a8251",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
