@@ -89,12 +89,17 @@ public final class SourceLinkageResolver {
     }
 
     /**
-     * Comparator to keep groups of modules with the same name ordered by their revision (latest first).
+     * Comparator ordering {@link SourceIdentifier}s so that {@link SourceIdentifier#name()}s are encountered in their
+     * natural order and the corresponding {@link SourceIdentifier#revision()}s are encountered in reverse order, i.e.
+     * newest revision first.
      */
-    private static final Comparator<SourceIdentifier> BY_REVISION = Comparator.comparing(
-        SourceIdentifier::revision,
-        Comparator.nullsLast(Revision::compareTo).reversed()
-    );
+    @NonNullByDefault
+    private static final Comparator<SourceIdentifier> BY_REVISION = (left, right) -> {
+        final var cmp = left.name().compareTo(right.name());
+        return cmp != 0 ? cmp
+            // swapped argument order to reverse the comparison
+            : Revision.compare(right.revision(), left.revision());
+    };
 
     // The set of sources that are required to be resolved, separated into modules and submodules. We are using
     // insertion order to ensure predictable ordering.
