@@ -534,6 +534,16 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
     }
 
     @Override
+    public final int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
     public final String toString() {
         return MoreObjects.toStringHelper(this).add("ref", infoRef).toString();
     }
