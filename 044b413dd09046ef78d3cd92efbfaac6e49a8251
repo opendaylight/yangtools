@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c27f299b_23edca94",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 194,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-08T07:54:55Z",
+      "side": 1,
+      "message": "iterate \"over\" submodules",
+      "revId": "044b413dd09046ef78d3cd92efbfaac6e49a8251",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
