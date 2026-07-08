@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -105,35 +106,34 @@ public final class SourceLinkageResolver {
     /**
      * The set of required module sources. We are using insertion order to ensure predictable ordering.
      */
-    // FIXME: store ResolvedSourceBuilder.ForModule here once we eliminate involvedSourcesMap
     @NonNullByDefault
-    private final LinkedHashSet<SourceInfoRef.OfModule> requiredModules = new LinkedHashSet<>();
+    private final LinkedHashMap<SourceInfoRef.OfModule, ResolvedSourceBuilder.ForModule> requiredModules =
+        new LinkedHashMap<>();
 
     /**
      * The set of required submodule sources. We are using insertion order to ensure predictable ordering.
      */
-    // FIXME: store ResolvedSourceBuilder.ForSubmodule here once we eliminate involvedSourcesMap
     @NonNullByDefault
-    private final LinkedHashSet<SourceInfoRef.OfSubmodule> requiredSubmodules = new LinkedHashSet<>();
+    private final LinkedHashMap<SourceInfoRef.OfSubmodule, ResolvedSourceBuilder.ForSubmodule> requiredSubmodules =
+        new LinkedHashMap<>();
 
     // As per RFC6020, every import-by-revision has to resolve to the same module. We are using a table, as that also
     // allows us quickly find all modules with the same name -- and have them ordered with latest revision first.
-    @NonNullByDefault
-    private final Table<Unqualified, RevisionUnion, SourceInfoRef.@Nullable OfModule> modulesByName =
-        Tables.<Unqualified, RevisionUnion, SourceInfoRef.@Nullable OfModule>newCustomTable(new HashMap<>(),
+    private final @NonNull Table<Unqualified, RevisionUnion, ResolvedSourceBuilder.ForModule> modulesByName =
+        Tables.<Unqualified, RevisionUnion, ResolvedSourceBuilder.ForModule>newCustomTable(new HashMap<>(),
             () -> new TreeMap<>(Comparator.reverseOrder()));
 
     // Our implementation constraints are looser than RFC6020/RFC7895/RFC7950/RFC8525 in that each module can be
     // implemented with multiple revisions, as long as each XMLNamespace/Revision combination is introduced by exactly
     // one source.
-    @NonNullByDefault
-    private final HashMap<QNameModule, SourceInfoRef.@Nullable OfModule> modulesByNamespace = new HashMap<>();
+    private final @NonNull HashMap<QNameModule, ResolvedSourceBuilder.ForModule> modulesByNamespace = new HashMap<>();
 
     /**
      * The set of required submodule sources, indexed by the name of the module they claim to belong to.
      */
     @NonNullByDefault
-    private final HashMultimap<Unqualified, SourceInfoRef.OfSubmodule> submodulesByParentName = HashMultimap.create();
+    private final HashMultimap<Unqualified, ResolvedSourceBuilder.ForSubmodule> submodulesByParentName =
+        HashMultimap.create();
 
     // FIXME: eliminate this field: it is eagerly instantiated and should nicely decompose to requiredModules and
     //        requiredSubmodules noted above, but the SourceIdentifier as a key is making things hazy: what exactly
@@ -308,8 +308,8 @@ public final class SourceLinkageResolver {
         }
 
         // ensures every required submodule has its parent module present in required modules as well
-        for (var submodule : requiredSubmodules) {
-            final var sourceInfo = submodule.info();
+        for (var submodule : requiredSubmodules.values()) {
+            final var sourceInfo = submodule.sourceInfo();
             final var parentId = submoduleToParentMap.get(sourceInfo.sourceId());
             if (parentId == null) {
                 throw new VerifyException(submodule + " does not have a parent");
@@ -323,15 +323,15 @@ public final class SourceLinkageResolver {
             }
 
             // only add to requirements if it is not present
-            if (!requiredModules.contains(parentModule)) {
+            if (!requiredModules.containsKey(parentModule)) {
                 addRequiredModule(parentModule);
             }
         }
 
         // resolve imports and non-sibling includes for all required sources. Sibling includes are identified, but are
         // resolved later (at end of this method).
-        for (var mainSource : Iterables.concat(requiredModules, requiredSubmodules)) {
-            final var rootId = mainSource.info().sourceId();
+        for (var mainSource : Iterables.concat(requiredModules.values(), requiredSubmodules.values())) {
+            final var rootId = mainSource.sourceId();
 
             // FIXME: This requires the mainSource to complete resolution once we start and in order to achieve that
             //        we track its unresolved dependencies locally, and try to resolve them first by pushing them to
@@ -474,9 +474,40 @@ public final class SourceLinkageResolver {
         return List.copyOf(allResolved.values());
     }
 
+    // resolve all import-by-revision statements, expanding requiredModules with libSources as needed
+    private void resolveImportByRevision(final Set<SourceInfoRef> libSources) {
+        boolean retry;
+        do {
+            retry = false;
+            for (var builder : Iterables.concat(List.copyOf(requiredModules.values()), requiredSubmodules.values())) {
+                for (var dependency : builder.missingImports()) {
+                    final var revision = dependency.revision();
+                    if (revision == null || resolveImportByRevision(builder, dependency, revision)) {
+                        continue;
+                    }
+
+                    // FIXME: find among libSources, bring in, resolve and mark the fact we have modified modules
+                }
+            }
+        } while (retry);
+    }
+
+    @NonNullByDefault
+    private boolean resolveImportByRevision(final ResolvedSourceBuilder<?> builder, final Import dependency,
+            final Revision revision) {
+        final var existing = modulesByName.get(dependency.name(), revision);
+        if (existing == null) {
+            return false;
+        }
+        builder.resolveImport(dependency, existing);
+        return true;
+    }
+
     @NonNullByDefault
     private void addRequiredModule(final SourceInfoRef.OfModule module) throws ReactorException {
-        if (!requiredModules.add(module)) {
+        final var builder = new ResolvedSourceBuilder.ForModule(module);
+        final var prev = requiredModules.putIfAbsent(module, builder);
+        if (prev != null) {
             throw new VerifyException("Attempted to add already-required " + module);
         }
 
@@ -489,7 +520,7 @@ public final class SourceLinkageResolver {
         //       SourceInfoRefs involved and have SourceLinkageBuilder map them back to ReactorSource/BuildSource and
         //       their corresponding location
 
-        final var prevByNamespace = modulesByNamespace.putIfAbsent(namespace, module);
+        final var prevByNamespace = modulesByNamespace.putIfAbsent(namespace, builder);
         if (prevByNamespace != null) {
             throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
                 new InferenceException(sourceId.toReference(),
@@ -498,7 +529,7 @@ public final class SourceLinkageResolver {
         }
 
         final var prevBySourceId = modulesByName.row(sourceId.name())
-            .putIfAbsent(RevisionUnion.of(sourceId.revision()), module);
+            .putIfAbsent(RevisionUnion.of(sourceId.revision()), builder);
         if (prevBySourceId != null) {
             throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
                 new InferenceException(sourceId.toReference(),
@@ -514,10 +545,12 @@ public final class SourceLinkageResolver {
 
     @NonNullByDefault
     private void addRequiredSubmodule(final SourceInfoRef.OfSubmodule submodule) {
-        if (!requiredSubmodules.add(submodule)) {
+        final var builder = new ResolvedSourceBuilder.ForSubmodule(submodule);
+        final var prev = requiredSubmodules.putIfAbsent(submodule, builder);
+        if (prev != null) {
             throw new VerifyException("Attempted to add already-required " + submodule);
         }
-        verify(submodulesByParentName.put(submodule.info().belongsTo().name(), submodule));
+        verify(submodulesByParentName.put(submodule.info().belongsTo().name(), builder));
     }
 
     // FIXME: remove this method once we do not need the two maps
