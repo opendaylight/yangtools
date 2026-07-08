@@ -90,6 +90,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "cc577e34_2c473232",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T14:48:56Z",
+      "side": 1,
+      "message": "actually it prevents accidental definition of a method with same signature in the subclasses -- just as with non-static methods",
+      "parentUuid": "66ec911d_5482eed8",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e25cfcc5_683e7d18",
         "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
         "patchSetId": 7
@@ -101,6 +119,24 @@
       "writtenOn": "2026-07-08T08:35:23Z",
       "side": 1,
       "message": "Could be NoDependencies{} to keep it consistent",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fc82f3d6_f8033b29",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T14:48:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e25cfcc5_683e7d18",
       "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -122,6 +158,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "e238b3e4_3b9e074c",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 272,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T14:48:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a2687e30_2587a68a",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3904418e_1262db75",
@@ -135,6 +189,24 @@
       "writtenOn": "2026-07-08T08:35:23Z",
       "side": 1,
       "message": "filtering \"out\"",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b2d11dcc_d6270309",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T14:48:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3904418e_1262db75",
       "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -156,6 +228,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "27804afb_25b81bb4",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 290,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T14:48:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "25e538c1_4d216c2c",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "19677698_50a65264",
@@ -169,6 +259,24 @@
       "writtenOn": "2026-07-08T08:35:23Z",
       "side": 1,
       "message": "The argument \"resolved\" is called \"builder\" in the abstract method. Let\u0027s align it so it\u0027s not confusing.",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "6f2fd330_7d463882",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 308,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T14:48:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "19677698_50a65264",
       "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -207,6 +315,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "9f8ee61d_f3b4ce0e",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 341,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T14:48:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d73b8481_0d403a79",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "25f81863_43cf5b93",
@@ -220,6 +346,24 @@
       "writtenOn": "2026-07-08T08:35:23Z",
       "side": 1,
       "message": "missing end period",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "5c3c8d1c_be1a559b",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 419,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T14:48:56Z",
+      "side": 1,
+      "message": "renders exactly as should:\n\nReturns true if all dependencies specified in sourceInfo() have been satisfied.\n\nReturns:\ntrue if all dependencies specified in sourceInfo() have been satisfied",
+      "parentUuid": "25f81863_43cf5b93",
       "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -241,6 +385,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "3ba9254b_d0986ecd",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 426,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T14:48:56Z",
+      "side": 1,
+      "message": "see above",
+      "parentUuid": "39e47cac_f201d30e",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fa9633a9_794d6d70",
@@ -258,6 +420,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "5297f776_1041a183",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 434,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T14:48:56Z",
+      "side": 1,
+      "message": "see above",
+      "parentUuid": "fa9633a9_794d6d70",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "739002ce_8a9a00e2",
@@ -271,6 +451,24 @@
       "writtenOn": "2026-07-08T08:35:23Z",
       "side": 1,
       "message": "Move the annotation above, just like in missingImports() - to keep it consistent",
+      "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a6b6dd05_1ff314ce",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 436,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-08T14:48:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "739002ce_8a9a00e2",
       "revId": "ffeecf744006d58a030b4080fa88cb3ef7ccb80a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
