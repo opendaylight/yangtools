@@ -54,6 +54,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "33ab48eb_411b7684",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-07-09T06:17:58Z",
+      "side": 1,
+      "message": "do we still need @NonNull?",
+      "revId": "7b0603810f597b132afda3487ac03594c2fc9426",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "e5f6f270_4f0663fa",
         "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
         "patchSetId": 17
