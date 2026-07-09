@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "fd80bf5b_80bf952c",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 168,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-09T08:49:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ca8375fc_5d8b97b1",
+      "revId": "7b0603810f597b132afda3487ac03594c2fc9426",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "e4cf7de8_0238e29e",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-07-09T06:16:50Z",
       "side": 1,
       "message": "@NonNullByDefault",
+      "revId": "7b0603810f597b132afda3487ac03594c2fc9426",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "e3ff95f2_f814e410",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 187,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-09T08:49:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e4cf7de8_0238e29e",
       "revId": "7b0603810f597b132afda3487ac03594c2fc9426",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -52,6 +88,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "b7aa7cec_b00e5842",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 199,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-09T08:49:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "c77855ae_132b20fa",
+      "revId": "7b0603810f597b132afda3487ac03594c2fc9426",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "33ab48eb_411b7684",
@@ -65,6 +119,24 @@
       "writtenOn": "2026-07-09T06:17:58Z",
       "side": 1,
       "message": "do we still need @NonNull?",
+      "revId": "7b0603810f597b132afda3487ac03594c2fc9426",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ae081ce8_05aeb772",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 211,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-09T08:49:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "33ab48eb_411b7684",
       "revId": "7b0603810f597b132afda3487ac03594c2fc9426",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -86,6 +158,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "afbb80c6_5d61b6df",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 284,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-09T08:49:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "e5f6f270_4f0663fa",
+      "revId": "7b0603810f597b132afda3487ac03594c2fc9426",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7bea7ef7_4a19d4a3",
@@ -99,6 +189,24 @@
       "writtenOn": "2026-07-09T06:16:50Z",
       "side": 1,
       "message": "to resolve \"include\"",
+      "revId": "7b0603810f597b132afda3487ac03594c2fc9426",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fb5b2bf7_6e1e48e3",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 477,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-09T08:49:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7bea7ef7_4a19d4a3",
       "revId": "7b0603810f597b132afda3487ac03594c2fc9426",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
