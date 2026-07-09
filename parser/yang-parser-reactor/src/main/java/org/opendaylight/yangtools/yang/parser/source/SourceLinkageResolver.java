@@ -11,13 +11,17 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
+import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SortedSetMultimap;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
+import com.google.common.collect.TreeBasedTable;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -90,6 +94,64 @@ public final class SourceLinkageResolver {
     }
 
     /**
+     * The set of library sources available within a resolution attempt. Split out of the outer class for state/logic
+     * isolation.
+     */
+    @NonNullByDefault
+    private final class LibrarySources {
+        // note: rows are using their natural order
+        // note: columns are ordered to encounter latest revision first
+        // note: values are ordered by their encounter order -- we really should have only one item in each
+        //       inner list -- as the first item naturally dominates others, but that is something we can think
+        //       about later, as all logic contained in this class should reside in SourceLinkageBuilder anyway
+        //       and there the laziness also implies parsing a library source and dealing with SourceIdentifier
+        //       normalization et al.
+        private final Table<Unqualified, RevisionUnion, List<SourceInfoRef.OfModule>> modules;
+        private final Table<Unqualified, RevisionUnion, List<SourceInfoRef.OfSubmodule>> submodules;
+
+        LibrarySources(final Set<SourceInfoRef> sources) {
+            modules = indexSources(sources, SourceInfoRef.OfModule.class);
+            submodules = indexSources(sources, SourceInfoRef.OfSubmodule.class);
+        }
+
+        private static <R extends SourceInfoRef> Table<Unqualified, RevisionUnion, List<R>> indexSources(
+                final Set<SourceInfoRef> sources, final Class<R> refClass) {
+            // filter relevant sources and group them by their SourceIdentifier, retaining encounter source order
+            final var tmp = ArrayListMultimap.<SourceIdentifier, R>create();
+            for (var source : sources) {
+                if (refClass.isInstance(source)) {
+                    tmp.put(source.ref().correctId(), refClass.cast(source));
+                }
+            }
+
+            if (tmp.isEmpty()) {
+                // empty sources: nothing else to do
+                return ImmutableTable.of();
+            }
+
+            // decompose SourceIdentifier into Unqualified/RevisionUnion and ensure the retained list is sized
+            // to precisely the number elements it contains
+            final var table = TreeBasedTable.<Unqualified, RevisionUnion, List<R>>create(Comparator.naturalOrder(),
+                Comparator.reverseOrder());
+            for (var entry : tmp.asMap().entrySet()) {
+                final var sourceId = entry.getKey();
+                table.put(sourceId.name(), RevisionUnion.of(sourceId.revision()), new ArrayList<>(entry.getValue()));
+            }
+            return table;
+        }
+
+        @Deprecated(forRemoval = true)
+        void populateLegacyMaps() {
+            for (var sources : modules.values()) {
+                sources.forEach(SourceLinkageResolver.this::populateLegacyMaps);
+            }
+            for (var sources : submodules.values()) {
+                sources.forEach(SourceLinkageResolver.this::populateLegacyMaps);
+            }
+        }
+    }
+
+    /**
      * Comparator to keep groups of modules with the same name ordered by their revision (latest first).
      */
     private static final Comparator<SourceIdentifier> BY_REVISION = Comparator.comparing(
@@ -129,6 +191,12 @@ public final class SourceLinkageResolver {
      */
     @NonNullByDefault
     private final HashMultimap<Unqualified, SourceInfoRef.OfSubmodule> submodulesByParentName = HashMultimap.create();
+
+    /**
+     * The set of library sources available to this resolver.
+     */
+    @NonNullByDefault
+    private final LibrarySources libSources;
 
     // FIXME: eliminate this field: it is eagerly instantiated and should nicely decompose to requiredModules and
     //        requiredSubmodules noted above, but the SourceIdentifier as a key is making things hazy: what exactly
@@ -176,8 +244,9 @@ public final class SourceLinkageResolver {
     //        and perhaps making this a possible intermediate in ResolvedSourceBuilder.includes resolution process
     private final Map<ResolvedSourceBuilder<?>, Map<Include, SourceIdentifier>> unresolvedSiblingsMap = new HashMap<>();
 
-    private SourceLinkageResolver() {
-        // hidden on purpose
+    @NonNullByDefault
+    private SourceLinkageResolver(final Set<SourceInfoRef> libSources) {
+        this.libSources = new LibrarySources(libSources);
     }
 
     /**
@@ -217,7 +286,7 @@ public final class SourceLinkageResolver {
             return List.of();
         }
 
-        final var resolver = new SourceLinkageResolver();
+        final var resolver = new SourceLinkageResolver(libSources);
         for (var source : mainSources) {
             switch (source) {
                 case SourceInfoRef.OfModule module -> resolver.addRequiredModule(module);
@@ -225,12 +294,11 @@ public final class SourceLinkageResolver {
             }
             resolver.populateLegacyMaps(source);
         }
-        return resolver.resolveInvolvedSources(libSources);
+        return resolver.resolveInvolvedSources();
     }
 
     @NonNullByDefault
-    private List<ResolvedSourceInfo> resolveInvolvedSources(final Set<SourceInfoRef> libSources)
-            throws ReactorException {
+    private List<ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
         // FIXME: the order of operations is wrong here:
         //          1) we populate 'allSources' and 'allSourcesMapped' with libSources
         //          2) we resolve belongs-to dependencies based on 'allSources', including those introduced in 1)
@@ -279,9 +347,7 @@ public final class SourceLinkageResolver {
         // and constrains the set of sources which can satisfy include dependencies. Here we want to do some unspecified
         // magic to take transitive include linkage to guide which module to pick.
 
-        for (var source : libSources) {
-            populateLegacyMaps(source);
-        }
+        libSources.populateLegacyMaps();
 
         // map all sources to their respective parents
         for (var source : allSources.values()) {
@@ -516,6 +582,7 @@ public final class SourceLinkageResolver {
     }
 
     // FIXME: remove this method once we do not need the two maps
+    @Deprecated(forRemoval = true)
     @NonNullByDefault
     private void populateLegacyMaps(final SourceInfoRef source) {
         final var sourceId = source.info().sourceId();
