@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "433bb7c4_0520abdb",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-09T06:36:59Z",
+      "side": 1,
+      "message": "In cases where we mix revisioned and revision-less sources, the order is reversed here. Previously the revision-less source would be first. Now it will be the last, if any revisioned sources are present. This is alright, but it should be described somewhere and ideally covered with a test - having both revision-less and a revisioned sources and assert which one a wildcard import resolves to.",
+      "revId": "4997cb23298aa1ef037ea8c43251ab3e6cabf979",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
