@@ -16,6 +16,24 @@
       "message": "In cases where we mix revisioned and revision-less sources, the order is reversed here. Previously the revision-less source would be first. Now it will be the last, if any revisioned sources are present. This is alright, but it should be described somewhere and ideally covered with a test - having both revision-less and a revisioned sources and assert which one a wildcard import resolves to.",
       "revId": "4997cb23298aa1ef037ea8c43251ab3e6cabf979",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4c663e7c_46082d00",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-09T12:10:02Z",
+      "side": 1,
+      "message": "Ah, right, so that reinforces the point for refactoring:\n\n- \u0027latest first\u0027 statement in documentation is not accurate, because\n- Revision gets its comparator from RevisionUnion, where\n- \u0027no revision\u0027 compares as less as any revision, hence\n- the natural order is null, 0000-00-00, ..., 9999-99-99\n\nHere the order is null, 9999-99-99, ...., 0000-00-00, which is neither natural or reverse order of Revision.\n\nNote that we have already have a well-established meaning of what \"newest revision first\" means here: https://github.com/opendaylight/yangtools/blob/8098f35c50fb4e3723b1936009ab334c2023d194/model/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/api/SchemaContext.java#L54-L61 -- and it is the exact reverse of the natural order.\n\nSo that sheds a light on how the lookups through maps actually work. I will refactor that part first and circle back here afterwards.",
+      "parentUuid": "433bb7c4_0520abdb",
+      "revId": "4997cb23298aa1ef037ea8c43251ab3e6cabf979",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
