@@ -34,6 +34,24 @@
       "parentUuid": "433bb7c4_0520abdb",
       "revId": "4997cb23298aa1ef037ea8c43251ab3e6cabf979",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "aed7162b_b280f885",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-12T14:34:47Z",
+      "side": 1,
+      "message": "added a test to demonstrate this -- the original behaviour is actually a regression.",
+      "parentUuid": "4c663e7c_46082d00",
+      "revId": "4997cb23298aa1ef037ea8c43251ab3e6cabf979",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
