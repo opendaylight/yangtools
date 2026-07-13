@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -361,7 +362,8 @@ public final class SourceLinkageResolver {
                 final var submoduleInfo = submodule.info();
                 final var belongsTo = submoduleInfo.belongsTo();
                 final var parentName = belongsTo.name();
-                final var parentId = findSatisfied(allSourcesMapped, parentName, belongsTo);
+                // FIXME: YANGTOOLS-1896: why are we not using findAnyParent() here?
+                final var parentId = findMappedParent(parentName);
                 final var submoduleId = submoduleInfo.sourceId();
                 if (parentId != null) {
                     submoduleToParentMap.put(submoduleId, parentId);
@@ -638,12 +640,20 @@ public final class SourceLinkageResolver {
                 continue;
             }
 
-            final var includedSibling = asIncludedSibling(sourceId, dependency, match);
-            if (includedSibling != null) {
+            if (dependency instanceof Include include && source instanceof SourceInfoRef.OfSubmodule submodule) {
                 // If this is an include of a sibling submodule, don't add it as unresolved dependency.
                 // It will be resolved later in a different way.
-                includedSiblings.put(includedSibling, match);
-                continue;
+                final var parent = findAnyParent(submodule);
+                if (parent != null) {
+                    final var matchSource = allSources.get(match);
+                    if (matchSource instanceof SourceInfoRef.OfSubmodule matchSubmodule) {
+                        final var matchParent = findAnyParent(matchSubmodule);
+                        if (matchParent != null && parent.equals(matchParent)) {
+                            includedSiblings.put(include, match);
+                            continue;
+                        }
+                    }
+                }
             }
 
             // Dependency exists but was not fully resolved yet - mark as unresolved
@@ -716,31 +726,23 @@ public final class SourceLinkageResolver {
         return CompleteResolution.INSTANCE;
     }
 
-    private Include asIncludedSibling(final SourceIdentifier current, final SourceDependency dependency,
-            final SourceIdentifier dependencyId) {
-        if (!(dependency instanceof Include sibling)) {
-            return null;
-        }
-
-        final var currentParent = findSatisfyingParentForSubmodule(current);
-        // FIXME: not needed if currentParent == null?
-        final var theirParent = findSatisfyingParentForSubmodule(dependencyId);
-
-        return currentParent != null && currentParent.equals(theirParent) ? sibling : null;
+    @NonNullByDefault
+    private @Nullable SourceIdentifier findAnyParent(final SourceInfoRef.OfSubmodule submodule) {
+        // FIXME: explain why we are looking at both involvedSourcesGrouped and allSourcesMapped
+        final var belongsToName = submodule.info().belongsTo().name();
+        final var satisfied = findParent(involvedSourcesGrouped, belongsToName);
+        return satisfied != null ? satisfied : findMappedParent(belongsToName);
     }
 
-    private @Nullable SourceIdentifier findSatisfyingParentForSubmodule(final SourceIdentifier submoduleId) {
-        final var infoRef = allSources.get(requireNonNull(submoduleId));
-        if (!(infoRef instanceof SourceInfoRef.OfSubmodule submoduleRef)) {
-            return null;
-        }
+    @NonNullByDefault
+    private @Nullable SourceIdentifier findMappedParent(final Unqualified parentName) {
+        return findParent(allSourcesMapped, parentName);
+    }
 
-        final var submoduleBelongsTo = submoduleRef.info().belongsTo();
-        final var satisfied = findSatisfied(involvedSourcesGrouped, submoduleBelongsTo.name(), submoduleBelongsTo);
-        if (satisfied != null) {
-            return satisfied;
-        }
-        return findSatisfied(allSourcesMapped, submoduleBelongsTo.name(), submoduleBelongsTo);
+    private static @Nullable SourceIdentifier findParent(final SortedSetMultimap<Unqualified, SourceIdentifier> map,
+            final @NonNull Unqualified parentName) {
+        final var match = map.get(parentName);
+        return match.isEmpty() ? null : match.iterator().next();
     }
 
     private static @Nullable SourceIdentifier findSatisfied(final SortedSetMultimap<Unqualified, SourceIdentifier> map,
