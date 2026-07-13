@@ -502,7 +502,8 @@
                     <links>
                         <link>https://docs.junit.org/5.14.4/api/</link>
                         <link>https://hamcrest.org/JavaHamcrest/javadoc/3.0/</link>
-                        <link>https://www.slf4j.org/apidocs/</link>
+                        <!-- FIXME: https://www.slf4j.org/apidocs/ when it works -->
+                        <link>https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.18/</link>
                         <link>https://guava.dev/releases/33.6.0-jre/api/docs/</link>
 
                         <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/14.3.6/</link>
