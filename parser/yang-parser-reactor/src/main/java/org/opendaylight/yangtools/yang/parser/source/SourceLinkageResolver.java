@@ -141,6 +141,47 @@ public final class SourceLinkageResolver {
             return table;
         }
 
+        // exact match
+        SourceInfoRef.@Nullable OfModule findModule(final Unqualified name, final Revision revision) {
+            final var matching = modules.get(name, revision);
+            return matching != null ? matching.getFirst() : null;
+        }
+
+        // wildcard: match latest revision. i.e. the first item
+        SourceInfoRef.@Nullable OfModule findLatestModule(final Unqualified name) {
+            final var matching = modules.row(name);
+            return matching.isEmpty() ? null : matching.entrySet().iterator().next().getValue().getFirst();
+        }
+
+        // exact match
+        SourceInfoRef.@Nullable OfSubmodule findSubmodule(final Unqualified parentName,
+                final Unqualified name, final Revision revision) {
+            final var matching = submodules.get(name, revision);
+            if (matching != null) {
+                for (var submodule : matching) {
+                    if (parentName.equals(submodule.info().belongsTo().name())) {
+                        return submodule;
+                    }
+                }
+            }
+            return null;
+        }
+
+        // wildcard: match latest revision that has the same parentName
+        SourceInfoRef.@Nullable OfSubmodule findLatestSubmodule(final Unqualified parentName, final Unqualified name) {
+            SourceInfoRef.@Nullable OfSubmodule found = null;
+            for (var values : submodules.row(name).values()) {
+                for (var submodule : values) {
+                    if (parentName.equals(submodule.info().belongsTo().name())
+                        && (found == null || Revision.compare(
+                            found.ref().correctId().revision(), submodule.ref().correctId().revision()) < 0)) {
+                        found = submodule;
+                    }
+                }
+            }
+            return found;
+        }
+
         @Deprecated(forRemoval = true)
         void populateLegacyMaps() {
             for (var sources : modules.values()) {
@@ -619,45 +660,56 @@ public final class SourceLinkageResolver {
         final var includedSiblings = new LinkedHashMap<Include, SourceIdentifier>();
 
         for (var dependency : dependencies) {
-            final var dependencyName = dependency.name();
+            final SourceIdentifier unresolvedId;
 
-            // Find the best match (by revision) among all modules
-            final var match = findSatisfied(allSourcesMapped, dependencyName, dependency);
-            if (match == null) {
-                // Dependency is missing
-                if (dependency instanceof Import) {
-                    throw new InferenceException(refOf(sourceId, dependency.sourceRef()),
-                        "Imported module %s was not found", dependencyName.getLocalName());
+            switch (dependency) {
+                case BelongsTo dep -> throw new VerifyException("Unexpected " + dep);
+                case Import dep -> {
+                    final var imported = findImportedModule(dep);
+                    if (imported == null) {
+                        throw new InferenceException(refOf(sourceId, dep.sourceRef()),
+                            "Imported module %s was not found", dep.name().getLocalName());
+                    }
+
+                    // if the match was already resolved, just move on
+                    unresolvedId = imported.ref().correctId();
+                    if (involvedSourcesMap.containsKey(unresolvedId)) {
+                        resolved.put(dep, dep.name());
+                        continue;
+                    }
                 }
-                // FIXME: also handling of BelongsTo?
-                throw new InferenceException(refOf(sourceId, dependency.sourceRef()),
-                        "Included submodule %s was not found", dependencyName.getLocalName());
-            }
 
-            // if the match was already resolved, just move on
-            if (involvedSourcesMap.containsKey(match)) {
-                resolved.put(dependency, dependencyName);
-                continue;
-            }
+                case Include dep -> {
+                    final var included = findIncludedSubmodule(source, dep);
+                    if (included == null) {
+                        throw new InferenceException(refOf(sourceId, dep.sourceRef()),
+                            "Included submodule %s was not found", dep.name().getLocalName());
+                    }
 
-            if (dependency instanceof Include include && source instanceof SourceInfoRef.OfSubmodule submodule) {
-                // If this is an include of a sibling submodule, don't add it as unresolved dependency.
-                // It will be resolved later in a different way.
-                final var parent = findAnyParent(submodule);
-                if (parent != null) {
-                    final var matchSource = allSources.get(match);
-                    if (matchSource instanceof SourceInfoRef.OfSubmodule matchSubmodule) {
-                        final var matchParent = findAnyParent(matchSubmodule);
-                        if (matchParent != null && parent.equals(matchParent)) {
-                            includedSiblings.put(include, match);
-                            continue;
+                    // if the match was already resolved, just move on
+                    unresolvedId = included.ref().correctId();
+                    if (involvedSourcesMap.containsKey(unresolvedId)) {
+                        resolved.put(dep, dep.name());
+                        continue;
+                    }
+
+                    if (source instanceof SourceInfoRef.OfSubmodule submodule) {
+                        // If this is an include of a sibling submodule, don't add it as unresolved dependency.
+                        // It will be resolved later in a different way.
+                        final var parent = findAnyParent(submodule);
+                        if (parent != null) {
+                            final var matchParent = findAnyParent(included);
+                            if (matchParent != null && parent.equals(matchParent)) {
+                                includedSiblings.put(dep, unresolvedId);
+                                continue;
+                            }
                         }
                     }
                 }
             }
 
             // Dependency exists but was not fully resolved yet - mark as unresolved
-            unresolved.add(match);
+            unresolved.add(unresolvedId);
         }
 
         if (!unresolved.isEmpty()) {
@@ -743,6 +795,57 @@ public final class SourceLinkageResolver {
             final @NonNull Unqualified parentName) {
         final var match = map.get(parentName);
         return match.isEmpty() ? null : match.iterator().next();
+    }
+
+    // Find the best match (by revision) among all modules
+    private SourceInfoRef.@Nullable OfModule findImportedModule(final @NonNull Import dependency) {
+        final var name = dependency.name();
+        final var revision = dependency.revision();
+        if (revision != null) {
+            // import-by-revision: exact match
+            final var required = modulesByName.get(name, revision);
+            return required != null ? required : libSources.findModule(name, revision);
+        }
+
+        // import without revision: return latest known
+        final var matching = modulesByName.row(name).values().iterator();
+        return matching.hasNext() ? matching.next() : libSources.findLatestModule(name);
+    }
+
+    // Find the best match (by revision) among all submodules
+    private SourceInfoRef.@Nullable OfSubmodule findIncludedSubmodule(final @NonNull SourceInfoRef source,
+            final @NonNull Include dependency) {
+        final var moduleName = switch (source) {
+            case SourceInfoRef.OfModule module -> module.ref().correctId().name();
+            case SourceInfoRef.OfSubmodule submodule -> submodule.info().belongsTo().name();
+        };
+        final var name = dependency.name();
+        final var revision = dependency.revision();
+        return revision != null ? findSubmodule(moduleName, name, revision) : findLatestSubmodule(moduleName, name);
+    }
+
+    private SourceInfoRef.@Nullable OfSubmodule findSubmodule(final @NonNull Unqualified moduleName,
+            final @NonNull Unqualified name, final @NonNull Revision revision) {
+        for (var submodule : submodulesByParentName.get(moduleName)) {
+            final var sourceId = submodule.ref().correctId();
+            if (name.equals(sourceId.name()) && revision.equals(sourceId.revision())) {
+                return submodule;
+            }
+        }
+        return libSources.findSubmodule(moduleName, name, revision);
+    }
+
+    private SourceInfoRef.@Nullable OfSubmodule findLatestSubmodule(final @NonNull Unqualified moduleName,
+            final @NonNull Unqualified name) {
+        SourceInfoRef.@Nullable OfSubmodule found = null;
+        for (var submodule : submodulesByParentName.get(moduleName)) {
+            final var sourceId = submodule.ref().correctId();
+            if (name.equals(sourceId.name())
+                && (found == null || Revision.compare(found.ref().correctId().revision(), sourceId.revision()) < 0)) {
+                found = submodule;
+            }
+        }
+        return found != null ? found : libSources.findLatestSubmodule(moduleName, name);
     }
 
     private static @Nullable SourceIdentifier findSatisfied(final SortedSetMultimap<Unqualified, SourceIdentifier> map,
