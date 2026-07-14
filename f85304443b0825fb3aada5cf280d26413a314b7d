@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "807a802c_73a79558",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 97,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-14T06:50:28Z",
+      "side": 1,
+      "message": "available library sources available",
+      "revId": "f85304443b0825fb3aada5cf280d26413a314b7d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "033ff88d_87a66fa8",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-14T06:50:28Z",
+      "side": 1,
+      "message": "should should",
+      "revId": "f85304443b0825fb3aada5cf280d26413a314b7d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "10b53c5e_6ff86176",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 132,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-14T06:50:28Z",
+      "side": 1,
+      "message": "the retained list *is* sized",
+      "revId": "f85304443b0825fb3aada5cf280d26413a314b7d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
