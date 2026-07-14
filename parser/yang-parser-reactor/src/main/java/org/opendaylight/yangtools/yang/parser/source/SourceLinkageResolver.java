@@ -634,66 +634,59 @@ public final class SourceLinkageResolver {
     private Resolution resolveDependencies(final SourceInfoRef source) {
         final var currentInfo = source.info();
         final var sourceId = currentInfo.sourceId();
-        final var dependencies = new LinkedHashSet<SourceDependency>();
-        dependencies.addAll(currentInfo.imports());
-        dependencies.addAll(currentInfo.includes());
 
         // try to resolve dependencies
         final var resolved = new HashMap<SourceDependency, Unqualified>();
         final var unresolved = new LinkedHashSet<SourceIdentifier>();
         final var includedSiblings = new LinkedHashMap<Include, SourceIdentifier>();
 
-        for (var dependency : dependencies) {
-            final SourceIdentifier unresolvedId;
+        for (var dependency : currentInfo.imports()) {
+            final var imported = findImportedModule(dependency);
+            if (imported == null) {
+                throw new InferenceException(refOf(sourceId, dependency.sourceRef()),
+                    "Imported module %s was not found", dependency.name().getLocalName());
+            }
 
-            switch (dependency) {
-                case BelongsTo dep -> throw new VerifyException("Unexpected " + dep);
-                case Import dep -> {
-                    final var imported = findImportedModule(dep);
-                    if (imported == null) {
-                        throw new InferenceException(refOf(sourceId, dep.sourceRef()),
-                            "Imported module %s was not found", dep.name().getLocalName());
-                    }
+            // if the match was already resolved, just move on
+            final var importedId = imported.ref().correctId();
+            if (involvedSourcesMap.containsKey(importedId)) {
+                resolved.put(dependency, dependency.name());
+                continue;
+            }
 
-                    // if the match was already resolved, just move on
-                    unresolvedId = imported.ref().correctId();
-                    if (involvedSourcesMap.containsKey(unresolvedId)) {
-                        resolved.put(dep, dep.name());
+            // Dependency exists but was not fully resolved yet - mark as unresolved
+            unresolved.add(importedId);
+        }
+
+        for (var dependency : currentInfo.includes()) {
+            final var included = findIncludedSubmodule(source, dependency);
+            if (included == null) {
+                throw new InferenceException(refOf(sourceId, dependency.sourceRef()),
+                    "Included submodule %s was not found", dependency.name().getLocalName());
+            }
+
+            // if the match was already resolved, just move on
+            final var includedId = included.ref().correctId();
+            if (involvedSourcesMap.containsKey(includedId)) {
+                resolved.put(dependency, dependency.name());
+                continue;
+            }
+
+            if (source instanceof SourceInfoRef.OfSubmodule submodule) {
+                // If this is an include of a sibling submodule, don't add it as unresolved dependency.
+                // It will be resolved later in a different way.
+                final var parent = findAnyParent(submodule);
+                if (parent != null) {
+                    final var matchParent = findAnyParent(included);
+                    if (matchParent != null && parent.equals(matchParent)) {
+                        includedSiblings.put(dependency, includedId);
                         continue;
-                    }
-                }
-
-                case Include dep -> {
-                    final var included = findIncludedSubmodule(source, dep);
-                    if (included == null) {
-                        throw new InferenceException(refOf(sourceId, dep.sourceRef()),
-                            "Included submodule %s was not found", dep.name().getLocalName());
-                    }
-
-                    // if the match was already resolved, just move on
-                    unresolvedId = included.ref().correctId();
-                    if (involvedSourcesMap.containsKey(unresolvedId)) {
-                        resolved.put(dep, dep.name());
-                        continue;
-                    }
-
-                    if (source instanceof SourceInfoRef.OfSubmodule submodule) {
-                        // If this is an include of a sibling submodule, don't add it as unresolved dependency.
-                        // It will be resolved later in a different way.
-                        final var parent = findAnyParent(submodule);
-                        if (parent != null) {
-                            final var matchParent = findAnyParent(included);
-                            if (matchParent != null && parent.equals(matchParent)) {
-                                includedSiblings.put(dep, unresolvedId);
-                                continue;
-                            }
-                        }
                     }
                 }
             }
 
             // Dependency exists but was not fully resolved yet - mark as unresolved
-            unresolved.add(unresolvedId);
+            unresolved.add(includedId);
         }
 
         if (!unresolved.isEmpty()) {
@@ -724,32 +717,29 @@ public final class SourceLinkageResolver {
             }
 
             final var depModule = involvedSourcesMap.get(satisfiedDepId);
-
             final var currentVersion = newResolved.yangVersion();
             final var dependencyVersion = depModule.yangVersion();
 
             switch (dep) {
-                case Import importDep -> {
+                case BelongsTo dependency -> throw new VerifyException("unexpected " + dependency);
+                case Import dependency -> {
                     // Version 1 sources must not import-by-revision Version 1.1 modules
-                    if (importDep.revision() != null && currentVersion == YangVersion.VERSION_1
+                    if (dependency.revision() != null && currentVersion == YangVersion.VERSION_1
                         && dependencyVersion != YangVersion.VERSION_1) {
-                        throw new YangVersionLinkageException(refOf(sourceId, importDep.sourceRef()),
+                        throw new YangVersionLinkageException(refOf(sourceId, dependency.sourceRef()),
                             "Cannot import by revision version %s module %s", dependencyVersion,
                             resolvedDep.getValue().getLocalName());
                     }
-                    newResolved.resolveImport(importDep, depModule);
+                    newResolved.resolveImport(dependency, depModule);
                 }
-                case Include includeDep -> {
+                case Include dependency -> {
                     if (currentVersion != dependencyVersion) {
-                        throw new YangVersionLinkageException(refOf(sourceId, dep.sourceRef()),
+                        throw new YangVersionLinkageException(refOf(sourceId, dependency.sourceRef()),
                             "Cannot include a version %s submodule %s in a version %s module %s",
                             dependencyVersion, resolvedDep.getValue().getLocalName(), currentVersion,
                             sourceId.name().getLocalName());
                     }
-                    newResolved.resolveInclude(includeDep, depModule);
-                }
-                case BelongsTo belongsToDep -> {
-                    // FIXME: verify() this never happens or document
+                    newResolved.resolveInclude(dependency, depModule);
                 }
             }
         }
