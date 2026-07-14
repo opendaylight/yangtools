@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "03de0267_bafd2f16",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 843,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-14T07:21:19Z",
+      "side": 1,
+      "message": "Why did we go from @NonNullByDefault to per-param @NonNull? It seemed cleaned before",
+      "revId": "5d2129fb04aaff24bd829e1944c521d302aa24ec",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
