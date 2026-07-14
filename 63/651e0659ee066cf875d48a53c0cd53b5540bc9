@@ -1,0 +1,9 @@
+Verified+1: ODL Required.GHA <releng+odl.required.gha@linuxfoundation.org>
+Verified+1: ODL GitHub Actions <releng+odl-github-actions@linuxfoundation.org>
+Code-Review+2: Robert Varga <nite@hq.sk>
+Code-Review+1: Tibor Kral <tibor.kral@pantheon.tech>
+Submitted-by: Robert Varga <nite@hq.sk>
+Submitted-at: Tue, 14 Jul 2026 08:54:52 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/c/yangtools/+/123901
+Project: yangtools
+Branch: refs/heads/master
