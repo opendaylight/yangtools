@@ -16,6 +16,24 @@
       "message": "The SortedSetMultimap should be @NonNull - or the entire method could be @NonNullByDefault just like the once above.",
       "revId": "ea07ac6519ef8ba71d235eb551074405baaeae14",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "a49e50eb_6ba99b77",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 742,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-14T08:25:27Z",
+      "side": 1,
+      "message": "it cannot use @NonNullByDefault because SpotBugs barfs on TYPE_USE with the explicit null return.",
+      "parentUuid": "a7b2a35f_82b222c3",
+      "revId": "ea07ac6519ef8ba71d235eb551074405baaeae14",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
