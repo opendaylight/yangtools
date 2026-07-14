@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "fa7c1609_b4899aaf",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 801,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-14T07:16:05Z",
+      "side": 1,
+      "message": "These helpers can be @NonNullByDefault - findImportedModule, findIncludedSubmodule, findSubmodule and findLatestSubmodule",
+      "revId": "b50fafd109001af1e3c42f6a30321afcbcb54aa8",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
