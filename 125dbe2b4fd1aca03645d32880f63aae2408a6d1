@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "2541242d_8a59c267",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 12,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-14T08:36:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f9f04e9b_7774ef5a",
+      "revId": "125dbe2b4fd1aca03645d32880f63aae2408a6d1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "6566c872_9edc7e39",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-07-14T07:28:03Z",
       "side": 1,
       "message": "all exceptions start capitalized - make it \"Unexpected\"",
+      "revId": "125dbe2b4fd1aca03645d32880f63aae2408a6d1",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f51c827f_231b3ae6",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 724,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-14T08:36:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6566c872_9edc7e39",
       "revId": "125dbe2b4fd1aca03645d32880f63aae2408a6d1",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
