@@ -40,7 +40,6 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.RevisionUnion;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
@@ -470,14 +469,7 @@ public final class SourceLinkageResolver {
                     throw new VerifyException("Cannot find source for " + current);
                 }
 
-                final Resolution resolution;
-                try {
-                    resolution = resolveDependencies(currentSource);
-                } catch (StatementSourceException e) {
-                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, current, e);
-                }
-
-                switch (resolution) {
+                switch (resolveDependencies(currentSource)) {
                     case CompleteResolution unused -> {
                         // Current was fully processed
                         inProgress.remove(current);
@@ -628,10 +620,10 @@ public final class SourceLinkageResolver {
      *
      * @param source the source to resolve
      * @return a dependency {@link Resolution}
-     * @throws StatementSourceException if a resolution error occurs
+     * @throws ReactorException if a resolution error occurs
      */
     @NonNullByDefault
-    private Resolution resolveDependencies(final SourceInfoRef source) {
+    private Resolution resolveDependencies(final SourceInfoRef source) throws ReactorException {
         final var currentInfo = source.info();
         final var sourceId = currentInfo.sourceId();
 
@@ -643,8 +635,9 @@ public final class SourceLinkageResolver {
         for (var dependency : currentInfo.imports()) {
             final var imported = findImportedModule(dependency);
             if (imported == null) {
-                throw new InferenceException(refOf(sourceId, dependency.sourceRef()),
-                    "Imported module %s was not found", dependency.name().getLocalName());
+                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                    new InferenceException(refOf(sourceId, dependency.sourceRef()),
+                        "Imported module %s was not found", dependency.name().getLocalName()));
             }
 
             // if the match was already resolved, just move on
@@ -661,8 +654,9 @@ public final class SourceLinkageResolver {
         for (var dependency : currentInfo.includes()) {
             final var included = findIncludedSubmodule(source, dependency);
             if (included == null) {
-                throw new InferenceException(refOf(sourceId, dependency.sourceRef()),
-                    "Included submodule %s was not found", dependency.name().getLocalName());
+                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                    new InferenceException(refOf(sourceId, dependency.sourceRef()),
+                        "Included submodule %s was not found", dependency.name().getLocalName()));
             }
 
             // if the match was already resolved, just move on
@@ -726,18 +720,20 @@ public final class SourceLinkageResolver {
                     // Version 1 sources must not import-by-revision Version 1.1 modules
                     if (dependency.revision() != null && currentVersion == YangVersion.VERSION_1
                         && dependencyVersion != YangVersion.VERSION_1) {
-                        throw new YangVersionLinkageException(refOf(sourceId, dependency.sourceRef()),
-                            "Cannot import by revision version %s module %s", dependencyVersion,
-                            resolvedDep.getValue().getLocalName());
+                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                            new YangVersionLinkageException(refOf(sourceId, dependency.sourceRef()),
+                                "Cannot import by revision version %s module %s", dependencyVersion,
+                                resolvedDep.getValue().getLocalName()));
                     }
                     newResolved.resolveImport(dependency, depModule);
                 }
                 case Include dependency -> {
                     if (currentVersion != dependencyVersion) {
-                        throw new YangVersionLinkageException(refOf(sourceId, dependency.sourceRef()),
-                            "Cannot include a version %s submodule %s in a version %s module %s",
-                            dependencyVersion, resolvedDep.getValue().getLocalName(), currentVersion,
-                            sourceId.name().getLocalName());
+                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                            new YangVersionLinkageException(refOf(sourceId, dependency.sourceRef()),
+                                "Cannot include a version %s submodule %s in a version %s module %s",
+                                dependencyVersion, resolvedDep.getValue().getLocalName(), currentVersion,
+                                sourceId.name().getLocalName()));
                     }
                     newResolved.resolveInclude(dependency, depModule);
                 }
