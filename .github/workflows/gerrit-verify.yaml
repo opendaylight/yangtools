@@ -71,7 +71,7 @@ jobs:
   pre-commit-linting:
     needs: prepare
     # yamllint disable-line rule:line-length
-    uses: lfit/releng-reusable-workflows/.github/workflows/compose-repo-linting.yaml@fd3c1b43bc919e9e70787b009ffa2768ddbb1267 # v0.7.2
+    uses: lfit/releng-reusable-workflows/.github/workflows/compose-repo-linting.yaml@5fa62e396473e823e2bb0f45b744e94c4f842faa # v0.7.4
     with:
       GERRIT_BRANCH: ${{ inputs.GERRIT_BRANCH }}
       GERRIT_CHANGE_ID: ${{ inputs.GERRIT_CHANGE_ID }}
