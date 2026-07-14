@@ -253,20 +253,6 @@ public final class SourceLinkageResolver {
     private final Map<SourceIdentifier, SourceInfoRef> allSources = new HashMap<>();
 
     /**
-     * Map of all sources with the same name. They are stored in a TreeSet with a Revision-Comparator which will keep
-     * them ordered by Revision.
-     */
-    // FIXME: link directly to ResolvedSourceBuilder: this map exists to ensure we can find all mainSources items by
-    //        their name when search for them
-    // FIXME: overall it seems we want to differentiate the set for
-    //        - modules, which cannot have conflicting SourceIdentifiers as implied by modulesBySourceId
-    //        - submodules, which can have naming conflicts as long as the conflicting submodules end up being mapped to
-    //          distinct modules by the resolution logic, as tracked in submodulesByParentName -- but that is a
-    //          difficult topic, as we currently handle only the case when the modules have different names
-    private final SortedSetMultimap<Unqualified, SourceIdentifier> allSourcesMapped =
-        Multimaps.newSortedSetMultimap(new HashMap<>(), () -> new TreeSet<>(BY_REVISION));
-
-    /**
      * Map of involved sources with the same name.
      */
     // FIXME: replace users of this map with lookups to modulesByName and submodulesByParentName
@@ -348,7 +334,7 @@ public final class SourceLinkageResolver {
     @NonNullByDefault
     private List<ResolvedSourceInfo> resolveInvolvedSources() throws ReactorException {
         // FIXME: the order of operations is wrong here:
-        //          1) we populate 'allSources' and 'allSourcesMapped' with libSources
+        //          1) we populate 'allSources' with libSources
         //          2) we resolve belongs-to dependencies based on 'allSources', including those introduced in 1)
         //          3) we expand the set of required modules based on 2)
         //          4) we perform a single pass over required sources and resolve each recursively, populating auxiliary
@@ -360,8 +346,8 @@ public final class SourceLinkageResolver {
         //   - parent module
         // such that the set of requiredModules and requiredSubmodules, as populated at the entry into this method, is
         // completely resolved.
-        // If any linkage is found to be unsatisfied, we need to consult libSources to find the
-        // minimal set of sources that result in such linkage.
+        // If any linkage is found to be unsatisfied, we need to consult libSources to find the minimal set of sources
+        // that result in such linkage.
         //
         // In order this, we need to resolve the following five cases:
         //   - import-by-revision, which is an exact match
@@ -634,9 +620,7 @@ public final class SourceLinkageResolver {
     @Deprecated(forRemoval = true)
     @NonNullByDefault
     private void populateLegacyMaps(final SourceInfoRef source) {
-        final var sourceId = source.info().sourceId();
-        allSources.putIfAbsent(sourceId, source);
-        allSourcesMapped.put(sourceId.name(), sourceId);
+        allSources.putIfAbsent(source.ref().correctId(), source);
     }
 
     /**
@@ -788,7 +772,8 @@ public final class SourceLinkageResolver {
 
     @NonNullByDefault
     private @Nullable SourceIdentifier findMappedParent(final Unqualified parentName) {
-        return findParent(allSourcesMapped, parentName);
+        final var module = findLatestModule(parentName);
+        return module != null ? module.ref().correctId() : null;
     }
 
     private static @Nullable SourceIdentifier findParent(final SortedSetMultimap<Unqualified, SourceIdentifier> map,
@@ -799,15 +784,22 @@ public final class SourceLinkageResolver {
 
     // Find the best match (by revision) among all modules
     private SourceInfoRef.@Nullable OfModule findImportedModule(final @NonNull Import dependency) {
-        final var name = dependency.name();
         final var revision = dependency.revision();
-        if (revision != null) {
-            // import-by-revision: exact match
-            final var required = modulesByName.get(name, revision);
-            return required != null ? required : libSources.findModule(name, revision);
-        }
+        return revision != null
+            // import by revision: return exact match
+            ? findModule(dependency.name(), revision)
+            // import without revision: return latest available
+            : findLatestModule(dependency.name());
+    }
 
-        // import without revision: return latest known
+    @NonNullByDefault
+    private SourceInfoRef.@Nullable OfModule findModule(final Unqualified name, final Revision revision) {
+        final var required = modulesByName.get(name, revision);
+        return required != null ? required : libSources.findModule(name, revision);
+    }
+
+    @NonNullByDefault
+    private SourceInfoRef.@Nullable OfModule findLatestModule(final Unqualified name) {
         final var matching = modulesByName.row(name).values().iterator();
         return matching.hasNext() ? matching.next() : libSources.findLatestModule(name);
     }
