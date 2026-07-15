@@ -329,22 +329,26 @@ public final class SourceLinkageResolver {
         // revisions being involved, but it specifies that the mapping must be consistent with include statement.
         //
         // The approach we take here is to work in order of decreasing certainty and contribution to invariants:
-        //   - import-by-revision
         //   - include-by-revision
-        //   - import-without-revision
         //   - include-without-reviesion
+        //   - import-by-revision
+        //   - import-without-revision
         //   - belongs-to
         // so that their invariants are established in this order. If a step ends up introducing new invariants to a
-        // previous step, we restart that step. For example, if a libSource satisfying an include-by-revision introduces
-        // new import-by-revision dependencies, we restart the algorithm.
+        // previous step, we restart that step. For example, if a libSource satisfying an import-by-revision introduces
+        // new include-by-revision dependencies, we restart the algorithm.
         //
         // This also means that import-without-revision and include-without-revision resolution can naturally happen
         // multiple times. For import-without-revision subsequent resolution result must have a newer revision. For
         // include-without-revision the situation is somewhat more complicated, as explained next.
         //
         // The most problematic is belongs-to, as it is inherently inaccurate, but impacts the set of required modules
-        // and constrains the set of sources which can satisfy include dependencies. Here we want to do some unspecified
-        // magic to take transitive include linkage to guide which module to pick.
+        // and constrains the set of sources which can satisfy include dependencies. We deal with this by resolving
+        // belongs-to when a submodule is pulled into a source -- which resolves most cases.
+
+
+        linkIncludeByRevision();
+        linkInclude();
 
         libSources.populateLegacyMaps();
 
@@ -639,6 +643,15 @@ public final class SourceLinkageResolver {
             allResolved.put(involvedSource.infoRef(), involvedSource.build());
         }
         return List.copyOf(allResolved.values());
+    }
+
+
+    private void linkIncludeByRevision() {
+
+    }
+
+    private void linkInclude() {
+
     }
 
     @NonNullByDefault
