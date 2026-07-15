@@ -54,14 +54,10 @@ public sealed interface ResolvedDependency extends Immutable {
     /**
      * A resolved {@link Include}.
      */
-    record ResolvedInclude(
-            Include dependency,
-            SourceRef.ToSubmodule sourceRef,
-            QNameModule qname) implements ResolvedDependency {
+    record ResolvedInclude(Include dependency, SourceRef.ToSubmodule sourceRef) implements ResolvedDependency {
         public ResolvedInclude {
             requireNonNull(dependency);
             requireNonNull(sourceRef);
-            requireNonNull(qname);
         }
     }
 
