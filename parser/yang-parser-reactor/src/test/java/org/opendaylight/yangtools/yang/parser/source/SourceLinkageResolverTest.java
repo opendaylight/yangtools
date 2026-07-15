@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -84,7 +83,6 @@ class SourceLinkageResolverTest {
     }
 
     @Test
-    @Disabled("FIXME: YANGTOOLS-1896: fix the issue and enable this test")
     void unreferencedConsistent() throws Exception {
         assertOnlyBarResolved(FOO_INFO, FOO_SUB_INFO);
     }
@@ -95,7 +93,6 @@ class SourceLinkageResolverTest {
     }
 
     @Test
-    @Disabled("FIXME: YANGTOOLS-1896: fix the issue and enable this test")
     void unreferencedWithoutModule() throws Exception {
         assertOnlyBarResolved(FOO_SUB_INFO);
     }
@@ -148,10 +145,9 @@ class SourceLinkageResolverTest {
         final var resolved = SourceLinkageResolver.resolveInvolvedSources(ImmutableSet.of(bazRef, noRevRef, revRef),
             Set.of());
         assertEquals(3, resolved.size());
-        assertSame(revRef, resolved.get(0).infoRef());
-        assertSame(noRevRef, resolved.get(2).infoRef());
-
-        final var baz = resolved.get(1);
+        assertSame(revRef, resolved.get(2).infoRef());
+        assertSame(noRevRef, resolved.get(1).infoRef());
+        final var baz = resolved.get(0);
         assertSame(bazRef, baz.infoRef());
 
         final var bazImports = baz.imports();
