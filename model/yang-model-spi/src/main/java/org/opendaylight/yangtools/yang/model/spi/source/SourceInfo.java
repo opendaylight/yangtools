@@ -93,6 +93,12 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
     /**
      * {@return all {@link Include} dependencies}
      */
+    // FIXME: as per RFC6-020/RFC7950, section 7.1.6:
+    //
+    //          Multiple revisions of the same submodule MUST NOT be included.
+    //
+    //        we should enforce that invariant here and report a SourceException from record constructors, such that
+    //        this set is effectively equivalent to Map<Unqualified, Map.Entry<RevisionUnion, Include>>
     ImmutableSet<Include> includes();
 
     /**
