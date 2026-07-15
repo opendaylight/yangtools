@@ -85,7 +85,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
     static final class ForSubmodule extends ResolvedSourceBuilder<SourceInfoRef.OfSubmodule> {
         // FIXME: internal state here: we go from unresolved -> resolved -> built, and we would like to throw away
         //        internal state when the product is built
-        private @Nullable ResolvedBelongsTo belongsTo;
+        private @Nullable ForModule parentModule;
 
         @NonNullByDefault
         ForSubmodule(final SourceInfoRef.OfSubmodule infoRef) {
@@ -99,38 +99,37 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
 
         @Override
         boolean isResolved() {
-            return belongsTo != null && super.isResolved();
+            return parentModule != null && super.isResolved();
         }
 
         /**
          * {@return {@link BelongsTo} that remains unresolved or {@code null}}
          */
         @Nullable BelongsTo missingBelongsTo() {
-            return belongsTo != null ? null : sourceInfo().belongsTo();
+            return parentModule != null ? null : sourceInfo().belongsTo();
         }
 
         @Override
         void resolveBelongsTo(final BelongsTo dependency, final ForModule module) {
-            final var local = belongsTo;
+            final var local = parentModule;
             if (local != null) {
                 throw new VerifyException("Attempted to re-resolve belongs-to from " + local + " to " + module);
             }
-            final var moduleRef = module.infoRef();
-            belongsTo = new ResolvedBelongsTo(dependency, moduleRef.ref(), moduleRef.info().moduleName().getModule());
+            parentModule = requireNonNull(module);
         }
 
         @Override
         ResolvedSourceInfo.Submodule buildProduct(final List<@NonNull ResolvedImport> resolvedImports,
                 final List<@NonNull ResolvedInclude> resolveIncludes) {
-            return new ResolvedSourceInfo.Submodule(infoRef(), belongsTo(), resolvedImports, resolveIncludes);
-        }
-
-        private @NonNull ResolvedBelongsTo belongsTo() {
-            final var local = belongsTo;
+            final var local = parentModule;
             if (local == null) {
                 throw new VerifyException("Unresolved belongs-to in " + this);
             }
-            return local;
+            final var parentRef = local.infoRef();
+            final var infoRef = infoRef();
+            return new ResolvedSourceInfo.Submodule(infoRef,
+                new ResolvedBelongsTo(infoRef.info().belongsTo(), parentRef.ref(),
+                    parentRef.info().moduleName().getModule()), resolvedImports, resolveIncludes);
         }
     }
 
