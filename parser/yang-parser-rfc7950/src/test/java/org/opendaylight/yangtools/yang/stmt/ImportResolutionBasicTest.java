@@ -46,8 +46,7 @@ class ImportResolutionBasicTest extends AbstractYangTest {
     void selfImportTest() {
         final var ex = assertInferenceException(
             "/semantic-statement-parser/import-arg-parsing/egocentric.yang", IMPORT_ROOT, ROOT_WITHOUT_IMPORT);
-        assertEquals(
-            "Found circular dependency between modules egocentric and egocentric [at somewhere in egocentric.yang]",
+        assertEquals("Found circular dependency between modules egocentric and egocentric [at egocentric:5:5]",
             ex.getMessage());
     }
 

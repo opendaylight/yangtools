@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -18,6 +19,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 class Bug7480Test {
@@ -49,8 +51,8 @@ class Bug7480Test {
     void missingRelevantImportTest() {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> parseYangSources("/bugs/bug7480/files-2", "/bugs/bug7480/lib-2"));
-        assertEquals("Imported module missing-lib was not found [at foo-imp-1:7:5]",
-            ex.getSuppressed().length > 0 ? ex.getSuppressed()[0].getMessage() : ex.getCause().getMessage());
+        final var cause = assertInstanceOf(InferenceException.class, ex.getCause());
+        assertEquals("Imported module missing-lib was not found [at foo-imp-1:7:5]", cause.getMessage());
     }
 
     @Test
