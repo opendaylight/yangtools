@@ -552,7 +552,7 @@ public final class SourceLinkageResolver {
                                         "Cannot import by revision version %s module %s", dependencyVersion,
                                         resolvedDep.getValue().getLocalName()));
                             }
-                            newResolved.resolveImport(dependency, depModule);
+                            newResolved.resolveImport(dependency, depModule.infoRef());
                         }
                         case Include dependency -> {
                             if (currentVersion != dependencyVersion) {
@@ -562,7 +562,7 @@ public final class SourceLinkageResolver {
                                         dependencyVersion, resolvedDep.getValue().getLocalName(), currentVersion,
                                         current.name().getLocalName()));
                             }
-                            newResolved.resolveInclude(dependency, depModule);
+                            newResolved.resolveInclude(dependency, depModule.infoRef());
                         }
                     }
                 }
@@ -622,7 +622,7 @@ public final class SourceLinkageResolver {
                         new InferenceException(sourceId.toReference(),
                             "Included submodule %s of module %s was not resolved", sibling, sourceId));
                 }
-                resolvedSource.resolveInclude(includeEntry.getKey(), resolvedSibling);
+                resolvedSource.resolveInclude(includeEntry.getKey(), resolvedSibling.infoRef());
             }
             siblingEntries.remove();
         }
