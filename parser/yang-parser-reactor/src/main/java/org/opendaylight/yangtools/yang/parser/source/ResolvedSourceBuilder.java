@@ -516,7 +516,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
             imports.buildResolved((requirement, builder) ->
                 new ResolvedImport(requirement, builder.infoRef().ref(), builder.definingModule())),
             includes.buildResolved((requirement, builder) ->
-                new ResolvedInclude(requirement, builder.infoRef().ref(), builder.definingModule())));
+                new ResolvedInclude(requirement, builder.infoRef().ref())));
         product = result;
         imports = TerminalDependencies.of();
         includes = TerminalDependencies.of();
