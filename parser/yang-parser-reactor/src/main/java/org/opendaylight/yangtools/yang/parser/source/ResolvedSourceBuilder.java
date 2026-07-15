@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.source;
 
+import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
@@ -25,7 +26,13 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
+import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.RevisionUnion;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
+import org.opendaylight.yangtools.yang.model.api.source.DeclarationInSource;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
@@ -36,6 +43,11 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedBelongsTo;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.source.YangVersionLinkageException;
 
 /**
  * The state required to construct a {@link ResolvedSourceInfo} for a particular {@link SourceInfoRef}. There should be
@@ -54,12 +66,207 @@ import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.Resolved
 //       should work nicely while taking up fewer characters.
 abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements Mutable {
     /**
-     * A {@link ResolvedSourceBuilder} for a YANG {@code module}.
+     * A {@link ResolvedSourceBuilder} for a YANG {@code module}. It provides a meeting point for resolving
+     * {@code include} statements to a consistent set of sources, such that violations of RFC6020/RFC7950 section 7.1.6
+     * requirement that {@code Multiple revisions of the same submodule MUST NOT be included.} are reliably reported.
      */
     @NonNullByDefault
     static final class ForModule extends ResolvedSourceBuilder<SourceInfoRef.OfModule> {
+        /**
+         * The specification of how the source of a submodule should be looked up.
+         */
+        // TODO: consider promoting parts of this contract to model.spi.source.SourceDependency
+        private sealed interface SubmoduleSpec {
+            // just a marker
+        }
+
+        /**
+         * A {@link SubmoduleSpec} lacking a revision specification, e.g. {@code include foo;}.
+         */
+        private static final class AnyRevision implements SubmoduleSpec {
+            static final AnyRevision INSTANCE = new AnyRevision();
+
+            private AnyRevision() {
+                // hidden on purpose
+            }
+        }
+
+        /**
+         * A {@link SubmoduleSpec} with a revision specification, either by means of being explicit
+         * {@code include foo { revision-date 1970-01-01; }}, or by means of being narrowed to a
+         */
+        // TODO: abstract sealed record when Java provides them as hinted at in
+        //       https://youtu.be/BdLND9D81lI?si=tAX8gXsPC1FBh5tJ&t=1703
+        private sealed interface ExactRevision extends SubmoduleSpec {
+
+            RevisionUnion revision();
+
+            StatementSourceReference sourceRef();
+        }
+
+        /**
+         * An {@link ExactRevision} which has been resolved to a {@link ForSubmodule}.
+         */
+        private record ResolvedRevision(ForSubmodule submodule, StatementSourceReference sourceRef)
+                implements ExactRevision {
+            ResolvedRevision {
+                requireNonNull(submodule);
+                requireNonNull(sourceRef);
+                revision();
+            }
+
+            @Override
+            public RevisionUnion revision() {
+                return RevisionUnion.of(submodule.sourceId().revision());
+            }
+        }
+
+        /**
+         * An {@link ExactRevision} which has not been resolved.
+         */
+        private record UnresolvedRevision(RevisionUnion revision, StatementSourceReference sourceRef)
+                implements ExactRevision {
+            UnresolvedRevision {
+                requireNonNull(revision);
+                requireNonNull(sourceRef);
+            }
+
+            ResolvedRevision toResolved(final ForSubmodule submodule) {
+                if (!Objects.equals(revision.revision(), submodule.sourceId().revision())) {
+                    throw new VerifyException("Attempted to resolve " + this + " with " + submodule.humanName());
+                }
+                return new ResolvedRevision(submodule, sourceRef);
+            }
+        }
+
+        /**
+         * The set of names of known submodules and their corresponding {@link SubmoduleSpec}.
+         */
+        private final LinkedHashMap<Unqualified, SubmoduleSpec> submoduleSpecs = new LinkedHashMap<>();
+
+        // FIXME: hide this constructor
+        @Deprecated
         ForModule(final SourceInfoRef.OfModule infoRef) {
             super(infoRef);
+        }
+
+        // FIXME: promote into public constructor when possible
+        private void initSubmodules() throws ReactorException {
+            requireIncludes(this);
+        }
+
+        /**
+         * {@return the set of submodule names that are known to be required by this module, but have not had their
+         * exact revision determined}
+         */
+        Set<Unqualified> inexactSubmodules() {
+            return Maps.filterValues(submoduleSpecs, AnyRevision.class::isInstance).keySet();
+        }
+
+        void narrowInexact(final Unqualified submodule, final RevisionUnion revision) {
+            // FIXME: implement this, but for that we need a reference ...
+            throw new UnsupportedOperationException();
+        }
+
+        /**
+         * {@return the {@link Revision} of a submodule that is known to be required by this module, but has not been
+         * resolved yet, or {@code null} if the submodule has been resolved or the revision is not yet known}
+         * @param submodule submodule name
+         */
+        @Nullable RevisionUnion unresolvedRevisionOf(final Unqualified submodule) {
+            return switch (submoduleSpecs.get(requireNonNull(submodule))) {
+                case null -> throw new VerifyException("Unexpected submodule " + submodule.getLocalName());
+                case UnresolvedRevision needed -> needed.revision;
+                default -> null;
+            };
+        }
+
+        void resolveSubmodule(final ForSubmodule submodule) {
+            final var sourceId = submodule.sourceId();
+            final var name = sourceId.name();
+            final var spec = submoduleSpecs.get(name);
+            switch (spec) {
+                case null -> throw new VerifyException("Unexpected submodule " + name.getLocalName());
+                case UnresolvedRevision prev -> verify(submoduleSpecs.replace(name, prev, prev.toResolved(submodule)));
+                default -> throw new VerifyException("Attempted to resolve " + spec + " with " + submodule.humanName());
+            }
+        }
+
+        @Nullable ForSubmodule lookupSubmodule(final Unqualified submodule) {
+            return switch (submoduleSpecs.get(requireNonNull(submodule))) {
+                case null -> throw new VerifyException("Unexpected submodule " + submodule.getLocalName());
+                case ResolvedRevision resolved -> resolved.submodule;
+                default -> null;
+            };
+        }
+
+        /**
+         * Record a requirement for this module to {@code Include} a set of submodule implied by a source.
+         *
+         * @param source the {@link ResolvedSourceBuilder} to the source of requirements
+         * @throws ReactorException if a requirement conflicts with a previous requirement
+         */
+        private void requireIncludes(final ResolvedSourceBuilder<?> source) throws ReactorException {
+            final var it = source.missingIncludes().iterator();
+            if (it.hasNext()) {
+                do {
+                    requireInclude(source, it.next());
+                } while (it.hasNext());
+            }
+        }
+
+        /**
+         * Record a requirement for this module to {@code Include} a submodule.
+         *
+         * @param source the {@link ResolvedSourceBuilder} of requirements
+         * @param dependency the {@link Include}
+         * @param rejectNew new include rejector, or {@code null}
+         * @throws ReactorException if the requirement conflicts with a previous requirement or cannot be added
+         */
+        private void requireInclude(final ResolvedSourceBuilder<?> source, final Include dependency)
+                throws ReactorException {
+            final var name = dependency.name();
+            final var revision = dependency.revision();
+            if (revision == null) {
+                // unspecified revision, never conflicts
+                if (!submoduleSpecs.containsKey(name)) {
+                    checkInclude(source, dependency);
+                    submoduleSpecs.put(name, AnyRevision.INSTANCE);
+                }
+                return;
+            }
+
+            // FIXME: Java 25: merge the two cases below when we can say 'case AnyRevision _' and move this allocation
+            //        there
+            final var depRef = dependency.sourceRef();
+            final var sourceRef = depRef != null ? depRef : source.sourceId().toReference();
+            final var spec = new UnresolvedRevision(revision, sourceRef);
+
+            // yes, we have a Map.get() + Map.put() and could be written as a Map.compute() operation, but this way is
+            // actually more modern: we are using Java 21+ language features instead of Java 8+ java.util features
+            // we do not care about the two HashMap lookup operations.
+            switch (submoduleSpecs.get(name)) {
+                case null -> {
+                    checkInclude(source, dependency);
+                    submoduleSpecs.put(name, spec);
+                }
+                case AnyRevision any -> submoduleSpecs.put(name, spec);
+                case ExactRevision exact -> {
+                    final var exactRevision = exact.revision();
+                    if (!revision.equals(exactRevision)) {
+                        final var exactRef = exact.sourceRef();
+                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE,
+                            source.sourceId(), new InferenceException(sourceRef, """
+                                Cannot include-by-revision submodule %s in module %s: already included as %s %s""",
+                                humanName(name, revision), humanName(), humanName(name, exactRevision.revision()),
+                                switch (exactRef) {
+                                    case DeclarationInSource ref -> ref.toString();
+                                    case StatementDeclaration ref -> "at " + ref;
+                                    default -> "from " + exactRef;
+                                }));
+                    }
+                }
+            }
         }
 
         @Override
@@ -77,6 +284,59 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
                 final List<ResolvedInclude> resolveIncludes) {
             return new ResolvedSourceInfo.Module(infoRef(), resolvedImports, resolveIncludes);
         }
+
+        /**
+         * Check that a source can add an {@link Include} dependency to this module.
+         *
+         * @param source the source that is resolving the dependency
+         * @param dependency the dependency being resolved
+         * @throws ReactorException if the source cannot be add the dependency to this module
+         */
+        void checkInclude(final ResolvedSourceBuilder<?> source, final Include dependency) throws ReactorException {
+            switch (source) {
+                case ForModule module -> verify(module == this);
+                case ForSubmodule submodule -> {
+                    final var yangVersion = yangVersion();
+                    if (yangVersion != YangVersion.VERSION_1) {
+                        final var depRef = dependency.sourceRef();
+                        final var sourceId = sourceId();
+                        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                            new InferenceException(depRef != null ? depRef : sourceId.toReference(), """
+                                Parent module %s does not include %s, YANG %s does not allow it to be included from \
+                                submodule %s""", humanName(), dependency.name(), yangVersion, submodule.humanName()));
+                    }
+                }
+            }
+        }
+
+        /**
+         * Check that a source can resolve an {@link Include} dependency with specified submodule in the context of this
+         * module.
+         *
+         * @param source the source that is resolving the dependency
+         * @param dependency the dependency being resolved
+         * @param submodule the submodule satisfying the dependency
+         * @throws ReactorException if the submodule cannot be included in this module
+         */
+        void checkInclude(final ResolvedSourceBuilder<?> source, final Include dependency, final ForSubmodule submodule)
+                throws ReactorException {
+            // As per https://www.rfc-editor.org/info/rfc7950/#section-12:
+            //
+            //      A YANG version 1.1 module MUST NOT include a YANG version 1
+            //      submodule, and a YANG version 1 module MUST NOT include a YANG
+            //      version 1.1 submodule.
+            //
+            final var moduleVersion = yangVersion();
+            final var submoduleVersion = submodule.yangVersion();
+            if (moduleVersion != submoduleVersion) {
+                final var sourceId = source.sourceId();
+                final var depRef = dependency.sourceRef();
+                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                    new YangVersionLinkageException(depRef != null ? depRef : sourceId.toReference(),
+                        "Cannot include a version %s submodule %s in a version %s module %s",
+                        submoduleVersion, submodule.humanName(), moduleVersion, humanName()));
+            }
+        }
     }
 
     /**
@@ -92,6 +352,13 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
             super(infoRef);
         }
 
+        /**
+         * {@return the {@link ForModule} corresponding to the parent module, or {@code null} if not yet determined}
+         */
+        @Nullable ForModule parentModule() {
+            return parentModule;
+        }
+
         @Override
         SourceInfo.Submodule sourceInfo() {
             return infoRef().info();
@@ -102,19 +369,26 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
             return parentModule != null && super.isResolved();
         }
 
-        /**
-         * {@return {@link BelongsTo} that remains unresolved or {@code null}}
-         */
-        @Nullable BelongsTo missingBelongsTo() {
-            return parentModule != null ? null : sourceInfo().belongsTo();
+        @NonNullByDefault
+        void resolveBelongsTo(final ForModule module) throws ReactorException {
+            // order of operations has implications on error reporting:
+            // - we reject duplicate resolution, then
+            // - we reject mismatch between proposed module and belongs-to module name, then
+            // - we declare belongs-to resolved, and finally
+            // - we inform the module of the include dependencies this submodule brings to the table
+            verifyNoParentModule(module);
+            final var belongsTo = sourceInfo().belongsTo().name();
+            if (!belongsTo.equals(module.sourceId().name())) {
+                throw new VerifyException("Attempted to resolve belongs-to " + belongsTo.getLocalName()
+                    + " with module " + module.humanName());
+            }
+            parentModule = module;
+            module.requireIncludes(this);
         }
 
         @Override
         void resolveBelongsTo(final BelongsTo dependency, final ForModule module) {
-            final var local = parentModule;
-            if (local != null) {
-                throw new VerifyException("Attempted to re-resolve belongs-to from " + local + " to " + module);
-            }
+            verifyNoParentModule(module);
             parentModule = requireNonNull(module);
         }
 
@@ -130,6 +404,13 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
             return new ResolvedSourceInfo.Submodule(infoRef,
                 new ResolvedBelongsTo(infoRef.info().belongsTo(), parentRef.ref(),
                     parentRef.info().moduleName().getModule()), resolvedImports, resolveIncludes);
+        }
+
+        private void verifyNoParentModule(final ForModule module) {
+            final var local = parentModule;
+            if (local != null) {
+                throw new VerifyException("Attempted to re-resolve belongs-to from " + local + " to " + module);
+            }
         }
     }
 
@@ -399,6 +680,13 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         includes = Dependencies.of(info.includes());
     }
 
+    @NonNullByDefault
+    static final ForModule forModule(final SourceInfoRef.OfModule infoRef) throws ReactorException {
+        final var ret = new ForModule(infoRef);
+        ret.initSubmodules();
+        return ret;
+    }
+
     final @NonNull R infoRef() {
         return infoRef;
     }
@@ -411,6 +699,21 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
 
     final @NonNull YangVersion yangVersion() {
         return sourceInfo().yangVersion();
+    }
+
+    @NonNullByDefault
+    final String humanName() {
+        final var sourceId = sourceId();
+        return humanName(sourceId.name(), sourceId.revision());
+    }
+
+    @NonNullByDefault
+    static final String humanName(final Unqualified name, final @Nullable Revision revision) {
+        var ret = name.getLocalName();
+        if (revision != null) {
+            ret = ret + "@" + revision;
+        }
+        return ret;
     }
 
     /**
