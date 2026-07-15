@@ -47,6 +47,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
+import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceBuilder.ForSubmodule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -175,16 +176,13 @@ public final class SourceLinkageResolver {
     /**
      * The set of required module sources. We are using insertion order to ensure predictable ordering.
      */
-    // FIXME: store ResolvedSourceBuilder.ForModule here once we eliminate involvedSourcesMap
-    @NonNullByDefault
-    private final LinkedHashSet<SourceInfoRef.OfModule> requiredModules = new LinkedHashSet<>();
-
+    private final LinkedHashMap<SourceInfoRef.OfModule, ResolvedSourceBuilder.ForModule> requiredModules =
+        new LinkedHashMap<>();
     /**
      * The set of required submodule sources. We are using insertion order to ensure predictable ordering.
      */
-    // FIXME: store ResolvedSourceBuilder.ForSubmodule here once we eliminate involvedSourcesMap
-    @NonNullByDefault
-    private final LinkedHashSet<SourceInfoRef.OfSubmodule> requiredSubmodules = new LinkedHashSet<>();
+    private final LinkedHashMap<SourceInfoRef.OfSubmodule, ResolvedSourceBuilder.ForSubmodule> requiredSubmodules =
+        new LinkedHashMap<>();
 
     // As per RFC6020, every import-by-revision has to resolve to the same module. We are using a table, as that also
     // allows us quickly find all modules with the same name -- and have them ordered with latest revision first.
@@ -203,7 +201,8 @@ public final class SourceLinkageResolver {
      * The set of required submodule sources, indexed by the name of the module they claim to belong to.
      */
     @NonNullByDefault
-    private final HashMultimap<Unqualified, SourceInfoRef.OfSubmodule> submodulesByParentName = HashMultimap.create();
+    private final HashMultimap<Unqualified, ResolvedSourceBuilder.ForSubmodule> submodulesByParentName =
+        HashMultimap.create();
 
     /**
      * The set of library sources available to this resolver.
@@ -329,22 +328,24 @@ public final class SourceLinkageResolver {
         // revisions being involved, but it specifies that the mapping must be consistent with include statement.
         //
         // The approach we take here is to work in order of decreasing certainty and contribution to invariants:
-        //   - import-by-revision
         //   - include-by-revision
-        //   - import-without-revision
         //   - include-without-reviesion
+        //   - import-by-revision
+        //   - import-without-revision
         //   - belongs-to
         // so that their invariants are established in this order. If a step ends up introducing new invariants to a
-        // previous step, we restart that step. For example, if a libSource satisfying an include-by-revision introduces
-        // new import-by-revision dependencies, we restart the algorithm.
+        // previous step, we restart that step. For example, if a libSource satisfying an import-by-revision introduces
+        // new include-by-revision dependencies, we restart the algorithm.
         //
         // This also means that import-without-revision and include-without-revision resolution can naturally happen
         // multiple times. For import-without-revision subsequent resolution result must have a newer revision. For
         // include-without-revision the situation is somewhat more complicated, as explained next.
         //
         // The most problematic is belongs-to, as it is inherently inaccurate, but impacts the set of required modules
-        // and constrains the set of sources which can satisfy include dependencies. Here we want to do some unspecified
-        // magic to take transitive include linkage to guide which module to pick.
+        // and constrains the set of sources which can satisfy include dependencies. We deal with this by resolving
+        // belongs-to when a submodule is pulled into a source -- which resolves most cases.
+
+        linkIncludes();
 
         libSources.populateLegacyMaps();
 
@@ -369,7 +370,7 @@ public final class SourceLinkageResolver {
         }
 
         // ensures every required submodule has its parent module present in required modules as well
-        for (var submodule : requiredSubmodules) {
+        for (var submodule : requiredSubmodules.keySet()) {
             final var sourceInfo = submodule.info();
             final var parentId = submoduleToParentMap.get(sourceInfo.sourceId());
             if (parentId == null) {
@@ -384,14 +385,14 @@ public final class SourceLinkageResolver {
             }
 
             // only add to requirements if it is not present
-            if (!requiredModules.contains(parentModule)) {
+            if (!requiredModules.containsKey(parentModule)) {
                 addRequiredModule(parentModule);
             }
         }
 
         // resolve imports and non-sibling includes for all required sources. Sibling includes are identified, but are
         // resolved later (at end of this method).
-        for (var mainSource : Iterables.concat(requiredModules, requiredSubmodules)) {
+        for (var mainSource : Iterables.concat(requiredModules.keySet(), requiredSubmodules.keySet())) {
             final var rootId = mainSource.info().sourceId();
 
             // FIXME: This requires the mainSource to complete resolution once we start and in order to achieve that
@@ -641,9 +642,158 @@ public final class SourceLinkageResolver {
         return List.copyOf(allResolved.values());
     }
 
+    /**
+     * Link as many {@link Include} dependencies required by {@link #requiredModules} and {@link #requiredSubmodules} as
+     * possible, potentially expanding {@link #requiredSubmodules} to satisfy them.
+     *
+     * <p>The algorithm employed here has a couple of peculiarities:
+     * <ol>
+     *   <li>the act of linking an {@link Include} dependency to a submodule also links that submodule's
+     *       {@link BelongsTo} dependency to the implied parent module</li>
+     *   <li>a submodule's dependencies are considered only after it has been linked, directly or indirectly, to its
+     *       parent module</li>
+     *   <li>exact dependencies are considered before inexact</li>
+     * </ol>
+     *
+     * <p>These work together to provide as much resolution accuracy as possible in face of overlapping submodule names,
+     * while also ensuring that reasonably attempt to resolve one-to-one mappings, i.e. {@code include} in a module,
+     * before we look at many-to-one mappings, i.e. {@code include} in a submodule.
+     *
+     * @throws ReactorException if a dependency cannot be resolved
+     */
+    private void linkIncludes() throws ReactorException {
+        for (var parent : requiredModules.values()) {
+            final var parentId = parent.sourceId();
+
+            // link all exact includes into their parent modules first, potentially expanding requiredSubmodules
+            for (var dependency : parent.missingIncludes()) {
+                // parent also tracks revision requirement requirements coming in transitively from included submodules,
+                // dealing with the following case:
+                //
+                //   module foo {
+                //     include bar { revision-date 1970-01-02; }
+                //     include baz;
+                //   }
+                //
+                //   submodule bar {
+                //     belongs-to foo;
+                //     revision 1970-01-01;
+                //     include baz { revision-date 1970-01-01; }
+                //   }
+                //
+                //   submodule baz {
+                //     belongs-to foo;
+                //     revision 1970-01-02;
+                //   }
+                //
+                // where the we can sharpen foo's include dependency to require the revision specified in baz
+                final var name = dependency.name();
+                final var revision = parent.unresolvedRevisionOf(name);
+                if (revision == null) {
+                    // we do not have an exact revision: skip it for now
+                    continue;
+                }
+
+                final var parentName = parentId.name();
+                var submodule = lookupSubmodule(parentName, name, revision);
+                if (submodule == null) {
+                    submodule = promoteLibrarySubmodule(parent, parent, dependency, revision);
+                }
+                linkInclude(parent, parent, dependency, submodule);
+            }
+        }
+
+        // link all exact includes into their submodules.
+        var it = requiredSubmodules.values().iterator();
+        while (it.hasNext()) {
+            final var source = it.next();
+            final var parent = source.parentModule();
+            if (parent == null) {
+                continue;
+            }
+
+            // RFC6020 and RFC7950 define different semantics on how submodules are included:
+            // - RFC6020 requires recursive resolution of an acyclic graph of include statements
+            // - RFC7950 requires all submodules to be included from the parent module and allows submodules' includes
+            //   to form cycles
+            //
+            // In both cases the effective set of included submodules must contain exactly one source for each
+            // submodule name and since this sibling has a parent, which in turn is expected to be cognizant of all
+            // names we are processing here.
+            for (var dependency : source.missingIncludes()) {
+                final var name = dependency.name();
+
+                // the submodule has already been resolved: just propagate it
+                final var existing = parent.lookupSubmodule(name);
+                if (existing != null) {
+                    source.resolveInclude(dependency, existing.infoRef());
+                    continue;
+                }
+
+                // submodule has not been resolved yet: see if we know which revision we need
+                final var revision = parent.unresolvedRevisionOf(name);
+                if (revision == null) {
+                    // we do not have an exact revision: skip it for now
+                    continue;
+                }
+
+                final var parentName = parent.sourceId().name();
+                var submodule = lookupSubmodule(parentName, name, revision);
+                if (submodule == null) {
+                    submodule = promoteLibrarySubmodule(parent, source, dependency, revision);
+                    // refresh iterator
+                    it = requiredSubmodules.values().iterator();
+                }
+                linkInclude(parent, source, dependency, submodule);
+            }
+        }
+    }
+
+    @NonNullByDefault
+    private static void linkInclude(final ResolvedSourceBuilder.ForModule module, final ResolvedSourceBuilder<?> source,
+            final Include dependency, final ResolvedSourceBuilder.ForSubmodule submodule) throws ReactorException {
+        // order of operations has implications on error reporting:
+        // - module needs to validate the submodule can be included
+        // - source will see its include dependency resolved
+        // - submodule will see its belongs-to dependency resolved
+        module.checkInclude(source, dependency, submodule);
+        source.resolveInclude(dependency, submodule.infoRef());
+        submodule.resolveBelongsTo(module);
+    }
+
+    @NonNullByDefault
+    private ForSubmodule promoteLibrarySubmodule(final ResolvedSourceBuilder.ForModule module,
+            final ResolvedSourceBuilder<?> source, final Include dependency, final Revision revision)
+                throws ReactorException {
+        // TODO: Consider better interaction with library: we know what yang-version we are looking for,
+        //       hence the library should be able to contain two submodules with the same SourceIdentifier,
+        //       with belongs-to to the same module, differing in only on their yang-version.
+        //
+        //       This is a non-issue when a submodule is properly maintained with revisions, but can occur
+        //       in the wild if a conversion to YANG 1.1 is made without incrementing revision and the two
+        //       sources meet in a reactor.
+        //
+        //       We do not have an example of this happening in the wild, so it is a largely-theoretical
+        //       concern.
+        //
+        //       Before we invest resources into resolving this TODO, we should attempt to side-step this
+        //       issue by ensuring user-specific ways to ensure submodule names do not overlap -- such as
+        //       done by the ietf-yang-library model, etc.
+        final var name = dependency.name();
+        final var fromLibrary = libSources.findSubmodule(module.sourceId().name(), name, revision);
+        if (fromLibrary == null) {
+            final var sourceId = source.sourceId();
+            throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                new InferenceException(refOf(sourceId, dependency.sourceRef()),
+                    "Included submodule %s@%s was not found", name.getLocalName(), revision));
+        }
+        return addRequiredSubmodule(fromLibrary);
+    }
+
     @NonNullByDefault
     private void addRequiredModule(final SourceInfoRef.OfModule module) throws ReactorException {
-        if (!requiredModules.add(module)) {
+        final var builder = ResolvedSourceBuilder.forModule(module);
+        if (requiredModules.putIfAbsent(module, builder) != null) {
             throw new VerifyException("Attempted to add already-required " + module);
         }
 
@@ -674,17 +824,30 @@ public final class SourceLinkageResolver {
         }
     }
 
+    private ResolvedSourceBuilder.@Nullable ForSubmodule lookupSubmodule(final @NonNull Unqualified moduleName,
+            final @NonNull Unqualified name, final @NonNull Revision revision) {
+        for (var submodule : submodulesByParentName.get(moduleName)) {
+            final var sourceId = submodule.infoRef().ref().correctId();
+            if (name.equals(sourceId.name()) && revision.equals(sourceId.revision())) {
+                return submodule;
+            }
+        }
+        return null;
+    }
+
     @NonNullByDefault
     private static String formatRevision(final @Nullable Revision revision) {
         return revision == null ? "" : "@" + revision;
     }
 
     @NonNullByDefault
-    private void addRequiredSubmodule(final SourceInfoRef.OfSubmodule submodule) {
-        if (!requiredSubmodules.add(submodule)) {
+    private ResolvedSourceBuilder.ForSubmodule addRequiredSubmodule(final SourceInfoRef.OfSubmodule submodule) {
+        final var builder = new ResolvedSourceBuilder.ForSubmodule(submodule);
+        if (requiredSubmodules.putIfAbsent(submodule, builder) != null) {
             throw new VerifyException("Attempted to add already-required " + submodule);
         }
-        verify(submodulesByParentName.put(submodule.info().belongsTo().name(), submodule));
+        verify(submodulesByParentName.put(submodule.info().belongsTo().name(), builder));
+        return builder;
     }
 
     // FIXME: remove this method once we do not need the two maps
@@ -751,23 +914,19 @@ public final class SourceLinkageResolver {
 
     private SourceInfoRef.@Nullable OfSubmodule findSubmodule(final @NonNull Unqualified moduleName,
             final @NonNull Unqualified name, final @NonNull Revision revision) {
-        for (var submodule : submodulesByParentName.get(moduleName)) {
-            final var sourceId = submodule.ref().correctId();
-            if (name.equals(sourceId.name()) && revision.equals(sourceId.revision())) {
-                return submodule;
-            }
-        }
-        return libSources.findSubmodule(moduleName, name, revision);
+        final var submodule = lookupSubmodule(moduleName, name, revision);
+        return submodule != null ? submodule.infoRef() : libSources.findSubmodule(moduleName, name, revision);
     }
 
     private SourceInfoRef.@Nullable OfSubmodule findLatestSubmodule(final @NonNull Unqualified moduleName,
             final @NonNull Unqualified name) {
         SourceInfoRef.@Nullable OfSubmodule found = null;
         for (var submodule : submodulesByParentName.get(moduleName)) {
-            final var sourceId = submodule.ref().correctId();
+            final var sourceRef = submodule.infoRef();
+            final var sourceId = sourceRef.ref().correctId();
             if (name.equals(sourceId.name())
                 && (found == null || Revision.compare(found.ref().correctId().revision(), sourceId.revision()) < 0)) {
-                found = submodule;
+                found = sourceRef;
             }
         }
         return found != null ? found : libSources.findLatestSubmodule(moduleName, name);
