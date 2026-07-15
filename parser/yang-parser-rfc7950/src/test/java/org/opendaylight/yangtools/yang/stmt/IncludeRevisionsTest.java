@@ -36,7 +36,8 @@ class IncludeRevisionsTest {
             .buildDeclared());
         assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
         final var cause = assertInstanceOf(InferenceException.class, ex.getCause());
-        assertEquals("Included submodule unequal-rev was not found [at unequal-root:5:5]", cause.getMessage());
+        assertEquals("Included submodule unequal-rev@2001-05-19 was not found [at unequal-root:5:5]",
+            cause.getMessage());
     }
 
     @Test
@@ -54,7 +55,8 @@ class IncludeRevisionsTest {
             .addSource(sourceForResource("/revisions/mod-only-root.yang")).buildDeclared());
         assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, ex.getPhase());
         final var cause = assertInstanceOf(InferenceException.class, ex.getCause());
-        assertEquals("Included submodule mod-only-rev was not found [at mod-only-root:5:5]", cause.getMessage());
+        assertEquals("Included submodule mod-only-rev@2001-05-19 was not found [at mod-only-root:5:5]",
+            cause.getMessage());
     }
 
     @Test
