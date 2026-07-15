@@ -1,4 +1,6 @@
 submodule sub-foo {
+    yang-version 1.1;
+
     belongs-to foo {
         prefix foo;
     }
