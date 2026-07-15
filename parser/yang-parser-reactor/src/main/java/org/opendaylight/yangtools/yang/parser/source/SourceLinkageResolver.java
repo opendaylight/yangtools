@@ -603,7 +603,7 @@ public final class SourceLinkageResolver {
             // FIXME: better message and/or better exception
             verify(belongsTo.isSatisfiedBy(parentId));
 
-            resolvedSubmodule.resolveBelongsTo(belongsTo, resolvedParent);
+            resolvedSubmodule.resolveBelongsTo(belongsTo, resolvedParent.infoRef());
         }
 
         // all other dependencies have been resolved: it is now time to deal with circular includes among submodules
