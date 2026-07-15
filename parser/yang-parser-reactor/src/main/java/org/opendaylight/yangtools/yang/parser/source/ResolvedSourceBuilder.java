@@ -25,7 +25,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.BelongsTo;
@@ -66,11 +65,6 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         @Override
         SourceInfo.Module sourceInfo() {
             return infoRef().info();
-        }
-
-        @Override
-        QNameModule definingModule() {
-            return sourceInfo().moduleName().getModule();
         }
 
         @Override
@@ -126,12 +120,6 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         }
 
         @Override
-        QNameModule definingModule() {
-            // A submodule's QNameModule is composed of parent's namespace + its own Revision (or null if absent)
-            return QNameModule.ofRevision(belongsTo().parentModuleQname().namespace(), sourceInfo().latestRevision());
-        }
-
-        @Override
         ResolvedSourceInfo.Submodule buildProduct(final List<@NonNull ResolvedImport> resolvedImports,
                 final List<@NonNull ResolvedInclude> resolveIncludes) {
             return new ResolvedSourceInfo.Submodule(infoRef(), belongsTo(), resolvedImports, resolveIncludes);
@@ -147,32 +135,32 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
     }
 
     /**
-     * A set of {@link SourceDependency} objects that need to be resolved to their corresponding
-     * {@link ResolvedSourceBuilder}. This class is meant to track {@link Import} and {@link Include}, with
-     * {@link ForSubmodule} tracking {@link BelongsTo} separately.
+     * A set of {@link SourceDependency} objects that need to be resolved to their corresponding {@link SourceInfoRef}.
+     * This class is meant to track {@link Import} and {@link Include}, with {@link ForSubmodule} tracking
+     * {@link BelongsTo} separately.
      *
      * <p>That separation allows us to assume {@code 0..N} cardinality and shared interpretation
      * of {@link SourceDependency#revision()}: it may or may not be a wildcard.
      *
      * @param <D> dependency type
-     * @param <B> builder type
+     * @param <S> {@link SourceInfoRef} type
      */
     @NonNullByDefault
-    private abstract static sealed class Dependencies<D extends SourceDependency, B extends ResolvedSourceBuilder<?>> {
+    private abstract static sealed class Dependencies<D extends SourceDependency, S extends SourceInfoRef> {
         /**
          * {@return an instance for the specified set of initial dependencies}
          * @param <D> dependency type
-         * @param <B> builder type
+         * @param <S> {@link SourceInfoRef} type
          * @param dependencies the set of dependencies
          */
-        static final <D extends SourceDependency, B extends ResolvedSourceBuilder<?>> Dependencies<D, B> of(
+        static final <D extends SourceDependency, S extends SourceInfoRef> Dependencies<D, S> of(
                 final Set<@NonNull D> dependencies) {
             return dependencies.isEmpty() ? NoDependencies.of() : new SomeDependencies<>(dependencies);
         }
 
         /**
          * {@return the unmodifiable view of dependencies that remain unresolved. Guaranteed to be updated by
-         * {@link #resolveMissing(SourceDependency, ResolvedSourceBuilder)} invocations and iterators reporting
+         * {@link #resolveMissing(SourceDependency, SourceInfoRef)} invocations and iterators reporting
          * {@link ConcurrentModificationException}}
          */
         abstract Set<@NonNull D> missing();
@@ -181,21 +169,21 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
          * Resolve a currently-missing dependency with a builder.
          *
          * @param dependency the dependency that is missing
-         * @param builder the builder to use to resolve the dependency
+         * @param infoRef the builder to use to resolve the dependency
          */
-        final void resolveMissing(final @NonNull D dependency, final @NonNull B builder) {
+        final void resolveMissing(final @NonNull D dependency, final @NonNull S infoRef) {
             // split to keep argument checking consistent
-            doResolveMissing(requireNonNull(dependency), requireNonNull(builder));
+            doResolveMissing(requireNonNull(dependency), requireNonNull(infoRef));
         }
 
         /**
-         * Implementation of the {@link #resolveMissing(SourceDependency, ResolvedSourceBuilder)} contract. All
-         * arguments are guaranteed to be non-{@code null} by the caller.
+         * Implementation of the {@link #resolveMissing(SourceDependency, SourceInfoRef)} contract. All arguments are
+         * guaranteed to be non-{@code null} by the caller.
          *
          * @param dependency the dependency that is missing
-         * @param builder the builder to use to resolve the dependency
+         * @param infoRef the builder to use to resolve the dependency
          */
-        abstract void doResolveMissing(@NonNull D dependency, @NonNull B builder);
+        abstract void doResolveMissing(@NonNull D dependency, @NonNull S infoRef);
 
         /**
          * Build a list of objects, each representing a dependency. Implementations of this method assert that all
@@ -206,7 +194,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
          * @param function the function to turn a dependency and its corresponding builder into the result type
          * @return a list of results
          */
-        final <R> List<R> buildResolved(final BiFunction<D, B, R> function) {
+        final <R> List<R> buildResolved(final BiFunction<D, S, R> function) {
             return doBuildResolved(requireNonNull(function));
         }
 
@@ -218,7 +206,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
          * @param function the function to turn a dependency and its corresponding builder into the result type
          * @return a list of results
          */
-        abstract <R> List<R> doBuildResolved(BiFunction<D, B, R> function);
+        abstract <R> List<R> doBuildResolved(BiFunction<D, S, R> function);
 
         @Override
         public abstract String toString();
@@ -228,11 +216,11 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
      * An implementation of {@link Dependencies} indicating there are no dependencies.
      *
      * @param <D> dependency type
-     * @param <B> builder type
+     * @param <S> {@link SourceInfoRef} type
      */
     @NonNullByDefault
-    private static final class NoDependencies<D extends SourceDependency, B extends ResolvedSourceBuilder<?>>
-            extends Dependencies<D, B> {
+    private static final class NoDependencies<D extends SourceDependency, S extends SourceInfoRef>
+            extends Dependencies<D, S> {
         private static final NoDependencies<?, ?> INSTANCE = new NoDependencies<>();
 
         private NoDependencies() {
@@ -240,8 +228,8 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         }
 
         @SuppressWarnings("unchecked")
-        static <D extends SourceDependency, B extends ResolvedSourceBuilder<?>> NoDependencies<D, B> of() {
-            return (NoDependencies<D, B>) INSTANCE;
+        static <D extends SourceDependency, S extends SourceInfoRef> NoDependencies<D, S> of() {
+            return (NoDependencies<D, S>) INSTANCE;
         }
 
         @Override
@@ -250,12 +238,12 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         }
 
         @Override
-        void doResolveMissing(final D dependency, final B builder) {
+        void doResolveMissing(final D dependency, final S infoRef) {
             throw new VerifyException("Attempted to resolve unspecified " + dependency);
         }
 
         @Override
-        <R> List<R> doBuildResolved(final BiFunction<D, B, R> function) {
+        <R> List<R> doBuildResolved(final BiFunction<D, S, R> function) {
             return List.of();
         }
 
@@ -269,11 +257,11 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
      * An implementation of {@link Dependencies} indicating there is at least one dependency.
      *
      * @param <D> dependency type
-     * @param <B> builder type
+     * @param <S> {@link SourceInfoRef} type
      */
     @NonNullByDefault
-    private static final class SomeDependencies<D extends SourceDependency, B extends ResolvedSourceBuilder<?>>
-            extends Dependencies<D, B> {
+    private static final class SomeDependencies<D extends SourceDependency, S extends SourceInfoRef>
+            extends Dependencies<D, S> {
         /**
          * The map of dependencies. The iteration order matches the iteration order of specified dependencies
          * and contains {@code null} for each dependency. This allows us to enforce that each dependency is resolved
@@ -284,7 +272,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
          *   <li>attempts to resolve a dependency that was not specified</li>
          * </ol>
          */
-        private final LinkedHashMap<D, @Nullable B> map;
+        private final LinkedHashMap<D, @Nullable S> map;
         /**
          * An unmodifiable view on what dependencies have not been satisfied. This is a materialized view
          * of {@code map.keySet()} filtering out any entries which have a {@code null} value.
@@ -314,20 +302,20 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         }
 
         @Override
-        void doResolveMissing(final D dependency, final B builder) {
-            if (!map.replace(dependency, null, builder)) {
+        void doResolveMissing(final D dependency, final S infoRef) {
+            if (!map.replace(dependency, null, infoRef)) {
                 final var prev = map.get(dependency);
                 throw prev == null
                     // replace failed because the dependency was not specified
                     ? new VerifyException("Attempted to resolve unspecified " + dependency)
                     // replace failed because the dependency was already resolved
                     : new VerifyException(
-                        "Attempted to override resolution of " + dependency + " from " + prev + " to " + builder);
+                        "Attempted to override resolution of " + dependency + " from " + prev + " to " + infoRef);
             }
         }
 
         @Override
-        <R> List<R> doBuildResolved(final BiFunction<D, B, R> function) {
+        <R> List<R> doBuildResolved(final BiFunction<D, S, R> function) {
             final var tmp = new ArrayList<R>(map.size());
             for (var entry : map.entrySet()) {
                 final var dependency = entry.getKey();
@@ -351,11 +339,11 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
      * interaction allowed is {@link #missing()}, which always indicates nothing is missing.
      *
      * @param <D> dependency type
-     * @param <B> builder type
+     * @param <S> {@link SourceInfoRef} type
      */
     @NonNullByDefault
-    private static final class TerminalDependencies<D extends SourceDependency, B extends ResolvedSourceBuilder<?>>
-            extends Dependencies<D, B> {
+    private static final class TerminalDependencies<D extends SourceDependency, S extends SourceInfoRef>
+            extends Dependencies<D, S> {
         private static final TerminalDependencies<?, ?> INSTANCE = new TerminalDependencies<>();
 
         private TerminalDependencies() {
@@ -363,8 +351,8 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         }
 
         @SuppressWarnings("unchecked")
-        static <D extends SourceDependency, B extends ResolvedSourceBuilder<?>> TerminalDependencies<D, B> of() {
-            return (TerminalDependencies<D, B>) INSTANCE;
+        static <D extends SourceDependency, S extends SourceInfoRef> TerminalDependencies<D, S> of() {
+            return (TerminalDependencies<D, S>) INSTANCE;
         }
 
         @Override
@@ -373,12 +361,12 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         }
 
         @Override
-        void doResolveMissing(final D dependency, final B builder) {
+        void doResolveMissing(final D dependency, final S infoRef) {
             throw uoe();
         }
 
         @Override
-        <R> List<@NonNull R> doBuildResolved(final BiFunction<D, B, R> function) {
+        <R> List<@NonNull R> doBuildResolved(final BiFunction<D, S, R> function) {
             throw uoe();
         }
 
@@ -398,9 +386,9 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
     // FIXME: Mutable state: we either have imports and includes, or product. Encapsulate the two possibilities into
     //        an internal class and eliminate TerminalDependencies.
     @NonNullByDefault
-    private Dependencies<Import, ResolvedSourceBuilder.ForModule> imports;
+    private Dependencies<Import, SourceInfoRef.OfModule> imports;
     @NonNullByDefault
-    private Dependencies<Include, ResolvedSourceBuilder.ForSubmodule> includes;
+    private Dependencies<Include, SourceInfoRef.OfSubmodule> includes;
     private @Nullable ResolvedSourceInfo product;
 
     @NonNullByDefault
@@ -450,14 +438,14 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
     }
 
     /**
-     * Adds a {@link ResolvedSourceBuilder} of an imported module.
+     * Adds a {@link SourceInfoRef} of an imported module.
      *
      * @param dependency the {@link Import} being satisfied
-     * @param link ResolvedSourceBuilder of the imported module.
+     * @param link {@link SourceInfoRef} of the imported module.
      */
     @NonNullByDefault
-    final void resolveImport(final Import dependency, final ResolvedSourceBuilder<?> link) {
-        if (!(link instanceof ForModule module)) {
+    final void resolveImport(final Import dependency, final SourceInfoRef link) {
+        if (!(link instanceof SourceInfoRef.OfModule module)) {
             throw new VerifyException(
                 "Attempted to resolve import " + dependency + " with non-module " + link);
         }
@@ -466,14 +454,14 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
     }
 
     /**
-     * Adds a {@link ResolvedSourceBuilder} of an included submodule.
+     * Adds a {@link SourceInfoRef} of an included submodule.
      *
      * @param dependency the {@link Include} dependency being satisfied
-     * @param link ResolvedSourceBuilder of the included submodule.
+     * @param link {@link SourceInfoRef} of the included submodule.
      */
     @NonNullByDefault
-    final void resolveInclude(final Include dependency, final ResolvedSourceBuilder<?> link) {
-        if (!(link instanceof ForSubmodule submodule)) {
+    final void resolveInclude(final Include dependency, final SourceInfoRef link) {
+        if (!(link instanceof SourceInfoRef.OfSubmodule submodule)) {
             throw new VerifyException(
                 "Attempted to resolve include " + dependency + " with non-submodule " + link);
         }
@@ -512,10 +500,9 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
             return local;
         }
         final var result = buildProduct(
-            imports.buildResolved((requirement, builder) ->
-                new ResolvedImport(requirement, builder.infoRef().ref(), builder.definingModule())),
-            includes.buildResolved((requirement, builder) ->
-                new ResolvedInclude(requirement, builder.infoRef().ref())));
+            imports.buildResolved((requirement, link) ->
+                new ResolvedImport(requirement, link.ref(), link.info().moduleName().getModule())),
+            includes.buildResolved((requirement, link) -> new ResolvedInclude(requirement, link.ref())));
         product = result;
         imports = TerminalDependencies.of();
         includes = TerminalDependencies.of();
@@ -525,8 +512,6 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
     @NonNullByDefault
     abstract ResolvedSourceInfo buildProduct(List<ResolvedImport> resolvedImports,
         List<ResolvedInclude> resolveIncludes);
-
-    abstract @NonNull QNameModule definingModule();
 
     private void ensureBuilderOpened() {
         final var local = product;
