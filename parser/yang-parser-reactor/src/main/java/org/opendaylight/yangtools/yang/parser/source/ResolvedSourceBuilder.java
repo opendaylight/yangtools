@@ -74,7 +74,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         }
 
         @Override
-        void resolveBelongsTo(final BelongsTo dependency, final ForModule module) {
+        void resolveBelongsTo(final BelongsTo dependency, final SourceInfoRef.OfModule module) {
             throw new VerifyException("Attempted to resolve belongs-to in non-submodule" + this);
         }
 
@@ -117,13 +117,12 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         }
 
         @Override
-        void resolveBelongsTo(final BelongsTo dependency, final ForModule module) {
+        void resolveBelongsTo(final BelongsTo dependency, final SourceInfoRef.OfModule module) {
             final var local = belongsTo;
             if (local != null) {
                 throw new VerifyException("Attempted to re-resolve belongs-to from " + local + " to " + module);
             }
-            final var moduleRef = module.infoRef();
-            belongsTo = new ResolvedBelongsTo(dependency, moduleRef.ref(), moduleRef.info().moduleName().getModule());
+            belongsTo = new ResolvedBelongsTo(dependency, module.ref(), module.info().moduleName().getModule());
         }
 
         @Override
@@ -483,14 +482,14 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
     }
 
     /**
-     * Adds a {@link ResolvedSourceBuilder} of the parent module this submodule belongs to.
+     * Adds a {@link SourceInfoRef} of the parent module this submodule belongs to.
      *
      * @param dependency the {@link BelongsTo} being satistifed
-     * @param link {@link ResolvedSourceBuilder} of the parent module.
+     * @param link {@link SourceInfoRef} of the parent module.
      */
     @NonNullByDefault
-    final void resolveBelongsTo(final BelongsTo dependency, final ResolvedSourceBuilder<?> link) {
-        if (!(link instanceof ForModule module)) {
+    final void resolveBelongsTo(final BelongsTo dependency, final SourceInfoRef link) {
+        if (!(link instanceof SourceInfoRef.OfModule module)) {
             throw new VerifyException(
                 "Attempted to resolve belongs-to " + dependency + " with non-module " + link);
         }
@@ -499,7 +498,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
     }
 
     @NonNullByDefault
-    abstract void resolveBelongsTo(BelongsTo dependency, ForModule module);
+    abstract void resolveBelongsTo(BelongsTo dependency, SourceInfoRef.OfModule module);
 
     /**
      * Builds a finalized {@link ResolvedSourceInfo} using the map of already-resolved sources.
