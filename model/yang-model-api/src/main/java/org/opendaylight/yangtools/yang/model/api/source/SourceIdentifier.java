@@ -12,6 +12,7 @@ import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_
 import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YIN_FILE_EXTENSION;
 
 import java.time.format.DateTimeParseException;
+import java.util.Comparator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
@@ -56,6 +57,19 @@ public record SourceIdentifier(Unqualified name, @Nullable Revision revision)
         implements Comparable<SourceIdentifier>, Identifier {
     @java.io.Serial
     private static final long serialVersionUID = 3L;
+
+    /**
+     * Comparator ordering {@link SourceIdentifier}s so that {@link SourceIdentifier#name()}s are encountered in their
+     * natural order and the corresponding {@link SourceIdentifier#revision()}s are encountered in reverse order, i.e.
+     * newest revision first.
+     *
+     * @since 16.0.0
+     */
+    public static final Comparator<SourceIdentifier> LATEST_REVISION_FIRST = (left, right) -> {
+        final var cmp = left.name().compareTo(right.name());
+        // swapped argument order to reverse the comparison
+        return cmp != 0 ? cmp : Revision.compare(right.revision(), left.revision());
+    };
 
     /**
      * Creates new YANG Schema source identifier for sources with or without a revision.
