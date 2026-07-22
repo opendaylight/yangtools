@@ -9,6 +9,11 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonSyntaxException;
@@ -20,10 +25,12 @@ import java.io.Flushable;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
@@ -60,6 +67,57 @@ public final class JsonParserStream implements Closeable, Flushable {
     static final String ANYXML_ARRAY_ELEMENT_ID = "array-element";
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonParserStream.class);
+
+    /**
+     * Global, identity-keyed cache of per-parent schema-lookup results. Schema nodes are singletons within a given
+     * {@link org.opendaylight.yangtools.yang.model.api.EffectiveModelContext}, so caching by identity is safe and
+     * lets results be reused across all parser instances. {@link CacheBuilder#weakKeys()} both supplies the desired
+     * identity ({@code ==}) key semantics and allows entries to be reclaimed once their model context is no longer
+     * referenced, so no explicit cache eviction is required.
+     */
+    private static final LoadingCache<DataSchemaNode, SchemaNodeCache> CACHE =
+        CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<>() {
+            @Override
+            public SchemaNodeCache load(final DataSchemaNode key) {
+                return new SchemaNodeCache(key);
+            }
+        });
+
+    /**
+     * Memoized schema-lookup results for a single parent {@link DataSchemaNode}. Both maps are keyed by the values
+     * that {@link JsonParserStream#read(JsonReader, AbstractNodeDataWithSchema)} scans for on every JSON element,
+     * turning the repeated linear scans into amortized O(1) lookups.
+     */
+    private static final class SchemaNodeCache {
+        private final ConcurrentHashMap<NsKey, ImmutableList<DataSchemaNode>> schemaNodes = new ConcurrentHashMap<>();
+        private final ConcurrentHashMap<String, ImmutableSet<XMLNamespace>> namespaces = new ConcurrentHashMap<>();
+        private final DataSchemaNode node;
+
+        SchemaNodeCache(final DataSchemaNode node) {
+            this.node = requireNonNull(node);
+        }
+
+        /**
+         * Equivalent of {@link ParserStreamUtils#findSchemaNodeByNameAndNamespace(DataSchemaNode, String,
+         * XMLNamespace)}, but memoized. Always returns a fresh, mutable {@link Deque}, because
+         * {@link CompositeNodeDataWithSchema#addChild(Deque, ChildReusePolicy)} consumes it via {@code pop()}.
+         */
+        Deque<DataSchemaNode> findSchemaNode(final String localName, final XMLNamespace namespace) {
+            final var path = schemaNodes.computeIfAbsent(new NsKey(localName, namespace),
+                key -> ImmutableList.copyOf(
+                    ParserStreamUtils.findSchemaNodeByNameAndNamespace(node, key.localName(), key.namespace())));
+            return new ArrayDeque<>(path);
+        }
+
+        Set<XMLNamespace> potentialNamespaces(final String elementName) {
+            return namespaces.computeIfAbsent(elementName, name -> computePotentialNamespaces(node, name));
+        }
+    }
+
+    private record NsKey(String localName, XMLNamespace namespace) {
+        // Value-based equals()/hashCode(): both components are value types.
+    }
+
     private final Deque<XMLNamespace> namespaces = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
@@ -284,7 +342,8 @@ public final class JsonParserStream implements Closeable, Flushable {
                 while (in.hasNext()) {
                     final var jsonElementName = in.nextName();
                     final var parentSchema = parent.getSchema();
-                    final var namespaceAndName = resolveNamespace(jsonElementName, parentSchema);
+                    final var schemaCache = CACHE.getUnchecked(parentSchema);
+                    final var namespaceAndName = resolveNamespace(schemaCache, jsonElementName, parentSchema);
                     final var localName = namespaceAndName.getKey();
                     final var namespace = namespaceAndName.getValue();
                     if (lenient && (localName == null || namespace == null)) {
@@ -298,8 +357,7 @@ public final class JsonParserStream implements Closeable, Flushable {
                         throw new JsonSyntaxException("Duplicate name " + jsonElementName + " in JSON input.");
                     }
 
-                    final var childDataSchemaNodes = ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema,
-                        localName, getCurrentNamespace());
+                    final var childDataSchemaNodes = schemaCache.findSchemaNode(localName, getCurrentNamespace());
                     if (childDataSchemaNodes.isEmpty()) {
                         throw new IllegalStateException(
                             "Schema for node with name %s and namespace %s does not exist at %s".formatted(
@@ -365,7 +423,8 @@ public final class JsonParserStream implements Closeable, Flushable {
         namespaces.push(namespace);
     }
 
-    private Entry<String, XMLNamespace> resolveNamespace(final String childName, final DataSchemaNode dataSchemaNode) {
+    private Entry<String, XMLNamespace> resolveNamespace(final SchemaNodeCache schemaCache, final String childName,
+            final DataSchemaNode dataSchemaNode) {
         final int lastIndexOfColon = childName.lastIndexOf(':');
         final String nodeNamePart;
         XMLNamespace namespace;
@@ -381,7 +440,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         }
 
         if (namespace == null) {
-            final var potentialUris = resolveAllPotentialNamespaces(nodeNamePart, dataSchemaNode);
+            final var potentialUris = schemaCache.potentialNamespaces(nodeNamePart);
             if (potentialUris.contains(getCurrentNamespace())) {
                 namespace = getCurrentNamespace();
             } else if (potentialUris.size() == 1) {
@@ -409,11 +468,17 @@ public final class JsonParserStream implements Closeable, Flushable {
         return sb.toString();
     }
 
-    private Set<XMLNamespace> resolveAllPotentialNamespaces(final String elementName,
-            final DataSchemaNode dataSchemaNode) {
+    private static ImmutableSet<XMLNamespace> computePotentialNamespaces(final DataSchemaNode dataSchemaNode,
+            final String elementName) {
         final var potentialUris = new HashSet<XMLNamespace>();
-        final var choices = new HashSet<ChoiceSchemaNode>();
+        collectPotentialNamespaces(potentialUris, dataSchemaNode, elementName);
+        return ImmutableSet.copyOf(potentialUris);
+    }
+
+    private static void collectPotentialNamespaces(final Set<XMLNamespace> potentialUris,
+            final DataSchemaNode dataSchemaNode, final String elementName) {
         if (dataSchemaNode instanceof DataNodeContainer container) {
+            final var choices = new ArrayList<ChoiceSchemaNode>();
             for (var childSchemaNode : container.getChildNodes()) {
                 if (childSchemaNode instanceof ChoiceSchemaNode choice) {
                     choices.add(choice);
@@ -424,11 +489,10 @@ public final class JsonParserStream implements Closeable, Flushable {
 
             for (var choiceNode : choices) {
                 for (var concreteCase : choiceNode.getCases()) {
-                    potentialUris.addAll(resolveAllPotentialNamespaces(elementName, concreteCase));
+                    collectPotentialNamespaces(potentialUris, concreteCase, elementName);
                 }
             }
         }
-        return potentialUris;
     }
 
     private XMLNamespace getCurrentNamespace() {
