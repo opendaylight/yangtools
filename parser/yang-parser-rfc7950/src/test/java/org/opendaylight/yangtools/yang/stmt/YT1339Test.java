@@ -47,7 +47,7 @@ class YT1339Test extends AbstractYangTest {
 
     private static void assertFailedImport(final String subdir) {
         assertThat(assertYangVersionLinkageException(subdir))
-            .startsWith("Cannot import by revision version 1.1 module new [at ");
+            .startsWith("Cannot import by revision version 1.1 module new@2021-10-01 [at ");
     }
 
     private static void assertFailedInclude(final String subdir, final YangVersion subVer, final YangVersion modVer) {
