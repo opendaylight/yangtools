@@ -48,6 +48,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * The state required to construct a {@link ResolvedSourceInfo} for a particular {@link SourceInfoRef}. There should be
@@ -795,21 +796,35 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
             throws ReactorException {
         ensureBuilderOpened();
 
-        // check that target module does not import parentModule
-        // FIXME: 16.0.0: different exception for the case of self-import
-        final var path = target.equals(requireNonNull(parentModule)) ? List.of(target)
-            : importPathOf(target, parentModule);
-        if (path != null) {
+        if (target.equals(requireNonNull(parentModule)) && parentModule.equals(this)) {
             final var sourceId = sourceId();
             final var depRef = dependency.sourceRef();
+            final var sourceRef = depRef != null ? depRef : sourceId.toReference();
             throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
-                 new InferenceException(depRef != null ? depRef : sourceId.toReference(),
-                     // FIXME: 16.0.0: humanName() and exact path
-                     "Found circular dependency between modules %s and %s",
-                     sourceId.name().getLocalName(), target.name().getLocalName()));
+                dependency.revision() != null
+                    // import by revision: this is a bug in the module
+                    ? new SourceException(sourceRef, "Module %s imports itself", humanName())
+                    // import without revision: this happens to resolve this way
+                    : new InferenceException(sourceRef, "Imported module %s resolves to itself",
+                        dependency.name().getLocalName()));
         }
 
-        imports.resolveMissing(dependency, target);
+        // check that target module does not import parentModule
+        final var path = importPathOf(target, parentModule);
+        if (path == null) {
+            imports.resolveMissing(dependency, target);
+            return;
+        }
+
+        // there is an import path: make sure to print it
+        final var sb = new StringBuilder("Module ").append(humanName()).append(" imports itself");
+        for (var source : path.reversed()) {
+            sb.append(" via ").append(source.humanName());
+        }
+        final var sourceId = sourceId();
+        final var depRef = dependency.sourceRef();
+        throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+            new InferenceException(sb.toString(), depRef != null ? depRef : sourceId.toReference()));
     }
 
     /**
