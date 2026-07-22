@@ -77,6 +77,15 @@ public final class JsonParserStream implements Closeable, Flushable {
         this.stack = requireNonNull(stack);
         this.lenient = lenient;
 
+        // Everything we parse has to come from the model context our codecs were built for. An identityref or
+        // instance-identifier value is resolved against codecs.modelContext(), so a parent from anywhere else would
+        // silently produce wrong results. JSONCodecFactory checks the same thing in its InputStreamNormalizer
+        // methods, see AbstractInputStreamNormalizer.checkInference().
+        final var modelContext = codecs.modelContext();
+        if (!modelContext.equals(stack.modelContext())) {
+            throw new IllegalArgumentException("Mismatched inference, expecting model context " + modelContext);
+        }
+
         if (!stack.isEmpty()) {
             final var parent = stack.currentStatement();
             parentNode = switch (parent) {
@@ -111,9 +120,11 @@ public final class JsonParserStream implements Closeable, Flushable {
      *
      * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
      * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
-     * @param parentNode Logical root node
+     * @param parentNode Logical root node, which has to be rooted in {@code codecFactory}'s model context
      * @return A new {@link JsonParserStream}
      * @throws NullPointerException if any of the arguments are null
+     * @throws IllegalArgumentException if {@code parentNode} comes from a different model context than
+     *                                  {@code codecFactory}
      */
     public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory, final @NonNull EffectiveStatementInference parentNode) {
@@ -152,9 +163,11 @@ public final class JsonParserStream implements Closeable, Flushable {
      *
      * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
      * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
-     * @param parentNode Logical root node
+     * @param parentNode Logical root node, which has to be rooted in {@code codecFactory}'s model context
      * @return A new {@link JsonParserStream}
      * @throws NullPointerException if any of the arguments are null
+     * @throws IllegalArgumentException if {@code parentNode} comes from a different model context than
+     *                                  {@code codecFactory}
      */
     public static @NonNull JsonParserStream createLenient(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory, final @NonNull EffectiveStatementInference parentNode) {
