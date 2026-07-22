@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.util.codec;
 
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.toIdentityString;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -105,6 +106,22 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
      */
     public final @NonNull EffectiveModelContext modelContext() {
         return modelContext;
+    }
+
+    /**
+     * Check that an inference is rooted in this factory's {@link #modelContext()}. Anything parsed with the help of
+     * this factory has to come from that one model context: an {@code identityref} or {@code instance-identifier}
+     * value is resolved against it, so an inference rooted anywhere else would silently produce wrong results.
+     *
+     * @param inferenceContext the {@link EffectiveModelContext} the inference is rooted in
+     * @throws IllegalArgumentException if {@code inferenceContext} is not this factory's model context
+     * @throws NullPointerException if {@code inferenceContext} is {@code null}
+     */
+    public final void checkInferenceContext(final @NonNull EffectiveModelContext inferenceContext) {
+        if (!modelContext.equals(requireNonNull(inferenceContext))) {
+            throw new IllegalArgumentException("Mismatched inference: expecting model context %s, got %s"
+                    .formatted(toIdentityString(modelContext), toIdentityString(inferenceContext)));
+        }
     }
 
     protected abstract T binaryCodec(BinaryTypeDefinition type);
