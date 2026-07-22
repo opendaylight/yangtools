@@ -306,7 +306,7 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule, ResolvedMo
      * @param dependency the dependency being resolved
      * @throws ReactorException if the source cannot be add the dependency to this module
      */
-    private void checkInclude(final SourceLinker<?> source, final Include dependency) throws ReactorException {
+    private void checkInclude(final SourceLinker<?, ?> source, final Include dependency) throws ReactorException {
         switch (source) {
             case ModuleLinker module -> verify(module == this);
             case SubmoduleLinker submodule -> {
