@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 class YangParserNegativeTest extends AbstractYangTest {
     @Test
     void testInvalidImport() {
-        assertEquals("Imported module some-module was not found [at testfile1:6:5]",
+        assertEquals("Imported module some-module@2013-02-27 was not found [at testfile1:6:5]",
             assertInferenceException("/negative-scenario/testfile1.yang").getMessage());
     }
 
