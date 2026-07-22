@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.util.codec;
 
 import static java.util.Objects.requireNonNull;
+import static java.util.Objects.toIdentityString;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -191,9 +192,10 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
         @NonNull QName expected, @NonNull InputStream stream) throws IOException, NormalizationException;
 
     private void checkInference(final EffectiveStatementInference inference) {
-        final var local = modelContext();
-        if (!local.equals(inference.modelContext())) {
-            throw new IllegalArgumentException("Mismatched inference, expecting model context " + local);
+        final var inferenceContext = inference.modelContext();
+        if (!inferenceContext.equals(modelContext())) {
+            throw new IllegalArgumentException("Mismatched inference: expecting model context %s, got %s"
+                .formatted(toIdentityString(modelContext()), toIdentityString(inferenceContext)));
         }
     }
 
