@@ -77,6 +77,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         this.stack = requireNonNull(stack);
         this.lenient = lenient;
 
+        codecs.checkInferenceContext(stack.modelContext());
         if (!stack.isEmpty()) {
             final var parent = stack.currentStatement();
             parentNode = switch (parent) {
@@ -111,9 +112,11 @@ public final class JsonParserStream implements Closeable, Flushable {
      *
      * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
      * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
-     * @param parentNode Logical root node
+     * @param parentNode Logical root node, which has to be rooted in {@code codecFactory}'s model context
      * @return A new {@link JsonParserStream}
      * @throws NullPointerException if any of the arguments are null
+     * @throws IllegalArgumentException if {@code parentNode} comes from a different model context than
+     *                                  {@code codecFactory}
      */
     public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory, final @NonNull EffectiveStatementInference parentNode) {
@@ -152,9 +155,11 @@ public final class JsonParserStream implements Closeable, Flushable {
      *
      * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
      * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
-     * @param parentNode Logical root node
+     * @param parentNode Logical root node, which has to be rooted in {@code codecFactory}'s model context
      * @return A new {@link JsonParserStream}
      * @throws NullPointerException if any of the arguments are null
+     * @throws IllegalArgumentException if {@code parentNode} comes from a different model context than
+     *                                  {@code codecFactory}
      */
     public static @NonNull JsonParserStream createLenient(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory, final @NonNull EffectiveStatementInference parentNode) {
