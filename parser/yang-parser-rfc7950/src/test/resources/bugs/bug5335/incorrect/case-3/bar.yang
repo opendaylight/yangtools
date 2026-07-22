@@ -13,4 +13,6 @@ module bar {
         container non-presence-container {
         }
     }
+
+    include sub-bar;
 }
