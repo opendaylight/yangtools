@@ -16,10 +16,13 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -116,7 +119,22 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
         }
     }
 
+    private static final VarHandle CHILD_LOOKUPS;
+
+    static {
+        try {
+            CHILD_LOOKUPS = MethodHandles.lookup().findVarHandle(JSONCodecFactory.class, "childLookups",
+                ChildLookupCache.class);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+    }
+
     private final @NonNull InstanceIdentifierJSONCodec iidCodec;
+
+    // Created on first use, as many factories are only used for writing and would never need it.
+    @SuppressFBWarnings(value = "URF_UNREAD_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
+    private volatile @Nullable ChildLookupCache childLookups = null;
 
     @SuppressFBWarnings(value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR",
         justification = "https://github.com/spotbugs/spotbugs/issues/1867")
@@ -221,6 +239,27 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
     @Override
     protected final JSONCodec<?> unionCodec(final UnionTypeDefinition type, final List<JSONCodec<?>> codecs) {
         return UnionJSONCodec.create(type, codecs);
+    }
+
+    /**
+     * {@return this factory's {@link ChildLookupCache}}
+     *
+     * <p>Every {@link JsonParserStream} created from this factory uses this one cache, and several of them may be
+     * parsing different documents on different threads at once. Because this factory is bound to a single
+     * {@link EffectiveModelContext} and a parser may not stray outside it, the cache only ever holds schema nodes of
+     * that one model context -- a factory created by {@link #rebaseTo(EffectiveModelContext)} has its own cache.
+     */
+    final @NonNull ChildLookupCache childLookups() {
+        final var local = (ChildLookupCache) CHILD_LOOKUPS.getAcquire(this);
+        return local != null ? local : loadChildLookups();
+    }
+
+    private @NonNull ChildLookupCache loadChildLookups() {
+        // Two threads may get here at once. The loser's cache has not been handed to anyone yet, so dropping it is
+        // harmless.
+        final var created = new ChildLookupCache();
+        final var witness = (ChildLookupCache) CHILD_LOOKUPS.compareAndExchangeRelease(this, null, created);
+        return witness != null ? witness : created;
     }
 
     // Returns a one-off factory for the purposes of normalizing an anydata tree.
