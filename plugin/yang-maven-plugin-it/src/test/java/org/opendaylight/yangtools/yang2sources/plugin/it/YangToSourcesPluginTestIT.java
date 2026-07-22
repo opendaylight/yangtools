@@ -82,7 +82,7 @@ class YangToSourcesPluginTestIT {
         final var ex = assertThrows(VerificationException.class, () -> setUp("test-parent/MissingYangInDep/", false));
         assertThat(ex.getMessage()).contains("""
                 Caused by: org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException: Imported module \
-                unknownDep was not found [at private:13:5]""");
+                unknownDep@2013-02-27 was not found [at private:13:5]""");
     }
 
     void verifyCorrectLog(final Verifier vrf) throws VerificationException {
