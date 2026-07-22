@@ -1,0 +1,14 @@
+module yt1899 {
+  namespace "yt1899";
+  prefix yt1899;
+
+  list top-list {
+    choice choice-node {
+      case case-a {
+        leaf case-a-leaf {
+          type string;
+        }
+      }
+    }
+  }
+}
