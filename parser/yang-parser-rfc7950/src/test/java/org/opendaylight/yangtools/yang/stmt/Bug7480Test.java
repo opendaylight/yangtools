@@ -52,7 +52,7 @@ class Bug7480Test {
         final var ex = assertThrows(SomeModifiersUnresolvedException.class,
             () -> parseYangSources("/bugs/bug7480/files-2", "/bugs/bug7480/lib-2"));
         final var cause = assertInstanceOf(InferenceException.class, ex.getCause());
-        assertEquals("Imported module missing-lib was not found [at foo-imp-1:7:5]", cause.getMessage());
+        assertEquals("Imported module missing-lib@2000-01-01 was not found [at foo-imp-1:7:5]", cause.getMessage());
     }
 
     @Test
