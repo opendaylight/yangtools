@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 /**
  * A {@link JsonParserStream} must stay within the model context of the {@link JSONCodecFactory} it was given. Parsing
  * against a different one would resolve {@code identityref} and {@code instance-identifier} values against the wrong
- * schema.
+ * schema, and it is also what keeps every {@link SchemaLookupCache} entry within a single model context.
  */
 class JsonParserStreamModelContextTest {
     private static final QName TOP = QName.create("yt1899", "top");
