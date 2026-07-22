@@ -37,17 +37,16 @@ class ImportResolutionBasicTest extends AbstractYangTest {
         assertInferenceExceptionMessage(
             "/semantic-statement-parser/import-arg-parsing/cycle-yin.yang",
             "/semantic-statement-parser/import-arg-parsing/cycle-yang.yang")
-            .startsWith("Found circular dependency between modules ")
-            .contains("cycle-yang")
-            .contains("cycle-yin");
+            .isIn(
+                "Module cycle-yin imports itself via cycle-yang [at cycle-yin:5:5]",
+                "Module cycle-yang imports itself via cycle-yin [at cycle-yang:5:5]");
     }
 
     @Test
     void selfImportTest() {
         final var ex = assertInferenceException(
             "/semantic-statement-parser/import-arg-parsing/egocentric.yang", IMPORT_ROOT, ROOT_WITHOUT_IMPORT);
-        assertEquals("Found circular dependency between modules egocentric and egocentric [at egocentric:5:5]",
-            ex.getMessage());
+        assertEquals("Imported module egocentric resolves to itself [at egocentric:5:5]", ex.getMessage());
     }
 
     @Test
