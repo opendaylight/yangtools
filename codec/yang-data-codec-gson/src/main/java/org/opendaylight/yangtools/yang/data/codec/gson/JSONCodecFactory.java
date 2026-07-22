@@ -116,6 +116,7 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
         }
     }
 
+    private final @NonNull SchemaLookupCache schemaLookups = new SchemaLookupCache();
     private final @NonNull InstanceIdentifierJSONCodec iidCodec;
 
     @SuppressFBWarnings(value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR",
@@ -221,6 +222,18 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
     @Override
     protected final JSONCodec<?> unionCodec(final UnionTypeDefinition type, final List<JSONCodec<?>> codecs) {
         return UnionJSONCodec.create(type, codecs);
+    }
+
+    /**
+     * {@return this factory's {@link SchemaLookupCache}}
+     *
+     * <p>Every {@link JsonParserStream} created from this factory uses this one cache, and several of them may be
+     * parsing different documents on different threads at once. Because this factory is bound to a single
+     * {@link EffectiveModelContext} and a parser may not stray outside it, the cache only ever holds schema nodes of
+     * that one model context -- a factory created by {@link #rebaseTo(EffectiveModelContext)} has its own cache.
+     */
+    final @NonNull SchemaLookupCache schemaLookups() {
+        return schemaLookups;
     }
 
     // Returns a one-off factory for the purposes of normalizing an anydata tree.
