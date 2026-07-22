@@ -9,14 +9,17 @@ package org.opendaylight.yangtools.yang.parser.source;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.params.provider.Arguments.argumentSet;
 
 import com.google.common.collect.ImmutableSet;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -82,31 +85,24 @@ class SourceLinkageResolverTest {
         assertEquals(List.of(), SourceLinkageResolver.resolveInvolvedSources(Set.of(), Set.of(BAZ_INFO.newRef())));
     }
 
-    @Test
-    void unreferencedConsistent() throws Exception {
-        assertOnlyBarResolved(FOO_INFO, FOO_SUB_INFO);
-    }
-
-    @Test
-    void unreferencedWithoutSubmodule() throws Exception {
-        assertOnlyBarResolved(FOO_INFO);
-    }
-
-    @Test
-    void unreferencedWithoutModule() throws Exception {
-        assertOnlyBarResolved(FOO_SUB_INFO);
-    }
-
-    // FIXME: inline the above three test cases into a parameterized test once we can enable the test cases
-    private static void assertOnlyBarResolved(final SourceInfo... libraryInfos) throws Exception {
+    @ParameterizedTest(name = "{argumentSetName}")
+    @MethodSource
+    void onlyBarResolvedWithLibraryContaining(final List<SourceInfo> libraryInfos) throws Exception {
         // main source: a module with no dependencies
         final var barRef = BAR_INFO.newRef();
 
         // resolution should succeed and should return only barRef
         final var resolved = SourceLinkageResolver.resolveInvolvedSources(Set.of(barRef),
-            Arrays.stream(libraryInfos).map(SourceInfo::newRef).collect(Collectors.toUnmodifiableSet()));
+            libraryInfos.stream().map(SourceInfo::newRef).collect(Collectors.toUnmodifiableSet()));
         assertEquals(1, resolved.size());
         assertSame(barRef, resolved.getFirst().infoRef());
+    }
+
+    private static List<Arguments> onlyBarResolvedWithLibraryContaining() {
+        return List.of(
+            argumentSet("module only", List.of(FOO_INFO)),
+            argumentSet("module and submodule", List.of(FOO_INFO, FOO_SUB_INFO)),
+            argumentSet("submodule only", List.of(FOO_SUB_INFO)));
     }
 
     @Test
