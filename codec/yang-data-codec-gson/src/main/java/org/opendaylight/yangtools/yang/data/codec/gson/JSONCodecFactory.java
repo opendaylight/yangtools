@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.gson.JsonParseException;
 import com.google.gson.stream.JsonReader;
@@ -72,14 +73,15 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
     @Deprecated(since = "12.0.0", forRemoval = true)
     static final class Lhotka02 extends JSONCodecFactory {
         @Deprecated(since = "12.0.0", forRemoval = true)
-        Lhotka02(final @NonNull DataSchemaContextTree dataContextTree, final @NonNull CodecCache<JSONCodec<?>> cache) {
-            super(dataContextTree, cache, InstanceIdentifierJSONCodec.Lhotka02::new);
+        Lhotka02(final @NonNull DataSchemaContextTree dataContextTree, final @NonNull CodecCache<JSONCodec<?>> cache,
+                final @NonNull SchemaLookupCache schemaLookups) {
+            super(dataContextTree, cache, schemaLookups, InstanceIdentifierJSONCodec.Lhotka02::new);
         }
 
         @Deprecated(since = "12.0.0", forRemoval = true)
         @Override
         Lhotka02 rebaseTo(final EffectiveModelContext newSchemaContext, final CodecCache<JSONCodec<?>> newCache) {
-            return new Lhotka02(DataSchemaContextTree.from(newSchemaContext), newCache);
+            return new Lhotka02(DataSchemaContextTree.from(newSchemaContext), newCache, schemaLookups());
         }
 
         @Deprecated(since = "12.0.0", forRemoval = true)
@@ -96,13 +98,14 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
     }
 
     static final class RFC7951 extends JSONCodecFactory {
-        RFC7951(final @NonNull DataSchemaContextTree dataContextTree, final @NonNull CodecCache<JSONCodec<?>> cache) {
-            super(dataContextTree, cache, InstanceIdentifierJSONCodec.RFC7951::new);
+        RFC7951(final @NonNull DataSchemaContextTree dataContextTree, final @NonNull CodecCache<JSONCodec<?>> cache,
+                final @NonNull SchemaLookupCache schemaLookups) {
+            super(dataContextTree, cache, schemaLookups, InstanceIdentifierJSONCodec.RFC7951::new);
         }
 
         @Override
         RFC7951 rebaseTo(final EffectiveModelContext newSchemaContext, final CodecCache<JSONCodec<?>> newCache) {
-            return new RFC7951(DataSchemaContextTree.from(newSchemaContext), newCache);
+            return new RFC7951(DataSchemaContextTree.from(newSchemaContext), newCache, schemaLookups());
         }
 
         @Override
@@ -116,14 +119,16 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
         }
     }
 
+    private final @NonNull SchemaLookupCache schemaLookups;
     private final @NonNull InstanceIdentifierJSONCodec iidCodec;
 
     @SuppressFBWarnings(value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR",
         justification = "https://github.com/spotbugs/spotbugs/issues/1867")
     private JSONCodecFactory(final @NonNull DataSchemaContextTree dataContextTree,
-            final @NonNull CodecCache<JSONCodec<?>> cache,
+            final @NonNull CodecCache<JSONCodec<?>> cache, final @NonNull SchemaLookupCache schemaLookups,
             final BiFunction<DataSchemaContextTree, JSONCodecFactory, @NonNull InstanceIdentifierJSONCodec> iidCodec) {
         super(dataContextTree.modelContext(), cache);
+        this.schemaLookups = requireNonNull(schemaLookups);
         this.iidCodec = verifyNotNull(iidCodec.apply(dataContextTree, this));
     }
 
@@ -221,6 +226,17 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
     @Override
     protected final JSONCodec<?> unionCodec(final UnionTypeDefinition type, final List<JSONCodec<?>> codecs) {
         return UnionJSONCodec.create(type, codecs);
+    }
+
+    /**
+     * {@return the {@link SchemaLookupCache} shared by all {@link JsonParserStream}s using this factory}
+     *
+     * <p>A factory created by {@link #rebaseTo(EffectiveModelContext)} shares this cache. That is safe because every
+     * entry is keyed by the schema node it describes, so a cached answer can never be returned for the wrong node,
+     * even when the two model contexts share nodes.
+     */
+    final @NonNull SchemaLookupCache schemaLookups() {
+        return schemaLookups;
     }
 
     // Returns a one-off factory for the purposes of normalizing an anydata tree.

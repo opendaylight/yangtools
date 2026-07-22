@@ -46,7 +46,7 @@ public enum JSONCodecFactorySupplier {
         @Override
         JSONCodecFactory createFactory(final DataSchemaContextTree dataContextTree,
                 final CodecCache<JSONCodec<?>> cache) {
-            return new JSONCodecFactory.RFC7951(dataContextTree, cache);
+            return new JSONCodecFactory.RFC7951(dataContextTree, cache, new SchemaLookupCache());
         }
     },
     /**
@@ -59,7 +59,7 @@ public enum JSONCodecFactorySupplier {
         @Override
         JSONCodecFactory createFactory(final DataSchemaContextTree dataContextTree,
                 final CodecCache<JSONCodec<?>> cache) {
-            return new JSONCodecFactory.Lhotka02(dataContextTree, cache);
+            return new JSONCodecFactory.Lhotka02(dataContextTree, cache, new SchemaLookupCache());
         }
     };
 
@@ -212,7 +212,8 @@ public enum JSONCodecFactorySupplier {
      *
      * <p>This implementation exists mostly for completeness only, as it does not perform any caching at all and each
      * codec is computed every time it is requested. This may be useful in extremely constrained environments, where
-     * memory footprint is more critical than performance.
+     * memory footprint is more critical than performance. Note that schema node lookups made while parsing JSON are
+     * still cached, but only through soft references, so they are released when the JVM runs short of memory.
      *
      * @param modelContext EffectiveModelContext instance
      * @return A non-sharable {@link JSONCodecFactory}
