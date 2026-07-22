@@ -37,10 +37,7 @@ import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.MultipleEntryDataWithSchema;
-import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
-import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -60,6 +57,7 @@ public final class JsonParserStream implements Closeable, Flushable {
     static final String ANYXML_ARRAY_ELEMENT_ID = "array-element";
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonParserStream.class);
+
     private final Deque<XMLNamespace> namespaces = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
@@ -76,6 +74,16 @@ public final class JsonParserStream implements Closeable, Flushable {
         this.codecs = requireNonNull(codecs);
         this.stack = requireNonNull(stack);
         this.lenient = lenient;
+
+        // Everything we parse has to come from the model context our codecs were built for. An identityref or
+        // instance-identifier value is resolved against codecs.modelContext(), so a parent from anywhere else would
+        // silently produce wrong results. It also keeps every SchemaLookupCache entry within a single model context.
+        // JSONCodecFactory checks the same thing in its InputStreamNormalizer methods, see
+        // AbstractInputStreamNormalizer.checkInference().
+        final var modelContext = codecs.modelContext();
+        if (!modelContext.equals(stack.modelContext())) {
+            throw new IllegalArgumentException("Mismatched inference, expecting model context " + modelContext);
+        }
 
         if (!stack.isEmpty()) {
             final var parent = stack.currentStatement();
@@ -111,9 +119,11 @@ public final class JsonParserStream implements Closeable, Flushable {
      *
      * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
      * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
-     * @param parentNode Logical root node
+     * @param parentNode Logical root node, which has to be rooted in {@code codecFactory}'s model context
      * @return A new {@link JsonParserStream}
      * @throws NullPointerException if any of the arguments are null
+     * @throws IllegalArgumentException if {@code parentNode} comes from a different model context than
+     *                                  {@code codecFactory}
      */
     public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory, final @NonNull EffectiveStatementInference parentNode) {
@@ -152,9 +162,11 @@ public final class JsonParserStream implements Closeable, Flushable {
      *
      * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
      * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
-     * @param parentNode Logical root node
+     * @param parentNode Logical root node, which has to be rooted in {@code codecFactory}'s model context
      * @return A new {@link JsonParserStream}
      * @throws NullPointerException if any of the arguments are null
+     * @throws IllegalArgumentException if {@code parentNode} comes from a different model context than
+     *                                  {@code codecFactory}
      */
     public static @NonNull JsonParserStream createLenient(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory, final @NonNull EffectiveStatementInference parentNode) {
@@ -281,10 +293,12 @@ public final class JsonParserStream implements Closeable, Flushable {
                 if (isArray(parent)) {
                     parent = newArrayEntry(parent);
                 }
+
+                final var parentSchema = parent.getSchema();
+                final var lookup = codecs.schemaLookups().lookupFor(parentSchema);
                 while (in.hasNext()) {
                     final var jsonElementName = in.nextName();
-                    final var parentSchema = parent.getSchema();
-                    final var namespaceAndName = resolveNamespace(jsonElementName, parentSchema);
+                    final var namespaceAndName = resolveNamespace(parentSchema, lookup, jsonElementName);
                     final var localName = namespaceAndName.getKey();
                     final var namespace = namespaceAndName.getValue();
                     if (lenient && (localName == null || namespace == null)) {
@@ -298,8 +312,7 @@ public final class JsonParserStream implements Closeable, Flushable {
                         throw new JsonSyntaxException("Duplicate name " + jsonElementName + " in JSON input.");
                     }
 
-                    final var childDataSchemaNodes = ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema,
-                        localName, getCurrentNamespace());
+                    final var childDataSchemaNodes = lookup.findSchemaNode(localName, getCurrentNamespace());
                     if (childDataSchemaNodes.isEmpty()) {
                         throw new IllegalStateException(
                             "Schema for node with name %s and namespace %s does not exist at %s".formatted(
@@ -365,7 +378,8 @@ public final class JsonParserStream implements Closeable, Flushable {
         namespaces.push(namespace);
     }
 
-    private Entry<String, XMLNamespace> resolveNamespace(final String childName, final DataSchemaNode dataSchemaNode) {
+    private Entry<String, XMLNamespace> resolveNamespace(final DataSchemaNode parent, final SchemaNodeLookup lookup,
+            final String childName) {
         final int lastIndexOfColon = childName.lastIndexOf(':');
         final String nodeNamePart;
         XMLNamespace namespace;
@@ -381,7 +395,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         }
 
         if (namespace == null) {
-            final var potentialUris = resolveAllPotentialNamespaces(nodeNamePart, dataSchemaNode);
+            final var potentialUris = lookup.potentialNamespaces(nodeNamePart);
             if (potentialUris.contains(getCurrentNamespace())) {
                 namespace = getCurrentNamespace();
             } else if (potentialUris.size() == 1) {
@@ -391,7 +405,7 @@ public final class JsonParserStream implements Closeable, Flushable {
                         + toModuleNames(potentialUris));
             } else if (potentialUris.isEmpty() && !lenient) {
                 throw new IllegalStateException("Schema node with name " + nodeNamePart + " was not found under "
-                        + dataSchemaNode.getQName() + ".");
+                        + parent.getQName() + ".");
             }
         }
 
@@ -407,28 +421,6 @@ public final class JsonParserStream implements Closeable, Flushable {
                 .argument().getLocalName());
         }
         return sb.toString();
-    }
-
-    private Set<XMLNamespace> resolveAllPotentialNamespaces(final String elementName,
-            final DataSchemaNode dataSchemaNode) {
-        final var potentialUris = new HashSet<XMLNamespace>();
-        final var choices = new HashSet<ChoiceSchemaNode>();
-        if (dataSchemaNode instanceof DataNodeContainer container) {
-            for (var childSchemaNode : container.getChildNodes()) {
-                if (childSchemaNode instanceof ChoiceSchemaNode choice) {
-                    choices.add(choice);
-                } else if (childSchemaNode.getQName().getLocalName().equals(elementName)) {
-                    potentialUris.add(childSchemaNode.getQName().getNamespace());
-                }
-            }
-
-            for (var choiceNode : choices) {
-                for (var concreteCase : choiceNode.getCases()) {
-                    potentialUris.addAll(resolveAllPotentialNamespaces(elementName, concreteCase));
-                }
-            }
-        }
-        return potentialUris;
     }
 
     private XMLNamespace getCurrentNamespace() {
