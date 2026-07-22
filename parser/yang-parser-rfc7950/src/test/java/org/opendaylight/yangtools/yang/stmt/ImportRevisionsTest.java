@@ -22,7 +22,7 @@ class ImportRevisionsTest extends AbstractYangTest {
     @Test
     void unequalRevisionDatesTest() {
         assertEquals("""
-            Imported module imported-module-with-unequal-revision-date was not found [at \
+            Imported module imported-module-with-unequal-revision-date@2012-10-25 was not found [at \
             root-with-unequal-revision-date:5:5]""", assertInferenceException(
             "/import-revision-date-test/root-with-unequal-revision-date.yang",
             "/import-revision-date-test/imported-module-with-unequal-revision-date.yang").getMessage());
@@ -31,8 +31,8 @@ class ImportRevisionsTest extends AbstractYangTest {
     @Test
     void revisionDatesInRootOnlyTest() {
         assertEquals("""
-            Imported module imported-module-without-revision-date was not found [at root-with-revision-date:5:5]""",
-            assertInferenceException(
+            Imported module imported-module-without-revision-date@2010-06-15 was not found [at \
+            root-with-revision-date:5:5]""", assertInferenceException(
                 "/import-revision-date-test/root-with-revision-date.yang",
                 "/import-revision-date-test/imported-module-without-revision-date.yang").getMessage());
     }
