@@ -146,6 +146,7 @@ public final class XmlParserStream implements Closeable, Flushable {
         this.codecs = requireNonNull(codecs);
         this.stack = requireNonNull(stack);
         this.strictParsing = strictParsing;
+        codecs.checkInferenceContext(stack.modelContext());
         parentNode = stack.isEmpty() ? stack.modelContext() : coerceAsParent(stack.currentStatement());
     }
 
@@ -162,8 +163,9 @@ public final class XmlParserStream implements Closeable, Flushable {
      *
      * @param writer Output writer
      * @param codecs Shared codecs
-     * @param parentNode Parent root node
+     * @param parentNode Parent root node, which has to be rooted in {@code codecs}' model context
      * @return A new stream instance
+     * @throws IllegalArgumentException if {@code parentNode} comes from a different model context than {@code codecs}
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
             final EffectiveStatementInference parentNode) {
@@ -175,12 +177,13 @@ public final class XmlParserStream implements Closeable, Flushable {
      *
      * @param writer Output writer
      * @param codecs Shared codecs
-     * @param parentNode Parent root node
+     * @param parentNode Parent root node, which has to be rooted in {@code codecs}' model context
      * @param strictParsing parsing mode
      *            if set to true, the parser will throw an exception if it encounters unknown child nodes
      *            (nodes, that are not defined in the provided SchemaContext) in containers and lists
      *            if set to false, the parser will skip unknown child nodes
      * @return A new stream instance
+     * @throws IllegalArgumentException if {@code parentNode} comes from a different model context than {@code codecs}
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
             final EffectiveStatementInference parentNode, final boolean strictParsing) {
@@ -240,6 +243,9 @@ public final class XmlParserStream implements Closeable, Flushable {
      * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
      * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, EffectiveStatementInference)}
      * instead and maintain a {@link XmlCodecFactory} to match the current {@link MountPointContext}.
+     *
+     * @throws IllegalArgumentException if {@code parentNode} comes from a different model context than
+     *                                  {@code mountCtx}
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
             final EffectiveStatementInference parentNode) {
@@ -290,6 +296,9 @@ public final class XmlParserStream implements Closeable, Flushable {
      * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
      * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, EffectiveStatementInference)}
      * instead and maintain a {@link XmlCodecFactory} to match the current {@link MountPointContext}.
+     *
+     * @throws IllegalArgumentException if {@code parentNode} comes from a different model context than
+     *                                  {@code mountCtx}
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final MountPointContext mountCtx,
             final EffectiveStatementInference parentNode, final boolean strictParsing) {

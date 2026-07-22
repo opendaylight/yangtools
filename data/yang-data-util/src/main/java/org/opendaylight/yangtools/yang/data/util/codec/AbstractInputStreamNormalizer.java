@@ -86,7 +86,7 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
     @Override
     public final PrefixAndResult parseChildData(final EffectiveStatementInference inference, final InputStream stream)
             throws NormalizationException {
-        checkInference(inference);
+        checkInferenceContext(inference.modelContext());
 
         final NormalizationResult<?> normalized;
         try {
@@ -190,15 +190,8 @@ public abstract class AbstractInputStreamNormalizer<T extends TypeAwareCodec<?, 
     protected abstract @NonNull NormalizationResult<?> parseInputOutput(@NonNull SchemaInferenceStack stack,
         @NonNull QName expected, @NonNull InputStream stream) throws IOException, NormalizationException;
 
-    private void checkInference(final EffectiveStatementInference inference) {
-        final var local = modelContext();
-        if (!local.equals(inference.modelContext())) {
-            throw new IllegalArgumentException("Mismatched inference, expecting model context " + local);
-        }
-    }
-
     private @NonNull SchemaInferenceStack checkInferenceNotEmpty(final EffectiveStatementInference inference) {
-        checkInference(inference);
+        checkInferenceContext(inference.modelContext());
         final var stack = SchemaInferenceStack.ofInference(inference);
         if (stack.isEmpty()) {
             throw new IllegalArgumentException("Inference must not be empty");
