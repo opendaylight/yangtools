@@ -16,6 +16,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableTable;
 import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimaps;
 import com.google.common.collect.Table;
 import com.google.common.collect.Tables;
 import com.google.common.collect.TreeBasedTable;
@@ -750,57 +751,83 @@ public final class SourceLinkageResolver {
 
         int narrowedIncludes = 0;
 
-        // consider all submodules that are required by only a single required module and see if there is a single
-        // unlinked required module which would satisfy the dependency
-        final var it = modulesBySubmodule.asMap().entrySet().iterator();
-        while (it.hasNext()) {
-            final var entry = it.next();
-            final var modules = entry.getValue();
-            if (modules.size() != 1) {
-                continue;
-            }
-
-            final var module = modules.iterator().next();
-            final var moduleName = module.name();
+        // First pass: unambiguous 1:1 relationships
+        // we copy the entries to isolate iteration from removal
+        for (var entry : List.copyOf(modulesBySubmodule.asMap().entrySet())) {
             final var submoduleName = entry.getKey();
-            // long-winded way of extracting an only unlinked candidate for a particular submodule
-            final var candidates = submodulesByParentName.get(moduleName).stream()
-                .filter(submodule -> submodule.parent() == null && submoduleName.equals(submodule.name()))
-                .iterator();
-            final ResolvedSourceBuilder.ForSubmodule candidate;
-            if (candidates.hasNext()) {
-                candidate = candidates.next();
-                if (candidates.hasNext()) {
-                    // there is another candidate, skip
-                    continue;
+            final var modules = entry.getValue();
+            switch (modules.size()) {
+                case 0 -> throw new VerifyException("Empty modules for " + submoduleName.getLocalName());
+                case 1 -> {
+                    // submodule is required only by a single required module: see if there is a single unlinked
+                    // required submodule which would satisfy the dependency
+                    final var it = modules.iterator();
+                    if (narrowInexactInclude(it.next(), submoduleName)) {
+                        it.remove();
+                        narrowedIncludes++;
+                    }
                 }
-            } else {
-                // No candidates: look into library for a match
-                candidate = promoteLatestSubmodule(module, submoduleName);
+                default -> {
+                    // submodule is required by multiple modules: process those with unique name and try to match each
+                    // to a single unlinked required submodule
+                    final var tmp = ArrayListMultimap.<Unqualified, ResolvedSourceBuilder.ForModule>create();
+                    for (var module : modules) {
+                        tmp.put(module.name(), module);
+                    }
+                    for (var siblings : Multimaps.asMap(tmp).values()) {
+                        if (siblings.size() == 1) {
+                            final var module = siblings.getFirst();
+                            if (narrowInexactInclude(module, submoduleName)) {
+                                verify(modules.remove(module));
+                                narrowedIncludes++;
+                            }
+                        }
+                    }
+                }
             }
-
-            module.narrowInexact(submoduleName, RevisionUnion.of(candidate.revision()));
-            narrowedIncludes++;
-            it.remove();
+        }
+        if (narrowedIncludes != 0) {
+            LOG.debug("Narrowed {} unambiguous include requirements, {} requires remain", narrowedIncludes,
+                modulesBySubmodule.size());
+            return true;
         }
 
-        if (narrowedIncludes == 0) {
-            // FIXME: We have not made progress so far, so let's make another pass or two.
+        // FIXME: Consider all submodules which have multiple revisions and the number of modules dependending on
+        //        each of them matches the number of revisions we have for that submodule. For any such combination
+        //        order both by revision and assign them in order: module with oldest revision gets the submodule
+        //        with oldest revision. etc.
 
-            // FIXME: Consider all submodules which have multiple revisions and the number of modules dependending on
-            //        each of them matches the number of revisions we have for that submodule. For any such combination
-            //        order both by revision and assign them in order: module with oldest revision gets the submodule
-            //        with oldest revision. etc.
+        LOG.trace("Remaining inexact {}", modulesBySubmodule);
+        return false;
+    }
 
-            // FIXME: Consider all submodules which are required by a single module, but do not have a candidate.
-            //        Consult libSources to see if we can bring in a matching submodule and narrow the requirement to
-            //        that submodule's revision.
-
-            LOG.trace("Remaining inexact {}", modulesBySubmodule);
+    @NonNullByDefault
+    private boolean narrowInexactInclude(final ResolvedSourceBuilder.ForModule module, final Unqualified submoduleName)
+            throws ReactorException {
+        // long-winded way of extracting an only unlinked candidate with matching a belongs-to matching the module
+        final var candidates = submodulesByParentName.get(module.name()).stream()
+            .filter(submodule -> submodule.parent() == null && submoduleName.equals(submodule.name()))
+            .iterator();
+        final ResolvedSourceBuilder.ForSubmodule candidate;
+        final String origin;
+        if (candidates.hasNext()) {
+            candidate = candidates.next();
+            if (candidates.hasNext()) {
+                // there is another candidate, skip
+                return false;
+            }
+            origin = "required";
+        } else {
+            // No candidates: look into library for a match
+            candidate = promoteLatestSubmodule(module, submoduleName);
+            origin = "library";
         }
-
-        LOG.trace("Narrowed {} include requirements, {} remain", narrowedIncludes, modulesBySubmodule.size());
-        return narrowedIncludes != 0;
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Narrowing {} include {} to {} {}", module.humanName(), submoduleName.getLocalName(), origin,
+                candidate.humanName());
+        }
+        module.narrowInexact(submoduleName, RevisionUnion.of(candidate.revision()));
+        return true;
     }
 
     @NonNullByDefault
@@ -837,7 +864,9 @@ public final class SourceLinkageResolver {
         if (resolvedImports == 0) {
             return false;
         }
-        LOG.trace("Resolved {} imports by revision in {}", resolvedImports, source.humanName());
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Resolved {} imports by revision in {}", resolvedImports, source.humanName());
+        }
         return true;
     }
 
