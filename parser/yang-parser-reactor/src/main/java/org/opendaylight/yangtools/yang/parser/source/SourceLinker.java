@@ -15,9 +15,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
@@ -37,9 +38,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
  * of a single thread executing {@link SourceLinkageResolver#resolveInvolvedSources(Set, Set)}.
  */
 @NonNullByDefault
-abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSourceInfo.Builder
-        permits ModuleLinker, SubmoduleLinker {
-    private final @NonNull R infoRef;
+abstract sealed class SourceLinker<R extends SourceInfoRef, I extends ResolvedSourceInfo>
+        extends ResolvedSourceInfo.Builder
+        permits ResolvedSourceInfo.ModuleBuilder, ResolvedSourceInfo.SubmoduleBuilder {
+    private final R infoRef;
 
     private DependencyLinker<Import, ModuleLinker> imports;
     private DependencyLinker<Include, SubmoduleLinker> includes;
@@ -53,8 +55,29 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
     }
 
     @Override
-    final R infoRef() {
+    public final R infoRef() {
         return infoRef;
+    }
+
+    @Override
+    public final String humanName() {
+        final var sourceId = sourceId();
+        return humanName(sourceId.name(), sourceId.revision());
+    }
+
+    static final String humanName(final Unqualified name, final @Nullable Revision revision) {
+        final var localName = name.getLocalName();
+        return revision == null ? localName : localName + "@" + revision;
+    }
+
+    @Override
+    public final Iterator<Import> missingImports() {
+        return imports.missing();
+    }
+
+    @Override
+    public final Iterator<Include> missingIncludes() {
+        return includes.missing();
     }
 
     /**
@@ -62,20 +85,6 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
      */
     boolean isResolved() {
         return !missingImports().hasNext() && !missingIncludes().hasNext();
-    }
-
-    /**
-     * {@return the set of {@link Import}s that remain unresolved}
-     */
-    final Iterator<Import> missingImports() {
-        return imports.missing();
-    }
-
-    /**
-     * {@return the set of {@link Include}s that remain unresolved}
-     */
-    final Iterator<Include> missingIncludes() {
-        return includes.missing();
     }
 
     /**
@@ -117,15 +126,15 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
      * @return the reverse sequence of sources through which the specified module is imported, or {@code null} when it
      *         is not imported
      */
-    private static @Nullable ArrayList<SourceLinker<?>> importPathOf(final HashSet<SourceLinker<?>> visited,
-            final SourceLinker<?> source, final ModuleLinker module) {
+    private static @Nullable ArrayList<SourceLinker<?, ?>> importPathOf(final HashSet<SourceLinker<?, ?>> visited,
+            final SourceLinker<?, ?> source, final ModuleLinker module) {
         // only process a source if we have not visited it yet
         if (visited.add(source)) {
             final var impIt = source.imports.present();
             while (impIt.hasNext()) {
                 final var target = impIt.next();
                 if (target.equals(module)) {
-                    final var ret = new ArrayList<SourceLinker<?>>();
+                    final var ret = new ArrayList<SourceLinker<?, ?>>();
                     ret.add(source);
                     return ret;
                 }
@@ -162,7 +171,7 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
     }
 
     @Override
-    final ResolvedSourceInfo build() {
+    public final I build() {
         return doBuild(
             imports.buildResolved((requirement, target) -> {
                 final var source = target.infoRef();
@@ -171,7 +180,7 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
             includes.buildResolved((requirement, target) -> new ResolvedInclude(requirement, target.infoRef().ref())));
     }
 
-    abstract ResolvedSourceInfo doBuild(List<ResolvedImport> imports, List<ResolvedInclude> includes);
+    abstract I doBuild(List<ResolvedImport> imports, List<ResolvedInclude> includes);
 
     @Override
     public final String toString() {
