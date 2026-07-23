@@ -15,6 +15,8 @@ import com.google.common.base.VerifyException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
@@ -28,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.Resolved
  * used to construct linkage substatements like imports, includes, belongs-to etc...
 */
 @NonNullByDefault
-public abstract sealed class ResolvedSourceInfo {
+public abstract sealed class ResolvedSourceInfo implements Immutable {
     /**
      * A {@link ResolvedSourceInfo} for a {@link SourceInfoRef.OfModule}.
      */
@@ -121,6 +123,16 @@ public abstract sealed class ResolvedSourceInfo {
         ToStringHelper addToStringAttributes(final ToStringHelper helper) {
             return super.addToStringAttributes(helper).add("belongsTo", belongsTo);
         }
+    }
+
+    /**
+     * A builder of {@link ResolvedSourceInfo} instances.
+     */
+    abstract static sealed class Builder implements Mutable permits ResolvedSourceBuilder {
+        /**
+         * {@return the {@link ResolvedSourceInfo} result of this builder}
+         */
+        abstract ResolvedSourceInfo build();
     }
 
     private final List<ResolvedImport> imports;
