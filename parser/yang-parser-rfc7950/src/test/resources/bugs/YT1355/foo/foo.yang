@@ -1,0 +1,6 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  include xyzzy;
+}
