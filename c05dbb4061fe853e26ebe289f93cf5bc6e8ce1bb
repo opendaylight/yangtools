@@ -120,6 +120,24 @@
       "message": "maybe, it would be better described if we want `tailMap()` with `newest.getKey()) \u003c 0` and what\u0027s the desired behavior\n\nI am afraid that condition `newest.getKey()) \u003c 0` is never satisfied",
       "revId": "c05dbb4061fe853e26ebe289f93cf5bc6e8ce1bb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "11913f2c_842cef81",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 40
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-23T11:24:08Z",
+      "side": 1,
+      "message": "fair point on tailMap() -- but not on the compare -- the map has reverse order.\nanyway, rewritten to make it simpler",
+      "parentUuid": "d713323f_47281406",
+      "revId": "c05dbb4061fe853e26ebe289f93cf5bc6e8ce1bb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
