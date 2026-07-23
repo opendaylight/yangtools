@@ -87,7 +87,7 @@ public abstract sealed class ResolvedSourceInfo implements Immutable permits Res
     /**
      * A builder of {@link ResolvedSourceInfo} instances.
      */
-    abstract static sealed class Builder implements Mutable permits ResolvedSourceBuilder {
+    abstract static sealed class Builder implements Mutable permits SourceLinker {
         /**
          * A set of {@link SourceDependency} objects that need to be resolved to their corresponding {@link Builder}.
          * This class is meant to track {@link Import} and {@link Include}.
@@ -389,6 +389,9 @@ public abstract sealed class ResolvedSourceInfo implements Immutable permits Res
             return sourceInfo().yangVersion();
         }
 
+        /**
+         * {@return the {@link SourceInfoRef} for which this builder was instantiated}
+         */
         abstract SourceInfoRef infoRef();
 
         abstract SourceInfo sourceInfo();

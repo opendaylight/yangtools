@@ -268,18 +268,16 @@ public final class SourceLinkageResolver {
     /**
      * The set of required module sources. We are using insertion order to ensure predictable ordering.
      */
-    private final LinkedHashMap<SourceInfoRef.OfModule, ResolvedSourceBuilder.ForModule> requiredModules =
-        new LinkedHashMap<>();
+    private final LinkedHashMap<SourceInfoRef.OfModule, ModuleLinker> requiredModules = new LinkedHashMap<>();
     /**
      * The set of required submodule sources. We are using insertion order to ensure predictable ordering.
      */
-    private final LinkedHashMap<SourceInfoRef.OfSubmodule, ResolvedSourceBuilder.ForSubmodule> requiredSubmodules =
-        new LinkedHashMap<>();
+    private final LinkedHashMap<SourceInfoRef.OfSubmodule, SubmoduleLinker> requiredSubmodules = new LinkedHashMap<>();
 
     // As per RFC6020, every import-by-revision has to resolve to the same module. We are using a table, as that also
     // allows us quickly find all modules with the same name -- and have them ordered with latest revision first.
-    private final @NonNull Table<Unqualified, RevisionUnion, ResolvedSourceBuilder.ForModule> modulesByName =
-        Tables.<Unqualified, RevisionUnion, ResolvedSourceBuilder.ForModule>newCustomTable(new HashMap<>(),
+    private final @NonNull Table<Unqualified, RevisionUnion, ModuleLinker> modulesByName =
+        Tables.<Unqualified, RevisionUnion, ModuleLinker>newCustomTable(new HashMap<>(),
             () -> new TreeMap<>(Comparator.reverseOrder()));
 
     // Our implementation constraints are looser than RFC6020/RFC7895/RFC7950/RFC8525 in that each module can be
@@ -292,12 +290,11 @@ public final class SourceLinkageResolver {
      * The set of required submodule sources, indexed by the name of the module they claim to belong to.
      */
     @NonNullByDefault
-    private final HashMultimap<Unqualified, ResolvedSourceBuilder.ForSubmodule> submodulesByParentName =
-        HashMultimap.create();
+    private final HashMultimap<Unqualified, SubmoduleLinker> submodulesByParentName = HashMultimap.create();
     /**
      * Index of latest module revisions. Populated lazily during {@link #linkInexactImports()}.
      */
-    private final HashMap<Unqualified, ResolvedSourceBuilder.ForModule> latestModules = new HashMap<>();
+    private final HashMap<Unqualified, ModuleLinker> latestModules = new HashMap<>();
 
     @NonNullByDefault
     private final LibrarySources libSources;
@@ -515,21 +512,19 @@ public final class SourceLinkageResolver {
     }
 
     @NonNullByDefault
-    private Stream<ResolvedSourceBuilder<?>> streamRequiredSources() {
+    private Stream<SourceLinker<?>> streamRequiredSources() {
         return Stream.concat(requiredModules.values().stream(), requiredSubmodules.values().stream());
     }
 
     @NonNullByDefault
-    private static InferenceException newNoProgressException(final ResolvedSourceBuilder<?> builder) {
-        final var sb = new StringBuilder("No linkage progress while linking ").append(builder.humanName());
-
-        appendDependencies(sb, "imports", builder.missingImports());
-        appendDependencies(sb, "includes", builder.missingIncludes());
-        if (builder instanceof ResolvedSourceBuilder.ForSubmodule submodule && submodule.parent() == null) {
+    private static InferenceException newNoProgressException(final SourceLinker<?> linker) {
+        final var sb = new StringBuilder("No linkage progress while linking ").append(linker.humanName());
+        appendDependencies(sb, "imports", linker.missingImports());
+        appendDependencies(sb, "includes", linker.missingIncludes());
+        if (linker instanceof SubmoduleLinker submodule && submodule.parent() == null) {
             sb.append(" belongs-to ").append(submodule.parentName().getLocalName());
         }
-
-        return new InferenceException(sb.toString(), builder.sourceId().toReference());
+        return new InferenceException(sb.toString(), linker.sourceId().toReference());
     }
 
     @NonNullByDefault
@@ -621,8 +616,8 @@ public final class SourceLinkageResolver {
     }
 
     @NonNullByDefault
-    private SubmoduleOrigin linkExactInclude(final ResolvedSourceBuilder.ForModule module,
-            final ResolvedSourceBuilder<?> source, final Include dependency) throws ReactorException {
+    private SubmoduleOrigin linkExactInclude(final ModuleLinker module, final SourceLinker<?> source,
+            final Include dependency) throws ReactorException {
         // parent module tracks submodule revision requirements coming in transitively from included submodules, dealing
         // with the following case:
         //
@@ -724,7 +719,7 @@ public final class SourceLinkageResolver {
      */
     private boolean narrowInexactIncludes() throws ReactorException {
         // determine which submodules have a required module referring to it inexactly
-        final var modulesBySubmodule = LinkedHashMultimap.<Unqualified, ResolvedSourceBuilder.ForModule>create();
+        final var modulesBySubmodule = LinkedHashMultimap.<Unqualified, ModuleLinker>create();
         for (var module : requiredModules.values()) {
             for (var submodule : module.inexactSubmodules()) {
                 modulesBySubmodule.put(submodule, module);
@@ -771,7 +766,7 @@ public final class SourceLinkageResolver {
                 default -> {
                     // submodule is required by multiple modules: process those with unique name and try to match each
                     // to a single unlinked required submodule
-                    final var tmp = ArrayListMultimap.<Unqualified, ResolvedSourceBuilder.ForModule>create();
+                    final var tmp = ArrayListMultimap.<Unqualified, ModuleLinker>create();
                     for (var module : modules) {
                         tmp.put(module.name(), module);
                     }
@@ -803,13 +798,13 @@ public final class SourceLinkageResolver {
     }
 
     @NonNullByDefault
-    private boolean narrowInexactInclude(final ResolvedSourceBuilder.ForModule module, final Unqualified submoduleName)
+    private boolean narrowInexactInclude(final ModuleLinker module, final Unqualified submoduleName)
             throws ReactorException {
         // long-winded way of extracting an only unlinked candidate with matching a belongs-to matching the module
         final var candidates = submodulesByParentName.get(module.name()).stream()
             .filter(submodule -> submodule.parent() == null && submoduleName.equals(submodule.name()))
             .iterator();
-        final ResolvedSourceBuilder.ForSubmodule candidate;
+        final SubmoduleLinker candidate;
         final String origin;
         if (candidates.hasNext()) {
             candidate = candidates.next();
@@ -833,8 +828,7 @@ public final class SourceLinkageResolver {
 
     @NonNullByDefault
     private boolean linkExactImports(final TreeBasedTable<Unqualified, Revision, ModulePromotion> missingModules,
-            final ResolvedSourceBuilder.ForModule parent, final ResolvedSourceBuilder<?> source)
-                throws ReactorException {
+            final ModuleLinker parent, final SourceLinker<?> source) throws ReactorException {
         var resolvedImports = 0;
 
         final var it = source.missingImports();
@@ -963,9 +957,8 @@ public final class SourceLinkageResolver {
     }
 
     @NonNullByDefault
-    private static InferenceException newUnresolvedParentException(final ResolvedSourceBuilder.ForSubmodule first,
-            final Iterator<ResolvedSourceBuilder.ForSubmodule> others,
-            final Map<RevisionUnion, ResolvedSourceBuilder.ForModule> modules) {
+    private static InferenceException newUnresolvedParentException(final SubmoduleLinker first,
+            final Iterator<SubmoduleLinker> others, final Map<RevisionUnion, ModuleLinker> modules) {
         // there are potentially-matching modules for each of the submodule(s), figure out a nice error
         final var ret = newUnresolvedParentException(first, modules);
         while (others.hasNext()) {
@@ -975,8 +968,8 @@ public final class SourceLinkageResolver {
     }
 
     @NonNullByDefault
-    private static InferenceException newUnresolvedParentException(final ResolvedSourceBuilder.ForSubmodule submodule,
-            final Map<RevisionUnion, ResolvedSourceBuilder.ForModule> modules) {
+    private static InferenceException newUnresolvedParentException(final SubmoduleLinker submodule,
+            final Map<RevisionUnion, ModuleLinker> modules) {
         final var sourceInfo = submodule.sourceInfo();
         final var sourceId = sourceInfo.sourceId();
         final var name = sourceId.name();
@@ -1036,8 +1029,8 @@ public final class SourceLinkageResolver {
     }
 
     @NonNullByDefault
-    private boolean linkInexactImports(final ResolvedSourceBuilder.ForModule parentModule,
-            final ResolvedSourceBuilder<?> source) throws ReactorException {
+    private boolean linkInexactImports(final ModuleLinker parentModule, final SourceLinker<?> source)
+            throws ReactorException {
         var loadedModule = false;
 
         final var it = source.missingImports();
@@ -1056,7 +1049,7 @@ public final class SourceLinkageResolver {
 
             final var allRequired = modulesByName.row(name);
             final var required = allRequired.isEmpty() ? null : allRequired.values().iterator().next();
-            final ResolvedSourceBuilder.ForModule module;
+            final ModuleLinker module;
             if (required == null) {
                 // no match in required modules, promote from library or fail
                 final var library = libSources.takeLatestModule(name);
@@ -1093,7 +1086,7 @@ public final class SourceLinkageResolver {
     }
 
     @NonNullByDefault
-    private ResolvedSourceBuilder.ForModule promoteModule(final Unqualified name, final RevisionUnion revision,
+    private ModuleLinker promoteModule(final Unqualified name, final RevisionUnion revision,
             final ModulePromotion origin) throws ReactorException {
         final var source = libSources.takeModule(name, revision);
         if (source == null) {
@@ -1103,9 +1096,8 @@ public final class SourceLinkageResolver {
     }
 
     @NonNullByDefault
-    private ResolvedSourceBuilder.ForModule addRequiredModule(final SourceInfoRef.OfModule module)
-            throws ReactorException {
-        final var builder = new ResolvedSourceBuilder.ForModule(module);
+    private ModuleLinker addRequiredModule(final SourceInfoRef.OfModule module) throws ReactorException {
+        final var builder = new ModuleLinker(module);
         if (requiredModules.putIfAbsent(module, builder) != null) {
             throw new VerifyException("Attempted to add already-required " + module);
         }
@@ -1139,8 +1131,8 @@ public final class SourceLinkageResolver {
     }
 
     @NonNullByDefault
-    private ResolvedSourceBuilder.ForSubmodule promoteLatestSubmodule(final ResolvedSourceBuilder.ForModule module,
-            final Unqualified name) throws ReactorException {
+    private SubmoduleLinker promoteLatestSubmodule(final ModuleLinker module, final Unqualified name)
+            throws ReactorException {
         final var moduleName = module.name();
         final var fromLibrary = libSources.takeLatestSubmodule(moduleName, name);
         if (fromLibrary != null) {
@@ -1175,8 +1167,7 @@ public final class SourceLinkageResolver {
     }
 
     @NonNullByDefault
-    private static String submoduleMismatchMessage(final Unqualified moduleName,
-            final ResolvedSourceBuilder.ForSubmodule submodule) {
+    private static String submoduleMismatchMessage(final Unqualified moduleName, final SubmoduleLinker submodule) {
         final var parent = submodule.parent();
         if (parent != null) {
             return "included by " + parent.humanName();
@@ -1190,8 +1181,8 @@ public final class SourceLinkageResolver {
     }
 
     @NonNullByDefault
-    private ResolvedSourceBuilder.ForSubmodule addRequiredSubmodule(final SourceInfoRef.OfSubmodule submodule) {
-        final var builder = new ResolvedSourceBuilder.ForSubmodule(submodule);
+    private SubmoduleLinker addRequiredSubmodule(final SourceInfoRef.OfSubmodule submodule) {
+        final var builder = new SubmoduleLinker(submodule);
         if (requiredSubmodules.putIfAbsent(submodule, builder) != null) {
             throw new VerifyException("Attempted to add already-required " + submodule);
         }
@@ -1199,7 +1190,7 @@ public final class SourceLinkageResolver {
         return builder;
     }
 
-    private ResolvedSourceBuilder.@Nullable ForSubmodule lookupSubmodule(final @NonNull Unqualified parentName,
+    private @Nullable SubmoduleLinker lookupSubmodule(final @NonNull Unqualified parentName,
             final @NonNull Unqualified name, final @NonNull RevisionUnion revision) {
         for (var submodule : submodulesByParentName.get(parentName)) {
             final var sourceId = submodule.infoRef().ref().correctId();
