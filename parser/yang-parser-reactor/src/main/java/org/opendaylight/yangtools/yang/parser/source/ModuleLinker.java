@@ -25,10 +25,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.DeclarationInSource;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
+import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo.ModuleBuilder;
+import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo.SubmoduleBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -40,7 +41,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
  * requirement that {@code Multiple revisions of the same submodule MUST NOT be included.} are reliably reported.
  */
 @NonNullByDefault
-final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
+final class ModuleLinker extends ModuleBuilder {
     /**
      * The source of an {@link ExactRevision}.
      */
@@ -230,7 +231,7 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
      * @param source the {@link SourceLinker} to the source of requirements
      * @throws ReactorException if a requirement conflicts with a previous requirement
      */
-    void requireIncludes(final SourceLinker<?> source) throws ReactorException {
+    void requireIncludes(final SourceLinker<?, ?> source) throws ReactorException {
         final var it = source.missingIncludes();
         while (it.hasNext()) {
             requireInclude(source, it.next());
@@ -240,11 +241,12 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
     /**
      * Record a requirement for this module to {@code Include} a submodule.
      *
-     * @param source the {@link SourceLinker} of requirements
+     * @param source the {@link ResolvedSourceInfo.Builder} of requirements
      * @param dependency the {@link Include}
      * @throws ReactorException if the requirement conflicts with a previous requirement or cannot be added
      */
-    private void requireInclude(final SourceLinker<?> source, final Include dependency) throws ReactorException {
+    private void requireInclude(final ResolvedSourceInfo.Builder source, final Include dependency)
+            throws ReactorException {
         final var name = dependency.name();
         final var revision = dependency.revision();
         if (revision == null) {
@@ -284,9 +286,29 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
         }
     }
 
-    @Override
-    SourceInfo.Module sourceInfo() {
-        return infoRef().info();
+    /**
+     * Check that a source can add an {@link Include} dependency to this module.
+     *
+     * @param source the source that is resolving the dependency
+     * @param dependency the dependency being resolved
+     * @throws ReactorException if the source cannot be add the dependency to this module
+     */
+    private void checkInclude(final ResolvedSourceInfo.Builder source, final Include dependency)
+            throws ReactorException {
+        switch (source) {
+            case ModuleBuilder module -> verify(module == this);
+            case SubmoduleBuilder submodule -> {
+                final var yangVersion = yangVersion();
+                if (yangVersion != YangVersion.VERSION_1) {
+                    final var depRef = dependency.sourceRef();
+                    final var sourceId = sourceId();
+                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                        new InferenceException(depRef != null ? depRef : sourceId.toReference(), """
+                            Parent module %s does not include %s, YANG %s does not allow it to be included from \
+                            submodule %s""", humanName(), dependency.name(), yangVersion, submodule.humanName()));
+                }
+            }
+        }
     }
 
     @Override
@@ -299,31 +321,7 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
      * @param name submodule name
      */
     StatementSourceReference includeRefOf(final Unqualified name) {
-        return submoduleSpecs.get(requireNonNull(name)) instanceof AnyRevision spec ? spec.sourceRef
+        return submoduleSpecs.get(requireNonNull(name)) instanceof AnyRevision(var sourceRef) ? sourceRef
             : sourceId().toReference();
-    }
-
-    /**
-     * Check that a source can add an {@link Include} dependency to this module.
-     *
-     * @param source the source that is resolving the dependency
-     * @param dependency the dependency being resolved
-     * @throws ReactorException if the source cannot be add the dependency to this module
-     */
-    private void checkInclude(final SourceLinker<?> source, final Include dependency) throws ReactorException {
-        switch (source) {
-            case ModuleLinker module -> verify(module == this);
-            case SubmoduleLinker submodule -> {
-                final var yangVersion = yangVersion();
-                if (yangVersion != YangVersion.VERSION_1) {
-                    final var depRef = dependency.sourceRef();
-                    final var sourceId = sourceId();
-                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
-                        new InferenceException(depRef != null ? depRef : sourceId.toReference(), """
-                            Parent module %s does not include %s, YANG %s does not allow it to be included from \
-                            submodule %s""", humanName(), dependency.name(), yangVersion, submodule.humanName()));
-                }
-            }
-        }
     }
 }
