@@ -511,7 +511,7 @@ public final class SourceLinkageResolver {
             throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, first.sourceId(), cause);
         }
 
-        return streamRequiredSources().map(ResolvedSourceBuilder::build).toList();
+        return streamRequiredSources().map(ResolvedSourceInfo.Builder::build).toList();
     }
 
     @NonNullByDefault
