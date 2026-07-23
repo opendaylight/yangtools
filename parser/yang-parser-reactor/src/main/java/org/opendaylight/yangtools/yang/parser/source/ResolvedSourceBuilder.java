@@ -469,7 +469,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
 
         /**
          * {@return the unmodifiable view of dependencies that remain unresolved. Guaranteed to be updated by
-         * {@link #resolveMissing(SourceDependency, SourceInfoRef)} invocations and iterators reporting
+         * {@link #resolveMissing(SourceDependency, ResolvedSourceBuilder)} invocations and iterators reporting
          * {@link ConcurrentModificationException}}
          */
         abstract Set<@NonNull D> missing();
@@ -488,8 +488,8 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         }
 
         /**
-         * Implementation of the {@link #resolveMissing(SourceDependency, SourceInfoRef)} contract. All arguments are
-         * guaranteed to be non-{@code null} by the caller.
+         * Implementation of the {@link #resolveMissing(SourceDependency, ResolvedSourceBuilder)} contract. All
+         * arguments are guaranteed to be non-{@code null} by the caller.
          *
          * @param dependency the dependency that is missing
          * @param target the builder to use to resolve the dependency
