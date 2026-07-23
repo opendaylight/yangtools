@@ -18,14 +18,14 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedBelongsTo;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
+import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo.SubmoduleBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 /**
  * A {@link SourceLinker} for a YANG {@code submodule}.
  */
-final class SubmoduleLinker extends SourceLinker<SourceInfoRef.OfSubmodule> {
-    // FIXME: internal state here: we go from unresolved -> resolved -> built, and we would like to throw away
-    //        internal state when the product is built
+final class SubmoduleLinker extends SourceLinker<SourceInfoRef.@NonNull OfSubmodule, @NonNull ResolvedSubmoduleInfo>
+        implements SubmoduleBuilder {
     private @Nullable ModuleLinker parent;
 
     @NonNullByDefault
@@ -46,11 +46,6 @@ final class SubmoduleLinker extends SourceLinker<SourceInfoRef.OfSubmodule> {
      */
     @Nullable ModuleLinker parent() {
         return parent;
-    }
-
-    @Override
-    SourceInfo.Submodule sourceInfo() {
-        return infoRef().info();
     }
 
     @Override
