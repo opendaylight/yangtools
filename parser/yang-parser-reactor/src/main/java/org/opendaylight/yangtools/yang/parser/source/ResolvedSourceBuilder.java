@@ -314,9 +314,9 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
         }
 
         @Override
-        ResolvedSourceInfo.Module doBuild(final List<ResolvedImport> resolvedImports,
+        ResolvedModuleInfo doBuild(final List<ResolvedImport> resolvedImports,
                 final List<ResolvedInclude> resolveIncludes) {
-            return new ResolvedSourceInfo.Module(infoRef(), resolvedImports, resolveIncludes);
+            return new ResolvedModuleInfo(infoRef(), resolvedImports, resolveIncludes);
         }
 
         /**
@@ -418,7 +418,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
         }
 
         @Override
-        ResolvedSourceInfo.Submodule doBuild(final List<@NonNull ResolvedImport> resolvedImports,
+        ResolvedSubmoduleInfo doBuild(final List<@NonNull ResolvedImport> resolvedImports,
                 final List<@NonNull ResolvedInclude> resolveIncludes) {
             final var local = parent;
             if (local == null) {
@@ -426,7 +426,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
             }
             final var parentRef = local.infoRef();
             final var infoRef = infoRef();
-            return new ResolvedSourceInfo.Submodule(infoRef,
+            return new ResolvedSubmoduleInfo(infoRef,
                 new ResolvedBelongsTo(infoRef.info().belongsTo(), parentRef.ref(),
                     parentRef.info().moduleName().getModule()), resolvedImports, resolveIncludes);
         }
