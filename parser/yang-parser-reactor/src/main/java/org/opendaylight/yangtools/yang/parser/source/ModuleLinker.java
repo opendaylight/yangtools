@@ -19,17 +19,16 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.RevisionUnion;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDeclaration;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.model.api.source.DeclarationInSource;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef.OfModule;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
+import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo.ModuleBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -41,7 +40,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
  * requirement that {@code Multiple revisions of the same submodule MUST NOT be included.} are reliably reported.
  */
 @NonNullByDefault
-final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
+final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule, ResolvedModuleInfo> implements ModuleBuilder {
     /**
      * The source of an {@link ExactRevision}.
      */
@@ -228,7 +227,7 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
      * @param source the {@link SourceLinker} to the source of requirements
      * @throws ReactorException if a requirement conflicts with a previous requirement
      */
-    void requireIncludes(final SourceLinker<?> source) throws ReactorException {
+    void requireIncludes(final SourceLinker<?, ?> source) throws ReactorException {
         final var it = source.missingIncludes();
         while (it.hasNext()) {
             requireInclude(source, it.next());
@@ -242,7 +241,7 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
      * @param dependency the {@link Include}
      * @throws ReactorException if the requirement conflicts with a previous requirement or cannot be added
      */
-    private void requireInclude(final SourceLinker<?> source, final Include dependency)
+    private void requireInclude(final SourceLinker<?, ?> source, final Include dependency)
             throws ReactorException {
         final var name = dependency.name();
         final var revision = dependency.revision();
@@ -286,11 +285,6 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
     }
 
     @Override
-    SourceInfo.Module sourceInfo() {
-        return infoRef().info();
-    }
-
-    @Override
     ResolvedModuleInfo doBuild(final List<ResolvedImport> resolvedImports,
             final List<ResolvedInclude> resolveIncludes) {
         return new ResolvedModuleInfo(infoRef(), resolvedImports, resolveIncludes);
@@ -312,7 +306,7 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
      * @param dependency the dependency being resolved
      * @throws ReactorException if the source cannot be add the dependency to this module
      */
-    void checkInclude(final SourceLinker<?> source, final Include dependency) throws ReactorException {
+    private void checkInclude(final SourceLinker<?, ?> source, final Include dependency) throws ReactorException {
         switch (source) {
             case ModuleLinker module -> verify(module == this);
             case SubmoduleLinker submodule -> {
