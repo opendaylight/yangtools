@@ -512,12 +512,12 @@ public final class SourceLinkageResolver {
     }
 
     @NonNullByDefault
-    private Stream<SourceLinker<?>> streamRequiredSources() {
+    private Stream<SourceLinker<?, ?>> streamRequiredSources() {
         return Stream.concat(requiredModules.values().stream(), requiredSubmodules.values().stream());
     }
 
     @NonNullByDefault
-    private static InferenceException newNoProgressException(final SourceLinker<?> linker) {
+    private static InferenceException newNoProgressException(final SourceLinker<?, ?> linker) {
         final var sb = new StringBuilder("No linkage progress while linking ").append(linker.humanName());
         appendDependencies(sb, "imports", linker.missingImports());
         appendDependencies(sb, "includes", linker.missingIncludes());
@@ -616,7 +616,7 @@ public final class SourceLinkageResolver {
     }
 
     @NonNullByDefault
-    private SubmoduleOrigin linkExactInclude(final ModuleLinker module, final SourceLinker<?> source,
+    private SubmoduleOrigin linkExactInclude(final ModuleLinker module, final SourceLinker<?, ?> source,
             final Include dependency) throws ReactorException {
         // parent module tracks submodule revision requirements coming in transitively from included submodules, dealing
         // with the following case:
@@ -828,7 +828,7 @@ public final class SourceLinkageResolver {
 
     @NonNullByDefault
     private boolean linkExactImports(final TreeBasedTable<Unqualified, Revision, ModulePromotion> missingModules,
-            final ModuleLinker parent, final SourceLinker<?> source) throws ReactorException {
+            final ModuleLinker parent, final SourceLinker<?, ?> source) throws ReactorException {
         var resolvedImports = 0;
 
         final var it = source.missingImports();
@@ -1029,7 +1029,7 @@ public final class SourceLinkageResolver {
     }
 
     @NonNullByDefault
-    private boolean linkInexactImports(final ModuleLinker parentModule, final SourceLinker<?> source)
+    private boolean linkInexactImports(final ModuleLinker parentModule, final SourceLinker<?, ?> source)
             throws ReactorException {
         var loadedModule = false;
 
