@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.VerifyException;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,7 +21,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map.Entry;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -461,7 +462,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
          */
         static final <D extends SourceDependency, B extends ResolvedSourceBuilder<?>> Dependencies<D, B> of(
                 final Set<@NonNull D> dependencies) {
-            return dependencies.isEmpty() ? NoDependencies.of() : new SomeDependencies<>(dependencies);
+            return dependencies.isEmpty() ? NoDependencies.of() : new NeededDependencies<>(dependencies);
         }
 
         /**
@@ -479,10 +480,12 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
          *
          * @param dependency the dependency that is missing
          * @param target the builder to use to resolve the dependency
+         * @return replacement {@link ResolvedDependencies}, if needed
          */
-        final void resolveMissing(final @NonNull D dependency, final @NonNull B target) {
+        final @Nullable ResolvedDependencies<D, B> resolveMissing(final @NonNull D dependency,
+                final @NonNull B target) {
             // split to keep argument checking consistent
-            doResolveMissing(requireNonNull(dependency), requireNonNull(target));
+            return doResolveMissing(requireNonNull(dependency), requireNonNull(target));
         }
 
         /**
@@ -491,8 +494,9 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
          *
          * @param dependency the dependency that is missing
          * @param target the builder to use to resolve the dependency
+         * @return replacement {@link ResolvedDependencies}, if needed
          */
-        abstract void doResolveMissing(@NonNull D dependency, @NonNull B target);
+        abstract @Nullable ResolvedDependencies<D, B> doResolveMissing(@NonNull D dependency, @NonNull B target);
 
         /**
          * Build a list of objects, each representing a dependency. Implementations of this method assert that all
@@ -519,6 +523,17 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
 
         @Override
         public abstract String toString();
+
+        // common utility for doResolveMissing() implementations
+        static final VerifyException notMissingException(final SourceDependency dependency,
+                final ResolvedSourceBuilder<?> target, final @Nullable ResolvedSourceBuilder<?> existing) {
+            return existing == null
+                // replace failed because the dependency was not specified
+                ? new VerifyException("Attempted to resolve unspecified " + dependency)
+                    // replace failed because the dependency was already resolved
+                    : new VerifyException(
+                        "Attempted to override resolution of " + dependency + " from " + existing + " to " + target);
+        }
     }
 
     /**
@@ -552,8 +567,8 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
         }
 
         @Override
-        void doResolveMissing(final D dependency, final B target) {
-            throw new VerifyException("Attempted to resolve unspecified " + dependency);
+        @Nullable ResolvedDependencies<D, B> doResolveMissing(final D dependency, final B target) {
+            throw notMissingException(dependency, target, null);
         }
 
         @Override
@@ -574,8 +589,42 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
      * @param <B> {@link ResolvedSourceBuilder} type
      */
     @NonNullByDefault
-    private static final class SomeDependencies<D extends SourceDependency, B extends ResolvedSourceBuilder<?>>
-            extends Dependencies<D, B> {
+    private abstract static sealed class SomeDependencies<
+            D extends SourceDependency,
+            B extends ResolvedSourceBuilder<?>> extends Dependencies<D, B> {
+        @Override
+        final <R> List<R> doBuildResolved(final BiFunction<D, B, R> function) {
+            final var entries = map().entrySet();
+            final var tmp = new ArrayList<R>(entries.size());
+            for (var entry : entries) {
+                final var dependency = entry.getKey();
+                final var resolved = entry.getValue();
+                if (resolved == null) {
+                    throw new VerifyException("Unresolved dependency " + dependency);
+                }
+                tmp.add(verifyNotNull(function.apply(dependency, resolved)));
+            }
+            return List.copyOf(tmp);
+        }
+
+        abstract Map<D, ? extends @Nullable B> map();
+
+        @Override
+        public final String toString() {
+            return MoreObjects.toStringHelper(this).add("dependencies", map()).toString();
+        }
+    }
+
+    /**
+     * An implementation of {@link SomeDependencies} indicating there is at least one dependency that needs to be
+     * resolved. It should eventually settle into {@link ResolvedDependencies}
+     *
+     * @param <D> dependency type
+     * @param <B> {@link ResolvedSourceBuilder} type
+     */
+    @NonNullByDefault
+    private static final class NeededDependencies<D extends SourceDependency, B extends ResolvedSourceBuilder<?>>
+            extends SomeDependencies<D, B> {
         /**
          * The map of dependencies. The iteration order matches the iteration order of specified dependencies
          * and contains {@code null} for each dependency. This allows us to enforce that each dependency is resolved
@@ -588,23 +637,31 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
          */
         private final LinkedHashMap<D, @Nullable B> map;
 
+        private int missing;
+
         /**
          * Default constructor. Should only be called from {@link Dependencies#of(Set)}.
          *
          * @param dependencies the set of dependencies
          */
-        SomeDependencies(final Set<D> dependencies) {
+        NeededDependencies(final Set<D> dependencies) {
             map = LinkedHashMap.newLinkedHashMap(dependencies.size());
             for (var dependency : dependencies) {
                 map.put(requireNonNull(dependency), null);
             }
+            missing = map.size();
+        }
+
+        @Override
+        Map<D, @Nullable B> map() {
+            return map;
         }
 
         @Override
         Iterator<D> missing() {
             return map.entrySet().stream()
                 .filter(entry -> entry.getValue() == null)
-                .map(Entry::getKey)
+                .map(Map.Entry::getKey)
                 .iterator();
         }
 
@@ -614,35 +671,76 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
         }
 
         @Override
-        void doResolveMissing(final D dependency, final B target) {
+        @Nullable ResolvedDependencies<D, B> doResolveMissing(final D dependency, final B target) {
             if (!map.replace(dependency, null, target)) {
-                final var prev = map.get(dependency);
-                throw prev == null
-                    // replace failed because the dependency was not specified
-                    ? new VerifyException("Attempted to resolve unspecified " + dependency)
-                    // replace failed because the dependency was already resolved
-                    : new VerifyException(
-                        "Attempted to override resolution of " + dependency + " from " + prev + " to " + target);
+                throw notMissingException(dependency, target, map.get(dependency));
             }
-        }
-
-        @Override
-        <R> List<R> doBuildResolved(final BiFunction<D, B, R> function) {
-            final var tmp = new ArrayList<R>(map.size());
-            for (var entry : map.entrySet()) {
-                final var dependency = entry.getKey();
-                final var resolved = entry.getValue();
-                if (resolved == null) {
-                    throw new VerifyException("Unresolved dependency " + dependency);
+            final var local = missing;
+            return switch (local) {
+                case 0 -> throw new VerifyException("Mismatched " + local + " and " + map);
+                case 1 -> {
+                    final var resolved = new ResolvedDependencies<>(map);
+                    missing = 0;
+                    yield resolved;
                 }
-                tmp.add(verifyNotNull(function.apply(dependency, resolved)));
+                default -> {
+                    missing = local - 1;
+                    yield null;
+                }
+            };
+        }
+    }
+
+    /**
+     * An implementation of {@link SomeDependencies} indicating there is at least one dependency that needs to be
+     * resolved. It should eventually settle into {@link ResolvedDependencies}
+     *
+     * @param <D> dependency type
+     * @param <B> {@link ResolvedSourceBuilder} type
+     */
+    @NonNullByDefault
+    private static final class ResolvedDependencies<D extends SourceDependency, B extends ResolvedSourceBuilder<?>>
+            extends SomeDependencies<D, B> {
+        /**
+         * The map of dependencies. The iteration order matches the iteration order of specified dependencies
+         * and contains {@code null} for each dependency. This allows us to enforce that each dependency is resolved
+         * exactly once (by making a {@code null} to non-{@code null} transition), at which it becomes satisfied -- thus
+         * providing a combined capability to detect
+         * <ol>
+         *   <li>attempts to resolve a dependency more than once, as well as</li>
+         *   <li>attempts to resolve a dependency that was not specified</li>
+         * </ol>
+         */
+        private final ImmutableMap<D, B> map;
+
+        ResolvedDependencies(final LinkedHashMap<D, @Nullable B> map) {
+            final var builder = ImmutableMap.<D, B>builderWithExpectedSize(map.size());
+            for (var entry : map.entrySet()) {
+                @SuppressWarnings("null")
+                final var value = (@NonNull B) verifyNotNull(entry.getValue());
+                builder.put(entry.getKey(), value);
             }
-            return List.copyOf(tmp);
+            this.map = builder.build();
         }
 
         @Override
-        public String toString() {
-            return MoreObjects.toStringHelper(this).add("dependencies", map).toString();
+        ImmutableMap<D, B> map() {
+            return map;
+        }
+
+        @Override
+        Iterator<D> missing() {
+            return Collections.emptyIterator();
+        }
+
+        @Override
+        Iterator<B> present() {
+            return map.values().iterator();
+        }
+
+        @Override
+        @Nullable ResolvedDependencies<D, B> doResolveMissing(final D dependency, final B target) {
+            throw notMissingException(dependency, target, map.get(dependency));
         }
     }
 
@@ -678,7 +776,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
         }
 
         @Override
-        void doResolveMissing(final D dependency, final B target) {
+        @Nullable ResolvedDependencies<D, B> doResolveMissing(final D dependency, final B target) {
             throw uoe();
         }
 
@@ -801,7 +899,10 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
                      sourceId.name().getLocalName(), target.name().getLocalName()));
         }
 
-        imports.resolveMissing(dependency, target);
+        final var resolved = imports.resolveMissing(dependency, target);
+        if (resolved != null) {
+            imports = resolved;
+        }
     }
 
     /**
@@ -854,7 +955,10 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
     final void resolveInclude(final Include dependency, final ForSubmodule target) {
         ensureBuilderOpened();
         // FIXME: YANG 1 submodules should enforce no circular includes
-        includes.resolveMissing(dependency, requireNonNull(target));
+        final var resolved = includes.resolveMissing(dependency, requireNonNull(target));
+        if (resolved != null) {
+            includes = resolved;
+        }
     }
 
     @Override
