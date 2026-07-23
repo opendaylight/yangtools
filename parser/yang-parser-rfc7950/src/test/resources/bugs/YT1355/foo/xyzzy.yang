@@ -1,0 +1,3 @@
+submodule xyzzy {
+  belongs-to foo { prefix foo; }
+}
