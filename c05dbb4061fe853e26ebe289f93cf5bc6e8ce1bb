@@ -20,6 +20,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "7f5b7aa9_e177909a",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 40
+      },
+      "lineNbr": 349,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-07-23T09:10:46Z",
+      "side": 1,
+      "message": "do we cover all posibilities?",
+      "revId": "c05dbb4061fe853e26ebe289f93cf5bc6e8ce1bb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8dacc77a_b8ca265f",
         "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
         "patchSetId": 40
