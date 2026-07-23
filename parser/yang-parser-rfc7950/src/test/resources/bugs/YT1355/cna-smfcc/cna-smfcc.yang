@@ -1,0 +1,6 @@
+module cna-smfcc {
+  namespace cna;
+  prefix cna;
+
+  include trace;
+}
