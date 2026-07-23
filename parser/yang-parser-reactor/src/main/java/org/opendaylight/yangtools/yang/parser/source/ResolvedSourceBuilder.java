@@ -65,7 +65,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
 //       here as we resolve inter-dependencies. A better name would be 'SourceLinkage' or something similar.
 // TODO: reconsider subclass naming: we are always referring to the types in qualified fashion, so SourceLinkage.Module
 //       should work nicely while taking up fewer characters.
-abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements Mutable {
+abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends ResolvedSourceInfo.Builder {
     /**
      * A {@link ResolvedSourceBuilder} for a YANG {@code module}. It provides a meeting point for resolving
      * {@code include} statements to a consistent set of sources, such that violations of RFC6020/RFC7950 section 7.1.6
@@ -321,7 +321,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         }
 
         @Override
-        ResolvedSourceInfo.Module buildProduct(final List<ResolvedImport> resolvedImports,
+        ResolvedSourceInfo.Module doBuild(final List<ResolvedImport> resolvedImports,
                 final List<ResolvedInclude> resolveIncludes) {
             return new ResolvedSourceInfo.Module(infoRef(), resolvedImports, resolveIncludes);
         }
@@ -425,7 +425,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         }
 
         @Override
-        ResolvedSourceInfo.Submodule buildProduct(final List<@NonNull ResolvedImport> resolvedImports,
+        ResolvedSourceInfo.Submodule doBuild(final List<@NonNull ResolvedImport> resolvedImports,
                 final List<@NonNull ResolvedInclude> resolveIncludes) {
             final var local = parent;
             if (local == null) {
@@ -865,18 +865,13 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
         includes.resolveMissing(dependency, requireNonNull(target));
     }
 
-    /**
-     * Builds a finalized {@link ResolvedSourceInfo} using the map of already-resolved sources.
-     *
-     * @return ResolvedSourceInfo of this source
-     */
-    @NonNullByDefault
+    @Override
     final ResolvedSourceInfo build() {
         final var local = product;
         if (local != null) {
             return local;
         }
-        final var result = buildProduct(
+        final var result = doBuild(
             imports.buildResolved((requirement, target) -> {
                 final var source = target.infoRef();
                 return new ResolvedImport(requirement, source.ref(), source.info().moduleName().getModule());
@@ -889,8 +884,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> implements 
     }
 
     @NonNullByDefault
-    abstract ResolvedSourceInfo buildProduct(List<ResolvedImport> resolvedImports,
-        List<ResolvedInclude> resolveIncludes);
+    abstract ResolvedSourceInfo doBuild(List<ResolvedImport> resolvedImports, List<ResolvedInclude> resolveIncludes);
 
     private void ensureBuilderOpened() {
         final var local = product;
