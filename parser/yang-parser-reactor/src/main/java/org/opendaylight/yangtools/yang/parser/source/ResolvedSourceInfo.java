@@ -7,11 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.source;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.VerifyException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -73,7 +70,7 @@ public abstract sealed class ResolvedSourceInfo implements Immutable permits Res
     /**
      * A builder of {@link ResolvedSourceInfo} instances.
      */
-    abstract static sealed class Builder implements Mutable permits ResolvedSourceBuilder {
+    abstract static sealed class Builder implements Mutable permits SourceLinker {
 
         final String humanName() {
             final var sourceId = sourceId();
@@ -101,6 +98,9 @@ public abstract sealed class ResolvedSourceInfo implements Immutable permits Res
             return sourceInfo().yangVersion();
         }
 
+        /**
+         * {@return the {@link SourceInfoRef} for which this builder was instantiated}
+         */
         abstract SourceInfoRef infoRef();
 
         abstract SourceInfo sourceInfo();
