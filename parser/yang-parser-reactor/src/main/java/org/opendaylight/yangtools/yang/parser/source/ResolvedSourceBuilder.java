@@ -16,11 +16,11 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.Maps;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -260,8 +260,9 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
          * @throws ReactorException if a requirement conflicts with a previous requirement
          */
         private void requireIncludes(final ResolvedSourceBuilder<?> source) throws ReactorException {
-            for (var dependency : source.missingIncludes()) {
-                requireInclude(source, dependency);
+            final var it = source.missingIncludes();
+            while (it.hasNext()) {
+                requireInclude(source, it.next());
             }
         }
 
@@ -464,16 +465,14 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
         }
 
         /**
-         * {@return the unmodifiable view of dependencies that remain unresolved. Guaranteed to be updated by
-         * {@link #resolveMissing(SourceDependency, ResolvedSourceBuilder)} invocations and iterators reporting
-         * {@link ConcurrentModificationException}}
+         * {@return the unmodifiable iterator reporting all dependencies that remain unresolved}
          */
-        abstract Set<@NonNull D> missing();
+        abstract Iterator<D> missing();
 
         /**
          * {@return an unmodifiable iterator reporting all dependencies that have been resolved}
          */
-        abstract Iterator<@NonNull B> present();
+        abstract Iterator<B> present();
 
         /**
          * Resolve a currently-missing dependency with a builder.
@@ -543,8 +542,8 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
         }
 
         @Override
-        Set<D> missing() {
-            return Set.of();
+        Iterator<D> missing() {
+            return Collections.emptyIterator();
         }
 
         @Override
@@ -588,15 +587,6 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
          * </ol>
          */
         private final LinkedHashMap<D, @Nullable B> map;
-        /**
-         * An unmodifiable view on what dependencies have not been satisfied. This is a materialized view
-         * of {@code map.keySet()} filtering out any entries which have a {@code null} value.
-         *
-         * <p>The set's iterators do not throw {@link ConcurrentModificationException} because the {@link #map} is not
-         * structurally modified by {@link #doResolveMissing(SourceDependency, ResolvedSourceBuilder)}, but users need
-         * to have a well-defined relationship between iterator advancement and the calls to that method.
-         */
-        private final Set<D> missing;
 
         /**
          * Default constructor. Should only be called from {@link Dependencies#of(Set)}.
@@ -608,12 +598,14 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
             for (var dependency : dependencies) {
                 map.put(requireNonNull(dependency), null);
             }
-            missing = Collections.unmodifiableSet(Maps.filterValues(map, Objects::isNull).keySet());
         }
 
         @Override
-        Set<D> missing() {
-            return missing;
+        Iterator<D> missing() {
+            return map.entrySet().stream()
+                .filter(entry -> entry.getValue() == null)
+                .map(Entry::getKey)
+                .iterator();
         }
 
         @Override
@@ -676,8 +668,8 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
         }
 
         @Override
-        Set<D> missing() {
-            return Set.of();
+        Iterator<D> missing() {
+            return Collections.emptyIterator();
         }
 
         @Override
@@ -763,14 +755,14 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
      * {@return {@code true} if all dependencies specified in {@link #sourceInfo()} have been satisfied}
      */
     boolean isResolved() {
-        return product != null || missingImports().isEmpty() && missingIncludes().isEmpty();
+        return product != null || !missingImports().hasNext() && !missingIncludes().hasNext();
     }
 
     /**
      * {@return the set of {@link Import}s that remain unresolved}
      */
     @NonNullByDefault
-    final Set<Import> missingImports() {
+    final Iterator<Import> missingImports() {
         return imports.missing();
     }
 
@@ -778,7 +770,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
      * {@return the set of {@link Include}s that remain unresolved}
      */
     @NonNullByDefault
-    final Set<Include> missingIncludes() {
+    final Iterator<Include> missingIncludes() {
         return includes.missing();
     }
 
