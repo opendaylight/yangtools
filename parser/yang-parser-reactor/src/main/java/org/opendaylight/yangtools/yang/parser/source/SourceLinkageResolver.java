@@ -534,8 +534,7 @@ public final class SourceLinkageResolver {
 
     @NonNullByDefault
     private static void appendDependencies(final StringBuilder sb, final String name,
-            final Set<? extends SourceDependency> dependencies) {
-        final var it = dependencies.iterator();
+            final Iterator<? extends SourceDependency> it) {
         if (it.hasNext()) {
             appendDependency(sb.append(' ').append(name).append(" ["), it.next());
             if (it.hasNext()) {
@@ -583,8 +582,9 @@ public final class SourceLinkageResolver {
         while (true) {
             // link all exact includes into their parent modules first, potentially expanding requiredSubmodules
             for (var parent : requiredModules.values()) {
-                for (var dependency : parent.missingIncludes()) {
-                    if (linkExactInclude(parent, parent, dependency) != SubmoduleOrigin.NONE) {
+                final var it = parent.missingIncludes();
+                while (it.hasNext()) {
+                    if (linkExactInclude(parent, parent, it.next()) != SubmoduleOrigin.NONE) {
                         progressed = true;
                     }
                 }
@@ -595,8 +595,9 @@ public final class SourceLinkageResolver {
             for (var source : List.copyOf(requiredSubmodules.values())) {
                 final var parent = source.parent();
                 if (parent != null) {
-                    for (var dependency : source.missingIncludes()) {
-                        switch (linkExactInclude(parent, source, dependency)) {
+                    final var it = source.missingIncludes();
+                    while (it.hasNext()) {
+                        switch (linkExactInclude(parent, source, it.next())) {
                             case null -> throw new NullPointerException();
                             case NONE -> {
                                 // no-op
@@ -836,7 +837,9 @@ public final class SourceLinkageResolver {
                 throws ReactorException {
         var resolvedImports = 0;
 
-        for (var dependency : source.missingImports()) {
+        final var it = source.missingImports();
+        while (it.hasNext()) {
+            final var dependency = it.next();
             final var revision = dependency.revision();
             if (revision != null) {
                 final var name = dependency.name();
@@ -861,6 +864,7 @@ public final class SourceLinkageResolver {
                 resolvedImports++;
             }
         }
+
         if (resolvedImports == 0) {
             return false;
         }
@@ -1036,7 +1040,9 @@ public final class SourceLinkageResolver {
             final ResolvedSourceBuilder<?> source) throws ReactorException {
         var loadedModule = false;
 
-        for (var dependency : source.missingImports()) {
+        final var it = source.missingImports();
+        while (it.hasNext()) {
+            final var dependency = it.next();
             if (dependency.revision() != null) {
                 continue;
             }
