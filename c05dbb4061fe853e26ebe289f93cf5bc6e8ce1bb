@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2cf04f82_f9b20335",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 40
+      },
+      "lineNbr": 825,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-07-23T08:22:26Z",
+      "side": 1,
+      "message": "what happens when the same source is passed multiple times, the same import from multiple models?\n\ndo we need to memorize sources we already added?",
+      "revId": "c05dbb4061fe853e26ebe289f93cf5bc6e8ce1bb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d713323f_47281406",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 40
+      },
+      "lineNbr": 127,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-07-23T08:22:26Z",
+      "side": 1,
+      "message": "maybe, it would be better described if we want `tailMap()` with `newest.getKey()) \u003c 0` and what\u0027s the desired behavior\n\nI am afraid that condition `newest.getKey()) \u003c 0` is never satisfied",
+      "revId": "c05dbb4061fe853e26ebe289f93cf5bc6e8ce1bb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
