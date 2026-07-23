@@ -1,0 +1,6 @@
+module nrf-agent {
+  namespace nrf;
+  prefix nrf;
+
+  include trace;
+}

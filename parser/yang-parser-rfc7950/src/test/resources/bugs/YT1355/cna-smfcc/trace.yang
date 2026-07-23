@@ -1,0 +1,5 @@
+submodule trace {
+  belongs-to cna-smfcc {
+    prefix cna;
+  }
+}
