@@ -23,7 +23,6 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.RevisionUnion;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -47,16 +46,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
  * exactly one instance of this class for each {@link SourceInfoRef} in a particular {@link SourceLinkageResolver}
  * instance.
  *
- * <p>This class is marked as {@link Mutable} because it has internal state, but once {@link #build()} succeeds, it
- * really becomes immutable, rejecting any state modification and returning the same build result.
- *
  * <p>This class is an implementation detail of {@link SourceLinkageResolver} and is expected to be used in the context
  * of a single thread executing {@link SourceLinkageResolver#resolveInvolvedSources(Set, Set)}.
  */
-// TODO: this is not exactly a builder, as the build() product is explicitly retained and we update the state tracked
-//       here as we resolve inter-dependencies. A better name would be 'SourceLinkage' or something similar.
-// TODO: reconsider subclass naming: we are always referring to the types in qualified fashion, so SourceLinkage.Module
-//       should work nicely while taking up fewer characters.
+// FIXME: Reconsider class naming: we are always referring: we refer to results as ResolvedSourceInfo,
+//        ResolvedModuleInfo and ResolvedSubmoduleInfo. ResolvedSourceBuilder.{ForModule,ForSubmodule} is quite
+//        a mouthful, rename to this class to SourceLinker and specializations to {Module,Submodule}Linker.
 abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends ResolvedSourceInfo.Builder {
     /**
      * A {@link ResolvedSourceBuilder} for a YANG {@code module}. It provides a meeting point for resolving
@@ -435,13 +430,10 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
     // the SourceInfoRef this object is attempting to resolve
     private final @NonNull R infoRef;
 
-    // FIXME: Mutable state: we either have imports and includes, or product. Encapsulate the two possibilities into
-    //        an internal class and eliminate TerminalDependencies.
     @NonNullByDefault
     private Dependencies<Import, ForModule> imports;
     @NonNullByDefault
     private Dependencies<Include, ForSubmodule> includes;
-    private @Nullable ResolvedSourceInfo product;
 
     @NonNullByDefault
     private ResolvedSourceBuilder(final R infoRef) {
@@ -461,7 +453,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
      * {@return {@code true} if all dependencies specified in {@link #sourceInfo()} have been satisfied}
      */
     boolean isResolved() {
-        return product != null || !missingImports().hasNext() && !missingIncludes().hasNext();
+        return !missingImports().hasNext() && !missingIncludes().hasNext();
     }
 
     /**
@@ -491,8 +483,6 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
     @NonNullByDefault
     final void resolveImport(final ForModule parentModule, final Import dependency, final ForModule target)
             throws ReactorException {
-        ensureBuilderOpened();
-
         // check that target module does not import parentModule
         // FIXME: 16.0.0: different exception for the case of self-import
         final var path = target.equals(requireNonNull(parentModule)) ? List.of(target)
@@ -561,7 +551,6 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
      */
     @NonNullByDefault
     final void resolveInclude(final Include dependency, final ForSubmodule target) {
-        ensureBuilderOpened();
         // FIXME: YANG 1 submodules should enforce no circular includes
         final var resolved = includes.resolveMissing(dependency, requireNonNull(target));
         if (resolved != null) {
@@ -571,29 +560,16 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
 
     @Override
     final ResolvedSourceInfo build() {
-        final var local = product;
-        if (local != null) {
-            return local;
-        }
-        final var result = doBuild(
+        return doBuild(
             imports.buildResolved((requirement, target) -> {
                 final var source = target.infoRef();
                 return new ResolvedImport(requirement, source.ref(), source.info().moduleName().getModule());
             }),
             includes.buildResolved((requirement, target) -> new ResolvedInclude(requirement, target.infoRef().ref())));
-        product = result;
-        return result;
     }
 
     @NonNullByDefault
     abstract ResolvedSourceInfo doBuild(List<ResolvedImport> resolvedImports, List<ResolvedInclude> resolveIncludes);
-
-    private void ensureBuilderOpened() {
-        final var local = product;
-        if (local != null) {
-            throw new VerifyException("Attempted to modify " + this + " with product " + local);
-        }
-    }
 
     @Override
     public final String toString() {
