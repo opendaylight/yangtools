@@ -43,6 +43,23 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "c0b58934_8dc0cb7a",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-23T12:45:29Z",
+      "side": 1,
+      "message": "This is backwards.. it will fire when the required revision is newer than the library’s newest revision",
+      "revId": "9aeaf144dd195534db1ea06a801f2158b8ffd425",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "c785b47b_24eec69d",
         "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
         "patchSetId": 44
