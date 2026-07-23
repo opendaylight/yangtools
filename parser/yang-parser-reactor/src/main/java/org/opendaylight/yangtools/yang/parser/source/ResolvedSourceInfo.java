@@ -38,8 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
-import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
-import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedBelongsTo;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
 
@@ -48,99 +46,42 @@ import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.Resolved
  * used to construct linkage substatements like imports, includes, belongs-to etc...
 */
 @NonNullByDefault
-public abstract sealed class ResolvedSourceInfo implements Immutable {
-    /**
-     * A {@link ResolvedSourceInfo} for a {@link SourceInfoRef.OfModule}.
-     */
-    public static final class Module extends ResolvedSourceInfo {
-        private final SourceInfoRef.OfModule infoRef;
+public abstract sealed class ResolvedSourceInfo implements Immutable permits ResolvedModuleInfo, ResolvedSubmoduleInfo {
+    private final List<ResolvedImport> imports;
+    private final List<ResolvedInclude> includes;
 
-        Module(final SourceInfoRef.OfModule infoRef, final List<ResolvedImport> imports,
-                final List<ResolvedInclude> includes) {
-            super(imports, includes);
-            this.infoRef = requireNonNull(infoRef);
-        }
-
-        @Override
-        public SourceInfoRef.OfModule infoRef() {
-            return infoRef;
-        }
-
-        @Override
-        public Unqualified prefix() {
-            return infoRef.info().prefix();
-        }
-
-        @Override
-        public QNameModule definingModule() {
-            return infoRef.info().moduleName().getModule();
-        }
-
-        @Override
-        public int hashCode() {
-            return infoRef.hashCode();
-        }
-
-        @Override
-        public boolean equals(final @Nullable Object obj) {
-            return obj == this || obj instanceof Module other && infoRef.equals(other.infoRef);
-        }
+    ResolvedSourceInfo(final List<ResolvedImport> imports, final List<ResolvedInclude> includes) {
+        this.imports = List.copyOf(imports);
+        this.includes = List.copyOf(includes);
     }
 
-    /**
-     * A {@link ResolvedSourceInfo} for a {@link SourceInfoRef.OfSubmodule}.
-     */
-    public static final class Submodule extends ResolvedSourceInfo {
-        private final SourceInfoRef. OfSubmodule infoRef;
-        private final ResolvedBelongsTo belongsTo;
+    public abstract SourceInfoRef infoRef();
 
-        Submodule(final SourceInfoRef.OfSubmodule infoRef, final ResolvedBelongsTo belongsTo,
-                final List<ResolvedImport> imports, final List<ResolvedInclude> includes) {
-            super(imports, includes);
-            this.infoRef = requireNonNull(infoRef);
-            this.belongsTo = requireNonNull(belongsTo);
+    public abstract QNameModule definingModule();
 
-            final var expectedDep = infoRef.info().belongsTo();
-            final var actualDep = belongsTo.dependency();
-            if (!expectedDep.equals(actualDep)) {
-                throw new VerifyException("Expecting " + expectedDep + " actual " + actualDep);
-            }
-        }
+    public abstract Unqualified prefix();
 
-        @Override
-        public SourceInfoRef.OfSubmodule infoRef() {
-            return infoRef;
-        }
+    public final List<ResolvedImport> imports() {
+        return imports;
+    }
 
-        public SourceRef.ToModule belongsToRef() {
-            return belongsTo.sourceRef();
-        }
+    public final List<ResolvedInclude> includes() {
+        return includes;
+    }
 
-        @Override
-        public Unqualified prefix() {
-            return belongsTo.dependency().prefix();
-        }
+    @Override
+    public abstract int hashCode();
 
-        @Override
-        public QNameModule definingModule() {
-            return belongsTo.parentModuleQname();
-        }
+    @Override
+    public abstract boolean equals(@Nullable Object obj);
 
-        @Override
-        public int hashCode() {
-            return infoRef.hashCode() + belongsTo.hashCode();
-        }
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+    }
 
-        @Override
-        public boolean equals(final @Nullable Object obj) {
-            return obj == this || obj instanceof Submodule other
-                && infoRef.equals(other.infoRef) && belongsTo.equals(other.belongsTo);
-        }
-
-        @Override
-        ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-            return super.addToStringAttributes(helper).add("belongsTo", belongsTo);
-        }
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.add("infoRef", infoRef());
     }
 
     /**
@@ -470,42 +411,5 @@ public abstract sealed class ResolvedSourceInfo implements Immutable {
                 final Set<@NonNull D> dependencies) {
             return dependencies.isEmpty() ? NoDependencies.of() : new NeededDependencies<>(dependencies);
         }
-    }
-
-    private final List<ResolvedImport> imports;
-    private final List<ResolvedInclude> includes;
-
-    private ResolvedSourceInfo(final List<ResolvedImport> imports, final List<ResolvedInclude> includes) {
-        this.imports = List.copyOf(imports);
-        this.includes = List.copyOf(includes);
-    }
-
-    public abstract SourceInfoRef infoRef();
-
-    public abstract QNameModule definingModule();
-
-    public abstract Unqualified prefix();
-
-    public final List<ResolvedImport> imports() {
-        return imports;
-    }
-
-    public final List<ResolvedInclude> includes() {
-        return includes;
-    }
-
-    @Override
-    public abstract int hashCode();
-
-    @Override
-    public abstract boolean equals(@Nullable Object obj);
-
-    @Override
-    public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
-    }
-
-    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("infoRef", infoRef());
     }
 }
