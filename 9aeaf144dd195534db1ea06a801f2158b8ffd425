@@ -124,6 +124,52 @@
       "message": "\"satistied\"",
       "revId": "9aeaf144dd195534db1ea06a801f2158b8ffd425",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aa45f6a8_d9b34bcb",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 1112,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-23T12:44:17Z",
+      "side": 1,
+      "message": "superfluous space",
+      "range": {
+        "startLine": 1112,
+        "startChar": 20,
+        "endLine": 1112,
+        "endChar": 21
+      },
+      "revId": "9aeaf144dd195534db1ea06a801f2158b8ffd425",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "94aa581e_57e382dc",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 44
+      },
+      "lineNbr": 1119,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-23T12:44:17Z",
+      "side": 1,
+      "message": "superfluous space",
+      "range": {
+        "startLine": 1119,
+        "startChar": 16,
+        "endLine": 1119,
+        "endChar": 17
+      },
+      "revId": "9aeaf144dd195534db1ea06a801f2158b8ffd425",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
