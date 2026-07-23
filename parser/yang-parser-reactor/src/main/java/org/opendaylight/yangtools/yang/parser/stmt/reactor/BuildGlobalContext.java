@@ -48,6 +48,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
 import org.opendaylight.yangtools.yang.model.spi.stmt.ImmutableNamespaceBinding;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedSourceInfo;
 import org.opendaylight.yangtools.yang.parser.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.source.ResolvedSubmoduleInfo;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
@@ -241,7 +242,7 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
                 .collect(Collectors.toUnmodifiableSet());
 
             // belongs-to applies only to submodules
-            if (resolvedInfo instanceof ResolvedSourceInfo.Submodule resolvedSubmodule) {
+            if (resolvedInfo instanceof ResolvedSubmoduleInfo resolvedSubmodule) {
                 source.setLinkage(importedModules, includedSubmodules, resolvedSubmodule.prefix(),
                     contextFor(linkedSources, resolvedSubmodule.belongsToRef()));
                 continue;
