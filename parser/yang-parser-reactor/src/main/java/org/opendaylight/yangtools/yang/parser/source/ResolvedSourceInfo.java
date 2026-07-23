@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.source;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.List;
@@ -70,9 +72,107 @@ public abstract sealed class ResolvedSourceInfo implements Immutable permits Res
     /**
      * A builder of {@link ResolvedSourceInfo} instances.
      */
-    abstract static sealed class Builder implements Mutable permits SourceLinker {
+    sealed interface Builder extends Mutable permits AbstractBuilder, ModuleBuilder, SubmoduleBuilder {
+        /**
+         * {@return the {@link SourceInfoRef} for which this builder was instantiated}
+         */
+        SourceInfoRef infoRef();
 
-        final String humanName() {
+        /**
+         * {@return the equivalent of {@code infoRef().info{}}}
+         */
+        SourceInfo sourceInfo();
+
+        /**
+         * {@return the equivalent of {@code sourceId().name{}}}
+         */
+        default Unqualified name() {
+            return sourceId().name();
+        }
+
+        /**
+         * {@return the equivalent of {@code sourceId().revision{}}}
+         */
+        default @Nullable Revision revision() {
+            return sourceId().revision();
+        }
+
+        /**
+         * {@return a human-friendly identifier composed of {@link #name()} and {@link #revision()}}
+         */
+        String humanName();
+
+        /**
+         * {@return the equivalent of {@code sourceInfo().sourceId{}}}
+         */
+        default SourceIdentifier sourceId() {
+            return sourceInfo().sourceId();
+        }
+
+        /**
+         * {@return the equivalent of {@code sourceInfo().yangVersion{}}}
+         */
+        default YangVersion yangVersion() {
+            return sourceInfo().yangVersion();
+        }
+
+        /**
+         * {@return the {@link ResolvedSourceInfo} result of this builder}
+         */
+        ResolvedSourceInfo build();
+    }
+
+    /**
+     * A {@link Builder} for {@link ResolvedModuleInfo}.
+     */
+    sealed interface ModuleBuilder extends Builder permits ModuleLinker {
+        @Override
+        SourceInfoRef.OfModule infoRef();
+
+        @Override
+        default SourceInfo.Module sourceInfo() {
+            return infoRef().info();
+        }
+
+        @Override
+        ResolvedModuleInfo build();
+    }
+
+    /**
+     * A {@link Builder} for {@link ResolvedSubmoduleInfo}.
+     */
+    sealed interface SubmoduleBuilder extends Builder permits SubmoduleLinker {
+        @Override
+        SourceInfoRef.OfSubmodule infoRef();
+
+        @Override
+        default SourceInfo.Submodule sourceInfo() {
+            return infoRef().info();
+        }
+
+        @Override
+        ResolvedSubmoduleInfo build();
+    }
+
+    /**
+     * A builder of {@link ResolvedSourceInfo} instances.
+     *
+     * @param <R> {@link SourceInfoRef} type
+     */
+    abstract static sealed class AbstractBuilder<R extends SourceInfoRef> implements Builder permits SourceLinker {
+        private final R infoRef;
+
+        AbstractBuilder(final R infoRef) {
+            this.infoRef = requireNonNull(infoRef);
+        }
+
+        @Override
+        public final R infoRef() {
+            return infoRef;
+        }
+
+        @Override
+        public final String humanName() {
             final var sourceId = sourceId();
             return humanName(sourceId.name(), sourceId.revision());
         }
@@ -81,34 +181,6 @@ public abstract sealed class ResolvedSourceInfo implements Immutable permits Res
             final var localName = name.getLocalName();
             return revision == null ? localName : localName + "@" + revision;
         }
-
-        final Unqualified name() {
-            return sourceId().name();
-        }
-
-        final @Nullable Revision revision() {
-            return sourceId().revision();
-        }
-
-        final SourceIdentifier sourceId() {
-            return sourceInfo().sourceId();
-        }
-
-        final YangVersion yangVersion() {
-            return sourceInfo().yangVersion();
-        }
-
-        /**
-         * {@return the {@link SourceInfoRef} for which this builder was instantiated}
-         */
-        abstract SourceInfoRef infoRef();
-
-        abstract SourceInfo sourceInfo();
-
-        /**
-         * {@return the {@link ResolvedSourceInfo} result of this builder}
-         */
-        abstract ResolvedSourceInfo build();
 
         @Override
         public abstract String toString();
