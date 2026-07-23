@@ -18,6 +18,8 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
@@ -36,16 +38,16 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
  * <p>This class is an implementation detail of {@link SourceLinkageResolver} and is expected to be used in the context
  * of a single thread executing {@link SourceLinkageResolver#resolveInvolvedSources(Set, Set)}.
  */
-abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSourceInfo.Builder
-        permits ModuleLinker, SubmoduleLinker {
-    private final @NonNull R infoRef;
+abstract sealed class SourceLinker<R extends @NonNull SourceInfoRef, I extends @NonNull ResolvedSourceInfo>
+        implements ResolvedSourceInfo.Builder permits ModuleLinker, SubmoduleLinker {
+    @NonNullByDefault
+    private final R infoRef;
 
     @NonNullByDefault
     private DependencyLinker<Import, ModuleLinker> imports;
     @NonNullByDefault
     private DependencyLinker<Include, SubmoduleLinker> includes;
 
-    @NonNullByDefault
     SourceLinker(final R infoRef) {
         this.infoRef = requireNonNull(infoRef);
 
@@ -55,8 +57,20 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
     }
 
     @Override
-    final R infoRef() {
+    public final R infoRef() {
         return infoRef;
+    }
+
+    @Override
+    public final String humanName() {
+        final var sourceId = sourceId();
+        return humanName(sourceId.name(), sourceId.revision());
+    }
+
+    @NonNullByDefault
+    static final String humanName(final Unqualified name, final @Nullable Revision revision) {
+        final var localName = name.getLocalName();
+        return revision == null ? localName : localName + "@" + revision;
     }
 
     /**
@@ -122,8 +136,8 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
      * @return the reverse sequence of sources through which the specified module is imported, or {@code null} when it
      *         is not imported
      */
-    private static @Nullable ArrayList<@NonNull SourceLinker<?>> importPathOf(
-            final @NonNull HashSet<SourceLinker<?>> visited, final @NonNull SourceLinker<?> source,
+    private static @Nullable ArrayList<@NonNull SourceLinker<?, ?>> importPathOf(
+            final @NonNull HashSet<SourceLinker<?, ?>> visited, final @NonNull SourceLinker<?, ?> source,
             final @NonNull ModuleLinker module) {
         // only process a source if we have not visited it yet
         if (visited.add(source)) {
@@ -131,7 +145,7 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
             while (impIt.hasNext()) {
                 final var target = impIt.next();
                 if (target.equals(module)) {
-                    final var ret = new ArrayList<SourceLinker<?>>();
+                    final var ret = new ArrayList<SourceLinker<?, ?>>();
                     ret.add(source);
                     return ret;
                 }
@@ -169,7 +183,7 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
     }
 
     @Override
-    final ResolvedSourceInfo build() {
+    public final I build() {
         return doBuild(
             imports.buildResolved((requirement, target) -> {
                 final var source = target.infoRef();
@@ -179,7 +193,7 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
     }
 
     @NonNullByDefault
-    abstract ResolvedSourceInfo doBuild(List<ResolvedImport> resolvedImports, List<ResolvedInclude> resolveIncludes);
+    abstract I doBuild(List<ResolvedImport> resolvedImports, List<ResolvedInclude> resolveIncludes);
 
     @Override
     public final String toString() {
