@@ -17,56 +17,14 @@ public final class CodegenGeneratedTypeBuilder<S extends EffectiveStatement<?, ?
         extends AbstractGeneratedTypeBuilder<GeneratedTypeBuilder<S>, S> implements GeneratedTypeBuilder<S> {
     private static final class CodegenLegacyArchetype<S extends EffectiveStatement<?, ?>>
             extends AbstractGeneratedType<S> {
-        private final String description;
-        private final String reference;
-        private final String moduleName;
-
         CodegenLegacyArchetype(final CodegenGeneratedTypeBuilder<S> builder) {
             super(builder);
-
-            description = builder.description;
-            reference = builder.reference;
-            moduleName = builder.moduleName;
-        }
-
-        @Override
-        public String getDescription() {
-            return description;
-        }
-
-        @Override
-        public String getReference() {
-            return reference;
-        }
-
-        @Override
-        public String getModuleName() {
-            return moduleName;
         }
     }
-
-    private String description;
-    private String reference;
-    private String moduleName;
 
     @NonNullByDefault
     public CodegenGeneratedTypeBuilder(final JavaTypeName typeName, final S statement) {
         super(typeName, statement);
-    }
-
-    @Override
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
-    @Override
-    public void setModuleName(final String moduleName) {
-        this.moduleName = moduleName;
-    }
-
-    @Override
-    public void setReference(final String reference) {
-        this.reference = reference;
     }
 
     @Override

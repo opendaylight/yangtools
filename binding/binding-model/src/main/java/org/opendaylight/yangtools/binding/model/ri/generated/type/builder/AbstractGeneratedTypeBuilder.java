@@ -12,17 +12,13 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeComment;
-import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
@@ -40,17 +36,11 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     private List<Constant> constants = List.of();
     private List<MethodSignatureBuilder> methodDefinitions = List.of();
     private List<Archetype> enclosedTypes = List.of();
-    private @Nullable TypeComment comment;
-    private YangSourceDefinition yangSourceDefinition;
 
     @NonNullByDefault
     AbstractGeneratedTypeBuilder(final JavaTypeName typeName, final S statement) {
         super(typeName);
         this.statement = requireNonNull(statement);
-    }
-
-    protected @Nullable TypeComment getComment() {
-        return comment;
     }
 
     protected List<AnnotationTypeBuilder> getAnnotations() {
@@ -83,12 +73,6 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
             throw new IllegalArgumentException("This generated type already contains equal enclosing transfer object.");
         }
         enclosedTypes = LazyCollections.lazyAdd(enclosedTypes, genType);
-        return thisInstance();
-    }
-
-    @Override
-    public T addComment(final TypeComment newComment) {
-        comment = requireNonNull(newComment);
         return thisInstance();
     }
 
@@ -157,23 +141,9 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     }
 
     @Override
-    public Optional<YangSourceDefinition> getYangSourceDefinition() {
-        return Optional.ofNullable(yangSourceDefinition);
-    }
-
-    @Override
-    public void setYangSourceDefinition(final YangSourceDefinition definition) {
-        yangSourceDefinition = requireNonNull(definition);
-    }
-
-    @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         super.addToStringAttributes(helper);
 
-        final var local = comment;
-        if (local != null) {
-            helper.add("comment", local.getJavadoc());
-        }
         addToStringAttribute(helper, "constants", constants);
         addToStringAttribute(helper, "enclosedTypes", enclosedTypes);
         addToStringAttribute(helper, "methods", methodDefinitions);

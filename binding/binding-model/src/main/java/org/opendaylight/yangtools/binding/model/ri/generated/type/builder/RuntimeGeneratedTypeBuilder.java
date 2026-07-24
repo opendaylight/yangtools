@@ -34,21 +34,6 @@ public final class RuntimeGeneratedTypeBuilder<S extends EffectiveStatement<?, ?
     }
 
     @Override
-    public void setDescription(final String description) {
-        // No-op
-    }
-
-    @Override
-    public void setModuleName(final String moduleName) {
-        // No-op
-    }
-
-    @Override
-    public void setReference(final String reference) {
-        // No-op
-    }
-
-    @Override
     protected RuntimeGeneratedTypeBuilder<S> thisInstance() {
         return this;
     }
