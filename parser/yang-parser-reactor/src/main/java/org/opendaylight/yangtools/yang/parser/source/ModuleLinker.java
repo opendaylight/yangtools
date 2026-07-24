@@ -241,8 +241,7 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
      * @param dependency the {@link Include}
      * @throws ReactorException if the requirement conflicts with a previous requirement or cannot be added
      */
-    private void requireInclude(final SourceLinker<?> source, final Include dependency)
-            throws ReactorException {
+    private void requireInclude(final SourceLinker<?> source, final Include dependency) throws ReactorException {
         final var name = dependency.name();
         final var revision = dependency.revision();
         if (revision == null) {
