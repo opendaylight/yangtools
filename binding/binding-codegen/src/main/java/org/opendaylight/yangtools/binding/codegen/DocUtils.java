@@ -6,9 +6,8 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.ri;
+package org.opendaylight.yangtools.binding.codegen;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import com.google.common.escape.Escaper;
 import com.google.common.escape.Escapers;
@@ -18,7 +17,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.api.TypeComment;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 
 /**
@@ -27,8 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
  *
  * @since 16.0.0
  */
-@Beta
-public final class DocUtils {
+final class DocUtils {
     // for encodeAngleBrackets()
     private static final CharMatcher GT_MATCHER = CharMatcher.is('>');
     private static final CharMatcher LT_MATCHER = CharMatcher.is('<');
@@ -57,7 +54,7 @@ public final class DocUtils {
      * @param description description of a yang statement which is used to generate javadoc comments
      * @return string with encoded angle brackets
      */
-    public static String encodeAngleBrackets(final String description) {
+    static String encodeAngleBrackets(final String description) {
         return description == null ? null
             : GT_MATCHER.replaceFrom(LT_MATCHER.replaceFrom(description, "&lt;"), "&gt;");
     }
@@ -72,7 +69,7 @@ public final class DocUtils {
      * @return A string with all backslashes made ineligible
      */
     @NonNullByDefault
-    public static String replaceAllIllegalChars(final String str) {
+    static String replaceAllIllegalChars(final String str) {
         final int backslash = str.indexOf('\\');
         return backslash == -1 ? str : defangUnicodeEscapes(str);
     }
@@ -91,7 +88,7 @@ public final class DocUtils {
      * @param node Documented node containing the description to be processed
      * @return {@link TypeComment}, or empty if the node's description was empty or non-present.
      */
-    public static @Nullable TypeComment typeCommentOf(final @NonNull DocumentedNode node) {
+    static @Nullable TypeComment typeCommentOf(final @NonNull DocumentedNode node) {
         final var description = node.getDescription().orElse("");
         // TODO: isBlank()?
         return description.isEmpty() ? null : () -> typeCommentJavadoc(description);
