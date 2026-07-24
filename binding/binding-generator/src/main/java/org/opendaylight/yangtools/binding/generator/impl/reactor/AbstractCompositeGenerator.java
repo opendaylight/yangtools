@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.api.type.builder.TypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -458,12 +457,11 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
      * is using.
      *
      * @param builder Target builder
-     * @param builderFactory factory for creating {@link TypeBuilder}s
      */
     @NonNullByDefault
-    final void addUsesInterfaces(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
+    final void addUsesInterfaces(final GeneratedTypeBuilderBase<?> builder) {
         for (var grp : groupings) {
-            builder.addImplementsType(grp.getGeneratedType(builderFactory));
+            builder.addImplementsType(grp.getGeneratedType());
         }
     }
 
@@ -473,14 +471,14 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     }
 
     @NonNullByDefault
-    final void addGetterMethods(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
+    final void addGetterMethods(final GeneratedTypeBuilderBase<?> builder) {
         for (var child : this) {
             // Only process explicit generators here
             if (child instanceof AbstractExplicitGenerator<?, ?> explicit) {
-                explicit.addAsGetterMethod(builder, builderFactory);
+                explicit.addAsGetterMethod(builder);
             }
 
-            final var enclosedType = child.enclosedType(builderFactory);
+            final var enclosedType = child.enclosedType();
             switch (enclosedType) {
                 case TypeObjectArchetype<?> typeObject -> builder.addEnclosedType(typeObject);
                 case null -> {

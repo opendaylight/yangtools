@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.Generator;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.GeneratorReactor;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.IdentityGenerator;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.ModuleGenerator;
-import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeBuilderFactory;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultBindingRuntimeTypes;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -69,7 +68,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
     }
 
     static @NonNull BindingRuntimeTypes createTypes(final @NonNull EffectiveModelContext modelContext) {
-        final var moduleGens = new GeneratorReactor(modelContext).execute(TypeBuilderFactory.RUNTIME);
+        final var moduleGens = new GeneratorReactor(modelContext).execute();
 
         final var sw = Stopwatch.createStarted();
         final var factory = new BindingRuntimeTypesFactory();

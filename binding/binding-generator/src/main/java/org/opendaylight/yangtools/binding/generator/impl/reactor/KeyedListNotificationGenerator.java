@@ -30,8 +30,7 @@ final class KeyedListNotificationGenerator extends AbstractNotificationGenerator
     }
 
     @Override
-    ParameterizedType notificationType(final TypeRef self, final TypeBuilderFactory builderFactory) {
-        return BindingTypes.keyedListNotification(self, TypeRef.of(getParent().typeName()),
-            keyGen.getArchetype(builderFactory));
+    ParameterizedType notificationType(final TypeRef self) {
+        return BindingTypes.keyedListNotification(self, TypeRef.of(getParent().typeName()), keyGen.getArchetype());
     }
 }

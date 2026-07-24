@@ -52,17 +52,17 @@ public final class IdentityGenerator
     }
 
     @NonNullByDefault
-    IdentityArchetype getArchetype(final TypeBuilderFactory builderFactory) {
-        return (IdentityArchetype) getGeneratedType(builderFactory);
+    IdentityArchetype getArchetype() {
+        return (IdentityArchetype) getGeneratedType();
     }
 
     @Override
-    IdentityArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
+    IdentityArchetype createTypeImpl() {
         final var typeName = typeName();
         final var statement = statement();
         return baseIdentities.isEmpty() ? new IdentityArchetype.Base(typeName, statement)
             : new IdentityArchetype.Derived(typeName,statement, baseIdentities.stream()
-                .map(baseIdentity -> baseIdentity.getArchetype(builderFactory).name())
+                .map(baseIdentity -> baseIdentity.getArchetype().name())
                 .collect(Collectors.toUnmodifiableList()));
     }
 
@@ -82,7 +82,7 @@ public final class IdentityGenerator
     }
 
     @Override
-    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
+    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder) {
         // identities are a separate concept
     }
 }

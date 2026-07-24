@@ -25,7 +25,7 @@ final class InstanceNotificationGenerator extends AbstractNotificationGenerator 
     }
 
     @Override
-    ParameterizedType notificationType(final TypeRef self, final TypeBuilderFactory builderFactory) {
+    ParameterizedType notificationType(final TypeRef self) {
         return BindingTypes.instanceNotification(self, TypeRef.of(getParent().typeName()));
     }
 }

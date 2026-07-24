@@ -329,7 +329,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
+    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder) {
         if (isAugmenting()) {
             // Do not process augmented nodes: they will be taken care of in their home augmentation
             return;
@@ -339,11 +339,11 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
             // grouping. There is one exception to this rule: 'type leafref' can use a relative path to point
             // outside of its home grouping. In this case we need to examine the instantiation until we succeed in
             // resolving the reference.
-            addAsGetterMethodOverride(builder, builderFactory);
+            addAsGetterMethodOverride(builder);
             return;
         }
 
-        final var returnType = methodReturnType(builderFactory);
+        final var returnType = methodReturnType();
         constructGetter(builder, returnType);
         constructRequire(builder, returnType);
     }
@@ -378,14 +378,13 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
             .setMechanics(ValueMechanics.NONNULL);
     }
 
-    void addAsGetterMethodOverride(final @NonNull GeneratedTypeBuilderBase<?> builder,
-            final @NonNull TypeBuilderFactory builderFactory) {
+    void addAsGetterMethodOverride(final @NonNull GeneratedTypeBuilderBase<?> builder) {
         // No-op for most cases
     }
 
     @NonNullByDefault
-    Type methodReturnType(final TypeBuilderFactory builderFactory) {
-        return getGeneratedType(builderFactory);
+    Type methodReturnType() {
+        return getGeneratedType();
     }
 
     @NonNullByDefault

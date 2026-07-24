@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBu
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.KeyRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
@@ -57,11 +58,11 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
     }
 
     @Override
-    LegacyArchetype<ListEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory) {
+    LegacyArchetype<ListEffectiveStatement> createTypeImpl() {
         final var statement = statement();
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName(), statement);
+        final var builder = new CodegenGeneratedTypeBuilder<>(typeName(), statement);
         addImplementsChildOf(builder);
-        addUsesInterfaces(builder, builderFactory);
+        addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
 
         addQNameConstant(builder, localName());
@@ -70,12 +71,12 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
         if (local != null) {
             // EntryObject implies Augmentable
             builder.addImplementsType(
-                BindingTypes.entryObject(builder.typeRef(), local.getArchetype(builderFactory)));
+                BindingTypes.entryObject(builder.typeRef(), local.getArchetype()));
         } else {
             addAugmentable(builder);
         }
 
-        addGetterMethods(builder, builderFactory);
+        addGetterMethods(builder);
 
         annotateDeprecatedIfNecessary(builder);
 
@@ -88,12 +89,12 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
     }
 
     @Override
-    Type methodReturnType(final TypeBuilderFactory builderFactory) {
-        final var generatedType = super.methodReturnType(builderFactory);
+    Type methodReturnType() {
+        final var generatedType = super.methodReturnType();
         // We are wrapping the generated type in either a List or a Map based on presence of the key
         final var local = keyGen;
         if (local != null && statement().effectiveOrdering() == Ordering.SYSTEM) {
-            return Types.mapTypeFor(local.getGeneratedType(builderFactory), generatedType);
+            return Types.mapTypeFor(local.getGeneratedType(), generatedType);
         }
 
         return Types.listTypeFor(generatedType);

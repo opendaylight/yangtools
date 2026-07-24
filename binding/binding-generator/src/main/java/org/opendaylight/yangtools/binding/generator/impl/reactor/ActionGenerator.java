@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
@@ -49,11 +50,10 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
     }
 
     @Override
-    LegacyArchetype<ActionEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory,
-            final Archetype input, final Archetype output) {
+    LegacyArchetype<ActionEffectiveStatement> createTypeImpl(final Archetype input, final Archetype output) {
         final var statement = statement();
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName(), statement);
-        addImplementedType(builderFactory, builder, input, output);
+        final var builder = new CodegenGeneratedTypeBuilder<>(typeName(), statement);
+        addImplementedType(builder, input, output);
         builder.addAnnotation(FUNCTIONAL_INTERFACE);
         defaultImplementedInterace(builder);
 
@@ -65,14 +65,14 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
     }
 
     @NonNullByDefault
-    private void addImplementedType(final TypeBuilderFactory builderFactory, final GeneratedTypeBuilder<?> builder,
-            final Archetype input, final Archetype output) {
+    private void addImplementedType(final GeneratedTypeBuilder<?> builder, final Archetype input,
+            final Archetype output) {
         final var parent = getParent();
         final var parentType = TypeRef.of(parent.typeName());
         if (parent instanceof ListGenerator list) {
             final var keyGen = list.keyGenerator();
             if (keyGen != null) {
-                final var keyType = keyGen.getArchetype(builderFactory);
+                final var keyType = keyGen.getArchetype();
                 builder.addImplementsType(BindingTypes.keyedListAction(parentType, keyType, input, output));
                 builder.addMethod(Naming.ACTION_INVOKE_NAME).setAbstract(true)
                     .addParameter(BindingTypes.objectIdentifierWithKey(parentType, keyType), "path")

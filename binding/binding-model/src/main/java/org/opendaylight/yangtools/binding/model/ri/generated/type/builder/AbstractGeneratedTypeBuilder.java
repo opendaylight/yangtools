@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 public abstract sealed class AbstractGeneratedTypeBuilder<
         T extends GeneratedTypeBuilderBase<T>,
         S extends EffectiveStatement<?, ?>> extends AbstractTypeBuilder implements GeneratedTypeBuilderBase<T>
-        permits CodegenGeneratedTypeBuilder, RuntimeGeneratedTypeBuilder, DataRootArchetypeBuilder {
+        permits CodegenGeneratedTypeBuilder, DataRootArchetypeBuilder {
     protected final @NonNull S statement;
 
     private List<AnnotationTypeBuilder> annotationBuilders = List.of();

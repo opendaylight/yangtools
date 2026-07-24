@@ -79,12 +79,12 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
     }
 
     @NonNullByDefault
-    ChoiceInArchetype getArchetype(final TypeBuilderFactory builderFactory) {
-        return (ChoiceInArchetype) getGeneratedType(builderFactory);
+    ChoiceInArchetype getArchetype() {
+        return (ChoiceInArchetype) getGeneratedType();
     }
 
     @Override
-    ChoiceInArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
+    ChoiceInArchetype createTypeImpl() {
         return new ChoiceInArchetype(typeName(), statement(), getParent().typeName());
     }
 

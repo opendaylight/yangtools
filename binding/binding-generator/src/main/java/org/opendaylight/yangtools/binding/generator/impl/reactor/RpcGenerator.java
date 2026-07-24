@@ -37,8 +37,7 @@ final class RpcGenerator extends AbstractInvokableGenerator<RpcEffectiveStatemen
     }
 
     @Override
-    RpcArchetype createTypeImpl(final TypeBuilderFactory builderFactory, final Archetype input,
-            final Archetype output) {
+    RpcArchetype createTypeImpl(final Archetype input, final Archetype output) {
         return new RpcArchetype(typeName(), statement(), input.name(), output.name());
     }
 

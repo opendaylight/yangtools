@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.RuntimeGeneratedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
@@ -18,8 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * @param <S> EffectiveStatement type
  */
 public sealed interface GeneratedTypeBuilder<S extends EffectiveStatement<?, ?>>
-        extends GeneratedTypeBuilderBase<GeneratedTypeBuilder<S>>
-        permits CodegenGeneratedTypeBuilder, RuntimeGeneratedTypeBuilder {
+        extends GeneratedTypeBuilderBase<GeneratedTypeBuilder<S>> permits CodegenGeneratedTypeBuilder {
     @Override
     LegacyArchetype<S> build();
 }

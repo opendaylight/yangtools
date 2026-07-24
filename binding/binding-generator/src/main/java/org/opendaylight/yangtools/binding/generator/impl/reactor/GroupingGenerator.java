@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.GroupingRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -69,12 +70,12 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
     }
 
     @Override
-    LegacyArchetype<GroupingEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory) {
+    LegacyArchetype<GroupingEffectiveStatement> createTypeImpl() {
         final var statement = statement();
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName(), statement);
+        final var builder = new CodegenGeneratedTypeBuilder<>(typeName(), statement);
         builder.addImplementsType(BindingTypes.GROUPING);
-        addUsesInterfaces(builder, builderFactory);
-        addGetterMethods(builder, builderFactory);
+        addUsesInterfaces(builder);
+        addGetterMethods(builder);
 
         annotateDeprecatedIfNecessary(builder);
 
@@ -82,7 +83,7 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
     }
 
     @Override
-    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
+    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder) {
         // groupings are a separate concept
     }
 

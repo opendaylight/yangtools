@@ -390,10 +390,9 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     @Override
-    final Archetype getGeneratedType(final TypeBuilderFactory builderFactory) {
+    final Archetype getGeneratedType() {
         // For derived enumerations defer to base type
-        return isDerivedEnumeration() ? baseGen.getGeneratedType(builderFactory)
-            : super.getGeneratedType(builderFactory);
+        return isDerivedEnumeration() ? baseGen.getGeneratedType() : super.getGeneratedType();
     }
 
     final boolean isEnumeration() {
@@ -405,8 +404,8 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     @Override
-    Type methodReturnType(final TypeBuilderFactory builderFactory) {
-        return methodReturnElementType(builderFactory);
+    Type methodReturnType() {
+        return methodReturnElementType();
     }
 
     @Override
@@ -419,17 +418,17 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     @NonNullByDefault
-    final Type methodReturnElementType(final TypeBuilderFactory builderFactory) {
+    final Type methodReturnElementType() {
         var local = methodReturnTypeElement;
         if (local == null) {
-            methodReturnTypeElement = local = createMethodReturnElementType(builderFactory);
+            methodReturnTypeElement = local = createMethodReturnElementType();
         }
         return local;
     }
 
     @NonNullByDefault
-    private Type createMethodReturnElementType(final TypeBuilderFactory builderFactory) {
-        final var generatedType = tryGeneratedType(builderFactory);
+    private Type createMethodReturnElementType() {
+        final var generatedType = tryGeneratedType();
         if (generatedType != null) {
             // We have generated a type here, so return it. This covers 'bits', 'enumeration' and 'union'.
             return generatedType;
@@ -437,13 +436,13 @@ abstract class AbstractTypeObjectGenerator<
 
         if (refType != null) {
             // This is a reference type of some kind. Defer to its judgement as to what the return type is.
-            return refType.methodReturnType(builderFactory);
+            return refType.methodReturnType();
         }
 
         final var prev = previous();
         if (prev != null) {
             // We have been added through augment/uses, defer to the original definition
-            return prev.methodReturnType(builderFactory);
+            return prev.methodReturnType();
         }
 
         final Type baseType;
@@ -454,14 +453,13 @@ abstract class AbstractTypeObjectGenerator<
             baseType = scalar.javaType;
         } else {
             // We are derived from a base generator. Defer to its type for return.
-            baseType = baseGen.getGeneratedType(builderFactory);
+            baseType = baseGen.getGeneratedType();
         }
 
-        return restrictType(baseType, Restrictions.compute(statement(), support.type), builderFactory);
+        return restrictType(baseType, Restrictions.compute(statement(), support.type));
     }
 
-    static final @NonNull Type restrictType(final @NonNull Type baseType, final @Nullable Restrictions restrictions,
-            final TypeBuilderFactory builderFactory) {
+    static final @NonNull Type restrictType(final @NonNull Type baseType, final @Nullable Restrictions restrictions) {
         if (restrictions == null || restrictions.isEmpty()) {
             // No additional restrictions, return base type
             return baseType;
@@ -486,8 +484,7 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     @Override
-    final void addAsGetterMethodOverride(final GeneratedTypeBuilderBase<?> builder,
-            final TypeBuilderFactory builderFactory) {
+    final void addAsGetterMethodOverride(final GeneratedTypeBuilderBase<?> builder) {
         if (!(refType instanceof ResolvedLeafref)) {
             // We are not dealing with a leafref or have nothing to add
             return;
@@ -500,7 +497,7 @@ abstract class AbstractTypeObjectGenerator<
         }
 
         // Note: this may we wrapped for leaf-list, hence we need to deal with that
-        final var myType = methodReturnType(builderFactory);
+        final var myType = methodReturnType();
         LOG.trace("Override of {} to {}", this, myType);
         final var getter = constructGetter(builder, myType);
         getter.addAnnotation(OVERRIDE_ANNOTATION);
@@ -508,9 +505,9 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     @Override
-    final TypeObjectArchetype<?> createTypeImpl(final TypeBuilderFactory builderFactory) {
+    final TypeObjectArchetype<?> createTypeImpl() {
         if (baseGen != null) {
-            final var baseType = baseGen.getGeneratedType(builderFactory);
+            final var baseType = baseGen.getGeneratedType();
             if (!(baseType instanceof TypeObjectArchetype.OfClass<?> gto)) {
                 throw new VerifyException("Unexpected base type " + baseType);
             }
@@ -526,8 +523,8 @@ abstract class AbstractTypeObjectGenerator<
                 final var stmt = statement();
                 yield new EnumTypeObjectArchetype(typeName(), stmt, (EnumTypeDefinition) stmt.typeDefinition());
             }
-            case TypeObjectSupport.Union union -> union.toArchetype(this, unionDependencies, builderFactory);
-            case TypeObjectSupport.Scalar scalar -> scalar.toArchetype(this, builderFactory);
+            case TypeObjectSupport.Union union -> union.toArchetype(this, unionDependencies);
+            case TypeObjectSupport.Scalar scalar -> scalar.toArchetype(this);
             default -> throw new VerifyException("Unhandled type " + support.type.argument());
         };
     }

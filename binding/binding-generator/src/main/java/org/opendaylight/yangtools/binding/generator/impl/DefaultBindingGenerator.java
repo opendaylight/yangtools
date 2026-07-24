@@ -17,7 +17,6 @@ import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.binding.generator.BindingGenerator;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.Generator;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.GeneratorReactor;
-import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeBuilderFactory;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -61,7 +60,7 @@ public final class DefaultBindingGenerator implements BindingGenerator {
             .collect(Collectors.toUnmodifiableSet());
 
         final var result = new ArrayList<Archetype>();
-        for (var gen : new GeneratorReactor(context).execute(TypeBuilderFactory.CODEGEN).values()) {
+        for (var gen : new GeneratorReactor(context).execute().values()) {
             if (filter.contains(gen.statement())) {
                 addTypes(result, gen);
             }

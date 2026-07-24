@@ -97,8 +97,7 @@ abstract sealed class TypeObjectSupport permits TypeObjectSupport.Base, TypeObje
             javaType = Decimal64Type.ofFractionDigits(def.getFractionDigits());
         }
 
-        ScalarTypeObjectArchetype toArchetype(final AbstractTypeObjectGenerator<?, ?> gen,
-                final TypeBuilderFactory builderFactory) {
+        ScalarTypeObjectArchetype toArchetype(final AbstractTypeObjectGenerator<?, ?> gen) {
             final var stmt = gen.statement();
             final var def = stmt.typeDefinition();
             return new ScalarTypeObjectArchetype(gen.typeName(), stmt, def, javaType, Restrictions.of(def), null);
@@ -161,10 +160,10 @@ abstract sealed class TypeObjectSupport permits TypeObjectSupport.Base, TypeObje
         }
 
         UnionTypeObjectArchetype toArchetype(final AbstractTypeObjectGenerator<?, ?> gen,
-                final Dependencies dependencies, final TypeBuilderFactory builderFactory) {
+                final Dependencies dependencies) {
             final var stmt = gen.statement();
             return UnionTypeObjectArchetypeBuilder.buildArchetype(gen.typeName(), stmt,
-                (UnionTypeDefinition) stmt.typeDefinition(), type, dependencies, builderFactory);
+                (UnionTypeDefinition) stmt.typeDefinition(), type, dependencies);
         }
     }
 

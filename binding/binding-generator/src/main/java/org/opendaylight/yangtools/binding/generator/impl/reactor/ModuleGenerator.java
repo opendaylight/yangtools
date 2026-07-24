@@ -82,11 +82,11 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
     }
 
     @Override
-    DataRootArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
+    DataRootArchetype createTypeImpl() {
         final var builder = new DataRootArchetypeBuilder(typeName(), statement());
-        addUsesInterfaces(builder, builderFactory);
+        addUsesInterfaces(builder);
         defaultImplementedInterace(builder);
-        addGetterMethods(builder, builderFactory);
+        addGetterMethods(builder);
         return builder.build();
     }
 
