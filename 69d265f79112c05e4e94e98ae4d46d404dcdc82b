@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "eddaab07_b5ca98ff",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinker.java",
+        "patchSetId": 37
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-24T12:39:22Z",
+      "side": 1,
+      "message": "The added \"\u0026\u0026 parentModule.equals(this)\" allows a circular dependency to pass through - if a submodule impors its own parent module. Previously it would end with List.of(target) and circular-dependency error.",
+      "revId": "69d265f79112c05e4e94e98ae4d46d404dcdc82b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "260de663_64d407a1",
+        "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt/ImportResolutionBasicTest.java",
+        "patchSetId": 37
+      },
+      "lineNbr": 46,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-24T12:39:22Z",
+      "side": 1,
+      "message": "We need another such test for the by-revision self-import to cover the SourceException(\"Module %s imports itself\") path in SourceLinker.resolveImport()",
+      "revId": "69d265f79112c05e4e94e98ae4d46d404dcdc82b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
