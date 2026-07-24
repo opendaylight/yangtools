@@ -28,24 +28,6 @@ public final class DataRootArchetypeBuilder
     }
 
     @Override
-    @Deprecated(forRemoval = true)
-    public void setModuleName(final String moduleName) {
-        // no-op
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public void setDescription(final String description) {
-        // No-op
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public void setReference(final String reference) {
-        // No-op
-    }
-
-    @Override
     public DataRootArchetype build() {
         return new DataRootArchetypeImpl(typeName(), statement, getImplementsTypes(),
             AbstractGeneratedType.toUnmodifiableMethods(getMethodDefinitions()),

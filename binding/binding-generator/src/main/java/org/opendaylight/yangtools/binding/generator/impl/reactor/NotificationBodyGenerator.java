@@ -56,7 +56,6 @@ final class NotificationBodyGenerator
         addGetterMethods(builder, builderFactory);
 
         annotateDeprecatedIfNecessary(builder);
-        builderFactory.addCodegenInformation(currentModule(), statement, builder);
 
         return builder.build();
     }

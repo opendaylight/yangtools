@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
@@ -34,42 +33,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  */
 public non-sealed interface LegacyArchetype<S extends EffectiveStatement<?, ?>> extends Archetype.WithStatement<S> {
     /**
-     * Returns a string that contains a human-readable textual description of
-     * type definition.
-     *
-     * @return a human-readable textual description of type definition.
-     */
-    default String getDescription() {
-        throw uoe();
-    }
-
-    /**
-     * Returns a string that is used to specify a textual cross-reference to an
-     * external document, either another module that defines related management
-     * information, or a document that provides additional information relevant
-     * to this definition.
-     *
-     * @return a textual cross-reference to an external document.
-     */
-    default String getReference() {
-        throw uoe();
-    }
-
-    /**
-     * Returns the name of the module, in which generated type was specified.
-     *
-     * @return the name of the module, in which generated type was specified.
-     */
-    default String getModuleName() {
-        throw uoe();
-    }
-
-    /**
-     * {@return comment string associated with Generated Type}
-     */
-    @Nullable TypeComment getComment();
-
-    /**
      * {@return List of annotation definitions associated with generated type}
      */
     @NonNull List<AnnotationType> getAnnotations();
@@ -91,15 +54,4 @@ public non-sealed interface LegacyArchetype<S extends EffectiveStatement<?, ?>> 
      * @return List of Method Definitions associated with Generated Type.
      */
     @NonNull List<MethodSignature> getMethodDefinitions();
-
-    /**
-     * {@return YANG source definition, or {@code null} when unavailable}
-     */
-    default @Nullable YangSourceDefinition yangSourceDefinition() {
-        throw uoe();
-    }
-
-    private static UnsupportedOperationException uoe() {
-        return new UnsupportedOperationException("Not available at runtime");
-    }
 }

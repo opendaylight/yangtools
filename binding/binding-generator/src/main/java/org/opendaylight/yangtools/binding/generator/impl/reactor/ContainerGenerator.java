@@ -57,9 +57,6 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
         addGetterMethods(builder, builderFactory);
 
         annotateDeprecatedIfNecessary(builder);
-        final var module = currentModule();
-        builderFactory.addCodegenInformation(module, statement, builder);
-        builder.setModuleName(module.statement().argument().getLocalName());
 
         return builder.build();
     }

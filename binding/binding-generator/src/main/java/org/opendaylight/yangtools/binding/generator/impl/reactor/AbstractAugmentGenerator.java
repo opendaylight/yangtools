@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAugmentRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -153,7 +152,6 @@ abstract class AbstractAugmentGenerator
         final var statement = statement();
         final var builder = builderFactory.newGeneratedTypeBuilder(typeName(), statement);
 
-        YangSourceDefinition.of(currentModule().statement(), statement).ifPresent(builder::setYangSourceDefinition);
         builder.addImplementsType(BindingTypes.augmentation(targetGenerator().getGeneratedType(builderFactory)));
         addUsesInterfaces(builder, builderFactory);
         addConcreteInterfaceMethods(builder);

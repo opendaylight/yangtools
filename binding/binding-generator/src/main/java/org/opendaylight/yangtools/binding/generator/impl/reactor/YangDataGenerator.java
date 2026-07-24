@@ -114,10 +114,6 @@ abstract sealed class YangDataGenerator
 
         builder.addConstant(BindingTypes.YANG_DATA_NAME, Naming.NAME_STATIC_FIELD_NAME, statement.argument());
 
-        final var module = currentModule();
-        builder.setModuleName(module.statement().argument().getLocalName());
-        builderFactory.addCodegenInformation(module, statement, builder);
-
         return builder.build();
     }
 

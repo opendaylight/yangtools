@@ -69,7 +69,6 @@ abstract class AbstractNotificationGenerator
 
         addQNameConstant(builder, localName());
 
-        builderFactory.addCodegenInformation(currentModule(), statement, builder);
         annotateDeprecatedIfNecessary(builder);
 
         return builder.build();

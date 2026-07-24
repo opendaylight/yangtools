@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.DocUtils;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
@@ -112,7 +113,7 @@ sealed class InterfaceTemplate<T extends @NonNull LegacyArchetype<?>> extends Ar
     @Override
     final BlockBuilder body() {
         final var bb = newBlockBuilder()
-            .blk(wrapToDocumentation(formatDataForJavaDoc(archetype)))
+            .blk(wrapToDocumentation(formatDataForJavaDoc()))
             .blk(generateAnnotations(archetype.getAnnotations()))
             .eol(generatedAnnotation())
             .str("public interface ").str(archetype.simpleName());
@@ -170,17 +171,20 @@ sealed class InterfaceTemplate<T extends @NonNull LegacyArchetype<?>> extends Ar
     }
 
     @NonNullByDefault
-    private String formatDataForJavaDoc(final LegacyArchetype<?> type) {
+    private String formatDataForJavaDoc() {
+        final var statement = archetype.statement();
+
         final var sb = new StringBuilder();
-        final var comment = type.getComment();
-        if (comment != null) {
-            sb.append(comment.getJavadoc());
+        if (statement instanceof DocumentedNode documented) {
+            final var comment = DocUtils.typeCommentOf(documented);
+            if (comment != null) {
+                sb.append(comment.getJavadoc());
+            }
         }
-        final var def = type.yangSourceDefinition();
-        if (def != null) {
+        YangSourceDefinition.of(root.statement(), statement).ifPresent(def -> {
             final var node = def.getNode();
-            appendSnippet(sb, type, def.getModule(), requireEffective(node), node);
-        }
+            appendSnippet(sb, archetype, def.getModule(), requireEffective(node), node);
+        });
 
         final var str = sb.toString();
         return str.isBlank() ? "" : str.stripTrailing() + '\n';
