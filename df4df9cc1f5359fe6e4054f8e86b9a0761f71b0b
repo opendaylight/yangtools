@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d371c6c4_7606ec23",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 499,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-24T08:08:03Z",
+      "side": 1,
+      "message": "stale comment.. missing().isEmpty() is no longer valid since it\u0027s now an Iterator",
+      "revId": "df4df9cc1f5359fe6e4054f8e86b9a0761f71b0b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5db5ee48_621d2be5",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 765,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-24T08:08:03Z",
+      "side": 1,
+      "message": "stale - returns Iterator. Both here an missingIncludes() below",
+      "revId": "df4df9cc1f5359fe6e4054f8e86b9a0761f71b0b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
