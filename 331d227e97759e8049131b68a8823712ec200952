@@ -1,0 +1,38 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ffcb6a2f_cce7a821",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 897,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-24T12:44:59Z",
+      "side": 1,
+      "message": "This is left from the \"case 0\" and it should be rewritten to better fit the current implementation.",
+      "revId": "331d227e97759e8049131b68a8823712ec200952",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3b9f1476_413d7b4d",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 35
+      },
+      "lineNbr": 899,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-24T12:44:59Z",
+      "side": 1,
+      "message": "can be var",
+      "revId": "331d227e97759e8049131b68a8823712ec200952",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
