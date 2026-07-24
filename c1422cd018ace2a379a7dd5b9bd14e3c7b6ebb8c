@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1dad0e31_7b74f2ca",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 946,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-24T11:47:40Z",
+      "side": 0,
+      "message": "Why are we no longer cleaning the imports/includes here? It seemed like a good idea. We don\u0027t need to retain the state post-build, do we?",
+      "revId": "c1422cd018ace2a379a7dd5b9bd14e3c7b6ebb8c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}

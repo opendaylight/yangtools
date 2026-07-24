@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "886f4c91_642575ea",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ResolvedSourceBuilder.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 438,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-24T11:47:40Z",
+      "side": 1,
+      "message": "This can be rewritten, since TerminalDependencies no longer exists",
+      "revId": "bab2864bb59fdfb9d64809cb7d8c7ce7bb52106e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
