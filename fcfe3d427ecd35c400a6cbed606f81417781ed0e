@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "4456edb6_def44db2",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ModuleLinker.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-07-24T12:27:24Z",
+      "side": 1,
+      "message": "Just a thought, but how about returning a Collection or a Stream here instead of Iterator? With iterator we have to iterate over the elements through \"while (it.hasNext())\". With either one of the above we could iterate using forEach.",
+      "revId": "fcfe3d427ecd35c400a6cbed606f81417781ed0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
