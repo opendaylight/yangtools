@@ -16,6 +16,24 @@
       "message": "do we need this empty line?",
       "revId": "77dbd55d095ba7e520c270941c86a242238d7e0e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "ea331d37_acb3ac30",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinkageResolver.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 848,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-24T00:45:44Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "518e4dc7_48a30169",
+      "revId": "77dbd55d095ba7e520c270941c86a242238d7e0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
