@@ -5,14 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.api;
+package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -22,9 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 /**
  * DTO capturing the YANG source definition which lead to a {@link LegacyArchetype} being emitted.
  */
-@Beta
 @NonNullByDefault
-public final class YangSourceDefinition {
+final class YangSourceDefinition {
     private final ModuleEffectiveStatement module;
     private final DocumentedNode node;
 
@@ -33,19 +32,19 @@ public final class YangSourceDefinition {
         this.node = requireNonNull(node);
     }
 
-    public static @Nullable YangSourceDefinition of(final ModuleEffectiveStatement module) {
+    static @Nullable YangSourceDefinition of(final ModuleEffectiveStatement module) {
         return module.declared() == null ? null : new YangSourceDefinition(module, module.toDataNodeContainer());
     }
 
-    public static Optional<YangSourceDefinition> of(final Module module, final SchemaNode node) {
+    static Optional<YangSourceDefinition> of(final Module module, final SchemaNode node) {
         return of(module.asEffectiveStatement(), node);
     }
 
-    public static Optional<YangSourceDefinition> of(final ModuleEffectiveStatement module, final SchemaNode node) {
+    static Optional<YangSourceDefinition> of(final ModuleEffectiveStatement module, final SchemaNode node) {
         return hasDeclaredStatement(node) ? Optional.of(new YangSourceDefinition(module, node)) : Optional.empty();
     }
 
-    public static Optional<YangSourceDefinition> of(final ModuleEffectiveStatement module,
+    static Optional<YangSourceDefinition> of(final ModuleEffectiveStatement module,
             final EffectiveStatement<?, ?> effective) {
         return effective instanceof DocumentedNode node && effective.declared() != null
                 ? Optional.of(new YangSourceDefinition(module, node)) : Optional.empty();
@@ -56,7 +55,7 @@ public final class YangSourceDefinition {
      *
      * @return Defining YANG module.
      */
-    public ModuleEffectiveStatement getModule() {
+    ModuleEffectiveStatement getModule() {
         return module;
     }
 
@@ -66,7 +65,7 @@ public final class YangSourceDefinition {
      *
      * @return defining SchemaNodes, guaranteed to be non-empty
      */
-    public DocumentedNode getNode() {
+    DocumentedNode getNode() {
         return node;
     }
 
