@@ -11,11 +11,11 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
-import com.google.common.collect.Maps;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.RevisionUnion;
@@ -166,10 +166,13 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule, ResolvedMo
     }
 
     /**
-     * {@return the set names of submodules required by this module and lack an exact revision specification}
+     * {@return iterator over the names of submodules required by this module and lack an exact revision specification}
      */
-    Set<Unqualified> inexactSubmodules() {
-        return Maps.filterValues(submoduleSpecs, AnyRevision.class::isInstance).keySet();
+    Iterator<Unqualified> inexactSubmodules() {
+        return submoduleSpecs.entrySet().stream()
+            .filter(entry -> entry.getValue() instanceof AnyRevision)
+            .map(Entry::getKey)
+            .iterator();
     }
 
     void narrowInexact(final Unqualified submodule, final RevisionUnion revision) {
