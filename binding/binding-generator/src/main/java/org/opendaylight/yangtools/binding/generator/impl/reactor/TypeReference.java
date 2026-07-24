@@ -26,7 +26,7 @@ abstract sealed class TypeReference {
         }
 
         @Override
-        Type methodReturnType(final TypeBuilderFactory builderFactory) {
+        Type methodReturnType() {
             if (returnType == null) {
                 // FIXME: This deals only with RFC6020 semantics. In order to deal with full RFC7950 semantics, we need
                 //        to analyze all the types and come up with the lowest-common denominator and use that as the
@@ -34,7 +34,7 @@ abstract sealed class TypeReference {
                 //        identities being passed -- because the identities may be completely unrelated, in which case
                 //        we cannot generate type-safe code.
                 returnType = referencedGenerators.stream()
-                    .map(gen -> gen.getGeneratedType(builderFactory))
+                    .map(IdentityGenerator::getGeneratedType)
                     .findFirst()
                     .orElseThrow();
             }
@@ -57,8 +57,8 @@ abstract sealed class TypeReference {
         }
 
         @Override
-        Type methodReturnType(final TypeBuilderFactory builderFactory) {
-            return referencedGenerator.methodReturnElementType(builderFactory);
+        Type methodReturnType() {
+            return referencedGenerator.methodReturnElementType();
         }
     }
 
@@ -70,7 +70,7 @@ abstract sealed class TypeReference {
         }
 
         @Override
-        Type methodReturnType(final TypeBuilderFactory builderFactory) {
+        Type methodReturnType() {
             return Types.objectType();
         }
     }
@@ -83,7 +83,7 @@ abstract sealed class TypeReference {
         }
 
         @Override
-        Type methodReturnType(final TypeBuilderFactory builderFactory) {
+        Type methodReturnType() {
             throw new UnsupportedOperationException("Cannot ascertain type", cause);
         }
     }
@@ -100,5 +100,5 @@ abstract sealed class TypeReference {
         return new Identityref(referencedGenerators);
     }
 
-    abstract @NonNull Type methodReturnType(@NonNull TypeBuilderFactory builderFactory);
+    abstract @NonNull Type methodReturnType();
 }

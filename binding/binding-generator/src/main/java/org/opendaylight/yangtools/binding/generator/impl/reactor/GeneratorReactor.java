@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.type.builder.TypeBuilder;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -99,12 +98,11 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
      *   <li>create {@link Type} instances</li>
      * </ol>
      *
-     * @param builderFactory factory for creating {@link TypeBuilder}s for resulting types
      * @return Resolved generators
      * @throws IllegalStateException if the reactor has failed execution
      * @throws NullPointerException if {@code builderFactory} is {@code null}
      */
-    public @NonNull Map<QNameModule, ModuleGenerator> execute(final @NonNull TypeBuilderFactory builderFactory) {
+    public @NonNull Map<QNameModule, ModuleGenerator> execute() {
         switch (state) {
             case null -> throw new NullPointerException();
             case INITIALIZED -> {
@@ -234,7 +232,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
          * through generators is dictated by us as well as generator linkage.
          */
         for (var module : children) {
-            module.ensureType(builderFactory);
+            module.ensureType();
         }
 
         LOG.debug("Processed {} modules in {}", generators.size(), sw);

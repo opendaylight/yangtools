@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.YangDataRuntimeType;
@@ -101,16 +102,16 @@ abstract sealed class YangDataGenerator
     }
 
     @Override
-    final LegacyArchetype<YangDataEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory) {
+    final LegacyArchetype<YangDataEffectiveStatement> createTypeImpl() {
         final var typeName = typeName();
         final var statement = statement();
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName, statement)
+        final var builder = new CodegenGeneratedTypeBuilder<>(typeName, statement)
             .addImplementsType(BindingTypes.yangData(TypeRef.of(typeName)));
 
-        addUsesInterfaces(builder, builderFactory);
+        addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
 
-        addGetterMethods(builder, builderFactory);
+        addGetterMethods(builder);
 
         builder.addConstant(BindingTypes.YANG_DATA_NAME, Naming.NAME_STATIC_FIELD_NAME, statement.argument());
 
@@ -130,7 +131,7 @@ abstract sealed class YangDataGenerator
     }
 
     @Override
-    final void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
+    final void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder) {
         // is not a part of any structure
     }
 }

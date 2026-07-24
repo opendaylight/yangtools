@@ -50,12 +50,12 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
     }
 
     @Override
-    FeatureArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
+    FeatureArchetype createTypeImpl() {
         return new FeatureArchetype(typeName(), statement());
     }
 
     @Override
-    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
+    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder) {
         // features are a separate concept
     }
 }

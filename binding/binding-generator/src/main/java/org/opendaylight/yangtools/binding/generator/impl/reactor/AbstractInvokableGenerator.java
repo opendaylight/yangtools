@@ -32,19 +32,19 @@ abstract sealed class AbstractInvokableGenerator<
     }
 
     @Override
-    final void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
+    final void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder) {
         // RPCs/Actions are a separate concept
     }
 
     @Override
-    final Archetype createTypeImpl(final TypeBuilderFactory builderFactory) {
-        return createTypeImpl(builderFactory,
-            getChild(InputEffectiveStatement.class).getGeneratedType(builderFactory),
-            getChild(OutputEffectiveStatement.class).getGeneratedType(builderFactory));
+    final Archetype createTypeImpl() {
+        return createTypeImpl(
+            getChild(InputEffectiveStatement.class).getGeneratedType(),
+            getChild(OutputEffectiveStatement.class).getGeneratedType());
     }
 
     @NonNullByDefault
-    abstract Archetype createTypeImpl(TypeBuilderFactory builderFactory, Archetype input, Archetype output);
+    abstract Archetype createTypeImpl(Archetype input, Archetype output);
 
     @NonNullByDefault
     private <T extends EffectiveStatement<?, ?>> AbstractExplicitGenerator<T, ?> getChild(final Class<T> type) {

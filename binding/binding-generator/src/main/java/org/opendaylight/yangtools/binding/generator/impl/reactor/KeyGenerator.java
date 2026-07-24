@@ -49,12 +49,12 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
     }
 
     @NonNullByDefault
-    KeyArchetype getArchetype(final TypeBuilderFactory builderFactory) {
-        return (KeyArchetype) getGeneratedType(builderFactory);
+    KeyArchetype getArchetype() {
+        return (KeyArchetype) getGeneratedType();
     }
 
     @Override
-    KeyArchetype createTypeImpl(final TypeBuilderFactory builderFactory) {
+    KeyArchetype createTypeImpl() {
         final var statement = statement();
         return new KeyArchetype(typeName(), statement, listGen.typeName(), statement().argument().stream()
             .map(qname -> {
@@ -62,7 +62,7 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
                 if (!(gen instanceof LeafGenerator leafGen)) {
                     throw new VerifyException("Unexpected generator " + gen);
                 }
-                return leafGen.methodReturnType(builderFactory);
+                return leafGen.methodReturnType();
             })
             .toList());
     }
@@ -83,7 +83,7 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
     }
 
     @Override
-    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
+    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder) {
         // Keys are explicitly handled by their corresponding list
     }
 }

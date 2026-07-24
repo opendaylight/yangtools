@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -148,15 +149,15 @@ abstract class AbstractAugmentGenerator
     }
 
     @Override
-    final LegacyArchetype<AugmentEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory) {
+    final LegacyArchetype<AugmentEffectiveStatement> createTypeImpl() {
         final var statement = statement();
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName(), statement);
+        final var builder = new CodegenGeneratedTypeBuilder<>(typeName(), statement);
 
-        builder.addImplementsType(BindingTypes.augmentation(targetGenerator().getGeneratedType(builderFactory)));
-        addUsesInterfaces(builder, builderFactory);
+        builder.addImplementsType(BindingTypes.augmentation(targetGenerator().getGeneratedType()));
+        addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
 
-        addGetterMethods(builder, builderFactory);
+        addGetterMethods(builder);
         annotateDeprecatedIfNecessary(builder);
 
         return builder.build();
@@ -201,7 +202,7 @@ abstract class AbstractAugmentGenerator
     }
 
     @Override
-    final void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
+    final void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder) {
         // Augments are never added as getters, as they are handled via Augmentable mechanics
     }
 

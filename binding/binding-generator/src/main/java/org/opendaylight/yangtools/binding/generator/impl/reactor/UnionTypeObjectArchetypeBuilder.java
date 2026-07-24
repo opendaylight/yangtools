@@ -62,20 +62,15 @@ final class UnionTypeObjectArchetypeBuilder {
             .build();
 
     private final TypeEffectiveStatement.MandatoryIn<?, ?> definingStatement;
-    private final TypeBuilderFactory builderFactory;
 
-    private UnionTypeObjectArchetypeBuilder(final TypeEffectiveStatement.MandatoryIn<?, ?> definingStatement,
-            final TypeBuilderFactory builderFactory) {
+    private UnionTypeObjectArchetypeBuilder(final TypeEffectiveStatement.MandatoryIn<?, ?> definingStatement) {
         this.definingStatement = requireNonNull(definingStatement);
-        this.builderFactory = requireNonNull(builderFactory);
     }
 
     static UnionTypeObjectArchetype buildArchetype(final JavaTypeName typeName,
             final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final UnionTypeDefinition typeDefinition,
-            final TypeEffectiveStatement type, final Dependencies dependencies,
-            final TypeBuilderFactory builderFactory) {
-        return new UnionTypeObjectArchetypeBuilder(statement, builderFactory)
-            .createUnion(dependencies, typeName, type, typeDefinition);
+            final TypeEffectiveStatement type, final Dependencies dependencies) {
+        return new UnionTypeObjectArchetypeBuilder(statement).createUnion(dependencies, typeName, type, typeDefinition);
     }
 
     private UnionTypeObjectArchetype createUnion(
@@ -128,12 +123,10 @@ final class UnionTypeObjectArchetypeBuilder {
                                 stmt, definingStatement)))
                         .argument().getLocalName();
                     generatedType = verifyNotNull(dependencies.identityrefOf(stmt),
-                        "Cannot resolve identityref %s in %s", stmt, definingStatement)
-                        .methodReturnType(builderFactory);
+                        "Cannot resolve identityref %s in %s", stmt, definingStatement).methodReturnType();
                 } else if (BuiltInType.LEAFREF.typeName().equals(subName)) {
                     generatedType = verifyNotNull(dependencies.leafrefOf(stmt),
-                        "Cannot resolve leafref %s in %s", stmt, definingStatement)
-                        .methodReturnType(builderFactory);
+                        "Cannot resolve leafref %s in %s", stmt, definingStatement).methodReturnType();
                 } else {
                     final var subDef = subType.typeDefinition();
 
@@ -143,7 +136,7 @@ final class UnionTypeObjectArchetypeBuilder {
                             // This has to be a reference to a typedef, let's lookup it up and pick up its type
                             final var baseGen = verifyNotNull(dependencies.basetypeOf(subName),
                                 "Cannot resolve base type %s in %s", subName, definingStatement);
-                            baseType = baseGen.methodReturnType(builderFactory);
+                            baseType = baseGen.methodReturnType();
 
                             // FIXME: This is legacy behaviour for leafrefs:
                             if (baseGen.isLeafRef()) {
@@ -165,7 +158,7 @@ final class UnionTypeObjectArchetypeBuilder {
 //                    expressions.putAll(AbstractTypeObjectGenerator.resolveRegExpressions(subDef));
 
                     generatedType = AbstractTypeObjectGenerator.restrictType(baseType,
-                        Restrictions.of(type.typeDefinition()), builderFactory);
+                        Restrictions.of(type.typeDefinition()));
                 }
 
                 final var propName = Naming.getPropertyName(propSource);

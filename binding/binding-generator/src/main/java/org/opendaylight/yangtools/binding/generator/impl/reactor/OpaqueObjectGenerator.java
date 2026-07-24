@@ -44,8 +44,8 @@ abstract class OpaqueObjectGenerator<
         }
 
         @Override
-        OpaqueObjectArchetype.Anydata getArchetype(final TypeBuilderFactory builderFactory) {
-            return (OpaqueObjectArchetype.Anydata) getGeneratedType(builderFactory);
+        OpaqueObjectArchetype.Anydata getArchetype() {
+            return (OpaqueObjectArchetype.Anydata) getGeneratedType();
         }
 
         @Override
@@ -75,8 +75,8 @@ abstract class OpaqueObjectGenerator<
         }
 
         @Override
-        OpaqueObjectArchetype.Anyxml getArchetype(final TypeBuilderFactory builderFactory) {
-            return (OpaqueObjectArchetype.Anyxml) getGeneratedType(builderFactory);
+        OpaqueObjectArchetype.Anyxml getArchetype() {
+            return (OpaqueObjectArchetype.Anyxml) getGeneratedType();
         }
 
         @Override
@@ -104,10 +104,10 @@ abstract class OpaqueObjectGenerator<
     }
 
     @NonNullByDefault
-    abstract OpaqueObjectArchetype<S> getArchetype(TypeBuilderFactory builderFactory);
+    abstract OpaqueObjectArchetype<S> getArchetype();
 
     @Override
-    final OpaqueObjectArchetype<S> createTypeImpl(final TypeBuilderFactory builderFactory) {
+    final OpaqueObjectArchetype<S> createTypeImpl() {
         return createTypeImpl(typeName(), statement());
     }
 

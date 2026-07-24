@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBu
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.TypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -145,53 +144,49 @@ public abstract class Generator implements Iterable<Generator> {
 
     /**
      * Create the type associated with this builder. This method idempotent.
-     *
-     * @param builderFactory Factory for {@link TypeBuilder}s
      */
     @NonNullByDefault
-    final void ensureType(final TypeBuilderFactory builderFactory) {
+    final void ensureType() {
         if (result != null) {
             return;
         }
 
         result = switch (classPlacement()) {
             case NONE, PHANTOM -> GeneratorResult.empty();
-            case MEMBER -> GeneratorResult.member(createTypeImpl(requireNonNull(builderFactory)));
-            case TOP_LEVEL -> GeneratorResult.toplevel(createTypeImpl(requireNonNull(builderFactory)));
+            case MEMBER -> GeneratorResult.member(createTypeImpl());
+            case TOP_LEVEL -> GeneratorResult.toplevel(createTypeImpl());
         };
 
         for (var child : this) {
-            child.ensureType(builderFactory);
+            child.ensureType();
         }
     }
 
     @NonNullByDefault
-    Archetype getGeneratedType(final TypeBuilderFactory builderFactory) {
-        final var genType = tryGeneratedType(builderFactory);
+    Archetype getGeneratedType() {
+        final var genType = tryGeneratedType();
         if (genType != null) {
             return genType;
         }
         throw new VerifyException("No type generated for " + this);
     }
 
-    final @Nullable Archetype tryGeneratedType(final @NonNull TypeBuilderFactory builderFactory) {
-        ensureType(builderFactory);
+    final @Nullable Archetype tryGeneratedType() {
+        ensureType();
         return result.generatedType();
     }
 
-    final @Nullable Archetype enclosedType(final @NonNull TypeBuilderFactory builderFactory) {
-        ensureType(builderFactory);
+    final @Nullable Archetype enclosedType() {
+        ensureType();
         return result.enclosedType();
     }
 
     /**
-     * Create the type associated with this builder, as per {@link #ensureType(TypeBuilderFactory)} contract. This
-     * method is guaranteed to be called at most once.
-     *
-     * @param builderFactory Factory for {@link TypeBuilder}s
+     * Create the type associated with this builder, as per {@link #ensureType()} contract. This method is guaranteed to
+     * be called at most once.
      */
     @NonNullByDefault
-    abstract Archetype createTypeImpl(TypeBuilderFactory builderFactory);
+    abstract Archetype createTypeImpl();
 
     final @NonNull String assignedName() {
         return getMember().currentClass();

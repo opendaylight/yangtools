@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -50,18 +51,18 @@ abstract class AbstractNotificationGenerator
     }
 
     @Override
-    final LegacyArchetype<NotificationEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory) {
+    final LegacyArchetype<NotificationEffectiveStatement> createTypeImpl() {
         final var statement = statement();
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName(), statement);
+        final var builder = new CodegenGeneratedTypeBuilder<>(typeName(), statement);
         builder.addImplementsType(BindingTypes.DATA_OBJECT);
-        builder.addImplementsType(notificationType(builder.typeRef(), builderFactory));
+        builder.addImplementsType(notificationType(builder.typeRef()));
 
         final var orig = getOriginal();
         if (equals(orig)) {
-            addUsesInterfaces(builder, builderFactory);
-            addGetterMethods(builder, builderFactory);
+            addUsesInterfaces(builder);
+            addGetterMethods(builder);
         } else {
-            builder.addImplementsType(orig.getGeneratedType(builderFactory));
+            builder.addImplementsType(orig.getGeneratedType());
         }
 
         addAugmentable(builder);
@@ -75,7 +76,7 @@ abstract class AbstractNotificationGenerator
     }
 
     @Override
-    final void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder, final TypeBuilderFactory builderFactory) {
+    final void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder) {
         // Notifications are a distinct concept
     }
 
@@ -92,5 +93,5 @@ abstract class AbstractNotificationGenerator
     }
 
     @NonNullByDefault
-    abstract Type notificationType(TypeRef self, TypeBuilderFactory builderFactory);
+    abstract Type notificationType(TypeRef self);
 }

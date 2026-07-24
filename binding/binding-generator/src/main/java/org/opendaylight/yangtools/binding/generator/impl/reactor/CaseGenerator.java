@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultCaseRuntimeTy
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -41,7 +42,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
     }
 
     @Override
-    LegacyArchetype<CaseEffectiveStatement> createTypeImpl(final TypeBuilderFactory builderFactory) {
+    LegacyArchetype<CaseEffectiveStatement> createTypeImpl() {
         // We also are implementing target choice's type. This is tricky, as we need to cover two distinct cases:
         // - being a child of a choice (i.e. normal definition)
         // - being a child of an augment (i.e. augmented into a choice)
@@ -62,19 +63,19 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
         // must not request parent's type. That is not true for choice->case relationship and hence we do not need to
         // go through DefaultType here
         final var statement = statement();
-        final var builder = builderFactory.newGeneratedTypeBuilder(typeName(), statement);
+        final var builder = new CodegenGeneratedTypeBuilder<>(typeName(), statement);
         // Note: this needs to be the first type we mention as we are relying on that fact for global runtime type
         //       choice/case indexing.
-        builder.addImplementsType(choice.getArchetype(builderFactory));
+        builder.addImplementsType(choice.getArchetype());
 
         builder.addImplementsType(BindingTypes.DATA_OBJECT);
         addAugmentable(builder);
-        addUsesInterfaces(builder, builderFactory);
+        addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
 
         addQNameConstant(builder, localName());
 
-        addGetterMethods(builder, builderFactory);
+        addGetterMethods(builder);
 
         annotateDeprecatedIfNecessary(builder);
 
