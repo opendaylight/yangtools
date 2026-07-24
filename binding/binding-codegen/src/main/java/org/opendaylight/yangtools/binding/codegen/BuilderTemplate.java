@@ -46,7 +46,7 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 /**
  * Template for generating JAVA builder classes.
@@ -955,15 +955,14 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Check if the {@code type} represents non-presence container.
      *
-     * @param type {@link GeneratedType} to be checked if represents container without presence statement.
+     * @param type {@link LegacyArchetype} to be checked if represents container without presence statement.
      * @return {@code true} if specified {@code type} is a container without presence statement,
      *     {@code false} otherwise.
      */
     // FIXME: YANGTOOLS-1876: remove this method
     @NonNullByDefault
     static boolean isNonPresenceContainer(final LegacyArchetype<?> type) {
-        final var sourceDef = type.yangSourceDefinition();
-        return sourceDef != null && sourceDef.getNode() instanceof ContainerSchemaNode container
-            && !container.isPresenceContainer();
+        return type.statement() instanceof ContainerEffectiveStatement container
+            && container.presenceStatement() == null;
     }
 }

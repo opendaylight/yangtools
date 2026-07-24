@@ -60,7 +60,6 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
         addQNameConstant(builder, statement().argument());
 
         annotateDeprecatedIfNecessary(builder);
-        builderFactory.addCodegenInformation(currentModule(), statement, builder);
 
         return builder.build();
     }

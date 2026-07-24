@@ -77,9 +77,6 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
         addGetterMethods(builder, builderFactory);
 
         annotateDeprecatedIfNecessary(builder);
-        final var module = currentModule();
-        builderFactory.addCodegenInformation(module, statement, builder);
-        builder.setModuleName(module.statement().argument().getLocalName());
 
         return builder.build();
     }

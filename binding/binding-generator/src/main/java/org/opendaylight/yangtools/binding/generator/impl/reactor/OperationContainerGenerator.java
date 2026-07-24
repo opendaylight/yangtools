@@ -80,9 +80,6 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
         addQNameConstant(builder, localName());
 
         annotateDeprecatedIfNecessary(builder);
-        final var module = currentModule();
-        builderFactory.addCodegenInformation(module, statement, builder);
-        builder.setModuleName(module.statement().argument().getLocalName());
 
         return builder.build();
     }

@@ -27,8 +27,6 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeComment;
-import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
@@ -42,19 +40,15 @@ abstract class AbstractGeneratedType<S extends EffectiveStatement<?, ?>> impleme
     private final @NonNull List<Constant> constants;
     private final @NonNull List<MethodSignature> methodSignatures;
     private final @NonNull List<Archetype> enclosedTypes;
-    private final @Nullable YangSourceDefinition definition;
-    private final @Nullable TypeComment comment;
 
     AbstractGeneratedType(final AbstractGeneratedTypeBuilder<?, S> builder) {
         name = builder.typeName();
         statement = builder.statement;
-        comment = builder.getComment();
         annotations = toUnmodifiableAnnotations(builder.getAnnotations());
         implementsTypes = makeUnmodifiable(builder.getImplementsTypes());
         constants = makeUnmodifiable(builder.getConstants());
         methodSignatures = toUnmodifiableMethods(builder.getMethodDefinitions());
         enclosedTypes = List.copyOf(builder.getEnclosedTypes());
-        definition = builder.getYangSourceDefinition().orElse(null);
     }
 
     @Override
@@ -117,11 +111,6 @@ abstract class AbstractGeneratedType<S extends EffectiveStatement<?, ?>> impleme
     }
 
     @Override
-    public final TypeComment getComment() {
-        return comment;
-    }
-
-    @Override
     public final List<AnnotationType> getAnnotations() {
         return annotations;
     }
@@ -147,11 +136,6 @@ abstract class AbstractGeneratedType<S extends EffectiveStatement<?, ?>> impleme
     }
 
     @Override
-    public final YangSourceDefinition yangSourceDefinition() {
-        return definition;
-    }
-
-    @Override
     public final int hashCode() {
         return name.hashCode();
     }
@@ -170,10 +154,6 @@ abstract class AbstractGeneratedType<S extends EffectiveStatement<?, ?>> impleme
     protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         helper.add("name", name);
 
-        final var local = comment;
-        if (local != null) {
-            helper.add("comment", local);
-        }
         addToStringAttribute(helper, "annotations", annotations);
         addToStringAttribute(helper, "implements", implementsTypes);
         addToStringAttribute(helper, "enclosedTypes", enclosedTypes);

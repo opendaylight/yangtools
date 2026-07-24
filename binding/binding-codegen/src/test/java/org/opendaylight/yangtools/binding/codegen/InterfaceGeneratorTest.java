@@ -100,7 +100,6 @@ class InterfaceGeneratorTest {
         doReturn(TEST).when(genType).packageName();
         doReturn(List.of(methSign)).when(genType).getMethodDefinitions();
         doReturn(List.of()).when(genType).getImplements();
-        doReturn(null).when(genType).yangSourceDefinition();
         return genType;
     }
 

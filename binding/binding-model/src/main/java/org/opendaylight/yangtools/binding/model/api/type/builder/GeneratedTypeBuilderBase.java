@@ -8,16 +8,12 @@
 package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import java.util.List;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeComment;
-import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTypeBuilder;
 
 public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
@@ -37,15 +33,6 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * @param genType the enclosed {@link Archetype}
      */
     T addEnclosedType(Archetype genType);
-
-    /**
-     * Adds String definition of comment into Method Signature definition.<br>
-     * The comment String MUST NOT contain any comment specific chars (i.e. "/**" or "//") just plain String text
-     * description.
-     *
-     * @param comment Comment String.
-     */
-    T addComment(TypeComment comment);
 
     List<Type> getImplementsTypes();
 
@@ -117,49 +104,6 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * @param methodName is method name
      */
     boolean containsMethod(String methodName);
-
-    /**
-     * Returns the YANG definition of this type, if available.
-     *
-     * @return YANG source definition, or empty when unavailable.
-     */
-    Optional<YangSourceDefinition> getYangSourceDefinition();
-
-    /**
-     * Set a string that contains a human-readable textual description of type definition.
-     *
-     * @param description a string that contains a human-readable textual description of type definition.
-     */
-    @Deprecated(since = "16.0.0", forRemoval = true)
-    @NonNullByDefault
-    void setDescription(String description);
-
-    /**
-     * Set the name of the module, in which generated type was specified.
-     *
-     * @param moduleName the name of the module
-     */
-    @Deprecated(since = "16.0.0", forRemoval = true)
-    @NonNullByDefault
-    void setModuleName(String moduleName);
-
-    /**
-     * Set a string that is used to specify a textual cross-reference to an external document, either another module
-     * that defines related management information, or a document that provides additional information relevant to this
-     * definition.
-     *
-     * @param reference a textual cross-reference to an external document.
-     */
-    @Deprecated(since = "16.0.0", forRemoval = true)
-    @NonNullByDefault
-    void setReference(String reference);
-
-    /**
-     * Set the YANG source definition.
-     *
-     * @param definition YANG source definition, must not be null
-     */
-    void setYangSourceDefinition(@NonNull YangSourceDefinition definition);
 
     /**
      * {@return a new immutable {@link LegacyArchetype} instance}

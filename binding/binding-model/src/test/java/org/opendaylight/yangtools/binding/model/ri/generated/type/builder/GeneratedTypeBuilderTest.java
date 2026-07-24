@@ -188,25 +188,4 @@ class GeneratedTypeBuilderTest {
         final var builder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(NullPointerException.class, () -> builder.addEnclosedType(null));
     }
-
-    @Test
-    void generatedTypeTest() {
-        var generatedTypeBuilder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
-            statement);
-
-        generatedTypeBuilder.setDescription("My description ...");
-        generatedTypeBuilder.setModuleName("myModuleName");
-        generatedTypeBuilder.setReference("myReference");
-        assertNotNull(generatedTypeBuilder.addComment(() -> "My comment.."));
-
-        assertEquals("CodegenGeneratedTypeBuilder{typeName=my.package.MyName, comment=My comment..}",
-            generatedTypeBuilder.toString());
-
-        var instance = generatedTypeBuilder.build();
-
-        assertEquals("My description ...", instance.getDescription());
-        assertEquals("myModuleName", instance.getModuleName());
-        assertEquals("myReference", instance.getReference());
-        assertEquals("My comment..", instance.getComment().getJavadoc());
-    }
 }

@@ -17,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.api.YangSourceDefinition;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -53,8 +52,7 @@ class PresenceContainerTest {
     @Test
     void nonContainerIsNonPresenceContainerTest() {
         final var userList = module.findDataTreeChild(DIRECTORY_QNAME, USER_QNAME).orElseThrow();
-        final var definition = YangSourceDefinition.of(module, userList).orElse(null);
-        doReturn(definition).when(type).yangSourceDefinition();
+        doReturn(userList).when(type).statement();
         assertFalse(BuilderTemplate.isNonPresenceContainer(type));
     }
 
@@ -64,8 +62,7 @@ class PresenceContainerTest {
     @Test
     void presenceContainerIsNonPresenceContainerTest() {
         final var scpContainer = module.findDataTreeChild(DIRECTORY_QNAME, SCP_QNAME).orElseThrow();
-        final var definition = YangSourceDefinition.of(module, scpContainer).orElse(null);
-        doReturn(definition).when(type).yangSourceDefinition();
+        doReturn(scpContainer).when(type).statement();
         assertFalse(BuilderTemplate.isNonPresenceContainer(type));
     }
 
@@ -75,8 +72,7 @@ class PresenceContainerTest {
     @Test
     void nonPresenceContainerIsNonPresenceContainerTest() {
         final var dataContainer = module.findDataTreeChild(DIRECTORY_QNAME, DATA_QNAME).orElseThrow();
-        final var definition = YangSourceDefinition.of(module, dataContainer).orElse(null);
-        doReturn(definition).when(type).yangSourceDefinition();
+        doReturn(dataContainer).when(type).statement();
         assertTrue(BuilderTemplate.isNonPresenceContainer(type));
     }
 }
