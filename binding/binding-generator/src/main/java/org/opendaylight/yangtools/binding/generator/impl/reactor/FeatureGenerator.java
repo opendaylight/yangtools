@@ -12,8 +12,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultFeatureRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.runtime.api.FeatureRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -55,7 +55,7 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
     }
 
     @Override
-    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder) {
+    void addAsGetterMethod(final LegacyArchetype.Builder<?> builder) {
         // features are a separate concept
     }
 }

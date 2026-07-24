@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractTypeBuilder;
@@ -19,7 +20,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
  */
 @NonNullByDefault
 public sealed interface TypeBuilder extends Mutable
-        permits AbstractTypeBuilder, AnnotationTypeBuilder, GeneratedTypeBuilderBase {
+        permits AbstractTypeBuilder, AnnotationTypeBuilder, LegacyArchetype.Builder {
     /**
      * {@return the name of the type this builder produces}
      */

@@ -10,11 +10,10 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 public final class CodegenGeneratedTypeBuilder<S extends EffectiveStatement<?, ?>>
-        extends AbstractGeneratedTypeBuilder<GeneratedTypeBuilder<S>, S> implements GeneratedTypeBuilder<S> {
+        extends AbstractGeneratedTypeBuilder<LegacyArchetype.Builder<S>, S> {
     private static final class CodegenLegacyArchetype<S extends EffectiveStatement<?, ?>>
             extends AbstractGeneratedType<S> {
         CodegenLegacyArchetype(final CodegenGeneratedTypeBuilder<S> builder) {

@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.WildcardType;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -62,7 +61,7 @@ final class NotificationBodyGenerator
     }
 
     @Override
-    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder) {
+    void addAsGetterMethod(final LegacyArchetype.Builder<?> builder) {
         // Notifications are a distinct concept
     }
 

@@ -13,9 +13,9 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnydataRuntimeType;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnyxmlRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.runtime.api.AnydataRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.AnyxmlRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.OpaqueRuntimeType;
@@ -115,7 +115,7 @@ abstract class OpaqueObjectGenerator<
     abstract OpaqueObjectArchetype<S> createTypeImpl(JavaTypeName name, S statement);
 
     @Override
-    void constructRequire(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
+    void constructRequire(final LegacyArchetype.Builder<?> builder, final Type returnType) {
         constructRequireImpl(builder, returnType);
     }
 

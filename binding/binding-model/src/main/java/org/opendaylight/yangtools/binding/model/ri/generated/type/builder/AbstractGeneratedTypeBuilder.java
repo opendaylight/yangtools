@@ -18,16 +18,16 @@ import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 public abstract sealed class AbstractGeneratedTypeBuilder<
-        T extends GeneratedTypeBuilderBase<T>,
-        S extends EffectiveStatement<?, ?>> extends AbstractTypeBuilder implements GeneratedTypeBuilderBase<T>
+        T extends LegacyArchetype.Builder<T>,
+        S extends EffectiveStatement<?, ?>> extends AbstractTypeBuilder implements LegacyArchetype.Builder<T>
         permits CodegenGeneratedTypeBuilder, DataRootArchetypeBuilder {
     protected final @NonNull S statement;
 

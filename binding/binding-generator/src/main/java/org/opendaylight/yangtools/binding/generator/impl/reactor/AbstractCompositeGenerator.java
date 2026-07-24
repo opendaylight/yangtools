@@ -18,10 +18,9 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -459,19 +458,19 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
      * @param builder Target builder
      */
     @NonNullByDefault
-    final void addUsesInterfaces(final GeneratedTypeBuilderBase<?> builder) {
+    final void addUsesInterfaces(final LegacyArchetype.Builder<?> builder) {
         for (var grp : groupings) {
             builder.addImplementsType(grp.getGeneratedType());
         }
     }
 
     @NonNullByDefault
-    static final void addAugmentable(final GeneratedTypeBuilder<?> builder) {
+    static final void addAugmentable(final LegacyArchetype.Builder<?> builder) {
         builder.addImplementsType(BindingTypes.augmentable(builder.typeRef()));
     }
 
     @NonNullByDefault
-    final void addGetterMethods(final GeneratedTypeBuilderBase<?> builder) {
+    final void addGetterMethods(final LegacyArchetype.Builder<?> builder) {
         for (var child : this) {
             // Only process explicit generators here
             if (child instanceof AbstractExplicitGenerator<?, ?> explicit) {

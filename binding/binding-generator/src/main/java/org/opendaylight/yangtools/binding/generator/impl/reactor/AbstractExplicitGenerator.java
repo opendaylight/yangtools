@@ -19,11 +19,11 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresentation;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -329,7 +329,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder) {
+    void addAsGetterMethod(final LegacyArchetype.Builder<?> builder) {
         if (isAugmenting()) {
             // Do not process augmented nodes: they will be taken care of in their home augmentation
             return;
@@ -349,13 +349,13 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    MethodSignatureBuilder constructGetter(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
+    MethodSignatureBuilder constructGetter(final LegacyArchetype.Builder<?> builder, final Type returnType) {
         return constructGetter(builder, returnType, Naming.getGetterMethodName(localName().getLocalName()));
     }
 
     @NonNullByDefault
-    final MethodSignatureBuilder constructGetter(final GeneratedTypeBuilderBase<?> builder,
-            final Type returnType, final String methodName) {
+    final MethodSignatureBuilder constructGetter(final LegacyArchetype.Builder<?> builder, final Type returnType,
+            final String methodName) {
         final var getMethod = builder.addMethod(methodName).setReturnType(returnType);
 
         annotateDeprecatedIfNecessary(getMethod);
@@ -367,18 +367,19 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    void constructRequire(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
+    void constructRequire(final LegacyArchetype.Builder<?> builder, final Type returnType) {
         // No-op in most cases
     }
 
     @NonNullByDefault
-    final void constructRequireImpl(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
+    final void constructRequireImpl(final LegacyArchetype.Builder<?> builder, final Type returnType) {
         constructGetter(builder, returnType, Naming.getRequireMethodName(localName().getLocalName()))
             .setDefault(true)
             .setMechanics(ValueMechanics.NONNULL);
     }
 
-    void addAsGetterMethodOverride(final @NonNull GeneratedTypeBuilderBase<?> builder) {
+    @NonNullByDefault
+    void addAsGetterMethodOverride(final LegacyArchetype.Builder<?> builder) {
         // No-op for most cases
     }
 
@@ -412,7 +413,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         throw new VerifyException("Unexpected type " + type);
     }
 
-    static final void addQNameConstant(final GeneratedTypeBuilderBase<?> builder, final AbstractQName localName) {
+    static final void addQNameConstant(final LegacyArchetype.Builder<?> builder, final AbstractQName localName) {
         builder.addConstant(BindingTypes.QNAME, Naming.QNAME_STATIC_FIELD_NAME, localName.getLocalName());
     }
 }

@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -75,7 +74,7 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     }
 
     @Override
-    MethodSignatureBuilder constructGetter(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
+    MethodSignatureBuilder constructGetter(final LegacyArchetype.Builder<?> builder, final Type returnType) {
         final var ret = super.constructGetter(builder, returnType).setMechanics(ValueMechanics.NORMAL);
         if (statement().presenceStatement() == null) {
             final var nonnull = builder

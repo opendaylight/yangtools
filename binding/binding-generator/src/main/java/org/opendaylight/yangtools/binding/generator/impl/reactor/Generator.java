@@ -26,12 +26,11 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
@@ -231,7 +230,7 @@ public abstract class Generator implements Iterable<Generator> {
         return helper;
     }
 
-    final void addImplementsChildOf(final GeneratedTypeBuilder<?> builder) {
+    final void addImplementsChildOf(final LegacyArchetype.Builder<?, ?> builder) {
         AbstractCompositeGenerator<?, ?> ancestor = getParent();
         while (true) {
             // choice/case hierarchy does not factor into 'ChildOf' hierarchy, hence we need to skip them
@@ -260,7 +259,7 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder Target builder
      */
     @NonNullByDefault
-    static final void addConcreteInterfaceMethods(final GeneratedTypeBuilder<?> builder) {
+    static final void addConcreteInterfaceMethods(final LegacyArchetype.Builder<?, ?> builder) {
         defaultImplementedInterace(builder);
         builder.addImplementsType(ParameterizedType.of(BindingTypes.JAVA_DATACONTAINER, builder.typeRef()));
     }
@@ -293,13 +292,13 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder Target builder
      */
     @NonNullByDefault
-    static final void defaultImplementedInterace(final GeneratedTypeBuilderBase<?> builder) {
+    static final void defaultImplementedInterace(final LegacyArchetype.Builder<?> builder) {
         defineImplementedInterfaceMethod(builder, builder.typeRef()).setDefault(true);
     }
 
     @NonNullByDefault
-    static final MethodSignatureBuilder defineImplementedInterfaceMethod(
-            final GeneratedTypeBuilderBase<?> typeBuilder, final Type classType) {
+    static final MethodSignatureBuilder defineImplementedInterfaceMethod(final LegacyArchetype.Builder<?> typeBuilder,
+            final Type classType) {
         final var ret = typeBuilder
                 .addMethod(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME)
                 .setAccessModifier(AccessModifier.PUBLIC)

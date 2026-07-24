@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
@@ -65,7 +64,7 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
     }
 
     @NonNullByDefault
-    private void addImplementedType(final GeneratedTypeBuilder<?> builder, final Archetype input,
+    private void addImplementedType(final LegacyArchetype.Builder<?> builder, final Archetype input,
             final Archetype output) {
         final var parent = getParent();
         final var parentType = TypeRef.of(parent.typeName());

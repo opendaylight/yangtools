@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
@@ -32,7 +32,7 @@ abstract sealed class AbstractInvokableGenerator<
     }
 
     @Override
-    final void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder) {
+    final void addAsGetterMethod(final LegacyArchetype.Builder<?> builder) {
         // RPCs/Actions are a separate concept
     }
 

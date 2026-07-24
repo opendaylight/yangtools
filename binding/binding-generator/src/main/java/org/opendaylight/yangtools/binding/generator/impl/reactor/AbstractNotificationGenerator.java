@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -76,7 +75,7 @@ abstract class AbstractNotificationGenerator
     }
 
     @Override
-    final void addAsGetterMethod(final GeneratedTypeBuilderBase<?> builder) {
+    final void addAsGetterMethod(final LegacyArchetype.Builder<?> builder) {
         // Notifications are a distinct concept
     }
 

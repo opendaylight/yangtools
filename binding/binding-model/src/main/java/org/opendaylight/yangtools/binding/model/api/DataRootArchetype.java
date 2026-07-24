@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.model.api;
 import com.google.common.annotations.Beta;
 import java.util.List;
 import org.opendaylight.yangtools.binding.DataRoot;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRootArchetypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
@@ -26,7 +25,7 @@ public non-sealed interface DataRootArchetype
      * A builder of {@link DataRootArchetype} instances.
      */
     @Beta
-    sealed interface Builder extends GeneratedTypeBuilderBase<Builder> permits DataRootArchetypeBuilder {
+    sealed interface Builder extends LegacyArchetype.Builder<Builder> permits DataRootArchetypeBuilder {
         @Override
         DataRootArchetype build();
     }

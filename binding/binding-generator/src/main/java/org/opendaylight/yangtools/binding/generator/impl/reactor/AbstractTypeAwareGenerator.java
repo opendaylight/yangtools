@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -66,7 +66,7 @@ abstract class AbstractTypeAwareGenerator<
     }
 
     @Override
-    final MethodSignatureBuilder constructGetter(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
+    final MethodSignatureBuilder constructGetter(final LegacyArchetype.Builder<?> builder, final Type returnType) {
         final MethodSignatureBuilder ret = super.constructGetter(builder, returnType);
 
         if (contextType != null) {
@@ -78,7 +78,7 @@ abstract class AbstractTypeAwareGenerator<
     }
 
     @Override
-    final void constructRequire(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
+    final void constructRequire(final LegacyArchetype.Builder<?> builder, final Type returnType) {
         constructRequireImpl(builder, returnType);
     }
 }
