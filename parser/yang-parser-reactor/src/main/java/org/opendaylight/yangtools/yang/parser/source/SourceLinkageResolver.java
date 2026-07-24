@@ -723,9 +723,7 @@ public final class SourceLinkageResolver {
         // determine which submodules have a required module referring to it inexactly
         final var modulesBySubmodule = LinkedHashMultimap.<Unqualified, ModuleLinker>create();
         for (var module : requiredModules.values()) {
-            for (var submodule : module.inexactSubmodules()) {
-                modulesBySubmodule.put(submodule, module);
-            }
+            module.inexactSubmodules().forEach(name -> modulesBySubmodule.put(name, module));
         }
         if (modulesBySubmodule.isEmpty()) {
             // no module has known inexact includes: there is nothing to do
