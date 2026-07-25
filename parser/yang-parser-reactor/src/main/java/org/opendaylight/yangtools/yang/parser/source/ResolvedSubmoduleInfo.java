@@ -30,8 +30,8 @@ public final class ResolvedSubmoduleInfo extends ResolvedSourceInfo {
     private final SourceInfoRef.OfSubmodule infoRef;
     private final ResolvedBelongsTo belongsTo;
 
-    ResolvedSubmoduleInfo(final SourceInfoRef.OfSubmodule infoRef, final ResolvedBelongsTo belongsTo,
-            final List<ResolvedImport> imports, final List<ResolvedInclude> includes) {
+    ResolvedSubmoduleInfo(final SourceInfoRef.OfSubmodule infoRef, final List<ResolvedImport> imports,
+            final List<ResolvedInclude> includes, final ResolvedBelongsTo belongsTo) {
         super(imports, includes);
         this.infoRef = requireNonNull(infoRef);
         this.belongsTo = requireNonNull(belongsTo);

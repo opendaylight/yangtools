@@ -100,8 +100,7 @@ final class SubmoduleLinker extends SourceLinker {
         if (local == null) {
             throw new VerifyException("Unresolved belongs-to in " + this);
         }
-        return new ResolvedSubmoduleInfo(infoRef,
-            new ResolvedBelongsTo(infoRef.info().belongsTo(), local.ref(), local.info().moduleName().getModule()),
-            imports, includes);
+        return new ResolvedSubmoduleInfo(infoRef, imports, includes,
+            new ResolvedBelongsTo(infoRef.info().belongsTo(), local.ref(), local.info().moduleName().getModule()));
     }
 }
