@@ -7,35 +7,40 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import static java.util.Objects.requireNonNull;
+
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
+
 /**
  * Interface Contact is designed to hold and model java constant. In Java there are no constant keywords instead of the
  * constant is defined as static final field with assigned value. For this purpose the Constant interface contains
- * methods {@link #getType()} to provide wrapped return Type of Constant, {@link #getName()} the Name of constant and
- * the {@link #getValue()} for providing of value assigned to Constant. To determine of which type the constant value is
+ * methods {@link #type()} to provide wrapped return Type of Constant, {@link #name()} the Name of constant and
+ * the {@link #value()} for providing of value assigned to Constant. To determine of which type the constant value is
  * it is recommended firstly to retrieve Type from constant. The Type interface holds base information like java package
  * name and java type name (e.g. fully qualified name). From this string user should be able to determine to which type
- * can be {@link #getValue()} type typecasted to unbox and provide value assigned to constant.
+ * can be {@link #value()} type typecasted to unbox and provide value assigned to constant.
+ *
+ * @param type the {@link Type}
+ * @param name the name
+ * @param value boxed value that is to be assigned
  */
-public interface Constant {
-    /**
-     * Returns the return Type (or just Type) of the Constant.
-     *
-     * @return the return Type (or just Type) of the Constant.
-     */
-    Type getType();
+@NonNullByDefault
+public record Constant(Type type, String name, Object value) {
+    public Constant {
+        requireNonNull(type);
+        requireNonNull(name);
+        requireNonNull(value);
+    }
 
-    /**
-     * Returns the name of constant. <br>
-     * By conventions the name SHOULD be in CAPITALS separated with underscores.
-     *
-     * @return the name of constant.
-     */
-    String getName();
+    @Override
+    public int hashCode() {
+        return 31 * 31 + 31 * name.hashCode() + type.hashCode();
+    }
 
-    /**
-     * Returns boxed value that is assigned for context.
-     *
-     * @return boxed value that is assigned for context.
-     */
-    Object getValue();
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        return this == obj || obj instanceof Constant other && name.equals(other.name) && type.equals(other.type)
+            && value.equals(other.value);
+    }
 }

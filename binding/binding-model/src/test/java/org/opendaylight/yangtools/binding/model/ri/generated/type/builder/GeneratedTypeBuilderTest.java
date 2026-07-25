@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -45,17 +46,15 @@ class GeneratedTypeBuilderTest {
         var constant2 = generatedTypeBuilder.addConstant(
                 Types.typeForClass(int.class).withRestrictions(Restrictions.empty()), "myIntConstant", 1);
 
-        var constant3 = new ConstantImpl(Types.typeForClass(String.class), "myConstant", "myConstantValue");
-        final var constant4 = new ConstantImpl(Types.typeForClass(String.class), "myConstant2", "myConstantValue");
-        final var constant5 = new ConstantImpl(Types.typeForClass(String.class), "myConstant", "myConstantValue2");
+        var constant3 = new Constant(Types.typeForClass(String.class), "myConstant", "myConstantValue");
+        final var constant4 = new Constant(Types.typeForClass(String.class), "myConstant2", "myConstantValue");
+        final var constant5 = new Constant(Types.typeForClass(String.class), "myConstant", "myConstantValue2");
 
         assertNotNull(constant);
         assertNotNull(constant2);
         assertNotNull(constant3);
         assertNotNull(constant4);
         assertNotNull(constant5);
-        // assertNotNull(constantx);
-        // assertTrue(constant!=constantx);
 
         assertFalse(constant.equals(null));
         assertFalse(constant.equals(new Object()));
@@ -71,7 +70,7 @@ class GeneratedTypeBuilderTest {
         assertNotEquals(constant.hashCode(), constant4.hashCode());
         assertEquals(constant.hashCode(), constant5.hashCode());
 
-        assertEquals("Constant [type=ConcreteType{name=java.lang.String}, name=myConstant, value=myConstantValue]",
+        assertEquals("Constant[type=ConcreteType{name=java.lang.String}, name=myConstant, value=myConstantValue]",
             constant.toString());
 
         var instance = generatedTypeBuilder.build();
@@ -84,9 +83,9 @@ class GeneratedTypeBuilderTest {
         assertFalse(constantDefinitions.contains(constant4));
         assertFalse(constantDefinitions.contains(constant5));
 
-        assertEquals("myConstant", constant.getName());
-        assertEquals("myConstantValue", constant.getValue());
-        assertEquals(Types.typeForClass(String.class), constant.getType());
+        assertEquals(Types.typeForClass(String.class), constant.type());
+        assertEquals("myConstant", constant.name());
+        assertEquals("myConstantValue", constant.value());
     }
 
     @Test

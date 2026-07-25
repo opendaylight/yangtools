@@ -543,14 +543,14 @@ final class BuilderTemplate extends BaseTemplate {
     private BlockBuilder constantsDeclarations() {
         final var bb = newBlockBuilder();
         for (var def : targetType.getConstantDefinitions()) {
-            if (!def.getName().startsWith(PATTERN_CONSTANT_NAME)) {
+            if (!def.name().startsWith(PATTERN_CONSTANT_NAME)) {
                 // other constants are emitted separately
                 continue;
             }
 
             // FIXME: these are not populated anywhere and this whole method does not work :(
-            final var xsdToPattern = (Map<String, String>) def.getValue();
-            final var fieldSuffix = def.getName().substring(PATTERN_CONSTANT_NAME.length());
+            final var xsdToPattern = (Map<String, String>) def.value();
+            final var fieldSuffix = def.name().substring(PATTERN_CONSTANT_NAME.length());
             final var jurPatternRef = importedName(JUR_PATTERN);
             if (xsdToPattern.size() == 1) {
                 final var firstEntry = xsdToPattern.entrySet().iterator().next();
