@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.source.DeclarationInSource;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -169,13 +170,13 @@ final class ModuleLinker extends SourceLinker {
     }
 
     @Override
-    SourceInfoRef.OfModule infoRef() {
-        return infoRef;
+    SourceInfo.Module info() {
+        return infoRef.info();
     }
 
     @Override
-    SourceInfo.Module sourceInfo() {
-        return infoRef.info();
+    SourceRef.ToModule ref() {
+        return infoRef.ref();
     }
 
     /**

@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
 
@@ -71,6 +72,15 @@ public abstract sealed class ResolvedSourceInfo implements Immutable permits Res
      * A builder of {@link ResolvedSourceInfo} instances.
      */
     abstract static sealed class Builder implements Mutable permits SourceLinker {
+        /**
+         * {@return the {@link SourceInfo} of the source for which this builder was instantiated}
+         */
+        abstract SourceInfo info();
+
+        /**
+         * {@return the {@link SourceRef} to the source for which this builder was instantiated}
+         */
+        abstract SourceRef ref();
 
         final String humanName() {
             final var sourceId = sourceId();
@@ -91,16 +101,12 @@ public abstract sealed class ResolvedSourceInfo implements Immutable permits Res
         }
 
         final SourceIdentifier sourceId() {
-            return sourceInfo().sourceId();
+            return info().sourceId();
         }
 
         final YangVersion yangVersion() {
-            return sourceInfo().yangVersion();
+            return info().yangVersion();
         }
-
-        abstract SourceInfoRef infoRef();
-
-        abstract SourceInfo sourceInfo();
 
         /**
          * {@return the {@link ResolvedSourceInfo} result of this builder}
