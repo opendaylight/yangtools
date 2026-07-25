@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.source;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.VerifyException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -22,12 +24,21 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 /**
  * A {@link SourceLinker} for a YANG {@code submodule}.
  */
-final class SubmoduleLinker extends SourceLinker<SourceInfoRef.OfSubmodule> {
+final class SubmoduleLinker extends SourceLinker {
+    @NonNullByDefault
+    private final SourceInfoRef.OfSubmodule infoRef;
+
     private @Nullable ModuleLinker parent;
 
     @NonNullByDefault
     SubmoduleLinker(final SourceInfoRef.OfSubmodule infoRef) {
-        super(infoRef);
+        super(infoRef.info());
+        this.infoRef = requireNonNull(infoRef);
+    }
+
+    @Override
+    SourceInfoRef.OfSubmodule infoRef() {
+        return infoRef;
     }
 
     /**
