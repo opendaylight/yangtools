@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
  * {@code Multiple revisions of the same submodule MUST NOT be included.} are reliably reported.
  */
 @NonNullByDefault
-final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
+final class ModuleLinker extends SourceLinker {
     /**
      * The source of an {@link ExactRevision}.
      */
@@ -160,9 +160,22 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
      */
     private final LinkedHashMap<Unqualified, SubmoduleSpec> submoduleSpecs = new LinkedHashMap<>();
 
+    private final SourceInfoRef.OfModule infoRef;
+
     ModuleLinker(final SourceInfoRef.OfModule infoRef) throws ReactorException {
-        super(infoRef);
+        super(infoRef.info());
+        this.infoRef = infoRef;
         requireIncludes(this);
+    }
+
+    @Override
+    SourceInfoRef.OfModule infoRef() {
+        return infoRef;
+    }
+
+    @Override
+    SourceInfo.Module sourceInfo() {
+        return infoRef.info();
     }
 
     /**
@@ -228,7 +241,7 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
      * @param source the {@link SourceLinker} to the source of requirements
      * @throws ReactorException if a requirement conflicts with a previous requirement
      */
-    void requireIncludes(final SourceLinker<?> source) throws ReactorException {
+    void requireIncludes(final SourceLinker source) throws ReactorException {
         final var it = source.missingIncludes();
         while (it.hasNext()) {
             requireInclude(source, it.next());
@@ -242,7 +255,7 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
      * @param dependency the {@link Include}
      * @throws ReactorException if the requirement conflicts with a previous requirement or cannot be added
      */
-    private void requireInclude(final SourceLinker<?> source, final Include dependency) throws ReactorException {
+    private void requireInclude(final SourceLinker source, final Include dependency) throws ReactorException {
         final var name = dependency.name();
         final var revision = dependency.revision();
         if (revision == null) {
@@ -284,13 +297,8 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
     }
 
     @Override
-    SourceInfo.Module sourceInfo() {
-        return infoRef().info();
-    }
-
-    @Override
     ResolvedModuleInfo doBuild(final List<ResolvedImport> imports, final List<ResolvedInclude> includes) {
-        return new ResolvedModuleInfo(infoRef(), imports, includes);
+        return new ResolvedModuleInfo(infoRef, imports, includes);
     }
 
     /**
@@ -309,7 +317,7 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
      * @param dependency the dependency being resolved
      * @throws ReactorException if the source cannot be add the dependency to this module
      */
-    void checkInclude(final SourceLinker<?> source, final Include dependency) throws ReactorException {
+    void checkInclude(final SourceLinker source, final Include dependency) throws ReactorException {
         switch (source) {
             case ModuleLinker module -> verify(module == this);
             case SubmoduleLinker submodule -> {

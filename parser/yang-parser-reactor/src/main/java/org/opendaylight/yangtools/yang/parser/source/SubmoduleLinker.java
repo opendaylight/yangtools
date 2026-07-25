@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.source;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.VerifyException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -22,12 +24,26 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 /**
  * A {@link SourceLinker} for a YANG {@code submodule}.
  */
-final class SubmoduleLinker extends SourceLinker<SourceInfoRef.OfSubmodule> {
+final class SubmoduleLinker extends SourceLinker {
+    @NonNullByDefault
+    private final SourceInfoRef.OfSubmodule infoRef;
+
     private @Nullable ModuleLinker parent;
 
     @NonNullByDefault
     SubmoduleLinker(final SourceInfoRef.OfSubmodule infoRef) {
-        super(infoRef);
+        super(infoRef.info());
+        this.infoRef = requireNonNull(infoRef);
+    }
+
+    @Override
+    SourceInfoRef.OfSubmodule infoRef() {
+        return infoRef;
+    }
+
+    @Override
+    SourceInfo.Submodule sourceInfo() {
+        return infoRef.info();
     }
 
     /**
@@ -43,11 +59,6 @@ final class SubmoduleLinker extends SourceLinker<SourceInfoRef.OfSubmodule> {
      */
     @Nullable ModuleLinker parent() {
         return parent;
-    }
-
-    @Override
-    SourceInfo.Submodule sourceInfo() {
-        return infoRef().info();
     }
 
     @Override
@@ -89,7 +100,6 @@ final class SubmoduleLinker extends SourceLinker<SourceInfoRef.OfSubmodule> {
             throw new VerifyException("Unresolved belongs-to in " + this);
         }
         final var parentRef = local.infoRef();
-        final var infoRef = infoRef();
         return new ResolvedSubmoduleInfo(infoRef,
             new ResolvedBelongsTo(infoRef.info().belongsTo(), parentRef.ref(),
                 parentRef.info().moduleName().getModule()), imports, includes);
