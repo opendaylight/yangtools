@@ -15,6 +15,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyImpl;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
 class GeneratedPropertyTest {
