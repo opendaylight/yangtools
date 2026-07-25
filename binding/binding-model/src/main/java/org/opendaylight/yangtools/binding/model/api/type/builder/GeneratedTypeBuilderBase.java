@@ -80,8 +80,6 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
         return addConstant(builder.typeRef(), name, value);
     }
 
-    List<MethodSignatureBuilder> getMethodDefinitions();
-
     /**
      * Add new Method Signature definition for Generated Type Builder and returns Method Signature Builder
      * for specifying all Method parameters.<br>

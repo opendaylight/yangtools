@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 final class DefaultLegacyArchetype<S extends EffectiveStatement<?, ?>> implements LegacyArchetype<S> {
@@ -44,7 +42,7 @@ final class DefaultLegacyArchetype<S extends EffectiveStatement<?, ?>> implement
         annotations = toUnmodifiableAnnotations(builder.getAnnotations());
         implementsTypes = makeUnmodifiable(builder.getImplementsTypes());
         constants = makeUnmodifiable(builder.getConstants());
-        methodSignatures = toUnmodifiableMethods(builder.getMethodDefinitions());
+        methodSignatures = builder.getMethodDefinitions();
         enclosedTypes = List.copyOf(builder.getEnclosedTypes());
     }
 
@@ -67,14 +65,6 @@ final class DefaultLegacyArchetype<S extends EffectiveStatement<?, ?>> implement
         return makeUnmodifiable(annotationBuilders.stream()
             .map(AnnotationTypeBuilder::build)
             .collect(Collectors.toUnmodifiableList()));
-    }
-
-    static List<MethodSignature> toUnmodifiableMethods(final List<MethodSignatureBuilder> methodBuilders) {
-        final var methods = new ArrayList<MethodSignature>(methodBuilders.size());
-        for (var methodBuilder : methodBuilders) {
-            methods.add(methodBuilder.build());
-        }
-        return makeUnmodifiable(methods);
     }
 
     @Override
