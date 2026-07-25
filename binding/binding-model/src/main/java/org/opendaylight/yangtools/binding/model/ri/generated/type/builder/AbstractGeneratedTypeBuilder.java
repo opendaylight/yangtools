@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
+import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -46,8 +47,21 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
         this.statement = requireNonNull(statement);
     }
 
-    protected List<AnnotationTypeBuilder> getAnnotations() {
-        return annotationBuilders;
+    @NonNullByDefault
+    final List<AnnotationType> getAnnotations() {
+        final var size = annotationBuilders.size();
+        return switch (size) {
+            case 0 -> List.of();
+            case 1 -> Collections.singletonList(annotationBuilders.getFirst().build());
+            case 2 -> List.of(annotationBuilders.getFirst().build(), annotationBuilders.getLast().build());
+            default -> {
+                final var tmp = new ArrayList<AnnotationType>(size);
+                for (var builder : annotationBuilders) {
+                    tmp.add(builder.build());
+                }
+                yield List.copyOf(tmp);
+            }
+        };
     }
 
     @NonNullByDefault
