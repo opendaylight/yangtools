@@ -14,12 +14,13 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
-final class GeneratedPropertyImpl extends AbstractTypeMember implements GeneratedProperty {
+public final class GeneratedPropertyImpl extends AbstractTypeMember implements GeneratedProperty {
     private final String value;
     private final boolean readOnly;
 
-    GeneratedPropertyImpl(final String name, final List<AnnotationType> annotations, final TypeMemberComment comment,
-            final AccessModifier accessModifier, final Type returnType, final boolean isReadOnly, final String value) {
+    public GeneratedPropertyImpl(final String name, final List<AnnotationType> annotations,
+            final TypeMemberComment comment, final AccessModifier accessModifier, final Type returnType,
+            final boolean isReadOnly, final String value) {
         super(name, annotations, comment, accessModifier, returnType);
         this.value = value;
         readOnly = isReadOnly;

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
+package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -18,10 +18,10 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
-class GeneratedPropertyBuilderImplTest {
+class GeneratedPropertyBuilderTest {
     @Test
     void generatedPropertyBuilderImplTest() {
-        final var generatedPropertyBuilderImpl = new GeneratedPropertyBuilderImpl("myPropertyName")
+        final var generatedPropertyBuilderImpl = new GeneratedPropertyBuilder("myPropertyName")
             .setValue("myValue")
             .setReadOnly(false)
             .setComment(null)
@@ -29,13 +29,16 @@ class GeneratedPropertyBuilderImplTest {
             .setReturnType(Types.BOOLEAN);
 
         assertEquals("""
-            GeneratedPropertyImpl [name=myPropertyName, annotations=[], comment=null, \
+            GeneratedPropertyBuilder [name=myPropertyName, annotations=[], comment=null, \
             returnType=ConcreteType{name=java.lang.Boolean}, isReadOnly=false, modifier=PUBLIC]""",
             generatedPropertyBuilderImpl.toString());
 
         var instance = generatedPropertyBuilderImpl.toInstance();
-
         assertNotNull(instance);
+        assertEquals("""
+            GeneratedPropertyImpl [name=myPropertyName, annotations=[], comment=null, \
+            returnType=ConcreteType{name=java.lang.Boolean}, isReadOnly=false, modifier=PUBLIC]""",
+            instance.toString());
 
         assertFalse(instance.isReadOnly());
         assertEquals("myValue", instance.getValue());
@@ -46,10 +49,10 @@ class GeneratedPropertyBuilderImplTest {
 
     @Test
     void generatedPropertyBuilderImplEqualsAndHashCodeTest() {
-        final var generatedPropertyBuilderImpl = new GeneratedPropertyBuilderImpl("myPropertyName");
-        final var generatedPropertyBuilderImpl2 = new GeneratedPropertyBuilderImpl("myPropertyName");
-        final var generatedPropertyBuilderImpl3 = new GeneratedPropertyBuilderImpl("myPropertyName3");
-        final var generatedPropertyBuilderImpl4 = new GeneratedPropertyBuilderImpl("myPropertyName");
+        final var generatedPropertyBuilderImpl = new GeneratedPropertyBuilder("myPropertyName");
+        final var generatedPropertyBuilderImpl2 = new GeneratedPropertyBuilder("myPropertyName");
+        final var generatedPropertyBuilderImpl3 = new GeneratedPropertyBuilder("myPropertyName3");
+        final var generatedPropertyBuilderImpl4 = new GeneratedPropertyBuilder("myPropertyName");
 
         assertNotNull(generatedPropertyBuilderImpl);
         assertNotNull(generatedPropertyBuilderImpl2);

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
+package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -18,22 +18,23 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.LegacyArchetypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 @ExtendWith(MockitoExtension.class)
-class MethodSignatureBuilderImplTest {
+class MethodSignatureBuilderTest {
     @Mock
     private EffectiveStatement<?, ?> statement;
 
     @Test
     void testCreateNewInstance() {
-        final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod");
+        final var signatureBuilderImpl = new MethodSignatureBuilder("testMethod");
         assertEquals("testMethod", signatureBuilderImpl.getName());
     }
 
     @Test
     void testSetAbstractMethod() {
-        final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod").setReturnType(Types.VOID);
+        final var signatureBuilderImpl = new MethodSignatureBuilder("testMethod").setReturnType(Types.VOID);
         signatureBuilderImpl.setAbstract(true);
         final var methodSignature = signatureBuilderImpl.build();
         assertTrue(methodSignature.isAbstract());
@@ -41,7 +42,7 @@ class MethodSignatureBuilderImplTest {
 
     @Test
     void testAddParameterMethod() {
-        final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod").setReturnType(Types.VOID);
+        final var signatureBuilderImpl = new MethodSignatureBuilder("testMethod").setReturnType(Types.VOID);
         final var ipAddressType = new LegacyArchetypeBuilder<>(
             JavaTypeName.create("org.opendaylight.yangtools.test", "IpAddress"), statement)
             .build();
@@ -52,12 +53,12 @@ class MethodSignatureBuilderImplTest {
 
     @Test
     void testHashCodeEqualsToStringMethods() {
-        final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod");
-        final var signatureBuilderImpl2 = new MethodSignatureBuilderImpl("testMethod");
-        final var signatureBuilderImpl3 = new MethodSignatureBuilderImpl("testMethod2");
-        final var signatureBuilderImpl4 = new MethodSignatureBuilderImpl(null);
+        final var signatureBuilderImpl = new MethodSignatureBuilder("testMethod");
+        final var signatureBuilderImpl2 = new MethodSignatureBuilder("testMethod");
+        final var signatureBuilderImpl3 = new MethodSignatureBuilder("testMethod2");
+        final var signatureBuilderImpl4 = new MethodSignatureBuilder(null);
         final var signatureBuilderImpl5 = signatureBuilderImpl;
-        final var signatureBuilderImpl6 = new MethodSignatureBuilderImpl("testMethod");
+        final var signatureBuilderImpl6 = new MethodSignatureBuilder("testMethod");
         final var returnType = new LegacyArchetypeBuilder<>(
             JavaTypeName.create("org.opendaylight.yangtools.test", "Address"), statement)
             .build();
