@@ -825,7 +825,7 @@ public final class SourceLinkageResolver {
             LOG.trace("Narrowing {} include {} to {} {}", module.humanName(), submoduleName.getLocalName(), origin,
                 candidate.humanName());
         }
-        module.narrowInexact(submoduleName, RevisionUnion.of(candidate.revision()));
+        module.narrowInexact(submoduleName, candidate.revision());
         return true;
     }
 
@@ -1063,7 +1063,7 @@ public final class SourceLinkageResolver {
                 loadedModule = true;
             } else {
                 // we have a match, let's see if the library has a newer one
-                final var library = libSources.takeLatestModule(name, RevisionUnion.of(required.revision()));
+                final var library = libSources.takeLatestModule(name, required.revision());
                 if (library != null) {
                     module = addRequiredModule(library);
                     loadedModule = true;
