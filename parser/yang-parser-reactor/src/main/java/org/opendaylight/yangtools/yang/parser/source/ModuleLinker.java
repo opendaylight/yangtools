@@ -289,9 +289,8 @@ final class ModuleLinker extends SourceLinker<SourceInfoRef.OfModule> {
     }
 
     @Override
-    ResolvedModuleInfo doBuild(final List<ResolvedImport> resolvedImports,
-            final List<ResolvedInclude> resolveIncludes) {
-        return new ResolvedModuleInfo(infoRef(), resolvedImports, resolveIncludes);
+    ResolvedModuleInfo doBuild(final List<ResolvedImport> imports, final List<ResolvedInclude> includes) {
+        return new ResolvedModuleInfo(infoRef(), imports, includes);
     }
 
     /**
