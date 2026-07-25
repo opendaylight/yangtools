@@ -17,8 +17,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTypeBuilder;
 
 public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
-        extends TypeBuilder, AnnotableTypeBuilder
-        permits AbstractGeneratedTypeBuilder, DataRootArchetype.Builder, GeneratedTypeBuilder {
+        extends TypeBuilder, AnnotableTypeBuilder permits AbstractGeneratedTypeBuilder, DataRootArchetype.Builder {
     /**
      * Adds a new enclosed {@link Archetype} into definition of Generated Type.
      *

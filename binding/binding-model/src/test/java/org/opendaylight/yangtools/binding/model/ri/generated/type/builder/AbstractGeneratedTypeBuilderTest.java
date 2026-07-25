@@ -24,11 +24,11 @@ class AbstractGeneratedTypeBuilderTest {
     @Mock
     private EffectiveStatement<?, ?> statement;
 
-    private CodegenGeneratedTypeBuilder<?> builder;
+    private LegacyArchetypeBuilder<?> builder;
 
     @BeforeEach
     void beforeEach() {
-        builder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
+        builder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
     }
 
     @Test

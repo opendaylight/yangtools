@@ -42,7 +42,7 @@ class MethodSignatureBuilderImplTest {
     @Test
     void testAddParameterMethod() {
         final var signatureBuilderImpl = new MethodSignatureBuilderImpl("testMethod").setReturnType(Types.VOID);
-        final var ipAddressType = new CodegenGeneratedTypeBuilder<>(
+        final var ipAddressType = new LegacyArchetypeBuilder<>(
             JavaTypeName.create("org.opendaylight.yangtools.test", "IpAddress"), statement)
             .build();
         signatureBuilderImpl.addParameter(ipAddressType, "ipAddress");
@@ -58,7 +58,7 @@ class MethodSignatureBuilderImplTest {
         final var signatureBuilderImpl4 = new MethodSignatureBuilderImpl(null);
         final var signatureBuilderImpl5 = signatureBuilderImpl;
         final var signatureBuilderImpl6 = new MethodSignatureBuilderImpl("testMethod");
-        final var returnType = new CodegenGeneratedTypeBuilder<>(
+        final var returnType = new LegacyArchetypeBuilder<>(
             JavaTypeName.create("org.opendaylight.yangtools.test", "Address"), statement)
             .build();
         signatureBuilderImpl6.setReturnType(returnType);

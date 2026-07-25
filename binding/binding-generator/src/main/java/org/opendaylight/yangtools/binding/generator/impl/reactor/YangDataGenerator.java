@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.LegacyArchetypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.YangDataRuntimeType;
@@ -105,7 +105,7 @@ abstract sealed class YangDataGenerator
     final LegacyArchetype<YangDataEffectiveStatement> createTypeImpl() {
         final var typeName = typeName();
         final var statement = statement();
-        final var builder = new CodegenGeneratedTypeBuilder<>(typeName, statement)
+        final var builder = new LegacyArchetypeBuilder<>(typeName, statement)
             .addImplementsType(BindingTypes.yangData(TypeRef.of(typeName)));
 
         addUsesInterfaces(builder);

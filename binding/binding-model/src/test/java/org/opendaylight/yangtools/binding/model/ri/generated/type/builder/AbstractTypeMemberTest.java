@@ -30,9 +30,9 @@ class AbstractTypeMemberTest {
     void testMethodsForAbstractTypeMemberBuilder() {
         final var methodSignatureBuilderImpl = new MethodSignatureBuilderImpl("TestProperty")
             .setReturnType(Types.STRING);
-        final var typeBuilderImpl = new CodegenGeneratedTypeBuilder<>(
+        final var typeBuilderImpl = new LegacyArchetypeBuilder<>(
             JavaTypeName.create("org.opendaylight.yangtools.test", "TestType"), statement);
-        final var typeBuilderImpl2 = new CodegenGeneratedTypeBuilder<>(
+        final var typeBuilderImpl2 = new LegacyArchetypeBuilder<>(
             JavaTypeName.create("org.opendaylight.yangtools.test", "TestType2"), statement);
         methodSignatureBuilderImpl.setComment(TypeMemberComment.contractOf("test comment"));
         methodSignatureBuilderImpl.setFinal(true);
