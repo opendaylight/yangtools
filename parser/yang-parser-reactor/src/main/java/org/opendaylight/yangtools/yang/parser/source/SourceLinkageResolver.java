@@ -467,7 +467,7 @@ public final class SourceLinkageResolver {
                         final var module = promoteModule(moduleName, columnEntry.getKey(), columnEntry.getValue());
                         // do not add another revision if the promoted module has includes so as not to create a new
                         // belongs-to ambiguity
-                        if (!module.sourceInfo().includes().isEmpty()) {
+                        if (!module.info().includes().isEmpty()) {
                             break;
                         }
                     }
@@ -912,7 +912,7 @@ public final class SourceLinkageResolver {
                             sb.append(", ").append(submodules.next().humanName());
                         } while (submodules.hasNext());
 
-                        final var sourceInfo = first.sourceInfo();
+                        final var sourceInfo = first.info();
                         cause = new InferenceException(sb.toString(), refOf(sourceInfo, sourceInfo.belongsTo()));
                     } else {
                         // a single required submodule: treat it as an import-without-revision and bring in the latest
@@ -924,7 +924,7 @@ public final class SourceLinkageResolver {
                             continue;
                         }
 
-                        final var sourceInfo = first.sourceInfo();
+                        final var sourceInfo = first.info();
                         cause = new InferenceException(refOf(sourceInfo, sourceInfo.belongsTo()),
                             // FIXME: 16.0.0: "Parent module %s was not found"
                             "Module %s from belongs-to was not found", parentName.getLocalName());
@@ -973,7 +973,7 @@ public final class SourceLinkageResolver {
     @NonNullByDefault
     private static InferenceException newUnresolvedParentException(final SubmoduleLinker submodule,
             final Map<RevisionUnion, ModuleLinker> modules) {
-        final var sourceInfo = submodule.sourceInfo();
+        final var sourceInfo = submodule.info();
         final var sourceId = sourceInfo.sourceId();
         final var name = sourceId.name();
         final var unlinkedModules = modules.values().stream()
@@ -1196,7 +1196,7 @@ public final class SourceLinkageResolver {
     private @Nullable SubmoduleLinker lookupSubmodule(final @NonNull Unqualified parentName,
             final @NonNull Unqualified name, final @NonNull RevisionUnion revision) {
         for (var submodule : submodulesByParentName.get(parentName)) {
-            final var sourceId = submodule.infoRef().ref().correctId();
+            final var sourceId = submodule.sourceId();
             if (name.equals(sourceId.name()) && Objects.equals(revision.revision(), sourceId.revision())) {
                 return submodule;
             }
