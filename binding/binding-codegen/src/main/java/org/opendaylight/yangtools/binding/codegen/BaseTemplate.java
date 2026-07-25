@@ -330,7 +330,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
 
     // FIXME: return a Block
     @NonNullByDefault
-    final BlockBuilder checkFieldValue(final LegacyArchetype<?> type, final GeneratedProperty property,
+    final BlockBuilder checkFieldValue(final Archetype.OfCompositeInterface<?> type, final GeneratedProperty property,
             final Restrictions restrictions, final Type actualType, final String value) {
         verify(!restrictions.isEmpty());
 

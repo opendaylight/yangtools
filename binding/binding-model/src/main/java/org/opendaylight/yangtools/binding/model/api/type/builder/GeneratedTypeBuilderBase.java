@@ -8,11 +8,10 @@
 package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTypeBuilder;
 
@@ -105,7 +104,8 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
     boolean containsMethod(String methodName);
 
     /**
-     * {@return a new immutable {@link LegacyArchetype} instance}
+     * {@return a new immutable {@link Archetype.OfCompositeInterface} instance}
      */
-    @NonNull LegacyArchetype<?> build();
+    @NonNullByDefault
+    Archetype.OfCompositeInterface<?> build();
 }

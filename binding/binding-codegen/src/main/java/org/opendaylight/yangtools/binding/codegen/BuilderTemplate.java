@@ -39,6 +39,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
@@ -53,7 +54,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
  */
 final class BuilderTemplate extends BaseTemplate {
     @NonNullByDefault
-    record Builder(LegacyArchetype<?> type) implements Template.Builder {
+    record Builder(Archetype.OfCompositeInterface<?> type) implements Template.Builder {
         Builder {
             requireNonNull(type);
         }
@@ -100,13 +101,13 @@ final class BuilderTemplate extends BaseTemplate {
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
     //        implementations of its methods
-    final @NonNull LegacyArchetype<?> targetType;
+    final Archetype.@NonNull OfCompositeInterface<?> targetType;
 
     private final GeneratedClass.@NonNull Nested implJavaType;
 
     @NonNullByDefault
     private BuilderTemplate(final GeneratedClass.TopLevel javaType, final GeneratedClass.Nested implJavaType,
-            final LegacyArchetype<?> targetType, final Set<BuilderGeneratedProperty> properties,
+            final Archetype.OfCompositeInterface<?> targetType, final Set<BuilderGeneratedProperty> properties,
             final @Nullable ParameterizedType augmentType, final @Nullable KeyArchetype keyType) {
         super(javaType);
         this.implJavaType = requireNonNull(implJavaType);
@@ -390,7 +391,7 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     @NonNullByDefault
-    private BlockBuilder generateMethodFieldsFromComment(final LegacyArchetype<?> type) {
+    private BlockBuilder generateMethodFieldsFromComment(final Archetype.OfCompositeInterface<?> type) {
         // FIXME: create a specialized JavadocBuilder to help with this
         final var bb = newBlockBuilder().txt("""
                     /**
@@ -414,13 +415,13 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Method is used to find out if given type implements any interface from uses.
      */
-    private boolean hasImplementsFromUses(final LegacyArchetype<?> type) {
+    private boolean hasImplementsFromUses(final Archetype.OfCompositeInterface<?> type) {
         return getAllIfcs(type).stream()
             .anyMatch(impl -> impl instanceof LegacyArchetype<?> genType && hasNonDefaultMethods(genType));
     }
 
     private @Nullable BlockBuilder generateIfCheck(final Type impl, final List<Type> done) {
-        return !(impl instanceof LegacyArchetype<?> archetype) || !hasNonDefaultMethods(archetype) ? null
+        return !(impl instanceof Archetype.OfCompositeInterface<?> archetype) || !hasNonDefaultMethods(archetype) ? null
             : newBlockBuilder()
                 .str("if (arg instanceof ").str(importedName(archetype)).str(" castArg)").oB()
                     .blk(printPropertySetter(archetype))
@@ -484,7 +485,8 @@ final class BuilderTemplate extends BaseTemplate {
         return getter;
     }
 
-    private static @Nullable MethodSignature getterByName(final LegacyArchetype<?> implType, final String getterName) {
+    private static @Nullable MethodSignature getterByName(final Archetype.OfCompositeInterface<?> implType,
+            final String getterName) {
         final var getter = getterByName(nonDefaultMethods(implType), getterName);
         if (getter != null) {
             return getter;
@@ -512,7 +514,7 @@ final class BuilderTemplate extends BaseTemplate {
         return !(type2 instanceof ParameterizedType);
     }
 
-    private static List<Type> getBaseIfcs(final LegacyArchetype<?> type) {
+    private static List<Type> getBaseIfcs(final Archetype.OfCompositeInterface<?> type) {
         final var baseIfcs = new ArrayList<Type>();
         for (var ifc : type.getImplements()) {
             if (ifc instanceof LegacyArchetype<?> genType && hasNonDefaultMethods(genType)) {
@@ -523,7 +525,7 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     private Set<Type> getAllIfcs(final Type type) {
-        if (!(type instanceof LegacyArchetype<?> ifc)) {
+        if (!(type instanceof Archetype.OfCompositeInterface<?> ifc)) {
             return Set.of();
         }
 
@@ -943,25 +945,25 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     @NonNullByDefault
-    static boolean hasNonDefaultMethods(final LegacyArchetype<?> type) {
+    static boolean hasNonDefaultMethods(final Archetype.OfCompositeInterface<?> type) {
         return type.getMethodDefinitions().stream().anyMatch(def -> !def.isDefault());
     }
 
     @NonNullByDefault
-    static Collection<MethodSignature> nonDefaultMethods(final LegacyArchetype<?> type) {
+    static Collection<MethodSignature> nonDefaultMethods(final Archetype.OfCompositeInterface<?> type) {
         return Collections2.filter(type.getMethodDefinitions(), def -> !def.isDefault());
     }
 
     /**
      * Check if the {@code type} represents non-presence container.
      *
-     * @param type {@link LegacyArchetype} to be checked if represents container without presence statement.
+     * @param type the archetype to be checked if represents container without presence statement.
      * @return {@code true} if specified {@code type} is a container without presence statement,
      *     {@code false} otherwise.
      */
     // FIXME: YANGTOOLS-1876: remove this method
     @NonNullByDefault
-    static boolean isNonPresenceContainer(final LegacyArchetype<?> type) {
+    static boolean isNonPresenceContainer(final Archetype.OfCompositeInterface<?> type) {
         return type.statement() instanceof ContainerEffectiveStatement container
             && container.presenceStatement() == null;
     }

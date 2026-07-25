@@ -311,13 +311,17 @@ class UsesTest {
         DataRootArchetype groupingUsesModulData = null;
 
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype<?> archetype) {
-                if (archetype.simpleName().equals("GroupingModulTest")) {
-                    groupingModulTest = archetype;
+            switch (genType.simpleName()) {
+                case "GroupingModulTest" -> {
+                    groupingModulTest = assertInstanceOf(LegacyArchetype.class, genType);
                     groupingModulTestCounter++;
-                } else if (archetype.simpleName().equals("GroupingUsesModulData")) {
-                    groupingUsesModulData = assertInstanceOf(DataRootArchetype.class, archetype);
+                }
+                case "GroupingUsesModulData" -> {
+                    groupingUsesModulData = assertInstanceOf(DataRootArchetype.class, genType);
                     groupingUsesModulDataCounter++;
+                }
+                default -> {
+                    // no-op
                 }
             }
         }

@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -33,7 +34,7 @@ class BindingGeneratorImplTest {
         final var generateTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
                 "/binding-generator-impl-test/choice-test.yang"));
 
-        LegacyArchetype<?> choiceTestData = null;
+        DataRootArchetype choiceTestData = null;
         LegacyArchetype<?> myRootContainer = null;
         LegacyArchetype<?> myList = null;
         LegacyArchetype<?> myContainer = null;
@@ -41,17 +42,15 @@ class BindingGeneratorImplTest {
         LegacyArchetype<?> myContainer2 = null;
 
         for (var type : generateTypes) {
-            if (type instanceof LegacyArchetype<?> archetype) {
-                switch (type.simpleName()) {
-                    case "ChoiceTestData" -> choiceTestData = archetype;
-                    case "Myrootcontainer" -> myRootContainer = archetype;
-                    case "Mylist" -> myList = archetype;
-                    case "Mylist2" -> myList2 = archetype;
-                    case "Mycontainer" -> myContainer = archetype;
-                    case "Mycontainer2" -> myContainer2 = archetype;
-                    default -> {
-                        // ignore
-                    }
+            switch (type.simpleName()) {
+                case "ChoiceTestData" -> choiceTestData = assertInstanceOf(DataRootArchetype.class, type);
+                case "Myrootcontainer" -> myRootContainer = assertInstanceOf(LegacyArchetype.class, type);
+                case "Mylist" -> myList = assertInstanceOf(LegacyArchetype.class, type);
+                case "Mylist2" -> myList2 = assertInstanceOf(LegacyArchetype.class, type);
+                case "Mycontainer" -> myContainer = assertInstanceOf(LegacyArchetype.class, type);
+                case "Mycontainer2" -> myContainer2 = assertInstanceOf(LegacyArchetype.class, type);
+                default -> {
+                    // ignore
                 }
             }
         }
