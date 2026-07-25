@@ -14,7 +14,6 @@ import com.google.common.base.VerifyException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -126,7 +125,7 @@ final class ModuleLinker extends SourceLinker {
 
         @Override
         public RevisionUnion revision() {
-            return RevisionUnion.of(submodule.revision());
+            return submodule.revision();
         }
     }
 
@@ -140,7 +139,7 @@ final class ModuleLinker extends SourceLinker {
         }
 
         ResolvedRevision toResolved(final SubmoduleLinker submodule) {
-            if (!Objects.equals(revision.revision(), submodule.revision())) {
+            if (!revision.equals(submodule.revision())) {
                 throw new VerifyException("Attempted to resolve " + this + " with " + submodule.humanName());
             }
             return new ResolvedRevision(submodule, exactness);
