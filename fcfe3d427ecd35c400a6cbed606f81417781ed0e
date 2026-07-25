@@ -16,6 +16,24 @@
       "message": "Just a thought, but how about returning a Collection or a Stream here instead of Iterator? With iterator we have to iterate over the elements through \"while (it.hasNext())\". With either one of the above we could iterate using forEach.",
       "revId": "fcfe3d427ecd35c400a6cbed606f81417781ed0e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "09cc60bb_8d8e4184",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/ModuleLinker.java",
+        "patchSetId": 11
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-25T10:42:49Z",
+      "side": 1,
+      "message": "Already possible with Iterator.forEachRemaining(). Given there is a single caller, we can return a stream and use a lambda.",
+      "parentUuid": "4456edb6_def44db2",
+      "revId": "fcfe3d427ecd35c400a6cbed606f81417781ed0e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
