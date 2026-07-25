@@ -800,21 +800,24 @@ public final class SourceLinkageResolver {
     @NonNullByDefault
     private boolean narrowInexactInclude(final ModuleLinker module, final Unqualified submoduleName)
             throws ReactorException {
-        // long-winded way of extracting an only unlinked candidate with matching a belongs-to matching the module
+        // all unlinked candidates with a matching name and belongs-to
         final var candidates = submodulesByParentName.get(module.name()).stream()
             .filter(submodule -> submodule.parent() == null && submoduleName.equals(submodule.name()))
             .iterator();
+
         final SubmoduleLinker candidate;
         final String origin;
         if (candidates.hasNext()) {
             candidate = candidates.next();
             if (candidates.hasNext()) {
-                // there is another candidate, skip
+                // more than one candidate: skip
                 return false;
             }
+
+            // sole candidate: pick it up
             origin = "required";
         } else {
-            // No candidates: look into library for a match
+            // no candidates: look into library for a match
             candidate = promoteLatestSubmodule(module, submoduleName);
             origin = "library";
         }
