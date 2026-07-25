@@ -31,16 +31,6 @@ public interface TypeMember {
     AccessModifier getAccessModifier();
 
     /**
-     * {@return {@code true} if member is declared as static}
-     */
-    boolean isStatic();
-
-    /**
-     * {@return {@code true} if member is declared as final}
-     */
-    boolean isFinal();
-
-    /**
      * {@return the returning {@link Type} of member}
      */
     @NonNull Type getReturnType();

@@ -24,23 +24,19 @@ class GeneratedPropertyBuilderImplTest {
         final var generatedPropertyBuilderImpl = new GeneratedPropertyBuilderImpl("myPropertyName")
             .setValue("myValue")
             .setReadOnly(false)
-            .setStatic(true)
             .setComment(null)
-            .setFinal(true)
             .setAccessModifier(AccessModifier.PUBLIC)
             .setReturnType(Types.BOOLEAN);
 
         assertEquals("""
             GeneratedPropertyImpl [name=myPropertyName, annotations=[], comment=null, \
-            returnType=ConcreteType{name=java.lang.Boolean}, isFinal=true, isReadOnly=false, modifier=PUBLIC]""",
+            returnType=ConcreteType{name=java.lang.Boolean}, isReadOnly=false, modifier=PUBLIC]""",
             generatedPropertyBuilderImpl.toString());
 
         var instance = generatedPropertyBuilderImpl.toInstance();
 
         assertNotNull(instance);
 
-        assertTrue(instance.isFinal());
-        assertTrue(instance.isStatic());
         assertFalse(instance.isReadOnly());
         assertEquals("myValue", instance.getValue());
         assertNull(instance.getComment());

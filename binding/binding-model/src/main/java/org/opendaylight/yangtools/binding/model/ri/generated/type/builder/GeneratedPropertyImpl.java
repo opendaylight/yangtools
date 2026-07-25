@@ -19,21 +19,20 @@ final class GeneratedPropertyImpl extends AbstractTypeMember implements Generate
     private final boolean readOnly;
 
     GeneratedPropertyImpl(final String name, final List<AnnotationType> annotations, final TypeMemberComment comment,
-            final AccessModifier accessModifier, final Type returnType, final boolean isFinal, final boolean isStatic,
-            final boolean isReadOnly, final String value) {
-        super(name, annotations, comment, accessModifier, returnType, isFinal, isStatic);
+            final AccessModifier accessModifier, final Type returnType, final boolean isReadOnly, final String value) {
+        super(name, annotations, comment, accessModifier, returnType);
         this.value = value;
-        this.readOnly = isReadOnly;
+        readOnly = isReadOnly;
     }
 
     @Override
     public String getValue() {
-        return this.value;
+        return value;
     }
 
     @Override
     public boolean isReadOnly() {
-        return this.readOnly;
+        return readOnly;
     }
 
     @Override
@@ -43,7 +42,6 @@ final class GeneratedPropertyImpl extends AbstractTypeMember implements Generate
             .append(", annotations=").append(getAnnotations())
             .append(", comment=").append(getComment())
             .append(", returnType=").append(getReturnType())
-            .append(", isFinal=").append(isFinal())
             .append(", isReadOnly=").append(readOnly)
             .append(", modifier=").append(getAccessModifier())
             .append(']')

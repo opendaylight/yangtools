@@ -274,8 +274,6 @@ sealed class InterfaceTemplate<T extends Archetype.@NonNull OfCompositeInterface
             final BlockBuilder blk;
             if (method.isDefault()) {
                 blk = generateDefaultMethod(method);
-            } else if (method.isStatic()) {
-                blk = null;
             } else if (method.getParameters().isEmpty() && isGetterMethodName(method.getName())) {
                 blk = generateAccessorMethod(method);
             } else if (method.getParameters().isEmpty() && isNonnullMethodName(method.getName())) {

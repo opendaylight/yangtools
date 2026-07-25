@@ -23,19 +23,15 @@ abstract class AbstractTypeMember implements TypeMember {
     private final TypeMemberComment comment;
     private final @NonNull Type returnType;
     private final @NonNull List<AnnotationType> annotations;
-    private final boolean isFinal;
-    private final boolean isStatic;
     private final AccessModifier accessModifier;
 
     AbstractTypeMember(final String name, final List<AnnotationType> annotations, final TypeMemberComment comment,
-            final AccessModifier accessModifier, final Type returnType, final boolean isFinal, final boolean isStatic) {
+            final AccessModifier accessModifier, final Type returnType) {
         this.name = requireNonNull(name);
         this.annotations = requireNonNull(annotations);
         this.comment = comment;
         this.accessModifier = accessModifier;
         this.returnType = requireNonNull(returnType);
-        this.isFinal = isFinal;
-        this.isStatic = isStatic;
     }
 
     @Override
@@ -61,16 +57,6 @@ abstract class AbstractTypeMember implements TypeMember {
     @Override
     public Type getReturnType() {
         return returnType;
-    }
-
-    @Override
-    public boolean isFinal() {
-        return isFinal;
-    }
-
-    @Override
-    public boolean isStatic() {
-        return isStatic;
     }
 
     @Override

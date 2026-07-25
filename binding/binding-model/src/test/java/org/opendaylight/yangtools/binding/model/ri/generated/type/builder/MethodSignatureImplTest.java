@@ -32,22 +32,12 @@ class MethodSignatureImplTest {
         var name = "customMethod";
         final var comment = TypeMemberComment.contractOf("This is just a comment");
         final var accessModifier = AccessModifier.PUBLIC;
-        boolean isFinal = false;
-        boolean isAbstract = false;
-        boolean isStatic = false;
 
-        signature1 = new MethodSignatureImpl(name, List.of(), comment,
-                accessModifier, Types.STRING, List.of(), isFinal, isAbstract,
-                isStatic);
-        signature2 = new MethodSignatureImpl(name, List.of(), comment,
-                accessModifier, Types.STRING, List.of(), isFinal, isAbstract,
-                isStatic);
-        signature3 = new MethodSignatureImpl(name, List.of(), comment,
-                accessModifier, Types.BOOLEAN, List.of(), isFinal, isAbstract,
-                isStatic);
-        signature4 = new MethodSignatureImpl("otherMethod", List.of(), comment,
-                accessModifier, Types.BOOLEAN, List.of(), isFinal, isAbstract,
-                isStatic);
+        signature1 = new MethodSignatureImpl(name, List.of(), comment, accessModifier, Types.STRING, List.of(), false);
+        signature2 = new MethodSignatureImpl(name, List.of(), comment, accessModifier, Types.STRING, List.of(), false);
+        signature3 = new MethodSignatureImpl(name, List.of(), comment, accessModifier, Types.BOOLEAN, List.of(), false);
+        signature4 = new MethodSignatureImpl("otherMethod", List.of(), comment, accessModifier, Types.BOOLEAN,
+            List.of(), false);
 
         hash1 = signature1.hashCode();
         hash4 = signature4.hashCode();

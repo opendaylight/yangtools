@@ -28,16 +28,15 @@ final class MethodSignatureImpl extends AbstractTypeMember implements MethodSign
     @VisibleForTesting
     MethodSignatureImpl(final String name, final List<AnnotationType> annotations,
             final TypeMemberComment comment, final AccessModifier accessModifier, final Type returnType,
-            final List<Parameter> params, final boolean isFinal, final boolean isAbstract, final boolean isStatic) {
-        this(name, annotations, comment, accessModifier, returnType, params, isFinal, isAbstract, isStatic, false,
-            ValueMechanics.NORMAL);
+            final List<Parameter> params, final boolean isAbstract) {
+        this(name, annotations, comment, accessModifier, returnType, params, isAbstract, false, ValueMechanics.NORMAL);
     }
 
     MethodSignatureImpl(final String name, final List<AnnotationType> annotations,
             final TypeMemberComment comment, final AccessModifier accessModifier, final Type returnType,
-            final List<Parameter> params, final boolean isFinal, final boolean isAbstract, final boolean isStatic,
-            final boolean isDefault, final ValueMechanics mechanics) {
-        super(name, annotations, comment, accessModifier, returnType, isFinal, isStatic);
+            final List<Parameter> params, final boolean isAbstract, final boolean isDefault,
+            final ValueMechanics mechanics) {
+        super(name, annotations, comment, accessModifier, returnType);
         this.params = params;
         this.isAbstract = isAbstract;
         this.isDefault = isDefault;
