@@ -256,9 +256,9 @@ public final class SourceLinkageResolver {
      * Details about the origin for a request to promote a module.
      */
     @NonNullByDefault
-    private record ModulePromotion(SourceIdentifier sourceId, Import dependency) {
+    private record ModulePromotion(SourceLinker source, Import dependency) {
         ModulePromotion {
-            requireNonNull(sourceId);
+            requireNonNull(source);
             requireNonNull(dependency);
         }
     }
@@ -841,7 +841,7 @@ public final class SourceLinkageResolver {
                 final var existing = modulesByName.get(name, revision);
                 if (existing == null) {
                     // just add to missing
-                    missingModules.row(name).putIfAbsent(revision, new ModulePromotion(source.sourceId(), dependency));
+                    missingModules.row(name).putIfAbsent(revision, new ModulePromotion(source, dependency));
                     continue;
                 }
 
@@ -1052,7 +1052,7 @@ public final class SourceLinkageResolver {
                 // no match in required modules, promote from library or fail
                 final var library = libSources.takeLatestModule(name);
                 if (library == null) {
-                    throw newModuleNotFoundException(source.sourceId(), dependency);
+                    throw source.newModuleNotFoundException(dependency);
                 }
                 module = addRequiredModule(library);
                 loadedModule = true;
@@ -1075,23 +1075,13 @@ public final class SourceLinkageResolver {
     }
 
     @NonNullByDefault
-    private static ReactorException newModuleNotFoundException(final SourceIdentifier sourceId,
-            final Import dependency) {
-        final var repRef = dependency.sourceRef();
-        return new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
-            new InferenceException(repRef != null ? repRef : sourceId.toReference(), "Imported module %s was not found",
-                // FIXME: 16.0.0: formatRevision(dependency.revision())
-                dependency.name().getLocalName()));
-    }
-
-    @NonNullByDefault
     private ModuleLinker promoteModule(final Unqualified name, final RevisionUnion revision,
             final ModulePromotion origin) throws ReactorException {
-        final var source = libSources.takeModule(name, revision);
-        if (source == null) {
-            throw newModuleNotFoundException(origin.sourceId, origin.dependency);
+        final var fromLibrary = libSources.takeModule(name, revision);
+        if (fromLibrary == null) {
+            throw origin.source.newModuleNotFoundException(origin.dependency);
         }
-        return addRequiredModule(source);
+        return addRequiredModule(fromLibrary);
     }
 
     @NonNullByDefault
