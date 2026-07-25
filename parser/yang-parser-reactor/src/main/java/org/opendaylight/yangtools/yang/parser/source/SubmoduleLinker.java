@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedBelongsTo;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
@@ -37,13 +38,13 @@ final class SubmoduleLinker extends SourceLinker {
     }
 
     @Override
-    SourceInfoRef.OfSubmodule infoRef() {
-        return infoRef;
+    SourceInfo.Submodule info() {
+        return infoRef.info();
     }
 
     @Override
-    SourceInfo.Submodule sourceInfo() {
-        return infoRef.info();
+    SourceRef.ToSubmodule ref() {
+        return infoRef.ref();
     }
 
     /**
@@ -51,7 +52,7 @@ final class SubmoduleLinker extends SourceLinker {
      */
     @NonNullByDefault
     Unqualified parentName() {
-        return sourceInfo().belongsTo().name();
+        return info().belongsTo().name();
     }
 
     /**
@@ -99,9 +100,8 @@ final class SubmoduleLinker extends SourceLinker {
         if (local == null) {
             throw new VerifyException("Unresolved belongs-to in " + this);
         }
-        final var parentRef = local.infoRef();
         return new ResolvedSubmoduleInfo(infoRef,
-            new ResolvedBelongsTo(infoRef.info().belongsTo(), parentRef.ref(),
-                parentRef.info().moduleName().getModule()), imports, includes);
+            new ResolvedBelongsTo(infoRef.info().belongsTo(), local.ref(), local.info().moduleName().getModule()),
+            imports, includes);
     }
 }
