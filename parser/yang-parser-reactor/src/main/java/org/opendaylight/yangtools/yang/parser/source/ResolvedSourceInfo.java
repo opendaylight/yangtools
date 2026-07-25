@@ -158,6 +158,17 @@ public abstract sealed class ResolvedSourceInfo implements Immutable permits Res
                 new InferenceException(depRef != null ? depRef : sourceId.toReference(), format, args));
         }
 
+        /**
+         * {@return a new {@link ReactorException} describing a failure to infer the linkage of an import dependency
+         * defined in the source for which this builder was instantiated}
+         * @param dependency the dependency
+         */
+        final ReactorException newModuleNotFoundException(final SourceDependency.Import dependency) {
+            return newLinkageInferenceException(dependency, "Imported module %s was not found",
+                // FIXME: 16.0.0: formatRevision(dependency.revision())
+                dependency.name().getLocalName());
+        }
+
         @Override
         public abstract String toString();
     }
