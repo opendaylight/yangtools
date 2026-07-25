@@ -49,17 +49,15 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
  * <p>This class is an implementation detail of {@link SourceLinkageResolver} and is expected to be used in the context
  * of a single thread executing {@link SourceLinkageResolver#resolveInvolvedSources(Set, Set)}.
  */
-// FIXME: Reconsider class naming: we are always referring: we refer to results as ResolvedSourceInfo,
-//        ResolvedModuleInfo and ResolvedSubmoduleInfo. ResolvedSourceBuilder.{ForModule,ForSubmodule} is quite
-//        a mouthful, rename to this class to SourceLinker and specializations to {Module,Submodule}Linker.
-abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends ResolvedSourceInfo.Builder {
+// FIXME: rename inner classes to top-level {Module,Submodule}Linker
+abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSourceInfo.Builder {
     /**
-     * A {@link ResolvedSourceBuilder} for a YANG {@code module}. It provides a meeting point for resolving
-     * {@code include} statements to a consistent set of sources, such that violations of RFC6020/RFC7950 section 7.1.6
-     * requirement that {@code Multiple revisions of the same submodule MUST NOT be included.} are reliably reported.
+     * A {@link SourceLinker} for a YANG {@code module}. It provides a meeting point for resolving {@code include}
+     * statements to a consistent set of sources, such that violations of RFC6020/RFC7950 section 7.1.6 requirement that
+     * {@code Multiple revisions of the same submodule MUST NOT be included.} are reliably reported.
      */
     @NonNullByDefault
-    static final class ForModule extends ResolvedSourceBuilder<SourceInfoRef.OfModule> {
+    static final class ForModule extends SourceLinker<SourceInfoRef.OfModule> {
         /**
          * The source of an {@link ExactRevision}.
          */
@@ -243,10 +241,10 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
         /**
          * Record a requirement for this module to {@code Include} a set of submodule implied by a source.
          *
-         * @param source the {@link ResolvedSourceBuilder} to the source of requirements
+         * @param source the {@link SourceLinker} to the source of requirements
          * @throws ReactorException if a requirement conflicts with a previous requirement
          */
-        private void requireIncludes(final ResolvedSourceBuilder<?> source) throws ReactorException {
+        private void requireIncludes(final SourceLinker<?> source) throws ReactorException {
             final var it = source.missingIncludes();
             while (it.hasNext()) {
                 requireInclude(source, it.next());
@@ -256,12 +254,11 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
         /**
          * Record a requirement for this module to {@code Include} a submodule.
          *
-         * @param source the {@link ResolvedSourceBuilder} of requirements
+         * @param source the {@link SourceLinker} of requirements
          * @param dependency the {@link Include}
          * @throws ReactorException if the requirement conflicts with a previous requirement or cannot be added
          */
-        private void requireInclude(final ResolvedSourceBuilder<?> source, final Include dependency)
-                throws ReactorException {
+        private void requireInclude(final SourceLinker<?> source, final Include dependency) throws ReactorException {
             final var name = dependency.name();
             final var revision = dependency.revision();
             if (revision == null) {
@@ -330,7 +327,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
          * @param dependency the dependency being resolved
          * @throws ReactorException if the source cannot be add the dependency to this module
          */
-        void checkInclude(final ResolvedSourceBuilder<?> source, final Include dependency) throws ReactorException {
+        void checkInclude(final SourceLinker<?> source, final Include dependency) throws ReactorException {
             switch (source) {
                 case ForModule module -> verify(module == this);
                 case ForSubmodule submodule -> {
@@ -349,9 +346,9 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
     }
 
     /**
-     * A {@link ResolvedSourceBuilder} for a YANG {@code submodule}.
+     * A {@link SourceLinker} for a YANG {@code submodule}.
      */
-    static final class ForSubmodule extends ResolvedSourceBuilder<SourceInfoRef.OfSubmodule> {
+    static final class ForSubmodule extends SourceLinker<SourceInfoRef.OfSubmodule> {
         // FIXME: internal state here: we go from unresolved -> resolved -> built, and we would like to throw away
         //        internal state when the product is built
         private @Nullable ForModule parent;
@@ -436,7 +433,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
     private DependencyLinker<Include, ForSubmodule> includes;
 
     @NonNullByDefault
-    private ResolvedSourceBuilder(final R infoRef) {
+    private SourceLinker(final R infoRef) {
         this.infoRef = requireNonNull(infoRef);
 
         final var info = infoRef.info();
@@ -512,8 +509,8 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
      * @return the reverse sequence of sources through which the specified module is imported, or {@code null} when it
      *         is not imported
      */
-    private static @Nullable ArrayList<@NonNull ResolvedSourceBuilder<?>> importPathOf(
-            final @NonNull HashSet<ResolvedSourceBuilder<?>> visited, final @NonNull ResolvedSourceBuilder<?> source,
+    private static @Nullable ArrayList<@NonNull SourceLinker<?>> importPathOf(
+            final @NonNull HashSet<SourceLinker<?>> visited, final @NonNull SourceLinker<?> source,
             final @NonNull ForModule module) {
         // only process a source if we have not visited it yet
         if (visited.add(source)) {
@@ -521,7 +518,7 @@ abstract sealed class ResolvedSourceBuilder<R extends SourceInfoRef> extends Res
             while (impIt.hasNext()) {
                 final var target = impIt.next();
                 if (target.equals(module)) {
-                    final var ret = new ArrayList<ResolvedSourceBuilder<?>>();
+                    final var ret = new ArrayList<SourceLinker<?>>();
                     ret.add(source);
                     return ret;
                 }
