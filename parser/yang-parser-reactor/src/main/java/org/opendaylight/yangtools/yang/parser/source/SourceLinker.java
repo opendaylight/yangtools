@@ -180,7 +180,7 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
     }
 
     @NonNullByDefault
-    abstract ResolvedSourceInfo doBuild(List<ResolvedImport> resolvedImports, List<ResolvedInclude> resolveIncludes);
+    abstract ResolvedSourceInfo doBuild(List<ResolvedImport> imports, List<ResolvedInclude> includes);
 
     @Override
     public final String toString() {

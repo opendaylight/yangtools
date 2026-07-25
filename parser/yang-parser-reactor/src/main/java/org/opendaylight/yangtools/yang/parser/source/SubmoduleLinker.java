@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.source;
 
 import com.google.common.base.VerifyException;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
@@ -83,8 +82,8 @@ final class SubmoduleLinker extends SourceLinker<SourceInfoRef.OfSubmodule> {
     }
 
     @Override
-    ResolvedSubmoduleInfo doBuild(final List<@NonNull ResolvedImport> resolvedImports,
-            final List<@NonNull ResolvedInclude> resolveIncludes) {
+    @NonNullByDefault
+    ResolvedSubmoduleInfo doBuild(final List<ResolvedImport> imports, final List<ResolvedInclude> includes) {
         final var local = parent;
         if (local == null) {
             throw new VerifyException("Unresolved belongs-to in " + this);
@@ -93,6 +92,6 @@ final class SubmoduleLinker extends SourceLinker<SourceInfoRef.OfSubmodule> {
         final var infoRef = infoRef();
         return new ResolvedSubmoduleInfo(infoRef,
             new ResolvedBelongsTo(infoRef.info().belongsTo(), parentRef.ref(),
-                parentRef.info().moduleName().getModule()), resolvedImports, resolveIncludes);
+                parentRef.info().moduleName().getModule()), imports, includes);
     }
 }
