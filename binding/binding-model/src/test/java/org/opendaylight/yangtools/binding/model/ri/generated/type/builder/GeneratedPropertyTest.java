@@ -15,12 +15,13 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
 class GeneratedPropertyTest {
     @Test
     void testMethodsForGeneratedPropertyBuilderImpl() {
-        final var propertyBuilderImpl = new GeneratedPropertyBuilderImpl("testProperty")
+        final var propertyBuilderImpl = new GeneratedPropertyBuilder("testProperty")
             .setReturnType(Types.STRING)
             .setValue("new value")
             .setReadOnly(true);

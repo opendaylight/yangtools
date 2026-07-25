@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2026 PANTHEON.tech, s.r.o.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -7,11 +8,20 @@
  */
 package org.opendaylight.yangtools.binding.model.api.type.builder;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature.Parameter;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.MethodSignatureImpl;
+import org.opendaylight.yangtools.util.LazyCollections;
 
 /**
  * Method Signature Builder serves solely for building Method Signature and
@@ -27,26 +37,47 @@ import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
  *
  * @see MethodSignature
  */
-public interface MethodSignatureBuilder extends TypeMemberBuilder<MethodSignatureBuilder> {
+public final class MethodSignatureBuilder extends TypeMemberBuilder<MethodSignatureBuilder> {
+    private List<MethodSignature.Parameter> parameters = List.of();
+    private ValueMechanics mechanics = ValueMechanics.NORMAL;
+    private boolean isAbstract;
+    private boolean isDefault;
+
+    public MethodSignatureBuilder(final String name) {
+        super(name);
+    }
+
     /**
      * Sets the flag for declaration of method as abstract or non abstract. If the flag {@code isAbstract == true}
      * the instantiated Method Signature MUST have return value for {@link MethodSignature#isAbstract()} also equals to
      * <code>true</code>.
      *
-     * @param isAbstract is abstract flag
+     * @param newIsAbstract is abstract flag
      */
-    MethodSignatureBuilder setAbstract(boolean isAbstract);
+    @NonNullByDefault
+    public MethodSignatureBuilder setAbstract(final boolean newIsAbstract) {
+        isAbstract = newIsAbstract;
+        return this;
+    }
 
     /**
      * Sets the flag indicating whether this is a {@code default interface} method.
      *
-     * @param isDefault true if this signature is to represent a default method.
+     * @param newIsDefault true if this signature is to represent a default method.
      * @return this builder
      */
-    MethodSignatureBuilder setDefault(boolean isDefault);
+    @NonNullByDefault
+    public MethodSignatureBuilder setDefault(final boolean newIsDefault) {
+        isDefault = newIsDefault;
+        return this;
+    }
 
     @Beta
-    MethodSignatureBuilder setMechanics(ValueMechanics mechanics);
+    @NonNullByDefault
+    public MethodSignatureBuilder setMechanics(final ValueMechanics newMechanics) {
+        mechanics = requireNonNull(newMechanics);
+        return this;
+    }
 
     /**
      * Adds Parameter into the List of method parameters. Neither the Name or Type of parameter can be {@code null}.
@@ -58,7 +89,11 @@ public interface MethodSignatureBuilder extends TypeMemberBuilder<MethodSignatur
      * @param type Parameter Type
      * @param name Parameter Name
      */
-    MethodSignatureBuilder addParameter(Type type, String name);
+    @NonNullByDefault
+    public MethodSignatureBuilder addParameter(final Type type, final String name) {
+        parameters = LazyCollections.lazyAdd(parameters, new Parameter(name, type));
+        return this;
+    }
 
     /**
      * Returns <code>new</code> <i>immutable</i> instance of Method Signature. <br>
@@ -68,5 +103,42 @@ public interface MethodSignatureBuilder extends TypeMemberBuilder<MethodSignatur
      *
      * @return <code>new</code> <i>immutable</i> instance of Method Signature.
      */
-    MethodSignature build();
+    @NonNullByDefault
+    public MethodSignature build() {
+        final var paramSize = parameters.size();
+        final var params = switch (paramSize) {
+            case 0 -> List.<MethodSignature.Parameter>of();
+            case 1 -> Collections.singletonList(parameters.getFirst());
+            default -> List.copyOf(parameters);
+        };
+
+        return new MethodSignatureImpl(getName(), toAnnotationTypes(), getComment(), getAccessModifier(),
+            getReturnType(), params, isAbstract, isDefault, mechanics);
+    }
+
+    @Override
+    MethodSignatureBuilder thisInstance() {
+        return this;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getName(), parameters, getReturnType());
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return this == obj || obj instanceof MethodSignatureBuilder other && Objects.equals(getName(), other.getName())
+            && Objects.equals(parameters, other.parameters) && Objects.equals(getReturnType(), other.getReturnType());
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder().append("MethodSignatureBuilderImpl [name=").append(getName())
+            .append(", returnType=").append(getReturnType())
+            .append(", parameters=").append(parameters)
+            .append(", annotationBuilders=").append(getAnnotationBuilders())
+            .append(", comment=").append(getComment())
+            .append(']').toString();
+    }
 }

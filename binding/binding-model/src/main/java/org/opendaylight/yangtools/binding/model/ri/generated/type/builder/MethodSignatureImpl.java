@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
-final class MethodSignatureImpl extends AbstractTypeMember implements MethodSignature {
+public final class MethodSignatureImpl extends AbstractTypeMember implements MethodSignature {
     private final List<Parameter> params;
     private final @NonNull ValueMechanics mechanics;
     private final boolean isAbstract;
@@ -32,7 +32,7 @@ final class MethodSignatureImpl extends AbstractTypeMember implements MethodSign
         this(name, annotations, comment, accessModifier, returnType, params, isAbstract, false, ValueMechanics.NORMAL);
     }
 
-    MethodSignatureImpl(final String name, final List<AnnotationType> annotations,
+    public MethodSignatureImpl(final String name, final List<AnnotationType> annotations,
             final TypeMemberComment comment, final AccessModifier accessModifier, final Type returnType,
             final List<Parameter> params, final boolean isAbstract, final boolean isDefault,
             final ValueMechanics mechanics) {

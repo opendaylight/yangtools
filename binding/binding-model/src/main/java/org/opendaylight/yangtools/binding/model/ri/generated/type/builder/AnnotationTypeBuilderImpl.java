@@ -26,12 +26,12 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
 
-final class AnnotationTypeBuilderImpl extends AbstractTypeBuilder implements AnnotationTypeBuilder {
+public final class AnnotationTypeBuilderImpl extends AbstractTypeBuilder implements AnnotationTypeBuilder {
     private List<AnnotationTypeBuilder> annotationBuilders = List.of();
     private List<Parameter> parameters = List.of();
 
     @NonNullByDefault
-    AnnotationTypeBuilderImpl(final JavaTypeName typeName) {
+    public AnnotationTypeBuilderImpl(final JavaTypeName typeName) {
         super(typeName);
     }
 
