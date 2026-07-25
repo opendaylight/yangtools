@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.RevisionUnion;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
@@ -82,6 +83,20 @@ public abstract sealed class ResolvedSourceInfo implements Immutable permits Res
          */
         abstract SourceRef ref();
 
+        /**
+         * {@return the name of the source for which this builder was instantiated}
+         */
+        final Unqualified name() {
+            return sourceId().name();
+        }
+
+        /**
+         * {@return the revision of the source for which this builder was instantiated}
+         */
+        final RevisionUnion revision() {
+            return RevisionUnion.of(sourceId().revision());
+        }
+
         final String humanName() {
             final var sourceId = sourceId();
             return humanName(sourceId.name(), sourceId.revision());
@@ -90,14 +105,6 @@ public abstract sealed class ResolvedSourceInfo implements Immutable permits Res
         static final String humanName(final Unqualified name, final @Nullable Revision revision) {
             final var localName = name.getLocalName();
             return revision == null ? localName : localName + "@" + revision;
-        }
-
-        final Unqualified name() {
-            return sourceId().name();
-        }
-
-        final @Nullable Revision revision() {
-            return sourceId().revision();
         }
 
         final SourceIdentifier sourceId() {
