@@ -43,15 +43,4 @@ public interface TypeMemberBuilder<T extends TypeMemberBuilder<T>> extends Annot
      * @param comment Structured comment
      */
     T setComment(TypeMemberComment comment);
-
-    /**
-     * Sets the flag final for method signature. If this is set the method will be prohibited from overriding. This
-     * setting is irrelevant for methods designated to be defined in interface definitions because interfaces cannot
-     * have a final method.
-     *
-     * @param isFinal Is Final
-     */
-    T setFinal(boolean isFinal);
-
-    T setStatic(boolean isStatic);
 }

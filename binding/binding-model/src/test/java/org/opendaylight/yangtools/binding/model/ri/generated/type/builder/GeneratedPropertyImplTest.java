@@ -24,9 +24,7 @@ class GeneratedPropertyImplTest {
         final var generatedPropertyBuilderImpl = new GeneratedPropertyBuilderImpl("myPropertyName")
             .setValue("myValue")
             .setReadOnly(false)
-            .setStatic(true)
             .setComment(TypeMemberComment.contractOf("myComment"))
-            .setFinal(true)
             .setAccessModifier(AccessModifier.PUBLIC)
             .setReturnType(Types.BOOLEAN);
 
@@ -34,8 +32,6 @@ class GeneratedPropertyImplTest {
 
         assertNotNull(instance);
 
-        assertTrue(instance.isFinal());
-        assertTrue(instance.isStatic());
         assertFalse(instance.isReadOnly());
         assertEquals("myValue", instance.getValue());
         assertEquals(TypeMemberComment.contractOf("myComment"), instance.getComment());
@@ -44,7 +40,7 @@ class GeneratedPropertyImplTest {
 
         assertEquals("""
             GeneratedPropertyImpl [name=myPropertyName, annotations=[], comment=TypeMemberComment{contract=myComment}, \
-            returnType=ConcreteType{name=java.lang.Boolean}, isFinal=true, isReadOnly=false, modifier=PUBLIC]""",
+            returnType=ConcreteType{name=java.lang.Boolean}, isReadOnly=false, modifier=PUBLIC]""",
             instance.toString());
     }
 

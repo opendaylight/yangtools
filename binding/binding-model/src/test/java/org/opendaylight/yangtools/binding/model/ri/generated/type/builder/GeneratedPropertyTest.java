@@ -34,8 +34,7 @@ class GeneratedPropertyTest {
     @Test
     void testMethodsForGeneratedPropertyImpl() {
         final var propertyImpl = new GeneratedPropertyImpl("Test", List.of(),
-            TypeMemberComment.contractOf("test property"), AccessModifier.PRIVATE, Types.VOID, true, true, true,
-            "test value");
+            TypeMemberComment.contractOf("test property"), AccessModifier.PRIVATE, Types.VOID, true, "test value");
 
         assertEquals("test value", propertyImpl.getValue());
         assertTrue(propertyImpl.isReadOnly());

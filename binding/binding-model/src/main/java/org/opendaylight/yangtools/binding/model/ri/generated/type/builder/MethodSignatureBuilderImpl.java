@@ -65,7 +65,7 @@ final class MethodSignatureBuilderImpl extends AbstractTypeMemberBuilder<MethodS
     public MethodSignature build() {
         final var annotations = toAnnotationTypes();
         return new MethodSignatureImpl(getName(), annotations, getComment(), getAccessModifier(), getReturnType(),
-            unmodifiableParams, isFinal(), isAbstract, isStatic(), isDefault, mechanics);
+            unmodifiableParams, isAbstract, isDefault, mechanics);
     }
 
     @Override

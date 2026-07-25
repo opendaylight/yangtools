@@ -19,7 +19,7 @@ public final class GeneratedPropertyBuilderImpl extends AbstractTypeMemberBuilde
 
     public GeneratedPropertyBuilderImpl(final String name) {
         super(name);
-        this.readOnly = true;
+        readOnly = true;
     }
 
     @Override
@@ -30,7 +30,7 @@ public final class GeneratedPropertyBuilderImpl extends AbstractTypeMemberBuilde
 
     @Override
     public GeneratedPropertyBuilderImpl setReadOnly(final boolean isReadOnly) {
-        this.readOnly = isReadOnly;
+        readOnly = isReadOnly;
         return this;
     }
 
@@ -43,7 +43,7 @@ public final class GeneratedPropertyBuilderImpl extends AbstractTypeMemberBuilde
     public GeneratedProperty toInstance() {
         final List<AnnotationType> annotations = toAnnotationTypes();
         return new GeneratedPropertyImpl(getName(), annotations, getComment(), getAccessModifier(), getReturnType(),
-            isFinal(), isStatic(), this.readOnly, this.value);
+            readOnly, value);
     }
 
     @Override
@@ -53,8 +53,7 @@ public final class GeneratedPropertyBuilderImpl extends AbstractTypeMemberBuilde
             .append(", annotations=").append(getAnnotationBuilders())
             .append(", comment=").append(getComment())
             .append(", returnType=").append(getReturnType())
-            .append(", isFinal=").append(isFinal())
-            .append(", isReadOnly=").append(this.readOnly)
+            .append(", isReadOnly=").append(readOnly)
             .append(", modifier=").append(getAccessModifier())
             .append(']').toString();
     }

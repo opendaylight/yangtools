@@ -25,11 +25,10 @@ import org.opendaylight.yangtools.util.LazyCollections;
 
 abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> implements TypeMemberBuilder<T> {
     private final String name;
+
     private Type returnType;
     private List<AnnotationTypeBuilder> annotationBuilders = Collections.emptyList();
     private TypeMemberComment comment;
-    private boolean isFinal;
-    private boolean isStatic;
     private AccessModifier accessModifier;
 
     AbstractTypeMemberBuilder(final String name) {
@@ -39,38 +38,30 @@ abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> impleme
     @Override
     public AnnotationTypeBuilder addAnnotation(final JavaTypeName identifier) {
         final AnnotationTypeBuilder builder = new AnnotationTypeBuilderImpl(identifier);
-        this.annotationBuilders = LazyCollections.lazyAdd(this.annotationBuilders, builder);
+        annotationBuilders = LazyCollections.lazyAdd(annotationBuilders, builder);
         return builder;
     }
 
     public Type getReturnType() {
-        return this.returnType;
+        return returnType;
     }
 
     protected Iterable<AnnotationTypeBuilder> getAnnotationBuilders() {
-        return this.annotationBuilders;
+        return annotationBuilders;
     }
 
     protected TypeMemberComment getComment() {
-        return this.comment;
-    }
-
-    protected boolean isFinal() {
-        return this.isFinal;
-    }
-
-    protected boolean isStatic() {
-        return this.isStatic;
+        return comment;
     }
 
     @Override
     public AccessModifier getAccessModifier() {
-        return this.accessModifier;
+        return accessModifier;
     }
 
     @Override
     public String getName() {
-        return this.name;
+        return name;
     }
 
     protected abstract T thisInstance();
@@ -78,32 +69,20 @@ abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> impleme
     @Override
     public T setReturnType(final Type newReturnType) {
         checkArgument(newReturnType != null, "Return Type of member cannot be null!");
-        this.returnType = newReturnType;
+        returnType = newReturnType;
         return thisInstance();
     }
 
     @Override
     public T setAccessModifier(final AccessModifier modifier) {
         checkArgument(modifier != null, "Access Modifier for member type cannot be null!");
-        this.accessModifier = modifier;
+        accessModifier = modifier;
         return thisInstance();
     }
 
     @Override
     public T setComment(final TypeMemberComment newComment) {
-        this.comment = newComment;
-        return thisInstance();
-    }
-
-    @Override
-    public T setFinal(final boolean newIsFinal) {
-        this.isFinal = newIsFinal;
-        return thisInstance();
-    }
-
-    @Override
-    public T setStatic(final boolean newIsStatic) {
-        this.isStatic = newIsStatic;
+        comment = newComment;
         return thisInstance();
     }
 
@@ -145,7 +124,6 @@ abstract class AbstractTypeMemberBuilder<T extends TypeMemberBuilder<T>> impleme
                 .append(", annotations=").append(getAnnotationBuilders())
                 .append(", comment=").append(getComment())
                 .append(", returnType=").append(getReturnType())
-                .append(", isFinal=").append(isFinal())
                 .append(", modifier=").append(getAccessModifier())
                 .append(']').toString();
     }

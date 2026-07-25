@@ -75,16 +75,6 @@ final class BuilderGeneratedProperty implements GeneratedProperty {
     }
 
     @Override
-    public boolean isStatic() {
-        throw uoe();
-    }
-
-    @Override
-    public boolean isFinal() {
-        throw uoe();
-    }
-
-    @Override
     public String getValue() {
         throw uoe();
     }
