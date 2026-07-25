@@ -24,10 +24,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 /**
  * The state required to construct a {@link ResolvedSourceInfo} for a particular {@link SourceInfoRef}. There should be
@@ -88,13 +85,9 @@ abstract sealed class SourceLinker extends ResolvedSourceInfo.Builder permits Mo
         final var path = target.equals(requireNonNull(parentModule)) ? List.of(target)
             : importPathOf(new HashSet<>(), target, parentModule);
         if (path != null) {
-            final var sourceId = sourceId();
-            final var depRef = dependency.sourceRef();
-            throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
-                 new InferenceException(depRef != null ? depRef : sourceId.toReference(),
-                     // FIXME: 16.0.0: humanName() and exact path
-                     "Found circular dependency between modules %s and %s",
-                     sourceId.name().getLocalName(), target.name().getLocalName()));
+            // FIXME: 16.0.0: humanName() and exact path
+            throw newLinkageInferenceException(dependency, "Found circular dependency between modules %s and %s",
+                name().getLocalName(), target.name().getLocalName());
         }
 
         final var resolved = imports.resolveMissing(dependency, target);

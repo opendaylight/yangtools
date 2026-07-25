@@ -29,10 +29,7 @@ import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 /**
  * A {@link SourceLinker} for a YANG {@code module}. It provides a meeting point for resolving {@code include}
@@ -271,8 +268,8 @@ final class ModuleLinker extends SourceLinker {
         // FIXME: Java 25: merge the two cases below when we can say 'case AnyRevision _' and move this allocation
         //        there
         final var depRef = dependency.sourceRef();
-        final var sourceRef = depRef != null ? depRef : source.sourceId().toReference();
-        final var spec = new UnresolvedRevision(revision, new Exactness.Explicit(sourceRef));
+        final var spec = new UnresolvedRevision(revision,
+            new Exactness.Explicit(depRef != null ? depRef : source.sourceId().toReference()));
 
         // yes, we have a Map.get() + Map.put() and could be written as a Map.compute() operation, but this way is
         // actually more modern: we are using Java 21+ language features instead of Java 8+ java.util features we do not
@@ -286,11 +283,10 @@ final class ModuleLinker extends SourceLinker {
             case ExactRevision exact -> {
                 final var exactRevision = exact.revision();
                 if (!revision.equals(exactRevision)) {
-                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, source.sourceId(),
-                        new InferenceException(sourceRef,
-                            "Cannot include-by-revision submodule %s in module %s: already included as %s %s",
-                            humanName(name, revision), humanName(), humanName(name, exactRevision.revision()),
-                            exact.exactness().sourceString()));
+                    throw source.newLinkageInferenceException(dependency,
+                        "Cannot include-by-revision submodule %s in module %s: already included as %s %s",
+                        humanName(name, revision), humanName(), humanName(name, exactRevision.revision()),
+                        exact.exactness().sourceString());
                 }
             }
         }
@@ -323,12 +319,9 @@ final class ModuleLinker extends SourceLinker {
             case SubmoduleLinker submodule -> {
                 final var yangVersion = yangVersion();
                 if (yangVersion != YangVersion.VERSION_1) {
-                    final var depRef = dependency.sourceRef();
-                    final var sourceId = sourceId();
-                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
-                        new InferenceException(depRef != null ? depRef : sourceId.toReference(), """
-                            Parent module %s does not include %s, YANG %s does not allow it to be included from \
-                            submodule %s""", humanName(), dependency.name(), yangVersion, submodule.humanName()));
+                    throw newLinkageInferenceException(dependency, """
+                        Parent module %s does not include %s, YANG %s does not allow it to be included from submodule \
+                        %s""", humanName(), dependency.name(), yangVersion, submodule.humanName());
                 }
             }
         }
