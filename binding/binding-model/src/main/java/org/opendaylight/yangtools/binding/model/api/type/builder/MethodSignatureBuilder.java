@@ -11,10 +11,12 @@ package org.opendaylight.yangtools.binding.model.api.type.builder;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.Parameter;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
@@ -31,7 +33,7 @@ import org.opendaylight.yangtools.util.LazyCollections;
  * set to public. The Method Signature builder does not contain method for
  * addName due to enforce reason that MethodSignatureBuilder SHOULD be
  * instantiated only once with defined method name. <br>
- * The methods as {@link #addAnnotation(String, String)} and
+ * The methods as {@link #addAnnotation(AttachedAnnotation)} and
  * {@link #setComment(TypeMemberComment)} can be used as optional because not all methods
  * MUST contain annotation or comment definitions.
  *
@@ -43,6 +45,7 @@ public final class MethodSignatureBuilder extends TypeMemberBuilder<MethodSignat
     private boolean isAbstract;
     private boolean isDefault;
 
+    @NonNullByDefault
     public MethodSignatureBuilder(final String name) {
         super(name);
     }
@@ -112,8 +115,8 @@ public final class MethodSignatureBuilder extends TypeMemberBuilder<MethodSignat
             default -> List.copyOf(parameters);
         };
 
-        return new MethodSignatureImpl(getName(), toAnnotationTypes(), getComment(), getAccessModifier(),
-            getReturnType(), params, isAbstract, isDefault, mechanics);
+        return new MethodSignatureImpl(getName(), annotations(), getComment(), getAccessModifier(), getReturnType(),
+            params, isAbstract, isDefault, mechanics);
     }
 
     @Override
@@ -134,11 +137,12 @@ public final class MethodSignatureBuilder extends TypeMemberBuilder<MethodSignat
 
     @Override
     public String toString() {
-        return new StringBuilder().append("MethodSignatureBuilderImpl [name=").append(getName())
-            .append(", returnType=").append(getReturnType())
-            .append(", parameters=").append(parameters)
-            .append(", annotationBuilders=").append(getAnnotationBuilders())
-            .append(", comment=").append(getComment())
-            .append(']').toString();
+        return MoreObjects.toStringHelper(this).omitNullValues()
+            .add("name", getName())
+            .add("returnType", getReturnType())
+            .add("parameters", parameters)
+            .add("annotations", annotations())
+            .add("comment", getComment())
+            .toString();
     }
 }

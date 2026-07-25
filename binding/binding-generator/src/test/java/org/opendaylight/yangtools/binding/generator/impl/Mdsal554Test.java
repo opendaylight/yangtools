@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -26,32 +26,16 @@ class Mdsal554Test {
         // status deprecated
         final var deprecated = (LegacyArchetype<?>) genTypes.get(1);
         assertEquals("DeprecatedNotification", deprecated.simpleName());
-        final var deprecatedAnnotations = deprecated.getAnnotations();
-        assertEquals(1, deprecatedAnnotations.size());
-
-        var annotation = deprecatedAnnotations.get(0);
-        assertEquals(JavaTypeName.create(Deprecated.class), annotation.name());
-        assertEquals(List.of(), annotation.getParameters());
+        assertEquals(List.of(DeprecatedAnnotation.DEPRECATED), deprecated.annotations());
 
         // status obsolete
         final var obsolete = (LegacyArchetype<?>) genTypes.get(2);
         assertEquals("ObsoleteNotification", obsolete.simpleName());
-
-        final var obsoleteAnnotations = obsolete.getAnnotations();
-        assertEquals(1, obsoleteAnnotations.size());
-
-        annotation = obsoleteAnnotations.get(0);
-        assertEquals(JavaTypeName.create(Deprecated.class), annotation.name());
-
-        final var annotationParameters = annotation.getParameters();
-        assertEquals(1, annotationParameters.size());
-
-        assertEquals("forRemoval", annotationParameters.get(0).getName());
-        assertEquals("true", annotationParameters.get(0).getValue());
+        assertEquals(List.of(DeprecatedAnnotation.OBSOLETE), obsolete.annotations());
 
         // status current
         final var current = assertInstanceOf(LegacyArchetype.class, genTypes.get(3));
         assertEquals("TestNotification", current.simpleName());
-        assertEquals(List.of(), current.getAnnotations());
+        assertEquals(List.of(), current.annotations());
     }
 }

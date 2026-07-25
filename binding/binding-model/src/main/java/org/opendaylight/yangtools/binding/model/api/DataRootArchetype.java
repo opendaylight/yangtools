@@ -33,7 +33,7 @@ public non-sealed interface DataRootArchetype extends Archetype.OfCompositeInter
 
     @Override
     @Deprecated(forRemoval = true)
-    default List<@NonNull AnnotationType> getAnnotations() {
+    default List<@NonNull AttachedAnnotation> annotations() {
         return List.of();
     }
 

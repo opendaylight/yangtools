@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
@@ -30,16 +29,22 @@ public sealed interface IdentityArchetype extends Archetype.WithQName<IdentityEf
      * @since 16.0.0
      */
     record Base(JavaTypeName name, IdentityEffectiveStatement statement) implements IdentityArchetype {
-        private static final List<JavaTypeName> INTERFACES = List.of(JavaTypeName.create(BaseIdentity.class));
+        private static final JavaTypeName BASE_IDENTITY = JavaTypeName.create(BaseIdentity.class);
 
         public Base {
-            requireNonNull(name);
-            requireNonNull(statement);
+            name = checkName(name);
         }
 
         @Override
         public List<JavaTypeName> interfaces() {
-            return INTERFACES;
+            return List.of(BASE_IDENTITY);
+        }
+
+        private static JavaTypeName checkName(final JavaTypeName name) {
+            if (name.equals(BASE_IDENTITY)) {
+                throw new IllegalArgumentException("invalid name " + BASE_IDENTITY);
+            }
+            return name;
         }
     }
 
@@ -56,10 +61,12 @@ public sealed interface IdentityArchetype extends Archetype.WithQName<IdentityEf
             IdentityEffectiveStatement statement,
             List<JavaTypeName> interfaces) implements IdentityArchetype {
         public Derived {
-            requireNonNull(name);
+            name = Base.checkName(name);
             requireNonNull(statement);
             interfaces = List.copyOf(interfaces);
-            checkArgument(!interfaces.isEmpty());
+            if (interfaces.isEmpty()) {
+                throw new IllegalArgumentException("empty interfaces");
+            }
         }
     }
 

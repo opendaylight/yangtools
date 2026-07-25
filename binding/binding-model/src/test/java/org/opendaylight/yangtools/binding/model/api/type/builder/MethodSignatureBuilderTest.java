@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -56,7 +55,6 @@ class MethodSignatureBuilderTest {
         final var signatureBuilderImpl = new MethodSignatureBuilder("testMethod");
         final var signatureBuilderImpl2 = new MethodSignatureBuilder("testMethod");
         final var signatureBuilderImpl3 = new MethodSignatureBuilder("testMethod2");
-        final var signatureBuilderImpl4 = new MethodSignatureBuilder(null);
         final var signatureBuilderImpl5 = signatureBuilderImpl;
         final var signatureBuilderImpl6 = new MethodSignatureBuilder("testMethod");
         final var returnType = new LegacyArchetypeBuilder<>(
@@ -68,14 +66,13 @@ class MethodSignatureBuilderTest {
 
         assertTrue(signatureBuilderImpl.equals(signatureBuilderImpl2));
         assertFalse(signatureBuilderImpl.equals(signatureBuilderImpl3));
-        assertFalse(signatureBuilderImpl.equals(signatureBuilderImpl4));
-        assertFalse(signatureBuilderImpl4.equals(signatureBuilderImpl));
         assertTrue(signatureBuilderImpl.equals(signatureBuilderImpl5));
-        assertFalse(signatureBuilderImpl4.equals("test"));
-        assertFalse(signatureBuilderImpl4.equals(signatureBuilderImpl));
+        assertFalse(signatureBuilderImpl3.equals("test"));
+        assertFalse(signatureBuilderImpl3.equals(signatureBuilderImpl));
         assertFalse(signatureBuilderImpl6.equals(signatureBuilderImpl));
         assertFalse(signatureBuilderImpl.equals(signatureBuilderImpl6));
 
-        assertNotNull(signatureBuilderImpl.toString());
+        assertEquals("MethodSignatureBuilder{name=testMethod, parameters=[], annotations=[]}",
+            signatureBuilderImpl.toString());
     }
 }

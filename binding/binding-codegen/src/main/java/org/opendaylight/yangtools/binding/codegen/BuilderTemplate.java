@@ -38,8 +38,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
+import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
@@ -127,7 +128,7 @@ final class BuilderTemplate extends BaseTemplate {
 
         final var bb = newBlockBuilder()
             .blk(wrapToDocumentation(createDescription().toRawString()))
-            .blk(generateDeprecatedAnnotation(targetType.getAnnotations()))
+            .blk(generateDeprecatedAnnotation(targetType.annotations()))
             .eol(generatedAnnotation())
             .str("public class ").str(simpleName).oB()
             // FIXME: remove this newline
@@ -208,13 +209,12 @@ final class BuilderTemplate extends BaseTemplate {
         return bb;
     }
 
-    private @Nullable BlockBuilder generateDeprecatedAnnotation(final @NonNull List<AnnotationType> annotations) {
+    private @Nullable BlockBuilder generateDeprecatedAnnotation(final @NonNull List<AttachedAnnotation> annotations) {
         for (var annotation : annotations) {
-            if (JavaFileTemplate.DEPRECATED.equals(annotation.name())) {
+            if (annotation instanceof DeprecatedAnnotation deprecated) {
                 final var bb = newBlockBuilder().at();
-                final var forRemoval = annotation.getParameter("forRemoval");
-                return forRemoval != null
-                    ? bb.str(importedName(DEPRECATED)).str("(forRemoval = ").str(forRemoval.getValue()).eol(")")
+                return deprecated.forRemoval()
+                    ? bb.str(importedName(DEPRECATED)).eol("(forRemoval = true)")
                     : bb.str(importedName(SUPPRESS_WARNINGS)).eol("(\"deprecation\")");
             }
         }

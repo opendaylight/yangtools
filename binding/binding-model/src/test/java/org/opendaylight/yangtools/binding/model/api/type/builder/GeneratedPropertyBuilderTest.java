@@ -29,9 +29,8 @@ class GeneratedPropertyBuilderTest {
             .setReturnType(Types.BOOLEAN);
 
         assertEquals("""
-            GeneratedPropertyBuilder [name=myPropertyName, annotations=[], comment=null, \
-            returnType=ConcreteType{name=java.lang.Boolean}, isReadOnly=false, modifier=PUBLIC]""",
-            generatedPropertyBuilderImpl.toString());
+            GeneratedPropertyBuilder{name=myPropertyName, returnType=ConcreteType{name=java.lang.Boolean}, \
+            modifier=PUBLIC}""", generatedPropertyBuilderImpl.toString());
 
         var instance = generatedPropertyBuilderImpl.toInstance();
         assertNotNull(instance);
