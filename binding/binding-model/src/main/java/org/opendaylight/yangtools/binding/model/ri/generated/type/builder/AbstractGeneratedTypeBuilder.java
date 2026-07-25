@@ -73,8 +73,14 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
         };
     }
 
-    protected List<Constant> getConstants() {
-        return constants;
+    @NonNullByDefault
+    final List<Constant> getConstants() {
+        return switch (constants.size()) {
+            case 0 -> List.of();
+            case 1 -> Collections.singletonList(constants.getFirst());
+            case 2 -> List.of(constants.getFirst(), constants.getLast());
+            default -> List.copyOf(constants);
+        };
     }
 
     @NonNullByDefault
