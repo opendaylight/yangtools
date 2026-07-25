@@ -70,7 +70,7 @@ public abstract sealed class ResolvedSourceInfo implements Immutable permits Res
     /**
      * A builder of {@link ResolvedSourceInfo} instances.
      */
-    abstract static sealed class Builder implements Mutable permits ResolvedSourceBuilder {
+    abstract static sealed class Builder implements Mutable permits SourceLinker {
 
         final String humanName() {
             final var sourceId = sourceId();
