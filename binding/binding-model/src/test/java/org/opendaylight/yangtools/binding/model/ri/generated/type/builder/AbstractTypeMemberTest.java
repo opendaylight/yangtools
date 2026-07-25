@@ -14,12 +14,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
 class AbstractTypeMemberTest {
     @Test
     void testMethodsForAbstractTypeMemberBuilder() {
-        final var builder = new MethodSignatureBuilderImpl("TestProperty").setReturnType(Types.STRING);
+        final var builder = new MethodSignatureBuilder("TestProperty").setReturnType(Types.STRING);
         builder.setComment(TypeMemberComment.contractOf("test comment"));
 
         final var genProperty = builder.build();

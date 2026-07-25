@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyBuilderImpl;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 
 /**
@@ -63,7 +63,7 @@ public record KeyArchetype(
         final var kit = arg.iterator();
 
         for (var field : fields()) {
-            props.add(new GeneratedPropertyBuilderImpl(Naming.getPropertyName(kit.next().getLocalName()))
+            props.add(new GeneratedPropertyBuilder(Naming.getPropertyName(kit.next().getLocalName()))
                 .setReturnType(field)
                 .setReadOnly(true)
                 .toInstance());

@@ -16,12 +16,13 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
 class GeneratedPropertyImplTest {
     @Test
     void generatedPropertyImplTest() {
-        final var generatedPropertyBuilderImpl = new GeneratedPropertyBuilderImpl("myPropertyName")
+        final var generatedPropertyBuilderImpl = new GeneratedPropertyBuilder("myPropertyName")
             .setValue("myValue")
             .setReadOnly(false)
             .setComment(TypeMemberComment.contractOf("myComment"))
@@ -46,10 +47,10 @@ class GeneratedPropertyImplTest {
 
     @Test
     void generatedPropertyImplEqualsAndHashCodeTest() {
-        var generatedPropertyBuilderImpl = new GeneratedPropertyBuilderImpl("myPropertyName");
-        var generatedPropertyBuilderImpl2 = new GeneratedPropertyBuilderImpl("myPropertyName");
-        final var generatedPropertyBuilderImpl3 = new GeneratedPropertyBuilderImpl("myPropertyName3");
-        final var generatedPropertyBuilderImpl4 = new GeneratedPropertyBuilderImpl("myPropertyName");
+        var generatedPropertyBuilderImpl = new GeneratedPropertyBuilder("myPropertyName");
+        var generatedPropertyBuilderImpl2 = new GeneratedPropertyBuilder("myPropertyName");
+        final var generatedPropertyBuilderImpl3 = new GeneratedPropertyBuilder("myPropertyName3");
+        final var generatedPropertyBuilderImpl4 = new GeneratedPropertyBuilder("myPropertyName");
 
         generatedPropertyBuilderImpl.setReturnType(Types.BOOLEAN);
         generatedPropertyBuilderImpl2.setReturnType(Types.BOOLEAN);

@@ -7,24 +7,42 @@
  */
 package org.opendaylight.yangtools.binding.model.api.type.builder;
 
+import static java.util.Objects.requireNonNull;
+
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyImpl;
 
 /**
  * Generated Property Builder is interface that contains methods to build and instantiate Generated Property definition.
  *
  * @see GeneratedProperty
  */
-public interface GeneratedPropertyBuilder extends TypeMemberBuilder<GeneratedPropertyBuilder> {
+public final class GeneratedPropertyBuilder extends TypeMemberBuilder<GeneratedPropertyBuilder> {
+    private boolean readOnly = true;
+    private String value;
 
-    GeneratedPropertyBuilder setValue(String value);
+    public GeneratedPropertyBuilder(final String name) {
+        super(name);
+    }
+
+    @NonNullByDefault
+    public GeneratedPropertyBuilder setValue(final String newValue) {
+        value = requireNonNull(newValue);
+        return this;
+    }
 
     /**
      * Sets isReadOnly flag for property. If property is marked as read only it is the same as set property in Java
      * as final.
      *
-     * @param isReadOnly Read Only property flag.
+     * @param newReadOnly Read Only property flag.
      */
-    GeneratedPropertyBuilder setReadOnly(boolean isReadOnly);
+    @NonNullByDefault
+    public GeneratedPropertyBuilder setReadOnly(final boolean newReadOnly) {
+        readOnly = newReadOnly;
+        return this;
+    }
 
     /**
      * Returns <code>new</code> <i>immutable</i> instance of Generated Property. <br>
@@ -36,5 +54,27 @@ public interface GeneratedPropertyBuilder extends TypeMemberBuilder<GeneratedPro
      *
      * @return <code>new</code> <i>immutable</i> instance of Generated Property.
      */
-    GeneratedProperty toInstance();
+    @NonNullByDefault
+    public GeneratedProperty toInstance() {
+        final var annotations = toAnnotationTypes();
+        return new GeneratedPropertyImpl(getName(), annotations, getComment(), getAccessModifier(), getReturnType(),
+            readOnly, value);
+    }
+
+    @Override
+    GeneratedPropertyBuilder thisInstance() {
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return new StringBuilder()
+            .append("GeneratedPropertyBuilder [name=").append(getName())
+            .append(", annotations=").append(getAnnotationBuilders())
+            .append(", comment=").append(getComment())
+            .append(", returnType=").append(getReturnType())
+            .append(", isReadOnly=").append(readOnly)
+            .append(", modifier=").append(getAccessModifier())
+            .append(']').toString();
+    }
 }
