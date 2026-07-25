@@ -40,7 +40,7 @@ final class DefaultLegacyArchetype<S extends EffectiveStatement<?, ?>> implement
         name = builder.typeName();
         statement = builder.statement;
         annotations = toUnmodifiableAnnotations(builder.getAnnotations());
-        implementsTypes = makeUnmodifiable(builder.getImplementsTypes());
+        implementsTypes = builder.getImplementsTypes();
         constants = makeUnmodifiable(builder.getConstants());
         methodSignatures = builder.getMethodDefinitions();
         enclosedTypes = List.copyOf(builder.getEnclosedTypes());
