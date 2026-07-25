@@ -13,7 +13,6 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -24,7 +23,6 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 final class DefaultLegacyArchetype<S extends EffectiveStatement<?, ?>> implements LegacyArchetype<S> {
@@ -39,7 +37,7 @@ final class DefaultLegacyArchetype<S extends EffectiveStatement<?, ?>> implement
     DefaultLegacyArchetype(final LegacyArchetypeBuilder<S> builder) {
         name = builder.typeName();
         statement = builder.statement;
-        annotations = toUnmodifiableAnnotations(builder.getAnnotations());
+        annotations = builder.getAnnotations();
         implementsTypes = builder.getImplementsTypes();
         constants = makeUnmodifiable(builder.getConstants());
         methodSignatures = builder.getMethodDefinitions();
@@ -58,13 +56,6 @@ final class DefaultLegacyArchetype<S extends EffectiveStatement<?, ?>> implement
             case 2 -> List.copyOf(list);
             default -> Collections.unmodifiableList(list);
         };
-    }
-
-    private static @NonNull List<AnnotationType> toUnmodifiableAnnotations(
-            final List<AnnotationTypeBuilder> annotationBuilders) {
-        return makeUnmodifiable(annotationBuilders.stream()
-            .map(AnnotationTypeBuilder::build)
-            .collect(Collectors.toUnmodifiableList()));
     }
 
     @Override
