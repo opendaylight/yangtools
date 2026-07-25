@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  */
 @NonNullByDefault
 public sealed interface Type extends Immutable
-        permits AnnotationType, Archetype, ConcreteType, ParameterizedType, TypeRef, WildcardType {
+        permits Archetype, ConcreteType, ParameterizedType, TypeRef, WildcardType {
     /**
      * {@return this type's {@link JavaTypeName}}
      */

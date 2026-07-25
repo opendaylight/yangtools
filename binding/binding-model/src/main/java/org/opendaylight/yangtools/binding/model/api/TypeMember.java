@@ -21,9 +21,9 @@ public interface TypeMember {
     @Nullable TypeMemberComment getComment();
 
     /**
-     * {@return List of annotation definitions associated with generated type}
+     * {@return List of annotation definitions attached to this member}
      */
-    @NonNull List<AnnotationType> getAnnotations();
+    @NonNull List<AttachedAnnotation> getAnnotations();
 
     /**
      * {@return the access modifier of member}

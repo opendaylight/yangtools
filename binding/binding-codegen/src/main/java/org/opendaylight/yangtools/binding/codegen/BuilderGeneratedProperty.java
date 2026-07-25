@@ -13,7 +13,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
@@ -65,7 +65,7 @@ final class BuilderGeneratedProperty implements GeneratedProperty {
     }
 
     @Override
-    public List<AnnotationType> getAnnotations() {
+    public List<AttachedAnnotation> getAnnotations() {
         throw uoe();
     }
 
