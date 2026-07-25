@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
@@ -26,13 +26,13 @@ public final class MethodSignatureImpl extends AbstractTypeMember implements Met
     private final boolean isDefault;
 
     @VisibleForTesting
-    MethodSignatureImpl(final String name, final List<AnnotationType> annotations,
+    MethodSignatureImpl(final String name, final List<AttachedAnnotation> annotations,
             final TypeMemberComment comment, final AccessModifier accessModifier, final Type returnType,
             final List<Parameter> params, final boolean isAbstract) {
         this(name, annotations, comment, accessModifier, returnType, params, isAbstract, false, ValueMechanics.NORMAL);
     }
 
-    public MethodSignatureImpl(final String name, final List<AnnotationType> annotations,
+    public MethodSignatureImpl(final String name, final List<AttachedAnnotation> annotations,
             final TypeMemberComment comment, final AccessModifier accessModifier, final Type returnType,
             final List<Parameter> params, final boolean isAbstract, final boolean isDefault,
             final ValueMechanics mechanics) {

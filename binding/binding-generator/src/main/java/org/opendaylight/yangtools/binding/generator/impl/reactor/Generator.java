@@ -25,7 +25,9 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
@@ -48,9 +50,6 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * <p>Overall the tree layout guides the allocation of Java package and top-level class namespaces.
  */
 public abstract class Generator implements Iterable<Generator> {
-    static final @NonNull JavaTypeName DEPRECATED_ANNOTATION = JavaTypeName.create(Deprecated.class);
-    static final @NonNull JavaTypeName OVERRIDE_ANNOTATION = JavaTypeName.create(Override.class);
-
     private final AbstractCompositeGenerator<?, ?> parent;
 
     private Optional<Member> member;
@@ -268,21 +267,7 @@ public abstract class Generator implements Iterable<Generator> {
     static final void annotateDeprecatedIfNecessary(final EffectiveStatement<?, ?> stmt,
             final AnnotableTypeBuilder builder) {
         if (stmt instanceof WithStatus withStatus) {
-            annotateDeprecatedIfNecessary(withStatus, builder);
-        }
-    }
-
-    @NonNullByDefault
-    static final void annotateDeprecatedIfNecessary(final WithStatus node, final AnnotableTypeBuilder builder) {
-        switch (node.getStatus()) {
-            case DEPRECATED ->
-                // FIXME: we really want to use a pre-made annotation
-                builder.addAnnotation(DEPRECATED_ANNOTATION);
-            case OBSOLETE -> builder.addAnnotation(DEPRECATED_ANNOTATION).addParameter("forRemoval", "true");
-            case CURRENT -> {
-                // No-op
-            }
-            default -> throw new IllegalStateException("Unhandled status in " + node);
+            builder.addAnnotation(DeprecatedAnnotation.ofStatus(withStatus.getStatus()));
         }
     }
 
@@ -299,11 +284,10 @@ public abstract class Generator implements Iterable<Generator> {
     @NonNullByDefault
     static final MethodSignatureBuilder defineImplementedInterfaceMethod(
             final GeneratedTypeBuilderBase<?> typeBuilder, final Type classType) {
-        final var ret = typeBuilder
+        return typeBuilder
                 .addMethod(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME)
                 .setAccessModifier(AccessModifier.PUBLIC)
-                .setReturnType(classType(classType));
-        ret.addAnnotation(OVERRIDE_ANNOTATION);
-        return ret;
+                .setReturnType(classType(classType))
+                .addAnnotation(OverrideAnnotation.INSTANCE);
     }
 }
