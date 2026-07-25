@@ -20,7 +20,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
@@ -466,7 +465,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     }
 
     @NonNullByDefault
-    static final void addAugmentable(final GeneratedTypeBuilder<?> builder) {
+    static final void addAugmentable(final GeneratedTypeBuilderBase<?> builder) {
         builder.addImplementsType(BindingTypes.augmentable(builder.typeRef()));
     }
 

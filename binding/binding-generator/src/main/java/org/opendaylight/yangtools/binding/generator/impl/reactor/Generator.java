@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -231,8 +230,8 @@ public abstract class Generator implements Iterable<Generator> {
         return helper;
     }
 
-    final void addImplementsChildOf(final GeneratedTypeBuilder<?> builder) {
-        AbstractCompositeGenerator<?, ?> ancestor = getParent();
+    final void addImplementsChildOf(final GeneratedTypeBuilderBase<?> builder) {
+        var ancestor = getParent();
         while (true) {
             // choice/case hierarchy does not factor into 'ChildOf' hierarchy, hence we need to skip them
             if (ancestor instanceof CaseGenerator || ancestor instanceof ChoiceGenerator) {
@@ -260,7 +259,7 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder Target builder
      */
     @NonNullByDefault
-    static final void addConcreteInterfaceMethods(final GeneratedTypeBuilder<?> builder) {
+    static final void addConcreteInterfaceMethods(final GeneratedTypeBuilderBase<?> builder) {
         defaultImplementedInterace(builder);
         builder.addImplementsType(ParameterizedType.of(BindingTypes.JAVA_DATACONTAINER, builder.typeRef()));
     }

@@ -32,7 +32,7 @@ class GeneratedTypeBuilderTest {
 
     @Test
     void addConstantTest() {
-        var generatedTypeBuilder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
+        var generatedTypeBuilder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
             statement);
 
         // assertNotNull(generatedTypeBuilder.addComment("My comment ..."));
@@ -91,27 +91,27 @@ class GeneratedTypeBuilderTest {
 
     @Test
     void addConstantIllegalArgumentTest() {
-        final var builder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(IllegalArgumentException.class,
             () -> builder.addConstant(Types.typeForClass(String.class), null, "myConstantValue"));
     }
 
     @Test
     void addConstantIllegalArgumentTest2() {
-        final var builder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(IllegalArgumentException.class,
             () -> builder.addConstant((Type) null, "myConstantName", "myConstantValue"));
     }
 
     @Test
     void generatedTypeBuilderEqualsAndHashCodeTest() {
-        final var generatedTypeBuilder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
+        final var generatedTypeBuilder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
             statement);
-        final var generatedTypeBuilder2 = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
+        final var generatedTypeBuilder2 = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
             statement);
-        final var generatedTypeBuilder3 = new CodegenGeneratedTypeBuilder<>(
+        final var generatedTypeBuilder3 = new LegacyArchetypeBuilder<>(
             JavaTypeName.create("my.package", "MyName2"), statement);
-        final var generatedTypeBuilder4 = new CodegenGeneratedTypeBuilder<>(
+        final var generatedTypeBuilder4 = new LegacyArchetypeBuilder<>(
             JavaTypeName.create("my.package2", "MyName"), statement);
 
         assertFalse(generatedTypeBuilder.equals(null));
@@ -127,13 +127,13 @@ class GeneratedTypeBuilderTest {
 
     @Test
     void addMethodIllegalArgumentTest() {
-        final var builder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(IllegalArgumentException.class, () -> builder.addMethod(null));
     }
 
     @Test
     void addMethodTest() {
-        var generatedTypeBuilder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
+        var generatedTypeBuilder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
             statement);
 
         var methodBuilder = generatedTypeBuilder.addMethod("myMethodName").setReturnType(Types.BOOLEAN);
@@ -160,13 +160,13 @@ class GeneratedTypeBuilderTest {
 
     @Test
     void addImplementsTypeIllegalArgumentTest() {
-        final var builder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(NullPointerException.class, () -> builder.addImplementsType((Type) null));
     }
 
     @Test
     void addImplementsTypeTest() {
-        var generatedTypeBuilder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
+        var generatedTypeBuilder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
             statement);
 
         assertEquals(generatedTypeBuilder,
@@ -185,7 +185,7 @@ class GeneratedTypeBuilderTest {
 
     @Test
     void addEnclosingTransferObjectIllegalArgumentTest2() {
-        final var builder = new CodegenGeneratedTypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(NullPointerException.class, () -> builder.addEnclosedType(null));
     }
 }

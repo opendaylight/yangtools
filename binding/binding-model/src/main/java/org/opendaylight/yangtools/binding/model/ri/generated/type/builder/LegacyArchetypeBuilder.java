@@ -10,30 +10,22 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-public final class CodegenGeneratedTypeBuilder<S extends EffectiveStatement<?, ?>>
-        extends AbstractGeneratedTypeBuilder<GeneratedTypeBuilder<S>, S> implements GeneratedTypeBuilder<S> {
-    private static final class CodegenLegacyArchetype<S extends EffectiveStatement<?, ?>>
-            extends AbstractGeneratedType<S> {
-        CodegenLegacyArchetype(final CodegenGeneratedTypeBuilder<S> builder) {
-            super(builder);
-        }
-    }
-
+public final class LegacyArchetypeBuilder<S extends EffectiveStatement<?, ?>>
+        extends AbstractGeneratedTypeBuilder<LegacyArchetypeBuilder<S>, S> {
     @NonNullByDefault
-    public CodegenGeneratedTypeBuilder(final JavaTypeName typeName, final S statement) {
+    public LegacyArchetypeBuilder(final JavaTypeName typeName, final S statement) {
         super(typeName, statement);
     }
 
     @Override
     public LegacyArchetype<S> build() {
-        return new CodegenLegacyArchetype<>(this);
+        return new DefaultLegacyArchetype<>(this);
     }
 
     @Override
-    protected CodegenGeneratedTypeBuilder<S> thisInstance() {
+    protected LegacyArchetypeBuilder<S> thisInstance() {
         return this;
     }
 }

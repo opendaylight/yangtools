@@ -14,7 +14,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.LegacyArchetypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -70,7 +70,7 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
         }
 
         final var statement = statement();
-        final var builder = new CodegenGeneratedTypeBuilder<>(typeName(), statement);
+        final var builder = new LegacyArchetypeBuilder<>(typeName(), statement);
         builder.addImplementsType(baseInterface);
         addAugmentable(builder);
 

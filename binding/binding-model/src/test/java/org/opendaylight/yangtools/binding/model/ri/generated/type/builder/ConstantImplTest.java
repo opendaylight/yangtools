@@ -26,7 +26,7 @@ class ConstantImplTest {
 
     @Test
     void testMethodsOfConstantImpl() {
-        final var type = new CodegenGeneratedTypeBuilder<>(
+        final var type = new LegacyArchetypeBuilder<>(
             JavaTypeName.create("org.opendaylight.yangtools.test.v1", "BaseType"), statement)
             .build();
         final var constImpl = new ConstantImpl(type, "IpAddress", "127.0.0.1");
@@ -40,8 +40,8 @@ class ConstantImplTest {
         assertEquals("IpAddress", constImpl.getName());
         assertEquals("127.0.0.1", constImpl.getValue());
         assertEquals("""
-            Constant [type=CodegenLegacyArchetype{name=org.opendaylight.yangtools.test.v1.BaseType}, \
-            name=IpAddress, value=127.0.0.1]""", constImpl.toString());
+            Constant [type=DefaultLegacyArchetype{name=org.opendaylight.yangtools.test.v1.BaseType}, name=IpAddress, \
+            value=127.0.0.1]""", constImpl.toString());
         assertEquals(constImpl.hashCode(), constImpl2.hashCode());
         assertNotNull(constImpl.getType());
         assertNotNull(constImpl.getName());

@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.WildcardType;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.CodegenGeneratedTypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.LegacyArchetypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationBodyRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -50,7 +50,7 @@ final class NotificationBodyGenerator
     LegacyArchetype<NotificationEffectiveStatement> createTypeImpl() {
         final var typeName = typeName();
         final var statement = statement();
-        final var builder = new CodegenGeneratedTypeBuilder<>(typeName, statement);
+        final var builder = new LegacyArchetypeBuilder<>(typeName, statement);
         builder.addImplementsType(BindingTypes.notificationBody(TypeRef.of(typeName())));
         defineImplementedInterfaceMethod(builder, WildcardType.ofName(builder.typeName()));
         addUsesInterfaces(builder);

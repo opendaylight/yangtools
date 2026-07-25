@@ -32,7 +32,7 @@ class AnnotationBuilderTest {
 
     @Test
     void generatedTypeAnnotationTest() {
-        final var genTypeBuilder = new CodegenGeneratedTypeBuilder<>(
+        final var genTypeBuilder = new LegacyArchetypeBuilder<>(
             JavaTypeName.create("org.opendaylight.controller", "AnnotInterface"), statement);
 
         genTypeBuilder.addAnnotation("javax.management", "MXBean");
@@ -68,7 +68,7 @@ class AnnotationBuilderTest {
 
     @Test
     void methodSignatureAnnotationTest() {
-        final var genTypeBuilder = new CodegenGeneratedTypeBuilder<>(
+        final var genTypeBuilder = new LegacyArchetypeBuilder<>(
             JavaTypeName.create("org.opendaylight.controller", "TransferObject"), statement);
 
         final var methodBuilder = genTypeBuilder.addMethod("simpleMethod");
@@ -126,7 +126,7 @@ class AnnotationBuilderTest {
 
     @Test
     void generatedTransfeObjectAnnotationTest() {
-        final var genTypeBuilder = new CodegenGeneratedTypeBuilder<>(
+        final var genTypeBuilder = new LegacyArchetypeBuilder<>(
             JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"), statement);
 
         genTypeBuilder.addAnnotation("javax.management", "MBean");
