@@ -13,7 +13,6 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
@@ -46,14 +45,6 @@ public final class AnnotationTypeBuilderImpl extends AbstractTypeBuilder impleme
     public boolean addParameter(final String paramName, final String value) {
         if (paramName != null && value != null) {
             return addParameter(new ParameterImpl(paramName, value));
-        }
-        return false;
-    }
-
-    @Override
-    public boolean addParameters(final String paramName, final List<String> values) {
-        if (paramName != null && values != null) {
-            return addParameter(new ParameterImpl(paramName, values));
         }
         return false;
     }
@@ -131,18 +122,10 @@ public final class AnnotationTypeBuilderImpl extends AbstractTypeBuilder impleme
     private static final class ParameterImpl implements Parameter {
         private final String name;
         private final String value;
-        private final List<String> values;
 
         ParameterImpl(final String name, final String value) {
-            this.name = name;
+            this.name = requireNonNull(name);
             this.value = value;
-            values = Collections.emptyList();
-        }
-
-        ParameterImpl(final String name, final List<String> values) {
-            this.name = name;
-            this.values = values;
-            value = null;
         }
 
         @Override
@@ -153,11 +136,6 @@ public final class AnnotationTypeBuilderImpl extends AbstractTypeBuilder impleme
         @Override
         public String getValue() {
             return value;
-        }
-
-        @Override
-        public List<String> getValues() {
-            return values;
         }
 
         @Override
@@ -185,15 +163,11 @@ public final class AnnotationTypeBuilderImpl extends AbstractTypeBuilder impleme
 
         @Override
         public String toString() {
-            final StringBuilder builder = new StringBuilder();
-            builder.append("ParameterImpl [name=");
-            builder.append(name);
-            builder.append(", value=");
-            builder.append(value);
-            builder.append(", values=");
-            builder.append(values);
-            builder.append("]");
-            return builder.toString();
+            final var sb = new StringBuilder().append("ParameterImpl [name=").append(name);
+            if (value != null) {
+                sb.append(", value=").append(value);
+            }
+            return sb.append("]").toString();
         }
     }
 }

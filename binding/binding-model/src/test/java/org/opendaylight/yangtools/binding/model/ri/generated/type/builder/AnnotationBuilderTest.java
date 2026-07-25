@@ -14,13 +14,11 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -58,8 +56,6 @@ class AnnotationBuilderTest {
                 assertEquals("description", param.getName());
                 assertNotNull(param.getValue());
                 assertEquals("some sort of interface", param.getValue());
-                assertNotNull(param.getValues());
-                assertTrue(param.getValues().isEmpty());
             }
         }
         assertEquals(2, annotCount);
@@ -80,11 +76,6 @@ class AnnotationBuilderTest {
         annotManAttr.addParameter("defaultValue", "\"bar\"");
         annotManAttr.addParameter("persistPolicy", "\"OnUpdate\"");
 
-        final AnnotationTypeBuilder annotManProp = methodBuilder.addAnnotation(
-            "org.springframework.jmx.export.annotation", "ManagedOperation");
-
-        annotManProp.addParameters("types", List.of("\"val1\"", "\"val2\"", "\"val3\""));
-
         final var genType = genTypeBuilder.build();
 
         assertNotNull(genType);
@@ -93,34 +84,21 @@ class AnnotationBuilderTest {
         assertNotNull(genType.getMethodDefinitions().get(0));
         assertNotNull(genType.getMethodDefinitions().get(0).getAnnotations());
         final var annotations = genType.getMethodDefinitions().get(0).getAnnotations();
-        assertEquals(2, annotations.size());
+        assertEquals(1, annotations.size());
 
-        int annotCount = 0;
-        for (var annotation : annotations) {
-            if (annotation.packageName().equals("org.springframework.jmx.export.annotation")
-                    && annotation.simpleName().equals("ManagedAttribute")) {
-                annotCount++;
-                assertEquals(4, annotation.getParameters().size());
+        final var annotation = annotations.getFirst();
+        assertEquals("org.springframework.jmx.export.annotation", annotation.packageName());
+        assertEquals("ManagedAttribute", annotation.simpleName());
+        assertEquals(4, annotation.getParameters().size());
 
-                assertNotNull(annotation.getParameter("description"));
-                assertNotNull(annotation.getParameter("currencyTimeLimit"));
-                assertNotNull(annotation.getParameter("defaultValue"));
-                assertNotNull(annotation.getParameter("persistPolicy"));
-                assertEquals("\"The Name Attribute\"", annotation.getParameter("description").getValue());
-                assertEquals("20", annotation.getParameter("currencyTimeLimit").getValue());
-                assertEquals("\"bar\"", annotation.getParameter("defaultValue").getValue());
-                assertEquals("\"OnUpdate\"", annotation.getParameter("persistPolicy").getValue());
-            }
-            if (annotation.packageName().equals("org.springframework.jmx.export.annotation")
-                    && annotation.simpleName().equals("ManagedOperation")) {
-                annotCount++;
-
-                assertEquals(1, annotation.getParameters().size());
-                assertNotNull(annotation.getParameter("types"));
-                assertEquals(3, annotation.getParameter("types").getValues().size());
-            }
-        }
-        assertEquals(2, annotCount);
+        assertNotNull(annotation.getParameter("description"));
+        assertNotNull(annotation.getParameter("currencyTimeLimit"));
+        assertNotNull(annotation.getParameter("defaultValue"));
+        assertNotNull(annotation.getParameter("persistPolicy"));
+        assertEquals("\"The Name Attribute\"", annotation.getParameter("description").getValue());
+        assertEquals("20", annotation.getParameter("currencyTimeLimit").getValue());
+        assertEquals("\"bar\"", annotation.getParameter("defaultValue").getValue());
+        assertEquals("\"OnUpdate\"", annotation.getParameter("persistPolicy").getValue());
     }
 
     @Test
@@ -131,7 +109,7 @@ class AnnotationBuilderTest {
         genTypeBuilder.addAnnotation("javax.management", "MBean");
         final var annotNotify = genTypeBuilder.addAnnotation("javax.management", "NotificationInfo");
 
-        annotNotify.addParameters("types", List.of("\"my.notif.type\""));
+        annotNotify.addParameter("types", "\"my.notif.type\"");
         annotNotify.addParameter("description", "@Description(\"my notification\")");
 
         var genTO = genTypeBuilder.build();
@@ -153,10 +131,7 @@ class AnnotationBuilderTest {
                 var param = annotation.getParameter("types");
                 assertNotNull(param);
                 assertEquals("types", param.getName());
-                assertNull(param.getValue());
-                assertNotNull(param.getValues());
-                assertEquals(1, param.getValues().size());
-                assertEquals("\"my.notif.type\"", param.getValues().get(0));
+                assertEquals("\"my.notif.type\"", param.getValue());
 
                 param = annotation.getParameter("description");
                 assertNotNull(param);
@@ -262,35 +237,19 @@ class AnnotationBuilderTest {
         assertFalse(annotationTypeBuilder.addParameter(null, "myValue"));
         assertFalse(annotationTypeBuilder.addParameter("myName", null));
 
-        assertFalse(annotationTypeBuilder.addParameters(null, List.of()));
-        assertFalse(annotationTypeBuilder.addParameters("myName", null));
-
         assertTrue(annotationTypeBuilder.addParameter("myName", "myValue"));
         assertFalse(annotationTypeBuilder.addParameter("myName", "myValue"));
-        assertFalse(annotationTypeBuilder.addParameters("myName", List.of()));
 
-        assertTrue(annotationTypeBuilder.addParameters("myName2", List.of("myValue")));
-
-        var annotationTypeInstance = annotationTypeBuilder.build();
-        assertEquals(2, annotationTypeInstance.getParameters().size());
-        assertEquals(2, annotationTypeInstance.getParameterNames().size());
+        final var annotationTypeInstance = annotationTypeBuilder.build();
+        assertEquals(1, annotationTypeInstance.getParameters().size());
+        assertEquals(1, annotationTypeInstance.getParameterNames().size());
         assertTrue(annotationTypeInstance.getParameterNames().contains("myName"));
-        assertTrue(annotationTypeInstance.getParameterNames().contains("myName2"));
-        assertFalse(annotationTypeInstance.getParameterNames().contains("myName3"));
-
-        var parameter = annotationTypeInstance.getParameter("myName");
-        var parameter2 = annotationTypeInstance.getParameter("myName2");
-        var parameter3 = annotationTypeInstance.getParameter("myName3");
-
+        final var parameter = annotationTypeInstance.getParameter("myName");
         assertNotNull(parameter);
-        assertNotNull(parameter2);
-        assertNull(parameter3);
+        assertEquals("myValue", parameter.getValue());
 
-        assertEquals(parameter.getValue(), "myValue");
-        assertTrue(parameter.getValues().isEmpty());
-
-        assertEquals(1, parameter2.getValues().size());
-        assertTrue(parameter2.getValues().contains("myValue"));
+        assertFalse(annotationTypeInstance.getParameterNames().contains("myName2"));
+        assertNull(annotationTypeInstance.getParameter("myName2"));
     }
 
     @Test
@@ -301,15 +260,13 @@ class AnnotationBuilderTest {
 
         assertEquals("""
             AnnotationTypeBuilderImpl{typeName=my.package.MyAnnotationName, \
-            parameters=[ParameterImpl [name=MyParameter, value=myValue, values=[]]]}""",
-            annotationTypeBuilder.toString());
+            parameters=[ParameterImpl [name=MyParameter, value=myValue]]}""", annotationTypeBuilder.toString());
 
         final var annotationTypeInstance = annotationTypeBuilder.build();
         assertSame(typeName, annotationTypeInstance.name());
         assertEquals("""
             AnnotationType{name=my.package.MyAnnotationName, \
-            parameters=[ParameterImpl [name=MyParameter, value=myValue, values=[]]]}""",
-                annotationTypeInstance.toString());
+            parameters=[ParameterImpl [name=MyParameter, value=myValue]]}""", annotationTypeInstance.toString());
     }
 
     @Test
@@ -319,22 +276,6 @@ class AnnotationBuilderTest {
         annotBuilderImpl.addParameter("testParam", "test value");
         annotBuilderImpl.addParameter(null, "test value");
         final var annotType = annotBuilderImpl.build();
-        assertEquals(1, annotType.getParameters().size());
-    }
-
-    @Test
-    void testAddParametersMethod() {
-        final var annotBuilderImpl = new AnnotationTypeBuilderImpl(
-            JavaTypeName.create("org.opedaylight.yangtools.test", "AnnotationTest"));
-
-        annotBuilderImpl.addParameters("testParam", List.of("test1", "test2", "test3"));
-
-        var annotType = annotBuilderImpl.build();
-        assertEquals(1, annotType.getParameters().size());
-
-        annotBuilderImpl.addParameters("testParam", null);
-
-        annotType = annotBuilderImpl.build();
         assertEquals(1, annotType.getParameters().size());
     }
 
@@ -404,7 +345,6 @@ class AnnotationBuilderTest {
         final var testParam = annotationType.getParameter("testParam");
         assertEquals("testParam", testParam.getName());
         assertEquals("test value", testParam.getValue());
-        assertEquals(0, testParam.getValues().size());
 
         final var testParams = annotationType.getParameters();
         final var sameParam = testParams.get(0);

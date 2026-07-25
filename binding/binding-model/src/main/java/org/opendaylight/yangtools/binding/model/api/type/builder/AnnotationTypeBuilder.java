@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.api.type.builder;
 
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -36,22 +35,6 @@ public non-sealed interface AnnotationTypeBuilder extends TypeBuilder {
      * @return <code>true</code> if the parameter has been successfully assigned for Annotation Type
      */
     boolean addParameter(String paramName, String value);
-
-    /**
-     * Adds the parameter with specified List of parameter values into List of
-     * parameters for Annotation Type. <br>
-     * If there is already stored parameter with the same name as the new
-     * parameter, the value of the old one will be simply overwritten by the
-     * newer parameter. <br>
-     * Neither the param name or value can contain <code>null</code> references.
-     * In case that any of parameters contains <code>null</code> the method
-     * SHOULD thrown {@link IllegalArgumentException}
-     *
-     * @param paramName Parameter Name
-     * @param values List of Values bounded to Parameter Name
-     * @return <code>true</code> if the parameter has been successfully assigned for Annotation Type
-     */
-    boolean addParameters(String paramName, List<String> values);
 
     /**
      * Returns <code>new</code> <i>immutable</i> instance of Annotation Type
