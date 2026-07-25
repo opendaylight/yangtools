@@ -11,6 +11,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -18,6 +20,7 @@ import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -56,9 +59,21 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
         return constants;
     }
 
-    @Override
-    public List<MethodSignatureBuilder> getMethodDefinitions() {
-        return methodDefinitions;
+    @NonNullByDefault
+    final List<MethodSignature> getMethodDefinitions() {
+        final var size = methodDefinitions.size();
+        return switch (size) {
+            case 0 -> List.of();
+            case 1 -> Collections.singletonList(methodDefinitions.getFirst().build());
+            case 2 -> List.of(methodDefinitions.getFirst().build(), methodDefinitions.getLast().build());
+            default -> {
+                final var methods = new ArrayList<MethodSignature>(size);
+                for (var builder : methodDefinitions) {
+                    methods.add(builder.build());
+                }
+                yield List.copyOf(methods);
+            }
+        };
     }
 
     protected final List<Archetype> getEnclosedTypes() {
