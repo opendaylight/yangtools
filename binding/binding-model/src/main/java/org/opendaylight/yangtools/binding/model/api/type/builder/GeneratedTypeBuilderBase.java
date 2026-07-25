@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -16,6 +17,9 @@ import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.Abstra
 
 public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
         extends TypeBuilder, AnnotableTypeBuilder permits AbstractGeneratedTypeBuilder, DataRootArchetype.Builder {
+    @Override
+    T addAnnotation(AttachedAnnotation annotation);
+
     /**
      * Adds a new enclosed {@link Archetype} into definition of Generated Type.
      *

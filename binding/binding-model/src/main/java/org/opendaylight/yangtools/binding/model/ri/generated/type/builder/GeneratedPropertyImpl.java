@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import java.util.List;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
+import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
@@ -18,7 +18,7 @@ public final class GeneratedPropertyImpl extends AbstractTypeMember implements G
     private final String value;
     private final boolean readOnly;
 
-    public GeneratedPropertyImpl(final String name, final List<AnnotationType> annotations,
+    public GeneratedPropertyImpl(final String name, final List<AttachedAnnotation> annotations,
             final TypeMemberComment comment, final AccessModifier accessModifier, final Type returnType,
             final boolean isReadOnly, final String value) {
         super(name, annotations, comment, accessModifier, returnType);

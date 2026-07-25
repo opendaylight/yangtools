@@ -33,13 +33,14 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
@@ -112,7 +113,7 @@ sealed class InterfaceTemplate<T extends Archetype.@NonNull OfCompositeInterface
     final BlockBuilder body() {
         final var bb = newBlockBuilder()
             .blk(wrapToDocumentation(formatDataForJavaDoc()))
-            .blk(generateAnnotations(archetype.getAnnotations()))
+            .blk(generateAnnotations(archetype.annotations()))
             .eol(generatedAnnotation())
             .str("public interface ").str(archetype.simpleName());
 
@@ -327,7 +328,7 @@ sealed class InterfaceTemplate<T extends Archetype.@NonNull OfCompositeInterface
         return bb;
     }
 
-    private @Nullable BlockBuilder generateAnnotations(final @NonNull List<AnnotationType> annotations) {
+    private @Nullable BlockBuilder generateAnnotations(final @NonNull List<AttachedAnnotation> annotations) {
         if (annotations.isEmpty()) {
             return null;
         }
@@ -434,7 +435,7 @@ sealed class InterfaceTemplate<T extends Archetype.@NonNull OfCompositeInterface
 
         final var bb = newBlockBuilder();
         for (var annotation : annotations) {
-            if (!Types.BOOLEAN.equals(method.getReturnType()) || !OVERRIDE.equals(annotation.name())) {
+            if (!Types.BOOLEAN.equals(method.getReturnType()) || !(annotation instanceof OverrideAnnotation)) {
                 bb.blk(generateAnnotation(annotation));
             }
         }

@@ -16,8 +16,8 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -49,8 +49,7 @@ class InterfaceGeneratorTest {
     @Test
     void builderTemplateDeprecatedListenerMethodTest() {
         final var methSign = mockMethSign("on" + TEST);
-        addMethodStatus(methSign, JavaTypeName.create(Deprecated.class));
-        final var genType = mockGenType(methSign);
+        doReturn(List.of(DeprecatedAnnotation.OBSOLETE)).when(methSign).getAnnotations();
 
         assertInterface("""
             package test;
@@ -62,18 +61,17 @@ class InterfaceGeneratorTest {
             public interface test {
 
 
-                @Deprecated
+                @Deprecated(forRemoval = true)
                 void ontest();
             }
-            """, genType);
+            """, mockGenType(methSign));
     }
 
     @Test
     void builderTemplateGenerateObsoleteListenerMethodTest() {
         final var methSign = mockMethSign("on" + TEST);
-        addMethodStatus(methSign, JavaTypeName.create(Deprecated.class));
+        doReturn(List.of(DeprecatedAnnotation.DEPRECATED)).when(methSign).getAnnotations();
         doReturn(true).when(methSign).isDefault();
-        final var genType = mockGenType(methSign);
 
         assertInterface("""
             package test;
@@ -90,7 +88,7 @@ class InterfaceGeneratorTest {
                     // No-op
                 }
             }
-            """, genType);
+            """, mockGenType(methSign));
     }
 
     private static @NonNull LegacyArchetype<?> mockGenType(final MethodSignature methSign) {
@@ -110,12 +108,6 @@ class InterfaceGeneratorTest {
         doReturn(methType).when(methSign).getReturnType();
         doReturn(MethodSignature.ValueMechanics.NORMAL).when(methSign).getMechanics();
         return methSign;
-    }
-
-    private static void addMethodStatus(final MethodSignature methSign, final JavaTypeName annotationJavaType) {
-        final var annotationType = mock(AnnotationType.class);
-        doReturn(annotationJavaType).when(annotationType).name();
-        doReturn(List.of(annotationType)).when(methSign).getAnnotations();
     }
 
     @NonNullByDefault

@@ -34,12 +34,10 @@ import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.YangData;
-import org.opendaylight.yangtools.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -60,9 +58,6 @@ public final class BindingTypes {
     public static final @NonNull ConcreteType UNION_TYPE_OBJECT = typeForBuiltIn(BuiltInType.UNION);
     public static final @NonNull ConcreteType YANG_DATA_NAME = typeForClass(YangDataName.class);
     public static final @NonNull ConcreteType JAVA_DATACONTAINER = typeForClass(JavaDataContainer.class);
-
-    // This is an annotation, we are current just referencing the type
-    public static final JavaTypeName ROUTING_CONTEXT = JavaTypeName.create(RoutingContext.class);
 
     @VisibleForTesting
     static final @NonNull ConcreteType AUGMENTABLE = typeForClass(Augmentable.class);

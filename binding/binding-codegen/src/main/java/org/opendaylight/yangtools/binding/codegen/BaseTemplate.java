@@ -25,17 +25,21 @@ import java.util.Locale;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.FunctionalInterfaceAnnotation;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
+import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.RoutingContextAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
@@ -227,27 +231,26 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     }
 
     @NonNullByDefault
-    final BlockBuilder generateAnnotation(final AnnotationType annotation) {
+    final BlockBuilder generateAnnotation(final AttachedAnnotation annotation) {
         final var bb = newBlockBuilder()
-            .at().str(importedName(annotation));
-
-        final var params = annotation.getParameters();
-        if (params != null && !params.isEmpty()) {
-            bb.eol("(");
-
-            final var it = params.iterator();
-            while (true) {
-                final var param = it.next();
-                bb.str("    ").str(param.getName()).str("=").str(param.getValue());
-                if (!it.hasNext()) {
-                    break;
+            .at().str(importedName(annotation.type()));
+        switch (annotation) {
+            case DeprecatedAnnotation deprecated -> {
+                if (deprecated.forRemoval()) {
+                    bb.str("(forRemoval = true)");
                 }
-                bb.eol(",");
             }
-
-            bb.nl().str(")");
+            case RoutingContextAnnotation routingContext -> {
+                bb.str("(value = ").str(importedName(routingContext.value())).str(".class)");
+            }
+            // TODO: use _ to merge these cases
+            case FunctionalInterfaceAnnotation unused -> {
+                // no-op
+            }
+            case OverrideAnnotation unused -> {
+                // no-op
+            }
         }
-
         return bb.nl();
     }
 

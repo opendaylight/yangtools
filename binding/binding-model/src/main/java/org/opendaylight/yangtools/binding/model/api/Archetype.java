@@ -65,7 +65,7 @@ public sealed interface Archetype extends Type permits Archetype.WithStatement {
          * {@return the list of annotations attached to interface declaration}
          */
         @NonNullByDefault
-        List<AnnotationType> getAnnotations();
+        List<AttachedAnnotation> annotations();
 
         /**
          * {@return the list of interfaces the interface extends}
