@@ -125,17 +125,6 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
         return builder;
     }
 
-    @Override
-    public boolean containsMethod(final String name) {
-        checkArgument(name != null, "Parameter name can't be null");
-        for (final MethodSignatureBuilder methodDefinition : methodDefinitions) {
-            if (name.equals(methodDefinition.getName())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     public Type getParent() {
         return null;
     }

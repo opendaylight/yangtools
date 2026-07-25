@@ -137,14 +137,9 @@ class GeneratedTypeBuilderTest {
             statement);
 
         var methodBuilder = generatedTypeBuilder.addMethod("myMethodName").setReturnType(Types.BOOLEAN);
-        var methodBuilder2 = generatedTypeBuilder.addMethod("myMethodName2").setReturnType(Types.STRING);
-
         assertNotNull(methodBuilder);
+        var methodBuilder2 = generatedTypeBuilder.addMethod("myMethodName2").setReturnType(Types.STRING);
         assertNotNull(methodBuilder2);
-
-        assertTrue(generatedTypeBuilder.containsMethod("myMethodName"));
-        assertTrue(generatedTypeBuilder.containsMethod("myMethodName2"));
-        assertFalse(generatedTypeBuilder.containsMethod("myMethodName3"));
 
         var instance = generatedTypeBuilder.build();
         var methodDefinitions = instance.getMethodDefinitions();

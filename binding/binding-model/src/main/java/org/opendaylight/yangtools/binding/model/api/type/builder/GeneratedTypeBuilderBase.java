@@ -97,13 +97,6 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
     MethodSignatureBuilder addMethod(String name);
 
     /**
-     * Checks if GeneratedTypeBuilder contains method with name <code>methodName</code>.
-     *
-     * @param methodName is method name
-     */
-    boolean containsMethod(String methodName);
-
-    /**
      * {@return a new immutable {@link Archetype.OfCompositeInterface} instance}
      */
     @NonNullByDefault
