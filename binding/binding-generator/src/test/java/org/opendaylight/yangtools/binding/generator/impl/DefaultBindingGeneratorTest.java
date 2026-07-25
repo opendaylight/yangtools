@@ -223,7 +223,8 @@ public class DefaultBindingGeneratorTest {
     void javaTypeForSchemaDefinitionConditionalLeafref() {
         // Note: previous incarnation did not resolve this, as the expression (pointed to a list)
         assertSame(assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt16")),
-            assertGeneratedMethod(TEST_TYPE_PROVIDER_B_DATA, "getConditionalLeafref").getReturnType());
+            assertGeneratedMethod(TEST_TYPE_PROVIDER_B_DATA, DataRootArchetype.class, "getConditionalLeafref")
+                .getReturnType());
     }
 
     @Test
@@ -231,7 +232,7 @@ public class DefaultBindingGeneratorTest {
         assertSame(assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8")),
             assertGeneratedMethod(JavaTypeName.create(TEST_TYPE_PROVIDER, "Bar"), "getLeafrefValue").getReturnType());
         assertSame(assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt16")),
-            assertGeneratedMethod(TEST_TYPE_PROVIDER_B_DATA, "getId").getReturnType());
+            assertGeneratedMethod(TEST_TYPE_PROVIDER_B_DATA, DataRootArchetype.class, "getId").getReturnType());
     }
 
     @Test
@@ -300,8 +301,13 @@ public class DefaultBindingGeneratorTest {
     }
 
     private static MethodSignature assertGeneratedMethod(final JavaTypeName typeName, final String methodName) {
+        return assertGeneratedMethod(typeName, LegacyArchetype.class, methodName);
+    }
+
+    private static <A extends Archetype.OfCompositeInterface<?>> MethodSignature assertGeneratedMethod(
+            final JavaTypeName typeName, final Class<A> archetypeClass, final String methodName) {
         return assertGeneratedMethod(
-            assertInstanceOf(LegacyArchetype.class, assertGeneratedType(typeName)).getMethodDefinitions(), methodName);
+            assertInstanceOf(archetypeClass, assertGeneratedType(typeName)).getMethodDefinitions(), methodName);
     }
 
     private static MethodSignature assertGeneratedMethod(final List<MethodSignature> methods, final String name) {

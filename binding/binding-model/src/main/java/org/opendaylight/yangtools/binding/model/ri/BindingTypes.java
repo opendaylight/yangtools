@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
@@ -351,21 +352,22 @@ public final class BindingTypes {
      * Recover the {@code keyType} argument from a potential {@link EntryObject} type. This is inverse operation to
      * adding {@link #entryObject(Type, KeyArchetype)} as an implemented interface.
      *
-     * @param genType the generated type
+     * @param archetype the generated type
      * @return the {@link KeyArchetype} defining the key type, or {@code null} if {@code genType} does not
      *         directly implement {@link EntryObject}
      * @since 16.0.0
      */
-    public static @Nullable KeyArchetype extractEntryObjectKey(final @NonNull LegacyArchetype<?> genType) {
-        for (var iface : genType.getImplements()) {
+    public static @Nullable KeyArchetype extractEntryObjectKey(
+            final Archetype.@NonNull OfCompositeInterface<?> archetype) {
+        for (var iface : archetype.getImplements()) {
             if (iface instanceof ParameterizedType parameterized && ENTRY_OBJECT.equals(parameterized.getRawType())) {
                 final var args = parameterized.getActualTypeArguments();
                 if (args.size() != 2) {
                     throw new VerifyException("Unexpected arguments " + args);
                 }
                 final var keyType = args.getLast();
-                if (keyType instanceof KeyArchetype archetype) {
-                    return archetype;
+                if (keyType instanceof KeyArchetype keyArchetype) {
+                    return keyArchetype;
                 }
                 throw new VerifyException("Unexpected key type " + keyType);
             }

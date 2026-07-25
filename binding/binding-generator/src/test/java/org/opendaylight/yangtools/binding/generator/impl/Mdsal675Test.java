@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype.Anydata;
@@ -122,7 +123,7 @@ class Mdsal675Test {
                 List.of("getAnyxmlFromGroup", "requireAnyxmlFromGroup"));
 
         // ensure module class has only getter for root container
-        final var moduleType = assertGenType(genTypesMap, MODULE_CLASS_NAME);
+        final var moduleType = assertArchetype(genTypesMap, MODULE_CLASS_NAME, DataRootArchetype.class);
         assertNotNull(moduleType.getMethodDefinitions());
         assertEquals(List.of("getRootContainer"),
                 moduleType.getMethodDefinitions().stream().map(MethodSignature::getName)

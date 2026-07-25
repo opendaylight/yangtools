@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -22,12 +22,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
  * The default implementation {@link DataRootArchetype}.
  * @since 15.0.0
  */
+@NonNullByDefault
 record DataRootArchetypeImpl(
-        @NonNull JavaTypeName name,
-        @NonNull ModuleEffectiveStatement statement,
-        @NonNull List<Type> getImplements,
-        @NonNull List<MethodSignature> getMethodDefinitions,
-        @NonNull List<@NonNull Archetype> enclosedTypes) implements DataRootArchetype {
+        JavaTypeName name,
+        ModuleEffectiveStatement statement,
+        List<Type> getImplements,
+        List<MethodSignature> getMethodDefinitions,
+        List<Archetype> enclosedTypes) implements DataRootArchetype {
     DataRootArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);

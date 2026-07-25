@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
@@ -31,27 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  *
  * @param <S> EffectiveStatement type
  */
-public non-sealed interface LegacyArchetype<S extends EffectiveStatement<?, ?>> extends Archetype.WithStatement<S> {
-    /**
-     * {@return List of annotation definitions associated with generated type}
-     */
-    @NonNull List<AnnotationType> getAnnotations();
-
-    /**
-     * {@return List of Types that Generated Type will implement}
-     */
-    @NonNull List<Type> getImplements();
-
-    /**
-     * {@return List of Constant definitions associated with Generated Type}
-     */
-    @NonNull List<Constant> getConstantDefinitions();
-
-    /**
-     * Returns List of Method Definitions associated with Generated Type. The list does not contains getters and setters
-     * for properties.
-     *
-     * @return List of Method Definitions associated with Generated Type.
-     */
-    @NonNull List<MethodSignature> getMethodDefinitions();
+public non-sealed interface LegacyArchetype<S extends EffectiveStatement<?, ?>>
+        extends Archetype.OfCompositeInterface<S> {
+    // FIXME: should be a final class
 }

@@ -28,7 +28,7 @@ public sealed interface Archetype extends Type permits Archetype.WithStatement {
      * @since 16.0.0
      */
     sealed interface WithStatement<S extends EffectiveStatement<?, ?>> extends Archetype
-            permits WithQName, KeyArchetype, LegacyArchetype, TypeObjectArchetype, DataRootArchetype {
+            permits OfCompositeInterface, WithQName, KeyArchetype, TypeObjectArchetype {
         /**
          * {@return the {@link EffectiveStatement}}
          */
@@ -50,6 +50,40 @@ public sealed interface Archetype extends Type permits Archetype.WithStatement {
         default @NonNull QName qnameConstant() {
             return statement().argument();
         }
+    }
+
+    /**
+     * An {@link Archetype} which is based on a particular {@link EffectiveStatement}.
+     *
+     * @param <S> EffectiveStatement type
+     * @since 16.0.0
+     */
+    @Beta
+    sealed interface OfCompositeInterface<S extends EffectiveStatement<?, ?>> extends WithStatement<S>
+            permits DataRootArchetype, LegacyArchetype {
+        /**
+         * {@return the list of annotations attached to interface declaration}
+         */
+        @NonNullByDefault
+        List<AnnotationType> getAnnotations();
+
+        /**
+         * {@return the list of interfaces the interface extends}
+         */
+        @NonNullByDefault
+        List<Type> getImplements();
+
+        /**
+         * {@return the list of constants the interface defines}
+         */
+        @NonNullByDefault
+        List<Constant> getConstantDefinitions();
+
+        /**
+         * {@return the list of methods the interface defines}
+         */
+        @NonNullByDefault
+        List<MethodSignature> getMethodDefinitions();
     }
 
     /**
