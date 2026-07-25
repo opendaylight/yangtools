@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
  * A {@link SourceLinker} for a YANG {@code submodule}.
  */
 final class SubmoduleLinker extends SourceLinker<SourceInfoRef.OfSubmodule> {
-    private @Nullable ForModule parent;
+    private @Nullable ModuleLinker parent;
 
     @NonNullByDefault
     SubmoduleLinker(final SourceInfoRef.OfSubmodule infoRef) {
@@ -40,9 +40,9 @@ final class SubmoduleLinker extends SourceLinker<SourceInfoRef.OfSubmodule> {
     }
 
     /**
-     * {@return the {@link ForModule} corresponding to the parent module, or {@code null} if not yet determined}
+     * {@return the {@link ModuleLinker} corresponding to the parent module, or {@code null} if not yet determined}
      */
-    @Nullable ForModule parent() {
+    @Nullable ModuleLinker parent() {
         return parent;
     }
 
@@ -57,12 +57,12 @@ final class SubmoduleLinker extends SourceLinker<SourceInfoRef.OfSubmodule> {
     }
 
     /**
-     * Adds a {@link ForModule} of the parent module this submodule belongs to.
+     * Adds a {@link ModuleLinker} of the parent module this submodule belongs to.
      *
-     * @param module {@link ForModule} of the parent module.
+     * @param module {@link ModuleLinker} of the parent module.
      */
     @NonNullByDefault
-    void resolveBelongsTo(final ForModule module) throws ReactorException {
+    void resolveBelongsTo(final ModuleLinker module) throws ReactorException {
         final var local = parent;
         if (local != null) {
             throw new VerifyException("Attempted to re-resolve belongs-to from " + local + " to " + module);
