@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
-import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedBelongsTo;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -50,7 +49,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
  * of a single thread executing {@link SourceLinkageResolver#resolveInvolvedSources(Set, Set)}.
  */
 // FIXME: rename inner classes to top-level {Module,Submodule}Linker
-abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSourceInfo.Builder {
+abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSourceInfo.Builder
+        permits SourceLinker.ForModule, SubmoduleLinker {
     /**
      * A {@link SourceLinker} for a YANG {@code module}. It provides a meeting point for resolving {@code include}
      * statements to a consistent set of sources, such that violations of RFC6020/RFC7950 section 7.1.6 requirement that
@@ -132,9 +132,9 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
         }
 
         /**
-         * An {@link ExactRevision} which has been resolved to a {@link ForSubmodule}.
+         * An {@link ExactRevision} which has been resolved to a {@link SubmoduleLinker}.
          */
-        private record ResolvedRevision(ForSubmodule submodule, Exactness exactness) implements ExactRevision {
+        private record ResolvedRevision(SubmoduleLinker submodule, Exactness exactness) implements ExactRevision {
             ResolvedRevision {
                 requireNonNull(submodule);
                 requireNonNull(exactness);
@@ -155,7 +155,7 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
                 requireNonNull(exactness);
             }
 
-            ResolvedRevision toResolved(final ForSubmodule submodule) {
+            ResolvedRevision toResolved(final SubmoduleLinker submodule) {
                 if (!Objects.equals(revision.revision(), submodule.revision())) {
                     throw new VerifyException("Attempted to resolve " + this + " with " + submodule.humanName());
                 }
@@ -213,21 +213,21 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
         }
 
         /**
-         * {@return the memoized {@link ForSubmodule}, or {@code null} if the submodule was not yet resolved}
+         * {@return the memoized {@link SubmoduleLinker}, or {@code null} if the submodule was not yet resolved}
          * @param submodule submodule name
          */
-        @Nullable ForSubmodule lookupSubmodule(final Unqualified submodule) {
+        @Nullable SubmoduleLinker lookupSubmodule(final Unqualified submodule) {
             return submoduleSpecs.get(requireNonNull(submodule)) instanceof ResolvedRevision resolved
                 ? resolved.submodule : null;
         }
 
         /**
          * Resolve the requirement to include a particular submodule revision, reported by
-         * {@link #lookupRevision(Unqualified)}, to a particular {@link ForSubmodule}.
+         * {@link #lookupRevision(Unqualified)}, to a particular {@link SubmoduleLinker}.
          *
          * @param submodule the submodule
          */
-        void resolveSubmodule(final ForSubmodule submodule) {
+        void resolveSubmodule(final SubmoduleLinker submodule) {
             final var sourceId = submodule.sourceId();
             final var name = sourceId.name();
             final var spec = submoduleSpecs.get(name);
@@ -244,7 +244,7 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
          * @param source the {@link SourceLinker} to the source of requirements
          * @throws ReactorException if a requirement conflicts with a previous requirement
          */
-        private void requireIncludes(final SourceLinker<?> source) throws ReactorException {
+        void requireIncludes(final SourceLinker<?> source) throws ReactorException {
             final var it = source.missingIncludes();
             while (it.hasNext()) {
                 requireInclude(source, it.next());
@@ -330,7 +330,7 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
         void checkInclude(final SourceLinker<?> source, final Include dependency) throws ReactorException {
             switch (source) {
                 case ForModule module -> verify(module == this);
-                case ForSubmodule submodule -> {
+                case SubmoduleLinker submodule -> {
                     final var yangVersion = yangVersion();
                     if (yangVersion != YangVersion.VERSION_1) {
                         final var depRef = dependency.sourceRef();
@@ -345,93 +345,16 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
         }
     }
 
-    /**
-     * A {@link SourceLinker} for a YANG {@code submodule}.
-     */
-    static final class ForSubmodule extends SourceLinker<SourceInfoRef.OfSubmodule> {
-        private @Nullable ForModule parent;
-
-        @NonNullByDefault
-        ForSubmodule(final SourceInfoRef.OfSubmodule infoRef) {
-            super(infoRef);
-        }
-
-        /**
-         * {@return the module name specified by this submodule through {@link SourceInfo.Submodule#belongsTo()}}
-         */
-        @NonNullByDefault
-        Unqualified parentName() {
-            return sourceInfo().belongsTo().name();
-        }
-
-        /**
-         * {@return the {@link ForModule} corresponding to the parent module, or {@code null} if not yet determined}
-         */
-        @Nullable ForModule parent() {
-            return parent;
-        }
-
-        @Override
-        SourceInfo.Submodule sourceInfo() {
-            return infoRef().info();
-        }
-
-        @Override
-        boolean isResolved() {
-            return parent != null && super.isResolved();
-        }
-
-        /**
-         * Adds a {@link ForModule} of the parent module this submodule belongs to.
-         *
-         * @param module {@link ForModule} of the parent module.
-         */
-        @NonNullByDefault
-        void resolveBelongsTo(final ForModule module) throws ReactorException {
-            final var local = parent;
-            if (local != null) {
-                throw new VerifyException("Attempted to re-resolve belongs-to from " + local + " to " + module);
-            }
-
-            // order of operations has implications on error reporting:
-            // - we reject duplicate resolution, then
-            // - we reject mismatch between proposed module and belongs-to module name, then
-            // - we declare belongs-to resolved, and finally
-            // - we inform the module of the include dependencies this submodule brings to the table
-            final var parentName = parentName();
-            if (!parentName.equals(module.name())) {
-                throw new VerifyException("Attempted to resolve belongs-to " + parentName.getLocalName()
-                    + " with module " + module.humanName());
-            }
-            parent = module;
-            module.requireIncludes(this);
-        }
-
-        @Override
-        ResolvedSubmoduleInfo doBuild(final List<@NonNull ResolvedImport> resolvedImports,
-                final List<@NonNull ResolvedInclude> resolveIncludes) {
-            final var local = parent;
-            if (local == null) {
-                throw new VerifyException("Unresolved belongs-to in " + this);
-            }
-            final var parentRef = local.infoRef();
-            final var infoRef = infoRef();
-            return new ResolvedSubmoduleInfo(infoRef,
-                new ResolvedBelongsTo(infoRef.info().belongsTo(), parentRef.ref(),
-                    parentRef.info().moduleName().getModule()), resolvedImports, resolveIncludes);
-        }
-    }
-
     // the SourceInfoRef this object is attempting to resolve
     private final @NonNull R infoRef;
 
     @NonNullByDefault
     private DependencyLinker<Import, ForModule> imports;
     @NonNullByDefault
-    private DependencyLinker<Include, ForSubmodule> includes;
+    private DependencyLinker<Include, SubmoduleLinker> includes;
 
     @NonNullByDefault
-    private SourceLinker(final R infoRef) {
+    SourceLinker(final R infoRef) {
         this.infoRef = requireNonNull(infoRef);
 
         final var info = infoRef.info();
@@ -539,13 +462,13 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
     }
 
     /**
-     * Adds a {@link ForSubmodule} of an included submodule.
+     * Adds a {@link SubmoduleLinker} of an included submodule.
      *
      * @param dependency the {@link Include} dependency being satisfied
-     * @param target {@link ForSubmodule} of the included submodule
+     * @param target {@link SubmoduleLinker} of the included submodule
      */
     @NonNullByDefault
-    final void resolveInclude(final Include dependency, final ForSubmodule target) {
+    final void resolveInclude(final Include dependency, final SubmoduleLinker target) {
         // FIXME: YANG 1 submodules should enforce no circular includes
         final var resolved = includes.resolveMissing(dependency, requireNonNull(target));
         if (resolved != null) {
