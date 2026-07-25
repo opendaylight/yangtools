@@ -16,6 +16,24 @@
       "message": "this should be split up into three patches",
       "revId": "62a405ae9e7d8d3828189df0b15f11325b5c139b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "f5171edf_88eb5892",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 23
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-25T09:05:47Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "661428db_a0b9aede",
+      "revId": "62a405ae9e7d8d3828189df0b15f11325b5c139b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
