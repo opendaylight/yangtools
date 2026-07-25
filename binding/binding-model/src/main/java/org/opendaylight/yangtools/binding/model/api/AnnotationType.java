@@ -17,13 +17,6 @@ import java.util.List;
  */
 public non-sealed interface AnnotationType extends Type {
     /**
-     * Returns the List of Annotations. Each Annotation Type MAY have defined multiple Annotations.
-     *
-     * @return the List of Annotations.
-     */
-    List<AnnotationType> getAnnotations();
-
-    /**
      * Returns Parameter Definition assigned for given parameter name. If Annotation does not contain parameter
      * with specified param name, the method MAY return <code>null</code> value.
      *
