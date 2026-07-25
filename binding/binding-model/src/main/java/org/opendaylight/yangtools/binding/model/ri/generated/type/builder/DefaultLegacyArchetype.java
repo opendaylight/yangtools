@@ -15,8 +15,8 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 final class DefaultLegacyArchetype<S extends EffectiveStatement<?, ?>> implements LegacyArchetype<S> {
     private final @NonNull JavaTypeName name;
     private final @NonNull S statement;
-    private final @NonNull List<AnnotationType> annotations;
+    private final @NonNull List<AttachedAnnotation> annotations;
     private final @NonNull List<Type> implementsTypes;
     private final @NonNull List<Constant> constants;
     private final @NonNull List<MethodSignature> methodSignatures;
@@ -54,7 +54,7 @@ final class DefaultLegacyArchetype<S extends EffectiveStatement<?, ?>> implement
     }
 
     @Override
-    public List<AnnotationType> getAnnotations() {
+    public List<AttachedAnnotation> annotations() {
         return annotations;
     }
 

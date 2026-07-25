@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -104,7 +105,9 @@ class AnnotationBuilderTest {
     @Test
     void generatedTransfeObjectAnnotationTest() {
         final var genTypeBuilder = new LegacyArchetypeBuilder<>(
-            JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"), statement);
+            JavaTypeName.create("org.opendaylight.controller", "AnnotClassCache"), statement)
+                .addAnnotation(DeprecatedAnnotation.DEPRECATED)
+                .build();
 
         genTypeBuilder.addAnnotation("javax.management", "MBean");
         final var annotNotify = genTypeBuilder.addAnnotation("javax.management", "NotificationInfo");

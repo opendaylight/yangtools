@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
@@ -19,25 +19,10 @@ import org.opendaylight.yangtools.concepts.Mutable;
 @NonNullByDefault
 public interface AnnotableTypeBuilder extends Mutable {
     /**
-     * The method creates new {@link AnnotationTypeBuilder} containing specified package name an annotation name.
+     * Add an {@link AttachedAnnotation} to this builder.
      *
-     * @param identifier JavaTypeName of the annotation
-     * @return a new instance of Annotation Type Builder.
+     * @param annotation the {@link AttachedAnnotation}
+     * @return this instance
      */
-    AnnotationTypeBuilder addAnnotation(JavaTypeName identifier);
-
-    /**
-     * The method creates new {@link AnnotationTypeBuilder} containing specified package name an annotation name.
-     * Neither the package name or annotation name can contain <code>null</code> references. In case that any
-     * of parameters contains <code>null</code> the method SHOULD thrown {@link IllegalArgumentException}
-     *
-     * @param packageName Package Name of Annotation Type
-     * @param simpleName Name of Annotation Type
-     * @return <code>new</code> instance of Annotation Type Builder.
-     * @throws NullPointerException if any of the arguments are null
-     * @throws IllegalArgumentException if any of the arguments is an empty string
-     */
-    default AnnotationTypeBuilder addAnnotation(final String packageName, final String simpleName) {
-        return addAnnotation(JavaTypeName.create(packageName, simpleName));
-    }
+    AnnotableTypeBuilder addAnnotation(AttachedAnnotation annotation);
 }

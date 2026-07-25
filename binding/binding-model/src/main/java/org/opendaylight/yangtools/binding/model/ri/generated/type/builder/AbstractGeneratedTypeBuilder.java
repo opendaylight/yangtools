@@ -16,14 +16,14 @@ import java.util.Collections;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotationTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
@@ -35,7 +35,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
         permits LegacyArchetypeBuilder, DataRootArchetypeBuilder {
     protected final @NonNull S statement;
 
-    private List<AnnotationTypeBuilder> annotationBuilders = List.of();
+    private @Nullable ArrayList<AttachedAnnotation> annotations = null;
     private List<Type> implementsTypes = List.of();
     private List<Constant> constants = List.of();
     private List<MethodSignatureBuilder> methodDefinitions = List.of();
@@ -47,21 +47,35 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
         this.statement = requireNonNull(statement);
     }
 
-    @NonNullByDefault
-    final List<AnnotationType> getAnnotations() {
-        final var size = annotationBuilders.size();
-        return switch (size) {
-            case 0 -> List.of();
-            case 1 -> Collections.singletonList(annotationBuilders.getFirst().build());
-            case 2 -> List.of(annotationBuilders.getFirst().build(), annotationBuilders.getLast().build());
-            default -> {
-                final var tmp = new ArrayList<AnnotationType>(size);
-                for (var builder : annotationBuilders) {
-                    tmp.add(builder.build());
+    @Override
+    public final T addAnnotation(final AttachedAnnotation annotation) {
+        final ArrayList<AttachedAnnotation> list;
+        final var local = annotations;
+        if (local != null) {
+            if (!annotation.repeatable()) {
+                final var type = annotation.type();
+                for (var existing : local) {
+                    if (type.equals(existing.type())) {
+                        throw new IllegalArgumentException("Attempt to repeat " + annotation + " after " + existing);
+                    }
                 }
-                yield List.copyOf(tmp);
             }
-        };
+            list = local;
+        } else {
+            requireNonNull(annotation);
+            annotations = list = new ArrayList<>(2);
+        }
+        list.add(annotation);
+        return thisInstance();
+    }
+
+    @NonNullByDefault
+    final List<AttachedAnnotation> getAnnotations() {
+        final var local = annotations;
+        if (local == null) {
+            return List.of();
+        }
+        return local.size() == 1 ? Collections.singletonList(local.getFirst()) : List.copyOf(local);
     }
 
     @NonNullByDefault
@@ -116,15 +130,6 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     }
 
     @Override
-    public AnnotationTypeBuilder addAnnotation(final JavaTypeName identifier) {
-        final var builder = new AnnotationTypeBuilderImpl(identifier);
-
-        checkArgument(!annotationBuilders.contains(builder), "This generated type already contains equal annotation.");
-        annotationBuilders = LazyCollections.lazyAdd(annotationBuilders, builder);
-        return builder;
-    }
-
-    @Override
     public T addImplementsType(final Type genType) {
         checkArgument(!implementsTypes.contains(requireNonNull(genType)),
             "This generated type already contains equal implements type.");
@@ -175,7 +180,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
         addToStringAttribute(helper, "constants", constants);
         addToStringAttribute(helper, "enclosedTypes", enclosedTypes);
         addToStringAttribute(helper, "methods", methodDefinitions);
-        addToStringAttribute(helper, "annotations", annotationBuilders);
+        addToStringAttribute(helper, "annotations", annotations);
         addToStringAttribute(helper, "implements", implementsTypes);
 
         return helper;
