@@ -20,6 +20,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Import;
 import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include;
+import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
@@ -36,28 +37,16 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
  * <p>This class is an implementation detail of {@link SourceLinkageResolver} and is expected to be used in the context
  * of a single thread executing {@link SourceLinkageResolver#resolveInvolvedSources(Set, Set)}.
  */
-abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSourceInfo.Builder
-        permits ModuleLinker, SubmoduleLinker {
-    // the SourceInfoRef this object is attempting to resolve
-    private final @NonNull R infoRef;
-
+abstract sealed class SourceLinker extends ResolvedSourceInfo.Builder permits ModuleLinker, SubmoduleLinker {
     @NonNullByDefault
     private DependencyLinker<Import, ModuleLinker> imports;
     @NonNullByDefault
     private DependencyLinker<Include, SubmoduleLinker> includes;
 
     @NonNullByDefault
-    SourceLinker(final R infoRef) {
-        this.infoRef = requireNonNull(infoRef);
-
-        final var info = infoRef.info();
+    SourceLinker(final SourceInfo info) {
         imports = DependencyLinker.of(info.imports());
         includes = DependencyLinker.of(info.includes());
-    }
-
-    @Override
-    final R infoRef() {
-        return infoRef;
     }
 
     /**
@@ -123,16 +112,15 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
      * @return the reverse sequence of sources through which the specified module is imported, or {@code null} when it
      *         is not imported
      */
-    private static @Nullable ArrayList<@NonNull SourceLinker<?>> importPathOf(
-            final @NonNull HashSet<SourceLinker<?>> visited, final @NonNull SourceLinker<?> source,
-            final @NonNull ModuleLinker module) {
+    private static @Nullable ArrayList<@NonNull SourceLinker> importPathOf(final @NonNull HashSet<SourceLinker> visited,
+            final @NonNull SourceLinker source, final @NonNull ModuleLinker module) {
         // only process a source if we have not visited it yet
         if (visited.add(source)) {
             final var impIt = source.imports.present();
             while (impIt.hasNext()) {
                 final var target = impIt.next();
                 if (target.equals(module)) {
-                    final var ret = new ArrayList<SourceLinker<?>>();
+                    final var ret = new ArrayList<SourceLinker>();
                     ret.add(source);
                     return ret;
                 }
@@ -184,6 +172,6 @@ abstract sealed class SourceLinker<R extends SourceInfoRef> extends ResolvedSour
 
     @Override
     public final String toString() {
-        return MoreObjects.toStringHelper(this).add("ref", infoRef).toString();
+        return MoreObjects.toStringHelper(this).add("ref", infoRef()).toString();
     }
 }
