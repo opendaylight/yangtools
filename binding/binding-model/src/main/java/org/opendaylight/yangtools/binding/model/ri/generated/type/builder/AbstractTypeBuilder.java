@@ -23,8 +23,7 @@ import org.opendaylight.yangtools.binding.model.api.type.builder.TypeBuilder;
  */
 @Beta
 @NonNullByDefault
-public abstract sealed class AbstractTypeBuilder implements TypeBuilder
-        permits AbstractGeneratedTypeBuilder, AnnotationTypeBuilderImpl {
+public abstract sealed class AbstractTypeBuilder implements TypeBuilder permits AbstractGeneratedTypeBuilder {
     private final JavaTypeName typeName;
 
     AbstractTypeBuilder(final JavaTypeName typeName) {

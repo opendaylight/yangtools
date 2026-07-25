@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyImpl;
@@ -22,6 +23,7 @@ public final class GeneratedPropertyBuilder extends TypeMemberBuilder<GeneratedP
     private boolean readOnly = true;
     private String value;
 
+    @NonNullByDefault
     public GeneratedPropertyBuilder(final String name) {
         super(name);
     }
@@ -56,9 +58,8 @@ public final class GeneratedPropertyBuilder extends TypeMemberBuilder<GeneratedP
      */
     @NonNullByDefault
     public GeneratedProperty toInstance() {
-        final var annotations = toAnnotationTypes();
-        return new GeneratedPropertyImpl(getName(), annotations, getComment(), getAccessModifier(), getReturnType(),
-            readOnly, value);
+        return new GeneratedPropertyImpl(getName(), annotations(), getComment(), getAccessModifier(),
+            getReturnType(), readOnly, value);
     }
 
     @Override
@@ -67,14 +68,10 @@ public final class GeneratedPropertyBuilder extends TypeMemberBuilder<GeneratedP
     }
 
     @Override
-    public String toString() {
-        return new StringBuilder()
-            .append("GeneratedPropertyBuilder [name=").append(getName())
-            .append(", annotations=").append(getAnnotationBuilders())
-            .append(", comment=").append(getComment())
-            .append(", returnType=").append(getReturnType())
-            .append(", isReadOnly=").append(readOnly)
-            .append(", modifier=").append(getAccessModifier())
-            .append(']').toString();
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        if (readOnly) {
+            helper.addValue("readOnly");
+        }
+        return super.addToStringAttributes(helper);
     }
 }

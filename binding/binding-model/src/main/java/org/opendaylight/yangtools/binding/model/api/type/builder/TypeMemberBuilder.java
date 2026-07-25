@@ -10,30 +10,33 @@ package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
-import org.opendaylight.yangtools.binding.model.api.AnnotationType;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AnnotationTypeBuilderImpl;
-import org.opendaylight.yangtools.util.LazyCollections;
 
 public abstract sealed class TypeMemberBuilder<T extends TypeMemberBuilder<T>> implements AnnotableTypeBuilder
         permits GeneratedPropertyBuilder, MethodSignatureBuilder {
     private final String name;
 
-    private Type returnType;
-    private List<AnnotationTypeBuilder> annotationBuilders = List.of();
-    private TypeMemberComment comment;
+    private @Nullable ArrayList<AttachedAnnotation> annotations = null;
     private AccessModifier accessModifier;
+    private TypeMemberComment comment;
+    private Type returnType;
 
+    @NonNullByDefault
     TypeMemberBuilder(final String name) {
-        this.name = name;
+        this.name = requireNonNull(name);
     }
 
     /**
@@ -88,30 +91,45 @@ public abstract sealed class TypeMemberBuilder<T extends TypeMemberBuilder<T>> i
     }
 
     @Override
-    public final AnnotationTypeBuilder addAnnotation(final JavaTypeName identifier) {
-        final var builder = new AnnotationTypeBuilderImpl(identifier);
-        annotationBuilders = LazyCollections.lazyAdd(annotationBuilders, builder);
-        return builder;
+    public final T addAnnotation(final AttachedAnnotation annotation) {
+        annotations = addAnnotation(annotations, annotation);
+        return thisInstance();
     }
 
-    final List<AnnotationTypeBuilder> getAnnotationBuilders() {
-        return annotationBuilders;
-    }
-
-    final List<AnnotationType> toAnnotationTypes() {
-        final var size = annotationBuilders.size();
-        return switch (size) {
-            case 0 -> List.of();
-            case 1 -> Collections.singletonList(annotationBuilders.getFirst().build());
-            case 2 -> List.of(annotationBuilders.getFirst().build(), annotationBuilders.getLast().build());
-            default -> {
-                final var tmp = new ArrayList<AnnotationType>(size);
-                for (var annotBuilder : annotationBuilders) {
-                    tmp.add(annotBuilder.build());
+    @Beta
+    public static @Nullable ArrayList<@NonNull AttachedAnnotation> addAnnotation(
+            final @Nullable ArrayList<@NonNull AttachedAnnotation> list,
+            final @Nullable AttachedAnnotation annotation) {
+        if (annotation == null) {
+            return list;
+        }
+        if (list == null) {
+            final var ret = new ArrayList<AttachedAnnotation>(2);
+            ret.add(annotation);
+            return ret;
+        }
+        if (!annotation.repeatable()) {
+            final var type = annotation.type();
+            for (var existing : list) {
+                if (annotation.equals(existing)) {
+                    throw new IllegalArgumentException("Attempt to repeat " + annotation);
                 }
-                yield List.copyOf(tmp);
+                if (type.equals(existing.type())) {
+                    throw new IllegalArgumentException("Attempt to repeat " + annotation + " after " + existing);
+                }
             }
-        };
+        }
+        list.add(annotation);
+        return list;
+    }
+
+    @NonNullByDefault
+    final List<AttachedAnnotation> annotations() {
+        final var local = annotations;
+        if (local == null) {
+            return List.of();
+        }
+        return local.size() == 1 ? Collections.singletonList(requireNonNull(local.getFirst())) : List.copyOf(local);
     }
 
     abstract @NonNull T thisInstance();
@@ -137,13 +155,17 @@ public abstract sealed class TypeMemberBuilder<T extends TypeMemberBuilder<T>> i
         return Objects.equals(name, other.name) && Objects.equals(returnType, other.returnType);
     }
 
+    // non-final for MethodSignatureBuilder
     @Override
     public String toString() {
-        return new StringBuilder().append("TypeMemberBuilder [name=").append(getName())
-            .append(", annotations=").append(annotationBuilders)
-            .append(", comment=").append(comment)
-            .append(", returnType=").append(returnType)
-            .append(", modifier=").append(accessModifier)
-            .append(']').toString();
+        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()
+            .add("name", name)
+            .add("annotations", annotations)
+            .add("comment", comment)
+            .add("returnType", returnType)).toString();
+    }
+
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.add("modifier", accessModifier);
     }
 }

@@ -18,8 +18,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
  * Common interface for all builders resulting in a {@link Type}.
  */
 @NonNullByDefault
-public sealed interface TypeBuilder extends Mutable
-        permits AbstractTypeBuilder, AnnotationTypeBuilder, GeneratedTypeBuilderBase {
+public sealed interface TypeBuilder extends Mutable permits AbstractTypeBuilder, GeneratedTypeBuilderBase {
     /**
      * {@return the name of the type this builder produces}
      */

@@ -14,8 +14,10 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultActionRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.FunctionalInterfaceAnnotation;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
+import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -51,9 +53,9 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
     @Override
     LegacyArchetype<ActionEffectiveStatement> createTypeImpl(final Archetype input, final Archetype output) {
         final var statement = statement();
-        final var builder = new LegacyArchetypeBuilder<>(typeName(), statement);
+        final var builder = new LegacyArchetypeBuilder<>(typeName(), statement)
+            .addAnnotation(FunctionalInterfaceAnnotation.INSTANCE);
         addImplementedType(builder, input, output);
-        builder.addAnnotation(FUNCTIONAL_INTERFACE);
         defaultImplementedInterace(builder);
 
         addQNameConstant(builder, statement().argument());
@@ -74,10 +76,10 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
                 final var keyType = keyGen.getArchetype();
                 builder.addImplementsType(BindingTypes.keyedListAction(parentType, keyType, input, output));
                 builder.addMethod(Naming.ACTION_INVOKE_NAME).setAbstract(true)
+                    .addAnnotation(OverrideAnnotation.INSTANCE)
                     .addParameter(BindingTypes.objectIdentifierWithKey(parentType, keyType), "path")
                     .addParameter(input, "input")
-                    .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)))
-                    .addAnnotation(OVERRIDE_ANNOTATION);
+                    .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)));
                 return;
             }
         }
@@ -86,7 +88,7 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
             .addParameter(BindingTypes.objectIdentifier(parentType), "path")
             .addParameter(input, "input")
             .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)))
-            .addAnnotation(OVERRIDE_ANNOTATION);
+            .addAnnotation(OverrideAnnotation.INSTANCE);
     }
 
     @Override
