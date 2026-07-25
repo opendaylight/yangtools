@@ -673,11 +673,9 @@ public final class SourceLinkageResolver {
             //       the ietf-yang-library model, etc.
             final var fromLibrary = libSources.takeSubmodule(module.name(), name, revision);
             if (fromLibrary == null) {
-                final var sourceId = source.sourceId();
-                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                throw source.newLinkageInferenceException(dependency,
                     // FIXME: 16.0.0: include revision
-                    new InferenceException(refOf(sourceId, dependency), "Included submodule %s was not found",
-                        name.getLocalName()));
+                    "Included submodule %s was not found", name.getLocalName());
             }
             submodule = addRequiredSubmodule(fromLibrary);
             result = SubmoduleOrigin.LIBRARY;
@@ -850,12 +848,9 @@ public final class SourceLinkageResolver {
                 // Version 1 sources must not import-by-revision Version 1.1 modules
                 final var depVersion = existing.yangVersion();
                 if (source.yangVersion() == YangVersion.VERSION_1 && depVersion != YangVersion.VERSION_1) {
-                    final var sourceId = source.sourceId();
-                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
-                        new YangVersionLinkageException(refOf(sourceId, dependency),
-                            "Cannot import by revision version %s module %s", depVersion,
-                            // FIXME: 16.0.0: humanName()
-                            existing.name().getLocalName()));
+                    throw source.newLinkageInferenceException(dependency,
+                        // FIXME: 16.0.0: humanName()
+                        "Cannot import by revision version %s module %s", depVersion, existing.name().getLocalName());
                 }
                 source.resolveImport(parent, dependency, existing);
                 resolvedImports++;
@@ -1082,8 +1077,9 @@ public final class SourceLinkageResolver {
     @NonNullByDefault
     private static ReactorException newModuleNotFoundException(final SourceIdentifier sourceId,
             final Import dependency) {
+        final var repRef = dependency.sourceRef();
         return new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
-            new InferenceException(refOf(sourceId, dependency), "Imported module %s was not found",
+            new InferenceException(repRef != null ? repRef : sourceId.toReference(), "Imported module %s was not found",
                 // FIXME: 16.0.0: formatRevision(dependency.revision())
                 dependency.name().getLocalName()));
     }
@@ -1105,30 +1101,17 @@ public final class SourceLinkageResolver {
             throw new VerifyException("Attempted to add already-required " + module);
         }
 
-        final var sourceInfo = module.info();
-        final var sourceId = sourceInfo.sourceId();
-        final var namespace = sourceInfo.moduleName().getModule();
-
-        // TODO: The exceptions here are less than perfect. We should not be reporting a combination of
-        //       ReactorException + InferenceException, but rather a dedicated exception which identifies the two
-        //       SourceInfoRefs involved and have SourceLinkageBuilder map them back to ReactorSource/BuildSource and
-        //       their corresponding location
-
+        final var namespace = module.info().moduleName().getModule();
         final var prevByNamespace = modulesByNamespace.putIfAbsent(namespace, module);
         if (prevByNamespace != null) {
-            throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
-                new InferenceException(sourceId.toReference(),
-                    "Module namespace collision: %s%s is already defined", namespace.namespace(),
-                    formatRevision(namespace.revision())));
+            throw linker.newLinkageInferenceException("Module namespace collision: %s%s is already defined",
+                namespace.namespace(), formatRevision(namespace.revision()));
         }
 
-        final var prevBySourceId = modulesByName.row(sourceId.name())
-            .putIfAbsent(RevisionUnion.of(sourceId.revision()), linker);
+        final var prevBySourceId = modulesByName.row(linker.name()).putIfAbsent(linker.revision(), linker);
         if (prevBySourceId != null) {
-            throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
-                new InferenceException(sourceId.toReference(),
-                    "Module name collision: %s%s is already defined", sourceId.name(),
-                    formatRevision(sourceId.revision())));
+            throw linker.newLinkageInferenceException("Module name collision: %s is already defined",
+                linker.humanName());
         }
         return linker;
     }
@@ -1207,12 +1190,6 @@ public final class SourceLinkageResolver {
     @NonNullByDefault
     private static String formatRevision(final @Nullable Revision revision) {
         return revision == null ? "" : "@" + revision;
-    }
-
-    @NonNullByDefault
-    private static StatementSourceReference refOf(final SourceIdentifier sourceId, final SourceDependency dependency) {
-        final var sourceRef = dependency.sourceRef();
-        return sourceRef != null ? sourceRef : sourceId.toReference();
     }
 
     @NonNullByDefault
