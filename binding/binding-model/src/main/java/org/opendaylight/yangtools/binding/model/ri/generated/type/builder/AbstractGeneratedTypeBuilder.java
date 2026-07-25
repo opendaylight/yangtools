@@ -50,9 +50,13 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
         return annotationBuilders;
     }
 
-    @Override
-    public List<Type> getImplementsTypes() {
-        return implementsTypes;
+    @NonNullByDefault
+    final List<Type> getImplementsTypes() {
+        return switch (implementsTypes.size()) {
+            case 0 -> List.of();
+            case 1 -> Collections.singletonList(implementsTypes.getFirst());
+            default -> List.copyOf(implementsTypes);
+        };
     }
 
     protected List<Constant> getConstants() {

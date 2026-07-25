@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.api.type.builder;
 
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.Constant;
@@ -31,8 +30,6 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * @param genType the enclosed {@link Archetype}
      */
     T addEnclosedType(Archetype genType);
-
-    List<Type> getImplementsTypes();
 
     /**
      * Add Type to implements.
