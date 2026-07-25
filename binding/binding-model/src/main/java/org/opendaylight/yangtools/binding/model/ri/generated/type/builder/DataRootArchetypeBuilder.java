@@ -30,7 +30,7 @@ public final class DataRootArchetypeBuilder
     @Override
     public DataRootArchetype build() {
         return new DataRootArchetypeImpl(typeName(), statement, getImplementsTypes(),
-            AbstractGeneratedType.toUnmodifiableMethods(getMethodDefinitions()),
+            DefaultLegacyArchetype.toUnmodifiableMethods(getMethodDefinitions()),
             List.copyOf(getEnclosedTypes()));
     }
 
