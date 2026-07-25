@@ -206,7 +206,7 @@ sealed class InterfaceTemplate<T extends Archetype.@NonNull OfCompositeInterface
         final var bb = newBlockBuilder();
         for (var constant : consts) {
             // Pattern constants are emitted separately
-            if (!constant.getName().startsWith(TypeConstants.PATTERN_CONSTANT_NAME)) {
+            if (!constant.name().startsWith(TypeConstants.PATTERN_CONSTANT_NAME)) {
                 // FIXME: short circuit to statically-known case
                 bb.txt(emitConstant(constant));
             }
@@ -216,13 +216,13 @@ sealed class InterfaceTemplate<T extends Archetype.@NonNull OfCompositeInterface
 
     @NonNullByDefault
     private String emitConstant(final Constant constant) {
-        final var name = constant.getName();
-        final var type = constant.getType();
+        final var name = constant.name();
+        final var type = constant.type();
 
         return switch (name) {
-            case NAME_STATIC_FIELD_NAME -> emitNameConstant(name, type, (YangDataName) constant.getValue());
-            case QNAME_STATIC_FIELD_NAME -> emitQNameConstant(name, type, (String) constant.getValue());
-            default -> "public static final " + importedName(type) + ' ' + name + " = " + constant.getValue() + ";\n";
+            case NAME_STATIC_FIELD_NAME -> emitNameConstant(name, type, (YangDataName) constant.value());
+            case QNAME_STATIC_FIELD_NAME -> emitQNameConstant(name, type, (String) constant.value());
+            default -> "public static final " + importedName(type) + ' ' + name + " = " + constant.value() + ";\n";
         };
     }
 

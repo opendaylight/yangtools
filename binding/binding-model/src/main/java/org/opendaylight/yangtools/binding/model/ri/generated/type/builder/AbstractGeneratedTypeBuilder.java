@@ -139,15 +139,15 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
         checkArgument(!containsConstant(name),
             "This generated type already contains a \"%s\" constant", name);
 
-        final var constant = new ConstantImpl(type, name, value);
+        final var constant = new Constant(type, name, value);
         constants = LazyCollections.lazyAdd(constants, constant);
         return constant;
     }
 
     public boolean containsConstant(final String name) {
         checkArgument(name != null, "Parameter name can't be null");
-        for (final Constant constant : constants) {
-            if (name.equals(constant.getName())) {
+        for (var constant : constants) {
+            if (name.equals(constant.name())) {
                 return true;
             }
         }

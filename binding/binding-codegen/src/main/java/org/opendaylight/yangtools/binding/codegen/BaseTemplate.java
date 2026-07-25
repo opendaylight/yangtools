@@ -350,7 +350,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         final var fieldUpperCase = fieldName.toUpperCase(Locale.ROOT);
 
         for (var currentConstant : type.getConstantDefinitions()) {
-            final var currentName = currentConstant.getName();
+            final var currentName = currentConstant.name();
 
             if (currentName.startsWith(PATTERN_CONSTANT_NAME)
                 && fieldUpperCase.equals(currentName.substring(PATTERN_CONSTANT_NAME.length()))) {
