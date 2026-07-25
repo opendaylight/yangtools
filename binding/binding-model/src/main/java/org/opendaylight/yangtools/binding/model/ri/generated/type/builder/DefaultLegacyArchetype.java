@@ -11,7 +11,6 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -39,7 +38,7 @@ final class DefaultLegacyArchetype<S extends EffectiveStatement<?, ?>> implement
         statement = builder.statement;
         annotations = builder.getAnnotations();
         implementsTypes = builder.getImplementsTypes();
-        constants = makeUnmodifiable(builder.getConstants());
+        constants = builder.getConstants();
         methodSignatures = builder.getMethodDefinitions();
         enclosedTypes = List.copyOf(builder.getEnclosedTypes());
     }
@@ -47,15 +46,6 @@ final class DefaultLegacyArchetype<S extends EffectiveStatement<?, ?>> implement
     @Override
     public S statement() {
         return statement;
-    }
-
-    private static <T> @NonNull List<T> makeUnmodifiable(final List<T> list) {
-        return switch (list.size()) {
-            case 0 -> List.of();
-            case 1 -> Collections.singletonList(list.getFirst());
-            case 2 -> List.copyOf(list);
-            default -> Collections.unmodifiableList(list);
-        };
     }
 
     @Override
