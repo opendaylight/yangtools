@@ -50,7 +50,7 @@ abstract sealed class SourceLinker extends ResolvedSourceInfo.Builder permits Mo
     }
 
     /**
-     * {@return {@code true} if all dependencies specified in {@link #sourceInfo()} have been satisfied}
+     * {@return {@code true} if all dependencies specified in {@link #info()} have been satisfied}
      */
     boolean isResolved() {
         return !missingImports().hasNext() && !missingIncludes().hasNext();
@@ -160,11 +160,9 @@ abstract sealed class SourceLinker extends ResolvedSourceInfo.Builder permits Mo
     @Override
     final ResolvedSourceInfo build() {
         return doBuild(
-            imports.buildResolved((requirement, target) -> {
-                final var source = target.infoRef();
-                return new ResolvedImport(requirement, source.ref(), source.info().moduleName().getModule());
-            }),
-            includes.buildResolved((requirement, target) -> new ResolvedInclude(requirement, target.infoRef().ref())));
+            imports.buildResolved((dependency, target) ->
+                new ResolvedImport(dependency, target.ref(), target.info().moduleName().getModule())),
+            includes.buildResolved((dependency, target) -> new ResolvedInclude(dependency, target.ref())));
     }
 
     @NonNullByDefault
@@ -172,6 +170,6 @@ abstract sealed class SourceLinker extends ResolvedSourceInfo.Builder permits Mo
 
     @Override
     public final String toString() {
-        return MoreObjects.toStringHelper(this).add("ref", infoRef()).toString();
+        return MoreObjects.toStringHelper(this).add("info", info()).add("ref", ref()).toString();
     }
 }
