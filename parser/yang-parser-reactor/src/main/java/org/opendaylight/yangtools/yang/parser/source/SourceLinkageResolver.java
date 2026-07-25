@@ -673,11 +673,9 @@ public final class SourceLinkageResolver {
             //       the ietf-yang-library model, etc.
             final var fromLibrary = libSources.takeSubmodule(module.name(), name, revision);
             if (fromLibrary == null) {
-                final var sourceId = source.sourceId();
-                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                throw source.newLinkageInferenceException(dependency,
                     // FIXME: 16.0.0: include revision
-                    new InferenceException(refOf(sourceId, dependency), "Included submodule %s was not found",
-                        name.getLocalName()));
+                    "Included submodule %s was not found", name.getLocalName());
             }
             submodule = addRequiredSubmodule(fromLibrary);
             result = SubmoduleOrigin.LIBRARY;
@@ -850,12 +848,9 @@ public final class SourceLinkageResolver {
                 // Version 1 sources must not import-by-revision Version 1.1 modules
                 final var depVersion = existing.yangVersion();
                 if (source.yangVersion() == YangVersion.VERSION_1 && depVersion != YangVersion.VERSION_1) {
-                    final var sourceId = source.sourceId();
-                    throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
-                        new YangVersionLinkageException(refOf(sourceId, dependency),
-                            "Cannot import by revision version %s module %s", depVersion,
-                            // FIXME: 16.0.0: humanName()
-                            existing.name().getLocalName()));
+                    throw source.newLinkageInferenceException(dependency,
+                        // FIXME: 16.0.0: humanName()
+                        "Cannot import by revision version %s module %s", depVersion, existing.name().getLocalName());
                 }
                 source.resolveImport(parent, dependency, existing);
                 resolvedImports++;
@@ -1082,8 +1077,9 @@ public final class SourceLinkageResolver {
     @NonNullByDefault
     private static ReactorException newModuleNotFoundException(final SourceIdentifier sourceId,
             final Import dependency) {
+        final var repRef = dependency.sourceRef();
         return new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
-            new InferenceException(refOf(sourceId, dependency), "Imported module %s was not found",
+            new InferenceException(repRef != null ? repRef : sourceId.toReference(), "Imported module %s was not found",
                 // FIXME: 16.0.0: formatRevision(dependency.revision())
                 dependency.name().getLocalName()));
     }
@@ -1207,12 +1203,6 @@ public final class SourceLinkageResolver {
     @NonNullByDefault
     private static String formatRevision(final @Nullable Revision revision) {
         return revision == null ? "" : "@" + revision;
-    }
-
-    @NonNullByDefault
-    private static StatementSourceReference refOf(final SourceIdentifier sourceId, final SourceDependency dependency) {
-        final var sourceRef = dependency.sourceRef();
-        return sourceRef != null ? sourceRef : sourceId.toReference();
     }
 
     @NonNullByDefault

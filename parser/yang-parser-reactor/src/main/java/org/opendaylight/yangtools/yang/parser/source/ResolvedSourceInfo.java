@@ -19,12 +19,17 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.RevisionUnion;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.source.SourceDependency;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfo;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceInfoRef;
 import org.opendaylight.yangtools.yang.model.spi.source.SourceRef;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedImport;
 import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.ResolvedInclude;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 /**
  * DTO containing all the linkage information which needs to be supplied to a RootStatementContext. This info will be
@@ -119,6 +124,21 @@ public abstract sealed class ResolvedSourceInfo implements Immutable permits Res
          * {@return the {@link ResolvedSourceInfo} result of this builder}
          */
         abstract ResolvedSourceInfo build();
+
+        /**
+         * {@return a new {@link ReactorException} describing a failure to infer the linkage of a
+         * {@link SourceDependency}}
+         * @param dependency the dependency
+         * @param format message format string
+         * @param args message format string arguments
+         */
+        final ReactorException newLinkageInferenceException(final SourceDependency dependency, final String format,
+                final Object... args) {
+            final var sourceId = sourceId();
+            final var depRef = dependency.sourceRef();
+            return new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
+                new InferenceException(depRef != null ? depRef : sourceId.toReference(), format, args));
+        }
 
         @Override
         public abstract String toString();
