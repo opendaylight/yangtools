@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.AnnotationType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
@@ -23,20 +22,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * @see AnnotationType
  */
 public non-sealed interface AnnotationTypeBuilder extends TypeBuilder {
-    /**
-     * The method creates new AnnotationTypeBuilder containing specified package
-     * name an annotation name. <br>
-     * Neither the package name or annotation name can contain <code>null</code>
-     * references. In case that any of parameters contains <code>null</code> the
-     * method SHOULD thrown {@link IllegalArgumentException}
-     *
-     * @param packageName Package Name of Annotation Type
-     * @param name Name of Annotation Type
-     * @return <code>new</code> instance of Annotation Type Builder.
-     */
-    @NonNullByDefault
-    AnnotationTypeBuilder addAnnotation(String packageName, String name);
-
     /**
      * Adds the parameter into List of parameters for Annotation Type. <br>
      * If there is already stored parameter with the same name as the new

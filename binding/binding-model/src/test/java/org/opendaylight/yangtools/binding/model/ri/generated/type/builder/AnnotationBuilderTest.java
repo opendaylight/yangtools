@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -170,28 +169,6 @@ class AnnotationBuilderTest {
     }
 
     @Test
-    void annotationTypeBuilderAddAnnotationTest() {
-        final var annotationTypeBuilder = new AnnotationTypeBuilderImpl(JavaTypeName.create("my.package", "MyName"));
-
-        assertThrows(NullPointerException.class, () -> annotationTypeBuilder.addAnnotation("my.package", null));
-        assertThrows(NullPointerException.class, () -> annotationTypeBuilder.addAnnotation(null, "MyName"));
-
-        assertNotNull(annotationTypeBuilder.addAnnotation("java.lang", "Deprecated"));
-
-        final var builder = annotationTypeBuilder.addAnnotation("my.package2", "MyName2");
-        assertNotNull(builder);
-        assertSame(builder, annotationTypeBuilder.addAnnotation("my.package2", "MyName2"));
-
-        var annotationTypeInstance = annotationTypeBuilder.build();
-
-        assertEquals(2, annotationTypeInstance.getAnnotations().size());
-
-        assertEquals("my.package", annotationTypeInstance.packageName());
-        assertEquals("MyName", annotationTypeInstance.simpleName());
-
-    }
-
-    @Test
     void annotationTypeBuilderEqualsTest() {
         final var annotationTypeBuilder = new AnnotationTypeBuilderImpl(JavaTypeName.create("my.package", "MyName"));
         final var annotationTypeBuilder2 = new AnnotationTypeBuilderImpl(JavaTypeName.create("my.package2", "MyName"));
@@ -321,12 +298,10 @@ class AnnotationBuilderTest {
     void annotationTypeBuilderToStringTest() {
         final var typeName = JavaTypeName.create("my.package", "MyAnnotationName");
         var annotationTypeBuilder = new AnnotationTypeBuilderImpl(typeName);
-        annotationTypeBuilder.addAnnotation("my.package", "MySubAnnotationName");
         annotationTypeBuilder.addParameter("MyParameter", "myValue");
 
         assertEquals("""
             AnnotationTypeBuilderImpl{typeName=my.package.MyAnnotationName, \
-            annotationBuilders=[AnnotationTypeBuilderImpl{typeName=my.package.MySubAnnotationName}], \
             parameters=[ParameterImpl [name=MyParameter, value=myValue, values=[]]]}""",
             annotationTypeBuilder.toString());
 
@@ -334,7 +309,6 @@ class AnnotationBuilderTest {
         assertSame(typeName, annotationTypeInstance.name());
         assertEquals("""
             AnnotationType{name=my.package.MyAnnotationName, \
-            annotations=[AnnotationType{name=my.package.MySubAnnotationName}], \
             parameters=[ParameterImpl [name=MyParameter, value=myValue, values=[]]]}""",
                 annotationTypeInstance.toString());
     }
@@ -403,7 +377,6 @@ class AnnotationBuilderTest {
         final var annotationType = annotBuilderImpl.build();
         assertSame(builderName, annotationType.name());
         assertTrue(annotationType.containsParameters());
-        assertEquals(List.of(), annotationType.getAnnotations());
         assertNotNull(annotationType.simpleName());
         assertNotNull(annotationType.packageName());
         assertNull(annotationType.getParameter(null));

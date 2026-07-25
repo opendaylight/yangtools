@@ -17,11 +17,35 @@ import java.util.List;
  */
 public non-sealed interface AnnotationType extends Type {
     /**
-     * Returns the List of Annotations. Each Annotation Type MAY have defined multiple Annotations.
-     *
-     * @return the List of Annotations.
+     * Annotation Type parameter interface. For simplicity the Parameter contains values and value types as Strings.
+     * Every annotation which contains parameters could contain either single parameter or array of parameters. To model
+     * this purposes the by contract if the parameter contains single parameter the {@link #getValues()} method will
+     * return empty List and {@link #getValue()} MUST always return non-<code>null</code> parameter. If the Parameter
+     * holds List of values the singular {@link #getValue()} parameter MAY return <code>null</code> value.
      */
-    List<AnnotationType> getAnnotations();
+    interface Parameter {
+        /**
+         * Returns the Name of the parameter.
+         *
+         * @return the Name of the parameter.
+         */
+        String getName();
+
+        /**
+         * Returns value in String format if Parameter contains singular value, otherwise MAY return <code>null</code>.
+         *
+         * @return value in String format if Parameter contains singular value.
+         */
+        String getValue();
+
+        /**
+         * Returns List of Parameter assigned values in order in which they were assigned for given parameter name.<br>
+         * If there are multiple values assigned for given parameter name the method MUST NOT return empty List.
+         *
+         * @return List of Parameter assigned values in order in which they were assigned for given parameter name.
+         */
+        List<String> getValues();
+    }
 
     /**
      * Returns Parameter Definition assigned for given parameter name. If Annotation does not contain parameter
@@ -52,35 +76,4 @@ public non-sealed interface AnnotationType extends Type {
      * @return <code>true</code> if annotation contains parameters.
      */
     boolean containsParameters();
-
-    /**
-     * Annotation Type parameter interface. For simplicity the Parameter contains values and value types as Strings.
-     * Every annotation which contains parameters could contain either single parameter or array of parameters. To model
-     * this purposes the by contract if the parameter contains single parameter the {@link #getValues()} method will
-     * return empty List and {@link #getValue()} MUST always return non-<code>null</code> parameter. If the Parameter
-     * holds List of values the singular {@link #getValue()} parameter MAY return <code>null</code> value.
-     */
-    interface Parameter {
-        /**
-         * Returns the Name of the parameter.
-         *
-         * @return the Name of the parameter.
-         */
-        String getName();
-
-        /**
-         * Returns value in String format if Parameter contains singular value, otherwise MAY return <code>null</code>.
-         *
-         * @return value in String format if Parameter contains singular value.
-         */
-        String getValue();
-
-        /**
-         * Returns List of Parameter assigned values in order in which they were assigned for given parameter name.<br>
-         * If there are multiple values assigned for given parameter name the method MUST NOT return empty List.
-         *
-         * @return List of Parameter assigned values in order in which they were assigned for given parameter name.
-         */
-        List<String> getValues();
-    }
 }
