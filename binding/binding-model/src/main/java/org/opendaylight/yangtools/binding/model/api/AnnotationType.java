@@ -69,11 +69,4 @@ public non-sealed interface AnnotationType extends Type {
      * @return List of parameter names.
      */
     List<String> getParameterNames();
-
-    /**
-     * Returns <code>true</code> if annotation contains parameters.
-     *
-     * @return <code>true</code> if annotation contains parameters.
-     */
-    boolean containsParameters();
 }

@@ -272,7 +272,6 @@ class AnnotationBuilderTest {
         assertTrue(annotationTypeBuilder.addParameters("myName2", List.of("myValue")));
 
         var annotationTypeInstance = annotationTypeBuilder.build();
-        assertTrue(annotationTypeInstance.containsParameters());
         assertEquals(2, annotationTypeInstance.getParameters().size());
         assertEquals(2, annotationTypeInstance.getParameterNames().size());
         assertTrue(annotationTypeInstance.getParameterNames().contains("myName"));
@@ -376,7 +375,6 @@ class AnnotationBuilderTest {
         annotBuilderImpl.addParameter("testParam", "test value");
         final var annotationType = annotBuilderImpl.build();
         assertSame(builderName, annotationType.name());
-        assertTrue(annotationType.containsParameters());
         assertNotNull(annotationType.simpleName());
         assertNotNull(annotationType.packageName());
         assertNull(annotationType.getParameter(null));

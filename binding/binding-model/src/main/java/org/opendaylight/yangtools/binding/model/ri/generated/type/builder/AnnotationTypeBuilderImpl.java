@@ -109,11 +109,6 @@ public final class AnnotationTypeBuilderImpl extends AbstractTypeBuilder impleme
         }
 
         @Override
-        public boolean containsParameters() {
-            return !parameters.isEmpty();
-        }
-
-        @Override
         public int hashCode() {
             return name.hashCode();
         }
