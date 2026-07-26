@@ -60,7 +60,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     }
 
     @NonNullByDefault
-    final List<AttachedAnnotation> getAnnotations() {
+    final List<AttachedAnnotation.ToType> getAnnotations() {
         final var local = annotations;
         if (local == null) {
             return List.of();

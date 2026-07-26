@@ -30,7 +30,10 @@ import org.opendaylight.yangtools.util.LazyCollections;
  * rather return empty string and {@link #getAnnotations()} SHOULD rather return empty list than {@code null} values.
  */
 // FIXME: seal this class and add simple factory methods
-// FIXME: rename to InterfaceMethod
+// FIXME: rename to InterfaceMethod or something, potentially nested in InterfaceArchetype
+// FIXME: these should carry an EffectiveStatement, because while they are not individual templates, they are emitted
+//        in response to a statement. Further thought needs to go into this, as UnionTypeObjectArchetype and
+//        KeyArchetype both have the notion of GeneratedProperty, which carries similar data.
 public interface MethodSignature extends Immutable {
     /**
      * The Parameter interface is designed to hold the information of method Parameter(s). The parameter is defined by

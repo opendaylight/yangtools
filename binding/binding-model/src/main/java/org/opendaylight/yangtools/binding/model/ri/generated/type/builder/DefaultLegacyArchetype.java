@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 final class DefaultLegacyArchetype<S extends EffectiveStatement<?, ?>> implements LegacyArchetype<S> {
     private final @NonNull JavaTypeName name;
     private final @NonNull S statement;
-    private final @NonNull List<AttachedAnnotation> annotations;
+    private final @NonNull List<AttachedAnnotation.ToType> annotations;
     private final @NonNull List<Type> implementsTypes;
     private final @NonNull List<Constant> constants;
     private final @NonNull List<MethodSignature> methodSignatures;
@@ -54,7 +54,7 @@ final class DefaultLegacyArchetype<S extends EffectiveStatement<?, ?>> implement
     }
 
     @Override
-    public List<AttachedAnnotation> annotations() {
+    public List<AttachedAnnotation.ToType> annotations() {
         return annotations;
     }
 
