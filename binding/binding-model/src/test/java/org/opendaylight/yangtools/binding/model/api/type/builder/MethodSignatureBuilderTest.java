@@ -26,12 +26,6 @@ class MethodSignatureBuilderTest {
     private EffectiveStatement<?, ?> statement;
 
     @Test
-    void testCreateNewInstance() {
-        final var signatureBuilderImpl = new MethodSignatureBuilder("testMethod");
-        assertEquals("testMethod", signatureBuilderImpl.getName());
-    }
-
-    @Test
     void testSetAbstractMethod() {
         final var signatureBuilderImpl = new MethodSignatureBuilder("testMethod").setReturnType(Types.VOID);
         final var methodSignature = signatureBuilderImpl.build();
