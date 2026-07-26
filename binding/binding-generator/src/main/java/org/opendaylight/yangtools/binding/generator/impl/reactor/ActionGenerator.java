@@ -73,21 +73,23 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
             final var keyGen = list.keyGenerator();
             if (keyGen != null) {
                 final var keyType = keyGen.getArchetype();
-                builder.addImplementsType(BindingTypes.keyedListAction(parentType, keyType, input, output));
-                builder.addMethod(Naming.ACTION_INVOKE_NAME).setAbstract(true)
-                    .addAnnotation(OverrideAnnotation.INSTANCE)
-                    .addParameter(BindingTypes.objectIdentifierWithKey(parentType, keyType), "path")
-                    .addParameter(input, "input")
-                    .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)));
+                builder
+                    .addImplementsType(BindingTypes.keyedListAction(parentType, keyType, input, output))
+                    .addMethod(Naming.ACTION_INVOKE_NAME).setAbstract(true)
+                        .addAnnotation(OverrideAnnotation.INSTANCE)
+                        .addParameter(BindingTypes.objectIdentifierWithKey(parentType, keyType), "path")
+                        .addParameter(input, "input")
+                        .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)));
                 return;
             }
         }
-        builder.addImplementsType(BindingTypes.action(parentType, input, output));
-        builder.addMethod(Naming.ACTION_INVOKE_NAME).setAbstract(true)
-            .addParameter(BindingTypes.objectIdentifier(parentType), "path")
-            .addParameter(input, "input")
-            .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)))
-            .addAnnotation(OverrideAnnotation.INSTANCE);
+        builder
+            .addImplementsType(BindingTypes.action(parentType, input, output))
+            .addMethod(Naming.ACTION_INVOKE_NAME).setAbstract(true)
+                .addAnnotation(OverrideAnnotation.INSTANCE)
+                .addParameter(BindingTypes.objectIdentifier(parentType), "path")
+                .addParameter(input, "input")
+                .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)));
     }
 
     @Override

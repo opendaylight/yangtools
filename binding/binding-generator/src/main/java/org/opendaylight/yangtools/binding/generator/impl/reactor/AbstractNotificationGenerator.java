@@ -52,10 +52,11 @@ abstract class AbstractNotificationGenerator
 
     @Override
     final LegacyArchetype<NotificationEffectiveStatement> createTypeImpl() {
+        final var typeName = typeName();
         final var statement = statement();
-        final var builder = new LegacyArchetypeBuilder<>(typeName(), statement);
-        builder.addImplementsType(BindingTypes.DATA_OBJECT);
-        builder.addImplementsType(notificationType(builder.typeRef()));
+        final var builder = new LegacyArchetypeBuilder<>(typeName, statement)
+            .addImplementsType(BindingTypes.DATA_OBJECT)
+            .addImplementsType(notificationType(TypeRef.of(typeName)));
 
         final var orig = getOriginal();
         if (equals(orig)) {
