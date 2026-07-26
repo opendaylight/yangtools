@@ -42,7 +42,7 @@ import org.opendaylight.yangtools.util.LazyCollections;
 public final class MethodSignatureBuilder extends TypeMemberBuilder<MethodSignatureBuilder> {
     private List<MethodSignature.Parameter> parameters = List.of();
     private ValueMechanics mechanics = ValueMechanics.NORMAL;
-    private boolean isAbstract;
+    private boolean isAbstract = true;
     private boolean isDefault;
 
     @NonNullByDefault

@@ -30,7 +30,7 @@ public abstract sealed class TypeMemberBuilder<T extends TypeMemberBuilder<T>> i
     private final String name;
 
     private @Nullable ArrayList<AttachedAnnotation> annotations = null;
-    private AccessModifier accessModifier;
+    private AccessModifier accessModifier = AccessModifier.PUBLIC;
     private TypeMemberComment comment;
     private Type returnType;
 

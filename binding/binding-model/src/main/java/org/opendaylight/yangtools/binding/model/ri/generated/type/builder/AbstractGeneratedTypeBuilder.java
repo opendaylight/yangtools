@@ -19,7 +19,6 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Constant;
@@ -27,7 +26,6 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.TypeMemberBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -39,10 +37,10 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     private final @NonNull JavaTypeName typeName;
     protected final @NonNull S statement;
 
-    private @Nullable ArrayList<AttachedAnnotation> annotations = null;
+    private @Nullable ArrayList<@NonNull AttachedAnnotation> annotations = null;
+    private @Nullable ArrayList<@NonNull MethodSignature> methodDefinitions = null;
     private List<Type> implementsTypes = List.of();
     private List<Constant> constants = List.of();
-    private List<MethodSignatureBuilder> methodDefinitions = List.of();
     private List<Archetype> enclosedTypes = List.of();
 
     @NonNullByDefault
@@ -64,11 +62,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
 
     @NonNullByDefault
     final List<AttachedAnnotation> getAnnotations() {
-        final var local = annotations;
-        if (local == null) {
-            return List.of();
-        }
-        return local.size() == 1 ? Collections.singletonList(local.getFirst()) : List.copyOf(local);
+        return listOf(annotations);
     }
 
     @NonNullByDefault
@@ -92,19 +86,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
 
     @NonNullByDefault
     final List<MethodSignature> getMethodDefinitions() {
-        final var size = methodDefinitions.size();
-        return switch (size) {
-            case 0 -> List.of();
-            case 1 -> Collections.singletonList(methodDefinitions.getFirst().build());
-            case 2 -> List.of(methodDefinitions.getFirst().build(), methodDefinitions.getLast().build());
-            default -> {
-                final var tmp = new ArrayList<MethodSignature>(size);
-                for (var builder : methodDefinitions) {
-                    tmp.add(builder.build());
-                }
-                yield List.copyOf(tmp);
-            }
-        };
+        return listOf(methodDefinitions);
     }
 
     protected final List<Archetype> getEnclosedTypes() {
@@ -123,7 +105,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     }
 
     @Override
-    public T addImplementsType(final Type genType) {
+    public final T addImplementsType(final Type genType) {
         checkArgument(!implementsTypes.contains(requireNonNull(genType)),
             "This generated type already contains equal implements type.");
         implementsTypes = LazyCollections.lazyAdd(implementsTypes, genType);
@@ -153,13 +135,14 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     }
 
     @Override
-    public MethodSignatureBuilder addMethod(final String name) {
-        checkArgument(name != null, "Name of method cannot be null!");
-        final var builder = new MethodSignatureBuilder(name)
-            .setAccessModifier(AccessModifier.PUBLIC)
-            .setAbstract(true);
-        methodDefinitions = LazyCollections.lazyAdd(methodDefinitions, builder);
-        return builder;
+    public final T addMethod(final MethodSignature method) {
+        requireNonNull(method);
+        var local = methodDefinitions;
+        if (local == null) {
+            methodDefinitions = local = new ArrayList<>(2);
+        }
+        local.add(method);
+        return thisInstance();
     }
 
     public Type getParent() {
@@ -199,5 +182,12 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
         if (value != null && !value.isEmpty()) {
             helper.add(name, value);
         }
+    }
+
+    private static <@NonNull T> @NonNull List<T> listOf(final @Nullable ArrayList<@NonNull T> list) {
+        if (list == null) {
+            return List.of();
+        }
+        return list.size() == 1 ? Collections.singletonList(list.getFirst()) : List.copyOf(list);
     }
 }

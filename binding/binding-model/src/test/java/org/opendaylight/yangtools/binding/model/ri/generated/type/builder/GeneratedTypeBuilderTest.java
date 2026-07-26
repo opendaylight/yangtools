@@ -128,26 +128,23 @@ class GeneratedTypeBuilderTest {
     @Test
     void addMethodIllegalArgumentTest() {
         final var builder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
-        assertThrows(IllegalArgumentException.class, () -> builder.addMethod(null));
+        assertThrows(NullPointerException.class, () -> builder.addMethod(null));
     }
 
     @Test
     void addMethodTest() {
-        var generatedTypeBuilder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
-            statement);
+        final var method = new MethodSignatureBuilder("myMethodName").setReturnType(Types.BOOLEAN).build();
+        final var method2 = new MethodSignatureBuilder("myMethodName2").setReturnType(Types.STRING).build();
 
-        var methodBuilder = generatedTypeBuilder.addMethod("myMethodName").setReturnType(Types.BOOLEAN);
-        assertNotNull(methodBuilder);
-        var methodBuilder2 = generatedTypeBuilder.addMethod("myMethodName2").setReturnType(Types.STRING);
-        assertNotNull(methodBuilder2);
-
-        var instance = generatedTypeBuilder.build();
-        var methodDefinitions = instance.getMethodDefinitions();
+        var methodDefinitions = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement)
+            .addMethod(method)
+            .addMethod(method2)
+            .build()
+            .getMethodDefinitions();
 
         assertEquals(2, methodDefinitions.size());
-
-        assertTrue(methodDefinitions.contains(methodBuilder.build()));
-        assertTrue(methodDefinitions.contains(methodBuilder2.build()));
+        assertTrue(methodDefinitions.contains(method));
+        assertTrue(methodDefinitions.contains(method2));
         assertFalse(methodDefinitions.contains(new MethodSignatureBuilder("myMethodName3")
             .setReturnType(Types.BOOLEAN)
             .build()));
