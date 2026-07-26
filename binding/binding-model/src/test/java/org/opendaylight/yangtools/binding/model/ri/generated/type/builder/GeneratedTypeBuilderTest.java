@@ -21,9 +21,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -148,7 +148,7 @@ class GeneratedTypeBuilderTest {
 
         assertTrue(methodDefinitions.contains(methodBuilder.build()));
         assertTrue(methodDefinitions.contains(methodBuilder2.build()));
-        assertFalse(methodDefinitions.contains(new MethodSignatureBuilder("myMethodName3")
+        assertFalse(methodDefinitions.contains(MethodSignature.builder("myMethodName3")
             .setReturnType(Types.BOOLEAN)
             .build()));
     }

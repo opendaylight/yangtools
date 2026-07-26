@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTypeBuilder;
@@ -105,7 +106,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * @param name Name of Method
      * @return <code>new</code> instance of Method Signature Builder.
      */
-    MethodSignatureBuilder addMethod(String name);
+    MethodSignature.Builder addMethod(String name);
 
     /**
      * {@return a new immutable {@link Archetype.OfCompositeInterface} instance}

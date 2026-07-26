@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -40,7 +39,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     private @Nullable ArrayList<AttachedAnnotation.ToType> annotations = null;
     private List<Type> implementsTypes = List.of();
     private List<Constant> constants = List.of();
-    private List<MethodSignatureBuilder> methodDefinitions = List.of();
+    private List<MethodSignature.Builder> methodDefinitions = List.of();
     private List<Archetype> enclosedTypes = List.of();
 
     @NonNullByDefault
@@ -56,7 +55,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
 
     @Override
     public final T addAnnotation(final AttachedAnnotation.ToType annotation) {
-        annotations = MethodSignatureBuilder.addAnnotation(annotations, annotation);
+        annotations = MethodSignature.Builder.addAnnotation(annotations, annotation);
         return thisInstance();
     }
 
@@ -151,9 +150,9 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     }
 
     @Override
-    public MethodSignatureBuilder addMethod(final String name) {
+    public MethodSignature.Builder addMethod(final String name) {
         checkArgument(name != null, "Name of method cannot be null!");
-        final var builder = new MethodSignatureBuilder(name);
+        final var builder = MethodSignature.builder(name);
         methodDefinitions = LazyCollections.lazyAdd(methodDefinitions, builder);
         return builder;
     }
