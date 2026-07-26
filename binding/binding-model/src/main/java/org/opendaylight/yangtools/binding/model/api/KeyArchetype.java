@@ -50,8 +50,7 @@ public record KeyArchetype(
         final var kit = arg.iterator();
 
         for (var field : fields()) {
-            props.add(new GeneratedPropertyImpl(Naming.getPropertyName(kit.next().getLocalName()), null, field, true,
-                null));
+            props.add(new GeneratedPropertyImpl(Naming.getPropertyName(kit.next().getLocalName()), field, true));
         }
 
         return props;

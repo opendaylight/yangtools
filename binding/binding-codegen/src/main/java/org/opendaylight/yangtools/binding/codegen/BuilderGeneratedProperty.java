@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
 @NonNullByDefault
 final class BuilderGeneratedProperty implements GeneratedProperty {
@@ -54,16 +53,6 @@ final class BuilderGeneratedProperty implements GeneratedProperty {
     public boolean equals(final @Nullable Object obj) {
         return obj == this || obj instanceof BuilderGeneratedProperty other
             && name.equals(other.name) && getter.equals(other.getter);
-    }
-
-    @Override
-    public @Nullable TypeMemberComment getComment() {
-        throw uoe();
-    }
-
-    @Override
-    public String getValue() {
-        throw uoe();
     }
 
     @Override

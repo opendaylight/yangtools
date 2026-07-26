@@ -193,6 +193,11 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     }
 
     @NonNullByDefault
+    final String importedReturnType(final GeneratedProperty member) {
+        return importedName(member.getReturnType());
+    }
+
+    @NonNullByDefault
     final String fullyQualifiedNonNull(final Type intype) {
         return fullyQualifiedName(intype, importedName(NONNULL));
     }

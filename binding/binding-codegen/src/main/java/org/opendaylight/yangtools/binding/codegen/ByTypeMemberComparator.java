@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -19,12 +18,12 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
+import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeMember;
 
 /**
  * By type member {@link Comparator} which provides sorting by type for members (variables)
@@ -32,8 +31,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeMember;
  *
  * @param <T> TypeMember type
  */
-@Beta
-final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T>, Serializable {
+final class ByTypeMemberComparator<T extends GeneratedProperty> implements Comparator<T>, Serializable {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
@@ -69,11 +67,11 @@ final class ByTypeMemberComparator<T extends TypeMember> implements Comparator<T
      * @return this comparator
      */
     @SuppressWarnings("unchecked")
-    public static <T extends TypeMember> ByTypeMemberComparator<T> getInstance() {
+    static <T extends GeneratedProperty> ByTypeMemberComparator<T> getInstance() {
         return (ByTypeMemberComparator<T>) INSTANCE;
     }
 
-    public static <T extends TypeMember> Collection<T> sort(final Collection<T> input) {
+    static <T extends GeneratedProperty> Collection<T> sort(final Collection<T> input) {
         if (input.size() < 2) {
             return input;
         }
