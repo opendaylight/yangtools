@@ -11,12 +11,10 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import java.io.Serializable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
@@ -32,8 +30,6 @@ public record BitsTypeObjectArchetype(
         TypeEffectiveStatement.MandatoryIn<?, ?> statement,
         BitsTypeDefinition typeDefinition,
         @Nullable BitsTypeObjectArchetype superType) implements TypeObjectArchetype.OfClass<BitsTypeObject> {
-    static final JavaTypeName SERIALIZABLE = JavaTypeName.create(Serializable.class);
-
     public BitsTypeObjectArchetype {
         requireNonNull(name);
         requireNonNull(statement);
@@ -43,17 +39,6 @@ public record BitsTypeObjectArchetype(
     public BitsTypeObjectArchetype(final JavaTypeName name, final TypeEffectiveStatement.MandatoryIn<?, ?> statement,
             final BitsTypeDefinition typeDefinition) {
         this(name, statement, typeDefinition, null);
-    }
-
-    @Override
-    public long serialVersionUID() {
-        final var svb = new SerialVersionHelper(name).setAbstract(false).addInterface(SERIALIZABLE);
-        if (superType == null) {
-            for (var bit : typeDefinition.getBits()) {
-                svb.addField(Naming.getPropertyName(bit.getName()));
-            }
-        }
-        return svb.computeSerialVersion();
     }
 
     @Override

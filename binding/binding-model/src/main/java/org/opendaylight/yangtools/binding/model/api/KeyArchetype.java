@@ -44,19 +44,6 @@ public record KeyArchetype(
         verify(fields.size() == statement.argument().size());
     }
 
-    /**
-     * {@return the value of the {@code serialVersionUID} of this {@link Key} class};
-     */
-    public long serialVersionUID() {
-        final var svh = new SerialVersionHelper(name())
-            .setAbstract(false)
-            .addInterface(JavaTypeName.create(Key.class));
-        for (var qname : statement().argument()) {
-            svh.addField(Naming.getPropertyName(qname.getLocalName()));
-        }
-        return svh.computeSerialVersion();
-    }
-
     public List<GeneratedProperty> getProperties() {
         final var arg = statement().argument();
         final var props = new ArrayList<GeneratedProperty>(arg.size());

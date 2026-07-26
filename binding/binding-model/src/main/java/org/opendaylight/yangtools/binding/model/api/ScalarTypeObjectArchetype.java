@@ -14,8 +14,6 @@ import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
-import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 
@@ -40,17 +38,6 @@ public record ScalarTypeObjectArchetype(
         if (restrictions != null && restrictions.isEmpty()) {
             restrictions = null;
         }
-    }
-
-    @Override
-    public long serialVersionUID() {
-        final var helper = new SerialVersionHelper(name)
-            .setAbstract(false)
-            .addInterface(BitsTypeObjectArchetype.SERIALIZABLE);
-        if (getSuperType == null) {
-            helper.addField(Naming.getPropertyName(TypeConstants.VALUE_PROP));
-        }
-        return helper.computeSerialVersion();
     }
 
     @Override

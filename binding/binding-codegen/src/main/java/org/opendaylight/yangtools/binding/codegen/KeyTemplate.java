@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Key;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -66,7 +67,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     private void classBody(final BlockBuilder bb) {
         bb
             .eol("@java.io.Serial")
-            .str("private static final long serialVersionUID = ").jLong(archetype.serialVersionUID()).eS()
+            .str("private static final long serialVersionUID = ").jLong(serialVersionUID(archetype)).eS()
             .newLine();
 
         // Fields
@@ -251,5 +252,15 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
 
     private static String importedUtilClass(final GeneratedClass clazz, final Type type) {
         return clazz.getReferenceString(type.isArray() ? JU_ARRAYS : JU_OBJECTS);
+    }
+
+    private static long serialVersionUID(final KeyArchetype archetype) {
+        final var svh = new SerialVersionHelper(archetype.name())
+            .setAbstract(false)
+            .addInterface(JavaTypeName.create(Key.class));
+        for (var qname : archetype.statement().argument()) {
+            svh.addField(Naming.getPropertyName(qname.getLocalName()));
+        }
+        return svh.computeSerialVersion();
     }
 }

@@ -119,7 +119,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         final var bb = newBodyBuilder(statement, statement.typeStatement().typeDefinition(), !isInnerClass)
             .frg(generateClassDeclaration(isInnerClass)).oB()
                 .eol("@java.io.Serial")
-                .str("private static final long serialVersionUID = ").jLong(archetype.serialVersionUID()).eS()
+                .str("private static final long serialVersionUID = ").jLong(serialVersionUID(archetype)).eS()
                  // inner classes
                 .blk(generateInnerClasses(root, archetype.enclosedTypes()));
 
@@ -434,5 +434,16 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             .str("public ").str(archetype.simpleName()).str("(").str(importedSuper).str(" source)").oB()
                 .eol("super(source);")
             .cB();
+    }
+
+    @NonNullByDefault
+    private static long serialVersionUID(final UnionTypeObjectArchetype archetype) {
+        final var svb = new SerialVersionHelper(archetype.name())
+            .setAbstract(false)
+            .addInterface(SerialVersionHelper.SERIALIZABLE);
+
+        archetype.typePropertyNames().stream().distinct().forEach(svb::addField);
+
+        return svb.computeSerialVersion();
     }
 }
