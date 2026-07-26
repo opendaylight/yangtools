@@ -11,14 +11,13 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractTypeBuilder;
 import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
  * Common interface for all builders resulting in a {@link Type}.
  */
 @NonNullByDefault
-public sealed interface TypeBuilder extends Mutable permits AbstractTypeBuilder, GeneratedTypeBuilderBase {
+public sealed interface TypeBuilder extends Mutable permits GeneratedTypeBuilderBase {
     /**
      * {@return the name of the type this builder produces}
      */
