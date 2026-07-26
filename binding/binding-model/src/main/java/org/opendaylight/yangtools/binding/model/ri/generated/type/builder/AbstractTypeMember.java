@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMember;
@@ -23,14 +22,12 @@ abstract class AbstractTypeMember implements TypeMember {
     private final TypeMemberComment comment;
     private final @NonNull Type returnType;
     private final @NonNull List<AttachedAnnotation> annotations;
-    private final AccessModifier accessModifier;
 
     AbstractTypeMember(final String name, final List<AttachedAnnotation> annotations, final TypeMemberComment comment,
-            final AccessModifier accessModifier, final Type returnType) {
+            final Type returnType) {
         this.name = requireNonNull(name);
         this.annotations = requireNonNull(annotations);
         this.comment = comment;
-        this.accessModifier = accessModifier;
         this.returnType = requireNonNull(returnType);
     }
 
@@ -47,11 +44,6 @@ abstract class AbstractTypeMember implements TypeMember {
     @Override
     public TypeMemberComment getComment() {
         return comment;
-    }
-
-    @Override
-    public AccessModifier getAccessModifier() {
-        return accessModifier;
     }
 
     @Override

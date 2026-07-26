@@ -34,13 +34,6 @@ import org.slf4j.LoggerFactory;
 @Beta
 @NonNullByDefault
 public final class SerialVersionHelper {
-    private record MethodDesc(String name, AccessModifier accessModifier) {
-        MethodDesc {
-            requireNonNull(name);
-            requireNonNull(accessModifier);
-        }
-    }
-
     private sealed interface DigestFactory {
 
         MessageDigest newMD();
@@ -78,7 +71,6 @@ public final class SerialVersionHelper {
     }
 
     private static final Comparator<JavaTypeName> IFACE_COMPARATOR = Comparator.comparing(JavaTypeName::canonicalName);
-    private static final Comparator<MethodDesc> METHOD_COMPARATOR = Comparator.comparing(MethodDesc::name);
     private static final DigestFactory DIGEST_FACTORY;
 
     static {
@@ -109,7 +101,7 @@ public final class SerialVersionHelper {
     }
 
     private final ArrayList<JavaTypeName> interfaces = new ArrayList<>();
-    private final ArrayList<MethodDesc> methods = new ArrayList<>();
+    private final ArrayList<String> methods = new ArrayList<>();
     private final ArrayList<String> fields = new ArrayList<>();
     private final JavaTypeName clazz;
 
@@ -134,10 +126,8 @@ public final class SerialVersionHelper {
         return this;
     }
 
-    public SerialVersionHelper addMethod(final String name, final AccessModifier accessModifier) {
-        if (accessModifier != AccessModifier.PRIVATE) {
-            methods.add(new MethodDesc(name, accessModifier));
-        }
+    public SerialVersionHelper addMethod(final String name) {
+        methods.add(requireNonNull(name);
         return this;
     }
 
@@ -158,10 +148,12 @@ public final class SerialVersionHelper {
                 dos.writeUTF(field);
             }
 
-            methods.sort(METHOD_COMPARATOR);
+            methods.sort(Comparator.naturalOrder());
             for (var method : methods) {
-                dos.writeUTF(method.name);
-                dos.write(method.accessModifier.ordinal());
+                dos.writeUTF(method);
+                // Note: comes from our legacy AccessModifier being ordered 'DEFAULT, PRIVATE, PUBLIC, PROTECTED' -- and
+                // now we only support public.
+                dos.write(2);
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
