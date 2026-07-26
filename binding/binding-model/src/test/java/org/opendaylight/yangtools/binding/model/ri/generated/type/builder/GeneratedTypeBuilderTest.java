@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -21,9 +22,10 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -133,24 +135,23 @@ class GeneratedTypeBuilderTest {
 
     @Test
     void addMethodTest() {
-        var generatedTypeBuilder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
+        final var generatedTypeBuilder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
             statement);
 
-        var methodBuilder = generatedTypeBuilder.addMethod("myMethodName").setReturnType(Types.BOOLEAN);
-        assertNotNull(methodBuilder);
-        var methodBuilder2 = generatedTypeBuilder.addMethod("myMethodName2").setReturnType(Types.STRING);
-        assertNotNull(methodBuilder2);
+        final var method = MethodSignature.publicAbstractOf("myMethodName", Types.BOOLEAN);
+        assertSame(generatedTypeBuilder, generatedTypeBuilder.addMethod(method));
+        final var method2 = MethodSignature.publicAbstractOf("myMethodName2", Types.STRING);
+        assertSame(generatedTypeBuilder, generatedTypeBuilder.addMethod(method2));
 
         var instance = generatedTypeBuilder.build();
         var methodDefinitions = instance.getMethodDefinitions();
 
         assertEquals(2, methodDefinitions.size());
 
-        assertTrue(methodDefinitions.contains(methodBuilder.build()));
-        assertTrue(methodDefinitions.contains(methodBuilder2.build()));
-        assertFalse(methodDefinitions.contains(new MethodSignatureBuilder("myMethodName3")
-            .setReturnType(Types.BOOLEAN)
-            .build()));
+        assertTrue(methodDefinitions.contains(method));
+        assertTrue(methodDefinitions.contains(method2));
+        assertFalse(methodDefinitions.contains(
+            MethodSignature.publicAbstractOf("myMethodName3", Types.BOOLEAN, ValueMechanics.NORMAL)));
     }
 
     @Test
