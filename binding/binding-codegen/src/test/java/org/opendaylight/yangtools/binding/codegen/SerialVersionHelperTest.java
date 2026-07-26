@@ -5,12 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.api;
+package org.opendaylight.yangtools.binding.codegen;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.Serializable;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 
 class SerialVersionHelperTest {
     @Test

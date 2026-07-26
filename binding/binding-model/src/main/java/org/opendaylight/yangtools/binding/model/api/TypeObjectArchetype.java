@@ -39,11 +39,6 @@ public sealed interface TypeObjectArchetype<T extends TypeObject>
     sealed interface OfClass<T extends TypeObject> extends TypeObjectArchetype<T>
             permits BitsTypeObjectArchetype, ScalarTypeObjectArchetype, UnionTypeObjectArchetype {
         /**
-         * {@return the value of the {@code serialVersionUID} of this {@link TypeObject} class}
-         */
-        long serialVersionUID();
-
-        /**
          * {@return the archetype describing the class this archetype's class extends, or {@code null}}
          */
         @Nullable OfClass<T> getSuperType();

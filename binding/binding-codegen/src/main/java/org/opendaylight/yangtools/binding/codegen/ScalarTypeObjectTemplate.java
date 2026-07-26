@@ -34,6 +34,7 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.UnsafeSecret;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -41,6 +42,7 @@ import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 
 /**
  * A template for {@link ScalarTypeObject} specializations.
@@ -430,7 +432,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
             .str("public").str(topLevel ? " " : "static ").str("class ").str(simpleName).frg(implFragment(importedType))
                 .oB()
                 .eol("@java.io.Serial")
-                .str("private static final long serialVersionUID = ").jLong(archetype.serialVersionUID()).eS();
+                .str("private static final long serialVersionUID = ").jLong(serialVersionUID(archetype)).eS();
 
         archetype.typeDefinition().getUnits().ifPresent(units ->
             bb.str("public static final String UNITS = ").jString(units).eS());
@@ -540,4 +542,14 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
     abstract void appendParentConstructor(BlockBuilder bb, ValueCheckers valueCheckers);
 
     abstract void appendMethods(BlockBuilder bb, ConcreteType valueType);
+
+    private static long serialVersionUID(final ScalarTypeObjectArchetype archetype) {
+        final var helper = new SerialVersionHelper(archetype.name())
+            .setAbstract(false)
+            .addInterface(SerialVersionHelper.SERIALIZABLE);
+        if (archetype.getSuperType() == null) {
+            helper.addField(Naming.getPropertyName(TypeConstants.VALUE_PROP));
+        }
+        return helper.computeSerialVersion();
+    }
 }

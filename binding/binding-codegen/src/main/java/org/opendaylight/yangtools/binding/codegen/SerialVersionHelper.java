@@ -6,14 +6,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.api;
+package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
 import java.io.UncheckedIOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -21,6 +21,7 @@ import java.security.Provider;
 import java.util.ArrayList;
 import java.util.Comparator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -30,10 +31,8 @@ import org.slf4j.LoggerFactory;
  *
  * @since 16.0.0
  */
-// FIXME: this should live in binding-codegen
-@Beta
 @NonNullByDefault
-public final class SerialVersionHelper {
+final class SerialVersionHelper {
     private sealed interface DigestFactory {
 
         MessageDigest newMD();
@@ -69,6 +68,8 @@ public final class SerialVersionHelper {
             }
         }
     }
+
+    static final JavaTypeName SERIALIZABLE = JavaTypeName.create(Serializable.class);
 
     private static final Comparator<JavaTypeName> IFACE_COMPARATOR = Comparator.comparing(JavaTypeName::canonicalName);
     private static final DigestFactory DIGEST_FACTORY;
@@ -107,26 +108,26 @@ public final class SerialVersionHelper {
 
     private boolean isAbstract = true;
 
-    public SerialVersionHelper(final JavaTypeName clazz) {
+    SerialVersionHelper(final JavaTypeName clazz) {
         this.clazz = requireNonNull(clazz);
     }
 
-    public SerialVersionHelper setAbstract(final boolean newAbstract) {
+    SerialVersionHelper setAbstract(final boolean newAbstract) {
         isAbstract = newAbstract;
         return this;
     }
 
-    public SerialVersionHelper addField(final String name) {
+    SerialVersionHelper addField(final String name) {
         fields.add(requireNonNull(name));
         return this;
     }
 
-    public SerialVersionHelper addInterface(final JavaTypeName name) {
+    SerialVersionHelper addInterface(final JavaTypeName name) {
         interfaces.add(requireNonNull(name));
         return this;
     }
 
-    public SerialVersionHelper addMethod(final String name) {
+    SerialVersionHelper addMethod(final String name) {
         methods.add(requireNonNull(name));
         return this;
     }
@@ -136,7 +137,7 @@ public final class SerialVersionHelper {
     // computeDefaultSUID(), but it does not. It is a part of the spec now, so
     //
     // Anyway, we want to keep things as compatible as possible, so this may never get rectified.
-    public long computeSerialVersion() {
+    long computeSerialVersion() {
         final var baos = new ByteArrayOutputStream();
         try (var dos = new DataOutputStream(baos)) {
             dos.writeUTF(clazz.simpleName());
