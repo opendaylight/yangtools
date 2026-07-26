@@ -18,8 +18,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
-public abstract sealed class TypeMemberBuilder<T extends TypeMemberBuilder<T>>
-        permits GeneratedPropertyBuilder, MethodSignatureBuilder {
+public abstract sealed class TypeMemberBuilder<T extends TypeMemberBuilder<T>> permits MethodSignatureBuilder {
     private final String name;
 
     private TypeMemberComment comment;

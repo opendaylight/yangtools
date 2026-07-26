@@ -15,7 +15,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.UnionTypeObject;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyImpl;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 
@@ -50,7 +50,7 @@ public record UnionTypeObjectArchetype(
     // FIXME: remove this method
     public List<GeneratedProperty> getProperties() {
         return Streams.zip(typePropertyNames().stream().distinct(), typePropertyTypes().stream(),
-            (pn, pt) -> new GeneratedPropertyBuilder(pn).setReadOnly(true).setReturnType(pt).toInstance())
+            (pn, pt) -> (GeneratedProperty) new GeneratedPropertyImpl(pn, null, pt, true, null))
             .toList();
     }
 
