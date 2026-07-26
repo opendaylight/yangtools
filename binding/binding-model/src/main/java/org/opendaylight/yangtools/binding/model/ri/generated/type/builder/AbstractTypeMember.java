@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMember;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
-abstract class AbstractTypeMember implements TypeMember {
+abstract sealed class AbstractTypeMember implements TypeMember permits MethodSignatureImpl {
     private final @NonNull String name;
     private final TypeMemberComment comment;
     private final @NonNull Type returnType;

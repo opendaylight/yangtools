@@ -50,7 +50,7 @@ public record UnionTypeObjectArchetype(
     // FIXME: remove this method
     public List<GeneratedProperty> getProperties() {
         return Streams.zip(typePropertyNames().stream().distinct(), typePropertyTypes().stream(),
-            (pn, pt) -> (GeneratedProperty) new GeneratedPropertyImpl(pn, null, pt, true, null))
+            (pn, pt) -> (GeneratedProperty) new GeneratedPropertyImpl(pn, pt, true))
             .toList();
     }
 

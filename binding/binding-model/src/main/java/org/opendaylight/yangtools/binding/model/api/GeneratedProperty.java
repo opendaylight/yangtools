@@ -7,18 +7,22 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-/**
- * Generated Property extends {@link TypeMember} interface with additional information about fields (and other members)
- * declared in Java Transfer Objects (or any java classes) and their access counterparts (getters and setters).
- *
- * @see TypeMember
- */
-// FIXME: 7.0.0: this interface (and others) need to be refactored:
-//               - getValue() is pretty much unused and its semantics are undefined
-//               - isReadOnly() is not related to getValue() and is not used together
-public interface GeneratedProperty extends TypeMember {
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
-    String getValue();
+/**
+ * Generated Property is essentially a named field with its type.
+ */
+@NonNullByDefault
+public interface GeneratedProperty {
+    /**
+     * {@return the name of this property}
+     */
+    String getName();
+
+    /**
+     * {@return the returning {@link Type} of member}
+     */
+    Type getReturnType();
 
     /**
      * Returns <code>true</code> if the property is declared as read-only. If this {@code true} the property should be
@@ -26,5 +30,6 @@ public interface GeneratedProperty extends TypeMember {
      *
      * @return {@code true<} if the property is declared as read-only.
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     boolean isReadOnly();
 }
