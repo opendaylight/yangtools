@@ -42,7 +42,7 @@ class KeyGeneratorTest {
 
                 switch (archetype.simpleName()) {
                     case "CompositeKeyListKey" -> {
-                        final var properties = archetype.getProperties();
+                        final var properties = KeyTemplate.getProperties(archetype);
                         int propertyCount = 0;
                         for (var prop : properties) {
                             if (prop.getName().equals("key1") || prop.getName().equals("key2")) {
