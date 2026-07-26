@@ -10,26 +10,17 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
 class GeneratedPropertyImplTest {
     @Test
     void generatedPropertyImplTest() {
-        final var generatedPropertyBuilderImpl = new GeneratedPropertyBuilder("myPropertyName")
-            .setValue("myValue")
-            .setReadOnly(false)
-            .setComment(TypeMemberComment.contractOf("myComment"))
-            .setReturnType(Types.BOOLEAN);
-
-        var instance = generatedPropertyBuilderImpl.toInstance();
-
-        assertNotNull(instance);
+        var instance = new GeneratedPropertyImpl("myPropertyName", TypeMemberComment.contractOf("myComment"),
+            Types.BOOLEAN, false, "myValue");
 
         assertFalse(instance.isReadOnly());
         assertEquals("myValue", instance.getValue());
@@ -43,25 +34,10 @@ class GeneratedPropertyImplTest {
 
     @Test
     void generatedPropertyImplEqualsAndHashCodeTest() {
-        var generatedPropertyBuilderImpl = new GeneratedPropertyBuilder("myPropertyName");
-        var generatedPropertyBuilderImpl2 = new GeneratedPropertyBuilder("myPropertyName");
-        final var generatedPropertyBuilderImpl3 = new GeneratedPropertyBuilder("myPropertyName3");
-        final var generatedPropertyBuilderImpl4 = new GeneratedPropertyBuilder("myPropertyName");
-
-        generatedPropertyBuilderImpl.setReturnType(Types.BOOLEAN);
-        generatedPropertyBuilderImpl2.setReturnType(Types.BOOLEAN);
-        generatedPropertyBuilderImpl3.setReturnType(Types.BOOLEAN);
-        generatedPropertyBuilderImpl4.setReturnType(Types.STRING);
-
-        final var property = generatedPropertyBuilderImpl.toInstance();
-        final var property2 = generatedPropertyBuilderImpl2.toInstance();
-        final var property3 = generatedPropertyBuilderImpl3.toInstance();
-        final var property4 = generatedPropertyBuilderImpl4.toInstance();
-
-        assertNotNull(property);
-        assertNotNull(property2);
-        assertNotNull(property3);
-        assertNotNull(property4);
+        final var property = new GeneratedPropertyImpl("myPropertyName", null, Types.BOOLEAN, true, null);
+        final var property2 = new GeneratedPropertyImpl("myPropertyName", null, Types.BOOLEAN, true, null);
+        final var property3 = new GeneratedPropertyImpl("myPropertyName3", null, Types.BOOLEAN, true, null);
+        final var property4 = new GeneratedPropertyImpl("myPropertyName", null, Types.STRING, true, null);
 
         assertFalse(property.equals(null));
         assertFalse(property.equals(new Object()));
