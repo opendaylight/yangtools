@@ -70,8 +70,8 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
         }
 
         final var statement = statement();
-        final var builder = new LegacyArchetypeBuilder<>(typeName(), statement);
-        builder.addImplementsType(baseInterface);
+        final var builder = new LegacyArchetypeBuilder<>(typeName(), statement)
+            .addImplementsType(baseInterface);
         addAugmentable(builder);
 
         addUsesInterfaces(builder);

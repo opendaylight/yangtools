@@ -114,7 +114,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     protected abstract @NonNull T thisInstance();
 
     @Override
-    public final T addEnclosedType(final Archetype genType) {
+    public final @NonNull T addEnclosedType(final Archetype genType) {
         if (enclosedTypes.contains(requireNonNull(genType))) {
             throw new IllegalArgumentException("This generated type already contains equal enclosing transfer object.");
         }
@@ -123,7 +123,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     }
 
     @Override
-    public T addImplementsType(final Type genType) {
+    public final @NonNull T addImplementsType(final Type genType) {
         checkArgument(!implementsTypes.contains(requireNonNull(genType)),
             "This generated type already contains equal implements type.");
         implementsTypes = LazyCollections.lazyAdd(implementsTypes, genType);
@@ -131,7 +131,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     }
 
     @Override
-    public Constant addConstant(final Type type, final String name, final Object value) {
+    public final Constant addConstant(final Type type, final String name, final Object value) {
         checkArgument(type != null, "Returning Type for Constant cannot be null!");
         checkArgument(name != null, "Name of constant cannot be null!");
         checkArgument(!containsConstant(name),

@@ -151,9 +151,8 @@ abstract class AbstractAugmentGenerator
     @Override
     final LegacyArchetype<AugmentEffectiveStatement> createTypeImpl() {
         final var statement = statement();
-        final var builder = new LegacyArchetypeBuilder<>(typeName(), statement);
-
-        builder.addImplementsType(BindingTypes.augmentation(targetGenerator().getGeneratedType()));
+        final var builder = new LegacyArchetypeBuilder<>(typeName(), statement)
+            .addImplementsType(BindingTypes.augmentation(targetGenerator().getGeneratedType()));
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
 

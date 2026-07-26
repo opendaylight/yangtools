@@ -62,17 +62,6 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
     T addImplementsType(Type genType);
 
     /**
-     * Add Type to implements.
-     *
-     * @param builder builder for the Type to implement
-     * @return <code>true</code> if the addition of type is successful.
-     */
-    @NonNullByDefault
-    default T addImplementsType(final GeneratedTypeBuilderBase<?> builder) {
-        return addImplementsType(builder.typeRef());
-    }
-
-    /**
      * Adds Constant definition and returns <code>new</code> Constant instance.<br>
      * By definition Constant MUST be defined by return Type, Name and assigned value. The name SHOULD be defined
      * with capital letters. Neither of method parameters can be <code>null</code> and the method SHOULD throw
