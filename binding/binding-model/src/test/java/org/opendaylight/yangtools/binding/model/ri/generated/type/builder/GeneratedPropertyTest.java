@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
@@ -33,8 +32,8 @@ class GeneratedPropertyTest {
 
     @Test
     void testMethodsForGeneratedPropertyImpl() {
-        final var propertyImpl = new GeneratedPropertyImpl("Test", List.of(),
-            TypeMemberComment.contractOf("test property"), Types.VOID, true, "test value");
+        final var propertyImpl = new GeneratedPropertyImpl("Test", TypeMemberComment.contractOf("test property"),
+            Types.VOID, true, "test value");
 
         assertEquals("test value", propertyImpl.getValue());
         assertTrue(propertyImpl.isReadOnly());

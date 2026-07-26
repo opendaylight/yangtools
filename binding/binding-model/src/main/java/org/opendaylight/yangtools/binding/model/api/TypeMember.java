@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -19,11 +18,6 @@ public interface TypeMember {
      * {@return comment string associated with member}
      */
     @Nullable TypeMemberComment getComment();
-
-    /**
-     * {@return List of annotation definitions attached to this member}
-     */
-    @NonNull List<AttachedAnnotation> getAnnotations();
 
     /**
      * {@return the returning {@link Type} of member}

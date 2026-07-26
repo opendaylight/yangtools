@@ -33,8 +33,8 @@ class GeneratedPropertyBuilderTest {
         var instance = generatedPropertyBuilderImpl.toInstance();
         assertNotNull(instance);
         assertEquals("""
-            GeneratedPropertyImpl [name=myPropertyName, annotations=[], comment=null, \
-            returnType=ConcreteType{name=java.lang.Boolean}, isReadOnly=false]""", instance.toString());
+            GeneratedPropertyImpl [name=myPropertyName, comment=null, returnType=ConcreteType{name=java.lang.Boolean}, \
+            isReadOnly=false]""", instance.toString());
 
         assertFalse(instance.isReadOnly());
         assertEquals("myValue", instance.getValue());

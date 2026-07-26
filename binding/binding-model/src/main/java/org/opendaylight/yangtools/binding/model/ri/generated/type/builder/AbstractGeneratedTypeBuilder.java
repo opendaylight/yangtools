@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
-import org.opendaylight.yangtools.binding.model.api.type.builder.TypeMemberBuilder;
 import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -38,7 +37,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     private final @NonNull JavaTypeName typeName;
     protected final @NonNull S statement;
 
-    private @Nullable ArrayList<AttachedAnnotation> annotations = null;
+    private @Nullable ArrayList<AttachedAnnotation.ToType> annotations = null;
     private List<Type> implementsTypes = List.of();
     private List<Constant> constants = List.of();
     private List<MethodSignatureBuilder> methodDefinitions = List.of();
@@ -56,8 +55,8 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     }
 
     @Override
-    public final T addAnnotation(final AttachedAnnotation annotation) {
-        annotations = TypeMemberBuilder.addAnnotation(annotations, annotation);
+    public final T addAnnotation(final AttachedAnnotation.ToType annotation) {
+        annotations = MethodSignatureBuilder.addAnnotation(annotations, annotation);
         return thisInstance();
     }
 

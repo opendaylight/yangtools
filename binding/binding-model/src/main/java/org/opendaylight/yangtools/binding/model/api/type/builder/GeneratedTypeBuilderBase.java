@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.model.api.type.builder;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Constant;
@@ -17,7 +19,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTypeBuilder;
 
-public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>> extends AnnotableTypeBuilder
+public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
         permits AbstractGeneratedTypeBuilder, DataRootArchetype.Builder {
     /**
      * {@return the name of the type this builder produces}
@@ -33,8 +35,13 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
         return TypeRef.of(typeName());
     }
 
-    @Override
-    T addAnnotation(AttachedAnnotation annotation);
+    /**
+     * Add an {@link AttachedAnnotation.ToType} to this builder.
+     *
+     * @param annotation the {@link AttachedAnnotation.ToType}, if {@code null} this method does nothing
+     * @return this instance
+     */
+    @NonNull T addAnnotation(AttachedAnnotation.@Nullable ToType annotation);
 
     /**
      * Adds a new enclosed {@link Archetype} into definition of Generated Type.
@@ -94,9 +101,6 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * for specifying all Method parameters.<br>
      * Name of Method cannot be <code>null</code>, if it is <code>null</code> the method SHOULD throw
      * {@link IllegalArgumentException}.<br>
-     * By <i>Default</i> the MethodSignatureBuilder SHOULD be pre-set as
-     * {@link MethodSignatureBuilder#setAbstract(boolean)}, {TypeMemberBuilder#setFinal(boolean)} and
-     * {TypeMemberBuilder#setAccessModifier(boolean)}
      *
      * @param name Name of Method
      * @return <code>new</code> instance of Method Signature Builder.

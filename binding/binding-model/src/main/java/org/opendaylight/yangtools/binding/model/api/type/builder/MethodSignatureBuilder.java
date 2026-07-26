@@ -12,10 +12,13 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.Parameter;
@@ -33,13 +36,14 @@ import org.opendaylight.yangtools.util.LazyCollections;
  * set to public. The Method Signature builder does not contain method for
  * addName due to enforce reason that MethodSignatureBuilder SHOULD be
  * instantiated only once with defined method name. <br>
- * The methods as {@link #addAnnotation(AttachedAnnotation)} and
+ * The methods as {@link #addAnnotation(AttachedAnnotation.ToMethod)} and
  * {@link #setComment(TypeMemberComment)} can be used as optional because not all methods
  * MUST contain annotation or comment definitions.
  *
  * @see MethodSignature
  */
 public final class MethodSignatureBuilder extends TypeMemberBuilder<MethodSignatureBuilder> {
+    private @Nullable ArrayList<AttachedAnnotation.ToMethod> annotations = null;
     private List<MethodSignature.Parameter> parameters = List.of();
     private ValueMechanics mechanics = ValueMechanics.NORMAL;
     private boolean isDefault = false;
@@ -82,6 +86,52 @@ public final class MethodSignatureBuilder extends TypeMemberBuilder<MethodSignat
     public MethodSignatureBuilder addParameter(final Type type, final String name) {
         parameters = LazyCollections.lazyAdd(parameters, new Parameter(name, type));
         return this;
+    }
+
+    /**
+     * Add an {@link AttachedAnnotation.ToMethod} to this builder.
+     *
+     * @param annotation the {@link AttachedAnnotation.ToMethod}, if {@code null} this method does nothing
+     * @return this instance
+     */
+    public @NonNull MethodSignatureBuilder addAnnotation(final AttachedAnnotation.@Nullable ToMethod annotation) {
+        annotations = addAnnotation(annotations, annotation);
+        return thisInstance();
+    }
+
+    @Beta
+    public static <T extends AttachedAnnotation> @Nullable ArrayList<@NonNull T> addAnnotation(
+            final @Nullable ArrayList<@NonNull T> list, final @Nullable T annotation) {
+        if (annotation == null) {
+            return list;
+        }
+        if (list == null) {
+            final var ret = new ArrayList<T>(2);
+            ret.add(annotation);
+            return ret;
+        }
+        if (!annotation.repeatable()) {
+            final var type = annotation.type();
+            for (var existing : list) {
+                if (annotation.equals(existing)) {
+                    throw new IllegalArgumentException("Attempt to repeat " + annotation);
+                }
+                if (type.equals(existing.type())) {
+                    throw new IllegalArgumentException("Attempt to repeat " + annotation + " after " + existing);
+                }
+            }
+        }
+        list.add(annotation);
+        return list;
+    }
+
+    @NonNullByDefault
+    private List<AttachedAnnotation.ToMethod> annotations() {
+        final var local = annotations;
+        if (local == null) {
+            return List.of();
+        }
+        return local.size() == 1 ? Collections.singletonList(requireNonNull(local.getFirst())) : List.copyOf(local);
     }
 
     /**
