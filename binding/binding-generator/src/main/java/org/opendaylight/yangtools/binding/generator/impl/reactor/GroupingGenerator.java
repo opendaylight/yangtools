@@ -77,9 +77,7 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
         addUsesInterfaces(builder);
         addGetterMethods(builder);
 
-        annotateDeprecatedIfNecessary(builder);
-
-        return builder.build();
+        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
     }
 
     @Override

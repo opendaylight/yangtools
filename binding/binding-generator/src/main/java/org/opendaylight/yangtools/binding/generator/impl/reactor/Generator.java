@@ -25,18 +25,14 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
@@ -261,14 +257,6 @@ public abstract class Generator implements Iterable<Generator> {
     static final void addConcreteInterfaceMethods(final GeneratedTypeBuilderBase<?> builder) {
         defaultImplementedInterace(builder);
         builder.addImplementsType(ParameterizedType.of(BindingTypes.JAVA_DATACONTAINER, builder.typeRef()));
-    }
-
-    @NonNullByDefault
-    static final void annotateDeprecatedIfNecessary(final EffectiveStatement<?, ?> stmt,
-            final AnnotableTypeBuilder builder) {
-        if (stmt instanceof WithStatus withStatus) {
-            builder.addAnnotation(DeprecatedAnnotation.ofStatus(withStatus.getStatus()));
-        }
     }
 
     /**

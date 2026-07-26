@@ -78,9 +78,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
 
         addGetterMethods(builder);
 
-        annotateDeprecatedIfNecessary(builder);
-
-        return builder.build();
+        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
     }
 
     private @Nullable KeyRuntimeType keyRuntimeType() {
@@ -104,11 +102,11 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
     MethodSignatureBuilder constructGetter(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
         final var ret = super.constructGetter(builder, returnType).setMechanics(ValueMechanics.NULLIFY_EMPTY);
 
-        final var nonnull = builder
+        builder
             .addMethod(Naming.getNonnullMethodName(localName().getLocalName()))
             .setReturnType(returnType)
-            .setDefault(true);
-        annotateDeprecatedIfNecessary(nonnull);
+            .setDefault(true)
+            .addAnnotation(deprecatedAnnotation(statement()));
 
         return ret;
     }
