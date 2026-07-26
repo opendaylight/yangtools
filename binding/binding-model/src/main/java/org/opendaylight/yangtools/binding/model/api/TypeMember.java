@@ -13,7 +13,7 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * Common interface for variables and methods in class.
  */
-public interface TypeMember {
+public sealed interface TypeMember permits MethodSignature {
     /**
      * {@return comment string associated with member}
      */

@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2026 PANTHEON.tech, s.r.o.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -29,7 +30,7 @@ import org.opendaylight.yangtools.util.LazyCollections;
  * rather return empty string and {@link #getAnnotations()} SHOULD rather return empty list than {@code null} values.
  */
 // FIXME: rename to InterfaceMethod
-public interface MethodSignature extends TypeMember {
+public non-sealed interface MethodSignature extends TypeMember {
     /**
      * {@return {@code true} if this method is a {@code default} method, or {@code false} if it is abstract}
      */

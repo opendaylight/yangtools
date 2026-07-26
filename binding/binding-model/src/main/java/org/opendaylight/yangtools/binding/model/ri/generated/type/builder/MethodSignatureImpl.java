@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2026 PANTHEON.tech, s.r.o.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -12,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.VisibleForTesting;
 import java.util.List;
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
@@ -19,27 +21,51 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
-@NonNullByDefault
-public final class MethodSignatureImpl extends AbstractTypeMember implements MethodSignature {
+public final class MethodSignatureImpl implements MethodSignature {
+    private final @NonNull String name;
+    private final @NonNull Type returnType;
+    private final @NonNull ValueMechanics mechanics;
+    @NonNullByDefault
     private final List<AttachedAnnotation.ToMethod> annotations;
-    private final ValueMechanics mechanics;
+    @NonNullByDefault
     private final List<Parameter> params;
     private final boolean isDefault;
+    private final @Nullable TypeMemberComment comment;
 
+    public MethodSignatureImpl(final @NonNull String name,
+            final @NonNull List<AttachedAnnotation.@NonNull ToMethod> annotations,
+            final @Nullable TypeMemberComment comment, final @NonNull Type returnType,
+            final @NonNull List<@NonNull Parameter> params, final boolean isDefault,
+            final @NonNull ValueMechanics mechanics) {
+        this.name = requireNonNull(name);
+        this.returnType = requireNonNull(returnType);
+        this.comment = comment;
+        this.annotations = requireNonNull(annotations);
+        this.params = requireNonNull(params);
+        this.isDefault = isDefault;
+        this.mechanics = requireNonNull(mechanics);
+    }
+
+    @NonNullByDefault
     @VisibleForTesting
     MethodSignatureImpl(final String name, final List<AttachedAnnotation.ToMethod> annotations,
             final TypeMemberComment comment, final Type returnType, final List<Parameter> params) {
         this(name, annotations, comment, returnType, params, false, ValueMechanics.NORMAL);
     }
 
-    public MethodSignatureImpl(final String name, final List<AttachedAnnotation.ToMethod> annotations,
-            final TypeMemberComment comment, final Type returnType, final List<Parameter> params,
-            final boolean isDefault, final ValueMechanics mechanics) {
-        super(name, comment, returnType);
-        this.annotations = requireNonNull(annotations);
-        this.params = params;
-        this.isDefault = isDefault;
-        this.mechanics = requireNonNull(mechanics);
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public TypeMemberComment getComment() {
+        return comment;
+    }
+
+    @Override
+    public Type getReturnType() {
+        return returnType;
     }
 
     @Override
