@@ -78,4 +78,9 @@ public interface MethodSignature extends TypeMember {
      * {@return the {@link ValueMechanics} associated with this method}
      */
     ValueMechanics getMechanics();
+
+    /**
+     * {@return List of annotation definitions attached to this method}
+     */
+    List<AttachedAnnotation.ToMethod> getAnnotations();
 }
