@@ -14,45 +14,16 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * The Method Signature interface contains simplified meta model for java method definition. Each method MUST be defined
- * by name, return type, parameters Additionally method MAY contain associated annotations and a comment. By contract if
- * method does not contain any comments or annotation definitions the {@link #getComment()} SHOULD rather return empty
- * string and {@link #getAnnotations()} SHOULD rather return empty list than {@code null} values.
+ * The Method Signature interface contains simplified meta model for Java interface method definition. Each method MUST
+ * be defined by name, return type, parameters Additionally method MAY contain associated annotations and a comment.
+ *
+ * <p>By contract if method does not contain any comments or annotation definitions the {@link #getComment()} SHOULD
+ * rather return empty string and {@link #getAnnotations()} SHOULD rather return empty list than {@code null} values.
  */
+// FIXME: rename to InterfaceMethod
+// FIXME: specialize getAnnotations() to return AttachedAnnotation.ToMethod
+@NonNullByDefault
 public interface MethodSignature extends TypeMember {
-    /**
-     * Returns {@code true} if the method signature is defined as abstract.
-     *
-     * <p>By default in java all method declarations in interface are defined as abstract, but the user does not need
-     * necessarily to declare abstract keyword in front of each method. The abstract methods are allowed in Class
-     * definitions but only when the class is declared as abstract.
-     *
-     * @return {@code true} if the method signature is defined as abstract.
-     */
-    boolean isAbstract();
-
-    /**
-     * Returns {@code true} if this method is a {@code interface default} method.
-     *
-     * @return {@code true} if the method signature is defined as default.
-     */
-    boolean isDefault();
-
-    /**
-     * Returns the List of parameters that method declare. If the method does not contain any parameters, the method
-     * will return empty List.
-     *
-     * @return the List of parameters that method declare.
-     */
-    List<Parameter> getParameters();
-
-    /**
-     * Return the mechanics associated with this method.
-     *
-     * @return Associated mechanics
-     */
-    @NonNull ValueMechanics getMechanics();
-
     /**
      * The Parameter interface is designed to hold the information of method Parameter(s). The parameter is defined by
      * his Name which MUST be unique as java does not allow multiple parameters with same names for one method and Type
@@ -61,7 +32,6 @@ public interface MethodSignature extends TypeMember {
      * @param name the parameter name
      * @param type the {@link Type} that is bounded to parameter name
      */
-    @NonNullByDefault
     record Parameter(String name, Type type) {
         public Parameter {
             requireNonNull(name);
@@ -90,4 +60,22 @@ public interface MethodSignature extends TypeMember {
          */
         NONNULL,
     }
+
+    /**
+     * {@return {@code true} if this method is a {@code default} method, or {@code false} if it is abstract}
+     */
+    boolean isDefault();
+
+    /**
+     * Returns the List of parameters that method declare. If the method does not contain any parameters, the method
+     * will return empty List.
+     *
+     * @return the List of parameters that method declare.
+     */
+    List<Parameter> getParameters();
+
+    /**
+     * {@return the {@link ValueMechanics} associated with this method}
+     */
+    ValueMechanics getMechanics();
 }
