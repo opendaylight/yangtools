@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.VerifyException;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -21,6 +23,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyImpl;
 
 /**
  * A template for {@link Key} specializations.
@@ -72,7 +75,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
 
         // Fields
         // FIXME: generate checker methods for each property
-        final var props = archetype.getProperties();
+        final var props = getProperties(archetype);
         for (var prop : props) {
             bb.str("private final ").str(importedNonNull(prop.getReturnType())).sp().str(fieldName(prop)).eS();
         }
@@ -262,5 +265,18 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
             svh.addField(Naming.getPropertyName(qname.getLocalName()));
         }
         return svh.computeSerialVersion();
+    }
+
+    @VisibleForTesting
+    static List<GeneratedProperty> getProperties(final KeyArchetype archetype) {
+        final var arg = archetype.statement().argument();
+        final var props = new ArrayList<GeneratedProperty>(arg.size());
+        final var it = arg.iterator();
+
+        for (var field : archetype.fields()) {
+            props.add(new GeneratedPropertyImpl(Naming.getPropertyName(it.next().getLocalName()), field, true));
+        }
+
+        return props;
     }
 }
