@@ -33,7 +33,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -929,9 +928,9 @@ final class BuilderTemplate extends BaseTemplate {
      */
     @NonNullByDefault
     static List<GeneratedProperty> keyConstructorArgs(final KeyArchetype keyType) {
-        return keyType.getProperties().stream()
+        return KeyTemplate.getProperties(keyType).stream()
             .sorted(Comparator.comparing(GeneratedProperty::getName))
-            .collect(Collectors.toList());
+            .toList();
     }
 
     static void removeProperty(final Collection<BuilderGeneratedProperty> props, final String name) {

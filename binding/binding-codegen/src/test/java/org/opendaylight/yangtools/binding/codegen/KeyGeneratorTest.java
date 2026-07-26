@@ -42,7 +42,7 @@ class KeyGeneratorTest {
 
                 switch (archetype.simpleName()) {
                     case "CompositeKeyListKey" -> {
-                        final var properties = archetype.getProperties();
+                        final var properties = KeyTemplate.getProperties(archetype);
                         int propertyCount = 0;
                         for (var prop : properties) {
                             if (prop.getName().equals("key1") || prop.getName().equals("key2")) {
@@ -133,7 +133,7 @@ class KeyGeneratorTest {
                             """, archetype);
                     }
                     case "InnerListKey" -> {
-                        final var properties = archetype.getProperties();
+                        final var properties = KeyTemplate.getProperties(archetype);
                         assertEquals(1, properties.size());
                         assertKeyClass("""
                             package org.opendaylight.yang.gen.v1.urn.composite.key.rev130227.list.parent.container.\
