@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement
  * @since 16.0.0
  */
 public sealed interface OpaqueObjectArchetype<S extends DataTreeEffectiveStatement<?> & DataSchemaCompat<QName, ?>>
-        extends Archetype.WithQName<S> {
+        extends Archetype.WithQName {
     /**
      * An {@link OpaqueObjectArchetype} for an {@link AnydataEffectiveStatement}.
      *
@@ -57,4 +57,7 @@ public sealed interface OpaqueObjectArchetype<S extends DataTreeEffectiveStateme
             requireNonNull(statement);
         }
     }
+
+    @Override
+    S statement();
 }

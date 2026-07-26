@@ -20,30 +20,19 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  *
  * @since 15.0.0
  */
-public sealed interface Archetype extends Type permits Archetype.WithStatement {
-    /**
-     * An {@link Archetype} which is based on a particular {@link EffectiveStatement}.
-     *
-     * @param <S> EffectiveStatement type
-     * @since 16.0.0
-     */
-    sealed interface WithStatement<S extends EffectiveStatement<?, ?>> extends Archetype
-            permits OfCompositeInterface, WithQName, KeyArchetype, TypeObjectArchetype {
-        /**
-         * {@return the {@link EffectiveStatement}}
-         */
-        @NonNull S statement();
-    }
-
+public sealed interface Archetype extends Type
+        permits Archetype.OfCompositeInterface, Archetype.WithQName, KeyArchetype, TypeObjectArchetype {
     /**
      * An {@link Archetype} which derives {@value Naming#QNAME_STATIC_FIELD_NAME} from its {@link #statement()}.
      *
-     * @param <S> EffectiveStatement type
      * @since 16.0.0
      */
     @Beta
-    sealed interface WithQName<S extends EffectiveStatement<QName, ?>> extends WithStatement<S>
+    sealed interface WithQName extends Archetype
             permits ChoiceInArchetype, FeatureArchetype, IdentityArchetype, OpaqueObjectArchetype, RpcArchetype {
+        @Override
+        EffectiveStatement<QName, ?> statement();
+
         /**
          * {@return the value of {@value Naming#QNAME_STATIC_FIELD_NAME} field}
          */
@@ -53,14 +42,13 @@ public sealed interface Archetype extends Type permits Archetype.WithStatement {
     }
 
     /**
-     * An {@link Archetype} which is based on a particular {@link EffectiveStatement}.
+     * An {@link Archetype} which results in an interface with zero or more methods.
      *
-     * @param <S> EffectiveStatement type
      * @since 16.0.0
      */
+    // FIXME: split out to InterfaceArchetype
     @Beta
-    sealed interface OfCompositeInterface<S extends EffectiveStatement<?, ?>> extends WithStatement<S>
-            permits DataRootArchetype, LegacyArchetype {
+    sealed interface OfCompositeInterface extends Archetype permits DataRootArchetype, LegacyArchetype {
         /**
          * {@return the list of annotations attached to interface declaration}
          */
@@ -85,6 +73,13 @@ public sealed interface Archetype extends Type permits Archetype.WithStatement {
         @NonNullByDefault
         List<MethodSignature> getMethodDefinitions();
     }
+
+    /**
+     * {@return the {@link EffectiveStatement}}
+     *
+     * @since 16.0.0
+     */
+    @NonNull EffectiveStatement<?, ?> statement();
 
     /**
      * {@return the list of enclosed {@link Archetype}s}

@@ -41,7 +41,7 @@ record TypeAnalysis(
      * to the type, expressed as properties.
      */
     @NonNullByDefault
-    static TypeAnalysis of(final Archetype.OfCompositeInterface<?> type) {
+    static TypeAnalysis of(final Archetype.OfCompositeInterface type) {
         final var methods = new LinkedHashSet<MethodSignature>();
         methods.addAll(type.getMethodDefinitions());
         final var augmentType = collectImplementedMethods(type, methods, type.getImplements());
@@ -60,7 +60,7 @@ record TypeAnalysis(
      *         augmentation.
      */
     private static @Nullable ParameterizedType collectImplementedMethods(
-            final Archetype.@NonNull OfCompositeInterface<?> archetype, final @NonNull Set<MethodSignature> methods,
+            final Archetype.@NonNull OfCompositeInterface archetype, final @NonNull Set<MethodSignature> methods,
             final @NonNull List<Type> implementedIfcs) {
         if (implementedIfcs.isEmpty()) {
             return null;

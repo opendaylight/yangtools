@@ -122,7 +122,7 @@ final class BindingJavaFileGenerator {
         }
     }
 
-    private void generateBuilder(final Archetype.OfCompositeInterface<?> type) {
+    private void generateBuilder(final Archetype.OfCompositeInterface type) {
         // FIXME: express this in GeneratedType hierarchy as a marker interface
         for (var iface : type.getImplements()) {
             if (BUILDER_INTERFACES.contains(iface.name())) {

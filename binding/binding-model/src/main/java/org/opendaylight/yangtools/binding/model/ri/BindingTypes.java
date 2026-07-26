@@ -353,7 +353,7 @@ public final class BindingTypes {
      * @since 16.0.0
      */
     public static @Nullable KeyArchetype extractEntryObjectKey(
-            final Archetype.@NonNull OfCompositeInterface<?> archetype) {
+            final Archetype.@NonNull OfCompositeInterface archetype) {
         for (var iface : archetype.getImplements()) {
             if (iface instanceof ParameterizedType parameterized && ENTRY_OBJECT.equals(parameterized.getRawType())) {
                 final var args = parameterized.getActualTypeArguments();

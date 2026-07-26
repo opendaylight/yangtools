@@ -29,7 +29,7 @@ public record RpcArchetype(
         JavaTypeName name,
         RpcEffectiveStatement statement,
         JavaTypeName input,
-        JavaTypeName output) implements Archetype.WithQName<RpcEffectiveStatement> {
+        JavaTypeName output) implements Archetype.WithQName {
     public RpcArchetype {
         requireNonNull(name);
         requireNonNull(statement);

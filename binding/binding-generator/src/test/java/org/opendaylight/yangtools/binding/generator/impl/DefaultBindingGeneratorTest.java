@@ -304,7 +304,7 @@ public class DefaultBindingGeneratorTest {
         return assertGeneratedMethod(typeName, LegacyArchetype.class, methodName);
     }
 
-    private static <A extends Archetype.OfCompositeInterface<?>> MethodSignature assertGeneratedMethod(
+    private static <A extends Archetype.OfCompositeInterface> MethodSignature assertGeneratedMethod(
             final JavaTypeName typeName, final Class<A> archetypeClass, final String methodName) {
         return assertGeneratedMethod(
             assertInstanceOf(archetypeClass, assertGeneratedType(typeName)).getMethodDefinitions(), methodName);

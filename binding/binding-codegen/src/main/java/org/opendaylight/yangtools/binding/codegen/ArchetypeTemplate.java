@@ -113,7 +113,7 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
      * @param qnameArchetype the archetype
      * @return a {@link BlockFragment}
      */
-    final BlockFragment qnameConstant(final Archetype.WithQName<?> qnameArchetype) {
+    final BlockFragment qnameConstant(final Archetype.WithQName qnameArchetype) {
         final var qname = qnameArchetype.qnameConstant();
         final var module = root.statement().localQNameModule();
         verify(module.equals(qname.getModule()));

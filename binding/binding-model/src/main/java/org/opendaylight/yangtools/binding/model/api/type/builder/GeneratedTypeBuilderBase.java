@@ -112,5 +112,5 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * {@return a new immutable {@link Archetype.OfCompositeInterface} instance}
      */
     @NonNullByDefault
-    Archetype.OfCompositeInterface<?> build();
+    Archetype.OfCompositeInterface build();
 }

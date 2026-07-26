@@ -76,7 +76,7 @@ final class SupportTestUtil {
         return sb.toString();
     }
 
-    static void containsInterface(final String interfaceNameSearched, final Archetype.OfCompositeInterface<?> genType) {
+    static void containsInterface(final String interfaceNameSearched, final Archetype.OfCompositeInterface genType) {
         for (var caseCImplement : genType.getImplements()) {
             if (resolveFullNameOfReturnType(caseCImplement).equals(interfaceNameSearched)) {
                 return;

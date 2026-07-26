@@ -21,9 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
  * @since 16.0.0
  */
 @NonNullByDefault
-public record FeatureArchetype(
-        JavaTypeName name,
-        FeatureEffectiveStatement statement) implements Archetype.WithQName<FeatureEffectiveStatement> {
+public record FeatureArchetype(JavaTypeName name, FeatureEffectiveStatement statement) implements Archetype.WithQName {
     public FeatureArchetype {
         requireNonNull(name);
         requireNonNull(statement);

@@ -23,11 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
  * @since 16.0.0
  */
 @Beta
-public sealed interface TypeObjectArchetype<T extends TypeObject>
-    // FIXME: this is not entirely accurate: we want to have:
-    //        - TypeEffectiveStatement statement()
-    //        - TypeEffectiveStatement.MandatoryIn<?, ?> definingStatement();
-        extends Archetype.WithStatement<TypeEffectiveStatement.@NonNull MandatoryIn<?, ?>>
+public sealed interface TypeObjectArchetype<T extends TypeObject> extends Archetype
         permits EnumTypeObjectArchetype, TypeObjectArchetype.OfClass {
     /**
      * Common interface for {@link TypeObjectArchetype}s other than {@link EnumTypeObjectArchetype}. These archetypes
@@ -54,4 +50,10 @@ public sealed interface TypeObjectArchetype<T extends TypeObject>
          */
         @Nullable TypeDefinition<?> getBaseType();
     }
+
+    // FIXME: this is not entirely accurate: we want to have:
+    //        - TypeEffectiveStatement statement()
+    //        - TypeEffectiveStatement.MandatoryIn<?, ?> definingStatement();
+    @Override
+    TypeEffectiveStatement.@NonNull MandatoryIn<?, ?> statement();
 }

@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
  * @since 15.0.0
  */
 @Beta
-public non-sealed interface DataRootArchetype extends Archetype.OfCompositeInterface<ModuleEffectiveStatement> {
+public non-sealed interface DataRootArchetype extends Archetype.OfCompositeInterface {
     /**
      * A builder of {@link DataRootArchetype} instances.
      */
@@ -30,6 +30,9 @@ public non-sealed interface DataRootArchetype extends Archetype.OfCompositeInter
         @Override
         DataRootArchetype build();
     }
+
+    @Override
+    ModuleEffectiveStatement statement();
 
     @Override
     @Deprecated(forRemoval = true)

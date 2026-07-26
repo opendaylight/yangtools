@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
@@ -29,7 +30,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  *
  * @param <S> EffectiveStatement type
  */
-public non-sealed interface LegacyArchetype<S extends EffectiveStatement<?, ?>>
-        extends Archetype.OfCompositeInterface<S> {
-    // FIXME: should be a final class
+// FIXME: integrate with DefaultLegacyArchetype and move LegacyArchetypeBuilder here
+public non-sealed interface LegacyArchetype<S extends EffectiveStatement<?, ?>> extends Archetype.OfCompositeInterface {
+    @Override
+    @NonNull S statement();
 }

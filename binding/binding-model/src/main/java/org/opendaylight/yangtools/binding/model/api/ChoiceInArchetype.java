@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement
 public record ChoiceInArchetype(
         JavaTypeName name,
         ChoiceEffectiveStatement statement,
-        JavaTypeName choiceIn) implements Archetype.WithQName<ChoiceEffectiveStatement> {
+        JavaTypeName choiceIn) implements Archetype.WithQName {
     public ChoiceInArchetype {
         requireNonNull(name);
         requireNonNull(statement);
