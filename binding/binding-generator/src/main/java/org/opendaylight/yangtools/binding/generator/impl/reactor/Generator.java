@@ -25,12 +25,12 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -269,7 +269,7 @@ public abstract class Generator implements Iterable<Generator> {
     }
 
     @NonNullByDefault
-    static final MethodSignatureBuilder defineImplementedInterfaceMethod(
+    static final MethodSignature.Builder defineImplementedInterfaceMethod(
             final GeneratedTypeBuilderBase<?> typeBuilder, final Type classType) {
         return typeBuilder
                 .addMethod(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME)

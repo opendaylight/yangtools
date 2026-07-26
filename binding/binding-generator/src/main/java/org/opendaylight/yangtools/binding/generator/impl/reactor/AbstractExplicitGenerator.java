@@ -20,11 +20,11 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain
 import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresentation;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
@@ -350,12 +350,12 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    MethodSignatureBuilder constructGetter(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
+    MethodSignature.Builder constructGetter(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
         return constructGetter(builder, returnType, Naming.getGetterMethodName(localName().getLocalName()));
     }
 
     @NonNullByDefault
-    final MethodSignatureBuilder constructGetter(final GeneratedTypeBuilderBase<?> builder,
+    final MethodSignature.Builder constructGetter(final GeneratedTypeBuilderBase<?> builder,
             final Type returnType, final String methodName) {
         final var getMethod = builder.addMethod(methodName)
             .setReturnType(returnType)
