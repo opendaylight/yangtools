@@ -19,7 +19,6 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Constant;
@@ -155,9 +154,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     @Override
     public MethodSignatureBuilder addMethod(final String name) {
         checkArgument(name != null, "Name of method cannot be null!");
-        final var builder = new MethodSignatureBuilder(name)
-            .setAccessModifier(AccessModifier.PUBLIC)
-            .setAbstract(true);
+        final var builder = new MethodSignatureBuilder(name).setAbstract(true);
         methodDefinitions = LazyCollections.lazyAdd(methodDefinitions, builder);
         return builder;
     }

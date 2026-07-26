@@ -15,12 +15,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * The Method Signature interface contains simplified meta model for java method definition. Each method MUST be defined
- * by name, return type, parameters and access modifier. Additionally method MAY contain associated annotations and a
- * comment. By contract if method does not contain any comments or annotation definitions the {@link #getComment()}
- * SHOULD rather return empty string and {@link #getAnnotations()} SHOULD rather return empty list than {@code null}
- * values.
- *
- * <p>The defining Type contains the reference to Generated Type that declares Method Signature.
+ * by name, return type, parameters Additionally method MAY contain associated annotations and a comment. By contract if
+ * method does not contain any comments or annotation definitions the {@link #getComment()} SHOULD rather return empty
+ * string and {@link #getAnnotations()} SHOULD rather return empty list than {@code null} values.
  */
 public interface MethodSignature extends TypeMember {
     /**
