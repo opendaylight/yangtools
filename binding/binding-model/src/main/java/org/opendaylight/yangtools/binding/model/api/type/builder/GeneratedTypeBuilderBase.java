@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTypeBuilder;
@@ -109,8 +110,8 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
     MethodSignature.Builder addMethod(String name);
 
     /**
-     * {@return a new immutable {@link Archetype.OfCompositeInterface} instance}
+     * {@return a new immutable {@link InterfaceArchetype} instance}
      */
     @NonNullByDefault
-    Archetype.OfCompositeInterface build();
+    InterfaceArchetype build();
 }

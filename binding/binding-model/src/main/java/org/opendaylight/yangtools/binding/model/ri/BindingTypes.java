@@ -36,8 +36,8 @@ import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -352,8 +352,7 @@ public final class BindingTypes {
      *         directly implement {@link EntryObject}
      * @since 16.0.0
      */
-    public static @Nullable KeyArchetype extractEntryObjectKey(
-            final Archetype.@NonNull OfCompositeInterface archetype) {
+    public static @Nullable KeyArchetype extractEntryObjectKey(final @NonNull InterfaceArchetype archetype) {
         for (var iface : archetype.getImplements()) {
             if (iface instanceof ParameterizedType parameterized && ENTRY_OBJECT.equals(parameterized.getRawType())) {
                 final var args = parameterized.getActualTypeArguments();
