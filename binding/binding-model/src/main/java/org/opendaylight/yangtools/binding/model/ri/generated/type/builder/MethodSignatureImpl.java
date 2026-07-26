@@ -12,37 +12,32 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.VisibleForTesting;
 import java.util.List;
 import java.util.Objects;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
+@NonNullByDefault
 public final class MethodSignatureImpl extends AbstractTypeMember implements MethodSignature {
+    private final ValueMechanics mechanics;
     private final List<Parameter> params;
-    private final @NonNull ValueMechanics mechanics;
-    private final boolean isAbstract;
     private final boolean isDefault;
 
     @VisibleForTesting
     MethodSignatureImpl(final String name, final List<AttachedAnnotation> annotations, final TypeMemberComment comment,
-            final Type returnType, final List<Parameter> params, final boolean isAbstract) {
-        this(name, annotations, comment, returnType, params, isAbstract, false, ValueMechanics.NORMAL);
+            final Type returnType, final List<Parameter> params) {
+        this(name, annotations, comment, returnType, params, false, ValueMechanics.NORMAL);
     }
 
     public MethodSignatureImpl(final String name, final List<AttachedAnnotation> annotations,
             final TypeMemberComment comment, final Type returnType, final List<Parameter> params,
-            final boolean isAbstract, final boolean isDefault, final ValueMechanics mechanics) {
+            final boolean isDefault, final ValueMechanics mechanics) {
         super(name, annotations, comment, returnType);
         this.params = params;
-        this.isAbstract = isAbstract;
         this.isDefault = isDefault;
         this.mechanics = requireNonNull(mechanics);
-    }
-
-    @Override
-    public boolean isAbstract() {
-        return isAbstract;
     }
 
     @Override
@@ -71,7 +66,7 @@ public final class MethodSignatureImpl extends AbstractTypeMember implements Met
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         return this == obj || obj instanceof MethodSignatureImpl other
             && Objects.equals(getName(), other.getName()) && Objects.equals(params, other.params)
             && Objects.equals(getReturnType(), other.getReturnType());

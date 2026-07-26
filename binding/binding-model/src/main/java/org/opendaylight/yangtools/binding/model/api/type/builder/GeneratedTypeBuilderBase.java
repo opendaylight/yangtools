@@ -94,9 +94,6 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * for specifying all Method parameters.<br>
      * Name of Method cannot be <code>null</code>, if it is <code>null</code> the method SHOULD throw
      * {@link IllegalArgumentException}.<br>
-     * By <i>Default</i> the MethodSignatureBuilder SHOULD be pre-set as
-     * {@link MethodSignatureBuilder#setAbstract(boolean)}, {TypeMemberBuilder#setFinal(boolean)} and
-     * {TypeMemberBuilder#setAccessModifier(boolean)}
      *
      * @param name Name of Method
      * @return <code>new</code> instance of Method Signature Builder.

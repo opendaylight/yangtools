@@ -34,9 +34,8 @@ class MethodSignatureBuilderTest {
     @Test
     void testSetAbstractMethod() {
         final var signatureBuilderImpl = new MethodSignatureBuilder("testMethod").setReturnType(Types.VOID);
-        signatureBuilderImpl.setAbstract(true);
         final var methodSignature = signatureBuilderImpl.build();
-        assertTrue(methodSignature.isAbstract());
+        assertFalse(methodSignature.isDefault());
     }
 
     @Test
