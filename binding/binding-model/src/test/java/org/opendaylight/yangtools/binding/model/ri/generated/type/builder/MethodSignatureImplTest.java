@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
@@ -31,13 +30,11 @@ class MethodSignatureImplTest {
     void setup() {
         var name = "customMethod";
         final var comment = TypeMemberComment.contractOf("This is just a comment");
-        final var accessModifier = AccessModifier.PUBLIC;
 
-        signature1 = new MethodSignatureImpl(name, List.of(), comment, accessModifier, Types.STRING, List.of(), false);
-        signature2 = new MethodSignatureImpl(name, List.of(), comment, accessModifier, Types.STRING, List.of(), false);
-        signature3 = new MethodSignatureImpl(name, List.of(), comment, accessModifier, Types.BOOLEAN, List.of(), false);
-        signature4 = new MethodSignatureImpl("otherMethod", List.of(), comment, accessModifier, Types.BOOLEAN,
-            List.of(), false);
+        signature1 = new MethodSignatureImpl(name, List.of(), comment, Types.STRING, List.of(), false);
+        signature2 = new MethodSignatureImpl(name, List.of(), comment, Types.STRING, List.of(), false);
+        signature3 = new MethodSignatureImpl(name, List.of(), comment, Types.BOOLEAN, List.of(), false);
+        signature4 = new MethodSignatureImpl("otherMethod", List.of(), comment, Types.BOOLEAN, List.of(), false);
 
         hash1 = signature1.hashCode();
         hash4 = signature4.hashCode();

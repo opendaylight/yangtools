@@ -115,8 +115,8 @@ public final class MethodSignatureBuilder extends TypeMemberBuilder<MethodSignat
             default -> List.copyOf(parameters);
         };
 
-        return new MethodSignatureImpl(getName(), annotations(), getComment(), getAccessModifier(), getReturnType(),
-            params, isAbstract, isDefault, mechanics);
+        return new MethodSignatureImpl(getName(), annotations(), getComment(), getReturnType(), params, isAbstract,
+            isDefault, mechanics);
     }
 
     @Override

@@ -58,8 +58,7 @@ public final class GeneratedPropertyBuilder extends TypeMemberBuilder<GeneratedP
      */
     @NonNullByDefault
     public GeneratedProperty toInstance() {
-        return new GeneratedPropertyImpl(getName(), annotations(), getComment(), getAccessModifier(),
-            getReturnType(), readOnly, value);
+        return new GeneratedPropertyImpl(getName(), annotations(), getComment(), getReturnType(), readOnly, value);
     }
 
     @Override
