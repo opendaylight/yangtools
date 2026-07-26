@@ -10,8 +10,10 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -32,8 +34,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 public abstract sealed class AbstractGeneratedTypeBuilder<
         T extends GeneratedTypeBuilderBase<T>,
-        S extends EffectiveStatement<?, ?>> extends AbstractTypeBuilder implements GeneratedTypeBuilderBase<T>
+        S extends EffectiveStatement<?, ?>> implements GeneratedTypeBuilderBase<T>
         permits LegacyArchetypeBuilder, DataRootArchetypeBuilder {
+    private final @NonNull JavaTypeName typeName;
     protected final @NonNull S statement;
 
     private @Nullable ArrayList<AttachedAnnotation> annotations = null;
@@ -44,8 +47,13 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
 
     @NonNullByDefault
     AbstractGeneratedTypeBuilder(final JavaTypeName typeName, final S statement) {
-        super(typeName);
+        this.typeName = requireNonNull(typeName);
         this.statement = requireNonNull(statement);
+    }
+
+    @Override
+    public final JavaTypeName typeName() {
+        return typeName;
     }
 
     @Override
@@ -159,8 +167,22 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     }
 
     @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        super.addToStringAttributes(helper);
+    public final int hashCode() {
+        return typeName.hashCode();
+    }
+
+    @Override
+    public final boolean equals(final @Nullable Object obj) {
+        return this == obj || obj instanceof AbstractGeneratedTypeBuilder other && typeName.equals(other.typeName());
+    }
+
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+    }
+
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        helper.add("typeName", typeName);
 
         addToStringAttribute(helper, "constants", constants);
         addToStringAttribute(helper, "enclosedTypes", enclosedTypes);
@@ -169,5 +191,13 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
         addToStringAttribute(helper, "implements", implementsTypes);
 
         return helper;
+    }
+
+    @NonNullByDefault
+    static final void addToStringAttribute(final ToStringHelper helper, final String name,
+            final @Nullable Collection<?> value) {
+        if (value != null && !value.isEmpty()) {
+            helper.add(name, value);
+        }
     }
 }
