@@ -11,13 +11,10 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.GeneratedPropertyImpl;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 
 /**
@@ -42,17 +39,5 @@ public record KeyArchetype(
         requireNonNull(entryObject);
         fields = List.copyOf(fields);
         verify(fields.size() == statement.argument().size());
-    }
-
-    public List<GeneratedProperty> getProperties() {
-        final var arg = statement().argument();
-        final var props = new ArrayList<GeneratedProperty>(arg.size());
-        final var kit = arg.iterator();
-
-        for (var field : fields()) {
-            props.add(new GeneratedPropertyImpl(Naming.getPropertyName(kit.next().getLocalName()), field, true));
-        }
-
-        return props;
     }
 }
