@@ -158,7 +158,7 @@ abstract class AbstractAugmentGenerator
 
         addGetterMethods(builder);
 
-        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
+        return builder.build();
     }
 
     boolean matchesInstantiated(final AugmentEffectiveStatement statement) {

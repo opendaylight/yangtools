@@ -56,7 +56,7 @@ final class NotificationBodyGenerator
         addUsesInterfaces(builder);
         addGetterMethods(builder);
 
-        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
+        return builder.build();
     }
 
     @Override

@@ -38,7 +38,7 @@ public sealed interface AttachedAnnotation permits AttachedAnnotation.ToType, At
     /**
      * An annotation attached to a Java type, e.g. when the {@link #type()} allows use with {@link ElementType#TYPE}.
      */
-    sealed interface ToType extends AttachedAnnotation permits DeprecatedAnnotation, FunctionalInterfaceAnnotation {
+    sealed interface ToType extends AttachedAnnotation permits FunctionalInterfaceAnnotation {
         @Override
         default List<ElementType> targets() {
             return List.of(ElementType.TYPE);

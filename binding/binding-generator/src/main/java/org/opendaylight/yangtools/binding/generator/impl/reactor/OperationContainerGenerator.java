@@ -80,6 +80,6 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
 
         addQNameConstant(builder, localName());
 
-        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
+        return builder.build();
     }
 }

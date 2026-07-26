@@ -12,7 +12,6 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -26,12 +25,12 @@ class Mdsal554Test {
         // status deprecated
         final var deprecated = (LegacyArchetype<?>) genTypes.get(1);
         assertEquals("DeprecatedNotification", deprecated.simpleName());
-        assertEquals(List.of(DeprecatedAnnotation.DEPRECATED), deprecated.annotations());
+        assertEquals(List.of(), deprecated.annotations());
 
         // status obsolete
         final var obsolete = (LegacyArchetype<?>) genTypes.get(2);
         assertEquals("ObsoleteNotification", obsolete.simpleName());
-        assertEquals(List.of(DeprecatedAnnotation.OBSOLETE), obsolete.annotations());
+        assertEquals(List.of(), obsolete.annotations());
 
         // status current
         final var current = assertInstanceOf(LegacyArchetype.class, genTypes.get(3));

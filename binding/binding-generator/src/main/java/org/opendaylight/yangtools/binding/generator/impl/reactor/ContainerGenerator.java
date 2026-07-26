@@ -57,7 +57,7 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
 
         addGetterMethods(builder);
 
-        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
+        return builder.build();
     }
 
     @Override

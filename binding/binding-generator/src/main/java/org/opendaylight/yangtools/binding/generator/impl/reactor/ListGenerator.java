@@ -77,7 +77,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
 
         addGetterMethods(builder);
 
-        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
+        return builder.build();
     }
 
     private @Nullable KeyRuntimeType keyRuntimeType() {

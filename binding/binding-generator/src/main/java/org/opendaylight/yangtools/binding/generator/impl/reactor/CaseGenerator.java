@@ -76,7 +76,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
 
         addGetterMethods(builder);
 
-        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
+        return builder.build();
     }
 
     @Override
