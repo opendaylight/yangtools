@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTypeBuilder;
@@ -48,6 +49,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * {@link IllegalArgumentException}.
      *
      * @param genType the enclosed {@link Archetype}
+     * @return this builder
      */
     @NonNullByDefault
     T addEnclosedType(Archetype genType);
@@ -56,7 +58,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * Add Type to implements.
      *
      * @param genType Type to implement
-     * @return <code>true</code> if the addition of type is successful.
+     * @return this builder
      */
     @NonNullByDefault
     T addImplementsType(Type genType);
@@ -65,7 +67,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * Add Type to implements.
      *
      * @param builder builder for the Type to implement
-     * @return <code>true</code> if the addition of type is successful.
+     * @return this builder
      */
     @NonNullByDefault
     default T addImplementsType(final GeneratedTypeBuilderBase<?> builder) {
@@ -110,9 +112,10 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * {TypeMemberBuilder#setAccessModifier(boolean)}
      *
      * @param name Name of Method
-     * @return <code>new</code> instance of Method Signature Builder.
+     * @return this builder
      */
-    MethodSignatureBuilder addMethod(String name);
+    @NonNullByDefault
+    T addMethod(MethodSignature method);
 
     /**
      * {@return a new immutable {@link Archetype.OfCompositeInterface} instance}
