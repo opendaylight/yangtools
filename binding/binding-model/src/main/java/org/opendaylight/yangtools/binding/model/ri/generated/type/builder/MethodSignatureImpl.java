@@ -13,7 +13,6 @@ import com.google.common.annotations.VisibleForTesting;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -26,17 +25,15 @@ public final class MethodSignatureImpl extends AbstractTypeMember implements Met
     private final boolean isDefault;
 
     @VisibleForTesting
-    MethodSignatureImpl(final String name, final List<AttachedAnnotation> annotations,
-            final TypeMemberComment comment, final AccessModifier accessModifier, final Type returnType,
-            final List<Parameter> params, final boolean isAbstract) {
-        this(name, annotations, comment, accessModifier, returnType, params, isAbstract, false, ValueMechanics.NORMAL);
+    MethodSignatureImpl(final String name, final List<AttachedAnnotation> annotations, final TypeMemberComment comment,
+            final Type returnType, final List<Parameter> params, final boolean isAbstract) {
+        this(name, annotations, comment, returnType, params, isAbstract, false, ValueMechanics.NORMAL);
     }
 
     public MethodSignatureImpl(final String name, final List<AttachedAnnotation> annotations,
-            final TypeMemberComment comment, final AccessModifier accessModifier, final Type returnType,
-            final List<Parameter> params, final boolean isAbstract, final boolean isDefault,
-            final ValueMechanics mechanics) {
-        super(name, annotations, comment, accessModifier, returnType);
+            final TypeMemberComment comment, final Type returnType, final List<Parameter> params,
+            final boolean isAbstract, final boolean isDefault, final ValueMechanics mechanics) {
+        super(name, annotations, comment, returnType);
         this.params = params;
         this.isAbstract = isAbstract;
         this.isDefault = isDefault;

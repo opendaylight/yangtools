@@ -26,11 +26,6 @@ public interface TypeMember {
     @NonNull List<AttachedAnnotation> getAnnotations();
 
     /**
-     * {@return the access modifier of member}
-     */
-    AccessModifier getAccessModifier();
-
-    /**
      * {@return the returning {@link Type} of member}
      */
     @NonNull Type getReturnType();

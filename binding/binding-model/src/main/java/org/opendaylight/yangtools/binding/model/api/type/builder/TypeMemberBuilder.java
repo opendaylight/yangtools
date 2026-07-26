@@ -20,7 +20,6 @@ import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
@@ -30,7 +29,6 @@ public abstract sealed class TypeMemberBuilder<T extends TypeMemberBuilder<T>> i
     private final String name;
 
     private @Nullable ArrayList<AttachedAnnotation> annotations = null;
-    private AccessModifier accessModifier;
     private TypeMemberComment comment;
     private Type returnType;
 
@@ -58,20 +56,6 @@ public abstract sealed class TypeMemberBuilder<T extends TypeMemberBuilder<T>> i
      */
     public final @NonNull T setReturnType(final Type newReaturnType) {
         returnType = requireNonNull(newReaturnType);
-        return thisInstance();
-    }
-
-    final AccessModifier getAccessModifier() {
-        return accessModifier;
-    }
-
-    /**
-     * Sets the access modifier of property.
-     *
-     * @param newAccessModifier Access Modifier value.
-     */
-    public final @NonNull T setAccessModifier(final AccessModifier newAccessModifier) {
-        accessModifier = requireNonNull(newAccessModifier);
         return thisInstance();
     }
 
@@ -166,6 +150,6 @@ public abstract sealed class TypeMemberBuilder<T extends TypeMemberBuilder<T>> i
     }
 
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return helper.add("modifier", accessModifier);
+        return helper;
     }
 }

@@ -34,13 +34,6 @@ import org.slf4j.LoggerFactory;
 @Beta
 @NonNullByDefault
 public final class SerialVersionHelper {
-    private record MethodDesc(String name, AccessModifier accessModifier) {
-        MethodDesc {
-            requireNonNull(name);
-            requireNonNull(accessModifier);
-        }
-    }
-
     private sealed interface DigestFactory {
 
         MessageDigest newMD();
@@ -78,7 +71,6 @@ public final class SerialVersionHelper {
     }
 
     private static final Comparator<JavaTypeName> IFACE_COMPARATOR = Comparator.comparing(JavaTypeName::canonicalName);
-    private static final Comparator<MethodDesc> METHOD_COMPARATOR = Comparator.comparing(MethodDesc::name);
     private static final DigestFactory DIGEST_FACTORY;
 
     static {
@@ -109,7 +101,7 @@ public final class SerialVersionHelper {
     }
 
     private final ArrayList<JavaTypeName> interfaces = new ArrayList<>();
-    private final ArrayList<MethodDesc> methods = new ArrayList<>();
+    private final ArrayList<String> methods = new ArrayList<>();
     private final ArrayList<String> fields = new ArrayList<>();
     private final JavaTypeName clazz;
 
@@ -134,18 +126,24 @@ public final class SerialVersionHelper {
         return this;
     }
 
-    public SerialVersionHelper addMethod(final String name, final AccessModifier accessModifier) {
-        if (accessModifier != AccessModifier.PRIVATE) {
-            methods.add(new MethodDesc(name, accessModifier));
-        }
+    public SerialVersionHelper addMethod(final String name) {
+        methods.add(requireNonNull(name));
         return this;
     }
 
+    // At the end of the day, this should match
+    // https://github.com/openjdk/jdk/blob/master/src/java.base/share/classes/java/io/ObjectStreamClass.java's
+    // computeDefaultSUID(), but it does not. It is a part of the spec now, so
+    //
+    // Anyway, we want to keep things as compatible as possible, so this may never get rectified.
     public long computeSerialVersion() {
         final var baos = new ByteArrayOutputStream();
         try (var dos = new DataOutputStream(baos)) {
             dos.writeUTF(clazz.simpleName());
-            // FIXME: explain magic numbers
+            // Magic numbers, coming from the original implementation. This should This correspond to
+            // "The class modifiers written as a 32-bit integer.", but the values are weird:
+            //   3 == Modifier.PUBLIC | Modifier.PRIVATE
+            //   7 == Modifier.PUBLIC | Modifier.PRIVATE | Modifier.PROTECTED
             dos.writeInt(isAbstract ? 3 : 7);
 
             interfaces.sort(IFACE_COMPARATOR);
@@ -158,10 +156,23 @@ public final class SerialVersionHelper {
                 dos.writeUTF(field);
             }
 
-            methods.sort(METHOD_COMPARATOR);
+            methods.sort(Comparator.naturalOrder());
             for (var method : methods) {
-                dos.writeUTF(method.name);
-                dos.write(method.accessModifier.ordinal());
+                dos.writeUTF(method);
+                // Note: the '2' here comes from our legacy AccessModifier being ordered
+                // 'DEFAULT, PRIVATE, PUBLIC, PROTECTED' -- and now we only support public
+                // Where does it really come from is hard to say, as originally 'PUBLIC' had ordinal() == 1, same as
+                // Modifier.PUBLIC, but that was changed in I983cdad79c8779940e75937f97ba0575e753830e, when the ordinal
+                // shifted to 2.
+                // This code was introduced in commit ebe09fa86aeeb694c758a4f1ea6a152023fde3f7, with a single assertion
+                // to compute 9028898643007565383L. That assertions was then changed multiple times:
+                // - to -8829501012356283881L in  9943ce49d0b19d00872bd06a0cdc18b9daf4ecde, on or about 13.11.2013
+                // - to -8290985055387641395L in I7e5b6e3a8f50daed6799164425a7f394b82fdef5, on or about 22.06.2023
+                // - to  1508705866470220657L in I489acc8d0e6e8c126ae0e5eadfdf9acfc3c68f58, on or about 20.06.2024
+                // - to -4330476182227230308L in I29a52002f64f595b752dad8dba15a93fd9e789f7, on or about 21.06.2024
+                // Tracking these is problematic, as the code has been moved between controller/yangtools/mdsal multiple
+                // times.
+                dos.write(2);
             }
         } catch (IOException e) {
             throw new UncheckedIOException(e);

@@ -19,7 +19,7 @@ class SerialVersionHelperTest {
             .setAbstract(true)
             .addInterface(JavaTypeName.create(Serializable.class))
             .addField("myProperty")
-            .addMethod("myMethodName", AccessModifier.PUBLIC)
+            .addMethod("myMethodName")
             .computeSerialVersion());
     }
 
@@ -30,7 +30,7 @@ class SerialVersionHelperTest {
         assertEquals(3315273139240025558L, svh.computeSerialVersion());
 
         assertEquals(2532542948215379779L, svh
-            .addMethod("testMethod", AccessModifier.PUBLIC)
+            .addMethod("testMethod")
             .addField("newProp")
             .addInterface(JavaTypeName.create("org.opendaylight.yangtools.test", "Type2"))
             .computeSerialVersion());

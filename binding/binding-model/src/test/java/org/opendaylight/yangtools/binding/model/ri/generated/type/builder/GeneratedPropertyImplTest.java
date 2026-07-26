@@ -14,7 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -26,7 +25,6 @@ class GeneratedPropertyImplTest {
             .setValue("myValue")
             .setReadOnly(false)
             .setComment(TypeMemberComment.contractOf("myComment"))
-            .setAccessModifier(AccessModifier.PUBLIC)
             .setReturnType(Types.BOOLEAN);
 
         var instance = generatedPropertyBuilderImpl.toInstance();
@@ -36,13 +34,11 @@ class GeneratedPropertyImplTest {
         assertFalse(instance.isReadOnly());
         assertEquals("myValue", instance.getValue());
         assertEquals(TypeMemberComment.contractOf("myComment"), instance.getComment());
-        assertEquals(AccessModifier.PUBLIC, instance.getAccessModifier());
         assertEquals(Types.BOOLEAN, instance.getReturnType());
 
         assertEquals("""
             GeneratedPropertyImpl [name=myPropertyName, annotations=[], comment=TypeMemberComment{contract=myComment}, \
-            returnType=ConcreteType{name=java.lang.Boolean}, isReadOnly=false, modifier=PUBLIC]""",
-            instance.toString());
+            returnType=ConcreteType{name=java.lang.Boolean}, isReadOnly=false]""", instance.toString());
     }
 
     @Test

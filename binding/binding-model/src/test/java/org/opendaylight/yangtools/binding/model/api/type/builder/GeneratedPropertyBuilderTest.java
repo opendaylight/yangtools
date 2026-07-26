@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.AccessModifier;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
 class GeneratedPropertyBuilderTest {
@@ -25,24 +24,21 @@ class GeneratedPropertyBuilderTest {
             .setValue("myValue")
             .setReadOnly(false)
             .setComment(null)
-            .setAccessModifier(AccessModifier.PUBLIC)
             .setReturnType(Types.BOOLEAN);
 
-        assertEquals("""
-            GeneratedPropertyBuilder{name=myPropertyName, returnType=ConcreteType{name=java.lang.Boolean}, \
-            modifier=PUBLIC}""", generatedPropertyBuilderImpl.toString());
+        assertEquals(
+            "GeneratedPropertyBuilder{name=myPropertyName, returnType=ConcreteType{name=java.lang.Boolean}}",
+            generatedPropertyBuilderImpl.toString());
 
         var instance = generatedPropertyBuilderImpl.toInstance();
         assertNotNull(instance);
         assertEquals("""
             GeneratedPropertyImpl [name=myPropertyName, annotations=[], comment=null, \
-            returnType=ConcreteType{name=java.lang.Boolean}, isReadOnly=false, modifier=PUBLIC]""",
-            instance.toString());
+            returnType=ConcreteType{name=java.lang.Boolean}, isReadOnly=false]""", instance.toString());
 
         assertFalse(instance.isReadOnly());
         assertEquals("myValue", instance.getValue());
         assertNull(instance.getComment());
-        assertEquals(AccessModifier.PUBLIC, instance.getAccessModifier());
         assertEquals(Types.BOOLEAN, instance.getReturnType());
     }
 
