@@ -19,7 +19,6 @@ import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.MethodSignatureImpl;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.LazyCollections;
 
@@ -30,8 +29,47 @@ import org.opendaylight.yangtools.util.LazyCollections;
  * <p>By contract if method does not contain any comments or annotation definitions the {@link #getComment()} SHOULD
  * rather return empty string and {@link #getAnnotations()} SHOULD rather return empty list than {@code null} values.
  */
+// FIXME: seal this class and add simple factory methods
 // FIXME: rename to InterfaceMethod
 public interface MethodSignature extends Immutable {
+    /**
+     * The Parameter interface is designed to hold the information of method Parameter(s). The parameter is defined by
+     * his Name which MUST be unique as java does not allow multiple parameters with same names for one method and Type
+     * that is associated with parameter.
+     *
+     * @param name the parameter name
+     * @param type the {@link Type} that is bounded to parameter name
+     */
+    @NonNullByDefault
+    record Parameter(String name, Type type) {
+        public Parameter {
+            requireNonNull(name);
+            requireNonNull(type);
+        }
+    }
+
+    /**
+     * Method return type mechanics. This is a bit of an escape hatch for various behaviors which are supported by
+     * code generation.
+     */
+    enum ValueMechanics {
+        /**
+         * Usual mechanics, nothing special is going on.
+         */
+        NORMAL,
+        /**
+         * Mechanics signaling that the method should not be returning empty collections, but rather squash tham
+         * to null.
+         */
+        NULLIFY_EMPTY,
+        /**
+         * Mechanics signaling that the method cannot legally return null. This is primarily useful for getters, where
+         * the declaration should end up having {@link NonNull} annotation attached to return type. For setters this
+         * indicates the setter should never accept a null value.
+         */
+        NONNULL,
+    }
+
     /**
      * {@return the returning {@link Type} of member}
      */
@@ -254,43 +292,5 @@ public interface MethodSignature extends Immutable {
                 .add("comment", comment)
                 .toString();
         }
-    }
-
-    /**
-     * The Parameter interface is designed to hold the information of method Parameter(s). The parameter is defined by
-     * his Name which MUST be unique as java does not allow multiple parameters with same names for one method and Type
-     * that is associated with parameter.
-     *
-     * @param name the parameter name
-     * @param type the {@link Type} that is bounded to parameter name
-     */
-    @NonNullByDefault
-    record Parameter(String name, Type type) {
-        public Parameter {
-            requireNonNull(name);
-            requireNonNull(type);
-        }
-    }
-
-    /**
-     * Method return type mechanics. This is a bit of an escape hatch for various behaviors which are supported by
-     * code generation.
-     */
-    enum ValueMechanics {
-        /**
-         * Usual mechanics, nothing special is going on.
-         */
-        NORMAL,
-        /**
-         * Mechanics signaling that the method should not be returning empty collections, but rather squash tham
-         * to null.
-         */
-        NULLIFY_EMPTY,
-        /**
-         * Mechanics signaling that the method cannot legally return null. This is primarily useful for getters, where
-         * the declaration should end up having {@link NonNull} annotation attached to return type. For setters this
-         * indicates the setter should never accept a null value.
-         */
-        NONNULL,
     }
 }
