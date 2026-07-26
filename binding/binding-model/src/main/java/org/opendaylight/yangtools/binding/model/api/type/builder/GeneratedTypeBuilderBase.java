@@ -12,11 +12,27 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTypeBuilder;
 
-public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>>
-        extends TypeBuilder, AnnotableTypeBuilder permits AbstractGeneratedTypeBuilder, DataRootArchetype.Builder {
+public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderBase<T>> extends AnnotableTypeBuilder
+        permits AbstractGeneratedTypeBuilder, DataRootArchetype.Builder {
+    /**
+     * {@return the name of the type this builder produces}
+     */
+    @NonNullByDefault
+    JavaTypeName typeName();
+
+    /**
+     * {@return a {@link TypeRef} to the type this builder produces}
+     */
+    @NonNullByDefault
+    default TypeRef typeRef() {
+        return TypeRef.of(typeName());
+    }
+
     @Override
     T addAnnotation(AttachedAnnotation annotation);
 
@@ -33,6 +49,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      *
      * @param genType the enclosed {@link Archetype}
      */
+    @NonNullByDefault
     T addEnclosedType(Archetype genType);
 
     /**
@@ -41,6 +58,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * @param genType Type to implement
      * @return <code>true</code> if the addition of type is successful.
      */
+    @NonNullByDefault
     T addImplementsType(Type genType);
 
     /**
@@ -49,7 +67,8 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * @param builder builder for the Type to implement
      * @return <code>true</code> if the addition of type is successful.
      */
-    default T addImplementsType(final TypeBuilder builder) {
+    @NonNullByDefault
+    default T addImplementsType(final GeneratedTypeBuilderBase<?> builder) {
         return addImplementsType(builder.typeRef());
     }
 
@@ -77,7 +96,7 @@ public sealed interface GeneratedTypeBuilderBase<T extends GeneratedTypeBuilderB
      * @param value Assigned Value
      * @return <code>new</code> Constant instance.
      */
-    default Constant addConstant(final TypeBuilder builder, final String name, final Object value) {
+    default Constant addConstant(final GeneratedTypeBuilderBase<?> builder, final String name, final Object value) {
         return addConstant(builder.typeRef(), name, value);
     }
 
