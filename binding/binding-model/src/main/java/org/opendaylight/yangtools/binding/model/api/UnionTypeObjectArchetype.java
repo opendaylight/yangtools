@@ -47,17 +47,6 @@ public record UnionTypeObjectArchetype(
         }
     }
 
-    @Override
-    public final long serialVersionUID() {
-        final var svb = new SerialVersionHelper(name())
-            .setAbstract(false)
-            .addInterface(BitsTypeObjectArchetype.SERIALIZABLE);
-
-        typePropertyNames.stream().distinct().forEach(svb::addField);
-
-        return svb.computeSerialVersion();
-    }
-
     // FIXME: remove this method
     public List<GeneratedProperty> getProperties() {
         return Streams.zip(typePropertyNames().stream().distinct(), typePropertyTypes().stream(),

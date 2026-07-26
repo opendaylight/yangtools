@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -260,7 +261,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
         final var bb = newBodyBuilder(archetype.statement(), archetype.typeDefinition(), topLevel)
             .str("public").str(modifiers(archetype, topLevel)).str("class ").str(simpleName).frg(implFragment()).oB()
                 .eol("@java.io.Serial")
-                .str("private static final long serialVersionUID = ").jLong(archetype.serialVersionUID()).eS()
+                .str("private static final long serialVersionUID = ").jLong(serialVersionUID(archetype)).eS()
                 .nl();
 
         final var bits = archetype.typeDefinition().getBits();
@@ -384,5 +385,17 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
         return bits.stream()
             .map(bit -> Map.entry(getPropertyName(bit.getName()), bit))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, (x, y) -> y, LinkedHashMap::new));
+    }
+
+    private static long serialVersionUID(final BitsTypeObjectArchetype archetype) {
+        final var svb = new SerialVersionHelper(archetype.name())
+            .setAbstract(false)
+            .addInterface(SerialVersionHelper.SERIALIZABLE);
+        if (archetype.superType() == null) {
+            for (var bit : archetype.typeDefinition().getBits()) {
+                svb.addField(Naming.getPropertyName(bit.getName()));
+            }
+        }
+        return svb.computeSerialVersion();
     }
 }
