@@ -70,9 +70,7 @@ abstract class AbstractNotificationGenerator
 
         addQNameConstant(builder, localName());
 
-        annotateDeprecatedIfNecessary(builder);
-
-        return builder.build();
+        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
     }
 
     @Override

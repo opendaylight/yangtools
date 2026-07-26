@@ -57,9 +57,7 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
 
         addGetterMethods(builder);
 
-        annotateDeprecatedIfNecessary(builder);
-
-        return builder.build();
+        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
     }
 
     @Override
@@ -77,12 +75,13 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     @Override
     MethodSignatureBuilder constructGetter(final GeneratedTypeBuilderBase<?> builder, final Type returnType) {
         final var ret = super.constructGetter(builder, returnType).setMechanics(ValueMechanics.NORMAL);
-        if (statement().presenceStatement() == null) {
-            final var nonnull = builder
-                    .addMethod(Naming.getNonnullMethodName(localName().getLocalName()))
-                    .setReturnType(returnType)
-                    .setDefault(false);
-            annotateDeprecatedIfNecessary(nonnull);
+        final var statement = statement();
+        if (statement.presenceStatement() == null) {
+            builder
+                .addMethod(Naming.getNonnullMethodName(localName().getLocalName()))
+                .setReturnType(returnType)
+                .setDefault(false)
+                .addAnnotation(deprecatedAnnotation(statement));
         }
         return ret;
     }

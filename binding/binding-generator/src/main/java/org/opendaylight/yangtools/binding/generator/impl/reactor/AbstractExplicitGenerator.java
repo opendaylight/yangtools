@@ -19,10 +19,10 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresentation;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
-import org.opendaylight.yangtools.binding.model.api.type.builder.AnnotableTypeBuilder;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.api.type.builder.MethodSignatureBuilder;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
@@ -356,9 +357,9 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     @NonNullByDefault
     final MethodSignatureBuilder constructGetter(final GeneratedTypeBuilderBase<?> builder,
             final Type returnType, final String methodName) {
-        final var getMethod = builder.addMethod(methodName).setReturnType(returnType);
-
-        annotateDeprecatedIfNecessary(getMethod);
+        final var getMethod = builder.addMethod(methodName)
+            .setReturnType(returnType)
+            .addAnnotation(deprecatedAnnotation(statement));
 
         statement.findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class)
             .map(TypeMemberComment::referenceOf).ifPresent(getMethod::setComment);
@@ -387,11 +388,6 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         return getGeneratedType();
     }
 
-    @NonNullByDefault
-    final void annotateDeprecatedIfNecessary(final AnnotableTypeBuilder builder) {
-        annotateDeprecatedIfNecessary(statement, builder);
-    }
-
     @Override
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         helper.add("argument", statement.argument());
@@ -414,5 +410,11 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
 
     static final void addQNameConstant(final GeneratedTypeBuilderBase<?> builder, final AbstractQName localName) {
         builder.addConstant(BindingTypes.QNAME, Naming.QNAME_STATIC_FIELD_NAME, localName.getLocalName());
+    }
+
+    static final @Nullable DeprecatedAnnotation deprecatedAnnotation(
+            final @NonNull EffectiveStatement<?, ?> statement) {
+        return statement instanceof DocumentedNode.WithStatus withStatus
+            ? DeprecatedAnnotation.ofStatus(withStatus.getStatus()) : null;
     }
 }
