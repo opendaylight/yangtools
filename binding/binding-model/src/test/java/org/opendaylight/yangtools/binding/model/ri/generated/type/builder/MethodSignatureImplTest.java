@@ -31,10 +31,10 @@ class MethodSignatureImplTest {
         var name = "customMethod";
         final var comment = TypeMemberComment.contractOf("This is just a comment");
 
-        signature1 = new MethodSignatureImpl(name, List.of(), comment, Types.STRING, List.of(), false);
-        signature2 = new MethodSignatureImpl(name, List.of(), comment, Types.STRING, List.of(), false);
-        signature3 = new MethodSignatureImpl(name, List.of(), comment, Types.BOOLEAN, List.of(), false);
-        signature4 = new MethodSignatureImpl("otherMethod", List.of(), comment, Types.BOOLEAN, List.of(), false);
+        signature1 = new MethodSignatureImpl(name, List.of(), comment, Types.STRING, List.of());
+        signature2 = new MethodSignatureImpl(name, List.of(), comment, Types.STRING, List.of());
+        signature3 = new MethodSignatureImpl(name, List.of(), comment, Types.BOOLEAN, List.of());
+        signature4 = new MethodSignatureImpl("otherMethod", List.of(), comment, Types.BOOLEAN, List.of());
 
         hash1 = signature1.hashCode();
         hash4 = signature4.hashCode();

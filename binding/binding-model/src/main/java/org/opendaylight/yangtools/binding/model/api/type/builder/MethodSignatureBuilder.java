@@ -42,25 +42,11 @@ import org.opendaylight.yangtools.util.LazyCollections;
 public final class MethodSignatureBuilder extends TypeMemberBuilder<MethodSignatureBuilder> {
     private List<MethodSignature.Parameter> parameters = List.of();
     private ValueMechanics mechanics = ValueMechanics.NORMAL;
-    private boolean isAbstract;
-    private boolean isDefault;
+    private boolean isDefault = false;
 
     @NonNullByDefault
     public MethodSignatureBuilder(final String name) {
         super(name);
-    }
-
-    /**
-     * Sets the flag for declaration of method as abstract or non abstract. If the flag {@code isAbstract == true}
-     * the instantiated Method Signature MUST have return value for {@link MethodSignature#isAbstract()} also equals to
-     * <code>true</code>.
-     *
-     * @param newIsAbstract is abstract flag
-     */
-    @NonNullByDefault
-    public MethodSignatureBuilder setAbstract(final boolean newIsAbstract) {
-        isAbstract = newIsAbstract;
-        return this;
     }
 
     /**
@@ -115,8 +101,8 @@ public final class MethodSignatureBuilder extends TypeMemberBuilder<MethodSignat
             default -> List.copyOf(parameters);
         };
 
-        return new MethodSignatureImpl(getName(), annotations(), getComment(), getReturnType(), params, isAbstract,
-            isDefault, mechanics);
+        return new MethodSignatureImpl(getName(), annotations(), getComment(), getReturnType(), params, isDefault,
+            mechanics);
     }
 
     @Override

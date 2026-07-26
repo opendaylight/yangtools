@@ -154,7 +154,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     @Override
     public MethodSignatureBuilder addMethod(final String name) {
         checkArgument(name != null, "Name of method cannot be null!");
-        final var builder = new MethodSignatureBuilder(name).setAbstract(true);
+        final var builder = new MethodSignatureBuilder(name);
         methodDefinitions = LazyCollections.lazyAdd(methodDefinitions, builder);
         return builder;
     }
