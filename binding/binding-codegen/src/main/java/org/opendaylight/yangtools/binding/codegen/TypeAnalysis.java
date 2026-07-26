@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 record TypeAnalysis(
         @NonNull Set<BuilderGeneratedProperty> properties,
         @Nullable ParameterizedType augmentType) {
-    private static final Comparator<MethodSignature> METHOD_COMPARATOR = new AlphabeticallyTypeMemberComparator<>();
+    private static final Comparator<MethodSignature> METHOD_COMPARATOR = Comparator.comparing(MethodSignature::getName);
     private static final int GETTER_PREFIX_LENGTH = Naming.GETTER_PREFIX.length();
 
     TypeAnalysis {

@@ -20,6 +20,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.MethodSignatureImpl;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.LazyCollections;
 
 /**
@@ -30,7 +31,22 @@ import org.opendaylight.yangtools.util.LazyCollections;
  * rather return empty string and {@link #getAnnotations()} SHOULD rather return empty list than {@code null} values.
  */
 // FIXME: rename to InterfaceMethod
-public non-sealed interface MethodSignature extends TypeMember {
+public interface MethodSignature extends Immutable {
+    /**
+     * {@return the returning {@link Type} of member}
+     */
+    @NonNull Type getReturnType();
+
+    /**
+     * {@return the name of member}
+     */
+    @NonNull String getName();
+
+    /**
+     * {@return comment string associated with member}
+     */
+    @Nullable TypeMemberComment getComment();
+
     /**
      * {@return {@code true} if this method is a {@code default} method, or {@code false} if it is abstract}
      */

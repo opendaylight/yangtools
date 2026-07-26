@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeMember;
 
 /**
  * Base Java file template. Contains a non-null type and imports which the generated code refers to.
@@ -188,13 +187,13 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     }
 
     @NonNullByDefault
-    final String importedReturnType(final TypeMember member) {
-        return importedName(member.getReturnType());
+    final String importedReturnType(final MethodSignature method) {
+        return importedName(method.getReturnType());
     }
 
     @NonNullByDefault
-    final String importedReturnType(final GeneratedProperty member) {
-        return importedName(member.getReturnType());
+    final String importedReturnType(final GeneratedProperty property) {
+        return importedName(property.getReturnType());
     }
 
     @NonNullByDefault
