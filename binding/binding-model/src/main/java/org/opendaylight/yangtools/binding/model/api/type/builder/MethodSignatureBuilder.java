@@ -42,15 +42,30 @@ import org.opendaylight.yangtools.util.LazyCollections;
  *
  * @see MethodSignature
  */
-public final class MethodSignatureBuilder extends TypeMemberBuilder<MethodSignatureBuilder> {
+public final class MethodSignatureBuilder {
+    private final @NonNull String name;
+
     private @Nullable ArrayList<AttachedAnnotation.ToMethod> annotations = null;
     private List<MethodSignature.Parameter> parameters = List.of();
     private ValueMechanics mechanics = ValueMechanics.NORMAL;
     private boolean isDefault = false;
+    private TypeMemberComment comment;
+    private Type returnType;
 
     @NonNullByDefault
     public MethodSignatureBuilder(final String name) {
-        super(name);
+        this.name = requireNonNull(name);
+    }
+
+    /**
+     * Adds String definition of comment into Method Signature definition. The comment String MUST NOT contain any
+     * comment specific chars (i.e. "/**" or "//") just plain String text description.
+     *
+     * @param newComment Structured comment
+     */
+    public @NonNull MethodSignatureBuilder setComment(final TypeMemberComment newComment) {
+        comment = newComment;
+        return this;
     }
 
     /**
@@ -73,18 +88,30 @@ public final class MethodSignatureBuilder extends TypeMemberBuilder<MethodSignat
     }
 
     /**
+     * Adds return Type into Builder definition for Generated Property. The return Type MUST NOT be <code>null</code>,
+     * otherwise the method SHOULD throw {@link IllegalArgumentException}
+     *
+     * @param newReaturnType Return Type of the member
+     */
+    @NonNullByDefault
+    public MethodSignatureBuilder setReturnType(final Type newReaturnType) {
+        returnType = requireNonNull(newReaturnType);
+        return this;
+    }
+
+    /**
      * Adds Parameter into the List of method parameters. Neither the Name or Type of parameter can be {@code null}.
      *
      * <br>
      * In case that any of parameters are defined as <code>null</code> the
      * method SHOULD throw an {@link IllegalArgumentException}
      *
-     * @param type Parameter Type
-     * @param name Parameter Name
+     * @param paramType Parameter Type
+     * @param paremName Parameter Name
      */
     @NonNullByDefault
-    public MethodSignatureBuilder addParameter(final Type type, final String name) {
-        parameters = LazyCollections.lazyAdd(parameters, new Parameter(name, type));
+    public MethodSignatureBuilder addParameter(final Type paramType, final String paremName) {
+        parameters = LazyCollections.lazyAdd(parameters, new Parameter(paremName, paramType));
         return this;
     }
 
@@ -96,7 +123,7 @@ public final class MethodSignatureBuilder extends TypeMemberBuilder<MethodSignat
      */
     public @NonNull MethodSignatureBuilder addAnnotation(final AttachedAnnotation.@Nullable ToMethod annotation) {
         annotations = addAnnotation(annotations, annotation);
-        return thisInstance();
+        return this;
     }
 
     @Beta
@@ -151,34 +178,28 @@ public final class MethodSignatureBuilder extends TypeMemberBuilder<MethodSignat
             default -> List.copyOf(parameters);
         };
 
-        return new MethodSignatureImpl(getName(), annotations(), getComment(), getReturnType(), params, isDefault,
-            mechanics);
-    }
-
-    @Override
-    MethodSignatureBuilder thisInstance() {
-        return this;
+        return new MethodSignatureImpl(name, annotations(), comment, returnType, params, isDefault, mechanics);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getName(), parameters, getReturnType());
+        return Objects.hash(name, parameters, returnType);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return this == obj || obj instanceof MethodSignatureBuilder other && Objects.equals(getName(), other.getName())
-            && Objects.equals(parameters, other.parameters) && Objects.equals(getReturnType(), other.getReturnType());
+        return this == obj || obj instanceof MethodSignatureBuilder other && name.equals(other.name)
+            && Objects.equals(parameters, other.parameters) && Objects.equals(returnType, other.returnType);
     }
 
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).omitNullValues()
-            .add("name", getName())
-            .add("returnType", getReturnType())
+            .add("name", name)
+            .add("returnType", returnType)
             .add("parameters", parameters)
             .add("annotations", annotations())
-            .add("comment", getComment())
+            .add("comment", comment)
             .toString();
     }
 }
