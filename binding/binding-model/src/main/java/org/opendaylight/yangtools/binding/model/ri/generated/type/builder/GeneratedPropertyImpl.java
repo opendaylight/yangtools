@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
-import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
@@ -17,9 +15,9 @@ public final class GeneratedPropertyImpl extends AbstractTypeMember implements G
     private final String value;
     private final boolean readOnly;
 
-    public GeneratedPropertyImpl(final String name, final List<AttachedAnnotation> annotations,
-            final TypeMemberComment comment, final Type returnType, final boolean isReadOnly, final String value) {
-        super(name, annotations, comment, returnType);
+    public GeneratedPropertyImpl(final String name, final TypeMemberComment comment, final Type returnType,
+            final boolean isReadOnly, final String value) {
+        super(name, comment, returnType);
         this.value = value;
         readOnly = isReadOnly;
     }
@@ -38,11 +36,9 @@ public final class GeneratedPropertyImpl extends AbstractTypeMember implements G
     public String toString() {
         return new StringBuilder()
             .append("GeneratedPropertyImpl [name=").append(getName())
-            .append(", annotations=").append(getAnnotations())
             .append(", comment=").append(getComment())
             .append(", returnType=").append(getReturnType())
             .append(", isReadOnly=").append(readOnly)
-            .append(']')
-            .toString();
+            .append(']').toString();
     }
 }

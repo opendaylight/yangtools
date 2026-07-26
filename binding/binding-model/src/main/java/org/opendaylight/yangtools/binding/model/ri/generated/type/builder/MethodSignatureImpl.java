@@ -21,20 +21,22 @@ import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
 @NonNullByDefault
 public final class MethodSignatureImpl extends AbstractTypeMember implements MethodSignature {
+    private final List<AttachedAnnotation.ToMethod> annotations;
     private final ValueMechanics mechanics;
     private final List<Parameter> params;
     private final boolean isDefault;
 
     @VisibleForTesting
-    MethodSignatureImpl(final String name, final List<AttachedAnnotation> annotations, final TypeMemberComment comment,
-            final Type returnType, final List<Parameter> params) {
+    MethodSignatureImpl(final String name, final List<AttachedAnnotation.ToMethod> annotations,
+            final TypeMemberComment comment, final Type returnType, final List<Parameter> params) {
         this(name, annotations, comment, returnType, params, false, ValueMechanics.NORMAL);
     }
 
-    public MethodSignatureImpl(final String name, final List<AttachedAnnotation> annotations,
+    public MethodSignatureImpl(final String name, final List<AttachedAnnotation.ToMethod> annotations,
             final TypeMemberComment comment, final Type returnType, final List<Parameter> params,
             final boolean isDefault, final ValueMechanics mechanics) {
-        super(name, annotations, comment, returnType);
+        super(name, comment, returnType);
+        this.annotations = requireNonNull(annotations);
         this.params = params;
         this.isDefault = isDefault;
         this.mechanics = requireNonNull(mechanics);
@@ -53,6 +55,11 @@ public final class MethodSignatureImpl extends AbstractTypeMember implements Met
     @Override
     public ValueMechanics getMechanics() {
         return mechanics;
+    }
+
+    @Override
+    public List<AttachedAnnotation.ToMethod> getAnnotations() {
+        return annotations;
     }
 
     @Override

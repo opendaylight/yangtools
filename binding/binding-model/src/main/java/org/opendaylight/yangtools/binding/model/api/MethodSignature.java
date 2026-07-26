@@ -21,7 +21,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * rather return empty string and {@link #getAnnotations()} SHOULD rather return empty list than {@code null} values.
  */
 // FIXME: rename to InterfaceMethod
-// FIXME: specialize getAnnotations() to return AttachedAnnotation.ToMethod
 @NonNullByDefault
 public interface MethodSignature extends TypeMember {
     /**
@@ -78,4 +77,9 @@ public interface MethodSignature extends TypeMember {
      * {@return the {@link ValueMechanics} associated with this method}
      */
     ValueMechanics getMechanics();
+
+    /**
+     * {@return List of annotation definitions attached to this method}
+     */
+    List<AttachedAnnotation.ToMethod> getAnnotations();
 }

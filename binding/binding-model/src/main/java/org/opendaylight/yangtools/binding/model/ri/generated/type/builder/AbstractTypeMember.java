@@ -9,10 +9,8 @@ package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMember;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
@@ -21,19 +19,11 @@ abstract class AbstractTypeMember implements TypeMember {
     private final @NonNull String name;
     private final TypeMemberComment comment;
     private final @NonNull Type returnType;
-    private final @NonNull List<AttachedAnnotation> annotations;
 
-    AbstractTypeMember(final String name, final List<AttachedAnnotation> annotations, final TypeMemberComment comment,
-            final Type returnType) {
+    AbstractTypeMember(final String name, final TypeMemberComment comment, final Type returnType) {
         this.name = requireNonNull(name);
-        this.annotations = requireNonNull(annotations);
         this.comment = comment;
         this.returnType = requireNonNull(returnType);
-    }
-
-    @Override
-    public List<AttachedAnnotation> getAnnotations() {
-        return annotations;
     }
 
     @Override
@@ -74,8 +64,6 @@ abstract class AbstractTypeMember implements TypeMember {
             .append("AbstractTypeMember [name=").append(getName())
             .append(", comment=").append(getComment())
             .append(", returnType=").append(getReturnType())
-            .append(", annotations=").append(getAnnotations())
-            .append(']')
-            .toString();
+            .append(']').toString();
     }
 }

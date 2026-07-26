@@ -328,7 +328,9 @@ sealed class InterfaceTemplate<T extends Archetype.@NonNull OfCompositeInterface
         return bb;
     }
 
-    private @Nullable BlockBuilder generateAnnotations(final @NonNull List<AttachedAnnotation> annotations) {
+    // FIXME: specialize to method and type annotations
+    private @Nullable BlockBuilder generateAnnotations(
+            final @NonNull List<? extends @NonNull AttachedAnnotation> annotations) {
         if (annotations.isEmpty()) {
             return null;
         }

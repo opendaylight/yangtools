@@ -9,10 +9,8 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
@@ -60,11 +58,6 @@ final class BuilderGeneratedProperty implements GeneratedProperty {
 
     @Override
     public @Nullable TypeMemberComment getComment() {
-        throw uoe();
-    }
-
-    @Override
-    public List<AttachedAnnotation> getAnnotations() {
         throw uoe();
     }
 

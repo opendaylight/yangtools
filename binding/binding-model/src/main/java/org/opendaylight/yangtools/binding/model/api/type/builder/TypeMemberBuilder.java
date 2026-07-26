@@ -10,25 +10,18 @@ package org.opendaylight.yangtools.binding.model.api.type.builder;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
-public abstract sealed class TypeMemberBuilder<T extends TypeMemberBuilder<T>> implements AnnotableTypeBuilder
+public abstract sealed class TypeMemberBuilder<T extends TypeMemberBuilder<T>>
         permits GeneratedPropertyBuilder, MethodSignatureBuilder {
     private final String name;
 
-    private @Nullable ArrayList<AttachedAnnotation> annotations = null;
     private TypeMemberComment comment;
     private Type returnType;
 
@@ -74,48 +67,6 @@ public abstract sealed class TypeMemberBuilder<T extends TypeMemberBuilder<T>> i
         return thisInstance();
     }
 
-    @Override
-    public final T addAnnotation(final AttachedAnnotation annotation) {
-        annotations = addAnnotation(annotations, annotation);
-        return thisInstance();
-    }
-
-    @Beta
-    public static @Nullable ArrayList<@NonNull AttachedAnnotation> addAnnotation(
-            final @Nullable ArrayList<@NonNull AttachedAnnotation> list,
-            final @Nullable AttachedAnnotation annotation) {
-        if (annotation == null) {
-            return list;
-        }
-        if (list == null) {
-            final var ret = new ArrayList<AttachedAnnotation>(2);
-            ret.add(annotation);
-            return ret;
-        }
-        if (!annotation.repeatable()) {
-            final var type = annotation.type();
-            for (var existing : list) {
-                if (annotation.equals(existing)) {
-                    throw new IllegalArgumentException("Attempt to repeat " + annotation);
-                }
-                if (type.equals(existing.type())) {
-                    throw new IllegalArgumentException("Attempt to repeat " + annotation + " after " + existing);
-                }
-            }
-        }
-        list.add(annotation);
-        return list;
-    }
-
-    @NonNullByDefault
-    final List<AttachedAnnotation> annotations() {
-        final var local = annotations;
-        if (local == null) {
-            return List.of();
-        }
-        return local.size() == 1 ? Collections.singletonList(requireNonNull(local.getFirst())) : List.copyOf(local);
-    }
-
     abstract @NonNull T thisInstance();
 
     @Override
@@ -144,9 +95,9 @@ public abstract sealed class TypeMemberBuilder<T extends TypeMemberBuilder<T>> i
     public String toString() {
         return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()
             .add("name", name)
-            .add("annotations", annotations)
             .add("comment", comment)
-            .add("returnType", returnType)).toString();
+            .add("returnType", returnType))
+            .toString();
     }
 
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
