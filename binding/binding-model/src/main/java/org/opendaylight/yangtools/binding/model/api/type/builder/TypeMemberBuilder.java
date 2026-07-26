@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 
 public abstract sealed class TypeMemberBuilder<T extends TypeMemberBuilder<T>> implements AnnotableTypeBuilder
-        permits GeneratedPropertyBuilder, MethodSignatureBuilder {
+        permits GeneratedPropertyBuilder {
     private final String name;
 
     private @Nullable ArrayList<AttachedAnnotation> annotations = null;
@@ -97,8 +97,9 @@ public abstract sealed class TypeMemberBuilder<T extends TypeMemberBuilder<T>> i
     }
 
     @Beta
-    public static @Nullable ArrayList<AttachedAnnotation> addAnnotation(
-            final @Nullable ArrayList<AttachedAnnotation> list, final @Nullable AttachedAnnotation annotation) {
+    public static @Nullable ArrayList<@NonNull AttachedAnnotation> addAnnotation(
+            final @Nullable ArrayList<@NonNull AttachedAnnotation> list,
+            final @Nullable AttachedAnnotation annotation) {
         if (annotation == null) {
             return list;
         }
