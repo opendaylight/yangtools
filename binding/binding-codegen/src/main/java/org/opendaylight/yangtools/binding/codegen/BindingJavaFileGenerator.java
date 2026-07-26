@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
+import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
@@ -122,7 +123,7 @@ final class BindingJavaFileGenerator {
         }
     }
 
-    private void generateBuilder(final Archetype.OfCompositeInterface type) {
+    private void generateBuilder(final InterfaceArchetype type) {
         // FIXME: express this in GeneratedType hierarchy as a marker interface
         for (var iface : type.getImplements()) {
             if (BUILDER_INTERFACES.contains(iface.name())) {

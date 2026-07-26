@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -76,7 +76,7 @@ final class SupportTestUtil {
         return sb.toString();
     }
 
-    static void containsInterface(final String interfaceNameSearched, final Archetype.OfCompositeInterface genType) {
+    static void containsInterface(final String interfaceNameSearched, final InterfaceArchetype genType) {
         for (var caseCImplement : genType.getImplements()) {
             if (resolveFullNameOfReturnType(caseCImplement).equals(interfaceNameSearched)) {
                 return;

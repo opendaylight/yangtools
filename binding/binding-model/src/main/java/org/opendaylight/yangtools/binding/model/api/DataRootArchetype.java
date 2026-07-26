@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRootArchetypeBuilder;
@@ -21,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
  * @since 15.0.0
  */
 @Beta
-public non-sealed interface DataRootArchetype extends Archetype.OfCompositeInterface {
+public non-sealed interface DataRootArchetype extends InterfaceArchetype {
     /**
      * A builder of {@link DataRootArchetype} instances.
      */
@@ -35,8 +36,9 @@ public non-sealed interface DataRootArchetype extends Archetype.OfCompositeInter
     ModuleEffectiveStatement statement();
 
     @Override
+    @NonNullByDefault
     @Deprecated(forRemoval = true)
-    default List<@NonNull AttachedAnnotation> annotations() {
+    default List<AttachedAnnotation.ToType> annotations() {
         return List.of();
     }
 

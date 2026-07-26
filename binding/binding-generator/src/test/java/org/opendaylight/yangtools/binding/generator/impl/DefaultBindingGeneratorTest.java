@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -304,8 +305,8 @@ public class DefaultBindingGeneratorTest {
         return assertGeneratedMethod(typeName, LegacyArchetype.class, methodName);
     }
 
-    private static <A extends Archetype.OfCompositeInterface> MethodSignature assertGeneratedMethod(
-            final JavaTypeName typeName, final Class<A> archetypeClass, final String methodName) {
+    private static <A extends InterfaceArchetype> MethodSignature assertGeneratedMethod(final JavaTypeName typeName,
+            final Class<A> archetypeClass, final String methodName) {
         return assertGeneratedMethod(
             assertInstanceOf(archetypeClass, assertGeneratedType(typeName)).getMethodDefinitions(), methodName);
     }

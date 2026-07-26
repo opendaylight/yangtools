@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -41,7 +41,7 @@ record TypeAnalysis(
      * to the type, expressed as properties.
      */
     @NonNullByDefault
-    static TypeAnalysis of(final Archetype.OfCompositeInterface type) {
+    static TypeAnalysis of(final InterfaceArchetype type) {
         final var methods = new LinkedHashSet<MethodSignature>();
         methods.addAll(type.getMethodDefinitions());
         final var augmentType = collectImplementedMethods(type, methods, type.getImplements());
@@ -59,9 +59,8 @@ record TypeAnalysis(
      * @return {@link ParameterizedType} of the implemented {@link Augmentation}, {@code null} if the type is not an
      *         augmentation.
      */
-    private static @Nullable ParameterizedType collectImplementedMethods(
-            final Archetype.@NonNull OfCompositeInterface archetype, final @NonNull Set<MethodSignature> methods,
-            final @NonNull List<Type> implementedIfcs) {
+    private static @Nullable ParameterizedType collectImplementedMethods(final @NonNull InterfaceArchetype archetype,
+            final @NonNull Set<MethodSignature> methods, final @NonNull List<Type> implementedIfcs) {
         if (implementedIfcs.isEmpty()) {
             return null;
         }

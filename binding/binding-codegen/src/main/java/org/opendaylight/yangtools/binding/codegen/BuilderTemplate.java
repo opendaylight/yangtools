@@ -38,10 +38,10 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -55,7 +55,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
  */
 final class BuilderTemplate extends BaseTemplate {
     @NonNullByDefault
-    record Builder(Archetype.OfCompositeInterface type) implements Template.Builder {
+    record Builder(InterfaceArchetype type) implements Template.Builder {
         Builder {
             requireNonNull(type);
         }
@@ -102,13 +102,13 @@ final class BuilderTemplate extends BaseTemplate {
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
     //        implementations of its methods
-    final Archetype.@NonNull OfCompositeInterface targetType;
+    final @NonNull InterfaceArchetype targetType;
 
     private final GeneratedClass.@NonNull Nested implJavaType;
 
     @NonNullByDefault
     private BuilderTemplate(final GeneratedClass.TopLevel javaType, final GeneratedClass.Nested implJavaType,
-            final Archetype.OfCompositeInterface targetType, final Set<BuilderGeneratedProperty> properties,
+            final InterfaceArchetype targetType, final Set<BuilderGeneratedProperty> properties,
             final @Nullable ParameterizedType augmentType, final @Nullable KeyArchetype keyType) {
         super(javaType);
         this.implJavaType = requireNonNull(implJavaType);
@@ -209,7 +209,8 @@ final class BuilderTemplate extends BaseTemplate {
         return bb;
     }
 
-    private @Nullable BlockBuilder generateDeprecatedAnnotation(final @NonNull List<AttachedAnnotation> annotations) {
+    private @Nullable BlockBuilder generateDeprecatedAnnotation(
+            final @NonNull List<AttachedAnnotation.ToType> annotations) {
         for (var annotation : annotations) {
             if (annotation instanceof DeprecatedAnnotation deprecated) {
                 final var bb = newBlockBuilder().at();
@@ -391,7 +392,7 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     @NonNullByDefault
-    private BlockBuilder generateMethodFieldsFromComment(final Archetype.OfCompositeInterface type) {
+    private BlockBuilder generateMethodFieldsFromComment(final InterfaceArchetype type) {
         // FIXME: create a specialized JavadocBuilder to help with this
         final var bb = newBlockBuilder().txt("""
                     /**
@@ -415,13 +416,13 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Method is used to find out if given type implements any interface from uses.
      */
-    private boolean hasImplementsFromUses(final Archetype.OfCompositeInterface type) {
+    private boolean hasImplementsFromUses(final InterfaceArchetype type) {
         return getAllIfcs(type).stream()
             .anyMatch(impl -> impl instanceof LegacyArchetype<?> genType && hasNonDefaultMethods(genType));
     }
 
     private @Nullable BlockBuilder generateIfCheck(final Type impl, final List<Type> done) {
-        return !(impl instanceof Archetype.OfCompositeInterface archetype) || !hasNonDefaultMethods(archetype) ? null
+        return !(impl instanceof InterfaceArchetype archetype) || !hasNonDefaultMethods(archetype) ? null
             : newBlockBuilder()
                 .str("if (arg instanceof ").str(importedName(archetype)).str(" castArg)").oB()
                     .blk(printPropertySetter(archetype))
@@ -485,8 +486,7 @@ final class BuilderTemplate extends BaseTemplate {
         return getter;
     }
 
-    private static @Nullable MethodSignature getterByName(final Archetype.OfCompositeInterface implType,
-            final String getterName) {
+    private static @Nullable MethodSignature getterByName(final InterfaceArchetype implType, final String getterName) {
         final var getter = getterByName(nonDefaultMethods(implType), getterName);
         if (getter != null) {
             return getter;
@@ -514,7 +514,7 @@ final class BuilderTemplate extends BaseTemplate {
         return !(type2 instanceof ParameterizedType);
     }
 
-    private static List<Type> getBaseIfcs(final Archetype.OfCompositeInterface type) {
+    private static List<Type> getBaseIfcs(final InterfaceArchetype type) {
         final var baseIfcs = new ArrayList<Type>();
         for (var ifc : type.getImplements()) {
             if (ifc instanceof LegacyArchetype<?> genType && hasNonDefaultMethods(genType)) {
@@ -525,7 +525,7 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     private Set<Type> getAllIfcs(final Type type) {
-        if (!(type instanceof Archetype.OfCompositeInterface ifc)) {
+        if (!(type instanceof InterfaceArchetype ifc)) {
             return Set.of();
         }
 
@@ -945,12 +945,12 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     @NonNullByDefault
-    static boolean hasNonDefaultMethods(final Archetype.OfCompositeInterface type) {
+    static boolean hasNonDefaultMethods(final InterfaceArchetype type) {
         return type.getMethodDefinitions().stream().anyMatch(def -> !def.isDefault());
     }
 
     @NonNullByDefault
-    static Collection<MethodSignature> nonDefaultMethods(final Archetype.OfCompositeInterface type) {
+    static Collection<MethodSignature> nonDefaultMethods(final InterfaceArchetype type) {
         return Collections2.filter(type.getMethodDefinitions(), def -> !def.isDefault());
     }
 
@@ -963,7 +963,7 @@ final class BuilderTemplate extends BaseTemplate {
      */
     // FIXME: YANGTOOLS-1876: remove this method
     @NonNullByDefault
-    static boolean isNonPresenceContainer(final Archetype.OfCompositeInterface type) {
+    static boolean isNonPresenceContainer(final InterfaceArchetype type) {
         return type.statement() instanceof ContainerEffectiveStatement container
             && container.presenceStatement() == null;
     }

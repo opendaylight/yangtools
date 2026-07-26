@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * @param <S> EffectiveStatement type
  */
 // FIXME: integrate with DefaultLegacyArchetype and move LegacyArchetypeBuilder here
-public non-sealed interface LegacyArchetype<S extends EffectiveStatement<?, ?>> extends Archetype.OfCompositeInterface {
+public non-sealed interface LegacyArchetype<S extends EffectiveStatement<?, ?>> extends InterfaceArchetype {
     @Override
     @NonNull S statement();
 }
