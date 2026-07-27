@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.ModuleGenerator
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultBindingRuntimeTypes;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
+import org.opendaylight.yangtools.binding.model.api.CaseArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -59,7 +60,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
     // All known 'choice's to their corresponding cases
     private final HashMultimap<JavaTypeName, CaseRuntimeType> choiceToCases = HashMultimap.create();
     // All case to cases mapping, values are the cases that can substitute case that is the key
-    private final HashMultimap<LegacyArchetype<?>, CaseRuntimeType> caseToSubstitutionCases = HashMultimap.create();
+    private final HashMultimap<CaseArchetype, CaseRuntimeType> caseToSubstitutionCases = HashMultimap.create();
     // All augment to augments mapping where values are augments that can substitute augment that is the key
     private final HashMultimap<AugmentationArchetype, AugmentRuntimeType> augmentToSubstitutionAugments =
         HashMultimap.create();
@@ -163,7 +164,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
      * @param caseToChildrenStmts map of case to its corresponding children
      */
     private void collectSubstsForCase(final Map<CaseRuntimeType, List<EffectiveStatement<?, ?>>> caseToChildrenStmts) {
-        final var localToSubstitutions = HashMultimap.<LegacyArchetype<?>, CaseRuntimeType>create();
+        final var localToSubstitutions = HashMultimap.<CaseArchetype, CaseRuntimeType>create();
         for (final var entry : choiceToCases.entries()) {
             final var choice = entry.getKey();
             // CaseRuntimeTypes associated with this choice
@@ -198,7 +199,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
      * @param local                current {@link CaseRuntimeType} for which substitutions we are looking for
      * @param candidates           available cases from one particular choice
      */
-    private static void addSubstitutionalCases(final Multimap<LegacyArchetype<?>, CaseRuntimeType> localToSubstitutions,
+    private static void addSubstitutionalCases(final Multimap<CaseArchetype, CaseRuntimeType> localToSubstitutions,
             final CaseRuntimeType local, final Collection<CaseRuntimeType> candidates,
             final Map<CaseRuntimeType, List<EffectiveStatement<?, ?>>> caseToChildrenStmts) {
         final var localType = local.javaType();
