@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
@@ -40,19 +39,26 @@ public non-sealed interface LegacyArchetype<S extends EffectiveStatement<?, ?>> 
      * @param <S> EffectiveStatement type
      */
     @NonNullByDefault
-    final class Builder<S extends EffectiveStatement<?, ?>> extends AbstractGeneratedTypeBuilder<Builder<S>, S> {
+    final class Builder<S extends EffectiveStatement<?, ?>> extends InterfaceArchetypeBuilder<Builder<S>, S> {
         private Builder(final JavaTypeName typeName, final S statement) {
             super(typeName, statement);
         }
 
         @Override
         public LegacyArchetype<S> build() {
-            return new DefaultLegacyArchetype<>(typeName(), statement, getAnnotations(), getImplementsTypes(),
-                getConstants(), getMethodDefinitions(), getEnclosedTypes());
+            return new DefaultLegacyArchetype<>(typeName, statement, annotations(), implementsTypes(),
+                constants(), methodDefinitions(), enclosedTypes());
         }
 
         @Override
-        protected Builder<S> thisInstance() {
+        @SuppressWarnings("rawtypes")
+        Class<LegacyArchetype> archetypeClass() {
+            return LegacyArchetype.class;
+        }
+
+
+        @Override
+        Builder<S> thisInstance() {
             return this;
         }
     }

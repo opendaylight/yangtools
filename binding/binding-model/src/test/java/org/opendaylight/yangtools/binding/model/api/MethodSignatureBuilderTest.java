@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
@@ -65,5 +66,23 @@ class MethodSignatureBuilderTest {
 
         assertEquals("MethodSignatureBuilder{name=testMethod, parameters=[], annotations=[]}",
             signatureBuilderImpl.toString());
+    }
+
+    @Test
+    void testMethodsForAbstractTypeMemberBuilder() {
+        final var builder = MethodSignature.builder("TestProperty")
+            .setReturnType(Types.STRING)
+            .setComment(TypeMemberComment.contractOf("test comment"));
+
+        final var genProperty = builder.build();
+        final var genProperty2 = builder.build();
+        assertEquals(TypeMemberComment.contractOf("test comment"), genProperty.getComment());
+        assertEquals(genProperty.hashCode(), genProperty2.hashCode());
+        assertEquals("""
+            MethodSignatureImpl [name=TestProperty, comment=TypeMemberComment{contract=test comment}, \
+            returnType=ConcreteType{name=java.lang.String}, params=[], annotations=[]]""", genProperty.toString());
+        assertNotNull(genProperty.toString());
+        assertTrue(genProperty.equals(genProperty2));
+        assertFalse(genProperty.equals(null));
     }
 }
