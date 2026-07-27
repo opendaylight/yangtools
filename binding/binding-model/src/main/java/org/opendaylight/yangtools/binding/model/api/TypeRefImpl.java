@@ -30,7 +30,7 @@ record TypeRefImpl(JavaTypeName name) implements TypeRef {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return MoreObjects.toStringHelper(TypeRef.class).add("name", name).toString();
     }
 }
