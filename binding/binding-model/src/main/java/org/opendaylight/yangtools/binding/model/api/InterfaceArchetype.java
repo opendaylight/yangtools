@@ -84,22 +84,6 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
         Constant addConstant(Type type, String name, Object value);
 
         /**
-         * Adds Constant definition and returns <code>new</code> Constant instance.<br>
-         * By definition Constant MUST be defined by return Type, Name and assigned value. The name SHOULD be defined
-         * with capital letters. Neither of method parameters can be <code>null</code> and the method SHOULD throw
-         * {@link IllegalArgumentException} if the contract is broken.
-         *
-         * @param builder builder for Constant Type
-         * @param name Name of Constant
-         * @param value Assigned Value
-         * @return <code>new</code> Constant instance.
-         */
-        @NonNullByDefault
-        default Constant addConstant(final Builder builder, final String name, final Object value) {
-            return addConstant(builder.typeRef(), name, value);
-        }
-
-        /**
          * Add new Method Signature definition for Generated Type Builder and returns Method Signature Builder
          * for specifying all Method parameters.<br>
          * Name of Method cannot be <code>null</code>, if it is <code>null</code> the method SHOULD throw
