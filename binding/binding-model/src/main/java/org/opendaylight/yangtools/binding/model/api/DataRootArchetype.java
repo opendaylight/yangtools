@@ -12,8 +12,8 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.DataRootArchetypeBuilder;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
@@ -21,15 +21,35 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
  *
  * @since 15.0.0
  */
+// FIXME: seal to allow only DataRootArchetypeImpl
 @Beta
 public non-sealed interface DataRootArchetype extends InterfaceArchetype {
     /**
      * A builder of {@link DataRootArchetype} instances.
      */
     @Beta
-    sealed interface Builder extends GeneratedTypeBuilderBase<Builder> permits DataRootArchetypeBuilder {
+    @NonNullByDefault
+    final class Builder extends AbstractGeneratedTypeBuilder<Builder, ModuleEffectiveStatement> {
+        private Builder(final JavaTypeName typeName, final ModuleEffectiveStatement statement) {
+            super(typeName, statement);
+            addImplementsType(BindingTypes.dataRoot(TypeRef.of(typeName)));
+        }
+
         @Override
-        DataRootArchetype build();
+        public DataRootArchetype build() {
+            return new DataRootArchetypeImpl(typeName(), statement, getImplementsTypes(), getMethodDefinitions(),
+                getEnclosedTypes());
+        }
+
+        @Override
+        protected Builder thisInstance() {
+            return this;
+        }
+    }
+
+    @NonNullByDefault
+    static Builder builder(final JavaTypeName typeName, final ModuleEffectiveStatement statement) {
+        return new Builder(typeName, statement);
     }
 
     @Override

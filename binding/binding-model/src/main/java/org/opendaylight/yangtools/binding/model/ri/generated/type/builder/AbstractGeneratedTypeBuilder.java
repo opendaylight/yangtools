@@ -22,6 +22,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Constant;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -33,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 public abstract sealed class AbstractGeneratedTypeBuilder<
         T extends GeneratedTypeBuilderBase<T>,
         S extends EffectiveStatement<?, ?>> implements GeneratedTypeBuilderBase<T>
-        permits LegacyArchetype.Builder, DataRootArchetypeBuilder {
+        permits DataRootArchetype.Builder, LegacyArchetype.Builder {
     private final @NonNull JavaTypeName typeName;
     protected final @NonNull S statement;
 
