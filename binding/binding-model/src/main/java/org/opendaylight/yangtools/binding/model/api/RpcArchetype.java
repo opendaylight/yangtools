@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
@@ -35,5 +36,15 @@ public record RpcArchetype(
         requireNonNull(statement);
         requireNonNull(input);
         requireNonNull(output);
+    }
+
+    @Override
+    public int hashCode() {
+        return TypeMethods.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        return TypeMethods.equals(this, obj);
     }
 }

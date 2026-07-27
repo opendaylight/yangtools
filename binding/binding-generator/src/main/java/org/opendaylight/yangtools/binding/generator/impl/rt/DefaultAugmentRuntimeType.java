@@ -8,20 +8,20 @@
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
+import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 
 public final class DefaultAugmentRuntimeType extends AbstractCompositeRuntimeType<AugmentEffectiveStatement>
         implements AugmentRuntimeType {
-    public DefaultAugmentRuntimeType(final LegacyArchetype<AugmentEffectiveStatement> bindingType,
-            final AugmentEffectiveStatement statement, final List<RuntimeType> children) {
+    public DefaultAugmentRuntimeType(final AugmentationArchetype bindingType, final AugmentEffectiveStatement statement,
+        final List<RuntimeType> children) {
         super(bindingType, statement, children);
     }
 
     @Override
-    public LegacyArchetype<AugmentEffectiveStatement> javaType() {
-        return (LegacyArchetype<AugmentEffectiveStatement>) super.javaType();
+    public AugmentationArchetype javaType() {
+        return (AugmentationArchetype) super.javaType();
     }
 }

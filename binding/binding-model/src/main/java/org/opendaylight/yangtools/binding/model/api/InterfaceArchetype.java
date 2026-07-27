@@ -21,7 +21,8 @@ import org.opendaylight.yangtools.concepts.Mutable;
 // TODO: a better name perhaps?
 @Beta
 @NonNullByDefault
-public sealed interface InterfaceArchetype extends Archetype permits DataRootArchetype, LegacyArchetype {
+public sealed interface InterfaceArchetype extends Archetype
+        permits AugmentationArchetype, DataRootArchetype, LegacyArchetype {
     /**
      * Base interface for builders resulting in an {@link InterfaceArchetype}.
      *

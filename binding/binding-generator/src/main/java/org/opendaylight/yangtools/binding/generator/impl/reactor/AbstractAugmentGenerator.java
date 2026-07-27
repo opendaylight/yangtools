@@ -22,9 +22,8 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAugmentRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -148,15 +147,17 @@ abstract class AbstractAugmentGenerator
     }
 
     @Override
-    final LegacyArchetype<AugmentEffectiveStatement> createTypeImpl() {
+    final AugmentationArchetype createTypeImpl() {
+        final var targetType = targetGenerator().getGeneratedType();
+        if (!(targetType instanceof InterfaceArchetype target)) {
+            throw new VerifyException("Unexpected target" + targetType);
+        }
+
         final var statement = statement();
-        final var builder = LegacyArchetype.builder(typeName(), statement)
-            .addImplementsType(BindingTypes.augmentation(targetGenerator().getGeneratedType()));
+        final var builder = AugmentationArchetype.builder(typeName(), statement, target);
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
-
         addGetterMethods(builder);
-
         return builder.addAnnotation(deprecatedAnnotation(statement)).build();
     }
 
@@ -212,8 +213,7 @@ abstract class AbstractAugmentGenerator
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
                 // 'augment' cannot be targeted by augment
                 verify(augments.isEmpty(), "Unexpected augments %s", augments);
-                return new DefaultAugmentRuntimeType((LegacyArchetype<AugmentEffectiveStatement>) type, statement,
-                    children);
+                return new DefaultAugmentRuntimeType((AugmentationArchetype) type, statement, children);
             }
         };
     }

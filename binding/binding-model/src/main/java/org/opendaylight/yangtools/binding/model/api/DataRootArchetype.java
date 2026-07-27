@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
- * The {@link Archetype} for {@link DataRoot} specializations.
+ * The {@link InterfaceArchetype} for {@link DataRoot} specializations.
  *
  * @since 15.0.0
  */

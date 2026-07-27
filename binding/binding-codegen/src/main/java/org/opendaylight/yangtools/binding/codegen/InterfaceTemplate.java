@@ -58,7 +58,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * Template for generating JAVA interfaces.
  */
 sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> extends ArchetypeTemplate<T>
-        permits DataRootTemplate {
+        permits AugmentationTemplate, DataRootTemplate {
     @NonNullByDefault
     record Builder(LegacyArchetype<?> type, DataRootArchetype root) implements Template.Builder {
         Builder {
@@ -91,12 +91,12 @@ sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> extends Ar
     private @Nullable TypeAnalysis typeAnalysis;
 
     @NonNullByDefault
-    InterfaceTemplate(final T type, final DataRootArchetype root) {
-        super(GeneratedClass.of(type), type, root);
+    InterfaceTemplate(final T archetype, final DataRootArchetype root) {
+        super(GeneratedClass.of(archetype), archetype, root);
 
-        consts = type.getConstantDefinitions();
-        methods = type.getMethodDefinitions();
-        enclosedGeneratedTypes = type.enclosedTypes();
+        consts = archetype.getConstantDefinitions();
+        methods = archetype.getMethodDefinitions();
+        enclosedGeneratedTypes = archetype.enclosedTypes();
     }
 
     private @NonNull TypeAnalysis typeAnalysis() {

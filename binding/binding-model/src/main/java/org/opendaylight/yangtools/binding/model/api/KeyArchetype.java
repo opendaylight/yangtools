@@ -14,6 +14,7 @@ import com.google.common.annotations.Beta;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.contract.Naming;
@@ -53,5 +54,15 @@ public record KeyArchetype(
         }
 
         return props;
+    }
+
+    @Override
+    public int hashCode() {
+        return TypeMethods.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        return TypeMethods.equals(this, obj);
     }
 }

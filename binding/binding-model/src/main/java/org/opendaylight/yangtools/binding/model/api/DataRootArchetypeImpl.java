@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
@@ -30,5 +31,20 @@ record DataRootArchetypeImpl(
         requireNonNull(getImplements);
         requireNonNull(getMethodDefinitions);
         requireNonNull(enclosedTypes);
+    }
+
+    @Override
+    public int hashCode() {
+        return TypeMethods.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        return TypeMethods.equals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+        return TypeMethods.toString(DataRootArchetype.class, this);
     }
 }

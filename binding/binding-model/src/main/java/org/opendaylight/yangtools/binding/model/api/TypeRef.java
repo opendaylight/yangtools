@@ -15,12 +15,12 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * @since 15.0.0
  */
 @NonNullByDefault
-public sealed interface TypeRef extends Type permits DefaultTypeRef {
+public sealed interface TypeRef extends Type permits TypeRefImpl {
     /**
      * {@return a {@link TypeRef} with specified name}
      * @param name the type name
      */
     static TypeRef of(final JavaTypeName name) {
-        return new DefaultTypeRef(name);
+        return new TypeRefImpl(name);
     }
 }
