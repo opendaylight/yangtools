@@ -30,12 +30,6 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
     @Beta
     sealed interface Builder extends Mutable permits InterfaceArchetypeBuilder {
         /**
-         * {@return the name of the type this builder produces}
-         */
-        @NonNullByDefault
-        JavaTypeName typeName();
-
-        /**
          * {@return a {@link TypeRef} to the type this builder produces}
          */
         @NonNullByDefault

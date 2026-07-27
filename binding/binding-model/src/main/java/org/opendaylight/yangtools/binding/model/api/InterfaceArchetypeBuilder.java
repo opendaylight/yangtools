@@ -47,11 +47,6 @@ abstract sealed class InterfaceArchetypeBuilder<
     }
 
     @Override
-    public final JavaTypeName typeName() {
-        return typeName;
-    }
-
-    @Override
     public final TypeRef typeRef() {
         return TypeRef.of(typeName);
     }
