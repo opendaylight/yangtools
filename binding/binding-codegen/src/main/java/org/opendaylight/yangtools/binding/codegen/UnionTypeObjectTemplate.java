@@ -17,6 +17,7 @@ import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.UNION_TYP
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Streams;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,6 +30,7 @@ import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.binding.model.api.GeneratedPropertyImpl;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -60,7 +62,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
     private UnionTypeObjectTemplate(final GeneratedClass javaType, final UnionTypeObjectArchetype archetype,
             final DataRootArchetype root) {
         super(javaType, archetype, root);
-        properties = archetype.getProperties();
+        properties = getProperties(archetype);
         finalProperties = properties.stream()
             .filter(GeneratedProperty::isReadOnly)
             .collect(Collectors.toUnmodifiableList());
@@ -69,6 +71,13 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         allProperties = Stream.concat(properties.stream(), parentProperties.stream())
             .sorted(PROP_COMPARATOR)
             .collect(Collectors.toUnmodifiableList());
+    }
+
+    @NonNullByDefault
+    private static List<GeneratedProperty> getProperties(final UnionTypeObjectArchetype archetype) {
+        return Streams.zip(archetype.typePropertyNames().stream().distinct(), archetype.typePropertyTypes().stream(),
+            (pn, pt) -> (GeneratedProperty) new GeneratedPropertyImpl(pn, pt, true))
+            .toList();
     }
 
     /**

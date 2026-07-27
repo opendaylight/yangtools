@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Streams;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -44,13 +43,6 @@ public record UnionTypeObjectArchetype(
         if (uniqueNames != typePropertyTypes.size()) {
             throw new IllegalArgumentException(uniqueNames + " names does not match " + typePropertyTypes);
         }
-    }
-
-    // FIXME: remove this method
-    public List<GeneratedProperty> getProperties() {
-        return Streams.zip(typePropertyNames().stream().distinct(), typePropertyTypes().stream(),
-            (pn, pt) -> (GeneratedProperty) new GeneratedPropertyImpl(pn, pt, true))
-            .toList();
     }
 
     @Override
