@@ -12,16 +12,19 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 /**
  * Generated Property is essentially a named field with its type.
  */
+@Deprecated(since = "16.0.0", forRemoval = true)
 @NonNullByDefault
 public interface GeneratedProperty {
     /**
      * {@return the name of this property}
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     String getName();
 
     /**
      * {@return the returning {@link Type} of member}
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     Type getReturnType();
 
     /**
