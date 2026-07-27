@@ -20,7 +20,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @NonNullByDefault
 public sealed interface ParameterizedType extends Type
-        permits ParametrizedType0, ParametrizedType1, ParametrizedType2, ParametrizedTypeN {
+        permits ParameterizedType0, ParameterizedType1, ParameterizedType2, ParameterizedTypeN {
     @Override
     default JavaTypeName name() {
         return getRawType().name();
@@ -46,7 +46,7 @@ public sealed interface ParameterizedType extends Type
      * @param rawType the {@link Type} that is being parameterized
      */
     static ParameterizedType of(final Type rawType) {
-        return new ParametrizedType0(rawType);
+        return new ParameterizedType0(rawType);
     }
 
     /**
@@ -55,7 +55,7 @@ public sealed interface ParameterizedType extends Type
      * @param arg the single argument
      */
     static ParameterizedType of(final Type rawType, final Type arg) {
-        return new ParametrizedType1(rawType, arg);
+        return new ParameterizedType1(rawType, arg);
     }
 
     /**
@@ -65,7 +65,7 @@ public sealed interface ParameterizedType extends Type
      * @param secondArg the second argument
      */
     static ParameterizedType of(final Type rawType, final Type firstArg, final Type secondArg) {
-        return new ParametrizedType2(rawType, firstArg, secondArg);
+        return new ParameterizedType2(rawType, firstArg, secondArg);
     }
 
     /**
@@ -91,7 +91,7 @@ public sealed interface ParameterizedType extends Type
             case 0 -> of(rawType);
             case 1 -> of(rawType, args.getFirst());
             case 2 -> of(rawType, args.getFirst(), args.getLast());
-            default -> new ParametrizedTypeN(rawType, args);
+            default -> new ParameterizedTypeN(rawType, args);
         };
     }
 }

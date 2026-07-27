@@ -9,16 +9,19 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.MoreObjects;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 @NonNullByDefault
-record ParametrizedTypeN(Type getRawType, List<Type> getActualTypeArguments) implements ParameterizedType {
-    ParametrizedTypeN {
+record ParameterizedType0(Type getRawType) implements ParameterizedType {
+    ParameterizedType0 {
         requireNonNull(getRawType);
-        getActualTypeArguments = List.copyOf(getActualTypeArguments);
+    }
+
+    @Override
+    public List<Type> getActualTypeArguments() {
+        return List.of();
     }
 
     @Override
@@ -32,10 +35,7 @@ record ParametrizedTypeN(Type getRawType, List<Type> getActualTypeArguments) imp
     }
 
     @Override
-    public final String toString() {
-        return MoreObjects.toStringHelper(ParameterizedType.class)
-            .add("name", name())
-            .add("arguments", getActualTypeArguments())
-            .toString();
+    public String toString() {
+        return TypeMethods.toString(this);
     }
 }
