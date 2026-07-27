@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
@@ -202,8 +203,8 @@ public class DefaultBindingGeneratorTest {
     @Test
     void testUnresolvedLeafref() {
         assertSame(Types.objectType(),
-            assertGeneratedMethod(JavaTypeName.create(TEST_TYPE_PROVIDER_B, "Grp"), "getUnresolvableLeafref")
-                .getReturnType());
+            assertGeneratedMethod(JavaTypeName.create(TEST_TYPE_PROVIDER_B, "Grp"), GroupingArchetype.class,
+                "getUnresolvableLeafref").getReturnType());
     }
 
     @Test

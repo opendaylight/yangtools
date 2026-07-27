@@ -43,7 +43,6 @@ import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -226,7 +225,8 @@ final class BuilderTemplate extends BaseTemplate {
         final var bb = newBlockBuilder().nl();
         boolean first = true;
         for (var impl : targetType.getImplements()) {
-            if (impl instanceof LegacyArchetype<?> genType) {
+            // FIXME: narrow down?
+            if (impl instanceof InterfaceArchetype genType) {
                 if (first) {
                     first = false;
                 } else {
@@ -241,7 +241,7 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Generate constructor with argument of given type.
      */
-    private @NonNull BlockBuilder generateConstructorFromIfc(final @NonNull LegacyArchetype<?> genType) {
+    private @NonNull BlockBuilder generateConstructorFromIfc(final @NonNull InterfaceArchetype genType) {
         final var bb = newBlockBuilder();
         if (hasNonDefaultMethods(genType)) {
             final var typeName = importedName(genType);
@@ -257,7 +257,8 @@ final class BuilderTemplate extends BaseTemplate {
                 .newLine();
         }
         for (var implTypeImplement : genType.getImplements()) {
-            if (implTypeImplement instanceof LegacyArchetype<?> implType) {
+            // FIXME: narrow down?
+            if (implTypeImplement instanceof InterfaceArchetype implType) {
                 bb.blk(generateConstructorFromIfc(implType));
             }
         }
@@ -265,7 +266,8 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     private @Nullable BlockBuilder printConstructorPropertySetter(final Type implementedIfc) {
-        if (!(implementedIfc instanceof LegacyArchetype<?> ifc)) {
+        // FIXME: narrow down?
+        if (!(implementedIfc instanceof InterfaceArchetype ifc)) {
             return null;
         }
 
@@ -284,7 +286,8 @@ final class BuilderTemplate extends BaseTemplate {
 
     private @Nullable BlockBuilder printConstructorPropertySetter(final Type implementedIfc,
             final Set<MethodSignature> alreadySetProperties) {
-        if (!(implementedIfc instanceof LegacyArchetype<?> ifc)) {
+        // FIXME: narrow down?
+        if (!(implementedIfc instanceof InterfaceArchetype ifc)) {
             return null;
         }
 
@@ -302,7 +305,7 @@ final class BuilderTemplate extends BaseTemplate {
         return bb;
     }
 
-    private static Set<MethodSignature> getSpecifiedGetters(final LegacyArchetype<?> type) {
+    private static Set<MethodSignature> getSpecifiedGetters(final InterfaceArchetype type) {
         return type.getMethodDefinitions().stream()
             .filter(JavaFileTemplate::hasOverrideAnnotation)
             .collect(ImmutableSet.toImmutableSet());
@@ -416,22 +419,24 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Method is used to find out if given type implements any interface from uses.
      */
+    @NonNullByDefault
     private boolean hasImplementsFromUses(final InterfaceArchetype type) {
-        return getAllIfcs(type).stream()
-            .anyMatch(impl -> impl instanceof LegacyArchetype<?> genType && hasNonDefaultMethods(genType));
+        // FIXME: narrow down?
+        return getAllIfcs(type).stream().anyMatch(BuilderTemplate::hasNonDefaultMethods);
     }
 
-    private @Nullable BlockBuilder generateIfCheck(final Type impl, final List<Type> done) {
-        return !(impl instanceof InterfaceArchetype archetype) || !hasNonDefaultMethods(archetype) ? null
-            : newBlockBuilder()
-                .str("if (arg instanceof ").str(importedName(archetype)).str(" castArg)").oB()
-                    .blk(printPropertySetter(archetype))
-                    .eol("isValidArg = true;")
-                .cB();
+    private @Nullable BlockBuilder generateIfCheck(final @NonNull InterfaceArchetype archetype,
+            final List<InterfaceArchetype> done) {
+        return !hasNonDefaultMethods(archetype) ? null : newBlockBuilder()
+            .str("if (arg instanceof ").str(importedName(archetype)).str(" castArg)").oB()
+                .blk(printPropertySetter(archetype))
+                .eol("isValidArg = true;")
+            .cB();
     }
 
     private @Nullable BlockBuilder printPropertySetter(final Type implementedIfc) {
-        if (!(implementedIfc instanceof LegacyArchetype<?> ifc)) {
+        // FIXME: narrow down?
+        if (!(implementedIfc instanceof InterfaceArchetype ifc)) {
             return null;
         }
 
@@ -492,7 +497,8 @@ final class BuilderTemplate extends BaseTemplate {
             return getter;
         }
         for (var ifc : implType.getImplements()) {
-            if (ifc instanceof LegacyArchetype<?> genInterface) {
+            // FIXME: narrow down?
+            if (ifc instanceof InterfaceArchetype genInterface) {
                 final var getterImpl = getterByName(genInterface, getterName);
                 if (getterImpl != null) {
                     return getterImpl;
@@ -514,24 +520,28 @@ final class BuilderTemplate extends BaseTemplate {
         return !(type2 instanceof ParameterizedType);
     }
 
-    private static List<Type> getBaseIfcs(final InterfaceArchetype type) {
-        final var baseIfcs = new ArrayList<Type>();
+    private static List<InterfaceArchetype> getBaseIfcs(final InterfaceArchetype type) {
+        final var baseIfcs = new ArrayList<InterfaceArchetype>();
         for (var ifc : type.getImplements()) {
-            if (ifc instanceof LegacyArchetype<?> genType && hasNonDefaultMethods(genType)) {
+            // FIXME: narrow down?
+            if (ifc instanceof InterfaceArchetype genType && hasNonDefaultMethods(genType)) {
                 baseIfcs.add(genType);
             }
         }
         return baseIfcs;
     }
 
-    private Set<Type> getAllIfcs(final Type type) {
+    @NonNullByDefault
+    private Set<InterfaceArchetype> getAllIfcs(final Type type) {
+        // FIXME: narrow down?
         if (!(type instanceof InterfaceArchetype ifc)) {
             return Set.of();
         }
 
-        final var baseIfcs = new HashSet<Type>();
+        final var baseIfcs = new HashSet<InterfaceArchetype>();
         for (var impl : ifc.getImplements()) {
-            if (impl instanceof LegacyArchetype<?> genType && hasNonDefaultMethods(genType)) {
+            // FIXME: narrow down?
+            if (impl instanceof InterfaceArchetype genType && hasNonDefaultMethods(genType)) {
                 baseIfcs.add(genType);
             }
             baseIfcs.addAll(getAllIfcs(impl));

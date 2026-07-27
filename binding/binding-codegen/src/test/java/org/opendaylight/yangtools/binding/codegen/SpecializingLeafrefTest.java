@@ -18,11 +18,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -73,8 +76,8 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testGroupingWithUnresolvedLeafRefs() throws Exception {
-        verifyReturnType("FooGrp", GET_LEAF1_NAME, Types.objectType());
-        verifyReturnType("FooGrp", GET_LEAFLIST1_NAME, Types.setTypeWildcard());
+        verifyReturnType(GroupingArchetype.class, "FooGrp", GET_LEAF1_NAME, Types.objectType());
+        verifyReturnType(GroupingArchetype.class, "FooGrp", GET_LEAFLIST1_NAME, Types.setTypeWildcard());
 
         final String content = getFileContent("FooGrp");
 
@@ -84,7 +87,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testLeafLeafrefPointsLeaf() throws Exception {
-        verifyReturnType(RESOLVED_LEAF_GRP, GET_LEAF1_NAME, Types.STRING);
+        verifyReturnType(GroupingArchetype.class, RESOLVED_LEAF_GRP, GET_LEAF1_NAME, Types.STRING);
 
         final String content = getFileContent(RESOLVED_LEAF_GRP);
 
@@ -93,7 +96,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testLeafLeafrefPointsLeafList() throws Exception {
-        verifyReturnType(RESOLVED_LEAFLIST_GRP, GET_LEAF1_NAME, Types.STRING);
+        verifyReturnType(GroupingArchetype.class, RESOLVED_LEAFLIST_GRP, GET_LEAF1_NAME, Types.STRING);
 
         final String content = getFileContent(RESOLVED_LEAF_GRP);
 
@@ -102,7 +105,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testLeafListLeafrefPointsLeaf() throws Exception {
-        verifyReturnType(RESOLVED_LEAF_GRP, GET_LEAFLIST1_NAME, SET_STRING_TYPE);
+        verifyReturnType(GroupingArchetype.class, RESOLVED_LEAF_GRP, GET_LEAFLIST1_NAME, SET_STRING_TYPE);
 
         final String content = getFileContent(RESOLVED_LEAF_GRP);
 
@@ -111,7 +114,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testLeafListLeafrefPointsLeafList() throws Exception {
-        verifyReturnType(RESOLVED_LEAFLIST_GRP, GET_LEAFLIST1_NAME, SET_STRING_TYPE);
+        verifyReturnType(GroupingArchetype.class, RESOLVED_LEAFLIST_GRP, GET_LEAFLIST1_NAME, SET_STRING_TYPE);
 
         final String content = getFileContent(RESOLVED_LEAFLIST_GRP);
 
@@ -120,8 +123,8 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testGroupingWhichInheritUnresolvedLeafrefAndDoesNotDefineIt() throws Exception {
-        verifyMethodAbsence(TRANSITIVE_GROUP, GET_LEAF1_NAME);
-        verifyMethodAbsence(TRANSITIVE_GROUP, GET_LEAFLIST1_NAME);
+        verifyMethodAbsence(GroupingArchetype.class, TRANSITIVE_GROUP, GET_LEAF1_NAME);
+        verifyMethodAbsence(GroupingArchetype.class, TRANSITIVE_GROUP, GET_LEAFLIST1_NAME);
 
         final String content = getFileContent(TRANSITIVE_GROUP);
 
@@ -131,8 +134,8 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testLeafrefWhichPointsBoolean() throws Exception {
-        verifyReturnType(UNRESOLVED_GROUPING, GET_LEAF1_NAME, Types.objectType());
-        verifyReturnType(BOOLEAN_CONT, GET_LEAF1_NAME, Types.BOOLEAN);
+        verifyReturnType(GroupingArchetype.class, UNRESOLVED_GROUPING, GET_LEAF1_NAME, Types.objectType());
+        verifyReturnType(LegacyArchetype.class, BOOLEAN_CONT, GET_LEAF1_NAME, Types.BOOLEAN);
 
         final String unresolvedGrouping = getFileContent(UNRESOLVED_GROUPING);
         final String booleanCont = getFileContent(BOOLEAN_CONT);
@@ -143,14 +146,15 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testGroupingsUsageWhereLeafrefAlreadyResolved() throws Exception {
-        leafList1AndLeaf1Absence(BAR_CONT);
-        leafList1AndLeaf1Absence("BarLst");
-        leafList1AndLeaf1Absence("BazGrp");
+        leafList1AndLeaf1Absence(LegacyArchetype.class, BAR_CONT);
+        leafList1AndLeaf1Absence(LegacyArchetype.class, "BarLst");
+        leafList1AndLeaf1Absence(GroupingArchetype.class, "BazGrp");
     }
 
-    private static void leafList1AndLeaf1Absence(final String typeName) throws Exception {
-        verifyMethodAbsence(typeName, GET_LEAF1_NAME);
-        verifyMethodAbsence(typeName, GET_LEAFLIST1_NAME);
+    private static void leafList1AndLeaf1Absence(final Class<? extends InterfaceArchetype> expected,
+            final String typeName) throws Exception {
+        verifyMethodAbsence(expected, typeName, GET_LEAF1_NAME);
+        verifyMethodAbsence(expected, typeName, GET_LEAFLIST1_NAME);
 
         final String content = getFileContent(typeName);
 
@@ -261,26 +265,28 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
         return content;
     }
 
-    private static void verifyMethodAbsence(final String typeName, final String getterName) {
-        verifyReturnType(typeName, getterName, null);
+    private static void verifyMethodAbsence(final Class<? extends InterfaceArchetype> expected, final String typeName,
+            final String getterName) {
+        verifyReturnType(expected, typeName, getterName, null);
     }
 
-    private static void verifyReturnType(final String typeName, final String getterName, final Type returnType) {
-        final var generated = typeByName(typeName);
+    private static void verifyReturnType(final Class<? extends InterfaceArchetype> expected, final String typeName,
+            final String getterName, final Type returnType) {
+        final var generated = typeByName(expected, typeName);
         assertNotNull(generated);
         assertEquals(returnType, returnTypeByMethodName(generated, getterName));
     }
 
-    private static LegacyArchetype<?> typeByName(final String name) {
+    private static <T extends InterfaceArchetype> @Nullable T typeByName(final Class<T> expected, final String name) {
         for (var type : types) {
             if (type.simpleName().equals(name)) {
-                return assertInstanceOf(LegacyArchetype.class, type);
+                return assertInstanceOf(expected, type);
             }
         }
         return null;
     }
 
-    private static Type returnTypeByMethodName(final LegacyArchetype<?> type, final String name) {
+    private static Type returnTypeByMethodName(final InterfaceArchetype type, final String name) {
         for (var m : type.getMethodDefinitions()) {
             if (m.getName().equals(name)) {
                 return m.getReturnType();
