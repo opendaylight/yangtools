@@ -47,6 +47,22 @@ final class TypeMethods {
     }
 
     /**
+     * Implementation of {@link ParameterizedType#toString()}.
+     *
+     * @param self the type
+     * @return a String
+     */
+    @NonNullByDefault
+    static String toString(final ParameterizedType self) {
+        final var helper = MoreObjects.toStringHelper(ParameterizedType.class).add("name", self.name());
+        final var arguments = self.getActualTypeArguments();
+        if (!arguments.isEmpty()) {
+            helper.add("arguments", arguments);
+        }
+        return helper.toString();
+    }
+
+    /**
      * Implementation of {@link InterfaceArchetype#toString()}.
      *
      * @param <A> the {@link InterfaceArchetype} type
