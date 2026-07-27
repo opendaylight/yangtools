@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
@@ -57,7 +58,7 @@ class Mdsal675Test {
         // yang-data > container
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithContainer"),
-            assertGenType(genTypesMap, PACKAGE + "yang.data.with.container.ContainerFromYangData"),
+            assertContainer(genTypesMap, PACKAGE + "yang.data.with.container.ContainerFromYangData"),
             List.of("getContainerFromYangData", "nonnullContainerFromYangData"));
         // yang-data > list
         assertYangDataGenType(
@@ -91,7 +92,7 @@ class Mdsal675Test {
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithContainerFromGroup"),
             assertGrouping(genTypesMap, PACKAGE + "GrpForContainer"),
-            assertGenType(genTypesMap, PACKAGE + "grp._for.container.ContainerFromGroup"),
+            assertContainer(genTypesMap, PACKAGE + "grp._for.container.ContainerFromGroup"),
             List.of("getContainerFromGroup", "nonnullContainerFromGroup"));
         // yang-data > uses > group > list
         assertYangDataGenType(
@@ -132,7 +133,7 @@ class Mdsal675Test {
                         .filter(methodName -> methodName.startsWith("get")).toList());
 
         // ensure yang-data at non-top level is ignored (no getters in parent container)
-        final var rootContainerType = assertGenType(genTypesMap, ROOT_CONTAINER_CLASS_NAME);
+        final var rootContainerType = assertContainer(genTypesMap, ROOT_CONTAINER_CLASS_NAME);
         assertNotNull(rootContainerType.getMethodDefinitions());
         assertThat(rootContainerType.getMethodDefinitions()).noneMatch(method -> method.getName().startsWith("get"));
     }
@@ -188,6 +189,11 @@ class Mdsal675Test {
 
     private static LegacyArchetype<?> assertGenType(final Map<String, Archetype> genTypesMap, final String className) {
         return assertArchetype(genTypesMap, className, LegacyArchetype.class);
+    }
+
+    private static ContainerArchetype assertContainer(final Map<String, Archetype> genTypesMap,
+            final String className) {
+        return assertArchetype(genTypesMap, className, ContainerArchetype.class);
     }
 
     private static GroupingArchetype assertGrouping(final Map<String, Archetype> genTypesMap, final String className) {

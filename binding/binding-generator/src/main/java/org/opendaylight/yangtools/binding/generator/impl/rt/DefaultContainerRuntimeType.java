@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -16,8 +16,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 
 public final class DefaultContainerRuntimeType extends AbstractAugmentableRuntimeType<ContainerEffectiveStatement>
         implements ContainerRuntimeType {
-    public DefaultContainerRuntimeType(final Archetype bindingType, final ContainerEffectiveStatement statement,
-            final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+    public DefaultContainerRuntimeType(final ContainerArchetype bindingType,
+            final ContainerEffectiveStatement statement, final List<RuntimeType> children,
+            final List<AugmentRuntimeType> augments) {
         super(bindingType, statement, children, augments);
+    }
+
+    @Override
+    public ContainerArchetype javaType() {
+        return (ContainerArchetype) super.javaType();
     }
 }

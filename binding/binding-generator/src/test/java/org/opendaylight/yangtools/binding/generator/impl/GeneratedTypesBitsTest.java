@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -58,7 +58,7 @@ class GeneratedTypesBitsTest {
             } else if (genType.simpleName().equals("LeafParentContainer")) {
                 leafParentFound = true;
                 // check of methods
-                methodSignaturesList = assertInstanceOf(LegacyArchetype.class, genType).getMethodDefinitions();
+                methodSignaturesList = assertInstanceOf(ContainerArchetype.class, genType).getMethodDefinitions();
                 if (methodSignaturesList != null) {
                     // loop through all methods
                     for (var methodSignature : methodSignaturesList) {

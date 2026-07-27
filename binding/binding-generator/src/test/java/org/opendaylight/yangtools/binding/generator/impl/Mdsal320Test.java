@@ -16,8 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -33,7 +33,7 @@ class Mdsal320Test {
         final var foo = generateTypes.stream()
             .filter(type -> type.canonicalName().equals("org.opendaylight.yang.gen.v1.urn.odl.yt320.norev.Foo"))
             .findFirst()
-            .map(type -> (LegacyArchetype<?>) type)
+            .map(ContainerArchetype.class::cast)
             .orElseThrow();
 
         assertThat(foo.getImplements()).anySatisfy(type -> type.name().equals(BindingTypes.JAVA_DATACONTAINER));
