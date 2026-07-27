@@ -24,13 +24,13 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -224,7 +224,7 @@ public abstract class Generator implements Iterable<Generator> {
         return helper;
     }
 
-    final void addImplementsChildOf(final GeneratedTypeBuilderBase<?> builder) {
+    final void addImplementsChildOf(final InterfaceArchetype.Builder<?> builder) {
         var ancestor = getParent();
         while (true) {
             // choice/case hierarchy does not factor into 'ChildOf' hierarchy, hence we need to skip them
@@ -253,7 +253,7 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder Target builder
      */
     @NonNullByDefault
-    static final void addConcreteInterfaceMethods(final GeneratedTypeBuilderBase<?> builder) {
+    static final void addConcreteInterfaceMethods(final InterfaceArchetype.Builder<?> builder) {
         defaultImplementedInterace(builder);
         builder.addImplementsType(ParameterizedType.of(BindingTypes.JAVA_DATACONTAINER, builder.typeRef()));
     }
@@ -264,13 +264,13 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder Target builder
      */
     @NonNullByDefault
-    static final void defaultImplementedInterace(final GeneratedTypeBuilderBase<?> builder) {
+    static final void defaultImplementedInterace(final InterfaceArchetype.Builder<?> builder) {
         defineImplementedInterfaceMethod(builder, builder.typeRef()).setDefault(true);
     }
 
     @NonNullByDefault
     static final MethodSignature.Builder defineImplementedInterfaceMethod(
-            final GeneratedTypeBuilderBase<?> typeBuilder, final Type classType) {
+            final InterfaceArchetype.Builder<?> typeBuilder, final Type classType) {
         return typeBuilder
                 .addMethod(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME)
                 .setReturnType(classType(classType))

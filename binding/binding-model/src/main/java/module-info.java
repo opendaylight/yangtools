@@ -7,7 +7,6 @@
  */
 module org.opendaylight.yangtools.binding.model {
     exports org.opendaylight.yangtools.binding.model.api;
-    exports org.opendaylight.yangtools.binding.model.api.type.builder;
     exports org.opendaylight.yangtools.binding.model.ri;
     exports org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
 
