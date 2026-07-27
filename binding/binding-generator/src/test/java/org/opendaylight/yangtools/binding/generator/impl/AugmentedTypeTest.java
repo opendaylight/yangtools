@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.assertEntryObject;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
@@ -39,7 +40,7 @@ class AugmentedTypeTest {
         LegacyArchetype<?> gtInterface = null;
         LegacyArchetype<?> gtTunnel = null;
         KeyArchetype gtTunnelKey = null;
-        LegacyArchetype<?> gtNetworkLink2 = null;
+        AugmentationArchetype gtNetworkLink2 = null;
 
         for (var type : genTypes) {
             if (!type.packageName().contains("augment._abstract.topology")) {
@@ -55,7 +56,7 @@ class AugmentedTypeTest {
             } else if (type.simpleName().equals("TunnelKey")) {
                 gtTunnelKey = assertInstanceOf(KeyArchetype.class, type);
             } else if (type.simpleName().equals("NetworkLink2")) {
-                gtNetworkLink2 = assertInstanceOf(LegacyArchetype.class, type);
+                gtNetworkLink2 = assertInstanceOf(AugmentationArchetype.class, type);
             }
         }
 

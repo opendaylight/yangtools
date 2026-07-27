@@ -46,7 +46,7 @@ public non-sealed interface LegacyArchetype<S extends EffectiveStatement<?, ?>> 
 
         @Override
         public LegacyArchetype<S> build() {
-            return new DefaultLegacyArchetype<>(typeName, statement, annotations(), implementsTypes(),
+            return new LegacyArchetypeImpl<>(typeName, statement, annotations(), implementsTypes(),
                 constants(), methodDefinitions(), enclosedTypes());
         }
 

@@ -47,13 +47,13 @@ public record ScalarTypeObjectArchetype(
     }
 
     @Override
-    public final int hashCode() {
-        return name.hashCode();
+    public int hashCode() {
+        return TypeMethods.hashCode(this);
     }
 
     @Override
-    public final boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof Type other && name.equals(other.name());
+    public boolean equals(final @Nullable Object obj) {
+        return TypeMethods.equals(this, obj);
     }
 
     @Override

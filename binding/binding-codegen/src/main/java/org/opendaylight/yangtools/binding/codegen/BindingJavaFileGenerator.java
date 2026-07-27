@@ -12,6 +12,7 @@ import com.google.common.collect.HashBasedTable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
@@ -19,6 +20,7 @@ import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -93,6 +95,8 @@ final class BindingJavaFileGenerator {
             final var root = rootBuilder.type();
 
             switch (type) {
+                case AugmentationArchetype archetype ->
+                    generateBoth(AugmentationTemplate.Builder::new, archetype, root);
                 case DataRootArchetype archetype -> {
                     // processed separately
                 }
@@ -109,10 +113,7 @@ final class BindingJavaFileGenerator {
                 case EnumTypeObjectArchetype etao -> generateFile(new EnumTypeObjectTemplate.Builder(etao, root));
                 case ScalarTypeObjectArchetype stao -> generateFile(new ScalarTypeObjectTemplate.Builder(stao, root));
                 case UnionTypeObjectArchetype utao -> generateFile(new UnionTypeObjectTemplate.Builder(utao, root));
-                case LegacyArchetype<?> legacy -> {
-                    generateBuilder(legacy);
-                    generateFile(new InterfaceTemplate.Builder(legacy, root));
-                }
+                case LegacyArchetype<?> legacy -> generateBoth(InterfaceTemplate.Builder::new, legacy, root);
             }
         }
 
@@ -121,6 +122,13 @@ final class BindingJavaFileGenerator {
             generateBuilder(module.type());
             generateFile(module);
         }
+    }
+
+    private <A extends InterfaceArchetype> void generateBoth(
+            final BiFunction<A, DataRootArchetype, Template.Builder> builderConstructor,
+            final A archetype, final DataRootArchetype root) {
+        generateBuilder(archetype);
+        generateFile(builderConstructor.apply(archetype, root));
     }
 
     private void generateBuilder(final InterfaceArchetype type) {
