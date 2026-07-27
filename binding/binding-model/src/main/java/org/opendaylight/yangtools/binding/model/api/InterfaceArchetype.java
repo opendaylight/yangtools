@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.model.api;
 import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
@@ -38,10 +37,10 @@ public sealed interface InterfaceArchetype extends Archetype
         /**
          * Add an {@link AttachedAnnotation.ToType} to this builder.
          *
-         * @param annotation the {@link AttachedAnnotation.ToType}, if {@code null} this method does nothing
+         * @param annotation the {@link AttachedAnnotation.ToType}
          * @return this instance
          */
-        Builder addAnnotation(AttachedAnnotation.@Nullable ToType annotation);
+        Builder addAnnotation(AttachedAnnotation.ToType annotation);
 
         /**
          * Adds a new enclosed {@link Archetype} into definition of Generated Type.

@@ -48,14 +48,12 @@ final class NotificationBodyGenerator
     @Override
     LegacyArchetype<NotificationEffectiveStatement> createTypeImpl() {
         final var typeName = typeName();
-        final var statement = statement();
-        final var builder = LegacyArchetype.builder(typeName, statement)
+        final var builder = LegacyArchetype.builder(typeName, statement())
             .addImplementsType(BindingTypes.notificationBody(TypeRef.of(typeName)));
         defineImplementedInterfaceMethod(builder, WildcardType.ofName(typeName));
         addUsesInterfaces(builder);
         addGetterMethods(builder);
-
-        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
+        return builder.build();
     }
 
     @Override

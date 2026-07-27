@@ -139,7 +139,7 @@ public interface MethodSignature extends Immutable {
     final class Builder {
         private final @NonNull String name;
 
-        private @Nullable ArrayList<AttachedAnnotation.ToMethod> annotations = null;
+        private @Nullable ArrayList<AttachedAnnotation.@NonNull ToMethod> annotations = null;
         private List<MethodSignature.Parameter> parameters = List.of();
         private ValueMechanics mechanics = ValueMechanics.NORMAL;
         private boolean isDefault = false;
@@ -215,16 +215,16 @@ public interface MethodSignature extends Immutable {
          * @return this instance
          */
         public @NonNull Builder addAnnotation(final AttachedAnnotation.@Nullable ToMethod annotation) {
-            annotations = addAnnotation(annotations, annotation);
+            if (annotation != null) {
+                annotations = addAnnotation(annotations, annotation);
+            }
             return this;
         }
 
         @Beta
-        public static <T extends AttachedAnnotation> @Nullable ArrayList<@NonNull T> addAnnotation(
-                final @Nullable ArrayList<@NonNull T> list, final @Nullable T annotation) {
-            if (annotation == null) {
-                return list;
-            }
+        @NonNullByDefault
+        public static <T extends AttachedAnnotation> ArrayList<T> addAnnotation(final @Nullable ArrayList<T> list,
+                final T annotation) {
             if (list == null) {
                 final var ret = new ArrayList<T>(2);
                 ret.add(annotation);

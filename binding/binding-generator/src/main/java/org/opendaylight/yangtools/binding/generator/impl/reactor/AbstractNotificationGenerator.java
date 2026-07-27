@@ -52,8 +52,7 @@ abstract class AbstractNotificationGenerator
     @Override
     final LegacyArchetype<NotificationEffectiveStatement> createTypeImpl() {
         final var typeName = typeName();
-        final var statement = statement();
-        final var builder = LegacyArchetype.builder(typeName, statement)
+        final var builder = LegacyArchetype.builder(typeName, statement())
             .addImplementsType(BindingTypes.DATA_OBJECT)
             .addImplementsType(notificationType(TypeRef.of(typeName)));
 
@@ -70,7 +69,7 @@ abstract class AbstractNotificationGenerator
 
         addQNameConstant(builder, localName());
 
-        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
+        return builder.build();
     }
 
     @Override

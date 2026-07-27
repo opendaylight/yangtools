@@ -64,20 +64,15 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
             //            orig.getPath().getPathFromRoot().iterator().next().getModule());
             //        input = context.addAliasType(origContext, orig.getInput(), action.getInput());
             //        output = context.addAliasType(origContext, orig.getOutput(), action.getOutput());
-
             throw new UnsupportedOperationException("Lookup in original");
         }
 
-        final var statement = statement();
-        final var builder = LegacyArchetype.builder(typeName(), statement).addImplementsType(baseInterface);
+        final var builder = LegacyArchetype.builder(typeName(), statement()).addImplementsType(baseInterface);
         addAugmentable(builder);
-
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
         addGetterMethods(builder);
-
         addQNameConstant(builder, localName());
-
-        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
+        return builder.build();
     }
 }

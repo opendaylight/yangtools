@@ -153,12 +153,11 @@ abstract class AbstractAugmentGenerator
             throw new VerifyException("Unexpected target" + targetType);
         }
 
-        final var statement = statement();
-        final var builder = AugmentationArchetype.builder(typeName(), statement, target);
+        final var builder = AugmentationArchetype.builder(typeName(), statement(), target);
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
         addGetterMethods(builder);
-        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
+        return builder.build();
     }
 
     boolean matchesInstantiated(final AugmentEffectiveStatement statement) {

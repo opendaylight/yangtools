@@ -58,8 +58,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
 
     @Override
     LegacyArchetype<ListEffectiveStatement> createTypeImpl() {
-        final var statement = statement();
-        final var builder = LegacyArchetype.builder(typeName(), statement);
+        final var builder = LegacyArchetype.builder(typeName(), statement());
         addImplementsChildOf(builder);
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
@@ -76,7 +75,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
 
         addGetterMethods(builder);
 
-        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
+        return builder.build();
     }
 
     private @Nullable KeyRuntimeType keyRuntimeType() {

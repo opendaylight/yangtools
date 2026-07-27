@@ -69,11 +69,10 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
 
     @Override
     GroupingArchetype createTypeImpl() {
-        final var statement = statement();
-        final var builder = GroupingArchetype.builder(typeName(), statement);
+        final var builder = GroupingArchetype.builder(typeName(), statement());
         addUsesInterfaces(builder);
         addGetterMethods(builder);
-        return builder.addAnnotation(deprecatedAnnotation(statement)).build();
+        return builder.build();
     }
 
     @Override

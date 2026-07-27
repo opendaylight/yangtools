@@ -49,13 +49,10 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
     LegacyArchetype<ActionEffectiveStatement> createTypeImpl(final Archetype input, final Archetype output) {
         final var statement = statement();
         final var builder = LegacyArchetype.builder(typeName(), statement)
-            .addAnnotation(FunctionalInterfaceAnnotation.INSTANCE)
-            .addAnnotation(deprecatedAnnotation(statement));
+            .addAnnotation(FunctionalInterfaceAnnotation.INSTANCE);
         addImplementedType(builder, input, output);
         defaultImplementedInterace(builder);
-
         addQNameConstant(builder, statement.argument());
-
         return builder.build();
     }
 

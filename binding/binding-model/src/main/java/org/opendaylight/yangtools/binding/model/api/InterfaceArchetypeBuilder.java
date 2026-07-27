@@ -19,6 +19,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.LazyCollections;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
@@ -35,7 +36,7 @@ abstract sealed class InterfaceArchetypeBuilder<
     final @NonNull JavaTypeName typeName;
     final @NonNull S statement;
 
-    private @Nullable ArrayList<AttachedAnnotation.ToType> annotations = null;
+    private @Nullable ArrayList<AttachedAnnotation.@NonNull ToType> annotations = null;
     private List<Type> implementsTypes = List.of();
     private List<Constant> constants = List.of();
     private List<MethodSignature.Builder> methodDefinitions = List.of();
@@ -45,6 +46,14 @@ abstract sealed class InterfaceArchetypeBuilder<
     InterfaceArchetypeBuilder(final JavaTypeName typeName, final S statement) {
         this.typeName = requireNonNull(typeName);
         this.statement = requireNonNull(statement);
+
+        // FIXME: remove this logic and let InterfaceTemplate do the equivalent
+        if (statement instanceof DocumentedNode.WithStatus withStatus) {
+            final var deprecated = DeprecatedAnnotation.ofStatus(withStatus.getStatus());
+            if (deprecated != null) {
+                addAnnotation(deprecated);
+            }
+        }
     }
 
     @Override
@@ -54,7 +63,7 @@ abstract sealed class InterfaceArchetypeBuilder<
 
     @Override
     public final B addAnnotation(final AttachedAnnotation.ToType annotation) {
-        annotations = MethodSignature.Builder.addAnnotation(annotations, annotation);
+        annotations = MethodSignature.Builder.addAnnotation(annotations, requireNonNull(annotation));
         return thisInstance();
     }
 
