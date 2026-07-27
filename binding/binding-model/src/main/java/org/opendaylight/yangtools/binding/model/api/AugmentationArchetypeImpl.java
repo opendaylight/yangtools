@@ -18,21 +18,21 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 record AugmentationArchetypeImpl(
         JavaTypeName name,
         AugmentEffectiveStatement statement,
+        InterfaceArchetype target,
         List<AttachedAnnotation.ToType> annotations,
         List<Type> implementsTypes,
         List<Constant> constants,
         List<MethodSignature> methodSignatures,
-        List<Archetype> enclosedTypes,
-        InterfaceArchetype target) implements AugmentationArchetype {
+        List<Archetype> enclosedTypes) implements AugmentationArchetype {
     AugmentationArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
+        requireNonNull(target);
         requireNonNull(annotations);
         requireNonNull(implementsTypes);
         requireNonNull(constants);
         requireNonNull(methodSignatures);
         requireNonNull(enclosedTypes);
-        requireNonNull(target);
     }
 
     @Override
