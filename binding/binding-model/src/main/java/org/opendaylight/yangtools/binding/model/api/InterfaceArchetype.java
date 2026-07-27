@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -21,6 +20,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
  */
 // TODO: a better name perhaps?
 @Beta
+@NonNullByDefault
 public sealed interface InterfaceArchetype extends Archetype permits DataRootArchetype, LegacyArchetype {
     /**
      * Base interface for builders resulting in an {@link InterfaceArchetype}.
@@ -32,7 +32,6 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
         /**
          * {@return a {@link TypeRef} to the type this builder produces}
          */
-        @NonNullByDefault
         TypeRef typeRef();
 
         /**
@@ -41,7 +40,7 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
          * @param annotation the {@link AttachedAnnotation.ToType}, if {@code null} this method does nothing
          * @return this instance
          */
-        @NonNull Builder addAnnotation(AttachedAnnotation.@Nullable ToType annotation);
+        Builder addAnnotation(AttachedAnnotation.@Nullable ToType annotation);
 
         /**
          * Adds a new enclosed {@link Archetype} into definition of Generated Type.
@@ -57,7 +56,6 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
          *
          * @param genType the enclosed {@link Archetype}
          */
-        @NonNullByDefault
         Builder addEnclosedType(Archetype genType);
 
         /**
@@ -66,7 +64,6 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
          * @param genType Type to implement
          * @return <code>true</code> if the addition of type is successful.
          */
-        @NonNullByDefault
         Builder addImplementsType(Type genType);
 
         /**
@@ -80,7 +77,6 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
          * @param value Assigned Value
          * @return <code>new</code> Constant instance.
          */
-        @NonNullByDefault
         Constant addConstant(Type type, String name, Object value);
 
         /**
@@ -92,20 +88,18 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
          * @param name Name of Method
          * @return <code>new</code> instance of Method Signature Builder.
          */
-        @NonNullByDefault
         MethodSignature.Builder addMethod(String name);
 
         /**
          * {@return a new immutable {@link InterfaceArchetype} instance}
          */
-        @NonNull InterfaceArchetype build();
+        InterfaceArchetype build();
     }
 
     /**
      * {@return the list of annotations attached to interface declaration}
      */
     // FIXME: all type annotations should be implied by specialization and this method should not exist
-    @NonNullByDefault
     List<AttachedAnnotation.ToType> annotations();
 
     /**
@@ -115,14 +109,12 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
     //        - only allow GroupingArchetypes here
     //        - have CaseArchetype have a dedicated pointer to its inherited ChoiceArchetype
     //        everything else should be implied by the archetype itself
-    @NonNullByDefault
     List<Type> getImplements();
 
     /**
      * {@return the list of constants the interface defines}
      */
     // FIXME: all constants should be implied by a particular archetype and this method should not exist
-    @NonNullByDefault
     List<Constant> getConstantDefinitions();
 
     /**
@@ -131,6 +123,8 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
     // FIXME: yes, these result in methods being generated, but they are somewhat subtle, as they also imply constants
     //        for builders, etc. Most notably, KeyArchetype is presenting a subset of these defined in its corresponding
     //        LegacyArchetype (or EntryObjectArchetype once that is created)
-    @NonNullByDefault
     List<MethodSignature> getMethodDefinitions();
+
+    @Override
+    String toString();
 }
