@@ -115,7 +115,7 @@ abstract class OpaqueObjectGenerator<
     abstract OpaqueObjectArchetype<S> createTypeImpl(JavaTypeName name, S statement);
 
     @Override
-    void constructRequire(final InterfaceArchetype.Builder<?> builder, final Type returnType) {
+    void constructRequire(final InterfaceArchetype.Builder builder, final Type returnType) {
         constructRequireImpl(builder, returnType);
     }
 

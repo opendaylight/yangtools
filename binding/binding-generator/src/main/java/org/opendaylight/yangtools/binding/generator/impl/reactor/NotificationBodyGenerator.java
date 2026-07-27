@@ -59,7 +59,7 @@ final class NotificationBodyGenerator
     }
 
     @Override
-    void addAsGetterMethod(final InterfaceArchetype.Builder<?> builder) {
+    void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
         // Notifications are a distinct concept
     }
 

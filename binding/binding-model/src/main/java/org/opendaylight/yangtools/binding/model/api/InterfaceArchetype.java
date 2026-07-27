@@ -25,11 +25,10 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
     /**
      * Base interface for builders resulting in an {@link InterfaceArchetype}.
      *
-     * @param <T> builder type
      * @since 16.0.0
      */
     @Beta
-    sealed interface Builder<T extends Builder<T>> permits AbstractGeneratedTypeBuilder {
+    sealed interface Builder permits AbstractGeneratedTypeBuilder {
         /**
          * {@return the name of the type this builder produces}
          */
@@ -50,7 +49,7 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
          * @param annotation the {@link AttachedAnnotation.ToType}, if {@code null} this method does nothing
          * @return this instance
          */
-        @NonNull T addAnnotation(AttachedAnnotation.@Nullable ToType annotation);
+        @NonNull Builder addAnnotation(AttachedAnnotation.@Nullable ToType annotation);
 
         /**
          * Adds a new enclosed {@link Archetype} into definition of Generated Type.
@@ -67,7 +66,7 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
          * @param genType the enclosed {@link Archetype}
          */
         @NonNullByDefault
-        T addEnclosedType(Archetype genType);
+        Builder addEnclosedType(Archetype genType);
 
         /**
          * Add Type to implements.
@@ -76,7 +75,7 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
          * @return <code>true</code> if the addition of type is successful.
          */
         @NonNullByDefault
-        T addImplementsType(Type genType);
+        Builder addImplementsType(Type genType);
 
         /**
          * Adds Constant definition and returns <code>new</code> Constant instance.<br>
@@ -104,7 +103,7 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
          * @return <code>new</code> Constant instance.
          */
         @NonNullByDefault
-        default Constant addConstant(final Builder<?> builder, final String name, final Object value) {
+        default Constant addConstant(final Builder builder, final String name, final Object value) {
             return addConstant(builder.typeRef(), name, value);
         }
 

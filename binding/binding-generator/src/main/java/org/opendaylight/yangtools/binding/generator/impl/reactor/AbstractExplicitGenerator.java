@@ -330,7 +330,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    void addAsGetterMethod(final InterfaceArchetype.Builder<?> builder) {
+    void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
         if (isAugmenting()) {
             // Do not process augmented nodes: they will be taken care of in their home augmentation
             return;
@@ -350,12 +350,12 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder<?> builder, final Type returnType) {
+    MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder builder, final Type returnType) {
         return constructGetter(builder, returnType, Naming.getGetterMethodName(localName().getLocalName()));
     }
 
     @NonNullByDefault
-    final MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder<?> builder,
+    final MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder builder,
             final Type returnType, final String methodName) {
         final var getMethod = builder.addMethod(methodName)
             .setReturnType(returnType)
@@ -368,19 +368,19 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    void constructRequire(final InterfaceArchetype.Builder<?> builder, final Type returnType) {
+    void constructRequire(final InterfaceArchetype.Builder builder, final Type returnType) {
         // No-op in most cases
     }
 
     @NonNullByDefault
-    final void constructRequireImpl(final InterfaceArchetype.Builder<?> builder, final Type returnType) {
+    final void constructRequireImpl(final InterfaceArchetype.Builder builder, final Type returnType) {
         constructGetter(builder, returnType, Naming.getRequireMethodName(localName().getLocalName()))
             .setDefault(true)
             .setMechanics(ValueMechanics.NONNULL);
     }
 
     @NonNullByDefault
-    void addAsGetterMethodOverride(final InterfaceArchetype.Builder<?> builder) {
+    void addAsGetterMethodOverride(final InterfaceArchetype.Builder builder) {
         // No-op for most cases
     }
 
@@ -411,7 +411,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    static final void addQNameConstant(final InterfaceArchetype.Builder<?> builder, final AbstractQName localName) {
+    static final void addQNameConstant(final InterfaceArchetype.Builder builder, final AbstractQName localName) {
         builder.addConstant(BindingTypes.QNAME, Naming.QNAME_STATIC_FIELD_NAME, localName.getLocalName());
     }
 

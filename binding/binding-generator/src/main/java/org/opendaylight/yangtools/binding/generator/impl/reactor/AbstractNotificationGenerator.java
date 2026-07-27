@@ -74,7 +74,7 @@ abstract class AbstractNotificationGenerator
     }
 
     @Override
-    final void addAsGetterMethod(final InterfaceArchetype.Builder<?> builder) {
+    final void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
         // Notifications are a distinct concept
     }
 

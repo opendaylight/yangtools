@@ -458,19 +458,19 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
      * @param builder Target builder
      */
     @NonNullByDefault
-    final void addUsesInterfaces(final InterfaceArchetype.Builder<?> builder) {
+    final void addUsesInterfaces(final InterfaceArchetype.Builder builder) {
         for (var grp : groupings) {
             builder.addImplementsType(grp.getGeneratedType());
         }
     }
 
     @NonNullByDefault
-    static final void addAugmentable(final InterfaceArchetype.Builder<?> builder) {
+    static final void addAugmentable(final InterfaceArchetype.Builder builder) {
         builder.addImplementsType(BindingTypes.augmentable(builder.typeRef()));
     }
 
     @NonNullByDefault
-    final void addGetterMethods(final InterfaceArchetype.Builder<?> builder) {
+    final void addGetterMethods(final InterfaceArchetype.Builder builder) {
         for (var child : this) {
             // Only process explicit generators here
             if (child instanceof AbstractExplicitGenerator<?, ?> explicit) {

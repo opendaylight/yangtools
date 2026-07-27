@@ -80,7 +80,7 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
     }
 
     @Override
-    void addAsGetterMethod(final InterfaceArchetype.Builder<?> builder) {
+    void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
         // groupings are a separate concept
     }
 

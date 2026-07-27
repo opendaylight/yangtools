@@ -97,7 +97,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
     }
 
     @Override
-    MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder<?> builder, final Type returnType) {
+    MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder builder, final Type returnType) {
         final var ret = super.constructGetter(builder, returnType).setMechanics(ValueMechanics.NULLIFY_EMPTY);
 
         builder

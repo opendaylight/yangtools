@@ -32,8 +32,8 @@ import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 public abstract sealed class AbstractGeneratedTypeBuilder<
-        T extends InterfaceArchetype.Builder<T>,
-        S extends EffectiveStatement<?, ?>> implements InterfaceArchetype.Builder<T>
+        T extends InterfaceArchetype.Builder,
+        S extends EffectiveStatement<?, ?>> implements InterfaceArchetype.Builder
         permits DataRootArchetype.Builder, LegacyArchetype.Builder {
     private final @NonNull JavaTypeName typeName;
     protected final @NonNull S statement;
