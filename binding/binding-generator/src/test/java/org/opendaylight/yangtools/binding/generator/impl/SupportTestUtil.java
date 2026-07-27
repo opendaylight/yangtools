@@ -27,7 +27,7 @@ final class SupportTestUtil {
         // Hidden on purpose
     }
 
-    static void containsMethods(final LegacyArchetype<?> genType, final NameTypePattern... searchedSignsWhat) {
+    static void containsMethods(final InterfaceArchetype genType, final NameTypePattern... searchedSignsWhat) {
         containsMethods(genType.getMethodDefinitions(), searchedSignsWhat);
     }
 

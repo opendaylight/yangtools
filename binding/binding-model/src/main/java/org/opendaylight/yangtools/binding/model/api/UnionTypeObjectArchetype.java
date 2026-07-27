@@ -58,4 +58,14 @@ public record UnionTypeObjectArchetype(
     public @Nullable TypeDefinition<?> getBaseType() {
         return null;
     }
+
+    @Override
+    public int hashCode() {
+        return TypeMethods.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        return TypeMethods.equals(this, obj);
+    }
 }

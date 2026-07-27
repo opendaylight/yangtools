@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
@@ -39,6 +40,16 @@ public sealed interface OpaqueObjectArchetype<S extends DataTreeEffectiveStateme
             requireNonNull(name);
             requireNonNull(statement);
         }
+
+        @Override
+        public int hashCode() {
+            return TypeMethods.hashCode(this);
+        }
+
+        @Override
+        public boolean equals(final @Nullable Object obj) {
+            return TypeMethods.equals(this, obj);
+        }
     }
 
     /**
@@ -55,6 +66,16 @@ public sealed interface OpaqueObjectArchetype<S extends DataTreeEffectiveStateme
         public Anyxml {
             requireNonNull(name);
             requireNonNull(statement);
+        }
+
+        @Override
+        public int hashCode() {
+            return TypeMethods.hashCode(this);
+        }
+
+        @Override
+        public boolean equals(final @Nullable Object obj) {
+            return TypeMethods.equals(this, obj);
         }
     }
 

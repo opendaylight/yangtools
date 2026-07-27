@@ -14,9 +14,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 @NonNullByDefault
-record DefaultRestrictedDecimal64Type(Decimal64Type type, Restrictions restrictions)
+record RestrictedDecimal64TypeImpl(Decimal64Type type, Restrictions restrictions)
         implements RestrictedDecimal64Type {
-    DefaultRestrictedDecimal64Type {
+    RestrictedDecimal64TypeImpl {
         requireNonNull(type);
         requireNonNull(restrictions);
     }
@@ -33,7 +33,7 @@ record DefaultRestrictedDecimal64Type(Decimal64Type type, Restrictions restricti
 
     @Override
     public RestrictedDecimal64Type withRestrictions(final Restrictions newRestrictions) {
-        return restrictions.equals(newRestrictions) ? this : new DefaultRestrictedDecimal64Type(this, newRestrictions);
+        return restrictions.equals(newRestrictions) ? this : new RestrictedDecimal64TypeImpl(this, newRestrictions);
     }
 
     @Override
@@ -42,13 +42,13 @@ record DefaultRestrictedDecimal64Type(Decimal64Type type, Restrictions restricti
     }
 
     @Override
-    public final int hashCode() {
-        return name().hashCode();
+    public int hashCode() {
+        return TypeMethods.hashCode(this);
     }
 
     @Override
-    public final boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof Type other && name().equals(other.name());
+    public boolean equals(final @Nullable Object obj) {
+        return TypeMethods.equals(this, obj);
     }
 
     @Override

@@ -14,6 +14,7 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.containsMethods;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -443,19 +444,23 @@ class UsesTest {
         final var genTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/uses-of-grouping/uses-of-grouping-augment.yang"));
 
-        LegacyArchetype<?> containerAugment1 = null;
+        AugmentationArchetype containerAugment1 = null;
         LegacyArchetype<?> groupingAugmentTest = null;
         int containerAugment1Counter = 0;
         int groupingAugmentTestCounter = 0;
 
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype<?> archetype) {
-                if (archetype.simpleName().equals("ContainerAugment1")) {
-                    containerAugment1 = archetype;
+            switch (genType.simpleName()) {
+                case "ContainerAugment1" -> {
+                    containerAugment1 = assertInstanceOf(AugmentationArchetype.class, genType);
                     containerAugment1Counter++;
-                } else if (archetype.simpleName().equals("GroupingAugmentTest")) {
-                    groupingAugmentTest = archetype;
+                }
+                case "GroupingAugmentTest" -> {
+                    groupingAugmentTest = (LegacyArchetype<?>) genType;
                     groupingAugmentTestCounter++;
+                }
+                default -> {
+                    // no-op
                 }
             }
         }

@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.common.Decimal64;
  * A {@link ConcreteType} representing {@link Decimal64}.
  */
 @NonNullByDefault
-public sealed interface Decimal64Type extends ConcreteType permits DefaultDecimal64Type, RestrictedDecimal64Type {
+public sealed interface Decimal64Type extends ConcreteType permits Decimal64TypeImpl, RestrictedDecimal64Type {
     @Override
     RestrictedDecimal64Type withRestrictions(Restrictions newRestrictions);
 
@@ -30,7 +30,7 @@ public sealed interface Decimal64Type extends ConcreteType permits DefaultDecima
      */
     static Decimal64Type ofFractionDigits(final int fractionDigits) {
         try {
-            return DefaultDecimal64Type.INSTANCES[fractionDigits - 1];
+            return Decimal64TypeImpl.INSTANCES[fractionDigits - 1];
         } catch (ArrayIndexOutOfBoundsException e) {
             throw new IllegalArgumentException("Invalid fractionDigits " + fractionDigits, e);
         }
