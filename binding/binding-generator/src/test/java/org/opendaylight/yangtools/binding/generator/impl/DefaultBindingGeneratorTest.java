@@ -23,6 +23,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
@@ -96,13 +97,14 @@ public class DefaultBindingGeneratorTest {
     @Test
     void generatedTypeForExtendedDefinitionTypeWithIdentityrefBaseType() {
         assertEquals(TypeRef.of(JavaTypeName.create(TEST_TYPE_PROVIDER, "Aes")),
-            assertGeneratedMethod(CONSTRUCTION_TYPE_TEST, "getAesIdentityrefType").getReturnType());
+            assertGeneratedMethod(CONSTRUCTION_TYPE_TEST, ContainerArchetype.class, "getAesIdentityrefType")
+                .getReturnType());
     }
 
     @Test
     void generatedTypeForExtendedDefinitionTypeWithLeafrefBaseType() {
         final var gto = assertInstanceOf(ScalarTypeObjectArchetype.class,
-            assertGeneratedMethod(CONSTRUCTION_TYPE_TEST, "getBarId").getReturnType());
+            assertGeneratedMethod(CONSTRUCTION_TYPE_TEST, ContainerArchetype.class, "getBarId").getReturnType());
         assertEquals(JavaTypeName.create(BASE_YANG_TYPES, "YangInt16"), gto.name());
     }
 
@@ -163,29 +165,32 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void javaTypeForSchemaDefinitionForExtUnionWithSimpleTypes() {
-        final var type = assertInstanceOf(UnionTypeObjectArchetype.class, assertGeneratedMethod(
-            JavaTypeName.create(TEST_TYPE_PROVIDER, "UseOfUnions"), "getSimpleIntTypesUnion").getReturnType());
+        final var type = assertInstanceOf(UnionTypeObjectArchetype.class,
+            assertGeneratedMethod(JavaTypeName.create(TEST_TYPE_PROVIDER, "UseOfUnions"), ContainerArchetype.class,
+                "getSimpleIntTypesUnion").getReturnType());
         assertEquals(JavaTypeName.create(BASE_YANG_TYPES, "YangUnion"), type.name());
     }
 
     @Test
     void javaTypeForSchemaDefinitionForExtUnionWithInnerUnionAndSimpleType() {
-        final var type = assertInstanceOf(UnionTypeObjectArchetype.class, assertGeneratedMethod(
-            JavaTypeName.create(TEST_TYPE_PROVIDER, "UseOfUnions"), "getComplexStringIntUnion").getReturnType());
+        final var type = assertInstanceOf(UnionTypeObjectArchetype.class,
+            assertGeneratedMethod(JavaTypeName.create(TEST_TYPE_PROVIDER, "UseOfUnions"), ContainerArchetype.class,
+                "getComplexStringIntUnion").getReturnType());
         assertEquals(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexStringIntUnion"), type.name());
     }
 
     @Test
     void javaTypeForSchemaDefinitionForExtComplexUnionWithInnerUnionTypes() {
         final var type = assertInstanceOf(UnionTypeObjectArchetype.class, assertGeneratedMethod(
-            JavaTypeName.create(TEST_TYPE_PROVIDER, "UseOfUnions"), "getComplexUnion").getReturnType());
+            JavaTypeName.create(TEST_TYPE_PROVIDER, "UseOfUnions"), ContainerArchetype.class, "getComplexUnion")
+                .getReturnType());
         assertEquals(JavaTypeName.create(TEST_TYPE_PROVIDER, "ComplexUnion"), type.name());
     }
 
     @Test
     void javaTypeForSchemaDefinitionIdentityrefExtType() {
         assertEquals(TypeRef.of(JavaTypeName.create(TEST_TYPE_PROVIDER, "CryptoAlg")),
-            assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getCrypto").getReturnType());
+            assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, ContainerArchetype.class, "getCrypto").getReturnType());
     }
 
     @Test
@@ -232,7 +237,8 @@ public class DefaultBindingGeneratorTest {
     @Test
     void javaTypeForSchemaDefinitionLeafrefExtType() {
         assertSame(assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8")),
-            assertGeneratedMethod(JavaTypeName.create(TEST_TYPE_PROVIDER, "Bar"), "getLeafrefValue").getReturnType());
+            assertGeneratedMethod(JavaTypeName.create(TEST_TYPE_PROVIDER, "Bar"), ContainerArchetype.class,
+                "getLeafrefValue").getReturnType());
         assertSame(assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt16")),
             assertGeneratedMethod(TEST_TYPE_PROVIDER_B_DATA, DataRootArchetype.class, "getId").getReturnType());
     }
@@ -252,14 +258,16 @@ public class DefaultBindingGeneratorTest {
         assertEquals("b", second.getKey().getName());
         assertEquals("B", second.getValue());
 
-        assertSame(type, assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getResolveEnumLeaf").getReturnType());
+        assertSame(type, assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, ContainerArchetype.class, "getResolveEnumLeaf")
+            .getReturnType());
     }
 
     @Test
     void javaTypeForSchemaDefinitionEnumExtTypeDirect() {
         // Note: this part of the test contained invalid assertion that the return would be java.lang.Enum
         final var type = assertInstanceOf(EnumTypeObjectArchetype.class,
-            assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getResolveDirectUseOfEnum").getReturnType());
+            assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, ContainerArchetype.class, "getResolveDirectUseOfEnum")
+                .getReturnType());
         assertEquals(TEST_TYPE_PROVIDER_FOO.createEnclosed("ResolveDirectUseOfEnum"), type.name());
 
         final var values = type.valueToConstant();
@@ -293,13 +301,16 @@ public class DefaultBindingGeneratorTest {
         assertEquals((byte) 100, constraint.upperEndpoint());
         assertFalse(it.hasNext());
 
-        assertSame(expected, assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getRestrictedInt8Type").getReturnType());
+        assertSame(expected,
+            assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, ContainerArchetype.class, "getRestrictedInt8Type")
+                .getReturnType());
     }
 
     @Test
     void javaTypeForSchemaDefinitionExtType() {
         final var expected = assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8"));
-        assertSame(expected, assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, "getYangInt8Type").getReturnType());
+        assertSame(expected,
+            assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, ContainerArchetype.class, "getYangInt8Type").getReturnType());
     }
 
     private static MethodSignature assertGeneratedMethod(final JavaTypeName typeName, final String methodName) {

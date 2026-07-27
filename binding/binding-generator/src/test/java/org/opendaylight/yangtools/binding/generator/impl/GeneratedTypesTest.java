@@ -14,6 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.assertEntryObject;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
@@ -36,13 +37,14 @@ class GeneratedTypesTest {
         assertNotNull(genTypes);
         assertEquals(3, genTypes.size());
 
-        var simpleContainer = (LegacyArchetype<?>) genTypes.get(1);
-        var nestedContainer = (LegacyArchetype<?>) genTypes.get(2);
+        // FIXME: pick one of the accesses
+        var simpleContainer = assertInstanceOf(ContainerArchetype.class, genTypes.get(1));
+        var nestedContainer = assertInstanceOf(ContainerArchetype.class, genTypes.get(2));
         for (var t : genTypes) {
             if ("SimpleContainer".equals(t.simpleName())) {
-                simpleContainer = assertInstanceOf(LegacyArchetype.class, t);
+                simpleContainer = assertInstanceOf(ContainerArchetype.class, t);
             } else if ("NestedContainer".equals(t.simpleName())) {
-                nestedContainer = assertInstanceOf(LegacyArchetype.class, t);
+                nestedContainer = assertInstanceOf(ContainerArchetype.class, t);
             }
         }
         assertNotNull(simpleContainer);
@@ -118,15 +120,17 @@ class GeneratedTypesTest {
         assertNotNull(genTypes);
         assertEquals(3, genTypes.size());
 
-        var simpleContainer = (LegacyArchetype<?>) genTypes.get(1);
-        var nestedContainer = (LegacyArchetype<?>) genTypes.get(2);
+        // FIXME: pick one of the accesses...
+        var simpleContainer = assertInstanceOf(ContainerArchetype.class, genTypes.get(1));
+        var nestedContainer = assertInstanceOf(ContainerArchetype.class, genTypes.get(2));
         for (var t : genTypes) {
             if ("SimpleContainer".equals(t.simpleName())) {
-                simpleContainer = assertInstanceOf(LegacyArchetype.class, t);
+                simpleContainer = assertInstanceOf(ContainerArchetype.class, t);
             } else if ("NestedContainer".equals(t.simpleName())) {
-                nestedContainer = assertInstanceOf(LegacyArchetype.class, t);
+                nestedContainer = assertInstanceOf(ContainerArchetype.class, t);
             }
         }
+
         assertNotNull(simpleContainer);
         assertNotNull(nestedContainer);
         // FIXME: split this into getter/default/static asserts
@@ -228,10 +232,19 @@ class GeneratedTypesTest {
                     assertEquals("Byte", properties.getFirst().getReturnType().simpleName());
                     assertTrue(properties.getFirst().isReadOnly());
                 }
+                case ContainerArchetype archetype -> {
+                    switch (archetype.simpleName()) {
+                        case "ListParentContainer" ->
+                            listParentContainerMethodsCount = archetype.getMethodDefinitions().size();
+                        case "ListChildContainer" ->
+                            listChildContainerMethodsCount = archetype.getMethodDefinitions().size();
+                        default -> {
+                            // no-op
+                        }
+                    }
+                }
                 case LegacyArchetype<?> archetype -> {
-                    if (archetype.simpleName().equals("ListParentContainer")) {
-                        listParentContainerMethodsCount = archetype.getMethodDefinitions().size();
-                    } else if (archetype.simpleName().equals("SimpleList")) {
+                    if (archetype.simpleName().equals("SimpleList")) {
                         assertEntryObject(archetype, JavaTypeName.create(
                             "org.opendaylight.yang.gen.v1.urn.simple.container.demo.rev130227.list.parent.container",
                             "SimpleListKey"));
@@ -261,8 +274,6 @@ class GeneratedTypesTest {
                                 default:
                             }
                         }
-                    } else if (archetype.simpleName().equals("ListChildContainer")) {
-                        listChildContainerMethodsCount = archetype.getMethodDefinitions().size();
                     }
                 }
                 default -> {

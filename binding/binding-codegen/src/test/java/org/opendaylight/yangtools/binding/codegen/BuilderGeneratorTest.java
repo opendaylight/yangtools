@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
+import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
@@ -183,7 +184,7 @@ public class BuilderGeneratorTest {
         final var bt = new BuilderTemplate.Builder(types.stream()
             .filter(t -> t.simpleName().equals("Nodes"))
             .findFirst()
-            .map(LegacyArchetype.class::cast)
+            .map(ContainerArchetype.class::cast)
             .orElseThrow())
             .build();
 

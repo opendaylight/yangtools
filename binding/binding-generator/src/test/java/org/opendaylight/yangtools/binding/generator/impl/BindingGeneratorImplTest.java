@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -35,20 +36,20 @@ class BindingGeneratorImplTest {
                 "/binding-generator-impl-test/choice-test.yang"));
 
         DataRootArchetype choiceTestData = null;
-        LegacyArchetype<?> myRootContainer = null;
+        ContainerArchetype myRootContainer = null;
         LegacyArchetype<?> myList = null;
-        LegacyArchetype<?> myContainer = null;
+        ContainerArchetype myContainer = null;
         LegacyArchetype<?> myList2 = null;
-        LegacyArchetype<?> myContainer2 = null;
+        ContainerArchetype myContainer2 = null;
 
         for (var type : generateTypes) {
             switch (type.simpleName()) {
                 case "ChoiceTestData" -> choiceTestData = assertInstanceOf(DataRootArchetype.class, type);
-                case "Myrootcontainer" -> myRootContainer = assertInstanceOf(LegacyArchetype.class, type);
+                case "Myrootcontainer" -> myRootContainer = assertInstanceOf(ContainerArchetype.class, type);
                 case "Mylist" -> myList = assertInstanceOf(LegacyArchetype.class, type);
                 case "Mylist2" -> myList2 = assertInstanceOf(LegacyArchetype.class, type);
-                case "Mycontainer" -> myContainer = assertInstanceOf(LegacyArchetype.class, type);
-                case "Mycontainer2" -> myContainer2 = assertInstanceOf(LegacyArchetype.class, type);
+                case "Mycontainer" -> myContainer = assertInstanceOf(ContainerArchetype.class, type);
+                case "Mycontainer2" -> myContainer2 = assertInstanceOf(ContainerArchetype.class, type);
                 default -> {
                     // ignore
                 }

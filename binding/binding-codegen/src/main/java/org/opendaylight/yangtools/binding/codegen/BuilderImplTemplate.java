@@ -21,9 +21,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
 import org.opendaylight.yangtools.binding.lib.AbstractDataContainer;
 import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
+import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 
 /**
@@ -179,7 +179,7 @@ final class BuilderImplTemplate extends BaseTemplate {
                 bb.cB();
 
                 // nonnullFoo() for structural containers
-                if (field.getReturnType() instanceof LegacyArchetype<?> fieldType
+                if (field.getReturnType() instanceof ContainerArchetype fieldType
                     && BuilderTemplate.isNonPresenceContainer(fieldType)) {
                     bb
                         .nl()

@@ -24,9 +24,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -135,7 +135,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
     @Test
     void testLeafrefWhichPointsBoolean() throws Exception {
         verifyReturnType(GroupingArchetype.class, UNRESOLVED_GROUPING, GET_LEAF1_NAME, Types.objectType());
-        verifyReturnType(LegacyArchetype.class, BOOLEAN_CONT, GET_LEAF1_NAME, Types.BOOLEAN);
+        verifyReturnType(ContainerArchetype.class, BOOLEAN_CONT, GET_LEAF1_NAME, Types.BOOLEAN);
 
         final String unresolvedGrouping = getFileContent(UNRESOLVED_GROUPING);
         final String booleanCont = getFileContent(BOOLEAN_CONT);
@@ -146,8 +146,8 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testGroupingsUsageWhereLeafrefAlreadyResolved() throws Exception {
-        leafList1AndLeaf1Absence(LegacyArchetype.class, BAR_CONT);
-        leafList1AndLeaf1Absence(LegacyArchetype.class, "BarLst");
+        leafList1AndLeaf1Absence(ContainerArchetype.class, BAR_CONT);
+        leafList1AndLeaf1Absence(ContainerArchetype.class, "BarLst");
         leafList1AndLeaf1Absence(GroupingArchetype.class, "BazGrp");
     }
 
