@@ -8,15 +8,20 @@
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.YangDataRuntimeType;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 
 public final class DefaultYangDataRuntimeType extends AbstractCompositeRuntimeType<YangDataEffectiveStatement>
         implements YangDataRuntimeType {
-    public DefaultYangDataRuntimeType(final Archetype bindingType, final YangDataEffectiveStatement statement,
+    public DefaultYangDataRuntimeType(final YangDataArchetype bindingType, final YangDataEffectiveStatement statement,
             final List<RuntimeType> children) {
         super(bindingType, statement, children);
+    }
+
+    @Override
+    public YangDataArchetype javaType() {
+        return (YangDataArchetype) super.javaType();
     }
 }

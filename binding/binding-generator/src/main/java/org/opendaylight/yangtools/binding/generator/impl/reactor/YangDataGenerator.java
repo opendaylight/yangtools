@@ -12,15 +12,12 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultYangDataRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.YangDataRuntimeType;
@@ -101,19 +98,11 @@ abstract sealed class YangDataGenerator
     }
 
     @Override
-    final LegacyArchetype<YangDataEffectiveStatement> createTypeImpl() {
-        final var typeName = typeName();
-        final var statement = statement();
-        final var builder = LegacyArchetype.builder(typeName, statement)
-            .addImplementsType(BindingTypes.yangData(TypeRef.of(typeName)));
-
+    final YangDataArchetype createTypeImpl() {
+        final var builder = YangDataArchetype.builder(typeName(), statement());
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
-
         addGetterMethods(builder);
-
-        builder.addConstant(BindingTypes.YANG_DATA_NAME, Naming.NAME_STATIC_FIELD_NAME, statement.argument());
-
         return builder.build();
     }
 
@@ -124,7 +113,7 @@ abstract sealed class YangDataGenerator
             @Override
             YangDataRuntimeType build(final Archetype type, final YangDataEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultYangDataRuntimeType(type, statement, children);
+                return new DefaultYangDataRuntimeType((YangDataArchetype) type, statement, children);
             }
         };
     }
