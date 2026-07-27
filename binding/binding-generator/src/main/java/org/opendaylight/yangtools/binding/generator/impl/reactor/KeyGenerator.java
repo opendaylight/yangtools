@@ -83,7 +83,7 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
     }
 
     @Override
-    void addAsGetterMethod(final InterfaceArchetype.Builder<?> builder) {
+    void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
         // Keys are explicitly handled by their corresponding list
     }
 }

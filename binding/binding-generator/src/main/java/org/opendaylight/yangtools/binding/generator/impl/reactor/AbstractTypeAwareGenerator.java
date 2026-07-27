@@ -66,7 +66,7 @@ abstract class AbstractTypeAwareGenerator<
     }
 
     @Override
-    final MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder<?> builder, final Type returnType) {
+    final MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder builder, final Type returnType) {
         final var ret = super.constructGetter(builder, returnType);
         if (contextType != null) {
             ret.addAnnotation(new RoutingContextAnnotation(contextType.getArchetype()));
@@ -75,7 +75,7 @@ abstract class AbstractTypeAwareGenerator<
     }
 
     @Override
-    final void constructRequire(final InterfaceArchetype.Builder<?> builder, final Type returnType) {
+    final void constructRequire(final InterfaceArchetype.Builder builder, final Type returnType) {
         constructRequireImpl(builder, returnType);
     }
 }

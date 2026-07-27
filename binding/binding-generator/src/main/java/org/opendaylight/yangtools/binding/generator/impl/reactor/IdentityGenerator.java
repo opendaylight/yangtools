@@ -82,7 +82,7 @@ public final class IdentityGenerator
     }
 
     @Override
-    void addAsGetterMethod(final InterfaceArchetype.Builder<?> builder) {
+    void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
         // identities are a separate concept
     }
 }

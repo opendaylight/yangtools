@@ -55,7 +55,7 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
     }
 
     @Override
-    void addAsGetterMethod(final InterfaceArchetype.Builder<?> builder) {
+    void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
         // features are a separate concept
     }
 }

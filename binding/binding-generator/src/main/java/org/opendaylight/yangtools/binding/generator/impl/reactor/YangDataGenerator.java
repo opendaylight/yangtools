@@ -130,7 +130,7 @@ abstract sealed class YangDataGenerator
     }
 
     @Override
-    final void addAsGetterMethod(final InterfaceArchetype.Builder<?> builder) {
+    final void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
         // is not a part of any structure
     }
 }

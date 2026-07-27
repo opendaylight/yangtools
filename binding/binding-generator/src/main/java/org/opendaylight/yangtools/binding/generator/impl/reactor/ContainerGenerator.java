@@ -72,7 +72,7 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     }
 
     @Override
-    MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder<?> builder, final Type returnType) {
+    MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder builder, final Type returnType) {
         final var ret = super.constructGetter(builder, returnType).setMechanics(ValueMechanics.NORMAL);
         final var statement = statement();
         if (statement.presenceStatement() == null) {

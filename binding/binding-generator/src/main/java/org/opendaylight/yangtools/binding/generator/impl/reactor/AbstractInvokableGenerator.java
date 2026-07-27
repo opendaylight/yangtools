@@ -32,7 +32,7 @@ abstract sealed class AbstractInvokableGenerator<
     }
 
     @Override
-    final void addAsGetterMethod(final InterfaceArchetype.Builder<?> builder) {
+    final void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
         // RPCs/Actions are a separate concept
     }
 

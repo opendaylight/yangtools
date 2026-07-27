@@ -485,7 +485,7 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     @Override
-    final void addAsGetterMethodOverride(final InterfaceArchetype.Builder<?> builder) {
+    final void addAsGetterMethodOverride(final InterfaceArchetype.Builder builder) {
         if (!(refType instanceof ResolvedLeafref)) {
             // We are not dealing with a leafref or have nothing to add
             return;

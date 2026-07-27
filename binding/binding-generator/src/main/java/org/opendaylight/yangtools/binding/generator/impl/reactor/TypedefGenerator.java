@@ -107,7 +107,7 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
     }
 
     @Override
-    void addAsGetterMethod(final InterfaceArchetype.Builder<?> builder) {
+    void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
         // typedefs are a separate concept
     }
 }

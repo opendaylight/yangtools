@@ -224,7 +224,7 @@ public abstract class Generator implements Iterable<Generator> {
         return helper;
     }
 
-    final void addImplementsChildOf(final InterfaceArchetype.Builder<?> builder) {
+    final void addImplementsChildOf(final InterfaceArchetype.Builder builder) {
         var ancestor = getParent();
         while (true) {
             // choice/case hierarchy does not factor into 'ChildOf' hierarchy, hence we need to skip them
@@ -253,7 +253,7 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder Target builder
      */
     @NonNullByDefault
-    static final void addConcreteInterfaceMethods(final InterfaceArchetype.Builder<?> builder) {
+    static final void addConcreteInterfaceMethods(final InterfaceArchetype.Builder builder) {
         defaultImplementedInterace(builder);
         builder.addImplementsType(ParameterizedType.of(BindingTypes.JAVA_DATACONTAINER, builder.typeRef()));
     }
@@ -264,16 +264,16 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder Target builder
      */
     @NonNullByDefault
-    static final void defaultImplementedInterace(final InterfaceArchetype.Builder<?> builder) {
+    static final void defaultImplementedInterace(final InterfaceArchetype.Builder builder) {
         defineImplementedInterfaceMethod(builder, builder.typeRef()).setDefault(true);
     }
 
     @NonNullByDefault
-    static final MethodSignature.Builder defineImplementedInterfaceMethod(
-            final InterfaceArchetype.Builder<?> typeBuilder, final Type classType) {
+    static final MethodSignature.Builder defineImplementedInterfaceMethod(final InterfaceArchetype.Builder typeBuilder,
+            final Type classType) {
         return typeBuilder
-                .addMethod(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME)
-                .setReturnType(classType(classType))
-                .addAnnotation(OverrideAnnotation.INSTANCE);
+            .addMethod(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME)
+            .setReturnType(classType(classType))
+            .addAnnotation(OverrideAnnotation.INSTANCE);
     }
 }

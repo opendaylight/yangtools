@@ -199,7 +199,7 @@ abstract class AbstractAugmentGenerator
     }
 
     @Override
-    final void addAsGetterMethod(final InterfaceArchetype.Builder<?> builder) {
+    final void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
         // Augments are never added as getters, as they are handled via Augmentable mechanics
     }
 
