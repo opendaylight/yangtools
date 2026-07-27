@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
+import org.opendaylight.yangtools.binding.model.api.CaseArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 
 /**
@@ -18,5 +18,5 @@ public interface CaseRuntimeType extends AugmentableRuntimeType, DataRuntimeType
     CaseEffectiveStatement statement();
 
     @Override
-    LegacyArchetype<CaseEffectiveStatement> javaType();
+    CaseArchetype javaType();
 }
