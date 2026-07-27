@@ -262,8 +262,8 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
         return property.getReturnType().isArray();
     }
 
-    static final @Nullable MethodSignature getterByName(final Collection<MethodSignature> methods,
-            final String implMethodName) {
+    static final @Nullable MethodSignature getterByName(final @NonNull Collection<@NonNull MethodSignature> methods,
+            final @NonNull String implMethodName) {
         for (var method : methods) {
             final var methodName = method.getName();
             if (Naming.isGetterMethodName(methodName) && isSameProperty(method.getName(), implMethodName)) {

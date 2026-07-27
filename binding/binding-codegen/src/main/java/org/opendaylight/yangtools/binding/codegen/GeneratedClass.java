@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.WildcardType;
@@ -221,8 +220,9 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     }
 
     private static void collectAccessibleTypes(final HashSet<String> set, final Archetype type) {
-        if (type instanceof LegacyArchetype<?> legacy) {
-            for (var impl : legacy.getImplements()) {
+        // FIXME: narrow down?
+        if (type instanceof InterfaceArchetype iface) {
+            for (var impl : iface.getImplements()) {
                 if (impl instanceof Archetype archetype) {
                     appendEnclosedTypes(set, archetype);
                     collectAccessibleTypes(set, archetype);

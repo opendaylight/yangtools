@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 
 /**
@@ -19,6 +20,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 public interface GroupingRuntimeType extends CompositeRuntimeType {
     @Override
     GroupingEffectiveStatement statement();
+
+    @Override
+    GroupingArchetype javaType();
 
     /**
      * Return the set of all concrete data tree instantiations of this {@code grouping}. This is necessary to completely

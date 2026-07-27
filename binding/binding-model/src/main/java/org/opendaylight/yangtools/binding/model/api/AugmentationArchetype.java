@@ -31,7 +31,7 @@ public sealed interface AugmentationArchetype extends InterfaceArchetype permits
                 final InterfaceArchetype target) {
             super(typeName, statement);
             this.target = requireNonNull(target);
-            // FIXME: do not add this and expose target from toString()
+            // FIXME: do not add this, expose target from toString() and make sure AugmentationTemplate generates it
             addImplementsType(BindingTypes.augmentation(target));
         }
 
