@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -20,7 +19,7 @@ record Decimal64TypeImpl(int fractionDigits) implements Decimal64Type {
     static final @NonNull Decimal64Type[] INSTANCES;
 
     static {
-        final var tmp = new Decimal64Type[18];
+        final var tmp = new @NonNull Decimal64Type[18];
         for (int i = 0; i < tmp.length; ++i) {
             tmp[i] = new Decimal64TypeImpl(i + 1);
         }
@@ -54,10 +53,7 @@ record Decimal64TypeImpl(int fractionDigits) implements Decimal64Type {
     }
 
     @Override
-    public final String toString() {
-        return MoreObjects.toStringHelper(ConcreteType.class)
-            .add("name", NAME)
-            .add("fractionDigits", fractionDigits)
-            .toString();
+    public String toString() {
+        return TypeMethods.toStringHelper(this).add("fractionDigits", fractionDigits).toString();
     }
 }

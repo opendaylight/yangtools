@@ -87,4 +87,15 @@ final class TypeMethods {
             helper.add(name, list);
         }
     }
+
+    /**
+     * Helper for implementations for {@link ConcreteType#toString()}.
+     *
+     * @param self the type
+     * @return a {@link ToStringHelper}
+     */
+    @NonNullByDefault
+    static ToStringHelper toStringHelper(final ConcreteType self) {
+        return MoreObjects.toStringHelper(ConcreteType.class).add("name", self.name());
+    }
 }
