@@ -16,6 +16,7 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -24,16 +25,16 @@ class UsesTest {
     void usesInGroupingDependenciesTest() {
         final var genTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/uses-of-grouping/uses-of-grouping-dependencies.yang"));
-        LegacyArchetype<?> groupingU = null;
-        LegacyArchetype<?> groupingX = null;
-        LegacyArchetype<?> groupingV = null;
+        GroupingArchetype groupingU = null;
+        GroupingArchetype groupingX = null;
+        GroupingArchetype groupingV = null;
 
         int groupingUCounter = 0;
         int groupingXCounter = 0;
         int groupingVCounter = 0;
 
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype<?> archetype) {
+            if (genType instanceof GroupingArchetype archetype) {
                 switch (archetype.simpleName()) {
                     case "GroupingU" -> {
                         groupingU = archetype;
@@ -81,24 +82,22 @@ class UsesTest {
         final var genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
                 "/uses-of-grouping/uses-of-grouping-case.yang"));
 
-        LegacyArchetype<?> groupingCaseTest = null;
+        GroupingArchetype groupingCaseTest = null;
         int groupingCaseTestCounter = 0;
         LegacyArchetype<?> caseC = null;
         int caseCCounter = 0;
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype<?> archetype) {
-                switch (archetype.simpleName()) {
-                    case "C" -> {
-                        caseC = archetype;
-                        caseCCounter++;
-                    }
-                    case "GroupingCaseTest" -> {
-                        groupingCaseTest = archetype;
-                        groupingCaseTestCounter++;
-                    }
-                    default -> {
-                        // no-op
-                    }
+            switch (genType.simpleName()) {
+                case "C" -> {
+                    caseC = (LegacyArchetype<?>) genType;
+                    caseCCounter++;
+                }
+                case "GroupingCaseTest" -> {
+                    groupingCaseTest = assertInstanceOf(GroupingArchetype.class, genType);
+                    groupingCaseTestCounter++;
+                }
+                default -> {
+                    // no-op
                 }
             }
         }
@@ -134,16 +133,20 @@ class UsesTest {
         int containerTestCount = 0;
         int groupingContainerTestCounter = 0;
         LegacyArchetype<?> containerTest = null;
-        LegacyArchetype<?> groupingContainerTest = null;
+        GroupingArchetype groupingContainerTest = null;
 
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype<?> archetype) {
-                if (archetype.simpleName().equals("GroupingContainerTest")) {
-                    groupingContainerTest = archetype;
+            switch (genType.simpleName()) {
+                case "GroupingContainerTest" -> {
+                    groupingContainerTest = assertInstanceOf(GroupingArchetype.class, genType);
                     groupingContainerTestCounter++;
-                } else if (archetype.simpleName().equals("ContainerTest")) {
-                    containerTest = archetype;
+                }
+                case "ContainerTest" -> {
+                    containerTest = (LegacyArchetype<?>) genType;
                     containerTestCount++;
+                }
+                default -> {
+                    // no-op
                 }
             }
         }
@@ -184,11 +187,11 @@ class UsesTest {
 
         int groupingTestCount = 0;
         int groupingGroupingTestCounter = 0;
-        LegacyArchetype<?> groupingTest = null;
-        LegacyArchetype<?> groupingGroupingTest = null;
+        GroupingArchetype groupingTest = null;
+        GroupingArchetype groupingGroupingTest = null;
 
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype<?> archetype) {
+            if (genType instanceof GroupingArchetype archetype) {
                 if (archetype.simpleName().equals("GroupingGroupingTest")) {
                     groupingGroupingTest = archetype;
                     groupingGroupingTestCounter++;
@@ -234,24 +237,30 @@ class UsesTest {
         int containerGroupingListTestCounter = 0;
         int listGroupingListTestCounter = 0;
         LegacyArchetype<?> listTest = null;
-        LegacyArchetype<?> groupingListTest = null;
+        GroupingArchetype groupingListTest = null;
         LegacyArchetype<?> containerGroupingListTest = null;
         LegacyArchetype<?> listGroupingListTest = null;
 
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype<?> archetype) {
-                if (archetype.simpleName().equals("GroupingListTest")) {
-                    groupingListTest = archetype;
+            switch (genType.simpleName()) {
+                case "GroupingListTest" -> {
+                    groupingListTest = assertInstanceOf(GroupingArchetype.class, genType);
                     groupingListTestCounter++;
-                } else if (archetype.simpleName().equals("ListTest")) {
-                    listTest = archetype;
+                }
+                case "ListTest" -> {
+                    listTest = (LegacyArchetype<?>) genType;
                     listTestCounter++;
-                } else if (archetype.simpleName().equals("ContainerGroupingListTest")) {
-                    containerGroupingListTest = archetype;
+                }
+                case "ContainerGroupingListTest" -> {
+                    containerGroupingListTest = (LegacyArchetype<?>) genType;
                     containerGroupingListTestCounter++;
-                } else if (archetype.simpleName().equals("ListGroupingListTest")) {
-                    listGroupingListTest = archetype;
+                }
+                case "ListGroupingListTest" -> {
+                    listGroupingListTest = (LegacyArchetype<?>) genType;
                     listGroupingListTestCounter++;
+                }
+                default -> {
+                    // no-op
                 }
             }
         }
@@ -308,13 +317,13 @@ class UsesTest {
 
         int groupingModulTestCounter = 0;
         int groupingUsesModulDataCounter = 0;
-        LegacyArchetype<?> groupingModulTest = null;
+        GroupingArchetype groupingModulTest = null;
         DataRootArchetype groupingUsesModulData = null;
 
         for (var genType : genTypes) {
             switch (genType.simpleName()) {
                 case "GroupingModulTest" -> {
-                    groupingModulTest = assertInstanceOf(LegacyArchetype.class, genType);
+                    groupingModulTest = assertInstanceOf(GroupingArchetype.class, genType);
                     groupingModulTestCounter++;
                 }
                 case "GroupingUsesModulData" -> {
@@ -363,27 +372,34 @@ class UsesTest {
         int containerGroupingRpcInputTestCounter = 0;
         LegacyArchetype<?> rpcTestInput = null;
         LegacyArchetype<?> rpcTestOutput = null;
-        LegacyArchetype<?> groupingRpcInputTest = null;
-        LegacyArchetype<?> groupingRpcOutputTest = null;
+        GroupingArchetype groupingRpcInputTest = null;
+        GroupingArchetype groupingRpcOutputTest = null;
         LegacyArchetype<?> containerGroupingRpcInputTest = null;
 
         for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype<?> archetype) {
-                if (archetype.simpleName().equals("RpcTestInput")) {
-                    rpcTestInput = archetype;
+            switch (genType.simpleName()) {
+                case "RpcTestInput" -> {
+                    rpcTestInput = (LegacyArchetype<?>) genType;
                     rpcTestInputCounter++;
-                } else if (archetype.simpleName().equals("RpcTestOutput")) {
-                    rpcTestOutput = archetype;
+                }
+                case "RpcTestOutput" -> {
+                    rpcTestOutput = (LegacyArchetype<?>) genType;
                     rpcTestOutputCounter++;
-                } else if (archetype.simpleName().equals("GroupingRpcInputTest")) {
-                    groupingRpcInputTest = archetype;
+                }
+                case "GroupingRpcInputTest" -> {
+                    groupingRpcInputTest = assertInstanceOf(GroupingArchetype.class, genType);
                     groupingRpcInputTestCounter++;
-                } else if (archetype.simpleName().equals("GroupingRpcOutputTest")) {
-                    groupingRpcOutputTest = archetype;
+                }
+                case "GroupingRpcOutputTest" -> {
+                    groupingRpcOutputTest = assertInstanceOf(GroupingArchetype.class, genType);
                     groupingRpcOutputTestCounter++;
-                } else if (archetype.simpleName().equals("ContainerGroupingRpcInputTest")) {
-                    containerGroupingRpcInputTest = archetype;
+                }
+                case "ContainerGroupingRpcInputTest" -> {
+                    containerGroupingRpcInputTest = (LegacyArchetype<?>) genType;
                     containerGroupingRpcInputTestCounter++;
+                }
+                default -> {
+                    // no-op
                 }
             }
         }
@@ -445,7 +461,7 @@ class UsesTest {
             YangParserTestUtils.parseYangResource("/uses-of-grouping/uses-of-grouping-augment.yang"));
 
         AugmentationArchetype containerAugment1 = null;
-        LegacyArchetype<?> groupingAugmentTest = null;
+        GroupingArchetype groupingAugmentTest = null;
         int containerAugment1Counter = 0;
         int groupingAugmentTestCounter = 0;
 
@@ -456,7 +472,7 @@ class UsesTest {
                     containerAugment1Counter++;
                 }
                 case "GroupingAugmentTest" -> {
-                    groupingAugmentTest = (LegacyArchetype<?>) genType;
+                    groupingAugmentTest = assertInstanceOf(GroupingArchetype.class, genType);
                     groupingAugmentTestCounter++;
                 }
                 default -> {
@@ -495,23 +511,28 @@ class UsesTest {
             YangParserTestUtils.parseYangResource("/uses-of-grouping/uses-of-grouping-notification.yang"));
 
         LegacyArchetype<?> notificationTest = null;
-        LegacyArchetype<?> groupingNotificationTest = null;
+        GroupingArchetype groupingNotificationTest = null;
         LegacyArchetype<?> containerGroupingNotificationTest = null;
         int notificationTestCounter = 0;
         int groupingNotificationTestCounter = 0;
         int containerGroupingNotificationTestCounter = 0;
 
         for (var type : genTypes) {
-            if (type instanceof LegacyArchetype<?> archetype) {
-                if (archetype.simpleName().equals("NotificationTest")) {
-                    notificationTest = archetype;
+            switch (type.simpleName()) {
+                case "NotificationTest" -> {
+                    notificationTest = (LegacyArchetype<?>) type;
                     notificationTestCounter++;
-                } else if (archetype.simpleName().equals("GroupingNotificationTest")) {
-                    groupingNotificationTest = archetype;
+                }
+                case "GroupingNotificationTest" -> {
+                    groupingNotificationTest = assertInstanceOf(GroupingArchetype.class, type);
                     groupingNotificationTestCounter++;
-                } else if (archetype.simpleName().equals("ContainerGroupingNotificationTest")) {
-                    containerGroupingNotificationTest = archetype;
+                }
+                case "ContainerGroupingNotificationTest" -> {
+                    containerGroupingNotificationTest = (LegacyArchetype<?>) type;
                     containerGroupingNotificationTestCounter++;
+                }
+                default -> {
+                    // no-op
                 }
             }
         }

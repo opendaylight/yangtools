@@ -41,9 +41,9 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -226,13 +226,13 @@ final class BuilderTemplate extends BaseTemplate {
         final var bb = newBlockBuilder().nl();
         boolean first = true;
         for (var impl : targetType.getImplements()) {
-            if (impl instanceof LegacyArchetype<?> genType) {
+            if (impl instanceof GroupingArchetype grouping) {
                 if (first) {
                     first = false;
                 } else {
                     bb.newLine();
                 }
-                bb.blk(generateConstructorFromIfc(genType));
+                bb.blk(generateConstructorFromIfc(grouping));
             }
         }
         return bb;
@@ -241,10 +241,10 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Generate constructor with argument of given type.
      */
-    private @NonNull BlockBuilder generateConstructorFromIfc(final @NonNull LegacyArchetype<?> genType) {
+    private @NonNull BlockBuilder generateConstructorFromIfc(final @NonNull GroupingArchetype archetype) {
         final var bb = newBlockBuilder();
-        if (hasNonDefaultMethods(genType)) {
-            final var typeName = importedName(genType);
+        if (hasNonDefaultMethods(archetype)) {
+            final var typeName = importedName(archetype);
             bb
                 .eol("/**")
                 .str(" * Construct a new builder initialized from specified {@link ").str(typeName).eol("}.")
@@ -252,39 +252,36 @@ final class BuilderTemplate extends BaseTemplate {
                 .str(" * @param arg ").str(typeName).eol(" from which the builder should be initialized")
                 .eol(" */")
                 .str("public ").str(simpleName()).str("(").str(typeName).str(" arg)").oB()
-                    .blk(printConstructorPropertySetter(genType))
+                    .blk(printConstructorPropertySetter(archetype))
                 .cB()
                 .newLine();
         }
-        for (var implTypeImplement : genType.getImplements()) {
-            if (implTypeImplement instanceof LegacyArchetype<?> implType) {
-                bb.blk(generateConstructorFromIfc(implType));
+        for (var implTypeImplement : archetype.getImplements()) {
+            if (implTypeImplement instanceof GroupingArchetype grouping) {
+                bb.blk(generateConstructorFromIfc(grouping));
             }
         }
         return bb;
     }
 
-    private @Nullable BlockBuilder printConstructorPropertySetter(final Type implementedIfc) {
-        if (!(implementedIfc instanceof LegacyArchetype<?> ifc)) {
-            return null;
-        }
-
+    @NonNullByDefault
+    private BlockBuilder printConstructorPropertySetter(final GroupingArchetype grouping) {
         final var bb = newBlockBuilder();
-        for (var getter : nonDefaultMethods(ifc)) {
+        for (var getter : nonDefaultMethods(grouping)) {
             if (isGetterMethodName(getter.getName())) {
                 bb.eol(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
             }
         }
 
-        for (var impl : ifc.getImplements()) {
-            bb.blk(printConstructorPropertySetter(impl, getSpecifiedGetters(ifc)));
+        for (var impl : grouping.getImplements()) {
+            bb.blk(printConstructorPropertySetter(impl, getSpecifiedGetters(grouping)));
         }
         return bb;
     }
 
     private @Nullable BlockBuilder printConstructorPropertySetter(final Type implementedIfc,
             final Set<MethodSignature> alreadySetProperties) {
-        if (!(implementedIfc instanceof LegacyArchetype<?> ifc)) {
+        if (!(implementedIfc instanceof GroupingArchetype ifc)) {
             return null;
         }
 
@@ -302,8 +299,8 @@ final class BuilderTemplate extends BaseTemplate {
         return bb;
     }
 
-    private static Set<MethodSignature> getSpecifiedGetters(final LegacyArchetype<?> type) {
-        return type.getMethodDefinitions().stream()
+    private static Set<MethodSignature> getSpecifiedGetters(final GroupingArchetype grouping) {
+        return grouping.getMethodDefinitions().stream()
             .filter(JavaFileTemplate::hasOverrideAnnotation)
             .collect(ImmutableSet.toImmutableSet());
     }
@@ -416,27 +413,24 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Method is used to find out if given type implements any interface from uses.
      */
+    @NonNullByDefault
     private boolean hasImplementsFromUses(final InterfaceArchetype type) {
-        return getAllIfcs(type).stream()
-            .anyMatch(impl -> impl instanceof LegacyArchetype<?> genType && hasNonDefaultMethods(genType));
+        return getAllIfcs(type).stream().anyMatch(BuilderTemplate::hasNonDefaultMethods);
     }
 
-    private @Nullable BlockBuilder generateIfCheck(final Type impl, final List<Type> done) {
-        return !(impl instanceof InterfaceArchetype archetype) || !hasNonDefaultMethods(archetype) ? null
-            : newBlockBuilder()
-                .str("if (arg instanceof ").str(importedName(archetype)).str(" castArg)").oB()
-                    .blk(printPropertySetter(archetype))
-                    .eol("isValidArg = true;")
-                .cB();
+    private @Nullable BlockBuilder generateIfCheck(final @NonNull GroupingArchetype grouping,
+            final List<GroupingArchetype> done) {
+        return !hasNonDefaultMethods(grouping) ? null : newBlockBuilder()
+            .str("if (arg instanceof ").str(importedName(grouping)).str(" castArg)").oB()
+                .blk(printPropertySetter(grouping))
+                .eol("isValidArg = true;")
+            .cB();
     }
 
-    private @Nullable BlockBuilder printPropertySetter(final Type implementedIfc) {
-        if (!(implementedIfc instanceof LegacyArchetype<?> ifc)) {
-            return null;
-        }
-
+    @NonNullByDefault
+    private BlockBuilder printPropertySetter(final GroupingArchetype implementedIfc) {
         final var bb = newBlockBuilder();
-        for (var getter : nonDefaultMethods(ifc)) {
+        for (var getter : nonDefaultMethods(implementedIfc)) {
             if (isGetterMethodName(getter.getName()) && !hasOverrideAnnotation(getter)) {
                 bb.eol(printPropertySetter(getter, "castArg", propertyNameFromGetter(getter)));
             }
@@ -486,14 +480,15 @@ final class BuilderTemplate extends BaseTemplate {
         return getter;
     }
 
-    private static @Nullable MethodSignature getterByName(final InterfaceArchetype implType, final String getterName) {
+    private static @Nullable MethodSignature getterByName(final @NonNull InterfaceArchetype implType,
+            final @NonNull String getterName) {
         final var getter = getterByName(nonDefaultMethods(implType), getterName);
         if (getter != null) {
             return getter;
         }
         for (var ifc : implType.getImplements()) {
-            if (ifc instanceof LegacyArchetype<?> genInterface) {
-                final var getterImpl = getterByName(genInterface, getterName);
+            if (ifc instanceof GroupingArchetype grouping) {
+                final var getterImpl = getterByName(grouping, getterName);
                 if (getterImpl != null) {
                     return getterImpl;
                 }
@@ -514,25 +509,26 @@ final class BuilderTemplate extends BaseTemplate {
         return !(type2 instanceof ParameterizedType);
     }
 
-    private static List<Type> getBaseIfcs(final InterfaceArchetype type) {
-        final var baseIfcs = new ArrayList<Type>();
+    private static List<GroupingArchetype> getBaseIfcs(final InterfaceArchetype type) {
+        final var baseIfcs = new ArrayList<GroupingArchetype>();
         for (var ifc : type.getImplements()) {
-            if (ifc instanceof LegacyArchetype<?> genType && hasNonDefaultMethods(genType)) {
-                baseIfcs.add(genType);
+            if (ifc instanceof GroupingArchetype grouping && hasNonDefaultMethods(grouping)) {
+                baseIfcs.add(grouping);
             }
         }
         return baseIfcs;
     }
 
-    private Set<Type> getAllIfcs(final Type type) {
+    @NonNullByDefault
+    private Set<GroupingArchetype> getAllIfcs(final Type type) {
         if (!(type instanceof InterfaceArchetype ifc)) {
             return Set.of();
         }
 
-        final var baseIfcs = new HashSet<Type>();
+        final var baseIfcs = new HashSet<GroupingArchetype>();
         for (var impl : ifc.getImplements()) {
-            if (impl instanceof LegacyArchetype<?> genType && hasNonDefaultMethods(genType)) {
-                baseIfcs.add(genType);
+            if (impl instanceof GroupingArchetype gruuping && hasNonDefaultMethods(gruuping)) {
+                baseIfcs.add(gruuping);
             }
             baseIfcs.addAll(getAllIfcs(impl));
         }

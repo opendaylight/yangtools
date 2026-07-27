@@ -15,9 +15,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultGroupingRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.GroupingRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -69,13 +68,11 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
     }
 
     @Override
-    LegacyArchetype<GroupingEffectiveStatement> createTypeImpl() {
+    GroupingArchetype createTypeImpl() {
         final var statement = statement();
-        final var builder = LegacyArchetype.builder(typeName(), statement)
-            .addImplementsType(BindingTypes.GROUPING);
+        final var builder = GroupingArchetype.builder(typeName(), statement);
         addUsesInterfaces(builder);
         addGetterMethods(builder);
-
         return builder.addAnnotation(deprecatedAnnotation(statement)).build();
     }
 
@@ -103,7 +100,7 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
                 // Groupings cannot be targeted by 'augment'
                 if (augments.isEmpty()) {
-                    return new DefaultGroupingRuntimeType(type, statement, children, vectors);
+                    return new DefaultGroupingRuntimeType((GroupingArchetype) type, statement, children, vectors);
                 }
                 throw new VerifyException("Unexpected augments " + augments);
             }
