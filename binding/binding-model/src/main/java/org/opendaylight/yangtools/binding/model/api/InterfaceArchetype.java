@@ -12,7 +12,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTypeBuilder;
+import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
  * An {@link Archetype} which results in an interface with zero or more methods.
@@ -28,7 +28,7 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
      * @since 16.0.0
      */
     @Beta
-    sealed interface Builder permits AbstractGeneratedTypeBuilder {
+    sealed interface Builder extends Mutable permits InterfaceArchetypeBuilder {
         /**
          * {@return the name of the type this builder produces}
          */
@@ -39,9 +39,7 @@ public sealed interface InterfaceArchetype extends Archetype permits DataRootArc
          * {@return a {@link TypeRef} to the type this builder produces}
          */
         @NonNullByDefault
-        default TypeRef typeRef() {
-            return TypeRef.of(typeName());
-        }
+        TypeRef typeRef();
 
         /**
          * Add an {@link AttachedAnnotation.ToType} to this builder.

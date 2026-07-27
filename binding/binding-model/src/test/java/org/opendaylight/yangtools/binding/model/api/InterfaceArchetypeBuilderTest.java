@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.ri.generated.type.builder;
+package org.opendaylight.yangtools.binding.model.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -19,17 +19,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.opendaylight.yangtools.binding.model.api.Constant;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
-import org.opendaylight.yangtools.binding.model.api.Restrictions;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 @ExtendWith(MockitoExtension.class)
-class GeneratedTypeBuilderTest {
+class InterfaceArchetypeBuilderTest {
     @Mock
     private EffectiveStatement<?, ?> statement;
 
@@ -101,28 +95,6 @@ class GeneratedTypeBuilderTest {
         final var builder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(IllegalArgumentException.class,
             () -> builder.addConstant((Type) null, "myConstantName", "myConstantValue"));
-    }
-
-    @Test
-    void generatedTypeBuilderEqualsAndHashCodeTest() {
-        final var generatedTypeBuilder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"),
-            statement);
-        final var generatedTypeBuilder2 = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"),
-            statement);
-        final var generatedTypeBuilder3 = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName2"),
-            statement);
-        final var generatedTypeBuilder4 = LegacyArchetype.builder(JavaTypeName.create("my.package2", "MyName"),
-            statement);
-
-        assertFalse(generatedTypeBuilder.equals(null));
-        assertFalse(generatedTypeBuilder.equals(new Object()));
-        assertTrue(generatedTypeBuilder.equals(generatedTypeBuilder));
-        assertTrue(generatedTypeBuilder.equals(generatedTypeBuilder2));
-
-        assertEquals(generatedTypeBuilder.hashCode(), generatedTypeBuilder.hashCode());
-        assertEquals(generatedTypeBuilder.hashCode(), generatedTypeBuilder2.hashCode());
-        assertNotEquals(generatedTypeBuilder.hashCode(), generatedTypeBuilder3.hashCode());
-        assertNotEquals(generatedTypeBuilder.hashCode(), generatedTypeBuilder4.hashCode());
     }
 
     @Test

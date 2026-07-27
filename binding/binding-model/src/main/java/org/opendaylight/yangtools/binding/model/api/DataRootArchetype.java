@@ -13,7 +13,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.AbstractGeneratedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
@@ -29,7 +28,7 @@ public non-sealed interface DataRootArchetype extends InterfaceArchetype {
      */
     @Beta
     @NonNullByDefault
-    final class Builder extends AbstractGeneratedTypeBuilder<Builder, ModuleEffectiveStatement> {
+    final class Builder extends InterfaceArchetypeBuilder<Builder, ModuleEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final ModuleEffectiveStatement statement) {
             super(typeName, statement);
             addImplementsType(BindingTypes.dataRoot(TypeRef.of(typeName)));
@@ -37,12 +36,17 @@ public non-sealed interface DataRootArchetype extends InterfaceArchetype {
 
         @Override
         public DataRootArchetype build() {
-            return new DataRootArchetypeImpl(typeName(), statement, getImplementsTypes(), getMethodDefinitions(),
-                getEnclosedTypes());
+            return new DataRootArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
+                enclosedTypes());
         }
 
         @Override
-        protected Builder thisInstance() {
+        Class<DataRootArchetype> archetypeClass() {
+            return DataRootArchetype.class;
+        }
+
+        @Override
+        Builder thisInstance() {
             return this;
         }
     }
