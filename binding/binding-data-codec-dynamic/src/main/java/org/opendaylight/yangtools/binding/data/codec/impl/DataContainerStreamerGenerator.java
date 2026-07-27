@@ -60,7 +60,6 @@ import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader.ClassGenerator;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader.GeneratorResult;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
@@ -371,8 +370,9 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
             hashMap.put(definition.getName(), definition.getReturnType());
         }
         for (var parent : type.getImplements()) {
-            if (parent instanceof LegacyArchetype<?> generated) {
-                collectAllProperties(generated, hashMap);
+            // FIXME: narrow down?
+            if (parent instanceof InterfaceArchetype implemented) {
+                collectAllProperties(implemented, hashMap);
             }
         }
     }

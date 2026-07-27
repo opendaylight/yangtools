@@ -20,7 +20,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -74,7 +73,8 @@ record TypeAnalysis(
                         augmentType = BindingTypes.augmentation(augmentableType);
                     }
                 }
-                case LegacyArchetype<?> ifc -> {
+                // FIXME: narrow down?
+                case InterfaceArchetype ifc -> {
                     for (var implMethod : ifc.getMethodDefinitions()) {
                         if (JavaFileTemplate.hasOverrideAnnotation(implMethod)) {
                             methods.add(implMethod);

@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -102,6 +103,7 @@ final class BindingJavaFileGenerator {
                 }
                 case ChoiceInArchetype archetype -> generateFile(new ChoiceInTemplate.Builder(archetype, root));
                 case FeatureArchetype archetype -> generateFile(new FeatureTemplate.Builder(archetype, root));
+                case GroupingArchetype archetype -> generateFile(new GroupingTemplate.Builder(archetype, root));
                 case IdentityArchetype archetype -> generateFile(new IdentityTemplate.Builder(archetype, root));
                 case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype, root));
                 case OpaqueObjectArchetype<?> archetype ->
