@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
+import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 
 /**
@@ -15,4 +16,7 @@ import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 public interface YangDataRuntimeType extends CompositeRuntimeType {
     @Override
     YangDataEffectiveStatement statement();
+
+    @Override
+    YangDataArchetype javaType();
 }
