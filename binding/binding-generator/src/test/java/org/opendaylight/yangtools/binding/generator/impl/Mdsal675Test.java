@@ -21,6 +21,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype.Anydata;
@@ -87,38 +89,38 @@ class Mdsal675Test {
         // yang-data > uses > group > container
         assertYangDataGenType(
                 assertGenType(genTypesMap, PACKAGE + "YangDataWithContainerFromGroup"),
-                assertGenType(genTypesMap, PACKAGE + "GrpForContainer"),
+                assertGrouping(genTypesMap, PACKAGE + "GrpForContainer"),
                 assertGenType(genTypesMap, PACKAGE + "grp._for.container.ContainerFromGroup"),
                 List.of("getContainerFromGroup", "nonnullContainerFromGroup"));
         // yang-data > uses > group > list
         assertYangDataGenType(
                 assertGenType(genTypesMap, PACKAGE + "YangDataWithListFromGroup"),
-                assertGenType(genTypesMap, PACKAGE + "GrpForList"),
+                assertGrouping(genTypesMap, PACKAGE + "GrpForList"),
                 Types.listTypeFor(assertGenType(genTypesMap, PACKAGE + "grp._for.list.ListFromGroup")),
                 List.of("getListFromGroup", "nonnullListFromGroup")
         );
         // yang-data > uses > group > leaf
         assertYangDataGenType(
                 assertGenType(genTypesMap, PACKAGE + "YangDataWithLeafFromGroup"),
-                assertGenType(genTypesMap, PACKAGE + "GrpForLeaf"),
+                assertGrouping(genTypesMap, PACKAGE + "GrpForLeaf"),
                 BaseYangTypes.UINT32_TYPE,
                 List.of("getLeafFromGroup", "requireLeafFromGroup"));
         // yang-data > uses > group > leaf-list
         assertYangDataGenType(
                 assertGenType(genTypesMap, PACKAGE + "YangDataWithLeafListFromGroup"),
-                assertGenType(genTypesMap, PACKAGE + "GrpForLeafList"),
+                assertGrouping(genTypesMap, PACKAGE + "GrpForLeafList"),
                 Types.setTypeFor(BaseYangTypes.UINT32_TYPE),
                 List.of("getLeafListFromGroup", "requireLeafListFromGroup"));
         // yang-data > uses > group > anydata
         assertYangDataGenType(
                 assertGenType(genTypesMap, PACKAGE + "YangDataWithAnydataFromGroup"),
-                assertGenType(genTypesMap, PACKAGE + "GrpForAnydata"),
+                assertGrouping(genTypesMap, PACKAGE + "GrpForAnydata"),
                 assertAnydata(genTypesMap, PACKAGE + "grp._for.anydata.AnydataFromGroup"),
                 List.of("getAnydataFromGroup", "requireAnydataFromGroup"));
         // yang-data > uses > group > anyxml
         assertYangDataGenType(
                 assertGenType(genTypesMap, PACKAGE + "YangDataWithAnyxmlFromGroup"),
-                assertGenType(genTypesMap, PACKAGE + "GrpForAnyxml"),
+                assertGrouping(genTypesMap, PACKAGE + "GrpForAnyxml"),
                 assertAnyxml(genTypesMap, PACKAGE + "grp._for.anyxml.AnyxmlFromGroup"),
                 List.of("getAnyxmlFromGroup", "requireAnyxmlFromGroup"));
 
@@ -188,6 +190,10 @@ class Mdsal675Test {
         return assertArchetype(genTypesMap, className, LegacyArchetype.class);
     }
 
+    private static GroupingArchetype assertGrouping(final Map<String, Archetype> genTypesMap, final String className) {
+        return assertArchetype(genTypesMap, className, GroupingArchetype.class);
+    }
+
     private static <T extends Archetype> @NonNull T assertArchetype(final Map<String, Archetype> genTypesMap,
             final String className, final Class<T> clazz) {
         final var ret = genTypesMap.get(className);
@@ -204,7 +210,7 @@ class Mdsal675Test {
         }
     }
 
-    private static void assertYangDataGenType(final LegacyArchetype<?> yangDataType, final LegacyArchetype<?> groupType,
+    private static void assertYangDataGenType(final LegacyArchetype<?> yangDataType, final GroupingArchetype groupType,
             final Type contentType, final List<String> getterMethods) {
         assertImplements(yangDataType, BindingTypes.yangData(yangDataType));
         assertImplements(yangDataType, groupType);
@@ -214,7 +220,7 @@ class Mdsal675Test {
         }
     }
 
-    private static void assertHasMethod(final LegacyArchetype<?> genType, final String methodName,
+    private static void assertHasMethod(final InterfaceArchetype genType, final String methodName,
             final Type returnType) {
         assertThat(genType.getMethodDefinitions())
             .anyMatch(method -> methodName.equals(method.getName()) && returnType.equals(method.getReturnType()));

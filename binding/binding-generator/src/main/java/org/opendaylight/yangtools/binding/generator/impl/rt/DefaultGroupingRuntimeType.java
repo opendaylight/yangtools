@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.GroupingRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -22,7 +22,7 @@ public final class DefaultGroupingRuntimeType extends AbstractCompositeRuntimeTy
         implements GroupingRuntimeType {
     private final @Nullable Object directUsers;
 
-    public DefaultGroupingRuntimeType(final Archetype bindingType, final GroupingEffectiveStatement statement,
+    public DefaultGroupingRuntimeType(final GroupingArchetype bindingType, final GroupingEffectiveStatement statement,
             final List<RuntimeType> children, final List<? extends CompositeRuntimeType> directUsers) {
         super(bindingType, statement, children);
         this.directUsers = switch (directUsers.size()) {
@@ -30,6 +30,11 @@ public final class DefaultGroupingRuntimeType extends AbstractCompositeRuntimeTy
             case 1 -> Objects.requireNonNull(directUsers.getFirst());
             default -> directUsers.stream().map(Objects::requireNonNull).toArray(CompositeRuntimeType[]::new);
         };
+    }
+
+    @Override
+    public GroupingArchetype javaType() {
+        return (GroupingArchetype) super.javaType();
     }
 
     @Override
