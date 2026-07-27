@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.LegacyArchetypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.KeyRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
@@ -60,7 +59,7 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
     @Override
     LegacyArchetype<ListEffectiveStatement> createTypeImpl() {
         final var statement = statement();
-        final var builder = new LegacyArchetypeBuilder<>(typeName(), statement);
+        final var builder = LegacyArchetype.builder(typeName(), statement);
         addImplementsChildOf(builder);
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);

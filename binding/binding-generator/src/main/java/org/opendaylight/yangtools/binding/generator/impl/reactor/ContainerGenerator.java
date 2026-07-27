@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.LegacyArchetypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -47,7 +46,7 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     @Override
     LegacyArchetype<ContainerEffectiveStatement> createTypeImpl() {
         final var statement = statement();
-        final var builder = new LegacyArchetypeBuilder<>(typeName(), statement);
+        final var builder = LegacyArchetype.builder(typeName(), statement);
         addImplementsChildOf(builder);
         addAugmentable(builder);
         addUsesInterfaces(builder);

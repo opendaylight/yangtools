@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
@@ -32,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 public abstract sealed class AbstractGeneratedTypeBuilder<
         T extends GeneratedTypeBuilderBase<T>,
         S extends EffectiveStatement<?, ?>> implements GeneratedTypeBuilderBase<T>
-        permits LegacyArchetypeBuilder, DataRootArchetypeBuilder {
+        permits LegacyArchetype.Builder, DataRootArchetypeBuilder {
     private final @NonNull JavaTypeName typeName;
     protected final @NonNull S statement;
 
@@ -43,7 +44,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     private List<Archetype> enclosedTypes = List.of();
 
     @NonNullByDefault
-    AbstractGeneratedTypeBuilder(final JavaTypeName typeName, final S statement) {
+    protected AbstractGeneratedTypeBuilder(final JavaTypeName typeName, final S statement) {
         this.typeName = requireNonNull(typeName);
         this.statement = requireNonNull(statement);
     }
@@ -60,7 +61,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     }
 
     @NonNullByDefault
-    final List<AttachedAnnotation.ToType> getAnnotations() {
+    protected final List<AttachedAnnotation.ToType> getAnnotations() {
         final var local = annotations;
         if (local == null) {
             return List.of();
@@ -69,7 +70,7 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     }
 
     @NonNullByDefault
-    final List<Type> getImplementsTypes() {
+    protected final List<Type> getImplementsTypes() {
         return switch (implementsTypes.size()) {
             case 0 -> List.of();
             case 1 -> Collections.singletonList(implementsTypes.getFirst());
@@ -78,17 +79,16 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
     }
 
     @NonNullByDefault
-    final List<Constant> getConstants() {
+    protected final List<Constant> getConstants() {
         return switch (constants.size()) {
             case 0 -> List.of();
             case 1 -> Collections.singletonList(constants.getFirst());
-            case 2 -> List.of(constants.getFirst(), constants.getLast());
             default -> List.copyOf(constants);
         };
     }
 
     @NonNullByDefault
-    final List<MethodSignature> getMethodDefinitions() {
+    protected final List<MethodSignature> getMethodDefinitions() {
         final var size = methodDefinitions.size();
         return switch (size) {
             case 0 -> List.of();
@@ -104,8 +104,13 @@ public abstract sealed class AbstractGeneratedTypeBuilder<
         };
     }
 
+    @NonNullByDefault
     protected final List<Archetype> getEnclosedTypes() {
-        return enclosedTypes;
+        return switch (enclosedTypes.size()) {
+            case 0 -> List.of();
+            case 1 -> Collections.singletonList(enclosedTypes.getFirst());
+            default -> List.copyOf(enclosedTypes);
+        };
     }
 
     protected abstract @NonNull T thisInstance();

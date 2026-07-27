@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultCaseRuntimeTy
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.LegacyArchetypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -63,7 +62,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
         // must not request parent's type. That is not true for choice->case relationship and hence we do not need to
         // go through DefaultType here
         final var statement = statement();
-        final var builder = new LegacyArchetypeBuilder<>(typeName(), statement)
+        final var builder = LegacyArchetype.builder(typeName(), statement)
             // Note: this needs to be the first type we mention as we are relying on that fact for global runtime type
             //       choice/case indexing.
             .addImplementsType(choice.getArchetype())

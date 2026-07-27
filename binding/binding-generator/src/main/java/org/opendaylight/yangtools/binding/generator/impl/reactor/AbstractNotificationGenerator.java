@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilderBase;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.LegacyArchetypeBuilder;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -54,7 +53,7 @@ abstract class AbstractNotificationGenerator
     final LegacyArchetype<NotificationEffectiveStatement> createTypeImpl() {
         final var typeName = typeName();
         final var statement = statement();
-        final var builder = new LegacyArchetypeBuilder<>(typeName, statement)
+        final var builder = LegacyArchetype.builder(typeName, statement)
             .addImplementsType(BindingTypes.DATA_OBJECT)
             .addImplementsType(notificationType(TypeRef.of(typeName)));
 

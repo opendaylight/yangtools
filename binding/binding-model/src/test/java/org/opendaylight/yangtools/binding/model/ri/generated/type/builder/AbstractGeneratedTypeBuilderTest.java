@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.FunctionalInterfaceAnnotation;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -26,11 +27,11 @@ class AbstractGeneratedTypeBuilderTest {
     @Mock
     private EffectiveStatement<?, ?> statement;
 
-    private LegacyArchetypeBuilder<?> builder;
+    private LegacyArchetype.Builder<?> builder;
 
     @BeforeEach
     void beforeEach() {
-        builder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
+        builder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
     }
 
     @Test

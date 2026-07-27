@@ -16,7 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.ri.Types;
-import org.opendaylight.yangtools.binding.model.ri.generated.type.builder.LegacyArchetypeBuilder;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 @ExtendWith(MockitoExtension.class)
@@ -34,7 +33,7 @@ class MethodSignatureBuilderTest {
     @Test
     void testAddParameterMethod() {
         final var signatureBuilderImpl = MethodSignature.builder("testMethod").setReturnType(Types.VOID);
-        final var ipAddressType = new LegacyArchetypeBuilder<>(
+        final var ipAddressType = LegacyArchetype.builder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "IpAddress"), statement)
             .build();
         signatureBuilderImpl.addParameter(ipAddressType, "ipAddress");
@@ -49,7 +48,7 @@ class MethodSignatureBuilderTest {
         final var signatureBuilderImpl3 = MethodSignature.builder("testMethod2");
         final var signatureBuilderImpl5 = signatureBuilderImpl;
         final var signatureBuilderImpl6 = MethodSignature.builder("testMethod");
-        final var returnType = new LegacyArchetypeBuilder<>(
+        final var returnType = LegacyArchetype.builder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "Address"), statement)
             .build();
         signatureBuilderImpl6.setReturnType(returnType);

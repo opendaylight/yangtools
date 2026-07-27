@@ -21,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -34,8 +35,7 @@ class GeneratedTypeBuilderTest {
 
     @Test
     void addConstantTest() {
-        var generatedTypeBuilder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
-            statement);
+        var generatedTypeBuilder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
 
         // assertNotNull(generatedTypeBuilder.addComment("My comment ..."));
 
@@ -91,28 +91,28 @@ class GeneratedTypeBuilderTest {
 
     @Test
     void addConstantIllegalArgumentTest() {
-        final var builder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(IllegalArgumentException.class,
             () -> builder.addConstant(Types.typeForClass(String.class), null, "myConstantValue"));
     }
 
     @Test
     void addConstantIllegalArgumentTest2() {
-        final var builder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(IllegalArgumentException.class,
             () -> builder.addConstant((Type) null, "myConstantName", "myConstantValue"));
     }
 
     @Test
     void generatedTypeBuilderEqualsAndHashCodeTest() {
-        final var generatedTypeBuilder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
+        final var generatedTypeBuilder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"),
             statement);
-        final var generatedTypeBuilder2 = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
+        final var generatedTypeBuilder2 = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"),
             statement);
-        final var generatedTypeBuilder3 = new LegacyArchetypeBuilder<>(
-            JavaTypeName.create("my.package", "MyName2"), statement);
-        final var generatedTypeBuilder4 = new LegacyArchetypeBuilder<>(
-            JavaTypeName.create("my.package2", "MyName"), statement);
+        final var generatedTypeBuilder3 = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName2"),
+            statement);
+        final var generatedTypeBuilder4 = LegacyArchetype.builder(JavaTypeName.create("my.package2", "MyName"),
+            statement);
 
         assertFalse(generatedTypeBuilder.equals(null));
         assertFalse(generatedTypeBuilder.equals(new Object()));
@@ -127,14 +127,13 @@ class GeneratedTypeBuilderTest {
 
     @Test
     void addMethodIllegalArgumentTest() {
-        final var builder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(IllegalArgumentException.class, () -> builder.addMethod(null));
     }
 
     @Test
     void addMethodTest() {
-        var generatedTypeBuilder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
-            statement);
+        var generatedTypeBuilder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
 
         var methodBuilder = generatedTypeBuilder.addMethod("myMethodName").setReturnType(Types.BOOLEAN);
         assertNotNull(methodBuilder);
@@ -155,14 +154,13 @@ class GeneratedTypeBuilderTest {
 
     @Test
     void addImplementsTypeIllegalArgumentTest() {
-        final var builder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(NullPointerException.class, () -> builder.addImplementsType((Type) null));
     }
 
     @Test
     void addImplementsTypeTest() {
-        var generatedTypeBuilder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"),
-            statement);
+        var generatedTypeBuilder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
 
         assertEquals(generatedTypeBuilder,
                 generatedTypeBuilder.addImplementsType(Types.typeForClass(Serializable.class)));
@@ -180,7 +178,7 @@ class GeneratedTypeBuilderTest {
 
     @Test
     void addEnclosingTransferObjectIllegalArgumentTest2() {
-        final var builder = new LegacyArchetypeBuilder<>(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(NullPointerException.class, () -> builder.addEnclosedType(null));
     }
 }
