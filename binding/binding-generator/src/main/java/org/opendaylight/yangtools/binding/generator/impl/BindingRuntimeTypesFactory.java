@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.IdentityGenerat
 import org.opendaylight.yangtools.binding.generator.impl.reactor.ModuleGenerator;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultBindingRuntimeTypes;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -60,7 +61,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
     // All case to cases mapping, values are the cases that can substitute case that is the key
     private final HashMultimap<LegacyArchetype<?>, CaseRuntimeType> caseToSubstitutionCases = HashMultimap.create();
     // All augment to augments mapping where values are augments that can substitute augment that is the key
-    private final HashMultimap<LegacyArchetype<?>, AugmentRuntimeType> augmentToSubstitutionAugments =
+    private final HashMultimap<AugmentationArchetype, AugmentRuntimeType> augmentToSubstitutionAugments =
         HashMultimap.create();
 
     private BindingRuntimeTypesFactory() {

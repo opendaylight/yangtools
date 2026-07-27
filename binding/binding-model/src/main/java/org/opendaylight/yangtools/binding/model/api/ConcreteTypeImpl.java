@@ -14,24 +14,24 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 @NonNullByDefault
-record DefaultConcreteType(JavaTypeName name) implements ConcreteType {
-    DefaultConcreteType {
+record ConcreteTypeImpl(JavaTypeName name) implements ConcreteType {
+    ConcreteTypeImpl {
         requireNonNull(name);
     }
 
     @Override
     public RestrictedType withRestrictions(final Restrictions restrictions) {
-        return new DefaultRestrictedType(name, restrictions);
+        return new RestrictedTypeImpl(name, restrictions);
     }
 
     @Override
-    public final int hashCode() {
-        return name.hashCode();
+    public int hashCode() {
+        return TypeMethods.hashCode(this);
     }
 
     @Override
-    public final boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof Type other && name.equals(other.name());
+    public boolean equals(final @Nullable Object obj) {
+        return TypeMethods.equals(this, obj);
     }
 
     @Override

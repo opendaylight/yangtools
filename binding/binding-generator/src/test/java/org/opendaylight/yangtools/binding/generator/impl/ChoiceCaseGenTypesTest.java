@@ -13,9 +13,12 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.containsMethods;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
+import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -111,9 +114,9 @@ class ChoiceCaseGenTypesTest {
         // "/nm:netconf-state/nm:datastores/nm:datastore/nm:locks/nm:lock-type/nm:partial-lock"
         // {
         // case
-        genType = checkGeneratedType(genTypes, "PartialLock1", augment);
-        containsMethods(genType, new NameTypePattern("getAugCaseByChoice", "AugCaseByChoice"));
-        containsInterface("Augmentation<PartialLock>", genType);
+        final var partialLock1 = checkGeneratedType(AugmentationArchetype.class, genTypes, "PartialLock1", augment);
+        containsMethods(partialLock1, new NameTypePattern("getAugCaseByChoice", "AugCaseByChoice"));
+        containsInterface("Augmentation<PartialLock>", partialLock1);
 
         // choice
         assertChoice(genTypes, "AugCaseByChoice",
@@ -132,9 +135,9 @@ class ChoiceCaseGenTypesTest {
         containsInterface("AugCaseByChoice", genType);
 
         // augment "/nm:netconf-state/nm:datastores/nm:datastore" {
-        genType = checkGeneratedType(genTypes, "Datastore1", augment);
-        containsMethods(genType, new NameTypePattern("getStorageFormat", "StorageFormat"));
-        containsInterface("Augmentation<Datastore>", genType);
+        final var datastore1 = checkGeneratedType(AugmentationArchetype.class, genTypes, "Datastore1", augment);
+        containsMethods(datastore1, new NameTypePattern("getStorageFormat", "StorageFormat"));
+        containsInterface("Augmentation<Datastore>", datastore1);
 
         // choice
         assertChoice(genTypes, "StorageFormat", augment + ".netconf.state.datastores.datastore");
@@ -167,27 +170,29 @@ class ChoiceCaseGenTypesTest {
         assertEquals(1, choices.size());
     }
 
-    private static LegacyArchetype<?> checkGeneratedType(final List<Archetype> genTypes, final String simpleName,
-            final String pkgName, final int occurences) {
-        LegacyArchetype<?> searchedGenType = null;
-        int searchedGenTypeCounter = 0;
-        for (var genType : genTypes) {
-            if (genType instanceof LegacyArchetype<?> archetype) {
-                if (archetype.simpleName().equals(simpleName) && archetype.packageName().equals(pkgName)) {
-                    searchedGenType = archetype;
-                    searchedGenTypeCounter++;
-                }
-            }
-        }
-        assertNotNull(searchedGenType, "Generated type " + simpleName + " wasn't found");
-        assertEquals(occurences, searchedGenTypeCounter,
-            simpleName + " generated type has incorrect number of occurences.");
-        return searchedGenType;
-
+    private static LegacyArchetype<?> checkGeneratedType(final List<Archetype> types, final String simpleName,
+            final String pkgName) {
+        return checkGeneratedType(LegacyArchetype.class, types, simpleName, pkgName);
     }
 
-    private static LegacyArchetype<?> checkGeneratedType(final List<Archetype> genTypes, final String simpleName,
-            final String pkgName) {
-        return checkGeneratedType(genTypes, simpleName, pkgName, 1);
+    private static <A extends InterfaceArchetype> A checkGeneratedType(final Class<A> clazz,
+            final List<Archetype> types, final String simpleName, final String pkgName) {
+        return checkGeneratedType(clazz, types, simpleName, pkgName, 1);
+    }
+
+    private static <A extends InterfaceArchetype> A checkGeneratedType(final Class<A> clazz,
+            final List<Archetype> types, final String simpleName, final String pkgName, final int occurences) {
+        @Nullable A found = null;
+        int count = 0;
+        for (var type : types) {
+            if (clazz.isInstance(type) && type.simpleName().equals(simpleName) && type.packageName().equals(pkgName)) {
+                found = clazz.cast(type);
+                count++;
+            }
+        }
+
+        assertNotNull(found, "Generated type " + simpleName + " wasn't found");
+        assertEquals(occurences, count, simpleName + " generated type has incorrect number of occurences.");
+        return found;
     }
 }

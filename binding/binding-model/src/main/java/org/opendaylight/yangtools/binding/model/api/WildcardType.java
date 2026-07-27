@@ -13,12 +13,12 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * Marker interface which assign to object property that it is a bounded wildcard type.
  */
 @NonNullByDefault
-public sealed interface WildcardType extends Type permits DefaultWildcardType {
+public sealed interface WildcardType extends Type permits WildcardTypeImpl {
     /**
      * {@return a {@link WildcardType} for specified type name}
      * @param name the name
      */
     static WildcardType ofName(final JavaTypeName name) {
-        return new DefaultWildcardType(name);
+        return new WildcardTypeImpl(name);
     }
 }
