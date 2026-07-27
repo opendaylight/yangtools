@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcArchetype;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFile;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFileLifecycle;
 import org.opendaylight.yangtools.plugin.generator.api.GeneratedFilePath;
@@ -94,12 +95,20 @@ final class BindingJavaFileGenerator {
             if (rootBuilder == null) {
                 throw new VerifyException("No DataRootTemplate for " + rootPackage);
             }
-            final var root = rootBuilder.type();
 
+            final var root = rootBuilder.type();
             switch (type) {
                 case DataRootArchetype archetype -> {
                     // processed separately
                 }
+
+                // TypeObject specializations
+                case BitsTypeObjectArchetype btao -> generateFile(new BitsTypeObjectTemplate.Builder(btao, root));
+                case EnumTypeObjectArchetype etao -> generateFile(new EnumTypeObjectTemplate.Builder(etao, root));
+                case ScalarTypeObjectArchetype stao -> generateFile(new ScalarTypeObjectTemplate.Builder(stao, root));
+                case UnionTypeObjectArchetype utao -> generateFile(new UnionTypeObjectTemplate.Builder(utao, root));
+
+                // everything else
                 case AugmentationArchetype archetype ->
                     generateBoth(AugmentationTemplate.Builder::new, archetype, root);
                 case CaseArchetype archetype -> generateBoth(CaseTemplate.Builder::new, archetype, root);
@@ -108,16 +117,11 @@ final class BindingJavaFileGenerator {
                 case GroupingArchetype archetype -> generateFile(new GroupingTemplate.Builder(archetype, root));
                 case IdentityArchetype archetype -> generateFile(new IdentityTemplate.Builder(archetype, root));
                 case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype, root));
+                case LegacyArchetype<?> legacy -> generateBoth(InterfaceTemplate.Builder::new, legacy, root);
                 case OpaqueObjectArchetype<?> archetype ->
                     generateFile(new OpaqueObjectTemplate.Builder(archetype, root));
                 case RpcArchetype archetype -> generateFile(new RpcTemplate.Builder(archetype, root));
-
-                // TypeObject specializations
-                case BitsTypeObjectArchetype btao -> generateFile(new BitsTypeObjectTemplate.Builder(btao, root));
-                case EnumTypeObjectArchetype etao -> generateFile(new EnumTypeObjectTemplate.Builder(etao, root));
-                case ScalarTypeObjectArchetype stao -> generateFile(new ScalarTypeObjectTemplate.Builder(stao, root));
-                case UnionTypeObjectArchetype utao -> generateFile(new UnionTypeObjectTemplate.Builder(utao, root));
-                case LegacyArchetype<?> legacy -> generateBoth(InterfaceTemplate.Builder::new, legacy, root);
+                case YangDataArchetype archetype -> generateBoth(YangDataTemplate.Builder::new, archetype, root);
             }
         }
 
