@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 
@@ -25,5 +26,15 @@ public record FeatureArchetype(JavaTypeName name, FeatureEffectiveStatement stat
     public FeatureArchetype {
         requireNonNull(name);
         requireNonNull(statement);
+    }
+
+    @Override
+    public int hashCode() {
+        return TypeMethods.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        return TypeMethods.equals(this, obj);
     }
 }

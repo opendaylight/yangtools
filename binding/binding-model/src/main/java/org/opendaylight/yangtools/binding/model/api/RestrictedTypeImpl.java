@@ -14,8 +14,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 @NonNullByDefault
-record DefaultRestrictedType(JavaTypeName name, Restrictions restrictions) implements RestrictedType {
-    DefaultRestrictedType {
+record RestrictedTypeImpl(JavaTypeName name, Restrictions restrictions) implements RestrictedType {
+    RestrictedTypeImpl {
         requireNonNull(name);
         // FIXME: require non-empty?
         requireNonNull(restrictions);
@@ -28,22 +28,22 @@ record DefaultRestrictedType(JavaTypeName name, Restrictions restrictions) imple
 
     @Override
     public RestrictedType withRestrictions(final Restrictions newRestrictions) {
-        return new DefaultRestrictedType(name(), newRestrictions);
+        return new RestrictedTypeImpl(name(), newRestrictions);
     }
 
     @Override
     public ConcreteType withoutRestrictions() {
-        return new DefaultConcreteType(name());
+        return new ConcreteTypeImpl(name());
     }
 
     @Override
-    public final int hashCode() {
-        return name.hashCode();
+    public int hashCode() {
+        return TypeMethods.hashCode(this);
     }
 
     @Override
-    public final boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof Type other && name.equals(other.name());
+    public boolean equals(final @Nullable Object obj) {
+        return TypeMethods.equals(this, obj);
     }
 
     @Override

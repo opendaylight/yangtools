@@ -14,7 +14,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @NonNullByDefault
 public sealed interface RestrictedDecimal64Type extends Decimal64Type, RestrictedType
-        permits DefaultRestrictedDecimal64Type {
+        permits RestrictedDecimal64TypeImpl {
     @Override
     Decimal64Type withoutRestrictions();
 }

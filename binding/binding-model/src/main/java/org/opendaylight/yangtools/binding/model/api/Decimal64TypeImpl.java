@@ -14,7 +14,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 
 @NonNullByDefault
-record DefaultDecimal64Type(int fractionDigits) implements Decimal64Type {
+record Decimal64TypeImpl(int fractionDigits) implements Decimal64Type {
     private static final JavaTypeName NAME = JavaTypeName.create(Decimal64.class);
 
     static final @NonNull Decimal64Type[] INSTANCES;
@@ -22,12 +22,12 @@ record DefaultDecimal64Type(int fractionDigits) implements Decimal64Type {
     static {
         final var tmp = new Decimal64Type[18];
         for (int i = 0; i < tmp.length; ++i) {
-            tmp[i] = new DefaultDecimal64Type(i + 1);
+            tmp[i] = new Decimal64TypeImpl(i + 1);
         }
         INSTANCES = tmp;
     }
 
-    DefaultDecimal64Type {
+    Decimal64TypeImpl {
         if (fractionDigits < 1 || fractionDigits > 18) {
             throw new IllegalArgumentException("invalid fractionDigits");
         }
@@ -40,17 +40,17 @@ record DefaultDecimal64Type(int fractionDigits) implements Decimal64Type {
 
     @Override
     public RestrictedDecimal64Type withRestrictions(final Restrictions newRestrictions) {
-        return new DefaultRestrictedDecimal64Type(this, newRestrictions);
+        return new RestrictedDecimal64TypeImpl(this, newRestrictions);
     }
 
     @Override
-    public final int hashCode() {
-        return NAME.hashCode();
+    public int hashCode() {
+        return TypeMethods.hashCode(this);
     }
 
     @Override
-    public final boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof Type other && NAME.equals(other.name());
+    public boolean equals(final @Nullable Object obj) {
+        return TypeMethods.equals(this, obj);
     }
 
     @Override

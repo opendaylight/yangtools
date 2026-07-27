@@ -14,19 +14,19 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 @NonNullByDefault
-record DefaultWildcardType(JavaTypeName name) implements WildcardType {
-    DefaultWildcardType {
+record WildcardTypeImpl(JavaTypeName name) implements WildcardType {
+    WildcardTypeImpl {
         requireNonNull(name);
     }
 
     @Override
-    public final int hashCode() {
-        return name.hashCode();
+    public int hashCode() {
+        return TypeMethods.hashCode(this);
     }
 
     @Override
-    public final boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof Type other && name.equals(other.name());
+    public boolean equals(final @Nullable Object obj) {
+        return TypeMethods.equals(this, obj);
     }
 
     @Override

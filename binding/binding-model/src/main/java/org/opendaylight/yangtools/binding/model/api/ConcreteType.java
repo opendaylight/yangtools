@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.common.Decimal64;
  * specialization.
  */
 @NonNullByDefault
-public sealed interface ConcreteType extends Type permits Decimal64Type, DefaultConcreteType, RestrictedType {
+public sealed interface ConcreteType extends Type permits Decimal64Type, ConcreteTypeImpl, RestrictedType {
     /**
      * {@return this type's equivalent with specified {@link Restrictions}}
      * @param newRestrictions the restrictions to apply
@@ -33,6 +33,6 @@ public sealed interface ConcreteType extends Type permits Decimal64Type, Default
         if (typeClass.equals(Decimal64.class)) {
             throw new IllegalArgumentException("Cannot instantiate on Decimal64, use Decimal64Type instead");
         }
-        return new DefaultConcreteType(JavaTypeName.create(typeClass));
+        return new ConcreteTypeImpl(JavaTypeName.create(typeClass));
     }
 }

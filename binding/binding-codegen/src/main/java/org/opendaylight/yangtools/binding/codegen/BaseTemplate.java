@@ -12,7 +12,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.extractAugmentationTarget;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.isNotificationBody;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 
@@ -27,6 +26,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
+import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -36,9 +36,7 @@ import org.opendaylight.yangtools.binding.model.api.FunctionalInterfaceAnnotatio
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.RoutingContextAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
@@ -52,7 +50,6 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
@@ -185,14 +182,11 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
                     sb.append('\n');
                 }
             }
-        } else if (stmt instanceof AugmentEffectiveStatement) {
+        } else if (type instanceof AugmentationArchetype augmentation) {
             // Find target Augmentation<Foo> and reference Foo
-            final var augType = findAugmentationArgument(type);
-            if (augType != null) {
-                sb
-                    .append("\n\n")
-                    .append("@see ").append(importedName(augType));
-            }
+            sb
+                .append("\n\n")
+                .append("@see ").append(importedName(augmentation.target()));
         }
         // FIXME: this is equivalent to genTo.isTypedef() so we should be able to unify the two concepts -- but really
         //        that sounds like it should be handled in those templates ... perhaps we should receive these from
@@ -215,20 +209,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             sb.append(DocUtils.replaceAllIllegalChars(DocUtils.encodeAngleBrackets(encodeJavadocSymbols(str))));
         }
         return sb;
-    }
-
-    private static @Nullable Type findAugmentationArgument(final Archetype genType) {
-        if (genType instanceof LegacyArchetype<?> archetype) {
-            for (var implType : archetype.getImplements()) {
-                if (implType instanceof ParameterizedType parameterized) {
-                    final var augmentType = extractAugmentationTarget(parameterized);
-                    if (augmentType != null) {
-                        return augmentType;
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     @NonNullByDefault

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -49,7 +50,7 @@ public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
     private final ImmutableMap<QName, IdentityRuntimeType> identities;
     private final ImmutableMap<JavaTypeName, RuntimeType> types;
     private final ImmutableListMultimap<LegacyArchetype<?>, CaseRuntimeType> caseToSubstitutionCases;
-    private final ImmutableListMultimap<LegacyArchetype<?>, AugmentRuntimeType> augmentToSubstitutionAugments;
+    private final ImmutableListMultimap<AugmentationArchetype, AugmentRuntimeType> augmentToSubstitutionAugments;
 
     public DefaultBindingRuntimeTypes(final EffectiveModelContext modelContext,
             final Map<QNameModule, ModuleRuntimeType> modules, final Map<JavaTypeName, RuntimeType> types,
@@ -57,7 +58,7 @@ public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
             final SetMultimap<JavaTypeName, CaseRuntimeType> choiceToCases,
             // FIXME: use JavaTypeName, as Archetypes compare as their name
             final Multimap<LegacyArchetype<?>, CaseRuntimeType> caseToSubstitutionCases,
-            final Multimap<LegacyArchetype<?>, AugmentRuntimeType> augmentToSubstitutionAugments) {
+            final Multimap<AugmentationArchetype, AugmentRuntimeType> augmentToSubstitutionAugments) {
         this.modelContext = requireNonNull(modelContext);
         this.identities = ImmutableMap.copyOf(identities);
         this.types = ImmutableMap.copyOf(types);
