@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -47,11 +46,7 @@ record RestrictedTypeImpl(JavaTypeName name, Restrictions restrictions) implemen
     }
 
     @Override
-    public final String toString() {
-        return MoreObjects.toStringHelper(RestrictedType.class)
-            .add("name", name)
-            .add("restrictions", restrictions)
-            .toString();
+    public String toString() {
+        return TypeMethods.toStringHelper(this).toString();
     }
-
 }

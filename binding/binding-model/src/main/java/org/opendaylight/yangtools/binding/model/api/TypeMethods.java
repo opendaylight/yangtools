@@ -98,4 +98,17 @@ final class TypeMethods {
     static ToStringHelper toStringHelper(final ConcreteType self) {
         return MoreObjects.toStringHelper(ConcreteType.class).add("name", self.name());
     }
+
+    /**
+     * Helper for implementations for {@link ConcreteType#toString()}.
+     *
+     * @param self the type
+     * @return a {@link ToStringHelper}
+     */
+    @NonNullByDefault
+    static ToStringHelper toStringHelper(final RestrictedType self) {
+        return MoreObjects.toStringHelper(RestrictedType.class)
+            .add("name", self.name())
+            .add("restrictions", self.restrictions());
+    }
 }

@@ -9,13 +9,11 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 @NonNullByDefault
-record RestrictedDecimal64TypeImpl(Decimal64Type type, Restrictions restrictions)
-        implements RestrictedDecimal64Type {
+record RestrictedDecimal64TypeImpl(Decimal64Type type, Restrictions restrictions) implements RestrictedDecimal64Type {
     RestrictedDecimal64TypeImpl {
         requireNonNull(type);
         requireNonNull(restrictions);
@@ -52,10 +50,7 @@ record RestrictedDecimal64TypeImpl(Decimal64Type type, Restrictions restrictions
     }
 
     @Override
-    public final String toString() {
-        return MoreObjects.toStringHelper(RestrictedType.class)
-            .add("name", name())
-            .add("fractionDigits", fractionDigits())
-            .toString();
+    public String toString() {
+        return TypeMethods.toStringHelper(this).add("fractionDigits", fractionDigits()).toString();
     }
 }
