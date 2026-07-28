@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BaseIdentity;
+import org.opendaylight.yangtools.binding.KeyedListAction;
 import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
@@ -82,6 +83,8 @@ public interface BindingRuntimeContext extends Immutable {
     @Nullable CompositeRuntimeType getSchemaDefinition(Class<?> cls);
 
     @Nullable ActionRuntimeType getActionDefinition(Class<? extends Action<?, ?, ?>> cls);
+
+    @Nullable KeyedListActionRuntimeType getKeyedListActionDefinition(Class<? extends KeyedListAction<?, ?, ?, ?>> cls);
 
     @Nullable RpcRuntimeType getRpcDefinition(Class<? extends Rpc<?, ?>> cls);
 

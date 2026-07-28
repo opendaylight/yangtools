@@ -9,77 +9,30 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultActionRuntimeType;
+import org.opendaylight.yangtools.binding.model.api.ActionArchetype;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.FunctionalInterfaceAnnotation;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 /**
- * Generator corresponding to a {@code action} statement.
+ * Generator corresponding to a {@code action} statement used outside of a {@code list} with a {@code key}.
  */
-final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveStatement, ActionRuntimeType> {
+final class ActionGenerator extends AbstractActionGenerator<ActionRuntimeType> {
     @NonNullByDefault
     ActionGenerator(final ActionEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
     @Override
-    StatementNamespace namespace() {
-        return StatementNamespace.ACTION;
-    }
-
-    @Override
-    ClassPlacement classPlacement() {
-        // We do not generate Actions for groupings as they are inexact, and do not capture an actual instantiation --
-        // therefore they do not have an InstanceIdentifier. We still need to allocate a package name for the purposes
-        // of generating shared classes for input/output
-        return getParent() instanceof GroupingGenerator ? ClassPlacement.PHANTOM : ClassPlacement.TOP_LEVEL;
-    }
-
-    @Override
-    LegacyArchetype<ActionEffectiveStatement> createTypeImpl(final Archetype input, final Archetype output) {
-        final var statement = statement();
-        final var builder = LegacyArchetype.builder(typeName(), statement)
-            .addAnnotation(FunctionalInterfaceAnnotation.INSTANCE);
-        addImplementedType(builder, input, output);
+    ActionArchetype createTypeImpl(final JavaTypeName typeName,
+            final ActionEffectiveStatement statement, final Archetype input, final Archetype output) {
+        final var builder = ActionArchetype.builder(typeName, statement, input, output, getParent().typeName());
         defaultImplementedInterace(builder);
         addQNameConstant(builder, statement.argument());
         return builder.build();
-    }
-
-    @NonNullByDefault
-    private void addImplementedType(final LegacyArchetype.Builder<?> builder, final Archetype input,
-            final Archetype output) {
-        final var parent = getParent();
-        final var parentType = TypeRef.of(parent.typeName());
-        if (parent instanceof EntryObjectGenerator list) {
-            final var keyType = list.keyGenerator().getArchetype();
-            builder
-                .addImplementsType(BindingTypes.keyedListAction(parentType, keyType, input, output))
-                .addMethod(Naming.ACTION_INVOKE_NAME)
-                    .addAnnotation(OverrideAnnotation.INSTANCE)
-                    .addParameter(BindingTypes.objectIdentifierWithKey(parentType, keyType), "path")
-                    .addParameter(input, "input")
-                    .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)));
-            return;
-        }
-
-        builder
-            .addImplementsType(BindingTypes.action(parentType, input, output))
-            .addMethod(Naming.ACTION_INVOKE_NAME)
-                .addAnnotation(OverrideAnnotation.INSTANCE)
-                .addParameter(BindingTypes.objectIdentifier(parentType), "path")
-                .addParameter(input, "input")
-                .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)));
     }
 
     @Override
@@ -87,9 +40,9 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
             final ActionEffectiveStatement statement) {
         return new InvokableRuntimeTypeBuilder<>(statement) {
             @Override
-            ActionRuntimeType build(final Archetype generatedType, final ActionEffectiveStatement statement,
+            ActionRuntimeType build(final Archetype type, final ActionEffectiveStatement statement,
                     final List<RuntimeType> childTypes) {
-                return new DefaultActionRuntimeType(generatedType, statement, childTypes);
+                return new DefaultActionRuntimeType((ActionArchetype) type, statement, childTypes);
             }
         };
     }

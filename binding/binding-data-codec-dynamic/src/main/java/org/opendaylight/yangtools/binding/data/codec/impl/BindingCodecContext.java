@@ -85,6 +85,7 @@ import org.opendaylight.yangtools.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.DataRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.InputRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.InvokableRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.OutputRuntimeType;
@@ -267,37 +268,52 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             @Override
             public ActionCodecContext load(final Class<? extends Action<?, ?, ?>> action) {
                 if (KeyedListAction.class.isAssignableFrom(action)) {
-                    return prepareActionContext(2, 3, 4, action, KeyedListAction.class);
+                    final var args = validateActionClass(4, action, KeyedListAction.class);
+                    @SuppressWarnings("unchecked")
+                    final var casted = (Class<? extends KeyedListAction<?, ?, ?, ?>>) action;
+                    return prepareActionContext(args[2], args[3], context.getKeyedListActionDefinition(casted));
                 }
                 if (Action.class.isAssignableFrom(action)) {
-                    return prepareActionContext(1, 2, 3, action, Action.class);
+                    final var args = validateActionClass(3, action, Action.class);
+                    return prepareActionContext(args[1], args[2], context.getActionDefinition(action));
                 }
                 throw new IllegalArgumentException("The specific action type does not exist for action "
                     + action.getName());
             }
 
-            private ActionCodecContext prepareActionContext(final int inputOffset, final int outputOffset,
-                    final int expectedArgsLength, final Class<? extends Action<?, ?, ?>> action,
-                    final Class<?> actionType) {
-                for (var type : action.getGenericInterfaces()) {
-                    if (type instanceof ParameterizedType ptype && actionType.equals(ptype.getRawType())) {
-                        final var args = ptype.getActualTypeArguments();
-                        checkArgument(args.length == expectedArgsLength, "Unexpected (%s) Action generatic arguments",
-                            args.length);
-                        final var schema = context.getActionDefinition(action);
-                        return new ActionCodecContext(
-                            new ContainerLikeCodecContext(asClass(args[inputOffset], RpcInput.class), schema.input(),
-                                BindingCodecContext.this),
-                            new ContainerLikeCodecContext(asClass(args[outputOffset], RpcOutput.class), schema.output(),
-                                BindingCodecContext.this));
-                    }
+            @SuppressWarnings({ "rawtypes", "unchecked" })
+            private ActionCodecContext prepareActionContext(final Type input, final Type output,
+                    final @Nullable InvokableRuntimeType schema) {
+                if (schema == null) {
+                    throw new IllegalStateException("Schema not found");
                 }
-                throw new IllegalStateException(action + " does not specialize " + actionType);
+                return new ActionCodecContext(
+                    new ContainerLikeCodecContext(asClass(input, RpcInput.class), schema.input(),
+                        BindingCodecContext.this),
+                    new ContainerLikeCodecContext(asClass(output, RpcOutput.class), schema.output(),
+                        BindingCodecContext.this));
             }
 
             private static <T extends DataObject> Class<? extends T> asClass(final Type type, final Class<T> target) {
-                verify(type instanceof Class, "Type %s is not a class", type);
-                return ((Class<?>) type).asSubclass(target);
+                if (type instanceof Class<?> typeClazz) {
+                    return typeClazz.asSubclass(target);
+                }
+                throw new VerifyException("Type " + type + " is not a class");
+            }
+
+            private static Type[] validateActionClass(final int expectedArgsLength,
+                    final Class<? extends Action<?, ?, ?>> action, final Class<?> actionType) {
+                for (var type : action.getGenericInterfaces()) {
+                    if (type instanceof ParameterizedType ptype && actionType.equals(ptype.getRawType())) {
+                        final var args = ptype.getActualTypeArguments();
+                        if (args.length == expectedArgsLength) {
+                            return args;
+                        }
+                        throw new IllegalArgumentException(
+                            "Unexpected (" + args.length + ") Action generatic arguments");
+                    }
+                }
+                throw new IllegalStateException(action + " does not specialize " + actionType);
             }
         });
 

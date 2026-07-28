@@ -20,6 +20,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BaseIdentity;
+import org.opendaylight.yangtools.binding.KeyedListAction;
 import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
@@ -74,7 +75,14 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
 
     @Override
     public final ActionRuntimeType getActionDefinition(final Class<? extends Action<?, ?, ?>> cls) {
-        return (ActionRuntimeType) getTypes().findSchema(JavaTypeName.create(cls)).orElse(null);
+        return (ActionRuntimeType) getTypes().findSchema(JavaTypeName.create(requireNonNull(cls))).orElse(null);
+    }
+
+    @Override
+    public final KeyedListActionRuntimeType getKeyedListActionDefinition(
+            final Class<? extends KeyedListAction<?, ?, ?, ?>> cls) {
+        return (KeyedListActionRuntimeType) getTypes().findSchema(JavaTypeName.create(requireNonNull(cls)))
+            .orElse(null);
     }
 
     @Override

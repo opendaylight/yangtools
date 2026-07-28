@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.InputRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.KeyedListActionRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.OutputRuntimeType;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -42,7 +42,7 @@ class Mdsal824Test {
             types.schemaTreeChild(QName.create("bar", "bar-top")));
         final var barList = assertInstanceOf(ListRuntimeType.class,
             barTop.schemaTreeChild(QName.create("bar", "bar-list")));
-        final var barAction = assertInstanceOf(ActionRuntimeType.class,
+        final var barAction = assertInstanceOf(KeyedListActionRuntimeType.class,
             barList.schemaTreeChild(QName.create("bar", "foo")));
 
         final var barInput = assertInstanceOf(InputRuntimeType.class,
