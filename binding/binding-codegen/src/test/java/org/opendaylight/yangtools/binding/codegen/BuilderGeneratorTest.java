@@ -14,7 +14,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
@@ -191,7 +190,7 @@ public class BuilderGeneratorTest {
         final var sortedProperties = bt.properties.stream()
                 .sorted(ByTypeMemberComparator.getInstance())
                 .map(BuilderGeneratedProperty::getName)
-                .collect(Collectors.toList());
+                .toList();
 
         assertEquals(List.of(
                 // numeric types (boolean, byte, short, int, long, Uint*, Decimal64), identityrefs, Empty
