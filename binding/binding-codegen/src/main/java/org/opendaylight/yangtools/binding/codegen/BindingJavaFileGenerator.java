@@ -30,11 +30,13 @@ import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
+import org.opendaylight.yangtools.binding.model.api.InputArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcArchetype;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
@@ -118,8 +120,10 @@ final class BindingJavaFileGenerator {
                 case FeatureArchetype archetype -> generateFile(new FeatureTemplate.Builder(archetype, root));
                 case GroupingArchetype archetype -> generateFile(new GroupingTemplate.Builder(archetype, root));
                 case IdentityArchetype archetype -> generateFile(new IdentityTemplate.Builder(archetype, root));
+                case InputArchetype archetype -> generateBoth(InputTemplate.Builder::new, archetype, root);
                 case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype, root));
                 case LegacyArchetype<?> legacy -> generateBoth(InterfaceTemplate.Builder::new, legacy, root);
+                case OutputArchetype archetype -> generateBoth(OutputTemplate.Builder::new, archetype, root);
                 case OpaqueObjectArchetype<?> archetype ->
                     generateFile(new OpaqueObjectTemplate.Builder(archetype, root));
                 case RpcArchetype archetype -> generateFile(new RpcTemplate.Builder(archetype, root));

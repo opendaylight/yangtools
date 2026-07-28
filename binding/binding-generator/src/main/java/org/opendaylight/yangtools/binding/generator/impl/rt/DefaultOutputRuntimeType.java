@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.OutputRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -16,8 +16,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 
 public final class DefaultOutputRuntimeType extends AbstractAugmentableRuntimeType<OutputEffectiveStatement>
         implements OutputRuntimeType {
-    public DefaultOutputRuntimeType(final Archetype bindingType, final OutputEffectiveStatement statement,
+    public DefaultOutputRuntimeType(final OutputArchetype bindingType, final OutputEffectiveStatement statement,
             final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
         super(bindingType, statement, children, augments);
+    }
+
+    @Override
+    public OutputArchetype javaType() {
+        return (OutputArchetype) super.javaType();
     }
 }

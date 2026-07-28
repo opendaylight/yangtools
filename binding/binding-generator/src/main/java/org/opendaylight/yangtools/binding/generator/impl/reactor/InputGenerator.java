@@ -13,7 +13,8 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultInputRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.api.InputArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.InputRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -24,10 +25,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
  * as the name. This makes it easier to support multiple RPCs/actions in one source file, as we can import them without
  * a conflict.
  */
-final class InputGenerator extends OperationContainerGenerator<InputEffectiveStatement, InputRuntimeType> {
+final class InputGenerator
+        extends OperationContainerGenerator<InputEffectiveStatement, InputRuntimeType, InputArchetype> {
     @NonNullByDefault
     InputGenerator(final InputEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
-        super(statement, parent, BindingTypes.RPC_INPUT);
+        super(statement, parent);
     }
 
     @Override
@@ -41,13 +43,24 @@ final class InputGenerator extends OperationContainerGenerator<InputEffectiveSta
     }
 
     @Override
+    InputArchetype createTypeImpl(final JavaTypeName typeName, final InputEffectiveStatement statement) {
+        final var builder = InputArchetype.builder(typeName, statement);
+        addAugmentable(builder);
+        addUsesInterfaces(builder);
+        addConcreteInterfaceMethods(builder);
+        addGetterMethods(builder);
+        addQNameConstant(builder, statement.argument());
+        return builder.build();
+    }
+
+    @Override
     CompositeRuntimeTypeBuilder<InputEffectiveStatement, InputRuntimeType> createBuilder(
             final InputEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
             InputRuntimeType build(final Archetype type, final InputEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultInputRuntimeType(type, statement, children, augments);
+                return new DefaultInputRuntimeType((InputArchetype) type, statement, children, augments);
             }
         };
     }

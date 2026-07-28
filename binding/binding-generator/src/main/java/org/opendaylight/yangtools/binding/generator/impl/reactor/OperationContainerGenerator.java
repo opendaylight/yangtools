@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static java.util.Objects.requireNonNull;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
+import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -21,16 +19,14 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to an {@code input} or an {@code output} statement.
  */
-abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveStatement<?>,
-            R extends CompositeRuntimeType> extends CompositeSchemaTreeGenerator<S, R>
+abstract sealed class OperationContainerGenerator<
+        S extends DataTreeEffectiveStatement<?>,
+        R extends CompositeRuntimeType,
+        A extends InterfaceArchetype> extends CompositeSchemaTreeGenerator<S, R>
         permits InputGenerator, OutputGenerator {
-    private final @NonNull ConcreteType baseInterface;
-
     @NonNullByDefault
-    OperationContainerGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent,
-            final ConcreteType baseInterface) {
+    OperationContainerGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
-        this.baseInterface = requireNonNull(baseInterface);
     }
 
     @Override
@@ -56,7 +52,7 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
     }
 
     @Override
-    final LegacyArchetype<S> createTypeImpl() {
+    final A createTypeImpl() {
         if (getParent() instanceof ActionGenerator actionParent && actionParent.isAddedByUses()) {
             //        final ActionDefinition orig = findOrigAction(parentSchema, action).get();
             //        // Original definition may live in a different module, make sure we account for that
@@ -66,13 +62,8 @@ abstract sealed class OperationContainerGenerator<S extends DataTreeEffectiveSta
             //        output = context.addAliasType(origContext, orig.getOutput(), action.getOutput());
             throw new UnsupportedOperationException("Lookup in original");
         }
-
-        final var builder = LegacyArchetype.builder(typeName(), statement()).addImplementsType(baseInterface);
-        addAugmentable(builder);
-        addUsesInterfaces(builder);
-        addConcreteInterfaceMethods(builder);
-        addGetterMethods(builder);
-        addQNameConstant(builder, localName());
-        return builder.build();
+        return createTypeImpl(typeName(), statement());
     }
+
+    abstract @NonNull A createTypeImpl(@NonNull JavaTypeName typeName, @NonNull S statement);
 }

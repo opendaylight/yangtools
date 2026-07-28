@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.InputArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal552Test {
@@ -43,7 +43,7 @@ class Mdsal552Test {
         final var input = types.stream()
             .filter(type -> BAR_INPUT.equals(type.name()))
             .findFirst()
-            .map(type -> (LegacyArchetype<?>) type)
+            .map(InputArchetype.class::cast)
             .orElseThrow();
         final var inputGetRef = input.getMethodDefinitions().stream()
             .filter(method -> method.getName().equals("getRef"))
