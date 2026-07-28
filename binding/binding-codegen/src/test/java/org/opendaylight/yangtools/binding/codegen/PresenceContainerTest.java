@@ -8,22 +8,26 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.doReturn;
 
+import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-@ExtendWith(MockitoExtension.class)
 class PresenceContainerTest {
     private static final QName DIRECTORY_QNAME = QName.create("urn:opendaylight:presence-container",
             "2022-03-17", "directory");
@@ -34,15 +38,12 @@ class PresenceContainerTest {
     private static final QName DATA_QNAME = QName.create("urn:opendaylight:presence-container",
             "2022-03-17", "data");
 
-    private static Module module;
-
-    @Mock
-    private LegacyArchetype<?> type;
+    private static Module MODULE;
 
     @BeforeAll
     static void beforeClass() {
         final var context = YangParserTestUtils.parseYangResource("/presence-container.yang");
-        module = context.findModule(XMLNamespace.of("urn:opendaylight:presence-container"), Revision.of("2022-03-17"))
+        MODULE = context.findModule(XMLNamespace.of("urn:opendaylight:presence-container"), Revision.of("2022-03-17"))
                 .orElseThrow();
     }
 
@@ -51,9 +52,16 @@ class PresenceContainerTest {
      */
     @Test
     void nonContainerIsNonPresenceContainerTest() {
-        final var userList = module.findDataTreeChild(DIRECTORY_QNAME, USER_QNAME).orElseThrow();
-        doReturn(userList).when(type).statement();
-        assertFalse(BuilderTemplate.isNonPresenceContainer(type));
+        final var userList = assertInstanceOf(ListEffectiveStatement.class,
+            MODULE.findDataTreeChild(DIRECTORY_QNAME, USER_QNAME).orElseThrow());
+        final var key = userList.keyStatement();
+        assertNotNull(key);
+        final var keyName = JavaTypeName.create("foo", "key");
+        final var listName = JavaTypeName.create("foo", "list");
+        final var archetype = EntryObjectArchetype.builder(listName, userList,
+            new KeyArchetype(keyName, key, listName, List.of(ConcreteType.ofClass(String.class)))).build();
+
+        assertFalse(BuilderTemplate.isNonPresenceContainer(archetype));
     }
 
     /**
@@ -61,9 +69,10 @@ class PresenceContainerTest {
      */
     @Test
     void presenceContainerIsNonPresenceContainerTest() {
-        final var scpContainer = module.findDataTreeChild(DIRECTORY_QNAME, SCP_QNAME).orElseThrow();
-        doReturn(scpContainer).when(type).statement();
-        assertFalse(BuilderTemplate.isNonPresenceContainer(type));
+        final var scpContainer = assertInstanceOf(ContainerEffectiveStatement.class,
+            MODULE.findDataTreeChild(DIRECTORY_QNAME, SCP_QNAME).orElseThrow());
+        assertFalse(BuilderTemplate.isNonPresenceContainer(
+            ContainerArchetype.builder(JavaTypeName.create("foo", "foo"), scpContainer).build()));
     }
 
     /**
@@ -71,8 +80,9 @@ class PresenceContainerTest {
      */
     @Test
     void nonPresenceContainerIsNonPresenceContainerTest() {
-        final var dataContainer = module.findDataTreeChild(DIRECTORY_QNAME, DATA_QNAME).orElseThrow();
-        doReturn(dataContainer).when(type).statement();
-        assertTrue(BuilderTemplate.isNonPresenceContainer(type));
+        final var dataContainer = assertInstanceOf(ContainerEffectiveStatement.class,
+            MODULE.findDataTreeChild(DIRECTORY_QNAME, DATA_QNAME).orElseThrow());
+        assertTrue(BuilderTemplate.isNonPresenceContainer(
+            ContainerArchetype.builder(JavaTypeName.create("foo", "foo"), dataContainer).build()));
     }
 }
