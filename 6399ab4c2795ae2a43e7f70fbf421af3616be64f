@@ -33,6 +33,23 @@
       "message": "gha recheck",
       "revId": "6399ab4c2795ae2a43e7f70fbf421af3616be64f",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "936b7e7a_b24d7be4",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1
+      },
+      "writtenOn": "2026-07-28T13:02:01Z",
+      "side": 1,
+      "message": "rerun-gha",
+      "revId": "6399ab4c2795ae2a43e7f70fbf421af3616be64f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
