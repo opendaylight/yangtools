@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
+import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype.Anydata;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype.Anyxml;
@@ -187,8 +187,8 @@ class Mdsal675Test {
         return assertArchetype(genTypesMap, className, Anyxml.class);
     }
 
-    private static LegacyArchetype<?> assertGenType(final Map<String, Archetype> genTypesMap, final String className) {
-        return assertArchetype(genTypesMap, className, LegacyArchetype.class);
+    private static ItemObjectArchetype assertGenType(final Map<String, Archetype> genTypesMap, final String className) {
+        return assertArchetype(genTypesMap, className, ItemObjectArchetype.class);
     }
 
     private static ContainerArchetype assertContainer(final Map<String, Archetype> genTypesMap,

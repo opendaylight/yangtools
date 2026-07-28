@@ -14,9 +14,9 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -86,7 +86,7 @@ final class SupportTestUtil {
     }
 
     @NonNullByDefault
-    static void assertEntryObject(final LegacyArchetype<?> type, final JavaTypeName expectedKeyType) {
+    static void assertEntryObject(final EntryObjectArchetype type, final JavaTypeName expectedKeyType) {
         final var key = BindingTypes.extractEntryObjectKey(type);
         assertNotNull(key);
         assertEquals(expectedKeyType, key.name());
