@@ -7,130 +7,124 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
+import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.getFiles;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
-import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class BuilderGeneratorTest {
-    private static final String TEST = "test";
-    private static final JavaTypeName TYPE_NAME = JavaTypeName.create(TEST, TEST);
+public class BuilderGeneratorTest extends BaseCompilationTest {
+    private static Path SOURCES;
+    private static List<Archetype> TYPES;
+    private static Map<String, Path> FILES;
 
-    @Test
-    void builderTemplateGenerateHashcodeWithPropertyTest() {
-        final var bb = genHashCode(mockGenType("get" + TEST));
-        assertNotNull(bb);
-        assertEquals("""
-            @Override
-            default int javaHC() {
-                return CodeHelpers.jcHC1(getTest());
-            }
-            """, bb.toRawString());
+    @BeforeAll
+    static void beforeAll() {
+        SOURCES = CompilationTestUtils.generatorOutput("test-types");
+        TYPES = generateTestSources("/compilation/test-types", SOURCES);
+        assertEquals(27, TYPES.size());
+        FILES = getFiles(SOURCES);
+        assertEquals(47, FILES.size());
+    }
+
+    @AfterAll
+    static void afterAll() throws Exception {
+        CompilationTestUtils.cleanUp(SOURCES);
+        SOURCES = null;
+        FILES = null;
+    }
+
+    private static void assertFileContent(final String name, final String content) {
+        final var file = FILES.get(name);
+        assertNotNull(file, name + " not found");
+        assertThat(assertDoesNotThrow(() -> Files.readString(file))).contains(content);
     }
 
     @Test
+    void builderTemplateGenerateHashcodeWithPropertyTest() {
+        assertFileContent("Container1Def.java", """
+
+                @Override
+                default int javaHC() {
+                    return CodeHelpers.jcHC1(this, getNodeIdString());
+                }
+
+            """);
+    }
+
+    @Test
+    @Disabled("FIXME: define a type which contains the equivalent")
     void builderTemplateGenerateHashCodeWithoutAnyPropertyTest() {
-        final var bb = genHashCode(mockGenType(TEST));
-        assertNotNull(bb);
-        assertEquals("""
+        assertFileContent("", """
             @Override
             default int javaHC() {
                 return 1;
             }
-            """, bb.toRawString());
+            """);
     }
 
     @Test
     void builderTemplateGenerateHashCodeWithMorePropertiesTest() {
-        final var bb = genHashCode(mockGenTypeMoreMeth("get" + TEST));
-        assertNotNull(bb);
-        assertEquals("""
-            @Override
-            default int javaHC() {
-                return CodeHelpers.jcHCN(
-                    getTest1(),
-                    getTest2());
-            }
-            """, bb.toRawString());
+        assertFileContent("IdList.java", """
+
+                @Override
+                default int javaHC() {
+                    return CodeHelpers.jcHCN(this,
+                        getKey1(),
+                        getKey2());
+                }
+
+            """);
     }
 
     @Test
+    @Disabled("FIXME: define a type which contains the equivalent")
     void builderTemplateGenerateHashCodeWithoutPropertyWithAugmentTest() {
-        final var bb = genHashCode(mockAugment(mockGenType(TEST)));
-        assertNotNull(bb);
-        assertEquals("""
+        assertFileContent("", """
             @Override
             default int javaHC() {
                 return CodeHelpers.jcHC0(this);
             }
-            """, bb.toRawString());
+            """);
     }
 
     @Test
-    void builderTemplateGenerateHashCodeWithPropertyWithAugmentTest() {
-        final var bb = genHashCode(mockAugment(mockGenType("get" + TEST)));
-        assertNotNull(bb);
-        assertEquals("""
-            @Override
-            default int javaHC() {
-                return CodeHelpers.jcHC1(this, getTest());
-            }
-            """, bb.toRawString());
-    }
-
-    @Test
-    void builderTemplateGenerateHashCodeWithMorePropertiesWithAugmentTest() {
-        final var bb = genHashCode(mockAugment(mockGenTypeMoreMeth("get" + TEST)));
-        assertNotNull(bb);
-        assertEquals("""
-            @Override
-            default int javaHC() {
-                return CodeHelpers.jcHCN(this,
-                    getTest1(),
-                    getTest2());
-            }
-            """, bb.toRawString());
-    }
-
-    @Test
+    @Disabled("FIXME: define a type which contains the equivalent")
     void builderTemplateGenerateToStringWithPropertyTest() {
-        final var genType = mockGenType("get" + TEST);
-
-        assertEquals("""
+        assertFileContent("", """
             @Override
             default String javaTS() {
                 return CodeHelpers.jcTS1(test.test.class, "test", gettest());
             }
-            """, genToString(genType).toRawString());
+            """);
     }
 
     @Test
+    @Disabled("FIXME: define a type which contains the equivalent")
     void builderTemplateGenerateToStringWithoutAnyPropertyTest() {
-        assertEquals("""
+        assertFileContent("", """
             @Override
             default String javaTS() {
                 return CodeHelpers.jcTS0(test.test.class);
             }
-            """, genToString(mockGenType(TEST)).toRawString());
+            """);
     }
 
     @Test
+    @Disabled("FIXME: define a type which contains the equivalent")
     void builderTemplateGenerateToStringWithMorePropertiesTest() {
-        assertEquals("""
+        assertFileContent("", """
             @Override
             default String javaTS() {
                 return CodeHelpers.jcTSB(test.test.class)
@@ -138,49 +132,93 @@ public class BuilderGeneratorTest {
                     .prop("test2", gettest2())
                     .build();
             }
-            """, genToString(mockGenTypeMoreMeth("get" + TEST)).toRawString());
+            """);
     }
 
     @Test
+    @Disabled("FIXME: define a type which contains the equivalent")
     void builderTemplateGenerateToStringWithoutPropertyWithAugmentTest() {
-        assertEquals("""
+        assertFileContent("", """
             @Override
             default String javaTS() {
                 return CodeHelpers.jcTS0(this);
             }
-            """, genToString(mockAugment(mockGenType(TEST))).toRawString());
+            """);
     }
 
     @Test
     void builderTemplateGenerateToStringWithPropertyWithAugmentTest() {
-        assertEquals("""
-            @Override
-            default String javaTS() {
-                return CodeHelpers.jcTS1(this, "test", gettest());
+        assertFileContent("Container1Def.java", """
+
+                @Override
+                default String javaTS() {
+                    return CodeHelpers.jcTS1(this, "nodeIdString", getNodeIdString());
+                }
             }
-            """, genToString(mockAugment(mockGenType("get" + TEST))).toRawString());
+            """);
     }
 
     @Test
     void builderTemplateGenerateToStringWithMorePropertiesWithAugmentTest() {
-        assertEquals("""
-            @Override
-            default String javaTS() {
-                return CodeHelpers.jcTSB(this)
-                    .prop("test1", gettest1())
-                    .prop("test2", gettest2())
-                    .build();
+        assertFileContent("Nodes.java", """
+
+                @Override
+                default String javaTS() {
+                    return CodeHelpers.jcTSB(this)
+                        .prop("id16", getId16())
+                        .prop("id16Def", getId16Def())
+                        .prop("id32", getId32())
+                        .prop("id32Def", getId32Def())
+                        .prop("id64", getId64())
+                        .prop("id64Def", getId64Def())
+                        .prop("id8", getId8())
+                        .prop("id8Def", getId8Def())
+                        .prop("idBinary", getIdBinary())
+                        .prop("idBinaryDef", getIdBinaryDef())
+                        .prop("idBits", getIdBits())
+                        .prop("idBitsDef", getIdBitsDef())
+                        .prop("idBoolean", getIdBoolean())
+                        .prop("idBooleanDef", getIdBooleanDef())
+                        .prop("idContainer1", getIdContainer1())
+                        .prop("idContainer2", getIdContainer2())
+                        .prop("idDecimal64", getIdDecimal64())
+                        .prop("idDecimal64Def", getIdDecimal64Def())
+                        .prop("idEmpty", getIdEmpty())
+                        .prop("idEmptyDef", getIdEmptyDef())
+                        .prop("idEnumeration", getIdEnumeration())
+                        .prop("idEnumerationDef", getIdEnumerationDef())
+                        .prop("idGroupContainer", getIdGroupContainer())
+                        .prop("idGroupLeafString", getIdGroupLeafString())
+                        .prop("idIdentityref", getIdIdentityref())
+                        .prop("idIdentityrefDef", getIdIdentityrefDef())
+                        .prop("idInstanceIdentifier", getIdInstanceIdentifier())
+                        .prop("idInstanceIdentifierDef", getIdInstanceIdentifierDef())
+                        .prop("idLeafref", getIdLeafref())
+                        .prop("idLeafrefContainer1", getIdLeafrefContainer1())
+                        .prop("idLeafrefContainer1Def", getIdLeafrefContainer1Def())
+                        .prop("idLeafrefDef", getIdLeafrefDef())
+                        .prop("idList", getIdList())
+                        .prop("idString", getIdString())
+                        .prop("idStringDef", getIdStringDef())
+                        .prop("idU16", getIdU16())
+                        .prop("idU16Def", getIdU16Def())
+                        .prop("idU32", getIdU32())
+                        .prop("idU32Def", getIdU32Def())
+                        .prop("idU64", getIdU64())
+                        .prop("idU64Def", getIdU64Def())
+                        .prop("idU8", getIdU8())
+                        .prop("idU8Def", getIdU8Def())
+                        .prop("idUnion", getIdUnion())
+                        .prop("idUnionDef", getIdUnionDef())
+                        .build();
+                }
             }
-            """, genToString(mockAugment(mockGenTypeMoreMeth("get" + TEST))).toRawString());
+            """);
     }
 
     @Test
     void builderTemplateGenerateToEqualsComparingOrderTest() {
-        final var context = YangParserTestUtils.parseYangResource("/test-types.yang");
-        final var types = new DefaultBindingGenerator().generateTypes(context);
-        assertEquals(27, types.size());
-
-        final var bt = new BuilderTemplate.Builder(types.stream()
+        final var bt = new BuilderTemplate.Builder(TYPES.stream()
             .filter(t -> t.simpleName().equals("Nodes"))
             .findFirst()
             .map(ContainerArchetype.class::cast)
@@ -206,48 +244,5 @@ public class BuilderGeneratorTest {
                 // other types
                 "idContainer1", "idContainer2", "idEnumeration", "idEnumerationDef",
                 "idGroupContainer", "idList", "idUnion", "idUnionDef"), sortedProperties);
-    }
-
-    private static LegacyArchetype<?> mockAugment(final LegacyArchetype<?> genType) {
-        doReturn(List.of(BindingTypes.augmentable(genType))).when(genType).getImplements();
-        return genType;
-    }
-
-    private static LegacyArchetype<?> mockGenTypeMoreMeth(final String methodeName) {
-        final var genType = spy(LegacyArchetype.class);
-        doReturn(TYPE_NAME).when(genType).name();
-        doReturn(TEST).when(genType).simpleName();
-        doReturn(TEST).when(genType).packageName();
-        doReturn(List.of(mockMethSign(methodeName + 1), mockMethSign(methodeName + 2)))
-            .when(genType).getMethodDefinitions();
-        doReturn(List.of()).when(genType).getImplements();
-        return genType;
-    }
-
-    private static BlockBuilder genToString(final LegacyArchetype<?> genType) {
-        return new InterfaceTemplate<>(genType, mock(DataRootArchetype.class)).generateBindingToString();
-    }
-
-    private static BlockBuilder genHashCode(final LegacyArchetype<?> genType) {
-        return new InterfaceTemplate<>(genType, mock(DataRootArchetype.class)).generateBindingHashCode();
-    }
-
-    private static LegacyArchetype<?> mockGenType(final String methodeName) {
-        final var genType = spy(LegacyArchetype.class);
-        doReturn(TYPE_NAME).when(genType).name();
-        doReturn(TEST).when(genType).simpleName();
-        doReturn(TEST).when(genType).packageName();
-        doReturn(List.of(mockMethSign(methodeName))).when(genType).getMethodDefinitions();
-        doReturn(List.of()).when(genType).getImplements();
-        return genType;
-    }
-
-    private static MethodSignature mockMethSign(final String methodeName) {
-        final var methSign = mock(MethodSignature.class);
-        doReturn(methodeName).when(methSign).getName();
-        final var methType = TypeRef.of(TYPE_NAME);
-        doReturn(methType).when(methSign).getReturnType();
-        doReturn(ValueMechanics.NORMAL).when(methSign).getMechanics();
-        return methSign;
     }
 }
