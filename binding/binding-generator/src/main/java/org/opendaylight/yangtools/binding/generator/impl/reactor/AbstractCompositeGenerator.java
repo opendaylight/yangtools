@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -540,12 +541,13 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                 }
                 case ListEffectiveStatement list -> {
                     if (isOriginalDeclaration(list)) {
-                        final var listGen = new ListGenerator(list, this);
-                        tmp.add(listGen);
-
-                        final var keyGen = listGen.keyGenerator();
-                        if (keyGen != null) {
-                            tmp.add(keyGen);
+                        final var optKey = list.findFirstEffectiveSubstatement(KeyEffectiveStatement.class);
+                        if (optKey.isPresent()) {
+                            final var listGen = new EntryObjectGenerator(list, this, optKey.orElseThrow());
+                            tmp.add(listGen);
+                            tmp.add(listGen.keyGenerator());
+                        } else {
+                            tmp.add(new ListGenerator(list, this));
                         }
                     }
                 }
@@ -557,18 +559,12 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                                     tmp.add(new NotificationBodyGenerator(notification, grouping));
                                 }
                             }
-                            case ListGenerator listGen -> {
-                                final var keyGen = listGen.keyGenerator();
-                                tmp.add(keyGen == null
-                                    ? new InstanceNotificationGenerator(notification, listGen)
-                                    : new KeyedListNotificationGenerator(notification, listGen, keyGen));
-                            }
-                            case ModuleGenerator module -> {
+                            case EntryObjectGenerator listGen ->
+                                tmp.add(new KeyedListNotificationGenerator(notification, listGen));
+                            case ModuleGenerator module ->
                                 tmp.add(new NotificationGenerator(notification, module));
-                            }
-                            default -> {
+                            default ->
                                 tmp.add(new InstanceNotificationGenerator(notification, this));
-                            }
                         }
                     }
                 }

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static java.util.Objects.requireNonNull;
-
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.type.builder.GeneratedTypeBuilder;
@@ -19,17 +17,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  * A {@link NotificationGenerator} generating {@link KeyedListNotification}s.
  */
 final class KeyedListNotificationGenerator extends AbstractNotificationGenerator {
-    private final KeyGenerator keyGen;
-
     KeyedListNotificationGenerator(final NotificationEffectiveStatement statement,
-            final ListGenerator parent, final KeyGenerator keyGen) {
+            final EntryObjectGenerator parent) {
         super(statement, parent);
-        this.keyGen = requireNonNull(keyGen);
     }
 
     @Override
     Type notificationType(final GeneratedTypeBuilder builder, final TypeBuilderFactory builderFactory) {
-        return BindingTypes.keyedListNotification(builder, Type.of(getParent().typeName()),
-            keyGen.getGeneratedType(builderFactory));
+        final var parent = (EntryObjectGenerator) getParent();
+        return BindingTypes.keyedListNotification(builder, Type.of(parent.typeName()),
+            parent.keyGenerator().getGeneratedType(builderFactory));
     }
 }

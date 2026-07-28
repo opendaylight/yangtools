@@ -46,18 +46,15 @@ final class ActionGenerator extends AbstractInvokableGenerator<ActionEffectiveSt
             final GeneratedType input, final GeneratedType output) {
         final var parent = getParent();
         final var parentType = Type.of(parent.typeName());
-        if (parent instanceof ListGenerator list) {
-            final var keyGen = list.keyGenerator();
-            if (keyGen != null) {
-                final var keyType = keyGen.getGeneratedType(builderFactory);
-                builder.addImplementsType(BindingTypes.keyedListAction(parentType, keyType, input, output));
-                builder.addMethod(Naming.ACTION_INVOKE_NAME).setAbstract(true)
-                    .addParameter(BindingTypes.objectIdentifierWithKey(parentType, keyType), "path")
-                    .addParameter(input, "input")
-                    .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)))
-                    .addAnnotation(OVERRIDE_ANNOTATION);
-                return;
-            }
+        if (parent instanceof EntryObjectGenerator list) {
+            final var keyType = list.keyGenerator().getGeneratedType(builderFactory);
+            builder.addImplementsType(BindingTypes.keyedListAction(parentType, keyType, input, output));
+            builder.addMethod(Naming.ACTION_INVOKE_NAME).setAbstract(true)
+                .addParameter(BindingTypes.objectIdentifierWithKey(parentType, keyType), "path")
+                .addParameter(input, "input")
+                .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)))
+                .addAnnotation(OVERRIDE_ANNOTATION);
+            return;
         }
         builder.addImplementsType(BindingTypes.action(parentType, input, output));
         builder.addMethod(Naming.ACTION_INVOKE_NAME).setAbstract(true)
