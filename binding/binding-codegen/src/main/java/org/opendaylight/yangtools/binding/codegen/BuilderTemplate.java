@@ -39,6 +39,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
+import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
@@ -47,7 +48,6 @@ import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 /**
  * Template for generating JAVA builder classes.
@@ -975,10 +975,8 @@ final class BuilderTemplate extends BaseTemplate {
      * @return {@code true} if specified {@code type} is a container without presence statement,
      *     {@code false} otherwise.
      */
-    // FIXME: YANGTOOLS-1876: remove this method
     @NonNullByDefault
     static boolean isNonPresenceContainer(final InterfaceArchetype type) {
-        return type.statement() instanceof ContainerEffectiveStatement container
-            && container.presenceStatement() == null;
+        return type instanceof ContainerArchetype container && container.statement().presenceStatement() == null;
     }
 }
