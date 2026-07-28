@@ -31,8 +31,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  *
  * @param <S> EffectiveStatement type
  */
-// FIXME: seal and only permit DefaultLegacyArchetype
-public non-sealed interface LegacyArchetype<S extends EffectiveStatement<?, ?>> extends InterfaceArchetype {
+public sealed interface LegacyArchetype<S extends EffectiveStatement<?, ?>> extends InterfaceArchetype
+        permits LegacyArchetypeImpl {
     /**
      * A builder of {@link LegacyArchetype}s.
      *
