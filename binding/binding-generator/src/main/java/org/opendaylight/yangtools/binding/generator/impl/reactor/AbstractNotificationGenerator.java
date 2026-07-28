@@ -45,7 +45,7 @@ abstract class AbstractNotificationGenerator
     }
 
     @Override
-    ClassPlacement classPlacement() {
+    final ClassPlacement classPlacement() {
         return ClassPlacement.TOP_LEVEL;
     }
 
@@ -72,6 +72,9 @@ abstract class AbstractNotificationGenerator
         return builder.build();
     }
 
+    @NonNullByDefault
+    abstract Type notificationType(TypeRef self);
+
     @Override
     final void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
         // Notifications are a distinct concept
@@ -88,7 +91,4 @@ abstract class AbstractNotificationGenerator
             }
         };
     }
-
-    @NonNullByDefault
-    abstract Type notificationType(TypeRef self);
 }
