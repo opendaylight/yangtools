@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
+import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 
@@ -14,5 +15,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
  * A {@link RuntimeType} associated with an {@code output} statement.
  */
 public interface OutputRuntimeType extends ContainerLikeRuntimeType<OutputStatement, OutputEffectiveStatement> {
-
+    @Override
+    OutputArchetype javaType();
 }

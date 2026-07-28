@@ -1,0 +1,37 @@
+/*
+ * Copyright (c) 2026 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.binding.codegen;
+
+import static java.util.Objects.requireNonNull;
+
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.RpcInput;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.InputArchetype;
+
+/**
+ * Template for {@link RpcInput} specializations.
+ */
+@NonNullByDefault
+final class InputTemplate extends InterfaceTemplate<InputArchetype> {
+    record Builder(InputArchetype type, DataRootArchetype root) implements Template.Builder {
+        Builder {
+            requireNonNull(type);
+            requireNonNull(root);
+        }
+
+        @Override
+        public InputTemplate build() {
+            return new InputTemplate(type, root);
+        }
+    }
+
+    private InputTemplate(final InputArchetype archetype, final DataRootArchetype root) {
+        super(archetype, root);
+    }
+}

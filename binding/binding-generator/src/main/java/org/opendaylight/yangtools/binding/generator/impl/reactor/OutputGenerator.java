@@ -13,7 +13,8 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultOutputRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.OutputRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -22,10 +23,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 /**
  * Generator corresponding to an {@code output} statement.
  */
-final class OutputGenerator extends OperationContainerGenerator<OutputEffectiveStatement, OutputRuntimeType> {
+final class OutputGenerator
+        extends OperationContainerGenerator<OutputEffectiveStatement, OutputRuntimeType, OutputArchetype> {
     @NonNullByDefault
     OutputGenerator(final OutputEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
-        super(statement, parent, BindingTypes.RPC_OUTPUT);
+        super(statement, parent);
     }
 
     @Override
@@ -39,13 +41,24 @@ final class OutputGenerator extends OperationContainerGenerator<OutputEffectiveS
     }
 
     @Override
+    OutputArchetype createTypeImpl(final JavaTypeName typeName, final OutputEffectiveStatement statement) {
+        final var builder = OutputArchetype.builder(typeName, statement);
+        addAugmentable(builder);
+        addUsesInterfaces(builder);
+        addConcreteInterfaceMethods(builder);
+        addGetterMethods(builder);
+        addQNameConstant(builder, statement.argument());
+        return builder.build();
+    }
+
+    @Override
     CompositeRuntimeTypeBuilder<OutputEffectiveStatement, OutputRuntimeType> createBuilder(
             final OutputEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
             OutputRuntimeType build(final Archetype type, final OutputEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultOutputRuntimeType(type, statement, children, augments);
+                return new DefaultOutputRuntimeType((OutputArchetype) type, statement, children, augments);
             }
         };
     }

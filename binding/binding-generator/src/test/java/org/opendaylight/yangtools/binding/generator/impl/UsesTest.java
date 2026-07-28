@@ -19,7 +19,9 @@ import org.opendaylight.yangtools.binding.model.api.CaseArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.api.InputArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
+import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class UsesTest {
@@ -372,8 +374,8 @@ class UsesTest {
         int groupingRpcInputTestCounter = 0;
         int groupingRpcOutputTestCounter = 0;
         int containerGroupingRpcInputTestCounter = 0;
-        LegacyArchetype<?> rpcTestInput = null;
-        LegacyArchetype<?> rpcTestOutput = null;
+        InputArchetype rpcTestInput = null;
+        OutputArchetype rpcTestOutput = null;
         GroupingArchetype groupingRpcInputTest = null;
         GroupingArchetype groupingRpcOutputTest = null;
         ContainerArchetype containerGroupingRpcInputTest = null;
@@ -381,11 +383,11 @@ class UsesTest {
         for (var genType : genTypes) {
             switch (genType.simpleName()) {
                 case "RpcTestInput" -> {
-                    rpcTestInput = (LegacyArchetype<?>) genType;
+                    rpcTestInput = assertInstanceOf(InputArchetype.class, genType);
                     rpcTestInputCounter++;
                 }
                 case "RpcTestOutput" -> {
-                    rpcTestOutput = (LegacyArchetype<?>) genType;
+                    rpcTestOutput = assertInstanceOf(OutputArchetype.class, genType);
                     rpcTestOutputCounter++;
                 }
                 case "GroupingRpcInputTest" -> {
