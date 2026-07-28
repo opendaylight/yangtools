@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.CaseArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeTypes;
@@ -175,7 +174,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
     /**
      * Update substitutions. Put to map:
      * <ul>
-     *  <li>key - {@link LegacyArchetype} - the {@link CaseRuntimeType#javaType} we want to substitute</li>
+     *  <li>key - {@link CaseArchetype} - the {@link CaseRuntimeType#javaType} we want to substitute</li>
      *  <li>value - {@link CaseRuntimeType} - the type that can be used as a substitution</li>
      * </ul>
      *

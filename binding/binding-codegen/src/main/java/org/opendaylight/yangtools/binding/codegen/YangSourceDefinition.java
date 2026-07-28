@@ -12,16 +12,13 @@ import static java.util.Objects.requireNonNull;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
-/**
- * DTO capturing the YANG source definition which lead to a {@link LegacyArchetype} being emitted.
- */
+// FIXME: remove this class
 @NonNullByDefault
 final class YangSourceDefinition {
     private final ModuleEffectiveStatement module;

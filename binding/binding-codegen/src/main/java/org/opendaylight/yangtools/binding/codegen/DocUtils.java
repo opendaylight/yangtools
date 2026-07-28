@@ -16,15 +16,9 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 
-/**
- * A dumping ground for utilities shared between {@code binding-generator} and {@code binding-codegen} imposed by
- * current design of {@link LegacyArchetype}.
- *
- * @since 16.0.0
- */
+// FIXME: remove this class
 final class DocUtils {
     // for encodeAngleBrackets()
     private static final CharMatcher GT_MATCHER = CharMatcher.is('>');

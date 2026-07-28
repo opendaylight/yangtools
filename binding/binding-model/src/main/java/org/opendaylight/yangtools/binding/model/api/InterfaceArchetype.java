@@ -124,7 +124,7 @@ public sealed interface InterfaceArchetype extends Archetype
      */
     // FIXME: yes, these result in methods being generated, but they are somewhat subtle, as they also imply constants
     //        for builders, etc. Most notably, KeyArchetype is presenting a subset of these defined in its corresponding
-    //        LegacyArchetype (or EntryObjectArchetype once that is created)
+    //        EntryObjectArchetype
     List<MethodSignature> getMethodDefinitions();
 
     @Override
