@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
+import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
@@ -15,4 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 public interface NotificationBodyRuntimeType extends CompositeRuntimeType {
     @Override
     NotificationEffectiveStatement statement();
+
+    @Override
+    NotificationBodyArchetype javaType();
 }

@@ -15,10 +15,8 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationBodyRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
+import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.WildcardType;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationBodyRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -46,10 +44,9 @@ final class NotificationBodyGenerator
     }
 
     @Override
-    LegacyArchetype<NotificationEffectiveStatement> createTypeImpl() {
+    NotificationBodyArchetype createTypeImpl() {
         final var typeName = typeName();
-        final var builder = LegacyArchetype.builder(typeName, statement())
-            .addImplementsType(BindingTypes.notificationBody(TypeRef.of(typeName)));
+        final var builder = NotificationBodyArchetype.builder(typeName, statement());
         defineImplementedInterfaceMethod(builder, WildcardType.ofName(typeName));
         addUsesInterfaces(builder);
         addGetterMethods(builder);
@@ -69,10 +66,10 @@ final class NotificationBodyGenerator
             NotificationBodyRuntimeType build(final Archetype type, final NotificationEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
                 // uninstantiated: cannot be targeted by 'augment'
-                if (augments.isEmpty()) {
-                    return new DefaultNotificationBodyRuntimeType(type, statement, children);
+                if (!augments.isEmpty()) {
+                    throw new VerifyException("Unexpected augments " + augments);
                 }
-                throw new VerifyException("Unexpected augments " + augments);
+                return new DefaultNotificationBodyRuntimeType((NotificationBodyArchetype) type, statement, children);
             }
         };
     }
