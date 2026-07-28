@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
-import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.InvokableRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 abstract sealed class AbstractInvokableGenerator<
         S extends SchemaTreeEffectiveStatement<?>,
-        R extends CompositeRuntimeType> extends CompositeSchemaTreeGenerator<S, R>
-        permits RpcGenerator, ActionGenerator {
+        R extends InvokableRuntimeType> extends CompositeSchemaTreeGenerator<S, R>
+        permits AbstractActionGenerator, RpcGenerator {
     @NonNullByDefault
     AbstractInvokableGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);

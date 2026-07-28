@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 abstract sealed class AbstractInvokableRuntimeType<S extends EffectiveStatement<?, ?>>
         extends AbstractCompositeRuntimeType<S> implements InvokableRuntimeType
-        permits DefaultActionRuntimeType, DefaultRpcRuntimeType {
+        permits DefaultActionRuntimeType, DefaultKeyedListActionRuntimeType, DefaultRpcRuntimeType {
     private final @NonNull InputRuntimeType input;
     private final @NonNull OutputRuntimeType output;
 

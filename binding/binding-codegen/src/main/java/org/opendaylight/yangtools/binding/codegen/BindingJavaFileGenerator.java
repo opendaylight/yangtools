@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.model.api.ActionArchetype;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
@@ -36,6 +37,7 @@ import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.KeyedListActionArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
@@ -115,6 +117,7 @@ final class BindingJavaFileGenerator {
                 case UnionTypeObjectArchetype utao -> generateFile(new UnionTypeObjectTemplate.Builder(utao, root));
 
                 // everything else
+                case ActionArchetype archetype -> generateFile(new ActionTemplate.Builder(archetype, root));
                 case AugmentationArchetype archetype ->
                     generateBoth(AugmentationTemplate.Builder::new, archetype, root);
                 case CaseArchetype archetype -> generateBoth(CaseTemplate.Builder::new, archetype, root);
@@ -127,6 +130,8 @@ final class BindingJavaFileGenerator {
                 case InputArchetype archetype -> generateBoth(InputTemplate.Builder::new, archetype, root);
                 case ItemObjectArchetype archetype -> generateBoth(ItemObjectTemplate.Builder::new, archetype, root);
                 case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype, root));
+                case KeyedListActionArchetype archetype ->
+                    generateFile(new KeyedListActionTemplate.Builder(archetype, root));
                 case LegacyArchetype<?> legacy -> generateBoth(InterfaceTemplate.Builder::new, legacy, root);
                 case OutputArchetype archetype -> generateBoth(OutputTemplate.Builder::new, archetype, root);
                 case NotificationBodyArchetype archetype ->
