@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GenEnumResolvingTest {
@@ -26,10 +26,10 @@ class GenEnumResolvingTest {
 
         assertEquals(9, genTypes.size());
 
-        LegacyArchetype<?> genInterface = null;
+        EntryObjectArchetype genInterface = null;
         for (var type : genTypes) {
             if (type.simpleName().equals("Interface")) {
-                genInterface = assertInstanceOf(LegacyArchetype.class, type);
+                genInterface = assertInstanceOf(EntryObjectArchetype.class, type);
             }
         }
         assertNotNull(genInterface, "Generated Type Interface is not present in list of Generated Types");
@@ -93,11 +93,11 @@ class GenEnumResolvingTest {
         assertNotNull(genTypes);
         assertEquals(27, genTypes.size());
 
-        LegacyArchetype<?> genInterface = null;
+        EntryObjectArchetype genInterface = null;
         for (var type : genTypes) {
             if (type.simpleName().equals("Interface") && type.packageName().equals(
                 "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces")) {
-                genInterface = assertInstanceOf(LegacyArchetype.class, type);
+                genInterface = assertInstanceOf(EntryObjectArchetype.class, type);
             }
         }
         assertNotNull(genInterface, "Generated Type Interface is not present in list of Generated Types");

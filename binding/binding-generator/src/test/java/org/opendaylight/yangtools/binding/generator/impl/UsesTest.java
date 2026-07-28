@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.InputArchetype;
+import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -240,10 +241,10 @@ class UsesTest {
         int groupingListTestCounter = 0;
         int containerGroupingListTestCounter = 0;
         int listGroupingListTestCounter = 0;
-        LegacyArchetype<?> listTest = null;
+        ItemObjectArchetype listTest = null;
         GroupingArchetype groupingListTest = null;
         ContainerArchetype containerGroupingListTest = null;
-        LegacyArchetype<?> listGroupingListTest = null;
+        ItemObjectArchetype listGroupingListTest = null;
 
         for (var genType : genTypes) {
             switch (genType.simpleName()) {
@@ -252,7 +253,7 @@ class UsesTest {
                     groupingListTestCounter++;
                 }
                 case "ListTest" -> {
-                    listTest = (LegacyArchetype<?>) genType;
+                    listTest = assertInstanceOf(ItemObjectArchetype.class, genType);
                     listTestCounter++;
                 }
                 case "ContainerGroupingListTest" -> {
@@ -260,7 +261,7 @@ class UsesTest {
                     containerGroupingListTestCounter++;
                 }
                 case "ListGroupingListTest" -> {
-                    listGroupingListTest = (LegacyArchetype<?>) genType;
+                    listGroupingListTest = assertInstanceOf(ItemObjectArchetype.class, genType);
                     listGroupingListTestCounter++;
                 }
                 default -> {
