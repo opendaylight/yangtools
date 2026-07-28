@@ -40,13 +40,13 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
+import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 /**
@@ -74,7 +74,7 @@ final class BuilderTemplate extends BaseTemplate {
             //        - entry object (implies augmentable)
             //        we should have three separate classes instead of @Nullable fields for the latter two cases
             return new BuilderTemplate(javaType, javaType.getNestedClass(implName), type, analysis.properties(),
-                analysis.augmentType(), BindingTypes.extractEntryObjectKey(type));
+                analysis.augmentType());
         }
     }
 
@@ -93,11 +93,6 @@ final class BuilderTemplate extends BaseTemplate {
      */
     final @NonNull Set<BuilderGeneratedProperty> properties;
 
-    /**
-     * KeyArchetype for key type, {@code null} if this type does not have a key.
-     */
-    final KeyArchetype keyType;
-
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
     //        implementations of its methods
@@ -108,13 +103,12 @@ final class BuilderTemplate extends BaseTemplate {
     @NonNullByDefault
     private BuilderTemplate(final GeneratedClass.TopLevel javaType, final GeneratedClass.Nested implJavaType,
             final InterfaceArchetype targetType, final Set<BuilderGeneratedProperty> properties,
-            final @Nullable ParameterizedType augmentType, final @Nullable KeyArchetype keyType) {
+            final @Nullable ParameterizedType augmentType) {
         super(javaType);
         this.implJavaType = requireNonNull(implJavaType);
         this.targetType = requireNonNull(targetType);
         this.properties = requireNonNull(properties);
         this.augmentType = augmentType;
-        this.keyType = keyType;
     }
 
     private @NonNull String simpleName() {
@@ -188,9 +182,16 @@ final class BuilderTemplate extends BaseTemplate {
             .cB();
     }
 
+    /**
+     * {@return a {@link KeyArchetype} if target is an {@link EntryObjectArchetype}, {@code null} otherwise}
+     */
+    // FIXME: this methods and all its callers are just begging for specialization
+    @Nullable KeyArchetype keyType() {
+        return targetType instanceof EntryObjectArchetype archetype ? archetype.key() : null;
+    }
+
     private @Nullable BlockBuilder builderFields() {
-        // FIXME: this just begs for specialization
-        final var key = keyType;
+        final var key = keyType();
         if (key != null) {
             verify(!properties.isEmpty(), "empty properties with key %s", key);
             return propertyFields()
@@ -375,6 +376,7 @@ final class BuilderTemplate extends BaseTemplate {
                         .cB();
                 }
 
+                final var keyType = keyType();
                 if (keyType != null && targetType.getImplements().contains(entryObject(targetType, keyType))) {
                     final var allProps = new ArrayList<>(properties);
                     final var keyProps = keyConstructorArgs(keyType);
@@ -612,6 +614,7 @@ final class BuilderTemplate extends BaseTemplate {
     private @NonNull BlockBuilder generateGetters(final boolean addOverride) {
         final var bb = newBlockBuilder();
 
+        final var keyType = keyType();
         if (keyType != null) {
             if (!addOverride) {
                 bb
@@ -783,6 +786,7 @@ final class BuilderTemplate extends BaseTemplate {
      */
     private @NonNull BlockBuilder generateSetters() {
         final var bb = newBlockBuilder();
+        final var keyType = keyType();
         if (keyType != null) {
             bb
                 .eol("/**")

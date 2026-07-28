@@ -11,7 +11,6 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.typeForBuiltIn;
 import static org.opendaylight.yangtools.binding.model.ri.Types.typeForClass;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -37,7 +36,6 @@ import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -232,7 +230,6 @@ public final class BindingTypes {
      * @param type Type for which to specialize
      * @param keyType the corresponding {@link #key(Type)}
      * @throws NullPointerException if any argument is {@code null}
-     * @see #extractEntryObjectKey(GeneratedType)
      */
     @NonNullByDefault
     public static ParameterizedType entryObject(final Type type, final KeyArchetype keyType) {
@@ -319,32 +316,6 @@ public final class BindingTypes {
                 if (arg != null) {
                     return arg;
                 }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Recover the {@code keyType} argument from a potential {@link EntryObject} type. This is inverse operation to
-     * adding {@link #entryObject(Type, KeyArchetype)} as an implemented interface.
-     *
-     * @param archetype the generated type
-     * @return the {@link KeyArchetype} defining the key type, or {@code null} if {@code genType} does not
-     *         directly implement {@link EntryObject}
-     * @since 16.0.0
-     */
-    public static @Nullable KeyArchetype extractEntryObjectKey(final @NonNull InterfaceArchetype archetype) {
-        for (var iface : archetype.getImplements()) {
-            if (iface instanceof ParameterizedType parameterized && ENTRY_OBJECT.equals(parameterized.getRawType())) {
-                final var args = parameterized.getActualTypeArguments();
-                if (args.size() != 2) {
-                    throw new VerifyException("Unexpected arguments " + args);
-                }
-                final var keyType = args.getLast();
-                if (keyType instanceof KeyArchetype keyArchetype) {
-                    return keyArchetype;
-                }
-                throw new VerifyException("Unexpected key type " + keyType);
             }
         }
         return null;

@@ -13,14 +13,13 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.assertEntryObject;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -37,11 +36,11 @@ class GeneratedTypesLeafrefTest {
         assertEquals(55, genTypes.size());
 
         KeyArchetype gtIfcKey = null;
-        LegacyArchetype<?> gtIfc = null;
-        LegacyArchetype<?> gtNetworkLink = null;
+        EntryObjectArchetype gtIfc = null;
+        EntryObjectArchetype gtNetworkLink = null;
         ContainerArchetype gtSource = null;
         ContainerArchetype gtDest = null;
-        LegacyArchetype<?> gtTunnel = null;
+        EntryObjectArchetype gtTunnel = null;
         KeyArchetype gtTunnelKey = null;
         ContainerArchetype gtTopology = null;
 
@@ -54,15 +53,15 @@ class GeneratedTypesLeafrefTest {
             } else {
                 switch (name) {
                     case "Interface" ->
-                        gtIfc = assertInstanceOf(LegacyArchetype.class, type);
+                        gtIfc = assertInstanceOf(EntryObjectArchetype.class, type);
                     case "NetworkLink" ->
-                        gtNetworkLink = assertInstanceOf(LegacyArchetype.class, type);
+                        gtNetworkLink = assertInstanceOf(EntryObjectArchetype.class, type);
                     case "SourceNode" ->
                         gtSource = assertInstanceOf(ContainerArchetype.class, type);
                     case "DestinationNode" ->
                         gtDest = assertInstanceOf(ContainerArchetype.class, type);
                     case "Tunnel" ->
-                        gtTunnel = assertInstanceOf(LegacyArchetype.class, type);
+                        gtTunnel = assertInstanceOf(EntryObjectArchetype.class, type);
                     case "TunnelKey" ->
                         gtTunnelKey = assertInstanceOf(KeyArchetype.class, type);
                     case "Topology" ->
@@ -113,8 +112,9 @@ class GeneratedTypesLeafrefTest {
         assertEquals("java.lang.String", ifcIdPropType.canonicalName());
 
         // Interface
-        assertEntryObject(gtIfc, JavaTypeName.create(
-            "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces", "InterfaceKey"));
+        assertEquals(JavaTypeName.create(
+            "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces", "InterfaceKey"),
+            gtIfc.key().name());
         final var gtIfcMethods = gtIfc.getMethodDefinitions();
         assertNotNull(gtIfcMethods);
         MethodSignature getHigherLayerIf = null;
@@ -179,9 +179,9 @@ class GeneratedTypesLeafrefTest {
         assertEquals("Uri", getIdDestType.simpleName());
 
         // Tunnel
-        assertEntryObject(gtTunnel, JavaTypeName.create("""
+        assertEquals(JavaTypeName.create("""
             org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.network.links.network.link.\
-            tunnels""", "TunnelKey"));
+            tunnels""", "TunnelKey"), gtTunnel.key().name());
         assertThat(gtTunnel.getMethodDefinitions()).hasSize(3);
 
         // TunnelKey

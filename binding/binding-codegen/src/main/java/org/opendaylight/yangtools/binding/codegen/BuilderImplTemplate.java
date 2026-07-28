@@ -59,7 +59,7 @@ final class BuilderImplTemplate extends BaseTemplate {
     BlockBuilder body() {
         // cache things from builder
         final var targetType = builder.targetType;
-        final var keyType = builder.keyType;
+        final var keyType = builder.keyType();
         final var augmentType = builder.augmentType;
         final var properties = builder.properties;
 

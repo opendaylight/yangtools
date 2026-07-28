@@ -16,15 +16,16 @@ import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 /**
  * A prototype for a {@link MapCodecContext}.
  */
-final class MapCodecPrototype extends ListCodecPrototype {
-    MapCodecPrototype(final DataObjectStep<?> step, final ListRuntimeType type, final CodecContextFactory factory) {
+final class MapCodecPrototype extends ListCodecPrototype<ListRuntimeType.WithKey> {
+    MapCodecPrototype(final DataObjectStep<?> step, final ListRuntimeType.WithKey type,
+            final CodecContextFactory factory) {
         super(step, type, factory);
         final var clazz = javaClass();
         checkArgument(KeyAware.class.isAssignableFrom(clazz), "%s is not KeyAware", clazz);
     }
 
     @Override
-    ListCodecContext<?> createInstance() {
+    ListCodecContext<?, ListRuntimeType.WithKey> createInstance() {
         return MapCodecContext.of(this);
     }
 }

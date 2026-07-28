@@ -149,16 +149,15 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
         }
 
         final var item = createItem(caseClass, childClass, child.statement());
-        if (child instanceof ContainerLikeRuntimeType<?, ?> containerLike) {
-            return child instanceof ContainerRuntimeType container && container.statement().presenceStatement() == null
-                ? new StructuralContainerCodecPrototype(item, container, factory)
-                : new ContainerLikeCodecPrototype(item, containerLike, factory);
-        }
-        if (child instanceof ListRuntimeType list) {
-            return list.keyType() != null ? new MapCodecPrototype(item, list, factory)
-                : new ListCodecPrototype(item, list, factory);
-        }
-        throw new UnsupportedOperationException("Unhandled type " + child);
+        return switch (child) {
+            case ContainerLikeRuntimeType<?, ?> containerLike ->
+                child instanceof ContainerRuntimeType container && container.statement().presenceStatement() == null
+                    ? new StructuralContainerCodecPrototype(item, container, factory)
+                    : new ContainerLikeCodecPrototype(item, containerLike, factory);
+            case ListRuntimeType.WithKey list -> new MapCodecPrototype(item, list, factory);
+            case ListRuntimeType.WithoutKey list -> new ListCodecPrototype<>(item, list, factory);
+            default -> throw new UnsupportedOperationException("Unhandled type " + child);
+        };
     }
 
     // FIXME: MDSAL-697: move this method into BindingRuntimeContext

@@ -45,7 +45,7 @@ sealed interface CodecContextFactory permits BindingCodecContext {
      * @param type Schema of list item
      * @return Path argument codec for supplied list item.
      */
-    IdentifiableItemCodec getPathArgumentCodec(Class<?> listClz, ListRuntimeType type);
+    IdentifiableItemCodec getPathArgumentCodec(Class<?> listClz, ListRuntimeType.WithKey type);
 
     /**
      * Return the codec loader associated with this factory.

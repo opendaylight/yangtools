@@ -19,17 +19,18 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 
-sealed class ListCodecContext<D extends DataObject> extends DataObjectCodecContext<D, ListRuntimeType>
+// FIXME: split into abstract class and two specializations
+sealed class ListCodecContext<D extends DataObject, R extends ListRuntimeType> extends DataObjectCodecContext<D, R>
         permits MapCodecContext {
-    ListCodecContext(final Class<D> cls, final ListRuntimeType list, final CodecContextFactory factory) {
-        this(new ListCodecPrototype(new NodeStep<>(cls), list, factory));
+    ListCodecContext(final Class<D> cls, final R list, final CodecContextFactory factory) {
+        this(new ListCodecPrototype<>(new NodeStep<>(cls), list, factory));
     }
 
-    ListCodecContext(final ListCodecPrototype prototype) {
+    ListCodecContext(final ListCodecPrototype<R> prototype) {
         super(prototype);
     }
 
-    ListCodecContext(final ListCodecPrototype prototype, final Method keyMethod) {
+    ListCodecContext(final ListCodecPrototype<R> prototype, final Method keyMethod) {
         super(prototype, keyMethod);
     }
 

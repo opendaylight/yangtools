@@ -187,9 +187,9 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                         : new ContainerLikeCodecContext<>(key, child, BindingCodecContext.this);
                     case ContainerLikeRuntimeType<?, ?> child ->
                         new ContainerLikeCodecContext<>(key, child, BindingCodecContext.this);
-                    case ListRuntimeType child -> child.keyType() == null
-                        ? new ListCodecContext<>(key, child, BindingCodecContext.this)
-                        : MapCodecContext.of(key, child, BindingCodecContext.this);
+                    case ListRuntimeType.WithKey child -> MapCodecContext.of(key, child, BindingCodecContext.this);
+                    case ListRuntimeType.WithoutKey child ->
+                        new ListCodecContext<>(key, child, BindingCodecContext.this);
                     case null -> throw DataContainerCodecContext.childNullException(context, key,
                         "%s is not top-level item.", key);
                     default -> throw new IncorrectNestingException(
@@ -548,7 +548,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
         CodecContext currentNode;
         switch (nextNode) {
-            case ListCodecContext<?> listNode -> {
+            case ListCodecContext<?, ?> listNode -> {
                 // 2. if it is a list, we need to see if we are consuming another item.
                 if (!it.hasNext()) {
                     // 2a: not further items: it boils down to a wildcard
@@ -583,7 +583,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             }
         }
 
-        ListCodecContext<?> currentList = null;
+        ListCodecContext<?, ?> currentList = null;
         while (it.hasNext()) {
             domArg = it.next();
             if (!(currentNode instanceof DataContainerCodecContext previous)) {
@@ -620,7 +620,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 }
                 currentList = null;
                 currentNode = nextNode;
-            } else if (nextNode instanceof ListCodecContext<?> listNode) {
+            } else if (nextNode instanceof ListCodecContext<?, ?> listNode) {
                 // We enter list, we do not update current Node yet,
                 // since we need to verify
                 currentList = listNode;
@@ -828,13 +828,10 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public IdentifiableItemCodec getPathArgumentCodec(final Class<?> listClz, final ListRuntimeType type) {
+    public IdentifiableItemCodec getPathArgumentCodec(final Class<?> listClz, final ListRuntimeType.WithKey type) {
         // CCE is as good an exception as any
         final var entryClass = listClz.asSubclass(EntryObject.class);
-        final var keyType = type.keyType();
-        if (keyType == null) {
-            throw new VerifyException(type + " is missing key type information required for EntryObject " + entryClass);
-        }
+        final var keyType = type. keyType();
 
         final Class<? extends Key<?>> keyClass;
         try {

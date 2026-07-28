@@ -11,13 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.assertEntryObject;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GeneratedTypesTest {
@@ -243,11 +242,11 @@ class GeneratedTypesTest {
                         }
                     }
                 }
-                case LegacyArchetype<?> archetype -> {
+                case EntryObjectArchetype archetype -> {
                     if (archetype.simpleName().equals("SimpleList")) {
-                        assertEntryObject(archetype, JavaTypeName.create(
+                        assertEquals(JavaTypeName.create(
                             "org.opendaylight.yang.gen.v1.urn.simple.container.demo.rev130227.list.parent.container",
-                            "SimpleListKey"));
+                            "SimpleListKey"), archetype.key().name());
 
                         simpleListMethodsCount = archetype.getMethodDefinitions().size();
                         for (var method : archetype.getMethodDefinitions()) {

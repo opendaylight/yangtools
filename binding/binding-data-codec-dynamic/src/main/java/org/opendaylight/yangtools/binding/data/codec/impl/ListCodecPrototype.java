@@ -14,13 +14,15 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 /**
  * A prototype for {@link ListCodecContext}.
  */
-sealed class ListCodecPrototype extends DataObjectCodecPrototype<ListRuntimeType> permits MapCodecPrototype {
-    ListCodecPrototype(final DataObjectStep<?> step, final ListRuntimeType type, final CodecContextFactory factory) {
+// FIXME: split into an abstract class and specialization
+sealed class ListCodecPrototype<R extends ListRuntimeType> extends DataObjectCodecPrototype<R>
+        permits MapCodecPrototype {
+    ListCodecPrototype(final DataObjectStep<?> step, final R type, final CodecContextFactory factory) {
         super(step, NodeIdentifier.create(type.statement().argument()), type, factory);
     }
 
     @Override
-    ListCodecContext<?> createInstance() {
+    ListCodecContext<?, R> createInstance() {
         return new ListCodecContext<>(this);
     }
 }

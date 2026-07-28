@@ -8,19 +8,14 @@
 package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
 final class SupportTestUtil {
     private SupportTestUtil() {
@@ -83,12 +78,5 @@ final class SupportTestUtil {
             }
         }
         fail("Generated type " + genType.simpleName() + " doesn't implement interface " + interfaceNameSearched);
-    }
-
-    @NonNullByDefault
-    static void assertEntryObject(final LegacyArchetype<?> type, final JavaTypeName expectedKeyType) {
-        final var key = BindingTypes.extractEntryObjectKey(type);
-        assertNotNull(key);
-        assertEquals(expectedKeyType, key.name());
     }
 }
