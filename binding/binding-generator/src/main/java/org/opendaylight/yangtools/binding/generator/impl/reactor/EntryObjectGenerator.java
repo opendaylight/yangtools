@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -36,7 +38,8 @@ final class EntryObjectGenerator extends ListGenerator {
     }
 
     @NonNull KeyGenerator keyGenerator() {
-        return keyGenerator;
+        // guard against invocations during construction
+        return verifyNotNull(keyGenerator);
     }
 
     @Override
