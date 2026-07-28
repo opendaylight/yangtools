@@ -539,12 +539,13 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                 }
                 case ListEffectiveStatement list -> {
                     if (isOriginalDeclaration(list)) {
-                        final var listGen = new ListGenerator(list, this);
-                        tmp.add(listGen);
-
-                        final var keyGen = listGen.keyGenerator();
-                        if (keyGen != null) {
-                            tmp.add(keyGen);
+                        final var key = list.keyStatement();
+                        if (key != null) {
+                            final var listGen = new EntryObjectGenerator(list, this, key);
+                            tmp.add(listGen);
+                            tmp.add(listGen.keyGenerator());
+                        } else {
+                            tmp.add(new ListGenerator(list, this));
                         }
                     }
                 }
@@ -556,18 +557,12 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                                     tmp.add(new NotificationBodyGenerator(notification, grouping));
                                 }
                             }
-                            case ListGenerator listGen -> {
-                                final var keyGen = listGen.keyGenerator();
-                                tmp.add(keyGen == null
-                                    ? new InstanceNotificationGenerator(notification, listGen)
-                                    : new KeyedListNotificationGenerator(notification, listGen, keyGen));
-                            }
-                            case ModuleGenerator module -> {
+                            case EntryObjectGenerator listGen ->
+                                tmp.add(new KeyedListNotificationGenerator(notification, listGen));
+                            case ModuleGenerator module ->
                                 tmp.add(new NotificationGenerator(notification, module));
-                            }
-                            default -> {
+                            default ->
                                 tmp.add(new InstanceNotificationGenerator(notification, this));
-                            }
                         }
                     }
                 }
