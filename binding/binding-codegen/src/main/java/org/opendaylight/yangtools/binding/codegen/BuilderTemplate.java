@@ -39,6 +39,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
+import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
@@ -47,7 +48,6 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 /**
  * Template for generating JAVA builder classes.
@@ -338,12 +338,12 @@ final class BuilderTemplate extends BaseTemplate {
      * Generate EMPTY instance which is lazily initialized in empty() method.
      */
     private @Nullable BlockBuilder generateEmptyInstance() {
-        if (!isNonPresenceContainer(targetType)) {
+        if (!(targetType instanceof ContainerArchetype.Structural structural)) {
             return null;
         }
 
-        final var nonnullTarget = importedNonNull(targetType);
-        final var targetName = targetType.simpleName();
+        final var nonnullTarget = importedNonNull(structural);
+        final var targetName = structural.simpleName();
 
         return newBlockBuilder()
             .str("private static final class LazyEmpty").oB()
@@ -962,19 +962,5 @@ final class BuilderTemplate extends BaseTemplate {
     @NonNullByDefault
     static Collection<MethodSignature> nonDefaultMethods(final InterfaceArchetype type) {
         return Collections2.filter(type.getMethodDefinitions(), def -> !def.isDefault());
-    }
-
-    /**
-     * Check if the {@code type} represents non-presence container.
-     *
-     * @param type the archetype to be checked if represents container without presence statement.
-     * @return {@code true} if specified {@code type} is a container without presence statement,
-     *     {@code false} otherwise.
-     */
-    // FIXME: YANGTOOLS-1876: remove this method
-    @NonNullByDefault
-    static boolean isNonPresenceContainer(final InterfaceArchetype type) {
-        return type.statement() instanceof ContainerEffectiveStatement container
-            && container.presenceStatement() == null;
     }
 }

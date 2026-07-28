@@ -78,6 +78,7 @@ import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices
 import org.opendaylight.yangtools.binding.data.codec.spi.BindingSchemaMapping;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.reflect.BindingReflections;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.binding.runtime.api.ChoiceRuntimeType;
@@ -182,9 +183,12 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 return switch (context.getTypes().bindingChild(JavaTypeName.create(key))) {
                     case ChoiceRuntimeType child ->
                         new ChoiceCodecContext<>(key.asSubclass(ChoiceIn.class), child, BindingCodecContext.this);
-                    case ContainerRuntimeType child -> child.statement().presenceStatement() == null
-                        ? new StructuralContainerCodecContext<>(key, child, BindingCodecContext.this)
-                        : new ContainerLikeCodecContext<>(key, child, BindingCodecContext.this);
+                    case ContainerRuntimeType child -> switch (child.javaType()) {
+                        case ContainerArchetype.Presence presence ->
+                            new ContainerLikeCodecContext<>(key, child, BindingCodecContext.this);
+                        case ContainerArchetype.Structural structural ->
+                            new StructuralContainerCodecContext<>(key, child, BindingCodecContext.this);
+                    };
                     case ContainerLikeRuntimeType<?, ?> child ->
                         new ContainerLikeCodecContext<>(key, child, BindingCodecContext.this);
                     case ListRuntimeType child -> child.keyType() == null
@@ -824,7 +828,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 }
                 throw new VerifyException("Unsupported type " + valueType.getName());
             }
-        };
+        }
     }
 
     @Override

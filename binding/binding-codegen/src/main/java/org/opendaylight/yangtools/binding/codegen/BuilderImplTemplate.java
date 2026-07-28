@@ -179,17 +179,16 @@ final class BuilderImplTemplate extends BaseTemplate {
                 bb.cB();
 
                 // nonnullFoo() for structural containers
-                if (field.getReturnType() instanceof ContainerArchetype fieldType
-                    && BuilderTemplate.isNonPresenceContainer(fieldType)) {
+                if (field.getReturnType() instanceof ContainerArchetype.Structural structuralContainer) {
                     bb
                         .nl()
                         .at().eol(override)
-                        .str("public ").str(importedName(fieldType)).str(" " + NONNULL_PREFIX)
+                        .str("public ").str(importedName(structuralContainer)).str(" " + NONNULL_PREFIX)
                             .str(toFirstUpper(field.getName())).str("()").oB()
                             .str("var tmp = ").str(getterMethodName(field)).eol("();")
                             .str("return tmp != null ? tmp : ")
                                 // FIXME: better reference to FooBuilder.empty()
-                                .str(fieldType.canonicalName()).eol(BUILDER_SUFFIX + ".empty();")
+                                .str(structuralContainer.canonicalName()).eol(BUILDER_SUFFIX + ".empty();")
                         .cB();
                 }
 

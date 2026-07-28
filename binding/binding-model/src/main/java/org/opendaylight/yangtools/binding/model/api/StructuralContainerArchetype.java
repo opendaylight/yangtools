@@ -15,15 +15,15 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 @NonNullByDefault
-record ContainerArchetypeImpl(
+record StructuralContainerArchetype(
         JavaTypeName name,
         ContainerEffectiveStatement statement,
         List<AttachedAnnotation.ToType> annotations,
         List<Type> implementsTypes,
         List<Constant> constants,
         List<MethodSignature> methodSignatures,
-        List<Archetype> enclosedTypes) implements ContainerArchetype {
-    ContainerArchetypeImpl {
+        List<Archetype> enclosedTypes) implements ContainerArchetype.Structural {
+    StructuralContainerArchetype {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(annotations);
