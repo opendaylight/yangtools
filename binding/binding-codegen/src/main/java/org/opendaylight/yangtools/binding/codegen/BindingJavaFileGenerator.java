@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
+import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcArchetype;
@@ -124,6 +125,8 @@ final class BindingJavaFileGenerator {
                 case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype, root));
                 case LegacyArchetype<?> legacy -> generateBoth(InterfaceTemplate.Builder::new, legacy, root);
                 case OutputArchetype archetype -> generateBoth(OutputTemplate.Builder::new, archetype, root);
+                case NotificationBodyArchetype archetype ->
+                    generateBoth(NotificationBodyTemplate.Builder::new, archetype, root);
                 case OpaqueObjectArchetype<?> archetype ->
                     generateFile(new OpaqueObjectTemplate.Builder(archetype, root));
                 case RpcArchetype archetype -> generateFile(new RpcTemplate.Builder(archetype, root));

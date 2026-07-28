@@ -39,7 +39,6 @@ import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -287,24 +286,6 @@ public final class BindingTypes {
     @NonNullByDefault
     public static ParameterizedType yangData(final Type concreteType) {
         return ParameterizedType.of(YANG_DATA, concreteType);
-    }
-
-    /**
-     * Check if specified type is a generated {@link NotificationBody}.
-     *
-     * @param type Type to examine
-     * @return {@code true} if the type is a generated {@link NotificationBody}
-     */
-    public static boolean isNotificationBody(final Type type) {
-        if (type instanceof LegacyArchetype<?> generated) {
-            for (var iface : generated.getImplements()) {
-                if (iface instanceof ParameterizedType parameterized
-                    && NOTIFICATION_BODY.equals(parameterized.getRawType())) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     /**

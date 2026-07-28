@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
 @NonNullByDefault
 public sealed interface InterfaceArchetype extends Archetype
         permits AugmentationArchetype, CaseArchetype, ContainerArchetype, DataRootArchetype, GroupingArchetype,
-                InputArchetype, OutputArchetype, YangDataArchetype, LegacyArchetype {
+                InputArchetype, NotificationBodyArchetype, OutputArchetype, YangDataArchetype, LegacyArchetype {
     /**
      * Base interface for builders resulting in an {@link InterfaceArchetype}.
      *

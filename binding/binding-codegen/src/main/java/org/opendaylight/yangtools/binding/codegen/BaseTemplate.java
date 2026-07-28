@@ -12,7 +12,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.isNotificationBody;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 
 import com.google.common.base.VerifyException;
@@ -36,6 +35,7 @@ import org.opendaylight.yangtools.binding.model.api.FunctionalInterfaceAnnotatio
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.RoutingContextAnnotation;
@@ -166,7 +166,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             // sb.append("</i>\n");
 
             if (schema instanceof ContainerSchemaNode || schema instanceof ListSchemaNode
-                || schema instanceof NotificationDefinition && !isNotificationBody(type)) {
+                || schema instanceof NotificationDefinition && !(type instanceof NotificationBodyArchetype)) {
                 final var simpleName = type.simpleName();
                 final var builderName = simpleName + BUILDER_SUFFIX;
 
