@@ -7,20 +7,41 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
-import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
  * A {@link RuntimeType} associated with a {@code list} statement.
  */
-public interface ListRuntimeType extends AugmentableRuntimeType, DataRuntimeType {
+@NonNullByDefault
+public sealed interface ListRuntimeType extends AugmentableRuntimeType, DataRuntimeType {
+    /**
+     * A {@link ListRuntimeType} for lists that have a {@code key} statement.
+     */
+    non-sealed interface WithKey extends ListRuntimeType {
+        @Override
+        EntryObjectArchetype javaType();
+
+        /**
+         * {@return the run-time type for this list's {@code key} statement}
+         */
+        KeyRuntimeType keyType();
+    }
+
+    /**
+     * A {@link ListRuntimeType} for lists that do not have a {@code key} statement.
+     */
+    non-sealed interface WithoutKey extends ListRuntimeType {
+        @Override
+        ItemObjectArchetype javaType();
+    }
+
     @Override
     ListEffectiveStatement statement();
 
-    /**
-     * Return the run-time type for this list's {@code key} statement, if present.
-     *
-     * @return This list's key run-time type, or null if not present
-     */
-    @Nullable KeyRuntimeType keyType();
+    @Override
+    InterfaceArchetype javaType();
 }

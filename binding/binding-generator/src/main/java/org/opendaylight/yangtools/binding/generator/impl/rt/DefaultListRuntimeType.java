@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.KeyRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
@@ -20,10 +20,15 @@ public final class DefaultListRuntimeType extends AbstractAugmentableRuntimeType
         implements ListRuntimeType {
     private final @Nullable KeyRuntimeType keyType;
 
-    public DefaultListRuntimeType(final Archetype bindingType, final ListEffectiveStatement statement,
+    public DefaultListRuntimeType(final InterfaceArchetype.OfList bindingType, final ListEffectiveStatement statement,
             final List<RuntimeType> children, final List<AugmentRuntimeType> augments, final KeyRuntimeType keyType) {
         super(bindingType, statement, children, augments);
         this.keyType = keyType;
+    }
+
+    @Override
+    public InterfaceArchetype.OfList javaType() {
+        return (InterfaceArchetype.OfList) super.javaType();
     }
 
     @Override

@@ -7,96 +7,42 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
-import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultListRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.Types;
-import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
-import org.opendaylight.yangtools.binding.runtime.api.KeyRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
-import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
-import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Generator corresponding to a {@code list} statement.
  */
-final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStatement, ListRuntimeType> {
-    private final @Nullable KeyGenerator keyGen;
-
+abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStatement, ListRuntimeType>
+        permits EntryObjectGenerator, ItemObjectGenerator {
     @NonNullByDefault
     ListGenerator(final ListEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
-        final var key = statement.keyStatement();
-        keyGen = key != null ? new KeyGenerator(key, parent, this) : null;
     }
 
     @Override
-    StatementNamespace namespace() {
+    final StatementNamespace namespace() {
         return StatementNamespace.LIST;
     }
 
-    @Nullable KeyGenerator keyGenerator() {
-        return keyGen;
-    }
-
     @Override
-    void pushToInference(final SchemaInferenceStack dataTree) {
+    public final void pushToInference(final SchemaInferenceStack dataTree) {
         dataTree.enterDataTree(statement().argument());
     }
 
     @Override
-    LegacyArchetype<ListEffectiveStatement> createTypeImpl() {
-        final var builder = LegacyArchetype.builder(typeName(), statement());
-        addImplementsChildOf(builder);
-        addUsesInterfaces(builder);
-        addConcreteInterfaceMethods(builder);
-
-        addQNameConstant(builder, localName());
-
-        final var local = keyGen;
-        if (local != null) {
-            // EntryObject implies Augmentable
-            builder.addImplementsType(BindingTypes.entryObject(builder.typeRef(), local.getArchetype()));
-        } else {
-            addAugmentable(builder);
-        }
-
-        addGetterMethods(builder);
-
-        return builder.build();
-    }
-
-    private @Nullable KeyRuntimeType keyRuntimeType() {
-        final var local = keyGen;
-        return local != null ? local.getRuntimeType() : null;
-    }
+    abstract InterfaceArchetype.OfList createTypeImpl();
 
     @Override
-    Type methodReturnType() {
-        final var generatedType = super.methodReturnType();
-        // We are wrapping the generated type in either a List or a Map based on presence of the key
-        final var local = keyGen;
-        if (local != null && statement().effectiveOrdering() == Ordering.SYSTEM) {
-            return Types.mapTypeFor(local.getGeneratedType(), generatedType);
-        }
-
-        return Types.listTypeFor(generatedType);
-    }
-
-    @Override
-    MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder builder, final Type returnType) {
+    final MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder builder, final Type returnType) {
         final var ret = super.constructGetter(builder, returnType).setMechanics(ValueMechanics.NULLIFY_EMPTY);
 
         builder
@@ -106,18 +52,5 @@ final class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStat
             .addAnnotation(deprecatedAnnotation(statement()));
 
         return ret;
-    }
-
-    @Override
-    CompositeRuntimeTypeBuilder<ListEffectiveStatement, ListRuntimeType> createBuilder(
-            final ListEffectiveStatement statement) {
-        return new CompositeRuntimeTypeBuilder<>(statement) {
-            @Override
-            ListRuntimeType build(final Archetype type, final ListEffectiveStatement statement,
-                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                // FIXME: the key here is not rebased correctly :(
-                return new DefaultListRuntimeType(type, statement, children, augments, keyRuntimeType());
-            }
-        };
     }
 }
