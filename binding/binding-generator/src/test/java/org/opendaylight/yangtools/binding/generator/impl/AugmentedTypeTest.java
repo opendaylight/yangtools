@@ -15,10 +15,10 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
+import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -37,8 +37,8 @@ class AugmentedTypeTest {
         assertEquals(31, genTypes.size());
 
         KeyArchetype gtInterfaceKey = null;
-        LegacyArchetype<?> gtInterface = null;
-        LegacyArchetype<?> gtTunnel = null;
+        EntryObjectArchetype gtInterface = null;
+        EntryObjectArchetype gtTunnel = null;
         KeyArchetype gtTunnelKey = null;
         AugmentationArchetype gtNetworkLink2 = null;
 
@@ -50,9 +50,9 @@ class AugmentedTypeTest {
             if (type.simpleName().equals("InterfaceKey")) {
                 gtInterfaceKey = assertInstanceOf(KeyArchetype.class, type);
             } else if (type.simpleName().equals("Interface")) {
-                gtInterface = assertInstanceOf(LegacyArchetype.class, type);
+                gtInterface = assertInstanceOf(EntryObjectArchetype.class, type);
             } else if (type.simpleName().equals("Tunnel")) {
-                gtTunnel = assertInstanceOf(LegacyArchetype.class, type);
+                gtTunnel = assertInstanceOf(EntryObjectArchetype.class, type);
             } else if (type.simpleName().equals("TunnelKey")) {
                 gtTunnelKey = assertInstanceOf(KeyArchetype.class, type);
             } else if (type.simpleName().equals("NetworkLink2")) {

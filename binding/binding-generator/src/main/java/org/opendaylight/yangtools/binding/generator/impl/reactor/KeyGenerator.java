@@ -24,11 +24,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement, KeyRuntimeType> {
-    private final @NonNull ListGenerator listGen;
+    private final @NonNull EntryObjectGenerator listGen;
 
     @NonNullByDefault
     KeyGenerator(final KeyEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent,
-            final ListGenerator listGen) {
+            final EntryObjectGenerator listGen) {
         super(statement, parent);
         this.listGen = requireNonNull(listGen);
     }

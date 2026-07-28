@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.assertEntryObject;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class AugmentRelativeXPathTest {
@@ -27,8 +27,8 @@ class AugmentRelativeXPathTest {
         assertEquals(27, genTypes.size());
 
         KeyArchetype gtInterfaceKey = null;
-        LegacyArchetype<?> gtInterface = null;
-        LegacyArchetype<?> gtTunnel = null;
+        EntryObjectArchetype gtInterface = null;
+        EntryObjectArchetype gtTunnel = null;
         KeyArchetype gtTunnelKey = null;
 
         for (var type : genTypes) {
@@ -48,7 +48,7 @@ class AugmentRelativeXPathTest {
                 assertNotNull(property.getReturnType(), "interfaceId return type is null");
                 assertEquals(JavaTypeName.create(String.class), property.getReturnType().name());
             } else if (type.simpleName().equals("Interface")) {
-                gtInterface = assertInstanceOf(LegacyArchetype.class, type);
+                gtInterface = assertInstanceOf(EntryObjectArchetype.class, type);
 
                 final var gtInterfaceMethods = gtInterface.getMethodDefinitions();
                 assertNotNull(gtInterfaceMethods, "Interface methods are null");
@@ -58,7 +58,7 @@ class AugmentRelativeXPathTest {
                     "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
                     "InterfaceKey"));
             } else if (type.simpleName().equals("Tunnel")) {
-                gtTunnel = assertInstanceOf(LegacyArchetype.class, type);
+                gtTunnel = assertInstanceOf(EntryObjectArchetype.class, type);
 
                 final var tunnelMethods = gtTunnel.getMethodDefinitions();
                 assertNotNull(tunnelMethods, "Tunnel methods are null");
