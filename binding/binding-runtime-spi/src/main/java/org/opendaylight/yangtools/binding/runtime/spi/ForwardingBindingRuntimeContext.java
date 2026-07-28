@@ -12,6 +12,7 @@ import com.google.common.collect.ForwardingObject;
 import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BaseIdentity;
+import org.opendaylight.yangtools.binding.KeyedListAction;
 import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeTypes;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.KeyedListActionRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RpcRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -51,6 +53,12 @@ public abstract class ForwardingBindingRuntimeContext extends ForwardingObject i
     @Override
     public ActionRuntimeType getActionDefinition(final Class<? extends Action<?, ?, ?>> cls) {
         return delegate().getActionDefinition(cls);
+    }
+
+    @Override
+    public KeyedListActionRuntimeType getKeyedListActionDefinition(
+            final Class<? extends KeyedListAction<?, ?, ?, ?>> cls) {
+        return delegate().getKeyedListActionDefinition(cls);
     }
 
     @Override

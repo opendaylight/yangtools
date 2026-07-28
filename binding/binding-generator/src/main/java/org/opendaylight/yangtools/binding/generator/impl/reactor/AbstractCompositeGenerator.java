@@ -496,7 +496,8 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
             switch (stmt) {
                 case ActionEffectiveStatement action -> {
                     if (!isAugmenting(action)) {
-                        tmp.add(new ActionGenerator(action, this));
+                        tmp.add(this instanceof EntryObjectGenerator entry
+                            ? new KeyedListActionGenerator(action, entry) : new ActionGenerator(action, this));
                     }
                 }
                 case AnydataEffectiveStatement anydata -> {
