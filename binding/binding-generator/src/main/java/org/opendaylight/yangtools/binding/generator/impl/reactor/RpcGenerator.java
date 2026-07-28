@@ -48,7 +48,7 @@ final class RpcGenerator extends AbstractInvokableGenerator<RpcEffectiveStatemen
             @Override
             RpcRuntimeType build(final Archetype generatedType, final RpcEffectiveStatement statement,
                     final List<RuntimeType> childTypes) {
-                return new DefaultRpcRuntimeType(generatedType, statement, childTypes);
+                return new DefaultRpcRuntimeType((RpcArchetype) generatedType, statement, childTypes);
             }
         };
     }
