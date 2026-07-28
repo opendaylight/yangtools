@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "927bf966_70e45ac2",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-07-28T14:38:28Z",
+      "side": 1,
+      "message": "Causes a builder reference to surface",
+      "revId": "5a8d465a6ea1fbc50d70478c0b0ecef6d2cd6270",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
