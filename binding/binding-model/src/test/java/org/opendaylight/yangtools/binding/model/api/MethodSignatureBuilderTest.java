@@ -17,12 +17,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.ri.Types;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 @ExtendWith(MockitoExtension.class)
 class MethodSignatureBuilderTest {
     @Mock
-    private EffectiveStatement<?, ?> statement;
+    private ContainerEffectiveStatement statement;
 
     @Test
     void testSetAbstractMethod() {
@@ -34,7 +34,7 @@ class MethodSignatureBuilderTest {
     @Test
     void testAddParameterMethod() {
         final var signatureBuilderImpl = MethodSignature.builder("testMethod").setReturnType(Types.VOID);
-        final var ipAddressType = LegacyArchetype.builder(
+        final var ipAddressType = ContainerArchetype.builder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "IpAddress"), statement)
             .build();
         signatureBuilderImpl.addParameter(ipAddressType, "ipAddress");
@@ -49,7 +49,7 @@ class MethodSignatureBuilderTest {
         final var signatureBuilderImpl3 = MethodSignature.builder("testMethod2");
         final var signatureBuilderImpl5 = signatureBuilderImpl;
         final var signatureBuilderImpl6 = MethodSignature.builder("testMethod");
-        final var returnType = LegacyArchetype.builder(
+        final var returnType = ContainerArchetype.builder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "Address"), statement)
             .build();
         signatureBuilderImpl6.setReturnType(returnType);

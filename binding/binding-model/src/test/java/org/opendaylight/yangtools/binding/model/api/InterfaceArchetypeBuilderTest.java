@@ -20,16 +20,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.ri.Types;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 @ExtendWith(MockitoExtension.class)
 class InterfaceArchetypeBuilderTest {
     @Mock
-    private EffectiveStatement<?, ?> statement;
+    private ContainerEffectiveStatement statement;
 
     @Test
     void addConstantTest() {
-        var generatedTypeBuilder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
+        var generatedTypeBuilder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
 
         // assertNotNull(generatedTypeBuilder.addComment("My comment ..."));
 
@@ -85,27 +85,27 @@ class InterfaceArchetypeBuilderTest {
 
     @Test
     void addConstantIllegalArgumentTest() {
-        final var builder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(IllegalArgumentException.class,
             () -> builder.addConstant(Types.typeForClass(String.class), null, "myConstantValue"));
     }
 
     @Test
     void addConstantIllegalArgumentTest2() {
-        final var builder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(IllegalArgumentException.class,
             () -> builder.addConstant((Type) null, "myConstantName", "myConstantValue"));
     }
 
     @Test
     void addMethodIllegalArgumentTest() {
-        final var builder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(IllegalArgumentException.class, () -> builder.addMethod(null));
     }
 
     @Test
     void addMethodTest() {
-        var generatedTypeBuilder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
+        var generatedTypeBuilder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
 
         var methodBuilder = generatedTypeBuilder.addMethod("myMethodName").setReturnType(Types.BOOLEAN);
         assertNotNull(methodBuilder);
@@ -126,13 +126,13 @@ class InterfaceArchetypeBuilderTest {
 
     @Test
     void addImplementsTypeIllegalArgumentTest() {
-        final var builder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(NullPointerException.class, () -> builder.addImplementsType((Type) null));
     }
 
     @Test
     void addImplementsTypeTest() {
-        var generatedTypeBuilder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
+        var generatedTypeBuilder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
 
         assertEquals(generatedTypeBuilder,
                 generatedTypeBuilder.addImplementsType(Types.typeForClass(Serializable.class)));
@@ -150,7 +150,7 @@ class InterfaceArchetypeBuilderTest {
 
     @Test
     void addEnclosingTransferObjectIllegalArgumentTest2() {
-        final var builder = LegacyArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
         assertThrows(NullPointerException.class, () -> builder.addEnclosedType(null));
     }
 }
