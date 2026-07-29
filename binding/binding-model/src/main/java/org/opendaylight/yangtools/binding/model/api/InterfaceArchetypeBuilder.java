@@ -33,9 +33,10 @@ abstract sealed class InterfaceArchetypeBuilder<
         S extends EffectiveStatement<?, ?>> implements InterfaceArchetype.Builder
         permits ActionArchetype.Builder, AugmentationArchetype.Builder, CaseArchetype.Builder,
                 ContainerArchetype.Builder, DataRootArchetype.Builder, EntryObjectArchetype.Builder,
-                GroupingArchetype.Builder, InputArchetype.Builder, ItemObjectArchetype.Builder,
-                KeyedListActionArchetype.Builder, NotificationArchetype.Builder, NotificationBodyArchetype.Builder,
-                OutputArchetype.Builder, YangDataArchetype.Builder, LegacyArchetype.Builder {
+                GroupingArchetype.Builder, InputArchetype.Builder, InstanceNotificationArchetype.Builder,
+                ItemObjectArchetype.Builder, KeyedListActionArchetype.Builder, NotificationArchetype.Builder,
+                NotificationBodyArchetype.Builder, OutputArchetype.Builder, YangDataArchetype.Builder,
+                LegacyArchetype.Builder {
     final @NonNull JavaTypeName typeName;
     final @NonNull S statement;
 

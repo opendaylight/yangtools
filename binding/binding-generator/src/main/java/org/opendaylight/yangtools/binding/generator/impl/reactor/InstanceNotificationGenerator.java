@@ -10,11 +10,8 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.InstanceNotificationArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
@@ -28,8 +25,8 @@ final class InstanceNotificationGenerator extends AbstractInstanceNotificationGe
     }
 
     @Override
-    InterfaceArchetype createTypeImpl(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
-            final AbstractCompositeGenerator<?, ?> parent) {
+    InstanceNotificationArchetype createTypeImpl(final JavaTypeName typeName,
+            final NotificationEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         final var builder = newBuilder(typeName, statement, parent);
         addUsesInterfaces(builder);
         addGetterMethods(builder);
@@ -37,17 +34,16 @@ final class InstanceNotificationGenerator extends AbstractInstanceNotificationGe
     }
 
     @Override
-    InterfaceArchetype createTypeImpl(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
-            final AbstractCompositeGenerator<?, ?> parent, final Archetype original) {
+    InstanceNotificationArchetype createTypeImpl(final JavaTypeName typeName,
+            final NotificationEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent,
+            final Archetype original) {
         return newBuilder(typeName, statement, parent).addImplementsType(original).build();
     }
 
     @NonNullByDefault
-    private static LegacyArchetype.Builder<NotificationEffectiveStatement> newBuilder(final JavaTypeName typeName,
+    private static InstanceNotificationArchetype.Builder newBuilder(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
-        final var builder = LegacyArchetype.builder(typeName, statement)
-            .addImplementsType(BindingTypes.DATA_OBJECT)
-            .addImplementsType(BindingTypes.instanceNotification(TypeRef.of(typeName), TypeRef.of(parent.typeName())));
+        final var builder = InstanceNotificationArchetype.builder(typeName, statement, parent.typeName());
         addAugmentable(builder);
         addConcreteInterfaceMethods(builder);
         addQNameConstant(builder, statement.argument());
