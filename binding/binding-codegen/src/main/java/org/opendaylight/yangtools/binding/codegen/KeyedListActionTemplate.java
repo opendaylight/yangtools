@@ -34,4 +34,9 @@ final class KeyedListActionTemplate extends InterfaceTemplate<KeyedListActionArc
     private KeyedListActionTemplate(final KeyedListActionArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
     }
+
+    @Override
+    QNameConstant constants() {
+        return new QNameConstant.InInterface(this, archetype.statement().argument());
+    }
 }

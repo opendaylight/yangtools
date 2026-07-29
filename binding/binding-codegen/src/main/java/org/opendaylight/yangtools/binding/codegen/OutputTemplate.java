@@ -34,4 +34,9 @@ final class OutputTemplate extends InterfaceTemplate<OutputArchetype> {
     private OutputTemplate(final OutputArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
     }
+
+    @Override
+    QNameConstant constants() {
+        return new QNameConstant.InInterface(this, archetype.statement().argument());
+    }
 }

@@ -31,7 +31,7 @@ public sealed interface NotificationBodyArchetype extends InterfaceArchetype per
 
         @Override
         public NotificationBodyArchetype build() {
-            return new NotificationBodyArchetypeImpl(typeName, statement, annotations(), implementsTypes(), constants(),
+            return new NotificationBodyArchetypeImpl(typeName, statement, annotations(), implementsTypes(),
                 methodDefinitions(), enclosedTypes());
         }
 

@@ -42,7 +42,6 @@ abstract sealed class InterfaceArchetypeBuilder<
 
     private @Nullable ArrayList<AttachedAnnotation.@NonNull ToType> annotations = null;
     private List<Type> implementsTypes = List.of();
-    private List<Constant> constants = List.of();
     private List<MethodSignature.Builder> methodDefinitions = List.of();
     private List<Archetype> enclosedTypes = List.of();
 
@@ -78,37 +77,6 @@ abstract sealed class InterfaceArchetypeBuilder<
             return List.of();
         }
         return local.size() == 1 ? Collections.singletonList(local.getFirst()) : List.copyOf(local);
-    }
-
-    @Override
-    public final Constant addConstant(final Type type, final String name, final Object value) {
-        checkArgument(type != null, "Returning Type for Constant cannot be null!");
-        checkArgument(name != null, "Name of constant cannot be null!");
-        checkArgument(!containsConstant(name),
-            "This generated type already contains a \"%s\" constant", name);
-
-        final var constant = new Constant(type, name, value);
-        constants = LazyCollections.lazyAdd(constants, constant);
-        return constant;
-    }
-
-    public final boolean containsConstant(final String name) {
-        checkArgument(name != null, "Parameter name can't be null");
-        for (var constant : constants) {
-            if (name.equals(constant.name())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    @NonNullByDefault
-    final List<Constant> constants() {
-        return switch (constants.size()) {
-            case 0 -> List.of();
-            case 1 -> Collections.singletonList(constants.getFirst());
-            default -> List.copyOf(constants);
-        };
     }
 
     @Override
@@ -197,7 +165,6 @@ abstract sealed class InterfaceArchetypeBuilder<
         final var helper = MoreObjects.toStringHelper(archetypeClass().getSimpleName() + ".Builder")
             .add("typeName", typeName);
 
-        addNonEmpty(helper, "constants", constants);
         addNonEmpty(helper, "enclosedTypes", enclosedTypes);
         addNonEmpty(helper, "methods", methodDefinitions);
         addNonEmpty(helper, "annotations", annotations);
