@@ -115,7 +115,8 @@ public sealed interface InterfaceArchetype extends Archetype
      * a subclass of {@link BaseNotification} and the hierarchy of this class reflects that. These are not to be
      * confused with {@link NotificationBodyArchetype}.
      */
-    sealed interface OfNotification extends InterfaceArchetype permits NotificationArchetype {
+    sealed interface OfNotification extends InterfaceArchetype
+            permits InstanceNotificationArchetype, NotificationArchetype {
         @Override
         NotificationEffectiveStatement statement();
     }
