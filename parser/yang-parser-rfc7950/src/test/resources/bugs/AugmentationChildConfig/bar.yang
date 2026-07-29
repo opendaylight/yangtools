@@ -1,0 +1,26 @@
+module bar {
+  namespace "bar";
+  prefix b;
+
+  import foo { prefix f; }
+
+  // Mirrors the shape of RFC 8344 (ietf-ip) "augment /if:interfaces/if:interface",
+  // which augments a config=true target and nests a leaf with an explicit
+  // "config false;" a couple of levels below the augmentation.
+  augment "/f:top" {
+    container aug-con {
+      list aug-list {
+        key "name";
+
+        leaf name {
+          type string;
+        }
+
+        leaf state-leaf {
+          type string;
+          config false;
+        }
+      }
+    }
+  }
+}
