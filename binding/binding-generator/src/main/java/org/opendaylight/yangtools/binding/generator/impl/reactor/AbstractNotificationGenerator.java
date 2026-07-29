@@ -7,27 +7,20 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
-import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
-import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
-import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Abstract base generator corresponding to a {@code notification} statement.
  */
-abstract class AbstractNotificationGenerator
-        extends CompositeSchemaTreeGenerator<NotificationEffectiveStatement, NotificationRuntimeType> {
+abstract sealed class AbstractNotificationGenerator<R extends CompositeRuntimeType>
+        extends CompositeSchemaTreeGenerator<NotificationEffectiveStatement, R>
+        permits AbstractInstanceNotificationGenerator, NotificationGenerator {
     @NonNullByDefault
     AbstractNotificationGenerator(final NotificationEffectiveStatement statement,
             final AbstractCompositeGenerator<?, ?> parent) {
@@ -50,45 +43,15 @@ abstract class AbstractNotificationGenerator
     }
 
     @Override
-    final LegacyArchetype<NotificationEffectiveStatement> createTypeImpl() {
-        final var typeName = typeName();
-        final var builder = LegacyArchetype.builder(typeName, statement())
-            .addImplementsType(BindingTypes.DATA_OBJECT)
-            .addImplementsType(notificationType(TypeRef.of(typeName)));
-
-        final var orig = getOriginal();
-        if (equals(orig)) {
-            addUsesInterfaces(builder);
-            addGetterMethods(builder);
-        } else {
-            builder.addImplementsType(orig.getGeneratedType());
-        }
-
-        addAugmentable(builder);
-        addConcreteInterfaceMethods(builder);
-
-        addQNameConstant(builder, localName());
-
-        return builder.build();
+    final InterfaceArchetype createTypeImpl() {
+        return createTypeImpl(typeName(), statement());
     }
 
     @NonNullByDefault
-    abstract Type notificationType(TypeRef self);
+    abstract InterfaceArchetype createTypeImpl(JavaTypeName typeName, NotificationEffectiveStatement statement);
 
     @Override
     final void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
         // Notifications are a distinct concept
-    }
-
-    @Override
-    final CompositeRuntimeTypeBuilder<NotificationEffectiveStatement, NotificationRuntimeType> createBuilder(
-            final NotificationEffectiveStatement statement) {
-        return new CompositeRuntimeTypeBuilder<>(statement) {
-            @Override
-            NotificationRuntimeType build(final Archetype type, final NotificationEffectiveStatement statement,
-                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultNotificationRuntimeType(type, statement, children, augments);
-            }
-        };
     }
 }
