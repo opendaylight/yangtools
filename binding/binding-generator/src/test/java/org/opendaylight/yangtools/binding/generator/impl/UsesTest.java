@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.InputArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
+import org.opendaylight.yangtools.binding.model.api.NotificationArchetype;
 import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -515,7 +515,7 @@ class UsesTest {
         final var genTypes = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/uses-of-grouping/uses-of-grouping-notification.yang"));
 
-        LegacyArchetype<?> notificationTest = null;
+        NotificationArchetype notificationTest = null;
         GroupingArchetype groupingNotificationTest = null;
         ContainerArchetype containerGroupingNotificationTest = null;
         int notificationTestCounter = 0;
@@ -525,7 +525,7 @@ class UsesTest {
         for (var type : genTypes) {
             switch (type.simpleName()) {
                 case "NotificationTest" -> {
-                    notificationTest = (LegacyArchetype<?>) type;
+                    notificationTest = assertInstanceOf(NotificationArchetype.class, type);
                     notificationTestCounter++;
                 }
                 case "GroupingNotificationTest" -> {

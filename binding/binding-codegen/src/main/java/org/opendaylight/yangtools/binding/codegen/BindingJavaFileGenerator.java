@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyedListActionArchetype;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
+import org.opendaylight.yangtools.binding.model.api.NotificationArchetype;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
@@ -133,6 +134,8 @@ final class BindingJavaFileGenerator {
                 case KeyedListActionArchetype archetype ->
                     generateFile(new KeyedListActionTemplate.Builder(archetype, root));
                 case LegacyArchetype<?> legacy -> generateBoth(InterfaceTemplate.Builder::new, legacy, root);
+                case NotificationArchetype archetype ->
+                    generateBoth(NotificationTemplate.Builder::new, archetype, root);
                 case OutputArchetype archetype -> generateBoth(OutputTemplate.Builder::new, archetype, root);
                 case NotificationBodyArchetype archetype ->
                     generateBoth(NotificationBodyTemplate.Builder::new, archetype, root);
