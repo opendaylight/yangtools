@@ -11,15 +11,14 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
  * Abstract base generator corresponding to a {@code notification} statement used somewhere else than the top-level,
  * e.g. the semantics introduced in RFC7950.
  */
-abstract sealed class AbstractInstanceNotificationGenerator<R extends CompositeRuntimeType>
-        extends AbstractNotificationGenerator<R> permits InstanceNotificationGenerator, KeyedListNotificationGenerator {
+abstract sealed class AbstractInstanceNotificationGenerator extends AbstractNotificationGenerator
+        permits InstanceNotificationGenerator, KeyedListNotificationGenerator {
     @NonNullByDefault
     AbstractInstanceNotificationGenerator(final NotificationEffectiveStatement statement,
             final AbstractCompositeGenerator<?, ?> parent) {

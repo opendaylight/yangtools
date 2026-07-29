@@ -7,19 +7,24 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
+import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationRuntimeType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
  * Abstract base generator corresponding to a {@code notification} statement.
  */
-abstract sealed class AbstractNotificationGenerator<R extends CompositeRuntimeType>
-        extends CompositeSchemaTreeGenerator<NotificationEffectiveStatement, R>
+abstract sealed class AbstractNotificationGenerator
+        extends CompositeSchemaTreeGenerator<NotificationEffectiveStatement, NotificationRuntimeType>
         permits AbstractInstanceNotificationGenerator, NotificationGenerator {
     @NonNullByDefault
     AbstractNotificationGenerator(final NotificationEffectiveStatement statement,
@@ -53,5 +58,17 @@ abstract sealed class AbstractNotificationGenerator<R extends CompositeRuntimeTy
     @Override
     final void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
         // Notifications are a distinct concept
+    }
+
+    @Override
+    final CompositeRuntimeTypeBuilder<NotificationEffectiveStatement, NotificationRuntimeType> createBuilder(
+            final NotificationEffectiveStatement statement) {
+        return new CompositeRuntimeTypeBuilder<>(statement) {
+            @Override
+            NotificationRuntimeType build(final Archetype type, final NotificationEffectiveStatement statement,
+                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
+                return new DefaultNotificationRuntimeType((InterfaceArchetype) type, statement, children, augments);
+            }
+        };
     }
 }

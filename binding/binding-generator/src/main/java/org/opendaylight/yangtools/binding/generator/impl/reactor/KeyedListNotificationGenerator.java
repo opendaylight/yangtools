@@ -7,24 +7,19 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
-import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
-import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
-import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
  * A {@link NotificationGenerator} generating {@link KeyedListNotification}s.
  */
-final class KeyedListNotificationGenerator extends AbstractInstanceNotificationGenerator<NotificationRuntimeType> {
+final class KeyedListNotificationGenerator extends AbstractInstanceNotificationGenerator {
     @NonNullByDefault
     KeyedListNotificationGenerator(final NotificationEffectiveStatement statement, final EntryObjectGenerator parent) {
         super(statement, parent);
@@ -57,17 +52,5 @@ final class KeyedListNotificationGenerator extends AbstractInstanceNotificationG
         addConcreteInterfaceMethods(builder);
         addQNameConstant(builder, statement.argument());
         return builder;
-    }
-
-    @Override
-    CompositeRuntimeTypeBuilder<NotificationEffectiveStatement, NotificationRuntimeType> createBuilder(
-            final NotificationEffectiveStatement statement) {
-        return new CompositeRuntimeTypeBuilder<>(statement) {
-            @Override
-            NotificationRuntimeType build(final Archetype type, final NotificationEffectiveStatement statement,
-                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultNotificationRuntimeType(type, statement, children, augments);
-            }
-        };
     }
 }

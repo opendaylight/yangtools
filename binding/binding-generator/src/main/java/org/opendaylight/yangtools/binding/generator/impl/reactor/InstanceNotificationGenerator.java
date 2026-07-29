@@ -7,25 +7,20 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.InstanceNotification;
-import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
-import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
-import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
  * A {@link NotificationGenerator} producing {@link InstanceNotification}s.
  */
-final class InstanceNotificationGenerator extends AbstractInstanceNotificationGenerator<NotificationRuntimeType> {
+final class InstanceNotificationGenerator extends AbstractInstanceNotificationGenerator {
     @NonNullByDefault
     InstanceNotificationGenerator(final NotificationEffectiveStatement statement,
             final AbstractCompositeGenerator<?, ?> parent) {
@@ -57,17 +52,5 @@ final class InstanceNotificationGenerator extends AbstractInstanceNotificationGe
         addConcreteInterfaceMethods(builder);
         addQNameConstant(builder, statement.argument());
         return builder;
-    }
-
-    @Override
-    CompositeRuntimeTypeBuilder<NotificationEffectiveStatement, NotificationRuntimeType> createBuilder(
-            final NotificationEffectiveStatement statement) {
-        return new CompositeRuntimeTypeBuilder<>(statement) {
-            @Override
-            NotificationRuntimeType build(final Archetype type, final NotificationEffectiveStatement statement,
-                    final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultNotificationRuntimeType(type, statement, children, augments);
-            }
-        };
     }
 }
