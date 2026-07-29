@@ -10,9 +10,18 @@ package org.opendaylight.yangtools.binding.runtime.api;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.concepts.Identifiable;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
- * A {@link RuntimeType} associated with a {@link Archetype}.
+ * A {@link RuntimeType} associated with a {@link Archetype}. This introduces two avenues of acquiring an
+ * {@link EffectiveStatement}.
+ * <ol>
+ *    <li>the {@link #statement()} method, and</li>
+ *    <li>the {@link Archetype#statement()} method</li>
+ * </ol>
+ * These may not be used interchangeably and for run-time purposes, only this interface's {@link #statement()} method
+ * must be used. The {@link Archetype} is provided solely for its information about structural properties of the
+ * corresponding Java class and should be ignored as an implementation detail.
  */
 public interface GeneratedRuntimeType extends RuntimeType, Identifiable<JavaTypeName> {
     @Override

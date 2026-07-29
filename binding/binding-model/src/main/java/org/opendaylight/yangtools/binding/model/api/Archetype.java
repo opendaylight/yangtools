@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
- * A {@link Type} representing a Java class from a set of invariants.
+ * A {@link Type} representing a Java class generated for a YANG statement.
  *
  * @since 15.0.0
  */
@@ -42,7 +42,7 @@ public sealed interface Archetype extends Type
     }
 
     /**
-     * {@return the {@link EffectiveStatement}}
+     * {@return the {@link EffectiveStatement} from which the class was generated}
      *
      * @since 16.0.0
      */
