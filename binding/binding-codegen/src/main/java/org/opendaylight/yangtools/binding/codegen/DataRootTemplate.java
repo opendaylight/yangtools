@@ -43,22 +43,21 @@ final class DataRootTemplate extends InterfaceTemplate<@NonNull DataRootArchetyp
     }
 
     @Override
-    BlockBuilder generateConstants() {
-        // pre-compute constants: split out for future isolation
-        final var nonNullByDefault = importedName(NONNULL_BY_DEFAULT);
-        final var rootMeta = importedName(ROOT_META);
-        final var moduleInfo = importedName(yangModuleInfoOf(archetype.statement().localQNameModule()));
+    BlockFragment constants() {
+        return bb -> {
+            final var rootMeta = importedName(ROOT_META);
+            final var moduleInfo = importedName(yangModuleInfoOf(archetype.statement().localQNameModule()));
+            // FIXME: YANGTOOLS-1808: use importedName()
+            final var type = archetype.canonicalName();
 
-        // FIXME: YANGTOOLS-1808: use importedName()
-        final var type = archetype.canonicalName();
-
-        return newBlockBuilder()
-            .eol("/**")
-            .str(" * The {@link ").str(rootMeta).eol("} associated with this module root.")
-            .eol(" */")
-            .at().eol(nonNullByDefault)
-            .gen(rootMeta, type).str(" META = new ").str(rootMeta).str("<>(").str(type).str(".class, ")
-                .str(moduleInfo).str('.' + INSTANCE_FIELD_NAME + ", ")
-                .str(moduleInfo).eol('.' + CONST_UNSAFE_ACCESS + ");");
+            bb
+                .eol("/**")
+                .str(" * The {@link ").str(rootMeta).eol("} associated with this module root.")
+                .eol(" */")
+                .at().eol(importedName(NONNULL_BY_DEFAULT))
+                .gen(rootMeta, type).str(" META = new ").str(rootMeta).str("<>(").str(type).str(".class, ")
+                    .str(moduleInfo).str('.' + INSTANCE_FIELD_NAME + ", ")
+                    .str(moduleInfo).eol('.' + CONST_UNSAFE_ACCESS + ");");
+        };
     }
 }

@@ -46,7 +46,6 @@ final class InstanceNotificationGenerator extends AbstractInstanceNotificationGe
         final var builder = InstanceNotificationArchetype.builder(typeName, statement, parent.typeName());
         addAugmentable(builder);
         addConcreteInterfaceMethods(builder);
-        addQNameConstant(builder, statement.argument());
         return builder;
     }
 }

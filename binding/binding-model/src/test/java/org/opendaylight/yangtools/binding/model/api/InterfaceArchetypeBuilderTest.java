@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -26,82 +25,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 class InterfaceArchetypeBuilderTest {
     @Mock
     private ContainerEffectiveStatement statement;
-
-    @Test
-    void addConstantTest() {
-        var generatedTypeBuilder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
-
-        // assertNotNull(generatedTypeBuilder.addComment("My comment ..."));
-
-        var constant = generatedTypeBuilder.addConstant(Types.typeForClass(String.class), "myConstant",
-                "myConstantValue");
-        // Constant constantx =
-        // generatedTypeBuilder.addConstant(Types.typeForClass(String.class),
-        // "myConstant", "myConstantValue");
-        var constant2 = generatedTypeBuilder.addConstant(
-                Types.typeForClass(int.class).withRestrictions(Restrictions.empty()), "myIntConstant", 1);
-
-        var constant3 = new Constant(Types.typeForClass(String.class), "myConstant", "myConstantValue");
-        final var constant4 = new Constant(Types.typeForClass(String.class), "myConstant2", "myConstantValue");
-        final var constant5 = new Constant(Types.typeForClass(String.class), "myConstant", "myConstantValue2");
-
-        assertNotNull(constant);
-        assertNotNull(constant2);
-        assertNotNull(constant3);
-        assertNotNull(constant4);
-        assertNotNull(constant5);
-
-        assertFalse(constant.equals(null));
-        assertFalse(constant.equals(new Object()));
-        assertTrue(constant.equals(constant));
-        assertTrue(constant.equals(constant3));
-        assertFalse(constant.equals(constant2));
-        assertFalse(constant.equals(constant4));
-        assertFalse(constant.equals(constant5));
-
-        assertEquals(constant.hashCode(), constant.hashCode());
-        assertEquals(constant.hashCode(), constant3.hashCode());
-        assertNotEquals(constant.hashCode(), constant2.hashCode());
-        assertNotEquals(constant.hashCode(), constant4.hashCode());
-        assertEquals(constant.hashCode(), constant5.hashCode());
-
-        assertEquals("Constant[type=ConcreteType{name=java.lang.String}, name=myConstant, value=myConstantValue]",
-            constant.toString());
-
-        var instance = generatedTypeBuilder.build();
-        var constantDefinitions = instance.getConstantDefinitions();
-        assertNotNull(constantDefinitions);
-        assertEquals(2, constantDefinitions.size());
-        assertTrue(constantDefinitions.contains(constant));
-        assertTrue(constantDefinitions.contains(constant2));
-        assertTrue(constantDefinitions.contains(constant3));
-        assertFalse(constantDefinitions.contains(constant4));
-        assertFalse(constantDefinitions.contains(constant5));
-
-        assertEquals(Types.typeForClass(String.class), constant.type());
-        assertEquals("myConstant", constant.name());
-        assertEquals("myConstantValue", constant.value());
-    }
-
-    @Test
-    void addConstantIllegalArgumentTest() {
-        final var builder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
-        assertThrows(IllegalArgumentException.class,
-            () -> builder.addConstant(Types.typeForClass(String.class), null, "myConstantValue"));
-    }
-
-    @Test
-    void addConstantIllegalArgumentTest2() {
-        final var builder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
-        assertThrows(IllegalArgumentException.class,
-            () -> builder.addConstant((Type) null, "myConstantName", "myConstantValue"));
-    }
-
-    @Test
-    void addMethodIllegalArgumentTest() {
-        final var builder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
-        assertThrows(IllegalArgumentException.class, () -> builder.addMethod(null));
-    }
 
     @Test
     void addMethodTest() {

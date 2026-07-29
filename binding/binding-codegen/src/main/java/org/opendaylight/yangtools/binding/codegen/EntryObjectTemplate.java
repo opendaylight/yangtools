@@ -34,4 +34,9 @@ final class EntryObjectTemplate extends InterfaceTemplate<EntryObjectArchetype> 
     private EntryObjectTemplate(final EntryObjectArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
     }
+
+    @Override
+    QNameConstant constants() {
+        return new QNameConstant.InInterface(this, archetype.statement().argument());
+    }
 }

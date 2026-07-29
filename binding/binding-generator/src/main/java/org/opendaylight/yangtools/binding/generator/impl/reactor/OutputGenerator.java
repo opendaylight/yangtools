@@ -47,7 +47,6 @@ final class OutputGenerator
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
         addGetterMethods(builder);
-        addQNameConstant(builder, statement.argument());
         return builder.build();
     }
 

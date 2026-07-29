@@ -31,8 +31,8 @@ public sealed interface OutputArchetype extends InterfaceArchetype permits Outpu
 
         @Override
         public OutputArchetype build() {
-            return new OutputArchetypeImpl(typeName, statement, annotations(), implementsTypes(), constants(),
-                methodDefinitions(), enclosedTypes());
+            return new OutputArchetypeImpl(typeName, statement, annotations(), implementsTypes(), methodDefinitions(),
+                enclosedTypes());
         }
 
         @Override

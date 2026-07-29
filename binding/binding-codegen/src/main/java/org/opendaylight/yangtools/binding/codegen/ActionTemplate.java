@@ -33,4 +33,9 @@ final class ActionTemplate extends InterfaceTemplate<ActionArchetype> {
     private ActionTemplate(final ActionArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
     }
+
+    @Override
+    QNameConstant constants() {
+        return new QNameConstant.InInterface(this, archetype.statement().argument());
+    }
 }

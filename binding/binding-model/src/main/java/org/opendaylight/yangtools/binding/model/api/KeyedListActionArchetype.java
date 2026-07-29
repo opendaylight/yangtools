@@ -45,7 +45,7 @@ public sealed interface KeyedListActionArchetype extends InterfaceArchetype perm
 
         @Override
         public KeyedListActionArchetype build() {
-            return new KeyedListActionArchetypeImpl(typeName, statement, annotations(), implementsTypes(), constants(),
+            return new KeyedListActionArchetypeImpl(typeName, statement, annotations(), implementsTypes(),
                 methodDefinitions(), enclosedTypes());
         }
 
