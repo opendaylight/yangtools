@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.QNAMEOF_METHOD_NAME;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.YANGDATANAMEOF_METHOD_NAME;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
@@ -33,13 +32,11 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Constant;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -55,51 +52,21 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
- * Template for generating JAVA interfaces.
+ * Base class for code generators based on {@link InterfaceArchetype}.
  */
-sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> extends ArchetypeTemplate<T>
-        permits ActionTemplate, AugmentationTemplate, CaseTemplate, ContainerTemplate, DataRootTemplate,
-                EntryObjectTemplate, GroupingTemplate, InputTemplate, InstanceNotificationTemplate, ItemObjectTemplate,
-                KeyedListActionTemplate, KeyedListNotificationTemplate, NotificationBodyTemplate, NotificationTemplate,
-                OutputTemplate, YangDataTemplate {
-    @NonNullByDefault
-    record Builder(LegacyArchetype<?> type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public InterfaceTemplate<LegacyArchetype<?>> build() {
-            return new InterfaceTemplate<>(type, root);
-        }
-    }
-
+abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> extends ArchetypeTemplate<T>
+    permits ActionTemplate, AugmentationTemplate, CaseTemplate, ContainerTemplate, DataRootTemplate,
+            EntryObjectTemplate, GroupingTemplate, InputTemplate, InstanceNotificationTemplate, ItemObjectTemplate,
+            KeyedListActionTemplate, KeyedListNotificationTemplate, NotificationBodyTemplate, NotificationTemplate,
+            OutputTemplate, YangDataTemplate {
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
-
-    /**
-     * List of constant instances which are generated as JAVA public static final attributes.
-     */
-    private final List<Constant> consts;
-    /**
-     * List of method signatures which are generated as method declarations.
-     */
-    private final List<MethodSignature> methods;
-    /**
-     * List of generated types which are enclosed inside the generated type.
-     */
-    private final List<Archetype> enclosedGeneratedTypes;
 
     private @Nullable TypeAnalysis typeAnalysis;
 
     @NonNullByDefault
     InterfaceTemplate(final T archetype, final DataRootArchetype root) {
         super(GeneratedClass.of(archetype), archetype, root);
-
-        consts = archetype.getConstantDefinitions();
-        methods = archetype.getMethodDefinitions();
-        enclosedGeneratedTypes = archetype.enclosedTypes();
     }
 
     private @NonNull TypeAnalysis typeAnalysis() {
@@ -164,7 +131,7 @@ sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> extends Ar
 
         return bb
             .oB()
-            .blk(generateInnerClasses(root, enclosedGeneratedTypes))
+            .blk(generateInnerClasses(root, archetype.enclosedTypes()))
             .nl()
             .blk(generateConstants())
             .nl()
@@ -204,6 +171,7 @@ sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> extends Ar
     }
 
     @Nullable BlockBuilder generateConstants() {
+        final var consts = archetype.getConstantDefinitions();
         if (consts.isEmpty()) {
             return null;
         }
@@ -268,6 +236,7 @@ sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> extends Ar
     }
 
     @Nullable BlockBuilder generateMethods() {
+        final var methods = archetype.getMethodDefinitions();
         if (methods.isEmpty()) {
             return null;
         }

@@ -36,7 +36,7 @@ abstract sealed class InterfaceArchetypeBuilder<
                 GroupingArchetype.Builder, InputArchetype.Builder, InstanceNotificationArchetype.Builder,
                 ItemObjectArchetype.Builder, KeyedListActionArchetype.Builder, KeyedListNotificationArchetype.Builder,
                 NotificationArchetype.Builder, NotificationBodyArchetype.Builder, OutputArchetype.Builder,
-                YangDataArchetype.Builder, LegacyArchetype.Builder {
+                YangDataArchetype.Builder {
     final @NonNull JavaTypeName typeName;
     final @NonNull S statement;
 

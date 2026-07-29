@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
@@ -311,10 +310,6 @@ public class DefaultBindingGeneratorTest {
         final var expected = assertScalar(JavaTypeName.create(BASE_YANG_TYPES, "YangInt8"));
         assertSame(expected,
             assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, ContainerArchetype.class, "getYangInt8Type").getReturnType());
-    }
-
-    private static MethodSignature assertGeneratedMethod(final JavaTypeName typeName, final String methodName) {
-        return assertGeneratedMethod(typeName, LegacyArchetype.class, methodName);
     }
 
     private static <A extends InterfaceArchetype> MethodSignature assertGeneratedMethod(final JavaTypeName typeName,

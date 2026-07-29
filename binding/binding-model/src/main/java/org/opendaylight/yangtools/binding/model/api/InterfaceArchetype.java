@@ -26,8 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 public sealed interface InterfaceArchetype extends Archetype
         permits ActionArchetype, AugmentationArchetype, CaseArchetype, ContainerArchetype, DataRootArchetype,
                 GroupingArchetype, InputArchetype, InterfaceArchetype.OfList, InterfaceArchetype.OfNotification,
-                KeyedListActionArchetype, NotificationBodyArchetype, OutputArchetype, YangDataArchetype,
-                LegacyArchetype {
+                KeyedListActionArchetype, NotificationBodyArchetype, OutputArchetype, YangDataArchetype {
     /**
      * Base interface for builders resulting in an {@link InterfaceArchetype}.
      *
