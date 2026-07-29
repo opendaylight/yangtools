@@ -29,7 +29,7 @@ public sealed interface ItemObjectArchetype extends InterfaceArchetype.OfList pe
 
         @Override
         public ItemObjectArchetype build() {
-            return new ItemObjectArchetypeImpl(typeName, statement, annotations(), implementsTypes(), constants(),
+            return new ItemObjectArchetypeImpl(typeName, statement, annotations(), implementsTypes(),
                 methodDefinitions(), enclosedTypes());
         }
 

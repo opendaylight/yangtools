@@ -33,4 +33,9 @@ final class CaseTemplate extends InterfaceTemplate<CaseArchetype> {
     private CaseTemplate(final CaseArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
     }
+
+    @Override
+    QNameConstant constants() {
+        return new QNameConstant.InInterface(this, archetype.statement().argument());
+    }
 }

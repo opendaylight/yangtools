@@ -39,9 +39,7 @@ import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.RpcResult;
-import org.opendaylight.yangtools.yang.common.YangDataName;
 
 public final class BindingTypes {
 
@@ -49,11 +47,9 @@ public final class BindingTypes {
     public static final @NonNull ConcreteType DATA_CONTAINER = typeForClass(DataContainer.class);
     public static final @NonNull ConcreteType DATA_OBJECT = typeForClass(DataObject.class);
     public static final @NonNull ConcreteType GROUPING = typeForClass(Grouping.class);
-    public static final @NonNull ConcreteType QNAME = typeForClass(QName.class);
     public static final @NonNull ConcreteType RPC_INPUT = typeForClass(RpcInput.class);
     public static final @NonNull ConcreteType RPC_OUTPUT = typeForClass(RpcOutput.class);
     public static final @NonNull ConcreteType UNION_TYPE_OBJECT = typeForBuiltIn(BuiltInType.UNION);
-    public static final @NonNull ConcreteType YANG_DATA_NAME = typeForClass(YangDataName.class);
     public static final @NonNull ConcreteType JAVA_DATACONTAINER = typeForClass(JavaDataContainer.class);
 
     @VisibleForTesting

@@ -20,7 +20,6 @@ record InstanceNotificationArchetypeImpl(
         NotificationEffectiveStatement statement,
         List<AttachedAnnotation.ToType> annotations,
         List<Type> implementsTypes,
-        List<Constant> constants,
         List<MethodSignature> methodSignatures,
         List<Archetype> enclosedTypes) implements InstanceNotificationArchetype {
     InstanceNotificationArchetypeImpl {
@@ -28,7 +27,6 @@ record InstanceNotificationArchetypeImpl(
         requireNonNull(statement);
         requireNonNull(annotations);
         requireNonNull(implementsTypes);
-        requireNonNull(constants);
         requireNonNull(methodSignatures);
         requireNonNull(enclosedTypes);
     }
@@ -36,11 +34,6 @@ record InstanceNotificationArchetypeImpl(
     @Override
     public List<Type> getImplements() {
         return implementsTypes;
-    }
-
-    @Override
-    public List<Constant> getConstantDefinitions() {
-        return constants;
     }
 
     @Override

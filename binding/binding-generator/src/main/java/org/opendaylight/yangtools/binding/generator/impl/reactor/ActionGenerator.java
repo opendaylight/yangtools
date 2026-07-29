@@ -31,7 +31,6 @@ final class ActionGenerator extends AbstractActionGenerator<ActionRuntimeType> {
             final ActionEffectiveStatement statement, final Archetype input, final Archetype output) {
         final var builder = ActionArchetype.builder(typeName, statement, input, output, getParent().typeName());
         defaultImplementedInterace(builder);
-        addQNameConstant(builder, statement.argument());
         return builder.build();
     }
 

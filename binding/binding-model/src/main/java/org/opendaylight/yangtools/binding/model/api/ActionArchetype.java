@@ -45,8 +45,8 @@ public sealed interface ActionArchetype extends InterfaceArchetype permits Actio
 
         @Override
         public ActionArchetype build() {
-            return new ActionArchetypeImpl(typeName, statement, annotations(), implementsTypes(), constants(),
-                methodDefinitions(), enclosedTypes());
+            return new ActionArchetypeImpl(typeName, statement, annotations(), implementsTypes(), methodDefinitions(),
+                enclosedTypes());
         }
 
         @Override

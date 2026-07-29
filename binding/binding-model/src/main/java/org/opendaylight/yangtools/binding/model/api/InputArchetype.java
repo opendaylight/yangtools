@@ -31,8 +31,8 @@ public sealed interface InputArchetype extends InterfaceArchetype permits InputA
 
         @Override
         public InputArchetype build() {
-            return new InputArchetypeImpl(typeName, statement, annotations(), implementsTypes(), constants(),
-                methodDefinitions(), enclosedTypes());
+            return new InputArchetypeImpl(typeName, statement, annotations(), implementsTypes(), methodDefinitions(),
+                enclosedTypes());
         }
 
         @Override
