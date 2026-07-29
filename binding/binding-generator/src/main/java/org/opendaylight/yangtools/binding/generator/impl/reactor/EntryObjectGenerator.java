@@ -71,13 +71,13 @@ final class EntryObjectGenerator extends ListGenerator {
     @Override
     CompositeRuntimeTypeBuilder<ListEffectiveStatement, ListRuntimeType> createBuilder(
             final ListEffectiveStatement statement) {
+        final var keyType = keyGenerator.getArchetype();
+
         return new CompositeRuntimeTypeBuilder<>(statement) {
             @Override
             ListRuntimeType build(final Archetype type, final ListEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultMapRuntimeType((EntryObjectArchetype) type, statement, children, augments,
-                    // FIXME: the key here is not rebased correctly :(
-                    keyGenerator.getRuntimeType());
+                return new DefaultMapRuntimeType((EntryObjectArchetype) type, statement, children, augments, keyType);
             }
         };
     }

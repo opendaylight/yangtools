@@ -11,6 +11,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
@@ -26,9 +27,9 @@ public sealed interface ListRuntimeType extends AugmentableRuntimeType, DataRunt
         EntryObjectArchetype javaType();
 
         /**
-         * {@return the run-time type for this list's {@code key} statement}
+         * {@return the archetype for this list's {@code key} statement}
          */
-        KeyRuntimeType keyType();
+        KeyArchetype keyType();
     }
 
     /**

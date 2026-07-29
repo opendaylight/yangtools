@@ -12,18 +12,18 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
-import org.opendaylight.yangtools.binding.runtime.api.KeyRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 public final class DefaultMapRuntimeType extends AbstractAugmentableRuntimeType<ListEffectiveStatement>
         implements ListRuntimeType.WithKey {
-    private final @NonNull KeyRuntimeType keyType;
+    private final @NonNull KeyArchetype keyType;
 
     public DefaultMapRuntimeType(final EntryObjectArchetype bindingType, final ListEffectiveStatement statement,
-            final List<RuntimeType> children, final List<AugmentRuntimeType> augments, final KeyRuntimeType keyType) {
+            final List<RuntimeType> children, final List<AugmentRuntimeType> augments, final KeyArchetype keyType) {
         super(bindingType, statement, children, augments);
         this.keyType = requireNonNull(keyType);
     }
@@ -34,7 +34,7 @@ public final class DefaultMapRuntimeType extends AbstractAugmentableRuntimeType<
     }
 
     @Override
-    public KeyRuntimeType keyType() {
+    public KeyArchetype keyType() {
         return keyType;
     }
 }

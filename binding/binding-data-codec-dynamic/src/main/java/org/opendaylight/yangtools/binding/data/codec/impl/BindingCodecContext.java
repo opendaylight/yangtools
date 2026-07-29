@@ -849,9 +849,9 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         final var entryClass = listClz.asSubclass(EntryObject.class);
         final var keyType = type.keyType();
 
-        final Class<? extends Key<?>> keyClass;
+        final Class<Key<?>> keyClass;
         try {
-            keyClass = runtimeContext().loadClass(keyType.javaType());
+            keyClass = runtimeContext().loadClass(keyType);
         } catch (ClassNotFoundException e) {
             throw new VerifyException("Cannot load key class for " + entryClass, e);
         }
