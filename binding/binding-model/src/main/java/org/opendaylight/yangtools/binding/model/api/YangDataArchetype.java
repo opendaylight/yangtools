@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangData;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 
@@ -28,13 +27,12 @@ public sealed interface YangDataArchetype extends InterfaceArchetype permits Yan
             super(typeName, statement);
             // FIXME: remove these and make sure YangDataTemplate still generates the equivalent
             addImplementsType(BindingTypes.yangData(TypeRef.of(typeName)));
-            addConstant(BindingTypes.YANG_DATA_NAME, Naming.NAME_STATIC_FIELD_NAME, statement.argument());
         }
 
         @Override
         public YangDataArchetype build() {
-            return new YangDataArchetypeImpl(typeName, statement, annotations(), implementsTypes(), constants(),
-                methodDefinitions(), enclosedTypes());
+            return new YangDataArchetypeImpl(typeName, statement, annotations(), implementsTypes(), methodDefinitions(),
+                enclosedTypes());
         }
 
         @Override

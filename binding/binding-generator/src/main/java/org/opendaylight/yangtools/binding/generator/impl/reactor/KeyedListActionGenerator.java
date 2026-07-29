@@ -33,7 +33,6 @@ final class KeyedListActionGenerator extends AbstractActionGenerator<KeyedListAc
         final var builder = KeyedListActionArchetype.builder(typeName, statement, input, output, parent.typeName(),
             parent.keyGenerator().getArchetype());
         defaultImplementedInterace(builder);
-        addQNameConstant(builder, statement.argument());
         return builder.build();
     }
 

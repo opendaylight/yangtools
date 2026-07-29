@@ -34,4 +34,9 @@ final class KeyedListNotificationTemplate extends InterfaceTemplate<KeyedListNot
             final DataRootArchetype root) {
         super(archetype, root);
     }
+
+    @Override
+    void appendConstants(final BlockBuilder bb) {
+        appendQNameConstant(bb, archetype.statement().argument());
+    }
 }

@@ -34,4 +34,9 @@ final class InstanceNotificationTemplate extends InterfaceTemplate<InstanceNotif
             final DataRootArchetype root) {
         super(archetype, root);
     }
+
+    @Override
+    void appendConstants(final BlockBuilder bb) {
+        appendQNameConstant(bb, archetype.statement().argument());
+    }
 }

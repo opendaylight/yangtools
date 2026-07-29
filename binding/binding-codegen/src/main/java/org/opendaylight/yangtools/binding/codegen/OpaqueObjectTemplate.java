@@ -51,7 +51,7 @@ final class OpaqueObjectTemplate extends ArchetypeTemplate<OpaqueObjectArchetype
                 .eol("/**")
                 .str(" * The YANG identifier of the {@code ").str(stmt).eol("} represented by this class.")
                 .eol(" */")
-                .frg(qnameConstant(archetype))
+                .frg(qnameConstant(archetype.statement().argument()))
                 .nl()
                 .at().eol(importedName(OVERRIDE))
                 .str("default ").gen(importedName(CLASS), simpleName).str(" implementedInterface()").oB()

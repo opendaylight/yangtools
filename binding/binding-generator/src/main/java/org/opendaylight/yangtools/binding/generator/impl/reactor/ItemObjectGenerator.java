@@ -40,8 +40,6 @@ final class ItemObjectGenerator extends ListGenerator {
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
 
-        addQNameConstant(builder, localName());
-
         addAugmentable(builder);
 
         addGetterMethods(builder);

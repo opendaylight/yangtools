@@ -33,4 +33,9 @@ final class ContainerTemplate extends InterfaceTemplate<ContainerArchetype> {
     private ContainerTemplate(final ContainerArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
     }
+
+    @Override
+    void appendConstants(final BlockBuilder bb) {
+        appendQNameConstant(bb, archetype.statement().argument());
+    }
 }

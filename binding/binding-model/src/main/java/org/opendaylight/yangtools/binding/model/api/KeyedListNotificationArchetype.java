@@ -35,7 +35,7 @@ public sealed interface KeyedListNotificationArchetype extends InterfaceArchetyp
         @Override
         public KeyedListNotificationArchetype build() {
             return new KeyedListNotificationArchetypeImpl(typeName, statement, annotations(), implementsTypes(),
-                constants(), methodDefinitions(), enclosedTypes());
+                methodDefinitions(), enclosedTypes());
         }
 
         @Override

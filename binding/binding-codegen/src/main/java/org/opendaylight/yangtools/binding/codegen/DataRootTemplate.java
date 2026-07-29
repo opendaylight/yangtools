@@ -43,7 +43,7 @@ final class DataRootTemplate extends InterfaceTemplate<@NonNull DataRootArchetyp
     }
 
     @Override
-    BlockBuilder generateConstants() {
+    void appendConstants(final BlockBuilder bb) {
         // pre-compute constants: split out for future isolation
         final var nonNullByDefault = importedName(NONNULL_BY_DEFAULT);
         final var rootMeta = importedName(ROOT_META);
@@ -52,7 +52,7 @@ final class DataRootTemplate extends InterfaceTemplate<@NonNull DataRootArchetyp
         // FIXME: YANGTOOLS-1808: use importedName()
         final var type = archetype.canonicalName();
 
-        return newBlockBuilder()
+        bb
             .eol("/**")
             .str(" * The {@link ").str(rootMeta).eol("} associated with this module root.")
             .eol(" */")

@@ -34,4 +34,9 @@ final class KeyedListActionTemplate extends InterfaceTemplate<KeyedListActionArc
     private KeyedListActionTemplate(final KeyedListActionArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
     }
+
+    @Override
+    void appendConstants(final BlockBuilder bb) {
+        appendQNameConstant(bb, archetype.statement().argument());
+    }
 }

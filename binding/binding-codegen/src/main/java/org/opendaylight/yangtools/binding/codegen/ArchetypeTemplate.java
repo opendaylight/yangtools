@@ -18,7 +18,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -34,6 +35,7 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
                 UnionTypeObjectTemplate {
     private static final String GENERATED_ANNOTATION =
         "@javax.annotation.processing.Generated(\"mdsal-binding-generator\")";
+    private static final JavaTypeName QNAME = JavaTypeName.create(QName.class);
 
     final DataRootArchetype root;
     final T archetype;
@@ -110,19 +112,18 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
     /**
      * Return a BlockFragment appending the {@code QNAME} field initialized via {@code YangModuleInfo.qnameOf(String)}.
      *
-     * @param qnameArchetype the archetype
+     * @param qname the {@link QName}
      * @return a {@link BlockFragment}
      */
-    final BlockFragment qnameConstant(final Archetype.WithQName qnameArchetype) {
-        final var qname = qnameArchetype.qnameConstant();
+    final BlockFragment qnameConstant(final QName qname) {
         final var module = root.statement().localQNameModule();
         verify(module.equals(qname.getModule()));
 
         return (BlockFragment) bb -> {
             bb
-                .str(importedNonNull(BindingTypes.QNAME)).str(" " + QNAME_STATIC_FIELD_NAME + " = ")
-                .str(importedName(yangModuleInfoOf(module))).str("." + QNAMEOF_METHOD_NAME + "(")
-                .jStr(qname.getLocalName()).eol(");");
+                .at().str(importedName(NONNULL)).sp().str(importedName(QNAME))
+                .str(" " + QNAME_STATIC_FIELD_NAME + " = ").str(importedName(yangModuleInfoOf(module)))
+                .str("." + QNAMEOF_METHOD_NAME + "(").jStr(qname.getLocalName()).eol(");");
         };
     }
 }

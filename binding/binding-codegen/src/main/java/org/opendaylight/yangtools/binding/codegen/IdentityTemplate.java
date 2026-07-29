@@ -51,7 +51,7 @@ final class IdentityTemplate extends ArchetypeTemplate<IdentityArchetype> {
                 .eol("/**")
                 .eol(" * The name of the {@code identity} represented by this class.")
                 .eol(" */")
-                .frg(qnameConstant(archetype))
+                .frg(qnameConstant(stmt.argument()))
                 .eol("/**")
                 .str(" * Singleton value representing the {@link ").str(typeName).eol("} identity.")
                 .eol(" */")

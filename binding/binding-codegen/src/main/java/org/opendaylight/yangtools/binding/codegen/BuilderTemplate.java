@@ -17,7 +17,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodN
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.GROUPING;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.entryObject;
-import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isListType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isMapType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isSetType;
@@ -31,7 +30,6 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
@@ -127,8 +125,8 @@ final class BuilderTemplate extends BaseTemplate {
             // FIXME: remove this newline
             .nl()
             .blk(builderFields())
-            .nl()
-            .blk(constantsDeclarations())
+//            .nl()
+//            .blk(constantsDeclarations())
             .nl();
         if (augmentType != null) {
             final var augmentTypeRef = importedName(augmentType);
@@ -551,62 +549,62 @@ final class BuilderTemplate extends BaseTemplate {
         return baseIfcs;
     }
 
-    @NonNullByDefault
-    private BlockBuilder constantsDeclarations() {
-        final var bb = newBlockBuilder();
-        for (var def : targetType.getConstantDefinitions()) {
-            if (!def.name().startsWith(PATTERN_CONSTANT_NAME)) {
-                // other constants are emitted separately
-                continue;
-            }
-
-            // FIXME: these are not populated anywhere and this whole method does not work :(
-            final var xsdToPattern = (Map<String, String>) def.value();
-            final var fieldSuffix = def.name().substring(PATTERN_CONSTANT_NAME.length());
-            final var jurPatternRef = importedName(JUR_PATTERN);
-            if (xsdToPattern.size() == 1) {
-                final var firstEntry = xsdToPattern.entrySet().iterator().next();
-                bb
-                    .str("private static final ").str(jurPatternRef).str(" " + MEMBER_PATTERN_LIST).str(fieldSuffix)
-                        .str(" = ").str(jurPatternRef).str(".compile(").jString(firstEntry.getKey()).eol(");")
-                    .str("private static final String " + MEMBER_REGEX_LIST).str(fieldSuffix).str(" = ")
-                        .jString(firstEntry.getValue()).eS();
-                continue;
-            }
-
-            bb
-                .str("private static final ").str(jurPatternRef).str("[] " + MEMBER_PATTERN_LIST).str(fieldSuffix)
-                    .str(" = ").str(importedName(CODEHELPERS)).str(".compilePatterns(").str(importedName(JU_LIST))
-                    .eol(".of(");
-            {
-                boolean first = true;
-                for (var xsd : xsdToPattern.keySet()) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        bb.str(", ");
-                    }
-                    bb.jString(xsd);
-                }
-            }
-            bb
-                .eol("));")
-                .str("private static final String[] " + MEMBER_REGEX_LIST).str(fieldSuffix).str(" = { ");
-            {
-                boolean first = true;
-                for (var pattern : xsdToPattern.values()) {
-                    if (first) {
-                        first = false;
-                    } else {
-                        bb.str(", ");
-                    }
-                    bb.jString(pattern);
-                }
-            }
-            bb.eol(" };");
-        }
-        return bb;
-    }
+//    @NonNullByDefault
+//    private BlockBuilder constantsDeclarations() {
+//        final var bb = newBlockBuilder();
+//        for (var def : targetType.getConstantDefinitions()) {
+//            if (!def.name().startsWith(PATTERN_CONSTANT_NAME)) {
+//                // other constants are emitted separately
+//                continue;
+//            }
+//
+//            // FIXME: these are not populated anywhere and this whole method does not work :(
+//            final var xsdToPattern = (Map<String, String>) def.value();
+//            final var fieldSuffix = def.name().substring(PATTERN_CONSTANT_NAME.length());
+//            final var jurPatternRef = importedName(JUR_PATTERN);
+//            if (xsdToPattern.size() == 1) {
+//                final var firstEntry = xsdToPattern.entrySet().iterator().next();
+//                bb
+//                    .str("private static final ").str(jurPatternRef).str(" " + MEMBER_PATTERN_LIST).str(fieldSuffix)
+//                        .str(" = ").str(jurPatternRef).str(".compile(").jString(firstEntry.getKey()).eol(");")
+//                    .str("private static final String " + MEMBER_REGEX_LIST).str(fieldSuffix).str(" = ")
+//                        .jString(firstEntry.getValue()).eS();
+//                continue;
+//            }
+//
+//            bb
+//                .str("private static final ").str(jurPatternRef).str("[] " + MEMBER_PATTERN_LIST).str(fieldSuffix)
+//                    .str(" = ").str(importedName(CODEHELPERS)).str(".compilePatterns(").str(importedName(JU_LIST))
+//                    .eol(".of(");
+//            {
+//                boolean first = true;
+//                for (var xsd : xsdToPattern.keySet()) {
+//                    if (first) {
+//                        first = false;
+//                    } else {
+//                        bb.str(", ");
+//                    }
+//                    bb.jString(xsd);
+//                }
+//            }
+//            bb
+//                .eol("));")
+//                .str("private static final String[] " + MEMBER_REGEX_LIST).str(fieldSuffix).str(" = { ");
+//            {
+//                boolean first = true;
+//                for (var pattern : xsdToPattern.values()) {
+//                    if (first) {
+//                        first = false;
+//                    } else {
+//                        bb.str(", ");
+//                    }
+//                    bb.jString(pattern);
+//                }
+//            }
+//            bb.eol(" };");
+//        }
+//        return bb;
+//    }
 
     /**
      * {@return string with getter methods}

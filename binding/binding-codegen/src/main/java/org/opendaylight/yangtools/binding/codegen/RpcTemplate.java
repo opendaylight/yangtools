@@ -56,7 +56,7 @@ final class RpcTemplate extends ArchetypeTemplate<RpcArchetype> {
                 .eol("/**")
                 .eol(" * The YANG identifier of the {@code rpc} statement represented by this class.")
                 .eol(" */")
-                .frg(qnameConstant(archetype))
+                .frg(qnameConstant(archetype.statement().argument()))
                 .nl()
                 .at().eol(override)
                 .str("default ").gen(importedName(CLASS), simpleName).str(" implementedInterface()").oB()

@@ -8,11 +8,16 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.YANGDATANAMEOF_METHOD_NAME;
+import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
+import static org.opendaylight.yangtools.binding.contract.Naming.NAME_STATIC_FIELD_NAME;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
+import org.opendaylight.yangtools.yang.common.YangDataName;
 
 /**
  * Template for {@link YangData} specializations.
@@ -31,7 +36,22 @@ final class YangDataTemplate extends InterfaceTemplate<YangDataArchetype> {
         }
     }
 
+    public static final JavaTypeName YANG_DATA_NAME = JavaTypeName.create(YangDataName.class);
+
     private YangDataTemplate(final YangDataArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
+    }
+
+    @Override
+    void appendConstants(final BlockBuilder bb) {
+        final var yangDataName = archetype.statement().argument();
+        final var yangModuleInfo = yangModuleInfoOf(yangDataName.module());
+        bb
+            .eol("/**")
+            .eol(" * Yang Data template name of the statement represented by this class.")
+            .eol(" */")
+            .at().str(importedName(NONNULL)).sp().str(importedName(YANG_DATA_NAME))
+                .str(" " + NAME_STATIC_FIELD_NAME + " = ").str(importedName(yangModuleInfo))
+                .str("." + YANGDATANAMEOF_METHOD_NAME + "(").jStr(yangDataName.name()).eol(");");
     }
 }

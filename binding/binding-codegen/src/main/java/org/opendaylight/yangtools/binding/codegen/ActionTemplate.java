@@ -33,4 +33,9 @@ final class ActionTemplate extends InterfaceTemplate<ActionArchetype> {
     private ActionTemplate(final ActionArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
     }
+
+    @Override
+    void appendConstants(final BlockBuilder bb) {
+        appendQNameConstant(bb, archetype.statement().argument());
+    }
 }

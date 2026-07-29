@@ -59,7 +59,7 @@ final class FeatureTemplate extends ArchetypeTemplate<FeatureArchetype> {
                         .eol("/**")
                         .eol(" * The name of the {@code feature} represented by this class.")
                         .eol(" */")
-                        .str("public static final ").frg(qnameConstant(archetype))
+                        .str("public static final ").frg(qnameConstant(stmt.argument()))
                         .eol("/**")
                         .eol(" * The singleton instance.")
                         .eol(" */")

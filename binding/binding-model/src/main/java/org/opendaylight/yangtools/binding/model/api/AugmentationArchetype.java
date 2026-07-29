@@ -38,7 +38,7 @@ public sealed interface AugmentationArchetype extends InterfaceArchetype permits
         @Override
         public AugmentationArchetype build() {
             return new AugmentationArchetypeImpl(typeName, statement, target, annotations(), implementsTypes(),
-                constants(), methodDefinitions(), enclosedTypes());
+                methodDefinitions(), enclosedTypes());
         }
 
         @Override
