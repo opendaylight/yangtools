@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 /**
  * A {@link RuntimeType} associated with an {@code augment} statement.
  */
-public interface AugmentRuntimeType extends CompositeRuntimeType, DataRuntimeType {
+public non-sealed interface AugmentRuntimeType extends CompositeRuntimeType, DataRuntimeType {
     @Override
     AugmentEffectiveStatement statement();
 

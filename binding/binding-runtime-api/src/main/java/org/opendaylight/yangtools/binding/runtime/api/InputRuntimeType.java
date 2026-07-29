@@ -9,12 +9,14 @@ package org.opendaylight.yangtools.binding.runtime.api;
 
 import org.opendaylight.yangtools.binding.model.api.InputArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 
 /**
  * A {@link RuntimeType} associated with an {@code input} statement.
  */
-public interface InputRuntimeType extends ContainerLikeRuntimeType<InputStatement, InputEffectiveStatement> {
+public non-sealed interface InputRuntimeType extends ContainerLikeRuntimeType {
+    @Override
+    InputEffectiveStatement statement();
+
     @Override
     InputArchetype javaType();
 }

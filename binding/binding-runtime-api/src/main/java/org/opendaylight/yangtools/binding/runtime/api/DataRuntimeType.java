@@ -24,6 +24,8 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
  * and similar, as those exist in outside of {@code data tree} contract, but are still part of what
  * {@link RuntimeTypeContainer#bindingChild(JavaTypeName)} considers as child constructs.
  */
-public interface DataRuntimeType extends RuntimeType {
+public sealed interface DataRuntimeType extends RuntimeType
+        permits AugmentRuntimeType, CaseRuntimeType, ChoiceRuntimeType, ContainerLikeRuntimeType, LeafListRuntimeType,
+                LeafRuntimeType, ListRuntimeType, OpaqueRuntimeType {
     // Marker interface, no further contract is specified
 }

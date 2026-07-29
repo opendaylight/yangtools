@@ -13,10 +13,9 @@ import org.opendaylight.yangtools.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-sealed class ContainerLikeCodecContext<D extends DataObject>
-        extends DataObjectCodecContext<D, ContainerLikeRuntimeType<?, ?>>
+sealed class ContainerLikeCodecContext<D extends DataObject> extends DataObjectCodecContext<D, ContainerLikeRuntimeType>
         permits StructuralContainerCodecContext {
-    ContainerLikeCodecContext(final Class<D> cls, final ContainerLikeRuntimeType<?, ?> type,
+    ContainerLikeCodecContext(final Class<D> cls, final ContainerLikeRuntimeType type,
             final CodecContextFactory factory) {
         this(new ContainerLikeCodecPrototype(new NodeStep<>(cls), type, factory));
     }

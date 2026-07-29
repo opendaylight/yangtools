@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 /**
  * A {@link DataRuntimeType} associated with a {@code leaf} statement.
  */
-public interface LeafRuntimeType extends DataRuntimeType {
+public non-sealed interface LeafRuntimeType extends DataRuntimeType {
     @Override
     LeafEffectiveStatement statement();
 }

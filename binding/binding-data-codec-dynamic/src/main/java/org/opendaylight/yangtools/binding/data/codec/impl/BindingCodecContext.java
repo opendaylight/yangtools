@@ -186,7 +186,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     case ContainerRuntimeType child -> child.statement().presenceStatement() == null
                         ? new StructuralContainerCodecContext<>(key, child, BindingCodecContext.this)
                         : new ContainerLikeCodecContext<>(key, child, BindingCodecContext.this);
-                    case ContainerLikeRuntimeType<?, ?> child ->
+                    case ContainerLikeRuntimeType child ->
                         new ContainerLikeCodecContext<>(key, child, BindingCodecContext.this);
                     case ListRuntimeType.WithKey child -> MapCodecContext.of(key, child, BindingCodecContext.this);
                     case ListRuntimeType.WithoutKey child ->

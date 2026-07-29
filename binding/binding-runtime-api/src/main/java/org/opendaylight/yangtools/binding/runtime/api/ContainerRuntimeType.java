@@ -9,13 +9,14 @@ package org.opendaylight.yangtools.binding.runtime.api;
 
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 
 /**
  * A {@link RuntimeType} associated with a {@code container} statement.
  */
-public interface ContainerRuntimeType
-        extends ContainerLikeRuntimeType<ContainerStatement, ContainerEffectiveStatement> {
+public non-sealed interface ContainerRuntimeType extends ContainerLikeRuntimeType {
+    @Override
+    ContainerEffectiveStatement statement();
+
     @Override
     ContainerArchetype javaType();
 }

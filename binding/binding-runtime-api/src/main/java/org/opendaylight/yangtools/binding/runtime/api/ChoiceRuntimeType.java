@@ -8,9 +8,10 @@
 package org.opendaylight.yangtools.binding.runtime.api;
 
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
+import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 
@@ -18,10 +19,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
  * A {@link RuntimeType} associated with a {@code choice} statement. Note that unlike YANG semantics, in Binding Spec
  * semantics a type generated for a 'choice' statement is <b>does not</b> implement {@link Augmentable}.
  */
-// FIXME override javaType() and provide default statement() implementation
-public interface ChoiceRuntimeType extends CompositeRuntimeType, DataRuntimeType {
+@NonNullByDefault
+public non-sealed interface ChoiceRuntimeType extends CompositeRuntimeType, DataRuntimeType {
     @Override
     ChoiceEffectiveStatement statement();
+
+    @Override
+    ChoiceInArchetype javaType();
 
     /**
      * Returns resolved {@link CaseRuntimeType} for specified binding class name.
@@ -37,5 +41,5 @@ public interface ChoiceRuntimeType extends CompositeRuntimeType, DataRuntimeType
      *
      * @return Valid {@link CaseRuntimeType}s
      */
-    @NonNull List<CaseRuntimeType> validCaseChildren();
+    List<CaseRuntimeType> validCaseChildren();
 }

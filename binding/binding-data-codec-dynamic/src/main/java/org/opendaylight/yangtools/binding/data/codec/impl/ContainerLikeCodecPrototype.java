@@ -14,9 +14,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 /**
  * A prototype for a {@link ContainerLikeCodecContext}.
  */
-sealed class ContainerLikeCodecPrototype extends DataObjectCodecPrototype<ContainerLikeRuntimeType<?, ?>>
+sealed class ContainerLikeCodecPrototype extends DataObjectCodecPrototype<ContainerLikeRuntimeType>
         permits StructuralContainerCodecPrototype {
-    ContainerLikeCodecPrototype(final DataObjectStep<?> step, final ContainerLikeRuntimeType<?, ?> type,
+    ContainerLikeCodecPrototype(final DataObjectStep<?> step, final ContainerLikeRuntimeType type,
             final CodecContextFactory factory) {
         super(step, NodeIdentifier.create(type.statement().argument()), type, factory);
     }

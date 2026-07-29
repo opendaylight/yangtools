@@ -22,6 +22,11 @@ public final class DefaultChoiceRuntimeType extends AbstractCompositeRuntimeType
     }
 
     @Override
+    public ChoiceInArchetype javaType() {
+        return (ChoiceInArchetype) super.javaType();
+    }
+
+    @Override
     public List<CaseRuntimeType> validCaseChildren() {
         return schemaTree(CaseRuntimeType.class);
     }
