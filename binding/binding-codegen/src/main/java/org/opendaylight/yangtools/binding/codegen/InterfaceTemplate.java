@@ -60,8 +60,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> extends ArchetypeTemplate<T>
         permits ActionTemplate, AugmentationTemplate, CaseTemplate, ContainerTemplate, DataRootTemplate,
                 EntryObjectTemplate, GroupingTemplate, InputTemplate, InstanceNotificationTemplate, ItemObjectTemplate,
-                KeyedListActionTemplate, NotificationBodyTemplate, NotificationTemplate, OutputTemplate,
-                YangDataTemplate {
+                KeyedListActionTemplate, KeyedListNotificationTemplate, NotificationBodyTemplate, NotificationTemplate,
+                OutputTemplate, YangDataTemplate {
     @NonNullByDefault
     record Builder(LegacyArchetype<?> type, DataRootArchetype root) implements Template.Builder {
         Builder {

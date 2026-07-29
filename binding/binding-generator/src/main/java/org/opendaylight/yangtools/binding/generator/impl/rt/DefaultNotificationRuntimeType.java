@@ -23,7 +23,7 @@ public final class DefaultNotificationRuntimeType extends AbstractAugmentableRun
     }
 
     @Override
-    public InterfaceArchetype javaType() {
-        return (InterfaceArchetype) super.javaType();
+    public InterfaceArchetype.OfNotification javaType() {
+        return (InterfaceArchetype.OfNotification) super.javaType();
     }
 }

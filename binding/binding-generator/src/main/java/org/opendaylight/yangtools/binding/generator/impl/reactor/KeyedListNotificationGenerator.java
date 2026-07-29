@@ -11,9 +11,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
+import org.opendaylight.yangtools.binding.model.api.KeyedListNotificationArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
@@ -26,7 +24,7 @@ final class KeyedListNotificationGenerator extends AbstractInstanceNotificationG
     }
 
     @Override
-    LegacyArchetype<NotificationEffectiveStatement> createTypeImpl(final JavaTypeName typeName,
+    KeyedListNotificationArchetype createTypeImpl(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         final var builder = newBuilder(typeName, statement, parent);
         addUsesInterfaces(builder);
@@ -35,19 +33,17 @@ final class KeyedListNotificationGenerator extends AbstractInstanceNotificationG
     }
 
     @Override
-    LegacyArchetype<NotificationEffectiveStatement> createTypeImpl(final JavaTypeName typeName,
+    KeyedListNotificationArchetype createTypeImpl(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent,
             final Archetype original) {
         return newBuilder(typeName, statement, parent).addImplementsType(original).build();
     }
 
     @NonNullByDefault
-    private static LegacyArchetype.Builder<NotificationEffectiveStatement> newBuilder(final JavaTypeName typeName,
+    private static KeyedListNotificationArchetype.Builder newBuilder(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
-        final var builder = LegacyArchetype.builder(typeName, statement)
-            .addImplementsType(BindingTypes.DATA_OBJECT)
-            .addImplementsType(BindingTypes.keyedListNotification(TypeRef.of(typeName), TypeRef.of(parent.typeName()),
-                ((EntryObjectGenerator) parent).keyGenerator().getArchetype()));
+        final var builder = KeyedListNotificationArchetype.builder(typeName, statement, parent.typeName(),
+            ((EntryObjectGenerator) parent).keyGenerator().getArchetype());
         addAugmentable(builder);
         addConcreteInterfaceMethods(builder);
         addQNameConstant(builder, statement.argument());

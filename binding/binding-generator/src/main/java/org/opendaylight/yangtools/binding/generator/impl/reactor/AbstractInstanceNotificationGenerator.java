@@ -26,7 +26,7 @@ abstract sealed class AbstractInstanceNotificationGenerator extends AbstractNoti
     }
 
     @Override
-    final InterfaceArchetype createTypeImpl(final JavaTypeName typeName,
+    final InterfaceArchetype.OfNotification createTypeImpl(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement) {
         final var parent = getParent();
         final var orig = getOriginal();
@@ -35,10 +35,10 @@ abstract sealed class AbstractInstanceNotificationGenerator extends AbstractNoti
     }
 
     @NonNullByDefault
-    abstract InterfaceArchetype createTypeImpl(JavaTypeName typeName, NotificationEffectiveStatement statement,
-        AbstractCompositeGenerator<?, ?> parent);
+    abstract InterfaceArchetype.OfNotification createTypeImpl(JavaTypeName typeName,
+        NotificationEffectiveStatement statement, AbstractCompositeGenerator<?, ?> parent);
 
     @NonNullByDefault
-    abstract InterfaceArchetype createTypeImpl(JavaTypeName typeName, NotificationEffectiveStatement statement,
-        AbstractCompositeGenerator<?, ?> parent, Archetype original);
+    abstract InterfaceArchetype.OfNotification createTypeImpl(JavaTypeName typeName,
+        NotificationEffectiveStatement statement, AbstractCompositeGenerator<?, ?> parent, Archetype original);
 }

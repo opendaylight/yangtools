@@ -48,12 +48,13 @@ abstract sealed class AbstractNotificationGenerator
     }
 
     @Override
-    final InterfaceArchetype createTypeImpl() {
+    final InterfaceArchetype.OfNotification createTypeImpl() {
         return createTypeImpl(typeName(), statement());
     }
 
     @NonNullByDefault
-    abstract InterfaceArchetype createTypeImpl(JavaTypeName typeName, NotificationEffectiveStatement statement);
+    abstract InterfaceArchetype.OfNotification createTypeImpl(JavaTypeName typeName,
+        NotificationEffectiveStatement statement);
 
     @Override
     final void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
