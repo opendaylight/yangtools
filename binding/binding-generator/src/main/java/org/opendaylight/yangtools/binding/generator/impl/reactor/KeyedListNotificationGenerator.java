@@ -46,7 +46,6 @@ final class KeyedListNotificationGenerator extends AbstractInstanceNotificationG
             ((EntryObjectGenerator) parent).keyGenerator().getArchetype());
         addAugmentable(builder);
         addConcreteInterfaceMethods(builder);
-        addQNameConstant(builder, statement.argument());
         return builder;
     }
 }

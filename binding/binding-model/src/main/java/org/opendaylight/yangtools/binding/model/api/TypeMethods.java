@@ -76,7 +76,6 @@ final class TypeMethods {
         addNonEmpty(helper, "annotations", self.annotations());
         addNonEmpty(helper, "implements", self.getImplements());
         addNonEmpty(helper, "enclosedTypes", self.enclosedTypes());
-        addNonEmpty(helper, "constants", self.getConstantDefinitions());
         addNonEmpty(helper, "methods", self.getMethodDefinitions());
         return helper.toString();
     }

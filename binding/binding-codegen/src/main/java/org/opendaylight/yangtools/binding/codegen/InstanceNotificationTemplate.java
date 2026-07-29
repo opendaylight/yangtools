@@ -34,4 +34,9 @@ final class InstanceNotificationTemplate extends InterfaceTemplate<InstanceNotif
             final DataRootArchetype root) {
         super(archetype, root);
     }
+
+    @Override
+    QNameConstant constants() {
+        return new QNameConstant.InInterface(this, archetype.statement().argument());
+    }
 }

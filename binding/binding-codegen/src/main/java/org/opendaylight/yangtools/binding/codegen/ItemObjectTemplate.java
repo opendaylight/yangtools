@@ -35,4 +35,9 @@ final class ItemObjectTemplate extends InterfaceTemplate<ItemObjectArchetype> {
     private ItemObjectTemplate(final ItemObjectArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
     }
+
+    @Override
+    QNameConstant constants() {
+        return new QNameConstant.InInterface(this, archetype.statement().argument());
+    }
 }

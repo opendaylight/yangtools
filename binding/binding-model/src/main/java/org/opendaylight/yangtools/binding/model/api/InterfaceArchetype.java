@@ -72,19 +72,6 @@ public sealed interface InterfaceArchetype extends Archetype
         Builder addImplementsType(Type genType);
 
         /**
-         * Adds Constant definition and returns <code>new</code> Constant instance.<br>
-         * By definition Constant MUST be defined by return Type, Name and assigned value. The name SHOULD be defined
-         * with capital letters. Neither of method parameters can be <code>null</code> and the method SHOULD throw
-         * {@link IllegalArgumentException} if the contract is broken.
-         *
-         * @param type Constant Type
-         * @param name Name of Constant
-         * @param value Assigned Value
-         * @return <code>new</code> Constant instance.
-         */
-        Constant addConstant(Type type, String name, Object value);
-
-        /**
          * Add new Method Signature definition for Generated Type Builder and returns Method Signature Builder
          * for specifying all Method parameters.<br>
          * Name of Method cannot be <code>null</code>, if it is <code>null</code> the method SHOULD throw
@@ -134,12 +121,6 @@ public sealed interface InterfaceArchetype extends Archetype
     //        - have CaseArchetype have a dedicated pointer to its inherited ChoiceArchetype
     //        everything else should be implied by the archetype itself
     List<Type> getImplements();
-
-    /**
-     * {@return the list of constants the interface defines}
-     */
-    // FIXME: all constants should be implied by a particular archetype and this method should not exist
-    List<Constant> getConstantDefinitions();
 
     /**
      * {@return the list of methods the interface defines}
