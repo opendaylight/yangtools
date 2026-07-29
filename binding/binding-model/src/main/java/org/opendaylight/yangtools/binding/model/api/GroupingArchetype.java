@@ -31,8 +31,8 @@ public sealed interface GroupingArchetype extends InterfaceArchetype permits Gro
 
         @Override
         public GroupingArchetype build() {
-            return new GroupingArchetypeImpl(typeName, statement, annotations(), implementsTypes(), constants(),
-                methodDefinitions(), enclosedTypes());
+            return new GroupingArchetypeImpl(typeName, statement, annotations(), implementsTypes(), methodDefinitions(),
+                enclosedTypes());
         }
 
         @Override

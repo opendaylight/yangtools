@@ -12,14 +12,12 @@ import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
-import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 
 import com.google.common.base.VerifyException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Locale;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -331,17 +329,17 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             LengthGenerator.appendCheckerCall(bb, fieldName, valueRef);
         }
 
-        final var fieldUpperCase = fieldName.toUpperCase(Locale.ROOT);
-
-        for (var currentConstant : type.getConstantDefinitions()) {
-            final var currentName = currentConstant.name();
-
-            if (currentName.startsWith(PATTERN_CONSTANT_NAME)
-                && fieldUpperCase.equals(currentName.substring(PATTERN_CONSTANT_NAME.length()))) {
-                bb.str(importedName(CODEHELPERS)).str(".checkPattern(value, " + MEMBER_PATTERN_LIST)
-                    .str(fieldName).str(", " + MEMBER_REGEX_LIST).str(fieldName).eol(");");
-            }
-        }
+//        final var fieldUpperCase = fieldName.toUpperCase(Locale.ROOT);
+//
+//        for (var currentConstant : type.getConstantDefinitions()) {
+//            final var currentName = currentConstant.name();
+//
+//            if (currentName.startsWith(PATTERN_CONSTANT_NAME)
+//                && fieldUpperCase.equals(currentName.substring(PATTERN_CONSTANT_NAME.length()))) {
+//                bb.str(importedName(CODEHELPERS)).str(".checkPattern(value, " + MEMBER_PATTERN_LIST)
+//                    .str(fieldName).str(", " + MEMBER_REGEX_LIST).str(fieldName).eol(");");
+//            }
+//        }
 
         return bb;
     }

@@ -59,8 +59,6 @@ final class EntryObjectGenerator extends ListGenerator {
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
 
-        addQNameConstant(builder, localName());
-
         builder.addImplementsType(BindingTypes.entryObject(builder.typeRef(), keyType));
 
         addGetterMethods(builder);

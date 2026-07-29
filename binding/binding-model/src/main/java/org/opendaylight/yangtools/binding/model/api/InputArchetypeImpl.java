@@ -20,7 +20,6 @@ record InputArchetypeImpl(
         InputEffectiveStatement statement,
         List<AttachedAnnotation.ToType> annotations,
         List<Type> implementsTypes,
-        List<Constant> constants,
         List<MethodSignature> methodSignatures,
         List<Archetype> enclosedTypes) implements InputArchetype {
     InputArchetypeImpl {
@@ -28,7 +27,6 @@ record InputArchetypeImpl(
         requireNonNull(statement);
         requireNonNull(annotations);
         requireNonNull(implementsTypes);
-        requireNonNull(constants);
         requireNonNull(methodSignatures);
         requireNonNull(enclosedTypes);
     }
@@ -36,11 +34,6 @@ record InputArchetypeImpl(
     @Override
     public List<Type> getImplements() {
         return implementsTypes;
-    }
-
-    @Override
-    public List<Constant> getConstantDefinitions() {
-        return constants;
     }
 
     @Override

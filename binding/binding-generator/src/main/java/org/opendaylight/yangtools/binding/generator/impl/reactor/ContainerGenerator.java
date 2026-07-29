@@ -50,7 +50,6 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
         addAugmentable(builder);
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
-        addQNameConstant(builder, localName());
         addGetterMethods(builder);
         return builder.build();
     }

@@ -37,7 +37,7 @@ public sealed interface CaseArchetype extends InterfaceArchetype permits CaseArc
 
         @Override
         public CaseArchetype build() {
-            return new CaseArchetypeImpl(typeName, statement, choice, annotations(), implementsTypes(), constants(),
+            return new CaseArchetypeImpl(typeName, statement, choice, annotations(), implementsTypes(),
                 methodDefinitions(), enclosedTypes());
         }
 

@@ -64,7 +64,6 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
         addAugmentable(builder);
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
-        addQNameConstant(builder, localName());
         addGetterMethods(builder);
         return builder.build();
     }
