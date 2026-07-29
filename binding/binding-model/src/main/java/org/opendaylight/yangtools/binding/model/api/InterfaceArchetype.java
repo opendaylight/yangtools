@@ -10,8 +10,10 @@ package org.opendaylight.yangtools.binding.model.api;
 import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.BaseNotification;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
  * An {@link Archetype} which results in an interface with zero or more methods.
@@ -23,8 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 @NonNullByDefault
 public sealed interface InterfaceArchetype extends Archetype
         permits ActionArchetype, AugmentationArchetype, CaseArchetype, ContainerArchetype, DataRootArchetype,
-                GroupingArchetype, InputArchetype, InterfaceArchetype.OfList, KeyedListActionArchetype,
-                NotificationBodyArchetype, OutputArchetype, YangDataArchetype, LegacyArchetype {
+                GroupingArchetype, InputArchetype, InterfaceArchetype.OfList, InterfaceArchetype.OfNotification,
+                KeyedListActionArchetype, NotificationBodyArchetype, OutputArchetype, YangDataArchetype,
+                LegacyArchetype {
     /**
      * Base interface for builders resulting in an {@link InterfaceArchetype}.
      *
@@ -105,6 +108,16 @@ public sealed interface InterfaceArchetype extends Archetype
     sealed interface OfList extends InterfaceArchetype permits EntryObjectArchetype, ItemObjectArchetype {
         @Override
         ListEffectiveStatement statement();
+    }
+
+    /**
+     * An {@link InterfaceArchetype} for a {@code notification} statement. Implementations of this archetype result in
+     * a subclass of {@link BaseNotification} and the hierarchy of this class reflects that. These are not to be
+     * confused with {@link NotificationBodyArchetype}.
+     */
+    sealed interface OfNotification extends InterfaceArchetype permits NotificationArchetype {
+        @Override
+        NotificationEffectiveStatement statement();
     }
 
     /**

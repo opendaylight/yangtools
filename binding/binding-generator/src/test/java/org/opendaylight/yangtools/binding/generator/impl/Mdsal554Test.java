@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
+import org.opendaylight.yangtools.binding.model.api.NotificationArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal554Test {
@@ -24,17 +24,17 @@ class Mdsal554Test {
         assertEquals(4, genTypes.size());
 
         // status deprecated
-        final var deprecated = (LegacyArchetype<?>) genTypes.get(1);
+        final var deprecated = assertInstanceOf(NotificationArchetype.class, genTypes.get(1));
         assertEquals("DeprecatedNotification", deprecated.simpleName());
         assertEquals(List.of(DeprecatedAnnotation.DEPRECATED), deprecated.annotations());
 
         // status obsolete
-        final var obsolete = (LegacyArchetype<?>) genTypes.get(2);
+        final var obsolete = assertInstanceOf(NotificationArchetype.class, genTypes.get(2));
         assertEquals("ObsoleteNotification", obsolete.simpleName());
         assertEquals(List.of(DeprecatedAnnotation.OBSOLETE), obsolete.annotations());
 
         // status current
-        final var current = assertInstanceOf(LegacyArchetype.class, genTypes.get(3));
+        final var current = assertInstanceOf(NotificationArchetype.class, genTypes.get(3));
         assertEquals("TestNotification", current.simpleName());
         assertEquals(List.of(), current.annotations());
     }

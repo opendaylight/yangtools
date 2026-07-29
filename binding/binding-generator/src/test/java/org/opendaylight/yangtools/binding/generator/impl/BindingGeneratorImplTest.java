@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.LegacyArchetype;
+import org.opendaylight.yangtools.binding.model.api.NotificationArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -110,10 +110,10 @@ class BindingGeneratorImplTest {
         final var generateTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource(
                 "/binding-generator-impl-test/notification-test.yang"));
 
-        LegacyArchetype<?> foo = null;
+        NotificationArchetype foo = null;
         for (var type : generateTypes) {
             if (type.simpleName().equals("Foo")) {
-                foo = assertInstanceOf(LegacyArchetype.class, type);
+                foo = assertInstanceOf(NotificationArchetype.class, type);
                 break;
             }
         }
