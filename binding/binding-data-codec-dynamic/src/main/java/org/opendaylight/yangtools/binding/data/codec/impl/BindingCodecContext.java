@@ -847,7 +847,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     public IdentifiableItemCodec getPathArgumentCodec(final Class<?> listClz, final ListRuntimeType.WithKey type) {
         // CCE is as good an exception as any
         final var entryClass = listClz.asSubclass(EntryObject.class);
-        final var keyType = type. keyType();
+        final var keyType = type.keyType();
 
         final Class<? extends Key<?>> keyClass;
         try {

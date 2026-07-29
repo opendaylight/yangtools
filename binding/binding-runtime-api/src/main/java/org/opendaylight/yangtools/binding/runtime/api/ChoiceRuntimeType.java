@@ -22,10 +22,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 @NonNullByDefault
 public non-sealed interface ChoiceRuntimeType extends CompositeRuntimeType, DataRuntimeType {
     @Override
-    ChoiceEffectiveStatement statement();
+    ChoiceInArchetype javaType();
 
     @Override
-    ChoiceInArchetype javaType();
+    ChoiceEffectiveStatement statement();
 
     /**
      * Returns resolved {@link CaseRuntimeType} for specified binding class name.

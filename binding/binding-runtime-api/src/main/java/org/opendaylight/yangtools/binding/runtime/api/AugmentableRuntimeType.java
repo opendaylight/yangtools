@@ -8,16 +8,15 @@
 package org.opendaylight.yangtools.binding.runtime.api;
 
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * A {@link CompositeRuntimeType} which is also can be targeted by {@code augment} statements.
  */
+@NonNullByDefault
 public interface AugmentableRuntimeType extends CompositeRuntimeType {
     /**
-     * Return the {@link AugmentRuntimeType}s extending this type, matching the underlying {@link #statement()}.
-     *
-     * @return {@link AugmentRuntimeType}s extending this type.
+     * {@return the {@link AugmentRuntimeType}s extending this type, matching the underlying {@link #statement()}}
      */
-    @NonNull List<AugmentRuntimeType> augments();
+    List<AugmentRuntimeType> augments();
 }

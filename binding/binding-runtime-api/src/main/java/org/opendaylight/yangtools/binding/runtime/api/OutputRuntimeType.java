@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
  */
 public non-sealed interface OutputRuntimeType extends ContainerLikeRuntimeType {
     @Override
-    OutputEffectiveStatement statement();
+    OutputArchetype javaType();
 
     @Override
-    OutputArchetype javaType();
+    OutputEffectiveStatement statement();
 }

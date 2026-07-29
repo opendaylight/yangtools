@@ -18,7 +18,5 @@ public interface FeatureRuntimeType extends GeneratedRuntimeType {
     FeatureArchetype javaType();
 
     @Override
-    default FeatureEffectiveStatement statement() {
-        return javaType().statement();
-    }
+    FeatureEffectiveStatement statement();
 }

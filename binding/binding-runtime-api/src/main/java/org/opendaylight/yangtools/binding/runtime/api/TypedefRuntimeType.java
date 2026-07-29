@@ -14,10 +14,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
  * A {@link RuntimeType} associated with a {@code typedef} statement.
  */
 public interface TypedefRuntimeType extends GeneratedRuntimeType {
-    @Override
-    TypedefEffectiveStatement statement();
-
     // FIXME: TypeObjectArchetype<?>
     @Override
     Archetype javaType();
+
+    @Override
+    TypedefEffectiveStatement statement();
 }

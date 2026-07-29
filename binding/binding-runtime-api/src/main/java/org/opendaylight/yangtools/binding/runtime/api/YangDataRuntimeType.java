@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
  */
 public interface YangDataRuntimeType extends CompositeRuntimeType {
     @Override
-    YangDataEffectiveStatement statement();
+    YangDataArchetype javaType();
 
     @Override
-    YangDataArchetype javaType();
+    YangDataEffectiveStatement statement();
 }

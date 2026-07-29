@@ -19,4 +19,9 @@ public final class DefaultAnyxmlRuntimeType
     public DefaultAnyxmlRuntimeType(final OpaqueObjectArchetype.Anyxml bindingType) {
         super(bindingType);
     }
+
+    @Override
+    public AnyxmlEffectiveStatement statement() {
+        return javaType().statement();
+    }
 }

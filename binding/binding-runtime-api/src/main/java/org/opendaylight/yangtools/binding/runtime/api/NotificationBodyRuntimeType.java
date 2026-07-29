@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  */
 public interface NotificationBodyRuntimeType extends CompositeRuntimeType {
     @Override
-    NotificationEffectiveStatement statement();
+    NotificationBodyArchetype javaType();
 
     @Override
-    NotificationBodyArchetype javaType();
+    NotificationEffectiveStatement statement();
 }

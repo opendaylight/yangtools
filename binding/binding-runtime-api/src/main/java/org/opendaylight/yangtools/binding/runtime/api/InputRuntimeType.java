@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
  */
 public non-sealed interface InputRuntimeType extends ContainerLikeRuntimeType {
     @Override
-    InputEffectiveStatement statement();
+    InputArchetype javaType();
 
     @Override
-    InputArchetype javaType();
+    InputEffectiveStatement statement();
 }

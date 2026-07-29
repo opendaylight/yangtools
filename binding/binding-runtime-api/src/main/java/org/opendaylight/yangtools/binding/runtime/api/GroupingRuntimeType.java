@@ -8,21 +8,21 @@
 package org.opendaylight.yangtools.binding.runtime.api;
 
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 
 /**
  * A {@link RuntimeType} associated with a {@code grouping} statement.
  */
+@NonNullByDefault
 public interface GroupingRuntimeType extends CompositeRuntimeType {
     @Override
-    GroupingEffectiveStatement statement();
+    GroupingArchetype javaType();
 
     @Override
-    GroupingArchetype javaType();
+    GroupingEffectiveStatement statement();
 
     /**
      * Return the set of all concrete data tree instantiations of this {@code grouping}. This is necessary to completely
@@ -82,7 +82,7 @@ public interface GroupingRuntimeType extends CompositeRuntimeType {
      *
      * @return The set instantiated {@link CompositeRuntimeType}s which use this grouping
      */
-    default @NonNull List<CompositeRuntimeType> instantiations() {
+    default List<CompositeRuntimeType> instantiations() {
         final var users = directUsers();
         return switch (users.size()) {
             case 0 -> List.of();
@@ -94,7 +94,7 @@ public interface GroupingRuntimeType extends CompositeRuntimeType {
                 .flatMap(user -> user instanceof GroupingRuntimeType grouping ? grouping.instantiations().stream()
                     : Stream.of(user))
                 .distinct()
-                .collect(Collectors.toUnmodifiableList());
+                .toList();
         };
     }
 
@@ -104,5 +104,5 @@ public interface GroupingRuntimeType extends CompositeRuntimeType {
      *
      * @return Direct users of this grouping
      */
-    @NonNull List<CompositeRuntimeType> directUsers();
+    List<CompositeRuntimeType> directUsers();
 }

@@ -18,7 +18,5 @@ public non-sealed interface AnydataRuntimeType extends OpaqueRuntimeType {
     OpaqueObjectArchetype.Anydata javaType();
 
     @Override
-    default AnydataEffectiveStatement statement() {
-        return javaType().statement();
-    }
+    AnydataEffectiveStatement statement();
 }

@@ -19,4 +19,9 @@ public final class DefaultAnydataRuntimeType
     public DefaultAnydataRuntimeType(final OpaqueObjectArchetype.Anydata bindingType) {
         super(bindingType);
     }
+
+    @Override
+    public AnydataEffectiveStatement statement() {
+        return javaType().statement();
+    }
 }

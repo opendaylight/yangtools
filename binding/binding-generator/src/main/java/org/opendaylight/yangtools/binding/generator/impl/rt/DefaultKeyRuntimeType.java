@@ -18,4 +18,9 @@ public final class DefaultKeyRuntimeType extends AbstractRuntimeType<KeyEffectiv
     public DefaultKeyRuntimeType(final KeyArchetype archetype) {
         super(archetype);
     }
+
+    @Override
+    public KeyEffectiveStatement statement() {
+        return javaType().statement();
+    }
 }

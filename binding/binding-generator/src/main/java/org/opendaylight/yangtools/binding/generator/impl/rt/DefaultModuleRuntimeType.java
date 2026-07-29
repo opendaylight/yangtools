@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.ModuleRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.YangDataRuntimeType;
@@ -23,10 +23,15 @@ public final class DefaultModuleRuntimeType extends AbstractCompositeRuntimeType
         implements ModuleRuntimeType {
     private final ImmutableMap<YangDataName, YangDataRuntimeType> yangDataChildren;
 
-    public DefaultModuleRuntimeType(final Archetype bindingType, final ModuleEffectiveStatement statement,
+    public DefaultModuleRuntimeType(final DataRootArchetype bindingType, final ModuleEffectiveStatement statement,
             final List<RuntimeType> children, final List<YangDataRuntimeType> yangDataChildren) {
         super(bindingType, statement, children);
         this.yangDataChildren = Maps.uniqueIndex(yangDataChildren, type -> type.statement().argument());
+    }
+
+    @Override
+    public DataRootArchetype javaType() {
+        return (DataRootArchetype) super.javaType();
     }
 
     @Override

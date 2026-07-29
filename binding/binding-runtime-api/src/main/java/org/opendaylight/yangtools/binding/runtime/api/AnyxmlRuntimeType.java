@@ -18,7 +18,5 @@ public non-sealed interface AnyxmlRuntimeType extends OpaqueRuntimeType {
     OpaqueObjectArchetype.Anyxml javaType();
 
     @Override
-    default AnyxmlEffectiveStatement statement() {
-        return javaType().statement();
-    }
+    AnyxmlEffectiveStatement statement();
 }

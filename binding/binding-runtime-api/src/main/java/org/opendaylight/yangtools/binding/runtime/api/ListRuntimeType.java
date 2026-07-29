@@ -40,8 +40,8 @@ public sealed interface ListRuntimeType extends AugmentableRuntimeType, DataRunt
     }
 
     @Override
-    ListEffectiveStatement statement();
+    InterfaceArchetype javaType();
 
     @Override
-    InterfaceArchetype javaType();
+    ListEffectiveStatement statement();
 }

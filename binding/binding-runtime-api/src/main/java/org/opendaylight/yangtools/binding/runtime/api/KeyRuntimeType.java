@@ -18,7 +18,5 @@ public interface KeyRuntimeType extends GeneratedRuntimeType {
     KeyArchetype javaType();
 
     @Override
-    default KeyEffectiveStatement statement() {
-        return javaType().statement();
-    }
+    KeyEffectiveStatement statement();
 }

@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
  */
 public non-sealed interface ContainerRuntimeType extends ContainerLikeRuntimeType {
     @Override
-    ContainerEffectiveStatement statement();
+    ContainerArchetype javaType();
 
     @Override
-    ContainerArchetype javaType();
+    ContainerEffectiveStatement statement();
 }

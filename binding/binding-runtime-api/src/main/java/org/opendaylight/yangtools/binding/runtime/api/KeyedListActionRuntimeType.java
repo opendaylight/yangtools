@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
  */
 public interface KeyedListActionRuntimeType extends InvokableRuntimeType {
     @Override
-    ActionEffectiveStatement statement();
+    KeyedListActionArchetype javaType();
 
     @Override
-    KeyedListActionArchetype javaType();
+    ActionEffectiveStatement statement();
 }

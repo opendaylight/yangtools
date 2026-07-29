@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
  */
 public interface ActionRuntimeType extends InvokableRuntimeType {
     @Override
-    ActionEffectiveStatement statement();
+    ActionArchetype javaType();
 
     @Override
-    ActionArchetype javaType();
+    ActionEffectiveStatement statement();
 }

@@ -18,4 +18,9 @@ public final class DefaultFeatureRuntimeType extends AbstractRuntimeType<Feature
     public DefaultFeatureRuntimeType(final FeatureArchetype archetype) {
         super(archetype);
     }
+
+    @Override
+    public FeatureEffectiveStatement statement() {
+        return javaType().statement();
+    }
 }

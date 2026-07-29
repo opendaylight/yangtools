@@ -18,7 +18,5 @@ public interface IdentityRuntimeType extends GeneratedRuntimeType {
     IdentityArchetype javaType();
 
     @Override
-    default IdentityEffectiveStatement statement() {
-        return javaType().statement();
-    }
+    IdentityEffectiveStatement statement();
 }

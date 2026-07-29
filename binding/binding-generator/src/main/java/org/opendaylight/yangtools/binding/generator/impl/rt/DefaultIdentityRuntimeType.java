@@ -18,4 +18,9 @@ public final class DefaultIdentityRuntimeType extends AbstractRuntimeType<Identi
     public DefaultIdentityRuntimeType(final IdentityArchetype bindingType) {
         super(bindingType);
     }
+
+    @Override
+    public IdentityEffectiveStatement statement() {
+        return javaType().statement();
+    }
 }
