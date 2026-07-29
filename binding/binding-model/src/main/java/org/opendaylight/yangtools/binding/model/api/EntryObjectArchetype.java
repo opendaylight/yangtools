@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface EntryObjectArchetype extends InterfaceArchetype permits EntryObjectArchetypeImpl {
+public sealed interface EntryObjectArchetype extends InterfaceArchetype.OfList permits EntryObjectArchetypeImpl {
     /**
      * A builder of {@link EntryObjectArchetype}s.
      */
@@ -52,9 +52,6 @@ public sealed interface EntryObjectArchetype extends InterfaceArchetype permits 
             final KeyArchetype key) {
         return new Builder(typeName, statement, key);
     }
-
-    @Override
-    ListEffectiveStatement statement();
 
     /**
      * {@return the {link KeyArchetype} associated with this archetype}

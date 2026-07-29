@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface ItemObjectArchetype extends InterfaceArchetype permits ItemObjectArchetypeImpl {
+public sealed interface ItemObjectArchetype extends InterfaceArchetype.OfList permits ItemObjectArchetypeImpl {
     /**
      * A builder of {@link ItemObjectArchetype}s.
      */
@@ -47,7 +47,4 @@ public sealed interface ItemObjectArchetype extends InterfaceArchetype permits I
     static Builder builder(final JavaTypeName typeName, final ListEffectiveStatement statement) {
         return new Builder(typeName, statement);
     }
-
-    @Override
-    ListEffectiveStatement statement();
 }

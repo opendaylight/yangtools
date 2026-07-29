@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
  * An {@link Archetype} which results in an interface with zero or more methods.
@@ -22,7 +23,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
 @NonNullByDefault
 public sealed interface InterfaceArchetype extends Archetype
         permits ActionArchetype, AugmentationArchetype, CaseArchetype, ContainerArchetype, DataRootArchetype,
-                EntryObjectArchetype, GroupingArchetype, InputArchetype, ItemObjectArchetype, KeyedListActionArchetype,
+                GroupingArchetype, InputArchetype, InterfaceArchetype.OfList, KeyedListActionArchetype,
                 NotificationBodyArchetype, OutputArchetype, YangDataArchetype, LegacyArchetype {
     /**
      * Base interface for builders resulting in an {@link InterfaceArchetype}.
@@ -96,6 +97,14 @@ public sealed interface InterfaceArchetype extends Archetype
          * {@return a new immutable {@link InterfaceArchetype} instance}
          */
         InterfaceArchetype build();
+    }
+
+    /**
+     * An {@link InterfaceArchetype} for a {@code list} statement.
+     */
+    sealed interface OfList extends InterfaceArchetype permits EntryObjectArchetype, ItemObjectArchetype {
+        @Override
+        ListEffectiveStatement statement();
     }
 
     /**
