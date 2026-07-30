@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.VisibleForTesting;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
@@ -24,30 +23,19 @@ public final class MethodSignatureImpl implements MethodSignature {
     private final @NonNull ValueMechanics mechanics;
     @NonNullByDefault
     private final List<AttachedAnnotation.ToMethod> annotations;
-    @NonNullByDefault
-    private final List<Parameter> params;
     private final boolean isDefault;
     private final @Nullable TypeMemberComment comment;
 
     public MethodSignatureImpl(final @NonNull String name,
             final @NonNull List<AttachedAnnotation.@NonNull ToMethod> annotations,
-            final @Nullable TypeMemberComment comment, final @NonNull Type returnType,
-            final @NonNull List<@NonNull Parameter> params, final boolean isDefault,
+            final @Nullable TypeMemberComment comment, final @NonNull Type returnType, final boolean isDefault,
             final @NonNull ValueMechanics mechanics) {
         this.name = requireNonNull(name);
         this.returnType = requireNonNull(returnType);
         this.comment = comment;
         this.annotations = requireNonNull(annotations);
-        this.params = requireNonNull(params);
         this.isDefault = isDefault;
         this.mechanics = requireNonNull(mechanics);
-    }
-
-    @NonNullByDefault
-    @VisibleForTesting
-    MethodSignatureImpl(final String name, final List<AttachedAnnotation.ToMethod> annotations,
-            final TypeMemberComment comment, final Type returnType, final List<Parameter> params) {
-        this(name, annotations, comment, returnType, params, false, ValueMechanics.NORMAL);
     }
 
     @Override
@@ -71,11 +59,6 @@ public final class MethodSignatureImpl implements MethodSignature {
     }
 
     @Override
-    public List<Parameter> getParameters() {
-        return params;
-    }
-
-    @Override
     public ValueMechanics getMechanics() {
         return mechanics;
     }
@@ -90,7 +73,6 @@ public final class MethodSignatureImpl implements MethodSignature {
         final int prime = 31;
         int result = 1;
         result = prime * result + Objects.hashCode(getName());
-        result = prime * result + Objects.hashCode(params);
         result = prime * result + Objects.hashCode(getReturnType());
         return result;
     }
@@ -98,8 +80,7 @@ public final class MethodSignatureImpl implements MethodSignature {
     @Override
     public boolean equals(final @Nullable Object obj) {
         return this == obj || obj instanceof MethodSignatureImpl other
-            && Objects.equals(getName(), other.getName()) && Objects.equals(params, other.params)
-            && Objects.equals(getReturnType(), other.getReturnType());
+            && Objects.equals(getName(), other.getName()) && Objects.equals(getReturnType(), other.getReturnType());
     }
 
     @Override
@@ -108,7 +89,6 @@ public final class MethodSignatureImpl implements MethodSignature {
             .append("MethodSignatureImpl [name=").append(getName())
             .append(", comment=").append(getComment())
             .append(", returnType=").append(getReturnType())
-            .append(", params=").append(params)
             .append(", annotations=").append(getAnnotations())
             .append(']')
             .toString();
