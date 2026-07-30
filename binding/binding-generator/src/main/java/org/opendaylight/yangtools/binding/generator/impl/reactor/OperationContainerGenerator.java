@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 abstract sealed class OperationContainerGenerator<
         S extends DataTreeEffectiveStatement<?>,
         R extends CompositeRuntimeType,
-        A extends InterfaceArchetype> extends CompositeSchemaTreeGenerator<S, R>
+        A extends AugmentableArchetype> extends CompositeSchemaTreeGenerator<S, R>
         permits InputGenerator, OutputGenerator {
     @NonNullByDefault
     OperationContainerGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {

@@ -11,8 +11,10 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultKeyedListActionRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.InputArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyedListActionArchetype;
+import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.KeyedListActionRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
@@ -28,7 +30,7 @@ final class KeyedListActionGenerator extends AbstractActionGenerator<KeyedListAc
 
     @Override
     KeyedListActionArchetype createTypeImpl(final JavaTypeName typeName,
-            final ActionEffectiveStatement statement, final Archetype input, final Archetype output) {
+            final ActionEffectiveStatement statement, final InputArchetype input, final OutputArchetype output) {
         final var parent = (EntryObjectGenerator) getParent();
         final var builder = KeyedListActionArchetype.builder(typeName, statement, input, output, parent.typeName(),
             parent.keyGenerator().getArchetype());
