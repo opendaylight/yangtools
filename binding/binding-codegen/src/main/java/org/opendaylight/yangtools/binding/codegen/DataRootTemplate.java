@@ -12,18 +12,24 @@ import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.INSTANCE_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
 
-import org.eclipse.jdt.annotation.NonNull;
+import com.google.common.collect.Iterators;
+import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.ri.Types;
 
 /**
  * Template for {@link DataRoot} specializations.
  */
-final class DataRootTemplate extends InterfaceTemplate<@NonNull DataRootArchetype> {
-    @NonNullByDefault
+@NonNullByDefault
+final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> {
     record Builder(DataRootArchetype type) implements Template.Builder {
         Builder {
             requireNonNull(type);
@@ -35,11 +41,23 @@ final class DataRootTemplate extends InterfaceTemplate<@NonNull DataRootArchetyp
         }
     }
 
-    private static final @NonNull JavaTypeName ROOT_META = JavaTypeName.create(RootMeta.class);
+    private static final JavaTypeName ROOT_META = JavaTypeName.create(RootMeta.class);
+    private static final ConcreteType DATA_ROOT = Types.typeForClass(DataRoot.class);
 
-    @NonNullByDefault
     private DataRootTemplate(final DataRootArchetype archetype) {
         super(archetype, archetype);
+    }
+
+    @Override
+    @Nullable DataRootArchetype builderTarget() {
+        return null;
+    }
+
+    @Override
+    Iterator<? extends Type> extendsTypes() {
+        return Iterators.concat(
+            Iterators.singletonIterator(ParameterizedType.of(DATA_ROOT, archetype)),
+            super.extendsTypes());
     }
 
     @Override

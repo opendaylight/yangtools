@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.model.api;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
@@ -29,7 +28,6 @@ public non-sealed interface DataRootArchetype extends InterfaceArchetype {
     final class Builder extends InterfaceArchetypeBuilder<Builder, ModuleEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final ModuleEffectiveStatement statement) {
             super(typeName, statement);
-            addImplementsType(BindingTypes.dataRoot(TypeRef.of(typeName)));
         }
 
         @Override

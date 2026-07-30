@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.model.ri;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -18,11 +17,9 @@ import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.BaseIdentity;
 import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.Notification;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 
 class BindingTypesTest {
     @Test
@@ -77,12 +74,5 @@ class BindingTypesTest {
         final var notificationType = BindingTypes.notification(Types.objectType());
         assertEquals(Types.typeForClass(Notification.class), notificationType.getRawType());
         assertEquals(List.of(Types.objectType()), notificationType.getActualTypeArguments());
-    }
-
-    @Test
-    void testDataRoot() {
-        final var type = assertInstanceOf(ParameterizedType.class, BindingTypes.dataRoot(Types.objectType()));
-        assertEquals(Types.typeForClass(DataRoot.class), type.getRawType());
-        assertEquals(List.of(Types.typeForClass(Object.class)), type.getActualTypeArguments());
     }
 }

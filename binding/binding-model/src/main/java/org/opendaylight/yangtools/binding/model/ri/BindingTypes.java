@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
-import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.binding.Key;
@@ -55,7 +54,6 @@ public final class BindingTypes {
     static final @NonNull ConcreteType KEY = typeForClass(Key.class);
 
     private static final @NonNull ConcreteType CHILD_OF = typeForClass(ChildOf.class);
-    private static final @NonNull ConcreteType DATA_ROOT = typeForClass(DataRoot.class);
     private static final @NonNull ConcreteType INSTANCE_NOTIFICATION = typeForClass(InstanceNotification.class);
     private static final @NonNull ConcreteType KEYED_LIST_NOTIFICATION = typeForClass(KeyedListNotification.class);
     private static final @NonNull ConcreteType NOTIFICATION = typeForClass(Notification.class);
@@ -151,18 +149,6 @@ public final class BindingTypes {
     @NonNullByDefault
     public static ParameterizedType childOf(final Type type) {
         return ParameterizedType.of(CHILD_OF, type);
-    }
-
-    /**
-     * Type specializing {@link DataRoot} for a particular type.
-     *
-     * @param type Type for which to specialize
-     * @return A parameterized type corresponding to {@code DataRoot<Type>}
-     * @throws NullPointerException if {@code type} is {@code null}
-     */
-    @NonNullByDefault
-    public static ParameterizedType dataRoot(final Type type) {
-        return ParameterizedType.of(DATA_ROOT, type);
     }
 
     /**

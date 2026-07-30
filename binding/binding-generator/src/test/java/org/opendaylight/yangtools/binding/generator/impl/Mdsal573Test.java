@@ -61,6 +61,6 @@ class Mdsal573Test {
         assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal573.norev", "Mdsal573Data"), root.name());
         final var methodSignature = root.getMethodDefinitions().getFirst();
         assertEquals("implementedInterface", methodSignature.getName());
-        assertThat(root.getImplements()).hasSize(3);
+        assertThat(root.getImplements()).hasSize(2);
     }
 }
