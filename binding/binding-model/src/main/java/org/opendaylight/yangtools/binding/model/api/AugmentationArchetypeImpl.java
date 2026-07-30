@@ -19,7 +19,6 @@ record AugmentationArchetypeImpl(
         JavaTypeName name,
         AugmentEffectiveStatement statement,
         AugmentableArchetype target,
-        List<AttachedAnnotation.ToType> annotations,
         List<Type> implementsTypes,
         List<MethodSignature> methodSignatures,
         List<Archetype> enclosedTypes) implements AugmentationArchetype {
@@ -27,7 +26,6 @@ record AugmentationArchetypeImpl(
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(target);
-        requireNonNull(annotations);
         requireNonNull(implementsTypes);
         requireNonNull(methodSignatures);
         requireNonNull(enclosedTypes);

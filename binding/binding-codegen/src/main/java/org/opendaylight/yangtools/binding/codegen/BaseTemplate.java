@@ -209,7 +209,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     }
 
     @NonNullByDefault
-    final BlockBuilder generateAnnotation(final AttachedAnnotation annotation) {
+    final BlockBuilder generateAnnotation(final AttachedAnnotation.ToMethod annotation) {
         final var bb = newBlockBuilder()
             .at().str(importedName(annotation.type()));
         switch (annotation) {

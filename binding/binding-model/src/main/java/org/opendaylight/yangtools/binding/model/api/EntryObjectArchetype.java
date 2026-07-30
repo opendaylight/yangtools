@@ -33,8 +33,8 @@ public sealed interface EntryObjectArchetype extends InterfaceArchetype.OfList p
 
         @Override
         public EntryObjectArchetype build() {
-            return new EntryObjectArchetypeImpl(typeName, statement, key, annotations(), implementsTypes(),
-                methodDefinitions(), enclosedTypes());
+            return new EntryObjectArchetypeImpl(typeName, statement, key, implementsTypes(), methodDefinitions(),
+                enclosedTypes());
         }
 
         @Override

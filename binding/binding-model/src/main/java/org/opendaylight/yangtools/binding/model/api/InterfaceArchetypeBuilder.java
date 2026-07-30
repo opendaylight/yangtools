@@ -19,7 +19,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.LazyCollections;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
@@ -39,7 +38,6 @@ abstract sealed class InterfaceArchetypeBuilder<
     final @NonNull JavaTypeName typeName;
     final @NonNull S statement;
 
-    private @Nullable ArrayList<AttachedAnnotation.@NonNull ToType> annotations = null;
     private List<Type> implementsTypes = List.of();
     private List<MethodSignature.Builder> methodDefinitions = List.of();
     private List<Archetype> enclosedTypes = List.of();
@@ -48,34 +46,11 @@ abstract sealed class InterfaceArchetypeBuilder<
     InterfaceArchetypeBuilder(final JavaTypeName typeName, final S statement) {
         this.typeName = requireNonNull(typeName);
         this.statement = requireNonNull(statement);
-
-        // FIXME: remove this logic and let InterfaceTemplate do the equivalent
-        if (statement instanceof DocumentedNode.WithStatus withStatus) {
-            final var deprecated = DeprecatedAnnotation.ofStatus(withStatus.getStatus());
-            if (deprecated != null) {
-                addAnnotation(deprecated);
-            }
-        }
     }
 
     @Override
     public final TypeRef typeRef() {
         return TypeRef.of(typeName);
-    }
-
-    @Override
-    public final B addAnnotation(final AttachedAnnotation.ToType annotation) {
-        annotations = MethodSignature.Builder.addAnnotation(annotations, requireNonNull(annotation));
-        return thisInstance();
-    }
-
-    @NonNullByDefault
-    final List<AttachedAnnotation.ToType> annotations() {
-        final var local = annotations;
-        if (local == null) {
-            return List.of();
-        }
-        return local.size() == 1 ? Collections.singletonList(local.getFirst()) : List.copyOf(local);
     }
 
     @Override
@@ -166,7 +141,6 @@ abstract sealed class InterfaceArchetypeBuilder<
 
         addNonEmpty(helper, "enclosedTypes", enclosedTypes);
         addNonEmpty(helper, "methods", methodDefinitions);
-        addNonEmpty(helper, "annotations", annotations);
         addNonEmpty(helper, "implements", implementsTypes);
 
         return helper.toString();

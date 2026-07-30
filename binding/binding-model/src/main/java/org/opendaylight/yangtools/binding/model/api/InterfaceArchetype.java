@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  *
  * @since 16.0.0
  */
-// TODO: a better name perhaps?
+// FIXME: rename to DataContainerArchetype
 @Beta
 @NonNullByDefault
 public sealed interface InterfaceArchetype extends Archetype
@@ -37,14 +37,6 @@ public sealed interface InterfaceArchetype extends Archetype
          * {@return a {@link TypeRef} to the type this builder produces}
          */
         TypeRef typeRef();
-
-        /**
-         * Add an {@link AttachedAnnotation.ToType} to this builder.
-         *
-         * @param annotation the {@link AttachedAnnotation.ToType}
-         * @return this instance
-         */
-        Builder addAnnotation(AttachedAnnotation.ToType annotation);
 
         /**
          * Adds a new enclosed {@link Archetype} into definition of Generated Type.
@@ -105,12 +97,6 @@ public sealed interface InterfaceArchetype extends Archetype
         @Override
         NotificationEffectiveStatement statement();
     }
-
-    /**
-     * {@return the list of annotations attached to interface declaration}
-     */
-    // FIXME: all type annotations should be implied by specialization and this method should not exist
-    List<AttachedAnnotation.ToType> annotations();
 
     /**
      * {@return the list of interfaces the interface extends}
