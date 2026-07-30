@@ -7,50 +7,35 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import static java.util.Objects.requireNonNull;
-
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Rpc;
-import org.opendaylight.yangtools.binding.RpcInput;
-import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 
 /**
  * An {@link Archetype} for a {@link Rpc} generated for an {@link RpcEffectiveStatement}.
  *
- * @param name this type's {@link JavaTypeName}}
- * @param statement the {@link RpcEffectiveStatement}
- * @param input this {@link JavaTypeName}} of the corresponding {@link RpcInput} interface
- * @param output this {@link JavaTypeName}} of the corresponding {@link RpcOutput} interface
  * @since 16.0.0
  */
 @NonNullByDefault
-public record RpcArchetype(
-        JavaTypeName name,
-        RpcEffectiveStatement statement,
-        InputArchetype input,
-        OutputArchetype output) implements OperationArchetype {
-    public RpcArchetype {
-        requireNonNull(name);
-        requireNonNull(statement);
-        requireNonNull(input);
-        requireNonNull(output);
+public sealed interface RpcArchetype extends OperationArchetype permits RpcArchetypeImpl {
+    /**
+     * {@return an RpcArchetype}.
+     * @param name the archetype's {@link JavaTypeName}}
+     * @param statement the {@link RpcEffectiveStatement}
+     * @param input the {@link InputArchetype} of the RPC's input
+     * @param output the {@link OutputArchetype} of the RPC's output
+     */
+    static RpcArchetype of(final JavaTypeName name, final RpcEffectiveStatement statement, final InputArchetype input,
+            final OutputArchetype output) {
+        return new RpcArchetypeImpl(name, statement, input, output);
     }
 
     @Override
     @SuppressWarnings("rawtypes")
-    public Class<Rpc> contract() {
+    default Class<Rpc> contract() {
         return Rpc.class;
     }
 
     @Override
-    public int hashCode() {
-        return TypeMethods.hashCode(this);
-    }
-
-    @Override
-    public boolean equals(final @Nullable Object obj) {
-        return TypeMethods.equals(this, obj);
-    }
+    RpcEffectiveStatement statement();
 }
