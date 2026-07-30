@@ -133,7 +133,7 @@ final class BindingJavaFileGenerator {
                 case FeatureArchetype archetype -> generateFile(new FeatureTemplate.Builder(archetype, root));
                 case GroupingArchetype archetype -> generateFile(new GroupingTemplate.Builder(archetype, root));
                 case IdentityArchetype archetype -> generateFile(new IdentityTemplate.Builder(archetype, root));
-                case InputArchetype archetype -> generateBoth(InputTemplate.Builder::new, archetype, root);
+                case InputArchetype archetype -> generateBoth(RpcInputTemplate.Builder::new, archetype, root);
                 case InstanceNotificationArchetype archetype ->
                     generateBoth(InstanceNotificationTemplate.Builder::new, archetype, root);
                 case ItemObjectArchetype archetype -> generateBoth(ItemObjectTemplate.Builder::new, archetype, root);
@@ -145,7 +145,7 @@ final class BindingJavaFileGenerator {
                     generateBoth(KeyedListNotificationTemplate.Builder::new, archetype, root);
                 case NotificationArchetype archetype ->
                     generateBoth(NotificationTemplate.Builder::new, archetype, root);
-                case OutputArchetype archetype -> generateBoth(OutputTemplate.Builder::new, archetype, root);
+                case OutputArchetype archetype -> generateBoth(RpcOutputTemplate.Builder::new, archetype, root);
                 case NotificationBodyArchetype archetype ->
                     generateFile(new NotificationBodyTemplate.Builder(archetype, root));
                 case OpaqueObjectArchetype<?> archetype ->

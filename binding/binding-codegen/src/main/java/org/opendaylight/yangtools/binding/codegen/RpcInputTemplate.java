@@ -10,28 +10,28 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.RpcOutput;
+import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
+import org.opendaylight.yangtools.binding.model.api.InputArchetype;
 
 /**
- * Template for {@link RpcOutput} specializations.
+ * Template for {@link RpcInput} specializations.
  */
 @NonNullByDefault
-final class OutputTemplate extends InterfaceTemplate<OutputArchetype> {
-    record Builder(OutputArchetype type, DataRootArchetype root) implements Template.Builder {
+final class RpcInputTemplate extends InterfaceTemplate<InputArchetype> {
+    record Builder(InputArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
             requireNonNull(root);
         }
 
         @Override
-        public OutputTemplate build() {
-            return new OutputTemplate(type, root);
+        public RpcInputTemplate build() {
+            return new RpcInputTemplate(type, root);
         }
     }
 
-    private OutputTemplate(final OutputArchetype archetype, final DataRootArchetype root) {
+    private RpcInputTemplate(final InputArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
     }
 

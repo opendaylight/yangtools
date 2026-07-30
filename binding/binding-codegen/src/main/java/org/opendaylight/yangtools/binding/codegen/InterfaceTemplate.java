@@ -52,8 +52,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 // TODO: split this class up into reusable components, i.e. use composition instead of inheritance
 abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> extends ArchetypeTemplate<T>
     permits AugmentationTemplate, CaseTemplate, ContainerTemplate, DataRootTemplate, EntryObjectTemplate,
-            GroupingTemplate, InputTemplate, InstanceNotificationTemplate, ItemObjectTemplate,
-            KeyedListNotificationTemplate, NotificationBodyTemplate, NotificationTemplate, OutputTemplate,
+            GroupingTemplate, RpcInputTemplate, InstanceNotificationTemplate, ItemObjectTemplate,
+            KeyedListNotificationTemplate, NotificationBodyTemplate, NotificationTemplate, RpcOutputTemplate,
             YangDataTemplate {
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
