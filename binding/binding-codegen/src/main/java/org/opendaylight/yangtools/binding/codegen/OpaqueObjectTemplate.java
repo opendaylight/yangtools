@@ -46,10 +46,7 @@ final class OpaqueObjectTemplate extends ArchetypeTemplate<OpaqueObjectArchetype
             .str("public interface ").str(simpleName).str(" extends ").gen(importedName(OPAQUE_OBJECT), simpleName).oB()
                 .frg(new QNameConstant.InInterface(this, archetype.statement().argument()))
                 .nl()
-                .at().eol(importedName(OVERRIDE))
-                .str("default ").gen(importedName(CLASS), simpleName).str(" implementedInterface()").oB()
-                    .str("return ").str(simpleName).eol(".class;")
-                .cB()
+                .frg(new ImplementedInterfaceMethod.Simple(this))
             .cB();
     }
 }

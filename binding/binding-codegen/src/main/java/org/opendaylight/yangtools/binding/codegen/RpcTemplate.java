@@ -43,22 +43,18 @@ final class RpcTemplate extends ArchetypeTemplate<RpcArchetype> {
 
     @Override
     BlockBuilder body() {
-        final var simpleName = archetype.simpleName();
-        final var override = importedName(OVERRIDE);
         final var input = importedName(archetype.input());
         final var output = importedName(archetype.output());
 
         return newBodyBuilder(archetype.statement())
             .eol("@java.lang.FunctionalInterface")
-            .str("public interface ").str(simpleName).str(" extends ").gen(importedName(RPC), input, output).oB()
+            .str("public interface ").str(archetype.simpleName()).str(" extends ").gen(importedName(RPC), input, output)
+                .oB()
                 .frg(new QNameConstant.InInterface(this, archetype.statement().argument()))
                 .nl()
-                .at().eol(override)
-                .str("default ").gen(importedName(CLASS), simpleName).str(" implementedInterface()").oB()
-                    .str("return ").str(simpleName).eol(".class;")
-                .cB()
+                .frg(new ImplementedInterfaceMethod.Simple(this))
                 .nl()
-                .at().eol(override)
+                .at().eol(importedName(OVERRIDE))
                 .str(importedName(LISTENABLE_FUTURE)).str("<").gen(importedName(RPC_RESULT), output).str("> invoke(")
                     .str(input).eol(" input);")
             .cB();

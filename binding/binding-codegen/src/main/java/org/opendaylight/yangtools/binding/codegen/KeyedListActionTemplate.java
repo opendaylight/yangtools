@@ -53,7 +53,6 @@ final class KeyedListActionTemplate extends ArchetypeTemplate<KeyedListActionArc
     @Override
     BlockBuilder body() {
         final var simpleName = archetype.simpleName();
-        final var override = importedName(OVERRIDE);
         final var input = importedName(archetype.input());
         final var output = importedName(archetype.output());
         final var parent = importedName(archetype.parentName());
@@ -65,12 +64,9 @@ final class KeyedListActionTemplate extends ArchetypeTemplate<KeyedListActionArc
                 .gen(importedName(KEYED_LIST_ACTION), key, parent, input, output).oB()
                 .frg(new QNameConstant.InInterface(this, archetype.statement().argument()))
                 .nl()
-                .at().eol(override)
-                .str("default ").gen(importedName(CLASS), simpleName).str(" implementedInterface()").oB()
-                    .str("return ").str(simpleName).eol(".class;")
-                .cB()
+                .frg(new ImplementedInterfaceMethod.Simple(this))
                 .nl()
-                .at().eol(override)
+                .at().eol(importedName(OVERRIDE))
                 .str(importedName(LISTENABLE_FUTURE)).str("<").gen(importedName(RPC_RESULT), output).str("> invoke(")
                     .gen(importedName(WITH_KEY), parent, key).str(" path, ").str(input).eol(" input);")
             .cB();

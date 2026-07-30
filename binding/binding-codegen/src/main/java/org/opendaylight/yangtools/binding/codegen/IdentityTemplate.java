@@ -41,7 +41,7 @@ final class IdentityTemplate extends ArchetypeTemplate<IdentityArchetype> {
     BlockBuilder body() {
         final var typeName = archetype.simpleName();
         final var clazz = importedName(CLASS);
-        final var object = importedName(Types.objectType());
+        final var object = importedName(OBJECT);
         final var override = importedName(OVERRIDE);
         final var codeHelpers = importedName(CODEHELPERS);
         final var stmt = archetype.statement();
@@ -57,10 +57,7 @@ final class IdentityTemplate extends ArchetypeTemplate<IdentityArchetype> {
                     .eol("@java.io.Serial")
                     .eol("private static final long serialVersionUID = 1L;")
                     .nl()
-                    .at().eol(override)
-                    .str("public ").gen(clazz, typeName).str(" implementedInterface()").oB()
-                        .str("return ").str(typeName).eol(".class;")
-                    .cB()
+                    .frg(new ImplementedInterfaceMethod.Simple(this))
                     .nl()
                     .at().eol(override)
                     .str("public int hashCode()").oB()
