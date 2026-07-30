@@ -21,15 +21,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
  * @since 16.0.0
  */
 @Beta
-// FIXME: do not extend InterfaceArchetype, just like RpcArchetype does not
+@NonNullByDefault
+// FIXME: extend OperationArchetype
 public sealed interface ActionArchetype extends InterfaceArchetype permits ActionArchetypeImpl {
     /**
      * A builder of {@link ActionArchetype}s.
      */
-    @NonNullByDefault
     final class Builder extends InterfaceArchetypeBuilder<Builder, ActionEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final ActionEffectiveStatement statement, final Archetype input,
-                final Archetype output, final JavaTypeName parentName) {
+        private Builder(final JavaTypeName typeName, final ActionEffectiveStatement statement,
+                final InputArchetype input, final OutputArchetype output, final JavaTypeName parentName) {
             super(typeName, statement);
 
             // FIXME: this is something ActionTemplate should be doing
@@ -60,9 +60,8 @@ public sealed interface ActionArchetype extends InterfaceArchetype permits Actio
         }
     }
 
-    @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final ActionEffectiveStatement statement, final Archetype input,
-            final Archetype output, final JavaTypeName parentName) {
+    static Builder builder(final JavaTypeName typeName, final ActionEffectiveStatement statement,
+            final InputArchetype input, final OutputArchetype output, final JavaTypeName parentName) {
         return new Builder(typeName, statement, input, output, parentName);
     }
 

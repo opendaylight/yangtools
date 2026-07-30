@@ -21,15 +21,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
  * @since 16.0.0
  */
 @Beta
-// FIXME: do not extend InterfaceArchetype, just like RpcArchetype does not
+@NonNullByDefault
+// FIXME: extend OperationArchetype
 public sealed interface KeyedListActionArchetype extends InterfaceArchetype permits KeyedListActionArchetypeImpl {
     /**
      * A builder of {@link KeyedListActionArchetype}s.
      */
-    @NonNullByDefault
     final class Builder extends InterfaceArchetypeBuilder<Builder, ActionEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final ActionEffectiveStatement statement, final Archetype input,
-                final Archetype output, final JavaTypeName parentName, final KeyArchetype key) {
+        private Builder(final JavaTypeName typeName, final ActionEffectiveStatement statement,
+                final InputArchetype input, final OutputArchetype output, final JavaTypeName parentName,
+                final KeyArchetype key) {
             super(typeName, statement);
 
             // FIXME: this is something KeyedListActionTemplate should be doing
@@ -60,9 +61,9 @@ public sealed interface KeyedListActionArchetype extends InterfaceArchetype perm
         }
     }
 
-    @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final ActionEffectiveStatement statement, final Archetype input,
-            final Archetype output, final JavaTypeName parentName, final KeyArchetype key) {
+    static Builder builder(final JavaTypeName typeName, final ActionEffectiveStatement statement,
+            final InputArchetype input, final OutputArchetype output, final JavaTypeName parentName,
+            final KeyArchetype key) {
         return new Builder(typeName, statement, input, output, parentName, key);
     }
 

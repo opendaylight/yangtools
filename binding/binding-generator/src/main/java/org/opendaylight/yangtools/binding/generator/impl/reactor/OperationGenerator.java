@@ -7,22 +7,23 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
+import org.opendaylight.yangtools.binding.model.api.InputArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.InvokableRuntimeType;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-abstract sealed class AbstractInvokableGenerator<
+public abstract sealed class OperationGenerator<
         S extends SchemaTreeEffectiveStatement<?>,
         R extends InvokableRuntimeType> extends CompositeSchemaTreeGenerator<S, R>
         permits AbstractActionGenerator, RpcGenerator {
     @NonNullByDefault
-    AbstractInvokableGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
+    OperationGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
@@ -39,22 +40,25 @@ abstract sealed class AbstractInvokableGenerator<
     @Override
     final Archetype createTypeImpl() {
         return createTypeImpl(
-            getChild(InputEffectiveStatement.class).getGeneratedType(),
-            getChild(OutputEffectiveStatement.class).getGeneratedType());
+            getContainer(InputArchetype.class, InputGenerator.class),
+            getContainer(OutputArchetype.class, OutputGenerator.class));
     }
 
     @NonNullByDefault
-    abstract Archetype createTypeImpl(Archetype input, Archetype output);
+    abstract Archetype createTypeImpl(InputArchetype input, OutputArchetype output);
 
     @NonNullByDefault
-    private <T extends EffectiveStatement<?, ?>> AbstractExplicitGenerator<T, ?> getChild(final Class<T> type) {
+    private <A extends AugmentableArchetype, G extends OperationContainerGenerator<?, ?, ?>> A getContainer(
+            final Class<A> archetypeClass, final Class<G> generatorClass) {
         for (var child : this) {
-            if (child instanceof AbstractExplicitGenerator<?, ?> explicit && type.isInstance(explicit.statement())) {
-                @SuppressWarnings("unchecked")
-                final var ret = (AbstractExplicitGenerator<T, ?>) explicit.getOriginal();
-                return ret;
+            if (generatorClass.isInstance(child)) {
+                final var original = generatorClass.cast(child).getOriginal().getGeneratedType();
+                if (archetypeClass.isInstance(original)) {
+                    return archetypeClass.cast(original);
+                }
+                throw new VerifyException("Unexpected archetype " + original);
             }
         }
-        throw new IllegalStateException("Cannot find " + type + " in " + this);
+        throw new VerifyException("No " + generatorClass.getSimpleName() + " in " + this);
     }
 }

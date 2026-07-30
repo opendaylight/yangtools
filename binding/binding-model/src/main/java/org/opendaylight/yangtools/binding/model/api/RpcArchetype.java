@@ -29,13 +29,19 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 public record RpcArchetype(
         JavaTypeName name,
         RpcEffectiveStatement statement,
-        JavaTypeName input,
-        JavaTypeName output) implements Archetype {
+        InputArchetype input,
+        OutputArchetype output) implements OperationArchetype {
     public RpcArchetype {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(input);
         requireNonNull(output);
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    public Class<Rpc> contract() {
+        return Rpc.class;
     }
 
     @Override

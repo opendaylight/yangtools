@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
  * Interface extended by all interfaces generated for a YANG {@code action}.
  */
 public non-sealed interface Action<P extends DataObjectIdentifier<?>, I extends RpcInput, O extends RpcOutput>
-        extends BindingContract<Action<P, I, O>> {
+        extends Operation<Action<P, I, O>> {
     /**
      * Invoke the action.
      *
