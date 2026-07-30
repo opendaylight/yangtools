@@ -7,18 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.QNAMEOF_METHOD_NAME;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
-import static org.opendaylight.yangtools.binding.contract.Naming.QNAME_STATIC_FIELD_NAME;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -104,25 +99,6 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
             case CURRENT -> null;
             case DEPRECATED -> newBlockBuilder().at().eol(importedName(DEPRECATED));
             case OBSOLETE -> newBlockBuilder().at().str(importedName(DEPRECATED)).eol("(forRemoval = true)");
-        };
-    }
-
-    /**
-     * Return a BlockFragment appending the {@code QNAME} field initialized via {@code YangModuleInfo.qnameOf(String)}.
-     *
-     * @param qnameArchetype the archetype
-     * @return a {@link BlockFragment}
-     */
-    final BlockFragment qnameConstant(final Archetype.WithQName qnameArchetype) {
-        final var qname = qnameArchetype.qnameConstant();
-        final var module = root.statement().localQNameModule();
-        verify(module.equals(qname.getModule()));
-
-        return (BlockFragment) bb -> {
-            bb
-                .str(importedNonNull(BindingTypes.QNAME)).str(" " + QNAME_STATIC_FIELD_NAME + " = ")
-                .str(importedName(yangModuleInfoOf(module))).str("." + QNAMEOF_METHOD_NAME + "(")
-                .jStr(qname.getLocalName()).eol(");");
         };
     }
 }

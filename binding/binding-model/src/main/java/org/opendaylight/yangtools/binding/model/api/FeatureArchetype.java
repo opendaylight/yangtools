@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
  * @since 16.0.0
  */
 @NonNullByDefault
-public record FeatureArchetype(JavaTypeName name, FeatureEffectiveStatement statement) implements Archetype.WithQName {
+public record FeatureArchetype(JavaTypeName name, FeatureEffectiveStatement statement) implements Archetype {
     public FeatureArchetype {
         requireNonNull(name);
         requireNonNull(statement);
