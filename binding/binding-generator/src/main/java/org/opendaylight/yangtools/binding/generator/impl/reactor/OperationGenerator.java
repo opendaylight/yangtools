@@ -8,11 +8,13 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import com.google.common.base.VerifyException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.InputArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.InvokableRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
@@ -39,13 +41,14 @@ public abstract sealed class OperationGenerator<
 
     @Override
     final Archetype createTypeImpl() {
-        return createTypeImpl(
+        return createTypeImpl(typeName(), statement(),
             getContainer(InputArchetype.class, InputGenerator.class),
             getContainer(OutputArchetype.class, OutputGenerator.class));
     }
 
     @NonNullByDefault
-    abstract Archetype createTypeImpl(InputArchetype input, OutputArchetype output);
+    abstract Archetype createTypeImpl(JavaTypeName typeName, @NonNull S statement, InputArchetype input,
+        OutputArchetype output);
 
     @NonNullByDefault
     private <A extends AugmentableArchetype, G extends OperationContainerGenerator<?, ?, ?>> A getContainer(

@@ -80,11 +80,21 @@ final class TypeMethods {
         return helper.toString();
     }
 
-    private static void addNonEmpty(final ToStringHelper helper, final @NonNull String name,
-            final @NonNull List<?> list) {
-        if (!list.isEmpty()) {
-            helper.add(name, list);
-        }
+    /**
+     * Implementation of {@link OperationArchetype#toString()}.
+     *
+     * @param <A> the {@link OperationArchetype} type
+     * @param archetypeClass the archetype class
+     * @param self the archetype
+     * @return a String
+     */
+    @NonNullByDefault
+    static <A extends OperationArchetype> String toString(final Class<A> archetypeClass, final A self) {
+        return MoreObjects.toStringHelper(archetypeClass)
+            .add("name", self.name())
+            .add("input", self.input().name())
+            .add("output", self.output().name())
+            .toString();
     }
 
     /**
@@ -109,5 +119,12 @@ final class TypeMethods {
         return MoreObjects.toStringHelper(RestrictedType.class)
             .add("name", self.name())
             .add("restrictions", self.restrictions());
+    }
+
+    private static void addNonEmpty(final ToStringHelper helper, final @NonNull String name,
+            final @NonNull List<?> list) {
+        if (!list.isEmpty()) {
+            helper.add(name, list);
+        }
     }
 }
