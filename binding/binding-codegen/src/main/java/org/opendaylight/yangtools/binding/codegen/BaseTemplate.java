@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.FunctionalInterfaceAnnotation;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -221,10 +220,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             }
             case RoutingContextAnnotation routingContext -> {
                 bb.str("(value = ").str(importedName(routingContext.value())).str(".class)");
-            }
-            // TODO: use _ to merge these cases
-            case FunctionalInterfaceAnnotation unused -> {
-                // no-op
             }
             case OverrideAnnotation unused -> {
                 // no-op
