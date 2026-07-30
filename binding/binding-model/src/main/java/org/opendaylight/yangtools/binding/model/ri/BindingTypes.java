@@ -205,17 +205,6 @@ public final class BindingTypes {
     }
 
     /**
-     * Return the {@link Augmentable} type a parameterized {@link Augmentation} type references.
-     *
-     * @param type Parameterized type
-     * @return Augmentable target, or null if {@code type} does not match the result of {@link #augmentation(Type)}
-     * @throws NullPointerException if {@code type} is {@code null}
-     */
-    public static @Nullable Type extractAugmentationTarget(final @NonNull ParameterizedType type) {
-        return AUGMENTATION.equals(type.getRawType()) ? onlyTypeArgument(type) : null;
-    }
-
-    /**
      * Return the {@link Augmentable} type a parameterized {@link Augmentable} type references.
      *
      * @param type Parameterized type
