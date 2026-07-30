@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
  *
  * @since 16.0.0
  */
-public sealed interface OutputArchetype extends InterfaceArchetype permits OutputArchetypeImpl {
+public sealed interface OutputArchetype extends AugmentableArchetype permits OutputArchetypeImpl {
     /**
      * A builder of {@link OutputArchetype}s.
      */

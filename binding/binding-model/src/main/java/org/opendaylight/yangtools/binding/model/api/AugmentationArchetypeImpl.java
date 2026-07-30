@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 record AugmentationArchetypeImpl(
         JavaTypeName name,
         AugmentEffectiveStatement statement,
-        InterfaceArchetype target,
+        AugmentableArchetype target,
         List<AttachedAnnotation.ToType> annotations,
         List<Type> implementsTypes,
         List<MethodSignature> methodSignatures,
