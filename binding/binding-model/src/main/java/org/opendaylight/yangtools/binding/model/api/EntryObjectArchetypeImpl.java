@@ -19,14 +19,12 @@ record EntryObjectArchetypeImpl(
         JavaTypeName name,
         ListEffectiveStatement statement,
         KeyArchetype key,
-        List<AttachedAnnotation.ToType> annotations,
         List<Type> implementsTypes,
         List<MethodSignature> methodSignatures,
         List<Archetype> enclosedTypes) implements EntryObjectArchetype {
     EntryObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(annotations);
         requireNonNull(implementsTypes);
         requireNonNull(methodSignatures);
         requireNonNull(enclosedTypes);

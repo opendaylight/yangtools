@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
-import java.lang.annotation.ElementType;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -20,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
  * @since 16.0.0
  */
 @Beta
-public enum DeprecatedAnnotation implements AttachedAnnotation.ToMethod, AttachedAnnotation.ToType {
+public enum DeprecatedAnnotation implements AttachedAnnotation.ToMethod {
     /**
      * {@code @Deprecated}, corresponding to {@link Status#DEPRECATED}.
      */
@@ -41,12 +39,6 @@ public enum DeprecatedAnnotation implements AttachedAnnotation.ToMethod, Attache
     @Override
     public JavaTypeName type() {
         return TYPE;
-    }
-
-    @Override
-    public List<ElementType> targets() {
-        // just the ones that have an AttachedAnnotation subclass
-        return List.of(ElementType.METHOD, ElementType.TYPE);
     }
 
     /**

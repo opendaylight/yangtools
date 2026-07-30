@@ -31,8 +31,7 @@ public sealed interface InputArchetype extends AugmentableArchetype permits Inpu
 
         @Override
         public InputArchetype build() {
-            return new InputArchetypeImpl(typeName, statement, annotations(), implementsTypes(), methodDefinitions(),
-                enclosedTypes());
+            return new InputArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(), enclosedTypes());
         }
 
         @Override

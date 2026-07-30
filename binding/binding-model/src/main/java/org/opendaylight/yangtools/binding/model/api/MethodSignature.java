@@ -178,12 +178,12 @@ public interface MethodSignature extends Immutable {
             return this;
         }
 
-        @Beta
         @NonNullByDefault
-        public static <T extends AttachedAnnotation> ArrayList<T> addAnnotation(final @Nullable ArrayList<T> list,
-                final T annotation) {
+        private static ArrayList<AttachedAnnotation.ToMethod> addAnnotation(
+                final @Nullable ArrayList<AttachedAnnotation.ToMethod> list,
+                final AttachedAnnotation.ToMethod annotation) {
             if (list == null) {
-                final var ret = new ArrayList<T>(2);
+                final var ret = new ArrayList<AttachedAnnotation.ToMethod>(2);
                 ret.add(annotation);
                 return ret;
             }

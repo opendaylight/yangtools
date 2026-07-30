@@ -18,14 +18,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 record NotificationArchetypeImpl(
         JavaTypeName name,
         NotificationEffectiveStatement statement,
-        List<AttachedAnnotation.ToType> annotations,
         List<Type> implementsTypes,
         List<MethodSignature> methodSignatures,
         List<Archetype> enclosedTypes) implements NotificationArchetype {
     NotificationArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(annotations);
         requireNonNull(implementsTypes);
         requireNonNull(methodSignatures);
         requireNonNull(enclosedTypes);

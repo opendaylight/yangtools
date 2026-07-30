@@ -251,9 +251,8 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
         return bb;
     }
 
-    // FIXME: specialize to method and type annotations
     private @Nullable BlockBuilder generateAnnotations(
-            final @NonNull List<? extends @NonNull AttachedAnnotation> annotations) {
+            final @NonNull List<AttachedAnnotation. @NonNull ToMethod> annotations) {
         if (annotations.isEmpty()) {
             return null;
         }

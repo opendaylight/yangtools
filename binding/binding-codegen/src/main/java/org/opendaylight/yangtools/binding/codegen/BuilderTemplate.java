@@ -36,7 +36,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
@@ -46,6 +45,7 @@ import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 
 /**
  * Template for generating JAVA builder classes.
@@ -119,7 +119,7 @@ final class BuilderTemplate extends BaseTemplate {
 
         final var bb = newBlockBuilder()
             .blk(wrapToDocumentation(createDescription().toRawString()))
-            .blk(generateDeprecatedAnnotation(targetType.annotations()))
+            .blk(generateDeprecatedAnnotation())
             .eol(generatedAnnotation())
             .str("public class ").str(simpleName).oB()
             // FIXME: remove this newline
@@ -207,10 +207,10 @@ final class BuilderTemplate extends BaseTemplate {
         return bb;
     }
 
-    private @Nullable BlockBuilder generateDeprecatedAnnotation(
-            final @NonNull List<AttachedAnnotation.ToType> annotations) {
-        for (var annotation : annotations) {
-            if (annotation instanceof DeprecatedAnnotation deprecated) {
+    private @Nullable BlockBuilder generateDeprecatedAnnotation() {
+        if (targetType.statement() instanceof DocumentedNode.WithStatus withStatus) {
+            final var deprecated = DeprecatedAnnotation.ofStatus(withStatus.getStatus());
+            if (deprecated != null) {
                 final var bb = newBlockBuilder().at();
                 return deprecated.forRemoval()
                     ? bb.str(importedName(DEPRECATED)).eol("(forRemoval = true)")

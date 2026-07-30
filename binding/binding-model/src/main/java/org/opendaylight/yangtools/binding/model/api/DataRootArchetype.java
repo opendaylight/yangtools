@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -57,11 +56,4 @@ public non-sealed interface DataRootArchetype extends InterfaceArchetype {
 
     @Override
     ModuleEffectiveStatement statement();
-
-    @Override
-    @NonNullByDefault
-    @Deprecated(forRemoval = true)
-    default List<AttachedAnnotation.ToType> annotations() {
-        return List.of();
-    }
 }
