@@ -30,10 +30,9 @@ final class ActionGenerator extends AbstractActionGenerator<ActionRuntimeType> {
 
     @Override
     ActionArchetype createTypeImpl(final JavaTypeName typeName,
-            final ActionEffectiveStatement statement, final InputArchetype input, final OutputArchetype output) {
-        final var builder = ActionArchetype.builder(typeName, statement, input, output, getParent().typeName());
-        defaultImplementedInterace(builder);
-        return builder.build();
+            final ActionEffectiveStatement statement, final InputArchetype input, final OutputArchetype output,
+            final JavaTypeName parentName) {
+        return ActionArchetype.of(typeName, statement, input, output, parentName);
     }
 
     @Override

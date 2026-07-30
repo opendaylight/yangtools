@@ -30,12 +30,9 @@ final class KeyedListActionGenerator extends AbstractActionGenerator<KeyedListAc
 
     @Override
     KeyedListActionArchetype createTypeImpl(final JavaTypeName typeName,
-            final ActionEffectiveStatement statement, final InputArchetype input, final OutputArchetype output) {
-        final var parent = (EntryObjectGenerator) getParent();
-        final var builder = KeyedListActionArchetype.builder(typeName, statement, input, output, parent.typeName(),
-            parent.keyGenerator().getArchetype());
-        defaultImplementedInterace(builder);
-        return builder.build();
+            final ActionEffectiveStatement statement, final InputArchetype input, final OutputArchetype output,
+            final JavaTypeName parentName) {
+        return KeyedListActionArchetype.of(typeName, statement, input, output, parentName);
     }
 
     @Override

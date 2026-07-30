@@ -8,15 +8,15 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.LISTENABLE_FUTURE;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.RPC_RESULT;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.OpaqueObject;
 import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.RpcArchetype;
-import org.opendaylight.yangtools.yang.common.RpcResult;
 
 /**
  * Template for a {@link OpaqueObject} interface generated for an {@code anydata} or {@code anyxml} statement.
@@ -35,9 +35,7 @@ final class RpcTemplate extends ArchetypeTemplate<RpcArchetype> {
         }
     }
 
-    private static final JavaTypeName LISTENABLE_FUTURE = JavaTypeName.create(ListenableFuture.class);
     private static final JavaTypeName RPC = JavaTypeName.create(Rpc.class);
-    private static final JavaTypeName RPC_RESULT = JavaTypeName.create(RpcResult.class);
 
     private RpcTemplate(final RpcArchetype archetype, final DataRootArchetype root) {
         super(GeneratedClass.of(archetype), archetype, root);

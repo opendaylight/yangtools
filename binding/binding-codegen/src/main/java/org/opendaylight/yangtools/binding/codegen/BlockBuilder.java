@@ -374,6 +374,29 @@ final class BlockBuilder extends Block.Builder {
         return endGen(startGen(rawType, arg0).append(", ").append(verifyStr(arg1)));
     }
 
+    /**
+     * Append type reference parameterized with specified generic type arguments. Short name for {@code generic}.
+     * Shorthand for {@code str(rawType).str("<").str(arg0).str(", ").str(arg1).str(", ") ... .str(">")}.
+     *
+     * @param rawType the raw type
+     * @param arg0 the first generic argument
+     * @param arg1 the second generic argument
+     * @param others the following generic arguments
+     * @return this instance
+     */
+    @NonNullByDefault
+    BlockBuilder gen(final String rawType, final String arg0, final String arg1, final String... others) {
+        if (others.length == 0) {
+            return gen(rawType, arg0, arg1);
+        }
+
+        final var sb = startGen(rawType, arg0).append(", ").append(verifyStr(arg1));
+        for (var arg : others) {
+            sb.append(", ").append(verifyStr(arg));
+        }
+        return endGen(sb);
+    }
+
     @NonNullByDefault
     private StringBuilder startGen(final String rawType, final String args) {
         return buf().append(verifyStr(rawType)).append('<').append(verifyStr(args));

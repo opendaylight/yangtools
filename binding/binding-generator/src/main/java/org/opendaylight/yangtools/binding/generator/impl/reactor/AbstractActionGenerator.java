@@ -9,6 +9,10 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
+import org.opendaylight.yangtools.binding.model.api.InputArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.OperationArchetype;
+import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.InvokableRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
@@ -35,4 +39,14 @@ abstract sealed class AbstractActionGenerator<R extends InvokableRuntimeType>
         // of generating shared classes for input/output
         return getParent() instanceof GroupingGenerator ? ClassPlacement.PHANTOM : ClassPlacement.TOP_LEVEL;
     }
+
+    @Override
+    final OperationArchetype.OfAction createTypeImpl(final JavaTypeName typeName,
+            final ActionEffectiveStatement statement, final InputArchetype input, final OutputArchetype output) {
+        return createTypeImpl(typeName, statement, input, output, getParent().typeName());
+    }
+
+    @NonNullByDefault
+    abstract OperationArchetype.OfAction createTypeImpl(JavaTypeName typeName, ActionEffectiveStatement statement,
+        InputArchetype input, OutputArchetype output, JavaTypeName parentName);
 }

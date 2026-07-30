@@ -8,35 +8,71 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.LISTENABLE_FUTURE;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.RPC_RESULT;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.KeyedListAction;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyedListActionArchetype;
 
 /**
  * Template for {@link KeyedListAction} specializations.
  */
 @NonNullByDefault
-final class KeyedListActionTemplate extends InterfaceTemplate<KeyedListActionArchetype> {
-    record Builder(KeyedListActionArchetype type, DataRootArchetype root) implements Template.Builder {
+final class KeyedListActionTemplate extends ArchetypeTemplate<KeyedListActionArchetype> {
+    record Builder(
+            KeyedListActionArchetype type,
+            DataRootArchetype root,
+            JavaTypeName keyName) implements Template.Builder {
         Builder {
             requireNonNull(type);
             requireNonNull(root);
+            requireNonNull(keyName);
         }
 
         @Override
         public KeyedListActionTemplate build() {
-            return new KeyedListActionTemplate(type, root);
+            return new KeyedListActionTemplate(type, root, keyName);
         }
     }
 
-    private KeyedListActionTemplate(final KeyedListActionArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root);
+    private static final JavaTypeName KEYED_LIST_ACTION = JavaTypeName.create(KeyedListAction.class);
+    private static final JavaTypeName WITH_KEY = JavaTypeName.create(DataObjectIdentifier.WithKey.class);
+
+    private final JavaTypeName keyName;
+
+    private KeyedListActionTemplate(final KeyedListActionArchetype archetype, final DataRootArchetype root,
+            final JavaTypeName keyName) {
+        super(GeneratedClass.of(archetype), archetype, root);
+        this.keyName = requireNonNull(keyName);
     }
 
     @Override
-    QNameConstant constants() {
-        return new QNameConstant.InInterface(this, archetype.statement().argument());
+    BlockBuilder body() {
+        final var simpleName = archetype.simpleName();
+        final var override = importedName(OVERRIDE);
+        final var input = importedName(archetype.input());
+        final var output = importedName(archetype.output());
+        final var parent = importedName(archetype.parentName());
+        final var key = importedName(keyName);
+
+        return newBodyBuilder(archetype.statement())
+            .eol("@java.lang.FunctionalInterface")
+            .str("public interface ").str(simpleName).str(" extends ")
+                .gen(importedName(KEYED_LIST_ACTION), key, parent, input, output).oB()
+                .frg(new QNameConstant.InInterface(this, archetype.statement().argument()))
+                .nl()
+                .at().eol(override)
+                .str("default ").gen(importedName(CLASS), simpleName).str(" implementedInterface()").oB()
+                    .str("return ").str(simpleName).eol(".class;")
+                .cB()
+                .nl()
+                .at().eol(override)
+                .str(importedName(LISTENABLE_FUTURE)).str("<").gen(importedName(RPC_RESULT), output).str("> invoke(")
+                    .gen(importedName(WITH_KEY), parent, key).str(" path, ").str(input).eol(" input);")
+            .cB();
     }
 }

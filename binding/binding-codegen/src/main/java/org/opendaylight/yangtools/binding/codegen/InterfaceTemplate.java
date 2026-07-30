@@ -47,10 +47,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * Base class for code generators based on {@link InterfaceArchetype}.
  */
 abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> extends ArchetypeTemplate<T>
-    permits ActionTemplate, AugmentationTemplate, CaseTemplate, ContainerTemplate, DataRootTemplate,
-            EntryObjectTemplate, GroupingTemplate, InputTemplate, InstanceNotificationTemplate, ItemObjectTemplate,
-            KeyedListActionTemplate, KeyedListNotificationTemplate, NotificationBodyTemplate, NotificationTemplate,
-            OutputTemplate, YangDataTemplate {
+    permits AugmentationTemplate, CaseTemplate, ContainerTemplate, DataRootTemplate, EntryObjectTemplate,
+            GroupingTemplate, InputTemplate, InstanceNotificationTemplate, ItemObjectTemplate,
+            KeyedListNotificationTemplate, NotificationBodyTemplate, NotificationTemplate, OutputTemplate,
+            YangDataTemplate {
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
 
