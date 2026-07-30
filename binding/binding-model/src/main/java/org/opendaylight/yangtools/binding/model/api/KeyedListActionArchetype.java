@@ -7,66 +7,35 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.KeyedListAction;
-import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 /**
- * The {@link InterfaceArchetype} for {@link KeyedListAction} specializations.
+ * The {@link OperationArchetype} for {@link KeyedListAction} specializations.
  *
  * @since 16.0.0
  */
-@Beta
 @NonNullByDefault
-// FIXME: extend OperationArchetype
-public sealed interface KeyedListActionArchetype extends InterfaceArchetype permits KeyedListActionArchetypeImpl {
+public sealed interface KeyedListActionArchetype extends OperationArchetype.OfAction
+        permits KeyedListActionArchetypeImpl {
     /**
-     * A builder of {@link KeyedListActionArchetype}s.
+     * {@return an KeyedListActionArchetype}
+     * @param name the archetype's {@link JavaTypeName}}
+     * @param statement the {@link ActionEffectiveStatement}
+     * @param input the {@link InputArchetype} of the action's input
+     * @param output the {@link OutputArchetype} of the action's output
+     * @param parentName the name of the parent archetype
      */
-    final class Builder extends InterfaceArchetypeBuilder<Builder, ActionEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final ActionEffectiveStatement statement,
-                final InputArchetype input, final OutputArchetype output, final JavaTypeName parentName,
-                final KeyArchetype key) {
-            super(typeName, statement);
-
-            // FIXME: this is something KeyedListActionTemplate should be doing
-            final var parentType = TypeRef.of(parentName);
-            addAnnotation(FunctionalInterfaceAnnotation.INSTANCE);
-            addImplementsType(BindingTypes.keyedListAction(parentType, key, input, output));
-            addMethod(Naming.ACTION_INVOKE_NAME)
-                .addAnnotation(OverrideAnnotation.INSTANCE)
-                .addParameter(BindingTypes.objectIdentifierWithKey(parentType, key), "path")
-                .addParameter(input, "input")
-                .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)));
-        }
-
-        @Override
-        public KeyedListActionArchetype build() {
-            return new KeyedListActionArchetypeImpl(typeName, statement, annotations(), implementsTypes(),
-                methodDefinitions(), enclosedTypes());
-        }
-
-        @Override
-        Class<KeyedListActionArchetype> archetypeClass() {
-            return KeyedListActionArchetype.class;
-        }
-
-        @Override
-        Builder thisInstance() {
-            return this;
-        }
-    }
-
-    static Builder builder(final JavaTypeName typeName, final ActionEffectiveStatement statement,
-            final InputArchetype input, final OutputArchetype output, final JavaTypeName parentName,
-            final KeyArchetype key) {
-        return new Builder(typeName, statement, input, output, parentName, key);
+    static KeyedListActionArchetype of(final JavaTypeName name, final ActionEffectiveStatement statement,
+            final InputArchetype input, final OutputArchetype output, final JavaTypeName parentName) {
+        return new KeyedListActionArchetypeImpl(name, statement, input, output, parentName);
     }
 
     @Override
-    ActionEffectiveStatement statement();
+    @SuppressWarnings("rawtypes")
+    default Class<Action> contract() {
+        return Action.class;
+    }
 }

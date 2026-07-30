@@ -81,7 +81,20 @@ final class TypeMethods {
     }
 
     /**
-     * Implementation of {@link OperationArchetype#toString()}.
+     * Implementation of {@link OperationArchetype.OfAction#toString()}.
+     *
+     * @param <A> the {@link OperationArchetype.OfAction} type
+     * @param archetypeClass the archetype class
+     * @param self the archetype
+     * @return a String
+     */
+    @NonNullByDefault
+    static <A extends OperationArchetype.OfAction> String toString(final Class<A> archetypeClass, final A self) {
+        return toStringHelper(archetypeClass, self).add("parentName", self.parentName()).toString();
+    }
+
+    /**
+     * Helper for implementations of {@link OperationArchetype#toString()}.
      *
      * @param <A> the {@link OperationArchetype} type
      * @param archetypeClass the archetype class
@@ -89,12 +102,11 @@ final class TypeMethods {
      * @return a String
      */
     @NonNullByDefault
-    static <A extends OperationArchetype> String toString(final Class<A> archetypeClass, final A self) {
+    static <A extends OperationArchetype> ToStringHelper toStringHelper(final Class<A> archetypeClass, final A self) {
         return MoreObjects.toStringHelper(archetypeClass)
             .add("name", self.name())
             .add("input", self.input().name())
-            .add("output", self.output().name())
-            .toString();
+            .add("output", self.output().name());
     }
 
     /**

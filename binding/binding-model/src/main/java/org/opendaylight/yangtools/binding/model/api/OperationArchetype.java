@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Operation;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 /**
  * An {@link Archetype} for a {@link Operation}.
@@ -16,7 +17,20 @@ import org.opendaylight.yangtools.binding.Operation;
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface OperationArchetype extends Archetype permits RpcArchetype {
+public sealed interface OperationArchetype extends Archetype permits OperationArchetype.OfAction, RpcArchetype {
+    /**
+     * An {@link OperationArchetype} for a {@code action} statement.
+     */
+    sealed interface OfAction extends OperationArchetype permits ActionArchetype, KeyedListActionArchetype {
+        @Override
+        ActionEffectiveStatement statement();
+
+        /**
+         * {@return the {@link JavaTypeName} of the archetype in which this action is defined}
+         */
+        JavaTypeName parentName();
+    }
+
     /**
      * {@return the contract the generated class implements}
      */
