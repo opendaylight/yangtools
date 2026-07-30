@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 /**
  * A {@link RuntimeType} associated with an {@code action} statement.
  */
-public interface ActionRuntimeType extends InvokableRuntimeType {
+public interface ActionRuntimeType extends OperationRuntimeType {
     @Override
     OperationArchetype.OfAction javaType();
 

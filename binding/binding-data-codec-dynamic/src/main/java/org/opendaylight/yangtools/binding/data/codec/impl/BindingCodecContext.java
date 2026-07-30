@@ -85,9 +85,9 @@ import org.opendaylight.yangtools.binding.runtime.api.ContainerLikeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.DataRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.InputRuntimeType;
-import org.opendaylight.yangtools.binding.runtime.api.InvokableRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.OperationRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.OutputRuntimeType;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -286,7 +286,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
             @SuppressWarnings({ "rawtypes", "unchecked" })
             private ActionCodecContext prepareActionContext(final Type input, final Type output,
-                    final @Nullable InvokableRuntimeType schema) {
+                    final @Nullable OperationRuntimeType schema) {
                 if (schema == null) {
                     throw new IllegalStateException("Schema not found");
                 }
