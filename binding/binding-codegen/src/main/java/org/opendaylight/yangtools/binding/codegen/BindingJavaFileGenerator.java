@@ -84,16 +84,33 @@ final class BindingJavaFileGenerator {
     }
 
     private void generateFiles(final List<Archetype> types) {
-        // First pass: catch all DataRootArchetypes, as they provide ModuleEffectiveStatement for other templates to use
+        // First pass: catch all
+        //   - DataRootArchetypes, as they provide ModuleEffectiveStatement for other templates to use
+        //   - EntryObjectArchetypes, as they provide KeyArchetype binding
         final var modules = new HashMap<String, DataRootTemplate.Builder>();
+        final var entryToKey = new HashMap<JavaTypeName, JavaTypeName>();
         for (var type : types) {
-            if (type instanceof DataRootArchetype archetype) {
-                final var builder = new DataRootTemplate.Builder(archetype);
-                final var rootPackage = archetype.name().packageName();
-                final var prev = modules.putIfAbsent(rootPackage, builder);
-                if (prev != null) {
-                    throw new VerifyException(
-                        "Duplicate package " + rootPackage + " between " + archetype + " and " + prev.type());
+            switch (type) {
+                case DataRootArchetype archetype -> {
+                    final var builder = new DataRootTemplate.Builder(archetype);
+                    final var rootPackage = archetype.name().packageName();
+                    final var prev = modules.putIfAbsent(rootPackage, builder);
+                    if (prev != null) {
+                        throw new VerifyException(
+                            "Duplicate package " + rootPackage + " between " + archetype + " and " + prev.type());
+                    }
+                }
+                case EntryObjectArchetype archetype -> {
+                    final var entryName = archetype.name();
+                    final var keyName = archetype.key().name();
+                    final var prev = entryToKey.putIfAbsent(entryName, keyName);
+                    if (prev != null) {
+                        throw new VerifyException(
+                            "Conflicing EntryObjectArchetype" + entryName + " keys " + keyName + " and " + prev);
+                    }
+                }
+                default -> {
+                    // no-op
                 }
             }
         }
@@ -135,7 +152,8 @@ final class BindingJavaFileGenerator {
                 case ItemObjectArchetype archetype -> generateBoth(ItemObjectTemplate.Builder::new, archetype, root);
                 case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype, root));
                 case KeyedListActionArchetype archetype ->
-                    generateFile(new KeyedListActionTemplate.Builder(archetype, root));
+                    generateFile(new KeyedListActionTemplate.Builder(archetype, root,
+                        entryToKey.get(archetype.parentName())));
                 case KeyedListNotificationArchetype archetype ->
                     generateBoth(KeyedListNotificationTemplate.Builder::new, archetype, root);
                 case NotificationArchetype archetype ->

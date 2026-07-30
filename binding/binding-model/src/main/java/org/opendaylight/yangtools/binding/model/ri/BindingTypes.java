@@ -14,7 +14,6 @@ import com.google.common.annotations.VisibleForTesting;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.ChildOf;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.KeyedListAction;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.NotificationBody;
@@ -61,11 +59,9 @@ public final class BindingTypes {
     @VisibleForTesting
     static final @NonNull ConcreteType KEY = typeForClass(Key.class);
 
-    private static final @NonNull ConcreteType ACTION = typeForClass(Action.class);
     private static final @NonNull ConcreteType CHILD_OF = typeForClass(ChildOf.class);
     private static final @NonNull ConcreteType DATA_ROOT = typeForClass(DataRoot.class);
     private static final @NonNull ConcreteType INSTANCE_NOTIFICATION = typeForClass(InstanceNotification.class);
-    private static final @NonNull ConcreteType KEYED_LIST_ACTION = typeForClass(KeyedListAction.class);
     private static final @NonNull ConcreteType KEYED_LIST_NOTIFICATION = typeForClass(KeyedListNotification.class);
     private static final @NonNull ConcreteType NOTIFICATION = typeForClass(Notification.class);
     private static final @NonNull ConcreteType NOTIFICATION_BODY = typeForClass(NotificationBody.class);
@@ -77,36 +73,6 @@ public final class BindingTypes {
 
     private BindingTypes() {
         //  Hidden on purpose
-    }
-
-    /**
-     * Type specializing {@link Action} for a particular type.
-     *
-     * @param parent Type of parent defining the action
-     * @param input Type input type
-     * @param output Type output type
-     * @return A parameterized type corresponding to {@code Action<Parent, Input, Output>}
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    @NonNullByDefault
-    public static ParameterizedType action(final Type parent, final Type input, final Type output) {
-        return ParameterizedType.of(ACTION, objectIdentifier(parent), input, output);
-    }
-
-    /**
-     * Type specializing {@link KeyedListAction} for a particular type.
-     *
-     * @param parent Type of parent defining the action
-     * @param keyType Type of parent's key
-     * @param input Type input type
-     * @param output Type output type
-     * @return A parameterized type corresponding to {@code KeyedListAction<ParentKey, Parent, Input, Output>}
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    @NonNullByDefault
-    public static ParameterizedType keyedListAction(final Type parent, final KeyArchetype keyType, final Type input,
-            final Type output) {
-        return ParameterizedType.of(KEYED_LIST_ACTION, keyType, parent, input, output);
     }
 
     /**

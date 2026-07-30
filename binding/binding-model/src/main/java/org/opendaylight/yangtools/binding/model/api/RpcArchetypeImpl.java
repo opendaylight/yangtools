@@ -50,6 +50,6 @@ public record RpcArchetypeImpl(
 
     @Override
     public String toString() {
-        return TypeMethods.toString(RpcArchetype.class, this);
+        return TypeMethods.toStringHelper(RpcArchetype.class, this).toString();
     }
 }

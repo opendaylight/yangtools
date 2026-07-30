@@ -24,8 +24,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 @Beta
 @NonNullByDefault
 public sealed interface InterfaceArchetype extends Archetype
-        permits ActionArchetype, AugmentableArchetype, AugmentationArchetype, DataRootArchetype, GroupingArchetype,
-                KeyedListActionArchetype, NotificationBodyArchetype, YangDataArchetype {
+        permits AugmentableArchetype, AugmentationArchetype, DataRootArchetype, GroupingArchetype,
+                NotificationBodyArchetype, YangDataArchetype {
     /**
      * Base interface for builders resulting in an {@link InterfaceArchetype}.
      *
