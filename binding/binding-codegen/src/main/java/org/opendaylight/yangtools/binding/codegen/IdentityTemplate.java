@@ -48,10 +48,7 @@ final class IdentityTemplate extends ArchetypeTemplate<IdentityArchetype> {
 
         return newBodyBuilder(stmt, stmt.toSchemaNode())
             .str("public interface ").str(typeName).str(" extends ").frg(this::appendInterfaces).oB()
-                .eol("/**")
-                .eol(" * The name of the {@code identity} represented by this class.")
-                .eol(" */")
-                .frg(qnameConstant(archetype))
+                .frg(new QNameConstant.InInterface(this, stmt.argument()))
                 .eol("/**")
                 .str(" * Singleton value representing the {@link ").str(typeName).eol("} identity.")
                 .eol(" */")
