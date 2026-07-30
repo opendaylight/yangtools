@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.Notification;
-import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -53,7 +52,6 @@ public final class BindingTypes {
     private static final @NonNull ConcreteType INSTANCE_NOTIFICATION = typeForClass(InstanceNotification.class);
     private static final @NonNull ConcreteType KEYED_LIST_NOTIFICATION = typeForClass(KeyedListNotification.class);
     private static final @NonNull ConcreteType NOTIFICATION = typeForClass(Notification.class);
-    private static final @NonNull ConcreteType NOTIFICATION_BODY = typeForClass(NotificationBody.class);
 
     private BindingTypes() {
         //  Hidden on purpose
@@ -69,18 +67,6 @@ public final class BindingTypes {
     @NonNullByDefault
     public static ParameterizedType notification(final Type concreteType) {
         return ParameterizedType.of(NOTIFICATION, concreteType);
-    }
-
-    /**
-     * Type specializing {@link NotificationBody} for a particular type.
-     *
-     * @param concreteType The concrete type of this notification
-     * @return A parameterized type corresponding to {@code NotificationBody<ConcreteType>}
-     * @throws NullPointerException if {@code parent} is {@code null}
-     */
-    @NonNullByDefault
-    public static ParameterizedType notificationBody(final Type concreteType) {
-        return ParameterizedType.of(NOTIFICATION_BODY, concreteType);
     }
 
     /**

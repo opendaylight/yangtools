@@ -157,6 +157,8 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
             .cB();
     }
 
+    // FIXME: This method forces the use of ConcreteType and ParameterizedType. Replace Type with a BlockFragment
+    //        subclass (TypeFragment?) does the equivalent of JavaFileTemplate.importedName(Type)
     @NonNullByDefault
     Iterator<? extends Type> extendsTypes() {
         return archetype.getImplements().iterator();
