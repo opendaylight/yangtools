@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface IdentityArchetype extends Archetype.WithQName {
+public sealed interface IdentityArchetype extends Archetype {
     /**
      * An {@link IdentityArchetype} specialized from {@link BaseIdentity}.
      *

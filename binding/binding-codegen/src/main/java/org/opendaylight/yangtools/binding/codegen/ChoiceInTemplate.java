@@ -43,10 +43,7 @@ final class ChoiceInTemplate extends ArchetypeTemplate<ChoiceInArchetype> {
         return newBodyBuilder(archetype.statement())
             .str("public interface ").str(archetype.simpleName()).str(" extends ")
                 .gen(importedName(CHOICE_IN), importedName(archetype.choiceIn())).oB()
-                .eol("/**")
-                .eol(" * The YANG identifier of the {@code choice} represented by this class.")
-                .eol(" */")
-                .frg(qnameConstant(archetype))
+                .frg(new QNameConstant.InInterface(this, stmt.argument()))
             .cB();
     }
 }

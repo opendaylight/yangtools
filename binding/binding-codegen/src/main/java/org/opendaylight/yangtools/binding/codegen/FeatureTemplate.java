@@ -56,10 +56,7 @@ final class FeatureTemplate extends ArchetypeTemplate<FeatureArchetype> {
                     final var clazz = importedName(CLASS);
 
                     bb
-                        .eol("/**")
-                        .eol(" * The name of the {@code feature} represented by this class.")
-                        .eol(" */")
-                        .str("public static final ").frg(qnameConstant(archetype))
+                        .frg(new QNameConstant.InClass(this, stmt.argument()))
                         .eol("/**")
                         .eol(" * The singleton instance.")
                         .eol(" */")
