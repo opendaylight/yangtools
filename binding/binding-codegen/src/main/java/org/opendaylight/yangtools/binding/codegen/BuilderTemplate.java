@@ -15,7 +15,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRAC
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.GROUPING;
 import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.entryObject;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isListType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isMapType;
@@ -35,12 +34,14 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -80,6 +81,8 @@ final class BuilderTemplate extends BaseTemplate {
      * The name of the field holding augmentations.
      */
     static final @NonNull String AUGMENTATION_FIELD = "augmentation";
+
+    private static final @NonNull JavaTypeName GROUPING = JavaTypeName.create(Grouping.class);
 
     /**
      * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME.

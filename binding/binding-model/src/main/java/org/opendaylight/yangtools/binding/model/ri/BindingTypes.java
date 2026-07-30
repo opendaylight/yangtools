@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.EntryObject;
-import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
@@ -41,7 +40,6 @@ public final class BindingTypes {
     public static final @NonNull ConcreteType BASE_IDENTITY = typeForBuiltIn(BuiltInType.IDENTITYREF);
     public static final @NonNull ConcreteType DATA_CONTAINER = typeForClass(DataContainer.class);
     public static final @NonNull ConcreteType DATA_OBJECT = typeForClass(DataObject.class);
-    public static final @NonNull ConcreteType GROUPING = typeForClass(Grouping.class);
     public static final @NonNull ConcreteType RPC_INPUT = typeForClass(RpcInput.class);
     public static final @NonNull ConcreteType RPC_OUTPUT = typeForClass(RpcOutput.class);
     public static final @NonNull ConcreteType UNION_TYPE_OBJECT = typeForBuiltIn(BuiltInType.UNION);

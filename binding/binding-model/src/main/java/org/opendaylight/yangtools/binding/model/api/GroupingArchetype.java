@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Grouping;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 
 /**
@@ -25,8 +24,6 @@ public sealed interface GroupingArchetype extends InterfaceArchetype permits Gro
     final class Builder extends InterfaceArchetypeBuilder<Builder, GroupingEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final GroupingEffectiveStatement statement) {
             super(typeName, statement);
-            // FIXME: do not add this and make sure GroupingTemplate generates it
-            addImplementsType(BindingTypes.GROUPING);
         }
 
         @Override
