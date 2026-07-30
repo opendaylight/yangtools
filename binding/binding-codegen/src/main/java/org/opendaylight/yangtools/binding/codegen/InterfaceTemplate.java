@@ -21,11 +21,15 @@ import com.google.common.base.VerifyException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.Augmentable;
+import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
@@ -54,11 +58,23 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
 
+    // FIXME: replace with static knowledge: for now we verify
+    // "rpc" and "grouping" elements do not implement Augmentable
+    private static final Set<JavaTypeName> BUILDER_INTERFACES = Set.of(
+        JavaTypeName.create(Augmentable.class),
+        JavaTypeName.create(Augmentation.class),
+        JavaTypeName.create(EntryObject.class));
+
     private @Nullable TypeAnalysis typeAnalysis;
 
     @NonNullByDefault
     InterfaceTemplate(final T archetype, final DataRootArchetype root) {
         super(GeneratedClass.of(archetype), archetype, root);
+    }
+
+    @Nullable InterfaceArchetype builderTarget() {
+        return archetype.getImplements().stream().map(Type::name).anyMatch(BUILDER_INTERFACES::contains) ? archetype
+            : null;
     }
 
     private @NonNull TypeAnalysis typeAnalysis() {
@@ -141,7 +157,8 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
             .cB();
     }
 
-    Iterator<@NonNull Type> extendsTypes() {
+    @NonNullByDefault
+    Iterator<? extends Type> extendsTypes() {
         return archetype.getImplements().iterator();
     }
 

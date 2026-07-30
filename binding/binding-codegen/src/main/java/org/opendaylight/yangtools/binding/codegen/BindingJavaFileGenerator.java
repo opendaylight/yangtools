@@ -11,13 +11,8 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.HashBasedTable;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.Augmentable;
-import org.opendaylight.yangtools.binding.Augmentation;
-import org.opendaylight.yangtools.binding.EntryObject;
-import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.ActionArchetype;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
@@ -61,14 +56,6 @@ import org.slf4j.LoggerFactory;
 @NonNullByDefault
 final class BindingJavaFileGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(BindingJavaFileGenerator.class);
-
-    // "rpc" and "grouping" elements do not implement Augmentable
-    private static final Set<JavaTypeName> BUILDER_INTERFACES = Set.of(
-        JavaTypeName.create(Augmentable.class),
-        JavaTypeName.create(Augmentation.class),
-        JavaTypeName.create(EntryObject.class),
-        JavaTypeName.create(YangData.class));
-
     private final HashBasedTable<GeneratedFileType, GeneratedFilePath, GeneratedFile> result = HashBasedTable.create();
     private final boolean ignoreDuplicateFiles;
 
@@ -160,7 +147,7 @@ final class BindingJavaFileGenerator {
                     generateBoth(NotificationTemplate.Builder::new, archetype, root);
                 case OutputArchetype archetype -> generateBoth(OutputTemplate.Builder::new, archetype, root);
                 case NotificationBodyArchetype archetype ->
-                    generateBoth(NotificationBodyTemplate.Builder::new, archetype, root);
+                    generateFile(new NotificationBodyTemplate.Builder(archetype, root));
                 case OpaqueObjectArchetype<?> archetype ->
                     generateFile(new OpaqueObjectTemplate.Builder(archetype, root));
                 case RpcArchetype archetype -> generateFile(new RpcTemplate.Builder(archetype, root));
@@ -170,7 +157,6 @@ final class BindingJavaFileGenerator {
 
         // third pass: process DataRootTemplates last
         for (var module : modules.values()) {
-            generateBuilder(module.type());
             generateFile(module);
         }
     }
@@ -178,22 +164,28 @@ final class BindingJavaFileGenerator {
     private <A extends InterfaceArchetype> void generateBoth(
             final BiFunction<A, DataRootArchetype, Template.Builder> builderConstructor,
             final A archetype, final DataRootArchetype root) {
-        generateBuilder(archetype);
-        generateFile(builderConstructor.apply(archetype, root));
+        final var template = builderConstructor.apply(archetype, root).build();
+        if (!(template instanceof InterfaceTemplate ifaceTemplate)) {
+            throw new VerifyException("Unexpected template " + template);
+        }
+        generateBoth(ifaceTemplate, root);
     }
 
-    private void generateBuilder(final InterfaceArchetype type) {
-        // FIXME: express this in GeneratedType hierarchy as a marker interface
-        for (var iface : type.getImplements()) {
-            if (BUILDER_INTERFACES.contains(iface.name())) {
-                generateFile(new BuilderTemplate.Builder(type));
-                return;
-            }
+    private <A extends InterfaceArchetype> void generateBoth(final InterfaceTemplate<?> template,
+            final DataRootArchetype root) {
+        final var builderTarget = template.builderTarget();
+        if (builderTarget == null) {
+            throw new VerifyException("Unneeded builder for " + template);
         }
+        generateFile(new BuilderTemplate.Builder(builderTarget));
+        generateFile(template);
     }
 
     private void generateFile(final Template.Builder builder) {
-        final var template = builder.build();
+        generateFile(builder.build());
+    }
+
+    private void generateFile(final Template template) {
         final var typeName = template.typeName();
         final var file = GeneratedFilePath.ofDirectoryFile(
             typeName.packageName().replace('.', GeneratedFilePath.SEPARATOR),

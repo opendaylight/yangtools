@@ -12,11 +12,19 @@ import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
 import static org.opendaylight.yangtools.binding.contract.Naming.NAME_STATIC_FIELD_NAME;
 
+import com.google.common.collect.Iterators;
+import java.util.Iterator;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangData;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
+import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 
 /**
@@ -36,10 +44,23 @@ final class YangDataTemplate extends InterfaceTemplate<YangDataArchetype> {
         }
     }
 
-    public static final JavaTypeName YANG_DATA_NAME = JavaTypeName.create(YangDataName.class);
+    private static final JavaTypeName YANG_DATA_NAME = JavaTypeName.create(YangDataName.class);
+    private static final ConcreteType YANG_DATA = Types.typeForClass(YangData.class);
 
     private YangDataTemplate(final YangDataArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
+    }
+
+    @Override
+    @NonNull YangDataArchetype builderTarget() {
+        return archetype;
+    }
+
+    @Override
+    Iterator<? extends Type> extendsTypes() {
+        return Iterators.concat(
+            Iterators.singletonIterator(ParameterizedType.of(YANG_DATA, TypeRef.of(archetype.name()))),
+            super.extendsTypes());
     }
 
     @Override

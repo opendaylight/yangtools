@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
@@ -31,7 +32,6 @@ import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype.Anyxml
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -213,7 +213,6 @@ class Mdsal675Test {
 
     private static void assertYangDataGenType(final YangDataArchetype yangDataType, final Type contentType,
             final List<String> getterMethods) {
-        assertImplements(yangDataType, BindingTypes.yangData(yangDataType));
         INTERFACE_METHODS.forEach((name, type) -> assertHasMethod(yangDataType, name, type));
         for (var methodName : getterMethods) {
             assertHasMethod(yangDataType, methodName, contentType);
@@ -222,7 +221,6 @@ class Mdsal675Test {
 
     private static void assertYangDataGenType(final YangDataArchetype yangDataType, final GroupingArchetype groupType,
             final Type contentType, final List<String> getterMethods) {
-        assertImplements(yangDataType, BindingTypes.yangData(yangDataType));
         assertImplements(yangDataType, groupType);
         INTERFACE_METHODS.forEach((name, type) -> assertHasMethod(yangDataType, name, type));
         for (var methodName : getterMethods) {
@@ -236,6 +234,7 @@ class Mdsal675Test {
             .anyMatch(method -> methodName.equals(method.getName()) && returnType.equals(method.getReturnType()));
     }
 
+    @NonNullByDefault
     private static void assertImplements(final InterfaceArchetype genType, final Type implementedType) {
         assertThat(genType.getImplements()).contains(implementedType);
     }
