@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.NotificationBody;
-import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -38,7 +37,6 @@ public final class BindingTypes {
     public static final @NonNull ConcreteType BASE_IDENTITY = typeForBuiltIn(BuiltInType.IDENTITYREF);
     public static final @NonNull ConcreteType DATA_CONTAINER = typeForClass(DataContainer.class);
     public static final @NonNull ConcreteType DATA_OBJECT = typeForClass(DataObject.class);
-    public static final @NonNull ConcreteType RPC_OUTPUT = typeForClass(RpcOutput.class);
     public static final @NonNull ConcreteType UNION_TYPE_OBJECT = typeForBuiltIn(BuiltInType.UNION);
     public static final @NonNull ConcreteType JAVA_DATACONTAINER = typeForClass(JavaDataContainer.class);
 
