@@ -14,10 +14,10 @@ import org.opendaylight.yangtools.binding.model.api.CaseArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 
 /**
- * Template for a {@link CaseArchetype}.
+ * Template for a (non-existing) {@code CaseObject}.
  */
 @NonNullByDefault
-final class CaseTemplate extends InterfaceTemplate<CaseArchetype> {
+final class CaseObjectTemplate extends InterfaceTemplate<CaseArchetype> {
     record Builder(CaseArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
@@ -25,12 +25,12 @@ final class CaseTemplate extends InterfaceTemplate<CaseArchetype> {
         }
 
         @Override
-        public CaseTemplate build() {
-            return new CaseTemplate(type, root);
+        public CaseObjectTemplate build() {
+            return new CaseObjectTemplate(type, root);
         }
     }
 
-    private CaseTemplate(final CaseArchetype archetype, final DataRootArchetype root) {
+    private CaseObjectTemplate(final CaseArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
     }
 

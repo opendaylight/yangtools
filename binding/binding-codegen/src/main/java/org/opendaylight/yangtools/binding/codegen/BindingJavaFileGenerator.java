@@ -126,7 +126,7 @@ final class BindingJavaFileGenerator {
                 case ActionArchetype archetype -> generateFile(new ActionTemplate.Builder(archetype, root));
                 case AugmentationArchetype archetype ->
                     generateBoth(AugmentationTemplate.Builder::new, archetype, root);
-                case CaseArchetype archetype -> generateBoth(CaseTemplate.Builder::new, archetype, root);
+                case CaseArchetype archetype -> generateBoth(CaseObjectTemplate.Builder::new, archetype, root);
                 case ChoiceInArchetype archetype -> generateFile(new ChoiceInTemplate.Builder(archetype, root));
                 case ContainerArchetype archetype -> generateBoth(ContainerTemplate.Builder::new, archetype, root);
                 case EntryObjectArchetype archetype -> generateBoth(EntryObjectTemplate.Builder::new, archetype, root);

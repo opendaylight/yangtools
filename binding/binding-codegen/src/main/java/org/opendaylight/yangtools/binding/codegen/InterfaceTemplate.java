@@ -51,7 +51,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  */
 // TODO: split this class up into reusable components, i.e. use composition instead of inheritance
 abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> extends ArchetypeTemplate<T>
-    permits AugmentationTemplate, CaseTemplate, ContainerTemplate, DataRootTemplate, EntryObjectTemplate,
+    permits AugmentationTemplate, CaseObjectTemplate, ContainerTemplate, DataRootTemplate, EntryObjectTemplate,
             GroupingTemplate, RpcInputTemplate, InstanceNotificationTemplate, ItemObjectTemplate,
             KeyedListNotificationTemplate, NotificationBodyTemplate, NotificationTemplate, RpcOutputTemplate,
             YangDataTemplate {
