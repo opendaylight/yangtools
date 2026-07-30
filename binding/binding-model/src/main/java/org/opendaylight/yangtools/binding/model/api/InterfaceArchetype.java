@@ -24,9 +24,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 @Beta
 @NonNullByDefault
 public sealed interface InterfaceArchetype extends Archetype
-        permits ActionArchetype, AugmentationArchetype, CaseArchetype, ContainerArchetype, DataRootArchetype,
-                GroupingArchetype, InputArchetype, InterfaceArchetype.OfList, InterfaceArchetype.OfNotification,
-                KeyedListActionArchetype, NotificationBodyArchetype, OutputArchetype, YangDataArchetype {
+        permits ActionArchetype, AugmentableArchetype, AugmentationArchetype, DataRootArchetype, GroupingArchetype,
+                KeyedListActionArchetype, NotificationBodyArchetype, YangDataArchetype {
     /**
      * Base interface for builders resulting in an {@link InterfaceArchetype}.
      *
@@ -91,7 +90,7 @@ public sealed interface InterfaceArchetype extends Archetype
     /**
      * An {@link InterfaceArchetype} for a {@code list} statement.
      */
-    sealed interface OfList extends InterfaceArchetype permits EntryObjectArchetype, ItemObjectArchetype {
+    sealed interface OfList extends AugmentableArchetype permits EntryObjectArchetype, ItemObjectArchetype {
         @Override
         ListEffectiveStatement statement();
     }
@@ -101,7 +100,7 @@ public sealed interface InterfaceArchetype extends Archetype
      * a subclass of {@link BaseNotification} and the hierarchy of this class reflects that. These are not to be
      * confused with {@link NotificationBodyArchetype}.
      */
-    sealed interface OfNotification extends InterfaceArchetype
+    sealed interface OfNotification extends AugmentableArchetype
             permits InstanceNotificationArchetype, KeyedListNotificationArchetype, NotificationArchetype {
         @Override
         NotificationEffectiveStatement statement();

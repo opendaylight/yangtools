@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
  *
  * @since 16.0.0
  */
-public sealed interface CaseArchetype extends InterfaceArchetype permits CaseArchetypeImpl {
+public sealed interface CaseArchetype extends AugmentableArchetype permits CaseArchetypeImpl {
     /**
      * A builder of {@link CaseArchetype}s.
      */
