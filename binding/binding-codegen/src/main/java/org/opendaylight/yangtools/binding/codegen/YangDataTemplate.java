@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.common.YangDataName;
@@ -59,7 +58,7 @@ final class YangDataTemplate extends InterfaceTemplate<YangDataArchetype> {
     @Override
     Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.singletonIterator(ParameterizedType.of(YANG_DATA, TypeRef.of(archetype.name()))),
+            Iterators.singletonIterator(ParameterizedType.of(YANG_DATA, archetype)),
             super.extendsTypes());
     }
 
