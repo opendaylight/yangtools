@@ -47,7 +47,7 @@ final class DataRootTemplate extends InterfaceTemplate<@NonNull DataRootArchetyp
         return bb -> {
             final var rootMeta = importedName(ROOT_META);
             final var moduleInfo = importedName(yangModuleInfoOf(archetype.statement().localQNameModule()));
-            // FIXME: YANGTOOLS-1808: use importedName()
+            // FIXME: YANGTOOLS-1808: use selfRef()
             final var type = archetype.canonicalName();
 
             bb
