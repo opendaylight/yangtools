@@ -199,9 +199,9 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
             final BlockBuilder blk;
             if (method.isDefault()) {
                 blk = generateDefaultMethod(method);
-            } else if (method.getParameters().isEmpty() && isGetterMethodName(method.getName())) {
+            } else if (isGetterMethodName(method.getName())) {
                 blk = generateAccessorMethod(method);
-            } else if (method.getParameters().isEmpty() && isNonnullMethodName(method.getName())) {
+            } else if (isNonnullMethodName(method.getName())) {
                 blk = generateNonnullAccessorMethod(method);
             } else {
                 blk = generateMethod(method);
@@ -220,8 +220,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
         return newBlockBuilder()
             .blk(generateJavadoc(method.getComment()))
             .blk(generateAnnotations(method.getAnnotations()))
-            .str(importedReturnType(method)).sp().str(method.getName()).str("(")
-                .str(generateParameters(method.getParameters())).eol(");");
+            .str(importedReturnType(method)).sp().str(method.getName()).eol("();");
     }
 
     private static @Nullable BlockBuilder generateJavadoc(final @Nullable TypeMemberComment comment) {
@@ -302,34 +301,9 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
         return newBlockBuilder()
             .blk(generateJavadoc(method.getComment()))
             .blk(generateAnnotations(method.getAnnotations()))
-            .str("default ").str(importedName(VOID)).sp().str(method.getName()).str("(")
-                .str(generateParameters(method.getParameters())).str(")").oB()
+            .str("default ").str(importedName(VOID)).sp().str(method.getName()).str("()").oB()
                 .eol("// No-op")
             .cB();
-    }
-
-    /**
-     * Template method which generates method parameters with their types from {@code parameters}.
-     *
-     * @param parameters list of parameter instances which are transformed to the method parameters
-     * @return string with the list of the method parameters with their types in JAVA format
-     */
-    private @Nullable StringBuilder generateParameters(final @NonNull List<MethodSignature.Parameter> parameters) {
-        final var it = parameters.iterator();
-        if (!it.hasNext()) {
-            return null;
-        }
-
-        final var sb = new StringBuilder();
-        while (true) {
-            final var parameter = it.next();
-            sb.append(importedName(parameter.type())).append(' ').append(parameter.name());
-            if (!it.hasNext()) {
-                break;
-            }
-            sb.append(", ");
-        }
-        return sb;
     }
 
     @NonNullByDefault

@@ -40,7 +40,6 @@ class GeneratedTypesBitsTest {
         String nameReturnParamType = "";
         boolean getByteLeafMethodFound = false;
         boolean setByteLeafMethodFound = false;
-        int setByteLeafMethodParamNum = 0;
 
         for (var genType : genTypes) {
             if (genType instanceof TypeObjectArchetype<?> archetype) {
@@ -68,9 +67,6 @@ class GeneratedTypesBitsTest {
                             nameReturnParamType = methodSignature.getReturnType().simpleName();
                         } else if (methodSignature.getName().equals("setByteLeaf")) {
                             setByteLeafMethodFound = true;
-
-                            var parameters = methodSignature.getParameters();
-                            setByteLeafMethodParamNum = parameters.size();
                         }
                     }
                 }
@@ -89,6 +85,5 @@ class GeneratedTypesBitsTest {
         assertEquals("ByteType", nameReturnParamType);
 
         assertFalse(setByteLeafMethodFound);
-        assertEquals(0, setByteLeafMethodParamNum);
     }
 }

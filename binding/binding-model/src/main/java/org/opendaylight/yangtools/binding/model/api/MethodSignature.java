@@ -20,7 +20,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.util.LazyCollections;
 
 /**
  * The Method Signature interface contains simplified meta model for Java interface method definition. Each method MUST
@@ -35,22 +34,6 @@ import org.opendaylight.yangtools.util.LazyCollections;
 //        in response to a statement. Further thought needs to go into this, as UnionTypeObjectArchetype and
 //        KeyArchetype both have the notion of GeneratedProperty, which carries similar data.
 public interface MethodSignature extends Immutable {
-    /**
-     * The Parameter interface is designed to hold the information of method Parameter(s). The parameter is defined by
-     * his Name which MUST be unique as java does not allow multiple parameters with same names for one method and Type
-     * that is associated with parameter.
-     *
-     * @param name the parameter name
-     * @param type the {@link Type} that is bounded to parameter name
-     */
-    @NonNullByDefault
-    record Parameter(String name, Type type) {
-        public Parameter {
-            requireNonNull(name);
-            requireNonNull(type);
-        }
-    }
-
     /**
      * Method return type mechanics. This is a bit of an escape hatch for various behaviors which are supported by
      * code generation.
@@ -94,15 +77,6 @@ public interface MethodSignature extends Immutable {
     boolean isDefault();
 
     /**
-     * Returns the List of parameters that method declare. If the method does not contain any parameters, the method
-     * will return empty List.
-     *
-     * @return the List of parameters that method declare.
-     */
-    @NonNullByDefault
-    List<Parameter> getParameters();
-
-    /**
      * {@return the {@link ValueMechanics} associated with this method}
      */
     @NonNullByDefault
@@ -140,7 +114,6 @@ public interface MethodSignature extends Immutable {
         private final @NonNull String name;
 
         private @Nullable ArrayList<AttachedAnnotation.@NonNull ToMethod> annotations = null;
-        private List<MethodSignature.Parameter> parameters = List.of();
         private ValueMechanics mechanics = ValueMechanics.NORMAL;
         private boolean isDefault = false;
         private TypeMemberComment comment;
@@ -189,22 +162,6 @@ public interface MethodSignature extends Immutable {
         @NonNullByDefault
         public Builder setReturnType(final Type newReaturnType) {
             returnType = requireNonNull(newReaturnType);
-            return this;
-        }
-
-        /**
-         * Adds Parameter into the List of method parameters. Neither the Name or Type of parameter can be {@code null}.
-         *
-         * <br>
-         * In case that any of parameters are defined as <code>null</code> the
-         * method SHOULD throw an {@link IllegalArgumentException}
-         *
-         * @param paramType Parameter Type
-         * @param paremName Parameter Name
-         */
-        @NonNullByDefault
-        public Builder addParameter(final Type paramType, final String paremName) {
-            parameters = LazyCollections.lazyAdd(parameters, new Parameter(paremName, paramType));
             return this;
         }
 
@@ -264,25 +221,18 @@ public interface MethodSignature extends Immutable {
          */
         @NonNullByDefault
         public MethodSignature build() {
-            final var paramSize = parameters.size();
-            final var params = switch (paramSize) {
-                case 0 -> List.<MethodSignature.Parameter>of();
-                case 1 -> Collections.singletonList(parameters.getFirst());
-                default -> List.copyOf(parameters);
-            };
-
-            return new MethodSignatureImpl(name, annotations(), comment, returnType, params, isDefault, mechanics);
+            return new MethodSignatureImpl(name, annotations(), comment, returnType, isDefault, mechanics);
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(name, parameters, returnType);
+            return Objects.hash(name, returnType);
         }
 
         @Override
         public boolean equals(final Object obj) {
             return this == obj || obj instanceof Builder other && name.equals(other.name)
-                && Objects.equals(parameters, other.parameters) && Objects.equals(returnType, other.returnType);
+                && Objects.equals(returnType, other.returnType);
         }
 
         @Override
@@ -290,7 +240,6 @@ public interface MethodSignature extends Immutable {
             return MoreObjects.toStringHelper("MethodSignatureBuilder").omitNullValues()
                 .add("name", name)
                 .add("returnType", returnType)
-                .add("parameters", parameters)
                 .add("annotations", annotations())
                 .add("comment", comment)
                 .toString();

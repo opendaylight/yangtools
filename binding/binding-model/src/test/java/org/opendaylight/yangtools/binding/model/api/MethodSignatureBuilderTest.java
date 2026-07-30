@@ -32,17 +32,6 @@ class MethodSignatureBuilderTest {
     }
 
     @Test
-    void testAddParameterMethod() {
-        final var signatureBuilderImpl = MethodSignature.builder("testMethod").setReturnType(Types.VOID);
-        final var ipAddressType = ContainerArchetype.builder(
-            JavaTypeName.create("org.opendaylight.yangtools.test", "IpAddress"), statement)
-            .build();
-        signatureBuilderImpl.addParameter(ipAddressType, "ipAddress");
-        final var methodSignature = signatureBuilderImpl.build();
-        assertEquals("ipAddress", methodSignature.getParameters().getFirst().name());
-    }
-
-    @Test
     void testHashCodeEqualsToStringMethods() {
         final var signatureBuilderImpl = MethodSignature.builder("testMethod");
         final var signatureBuilderImpl2 = MethodSignature.builder("testMethod");
@@ -64,8 +53,7 @@ class MethodSignatureBuilderTest {
         assertFalse(signatureBuilderImpl6.equals(signatureBuilderImpl));
         assertFalse(signatureBuilderImpl.equals(signatureBuilderImpl6));
 
-        assertEquals("MethodSignatureBuilder{name=testMethod, parameters=[], annotations=[]}",
-            signatureBuilderImpl.toString());
+        assertEquals("MethodSignatureBuilder{name=testMethod, annotations=[]}", signatureBuilderImpl.toString());
     }
 
     @Test
@@ -80,7 +68,7 @@ class MethodSignatureBuilderTest {
         assertEquals(genProperty.hashCode(), genProperty2.hashCode());
         assertEquals("""
             MethodSignatureImpl [name=TestProperty, comment=TypeMemberComment{contract=test comment}, \
-            returnType=ConcreteType{name=java.lang.String}, params=[], annotations=[]]""", genProperty.toString());
+            returnType=ConcreteType{name=java.lang.String}, annotations=[]]""", genProperty.toString());
         assertNotNull(genProperty.toString());
         assertTrue(genProperty.equals(genProperty2));
         assertFalse(genProperty.equals(null));
