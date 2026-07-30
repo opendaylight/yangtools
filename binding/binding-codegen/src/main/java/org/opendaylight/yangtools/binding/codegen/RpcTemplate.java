@@ -35,9 +35,10 @@ final class RpcTemplate extends ArchetypeTemplate<RpcArchetype> {
         }
     }
 
-    private static final JavaTypeName LISTENABLE_FUTURE = JavaTypeName.create(ListenableFuture.class);
+    static final JavaTypeName LISTENABLE_FUTURE = JavaTypeName.create(ListenableFuture.class);
+    static final JavaTypeName RPC_RESULT = JavaTypeName.create(RpcResult.class);
+
     private static final JavaTypeName RPC = JavaTypeName.create(Rpc.class);
-    private static final JavaTypeName RPC_RESULT = JavaTypeName.create(RpcResult.class);
 
     private RpcTemplate(final RpcArchetype archetype, final DataRootArchetype root) {
         super(GeneratedClass.of(archetype), archetype, root);
