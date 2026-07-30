@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 /**
  * Base class for code generators based on {@link InterfaceArchetype}.
  */
+// TODO: split this class up into reusable components, i.e. use composition instead of inheritance
 abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> extends ArchetypeTemplate<T>
     permits AugmentationTemplate, CaseTemplate, ContainerTemplate, DataRootTemplate, EntryObjectTemplate,
             GroupingTemplate, InputTemplate, InstanceNotificationTemplate, ItemObjectTemplate,
@@ -96,27 +97,29 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
         //               Two {
         //       int VALUE = 42;
         //
-        final var ifaces = archetype.getImplements();
-        switch (ifaces.size()) {
-            case 0 -> {
-                // No-op
-            }
-            case 1 -> bb.str(" extends ").str(importedName(ifaces.getFirst()));
-            default -> {
+        // TODO: split this out into a ExtendsKeyword, which is a BlockFragment
+        // TODO: there always should be at least one interface
+        final var ifaces = extendsTypes();
+        if (ifaces.hasNext()) {
+            final var first = ifaces.next();
+            if (ifaces.hasNext()) {
                 bb.nl().ind("extends ");
 
                 // Note: We could try to pack multiple references into a single line, but that would require us to pick
                 //       a length limit and peek into importedName to see how long it is.
                 //       Perhaps it is worth the added complexity: for now this simple approach just works
-                final var it = ifaces.iterator();
+                var current = first;
                 while (true) {
-                    bb.str(importedName(it.next()));
-                    if (!it.hasNext()) {
+                    bb.str(importedName(current));
+                    if (!ifaces.hasNext()) {
                         break;
                     }
                     // space equivalent of 'extends'
                     bb.eol(",").ind("        ");
+                    current = ifaces.next();
                 }
+            } else {
+                bb.str(" extends ").str(importedName(first));
             }
         }
 
@@ -136,6 +139,10 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
             .blk(generateMethods())
             .blk(generateJavaDataContainerMethods())
             .cB();
+    }
+
+    Iterator<@NonNull Type> extendsTypes() {
+        return archetype.getImplements().iterator();
     }
 
     BlockFragment constants() {
