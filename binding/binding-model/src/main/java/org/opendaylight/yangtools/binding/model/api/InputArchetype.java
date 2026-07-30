@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.RpcInput;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 
 /**
@@ -25,8 +24,6 @@ public sealed interface InputArchetype extends AugmentableArchetype permits Inpu
     final class Builder extends InterfaceArchetypeBuilder<Builder, InputEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final InputEffectiveStatement statement) {
             super(typeName, statement);
-            // FIXME: InputArchetype should fill this in by itself
-            addImplementsType(BindingTypes.RPC_INPUT);
         }
 
         @Override
