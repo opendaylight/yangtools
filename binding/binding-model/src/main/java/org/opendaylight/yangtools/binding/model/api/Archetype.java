@@ -7,12 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
@@ -21,26 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * @since 15.0.0
  */
 public sealed interface Archetype extends Type
-        permits InterfaceArchetype, Archetype.WithQName, KeyArchetype, TypeObjectArchetype {
-    /**
-     * An {@link Archetype} which derives {@value Naming#QNAME_STATIC_FIELD_NAME} from its {@link #statement()}.
-     *
-     * @since 16.0.0
-     */
-    @Beta
-    sealed interface WithQName extends Archetype
-            permits ChoiceInArchetype, FeatureArchetype, IdentityArchetype, OpaqueObjectArchetype, RpcArchetype {
-        @Override
-        EffectiveStatement<QName, ?> statement();
-
-        /**
-         * {@return the value of {@value Naming#QNAME_STATIC_FIELD_NAME} field}
-         */
-        default @NonNull QName qnameConstant() {
-            return statement().argument();
-        }
-    }
-
+        permits ChoiceInArchetype, FeatureArchetype, IdentityArchetype, InterfaceArchetype, KeyArchetype,
+                OpaqueObjectArchetype, RpcArchetype, TypeObjectArchetype {
     /**
      * {@return the {@link EffectiveStatement} from which the class was generated}
      *
