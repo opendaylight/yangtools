@@ -19,14 +19,12 @@ record CaseArchetypeImpl(
         JavaTypeName name,
         CaseEffectiveStatement statement,
         ChoiceInArchetype choice,
-        List<AttachedAnnotation.ToType> annotations,
         List<Type> implementsTypes,
         List<MethodSignature> methodSignatures,
         List<Archetype> enclosedTypes) implements CaseArchetype {
     CaseArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(annotations);
         requireNonNull(implementsTypes);
         requireNonNull(methodSignatures);
         requireNonNull(enclosedTypes);

@@ -31,7 +31,7 @@ public sealed interface YangDataArchetype extends InterfaceArchetype permits Yan
 
         @Override
         public YangDataArchetype build() {
-            return new YangDataArchetypeImpl(typeName, statement, annotations(), implementsTypes(), methodDefinitions(),
+            return new YangDataArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
                 enclosedTypes());
         }
 

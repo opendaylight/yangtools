@@ -33,8 +33,8 @@ public sealed interface NotificationArchetype extends InterfaceArchetype.OfNotif
 
         @Override
         public NotificationArchetype build() {
-            return new NotificationArchetypeImpl(typeName, statement, annotations(), implementsTypes(),
-                methodDefinitions(), enclosedTypes());
+            return new NotificationArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
+                enclosedTypes());
         }
 
         @Override

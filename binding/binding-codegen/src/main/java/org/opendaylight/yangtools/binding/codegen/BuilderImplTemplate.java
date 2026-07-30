@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
 import org.opendaylight.yangtools.binding.lib.AbstractDataContainer;
 import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
-import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 
@@ -70,11 +69,9 @@ final class BuilderImplTemplate extends BaseTemplate {
 
         final var bb = newBlockBuilder();
 
-        for (var annotation : targetType.annotations()) {
-            if (annotation instanceof DeprecatedAnnotation deprecated) {
-                bb.blk(generateAnnotation(deprecated));
-                break;
-            }
+        final var annotation = builder.deprecatedAnnotation();
+        if (annotation != null) {
+            bb.blk(generateAnnotation(annotation));
         }
 
         bb

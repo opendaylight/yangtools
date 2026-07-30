@@ -37,8 +37,8 @@ public sealed interface CaseArchetype extends AugmentableArchetype permits CaseA
 
         @Override
         public CaseArchetype build() {
-            return new CaseArchetypeImpl(typeName, statement, choice, annotations(), implementsTypes(),
-                methodDefinitions(), enclosedTypes());
+            return new CaseArchetypeImpl(typeName, statement, choice, implementsTypes(), methodDefinitions(),
+                enclosedTypes());
         }
 
         @Override

@@ -31,7 +31,7 @@ public sealed interface OutputArchetype extends AugmentableArchetype permits Out
 
         @Override
         public OutputArchetype build() {
-            return new OutputArchetypeImpl(typeName, statement, annotations(), implementsTypes(), methodDefinitions(),
+            return new OutputArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
                 enclosedTypes());
         }
 

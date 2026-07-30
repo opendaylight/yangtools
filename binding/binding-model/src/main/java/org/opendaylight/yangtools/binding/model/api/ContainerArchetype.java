@@ -28,8 +28,8 @@ public sealed interface ContainerArchetype extends AugmentableArchetype permits 
 
         @Override
         public ContainerArchetype build() {
-            return new ContainerArchetypeImpl(typeName, statement, annotations(), implementsTypes(),
-                methodDefinitions(), enclosedTypes());
+            return new ContainerArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
+                enclosedTypes());
         }
 
         @Override

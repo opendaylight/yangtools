@@ -73,7 +73,6 @@ final class TypeMethods {
     @NonNullByDefault
     static <A extends InterfaceArchetype> String toString(final Class<A> archetypeClass, final A self) {
         final var helper = MoreObjects.toStringHelper(archetypeClass).add("name", self.name());
-        addNonEmpty(helper, "annotations", self.annotations());
         addNonEmpty(helper, "implements", self.getImplements());
         addNonEmpty(helper, "enclosedTypes", self.enclosedTypes());
         addNonEmpty(helper, "methods", self.getMethodDefinitions());

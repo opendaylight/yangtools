@@ -18,14 +18,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 record ContainerArchetypeImpl(
         JavaTypeName name,
         ContainerEffectiveStatement statement,
-        List<AttachedAnnotation.ToType> annotations,
         List<Type> implementsTypes,
         List<MethodSignature> methodSignatures,
         List<Archetype> enclosedTypes) implements ContainerArchetype {
     ContainerArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(annotations);
         requireNonNull(implementsTypes);
         requireNonNull(methodSignatures);
         requireNonNull(enclosedTypes);

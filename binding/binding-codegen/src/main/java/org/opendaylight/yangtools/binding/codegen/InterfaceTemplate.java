@@ -20,15 +20,14 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.VerifyException;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -76,7 +75,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
     final BlockBuilder body() {
         final var bb = newBlockBuilder()
             .blk(wrapToDocumentation(formatDataForJavaDoc()))
-            .blk(generateAnnotations(archetype.annotations()))
+            .blk(generateAnnotations())
             .eol(generatedAnnotation())
             .str("public interface ").str(archetype.simpleName());
 
@@ -219,7 +218,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
     private @NonNull BlockBuilder generateMethod(final MethodSignature method) {
         return newBlockBuilder()
             .blk(generateJavadoc(method.getComment()))
-            .blk(generateAnnotations(method.getAnnotations()))
+            .blk(generateAnnotations(method))
             .str(importedReturnType(method)).sp().str(method.getName()).eol("();");
     }
 
@@ -251,9 +250,18 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
         return bb;
     }
 
-    // FIXME: specialize to method and type annotations
-    private @Nullable BlockBuilder generateAnnotations(
-            final @NonNull List<? extends @NonNull AttachedAnnotation> annotations) {
+    private @Nullable BlockBuilder generateAnnotations() {
+        if (archetype.statement() instanceof DocumentedNode.WithStatus withStatus) {
+            final var annotation = DeprecatedAnnotation.ofStatus(withStatus.getStatus());
+            if (annotation != null) {
+                return generateAnnotation(annotation);
+            }
+        }
+        return null;
+    }
+
+    private @Nullable BlockBuilder generateAnnotations(final MethodSignature method) {
+        final var annotations = method.getAnnotations();
         if (annotations.isEmpty()) {
             return null;
         }
@@ -289,7 +297,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
 
         return newBlockBuilder()
             .txt(accessorJavadoc(method, ", or an empty list if it is not present"))
-            .blk(generateAnnotations(method.getAnnotations()))
+            .blk(generateAnnotations(method))
             .str("default ").str(importedNonNull(ret)).sp().str(name).str("()").oB()
                 .str("return ").str(importedName(CODEHELPERS)).str(".nonnull(").str(getGetterMethodForNonnull(name))
                     .eol("());")
@@ -300,7 +308,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
     private BlockBuilder generateNoopVoidInterfaceMethod(final MethodSignature method) {
         return newBlockBuilder()
             .blk(generateJavadoc(method.getComment()))
-            .blk(generateAnnotations(method.getAnnotations()))
+            .blk(generateAnnotations(method))
             .str("default ").str(importedName(VOID)).sp().str(method.getName()).str("()").oB()
                 .eol("// No-op")
             .cB();
@@ -346,7 +354,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
     private BlockBuilder generateNonnullAccessorMethod(final MethodSignature method) {
         return newBlockBuilder()
             .txt(accessorJavadoc(method, ", or an empty instance if it is not present"))
-            .blk(generateAnnotations(method.getAnnotations()))
+            .blk(generateAnnotations(method))
             .str(importedNonNull(method.getReturnType())).sp().str(method.getName()).eol("();");
     }
 
