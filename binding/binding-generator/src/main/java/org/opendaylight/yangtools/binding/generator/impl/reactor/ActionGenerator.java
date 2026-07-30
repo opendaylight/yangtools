@@ -7,22 +7,17 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultActionRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.ActionArchetype;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.InputArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
-import org.opendaylight.yangtools.binding.runtime.api.ActionRuntimeType;
-import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 /**
  * Generator corresponding to a {@code action} statement used outside of a {@code list} with a {@code key}.
  */
-final class ActionGenerator extends AbstractActionGenerator<ActionRuntimeType> {
+final class ActionGenerator extends AbstractActionGenerator {
     @NonNullByDefault
     ActionGenerator(final ActionEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
@@ -33,17 +28,5 @@ final class ActionGenerator extends AbstractActionGenerator<ActionRuntimeType> {
             final ActionEffectiveStatement statement, final InputArchetype input, final OutputArchetype output,
             final JavaTypeName parentName) {
         return ActionArchetype.of(typeName, statement, input, output, parentName);
-    }
-
-    @Override
-    CompositeRuntimeTypeBuilder<ActionEffectiveStatement, ActionRuntimeType> createBuilder(
-            final ActionEffectiveStatement statement) {
-        return new InvokableRuntimeTypeBuilder<>(statement) {
-            @Override
-            ActionRuntimeType build(final Archetype type, final ActionEffectiveStatement statement,
-                    final List<RuntimeType> childTypes) {
-                return new DefaultActionRuntimeType((ActionArchetype) type, statement, childTypes);
-            }
-        };
     }
 }

@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
-import org.opendaylight.yangtools.binding.model.api.ActionArchetype;
+import org.opendaylight.yangtools.binding.model.api.OperationArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 /**
- * A {@link RuntimeType} associated with an {@code action} statement outside of a {@code list} with a {@code key}.
+ * A {@link RuntimeType} associated with an {@code action} statement.
  */
 public interface ActionRuntimeType extends InvokableRuntimeType {
     @Override
-    ActionArchetype javaType();
+    OperationArchetype.OfAction javaType();
 
     @Override
     ActionEffectiveStatement statement();

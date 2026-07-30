@@ -7,20 +7,23 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
+import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultActionRuntimeType;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.InputArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.OperationArchetype;
 import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
-import org.opendaylight.yangtools.binding.runtime.api.InvokableRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.ActionRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 /**
  * Abstract class for generators dealing with {@link ActionEffectiveStatement}.
  */
-abstract sealed class AbstractActionGenerator<R extends InvokableRuntimeType>
-        extends OperationGenerator<ActionEffectiveStatement, R>
+abstract sealed class AbstractActionGenerator extends OperationGenerator<ActionEffectiveStatement, ActionRuntimeType>
         permits ActionGenerator, KeyedListActionGenerator {
     @NonNullByDefault
     AbstractActionGenerator(final ActionEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
@@ -49,4 +52,16 @@ abstract sealed class AbstractActionGenerator<R extends InvokableRuntimeType>
     @NonNullByDefault
     abstract OperationArchetype.OfAction createTypeImpl(JavaTypeName typeName, ActionEffectiveStatement statement,
         InputArchetype input, OutputArchetype output, JavaTypeName parentName);
+
+    @Override
+    final CompositeRuntimeTypeBuilder<ActionEffectiveStatement, ActionRuntimeType> createBuilder(
+            final ActionEffectiveStatement statement) {
+        return new InvokableRuntimeTypeBuilder<>(statement) {
+            @Override
+            ActionRuntimeType build(final Archetype type, final ActionEffectiveStatement statement,
+                    final List<RuntimeType> childTypes) {
+                return new DefaultActionRuntimeType((OperationArchetype.OfAction) type, statement, childTypes);
+            }
+        };
+    }
 }

@@ -267,18 +267,21 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public ActionCodecContext load(final Class<? extends Action<?, ?, ?>> action) {
+                final Type input;
+                final Type output;
                 if (KeyedListAction.class.isAssignableFrom(action)) {
                     final var args = validateActionClass(4, action, KeyedListAction.class);
-                    @SuppressWarnings("unchecked")
-                    final var casted = (Class<? extends KeyedListAction<?, ?, ?, ?>>) action;
-                    return prepareActionContext(args[2], args[3], context.getKeyedListActionDefinition(casted));
-                }
-                if (Action.class.isAssignableFrom(action)) {
+                    input = args[2];
+                    output = args[3];
+                } else if (Action.class.isAssignableFrom(action)) {
                     final var args = validateActionClass(3, action, Action.class);
-                    return prepareActionContext(args[1], args[2], context.getActionDefinition(action));
+                    input = args[1];
+                    output = args[2];
+                } else {
+                    throw new IllegalArgumentException(
+                        "The specific action type does not exist for action " + action.getName());
                 }
-                throw new IllegalArgumentException("The specific action type does not exist for action "
-                    + action.getName());
+                return prepareActionContext(input, output, context.getActionDefinition(action));
             }
 
             @SuppressWarnings({ "rawtypes", "unchecked" })

@@ -7,24 +7,26 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.api.OperationArchetype;
 
 /**
  * Common interface for run-time types associated with invokable operations, such as those defined by {@code action} and
  * {@code rpc} statements.
  */
+@NonNullByDefault
 public interface InvokableRuntimeType extends CompositeRuntimeType {
+    @Override
+    OperationArchetype javaType();
+
+    // FIXME: remove these: the archetypes are available from javaType() and the statements are exposed from statement()
     /**
-     * Return the run-time type for this action's input.
-     *
-     * @return Input run-time type
+     * {@return the run-time type for this operation input}
      */
-    @NonNull InputRuntimeType input();
+    InputRuntimeType input();
 
     /**
-     * Return the run-time type for this action's output.
-     *
-     * @return Output run-time type
+     * {@return the run-time type for this operation's output}
      */
-    @NonNull OutputRuntimeType output();
+    OutputRuntimeType output();
 }
