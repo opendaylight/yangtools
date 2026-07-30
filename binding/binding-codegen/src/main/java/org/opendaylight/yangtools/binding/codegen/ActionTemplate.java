@@ -8,17 +8,23 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.LISTENABLE_FUTURE;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.RPC_RESULT;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.Action;
+import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.model.api.ActionArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 
 /**
  * Template for {@link Action} specializations.
  */
 @NonNullByDefault
-final class ActionTemplate extends InterfaceTemplate<ActionArchetype> {
-    record Builder(ActionArchetype type, DataRootArchetype root) implements Template.Builder {
+final class ActionTemplate extends ArchetypeTemplate<ActionArchetype> {
+    record Builder(ActionArchetype type, DataRootArchetype root)
+            implements Template.Builder {
         Builder {
             requireNonNull(type);
             requireNonNull(root);
@@ -30,12 +36,35 @@ final class ActionTemplate extends InterfaceTemplate<ActionArchetype> {
         }
     }
 
+    private static final JavaTypeName ACTION = JavaTypeName.create(Action.class);
+    private static final JavaTypeName DATA_OBJECT_IDENTIFIER = JavaTypeName.create(DataObjectIdentifier.class);
+
     private ActionTemplate(final ActionArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root);
+        super(GeneratedClass.of(archetype), archetype, root);
     }
 
     @Override
-    QNameConstant constants() {
-        return new QNameConstant.InInterface(this, archetype.statement().argument());
+    BlockBuilder body() {
+        final var simpleName = archetype.simpleName();
+        final var override = importedName(OVERRIDE);
+        final var input = importedName(archetype.input());
+        final var output = importedName(archetype.output());
+        final var pathType = importedName(DATA_OBJECT_IDENTIFIER) + "<" + importedName(archetype.parentName()) + ">";
+
+        return newBodyBuilder(archetype.statement())
+            .eol("@java.lang.FunctionalInterface")
+            .str("public interface ").str(simpleName).str(" extends ")
+                .gen(importedName(ACTION), pathType, input, output).oB()
+                .frg(new QNameConstant.InInterface(this, archetype.statement().argument()))
+                .nl()
+                .at().eol(override)
+                .str("default ").gen(importedName(CLASS), simpleName).str(" implementedInterface()").oB()
+                    .str("return ").str(simpleName).eol(".class;")
+                .cB()
+                .nl()
+                .at().eol(override)
+                .str(importedName(LISTENABLE_FUTURE)).str("<").gen(importedName(RPC_RESULT), output).str("> invoke(")
+                    .str(pathType).str(" path, ").str(input).eol(" input);")
+            .cB();
     }
 }
