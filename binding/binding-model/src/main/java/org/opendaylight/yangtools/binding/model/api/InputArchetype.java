@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
  *
  * @since 16.0.0
  */
-public sealed interface InputArchetype extends InterfaceArchetype permits InputArchetypeImpl {
+public sealed interface InputArchetype extends AugmentableArchetype permits InputArchetypeImpl {
     /**
      * A builder of {@link InputArchetype}s.
      */

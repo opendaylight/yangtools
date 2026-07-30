@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
  *
  * @since 16.0.0
  */
-public sealed interface ContainerArchetype extends InterfaceArchetype permits ContainerArchetypeImpl {
+public sealed interface ContainerArchetype extends AugmentableArchetype permits ContainerArchetypeImpl {
     /**
      * A builder of {@link ContainerArchetype}s.
      */

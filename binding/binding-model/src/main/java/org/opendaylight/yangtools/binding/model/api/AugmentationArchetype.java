@@ -25,10 +25,10 @@ public sealed interface AugmentationArchetype extends InterfaceArchetype permits
      */
     @NonNullByDefault
     final class Builder extends InterfaceArchetypeBuilder<Builder, AugmentEffectiveStatement> {
-        private final InterfaceArchetype target;
+        private final AugmentableArchetype target;
 
         private Builder(final JavaTypeName typeName, final AugmentEffectiveStatement statement,
-                final InterfaceArchetype target) {
+                final AugmentableArchetype target) {
             super(typeName, statement);
             this.target = requireNonNull(target);
             // FIXME: do not add this, expose target from toString() and make sure AugmentationTemplate generates it
@@ -54,7 +54,7 @@ public sealed interface AugmentationArchetype extends InterfaceArchetype permits
 
     @NonNullByDefault
     static Builder builder(final JavaTypeName typeName, final AugmentEffectiveStatement statement,
-            final InterfaceArchetype target) {
+            final AugmentableArchetype target) {
         return new Builder(typeName, statement, target);
     }
 
@@ -64,6 +64,5 @@ public sealed interface AugmentationArchetype extends InterfaceArchetype permits
     /**
      * {@return the augmentation target archetype}
      */
-    // FIXME: should be AugmentableArchetype
-    InterfaceArchetype target();
+    AugmentableArchetype target();
 }

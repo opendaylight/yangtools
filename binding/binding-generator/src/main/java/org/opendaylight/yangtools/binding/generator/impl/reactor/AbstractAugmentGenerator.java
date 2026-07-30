@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAugmentRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -149,8 +150,8 @@ abstract class AbstractAugmentGenerator
     @Override
     final AugmentationArchetype createTypeImpl() {
         final var targetType = targetGenerator().getGeneratedType();
-        if (!(targetType instanceof InterfaceArchetype target)) {
-            throw new VerifyException("Unexpected target" + targetType);
+        if (!(targetType instanceof AugmentableArchetype target)) {
+            throw new VerifyException("Unexpected target " + targetType);
         }
 
         final var builder = AugmentationArchetype.builder(typeName(), statement(), target);
