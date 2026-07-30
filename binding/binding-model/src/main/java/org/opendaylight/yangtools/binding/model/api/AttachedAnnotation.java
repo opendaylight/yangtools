@@ -16,14 +16,13 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * An instance of {@link #type()} annotation. This may be applicable to
  * <ul>
  *   <li>a Java method, represented by {@link ToMethod}</li>
- *   <li>a Java type, represented by {@link ToType}</li>
  * </ul>
  *
  * @since 16.0.0
  */
 @Beta
 @NonNullByDefault
-public sealed interface AttachedAnnotation permits AttachedAnnotation.ToType, AttachedAnnotation.ToMethod {
+public sealed interface AttachedAnnotation permits AttachedAnnotation.ToMethod {
     /**
      * An annotation attached to a method, e.g. when the {@link #type()} allows use with {@link ElementType#METHOD}.
      */
@@ -32,16 +31,6 @@ public sealed interface AttachedAnnotation permits AttachedAnnotation.ToType, At
         @Override
         default List<ElementType> targets() {
             return List.of(ElementType.METHOD);
-        }
-    }
-
-    /**
-     * An annotation attached to a Java type, e.g. when the {@link #type()} allows use with {@link ElementType#TYPE}.
-     */
-    sealed interface ToType extends AttachedAnnotation permits DeprecatedAnnotation {
-        @Override
-        default List<ElementType> targets() {
-            return List.of(ElementType.TYPE);
         }
     }
 

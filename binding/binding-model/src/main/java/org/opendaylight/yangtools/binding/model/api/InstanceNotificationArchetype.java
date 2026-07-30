@@ -34,8 +34,8 @@ public sealed interface InstanceNotificationArchetype extends InterfaceArchetype
 
         @Override
         public InstanceNotificationArchetype build() {
-            return new InstanceNotificationArchetypeImpl(typeName, statement, annotations(), implementsTypes(),
-                methodDefinitions(), enclosedTypes());
+            return new InstanceNotificationArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
+                enclosedTypes());
         }
 
         @Override

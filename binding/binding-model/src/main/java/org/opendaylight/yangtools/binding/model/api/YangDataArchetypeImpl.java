@@ -18,14 +18,12 @@ import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 record YangDataArchetypeImpl(
         JavaTypeName name,
         YangDataEffectiveStatement statement,
-        List<AttachedAnnotation.ToType> annotations,
         List<Type> implementsTypes,
         List<MethodSignature> methodSignatures,
         List<Archetype> enclosedTypes) implements YangDataArchetype {
     YangDataArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(annotations);
         requireNonNull(implementsTypes);
         requireNonNull(methodSignatures);
         requireNonNull(enclosedTypes);
