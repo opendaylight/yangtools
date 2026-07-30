@@ -7,64 +7,33 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Action;
-import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 /**
- * The {@link InterfaceArchetype} for {@link Action} specializations.
+ * The {@link OperationArchetype} for {@link Action} specializations.
  *
  * @since 16.0.0
  */
-@Beta
 @NonNullByDefault
-// FIXME: extend OperationArchetype
-public sealed interface ActionArchetype extends InterfaceArchetype permits ActionArchetypeImpl {
+public sealed interface ActionArchetype extends OperationArchetype.OfAction permits ActionArchetypeImpl {
     /**
-     * A builder of {@link ActionArchetype}s.
+     * {@return an ActionArchetype}
+     * @param name the archetype's {@link JavaTypeName}}
+     * @param statement the {@link ActionEffectiveStatement}
+     * @param input the {@link InputArchetype} of the action's input
+     * @param output the {@link OutputArchetype} of the action's output
+     * @param paramName the name of the parent archetype
      */
-    final class Builder extends InterfaceArchetypeBuilder<Builder, ActionEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final ActionEffectiveStatement statement,
-                final InputArchetype input, final OutputArchetype output, final JavaTypeName parentName) {
-            super(typeName, statement);
-
-            // FIXME: this is something ActionTemplate should be doing
-            final var parentType = TypeRef.of(parentName);
-            addAnnotation(FunctionalInterfaceAnnotation.INSTANCE);
-            addImplementsType(BindingTypes.action(parentType, input, output));
-            addMethod(Naming.ACTION_INVOKE_NAME)
-                .addAnnotation(OverrideAnnotation.INSTANCE)
-                .addParameter(BindingTypes.objectIdentifier(parentType), "path")
-                .addParameter(input, "input")
-                .setReturnType(Types.listenableFutureTypeFor(BindingTypes.rpcResult(output)));
-        }
-
-        @Override
-        public ActionArchetype build() {
-            return new ActionArchetypeImpl(typeName, statement, annotations(), implementsTypes(), methodDefinitions(),
-                enclosedTypes());
-        }
-
-        @Override
-        Class<ActionArchetype> archetypeClass() {
-            return ActionArchetype.class;
-        }
-
-        @Override
-        Builder thisInstance() {
-            return this;
-        }
-    }
-
-    static Builder builder(final JavaTypeName typeName, final ActionEffectiveStatement statement,
+    static ActionArchetype of(final JavaTypeName name, final ActionEffectiveStatement statement,
             final InputArchetype input, final OutputArchetype output, final JavaTypeName parentName) {
-        return new Builder(typeName, statement, input, output, parentName);
+        return new ActionArchetypeImpl(name, statement, input, output, parentName);
     }
 
     @Override
-    ActionEffectiveStatement statement();
+    @SuppressWarnings("rawtypes")
+    default Class<Action> contract() {
+        return Action.class;
+    }
 }
