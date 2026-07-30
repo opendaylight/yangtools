@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.binding.model.api.OperationArchetype;
  * {@code rpc} statements.
  */
 @NonNullByDefault
-public interface InvokableRuntimeType extends CompositeRuntimeType {
+public interface OperationRuntimeType extends CompositeRuntimeType {
     @Override
     OperationArchetype javaType();
 

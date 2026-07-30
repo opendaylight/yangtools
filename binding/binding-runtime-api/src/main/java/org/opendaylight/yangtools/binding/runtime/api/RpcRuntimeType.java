@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 /**
  * A {@link RuntimeType} associated with an {@code rpc} statement.
  */
-public interface RpcRuntimeType extends InvokableRuntimeType {
+public interface RpcRuntimeType extends OperationRuntimeType {
     @Override
     RpcArchetype javaType();
 

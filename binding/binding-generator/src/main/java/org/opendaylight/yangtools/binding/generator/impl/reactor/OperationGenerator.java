@@ -16,13 +16,13 @@ import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.OperationArchetype;
 import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
-import org.opendaylight.yangtools.binding.runtime.api.InvokableRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.OperationRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public abstract sealed class OperationGenerator<
         S extends SchemaTreeEffectiveStatement<?>,
-        R extends InvokableRuntimeType> extends CompositeSchemaTreeGenerator<S, R>
+        R extends OperationRuntimeType> extends CompositeSchemaTreeGenerator<S, R>
         permits AbstractActionGenerator, RpcGenerator {
     @NonNullByDefault
     OperationGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {

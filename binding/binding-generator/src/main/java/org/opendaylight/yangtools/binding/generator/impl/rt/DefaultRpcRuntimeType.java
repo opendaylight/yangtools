@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.binding.runtime.api.RpcRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 
-public final class DefaultRpcRuntimeType extends AbstractInvokableRuntimeType<RpcEffectiveStatement>
+public final class DefaultRpcRuntimeType extends AbstractOperationRuntimeType<RpcEffectiveStatement>
         implements RpcRuntimeType {
     public DefaultRpcRuntimeType(final RpcArchetype bindingType, final RpcEffectiveStatement statement,
             final List<RuntimeType> children) {
