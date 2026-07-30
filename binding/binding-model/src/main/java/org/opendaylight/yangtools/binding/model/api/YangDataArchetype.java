@@ -17,11 +17,11 @@ import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
  *
  * @since 16.0.0
  */
+@NonNullByDefault
 public sealed interface YangDataArchetype extends InterfaceArchetype permits YangDataArchetypeImpl {
     /**
      * A builder of {@link YangDataArchetype}s.
      */
-    @NonNullByDefault
     final class Builder extends InterfaceArchetypeBuilder<Builder, YangDataEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final YangDataEffectiveStatement statement) {
             super(typeName, statement);
@@ -46,9 +46,14 @@ public sealed interface YangDataArchetype extends InterfaceArchetype permits Yan
         }
     }
 
-    @NonNullByDefault
     static Builder builder(final JavaTypeName typeName, final YangDataEffectiveStatement statement) {
         return new Builder(typeName, statement);
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    default Class<YangData> contract() {
+        return YangData.class;
     }
 
     @Override

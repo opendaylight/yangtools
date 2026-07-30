@@ -17,12 +17,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  *
  * @since 16.0.0
  */
+@NonNullByDefault
 public sealed interface NotificationArchetype extends InterfaceArchetype.OfNotification
         permits NotificationArchetypeImpl {
     /**
      * A builder of {@link NotificationArchetype}s.
      */
-    @NonNullByDefault
     final class Builder extends InterfaceArchetypeBuilder<Builder, NotificationEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement) {
             super(typeName, statement);
@@ -48,8 +48,13 @@ public sealed interface NotificationArchetype extends InterfaceArchetype.OfNotif
         }
     }
 
-    @NonNullByDefault
     static Builder builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement) {
         return new Builder(typeName, statement);
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    default Class<Notification> contract() {
+        return Notification.class;
     }
 }

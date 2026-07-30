@@ -21,12 +21,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
  */
 // FIXME: seal to allow only DataRootArchetypeImpl
 @Beta
+@NonNullByDefault
 public non-sealed interface DataRootArchetype extends InterfaceArchetype {
     /**
      * A builder of {@link DataRootArchetype} instances.
      */
     @Beta
-    @NonNullByDefault
     final class Builder extends InterfaceArchetypeBuilder<Builder, ModuleEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final ModuleEffectiveStatement statement) {
             super(typeName, statement);
@@ -50,16 +50,20 @@ public non-sealed interface DataRootArchetype extends InterfaceArchetype {
         }
     }
 
-    @NonNullByDefault
     static Builder builder(final JavaTypeName typeName, final ModuleEffectiveStatement statement) {
         return new Builder(typeName, statement);
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    default Class<DataRoot> contract() {
+        return DataRoot.class;
     }
 
     @Override
     ModuleEffectiveStatement statement();
 
     @Override
-    @NonNullByDefault
     @Deprecated(forRemoval = true)
     default List<AttachedAnnotation.ToType> annotations() {
         return List.of();

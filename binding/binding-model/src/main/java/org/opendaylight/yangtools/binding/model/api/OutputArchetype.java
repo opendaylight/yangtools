@@ -52,5 +52,11 @@ public sealed interface OutputArchetype extends AugmentableArchetype permits Out
     }
 
     @Override
+    @NonNullByDefault
+    default Class<RpcOutput> contract() {
+        return RpcOutput.class;
+    }
+
+    @Override
     OutputEffectiveStatement statement();
 }

@@ -53,6 +53,12 @@ public sealed interface EntryObjectArchetype extends InterfaceArchetype.OfList p
         return new Builder(typeName, statement, key);
     }
 
+    @Override
+    @SuppressWarnings("rawtypes")
+    default Class<EntryObject> contract() {
+        return EntryObject.class;
+    }
+
     /**
      * {@return the {link KeyArchetype} associated with this archetype}
      */

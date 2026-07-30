@@ -17,11 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
  *
  * @since 16.0.0
  */
+@NonNullByDefault
 public sealed interface InputArchetype extends AugmentableArchetype permits InputArchetypeImpl {
     /**
      * A builder of {@link InputArchetype}s.
      */
-    @NonNullByDefault
     final class Builder extends InterfaceArchetypeBuilder<Builder, InputEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final InputEffectiveStatement statement) {
             super(typeName, statement);
@@ -46,9 +46,13 @@ public sealed interface InputArchetype extends AugmentableArchetype permits Inpu
         }
     }
 
-    @NonNullByDefault
     static Builder builder(final JavaTypeName typeName, final InputEffectiveStatement statement) {
         return new Builder(typeName, statement);
+    }
+
+    @Override
+    default Class<RpcInput> contract() {
+        return RpcInput.class;
     }
 
     @Override

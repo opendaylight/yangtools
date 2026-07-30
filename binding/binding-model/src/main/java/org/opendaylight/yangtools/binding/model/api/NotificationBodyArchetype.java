@@ -52,5 +52,11 @@ public sealed interface NotificationBodyArchetype extends InterfaceArchetype per
     }
 
     @Override
+    @SuppressWarnings("rawtypes")
+    default Class<NotificationBody> contract() {
+        return NotificationBody.class;
+    }
+
+    @Override
     NotificationEffectiveStatement statement();
 }

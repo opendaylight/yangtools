@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BaseNotification;
+import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
@@ -105,6 +106,11 @@ public sealed interface InterfaceArchetype extends Archetype
         @Override
         NotificationEffectiveStatement statement();
     }
+
+    /**
+     * {@return the {@link DataContainer} contract of the generated class}
+     */
+    Class<? extends DataContainer> contract();
 
     /**
      * {@return the list of annotations attached to interface declaration}

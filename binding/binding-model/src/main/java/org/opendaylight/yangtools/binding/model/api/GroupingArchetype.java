@@ -17,11 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
  *
  * @since 16.0.0
  */
+@NonNullByDefault
 public sealed interface GroupingArchetype extends InterfaceArchetype permits GroupingArchetypeImpl {
     /**
      * A builder of {@link GroupingArchetype}s.
      */
-    @NonNullByDefault
     final class Builder extends InterfaceArchetypeBuilder<Builder, GroupingEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final GroupingEffectiveStatement statement) {
             super(typeName, statement);
@@ -46,9 +46,13 @@ public sealed interface GroupingArchetype extends InterfaceArchetype permits Gro
         }
     }
 
-    @NonNullByDefault
     static Builder builder(final JavaTypeName typeName, final GroupingEffectiveStatement statement) {
         return new Builder(typeName, statement);
+    }
+
+    @Override
+    default Class<Grouping> contract() {
+        return Grouping.class;
     }
 
     @Override

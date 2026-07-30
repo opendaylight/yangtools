@@ -19,11 +19,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
  *
  * @since 16.0.0
  */
+@NonNullByDefault
 public sealed interface AugmentationArchetype extends InterfaceArchetype permits AugmentationArchetypeImpl {
     /**
      * A builder of {@link AugmentationArchetype}s.
      */
-    @NonNullByDefault
     final class Builder extends InterfaceArchetypeBuilder<Builder, AugmentEffectiveStatement> {
         private final AugmentableArchetype target;
 
@@ -52,10 +52,15 @@ public sealed interface AugmentationArchetype extends InterfaceArchetype permits
         }
     }
 
-    @NonNullByDefault
     static Builder builder(final JavaTypeName typeName, final AugmentEffectiveStatement statement,
             final AugmentableArchetype target) {
         return new Builder(typeName, statement, target);
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    default Class<Augmentation> contract() {
+        return Augmentation.class;
     }
 
     @Override

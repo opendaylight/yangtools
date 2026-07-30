@@ -17,12 +17,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  *
  * @since 16.0.0
  */
+@NonNullByDefault
 public sealed interface KeyedListNotificationArchetype extends InterfaceArchetype.OfNotification
         permits KeyedListNotificationArchetypeImpl {
     /**
      * A builder of {@link KeyedListNotificationArchetype}s.
      */
-    @NonNullByDefault
     final class Builder extends InterfaceArchetypeBuilder<Builder, NotificationEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
                 final JavaTypeName parentName, final KeyArchetype key) {
@@ -49,9 +49,14 @@ public sealed interface KeyedListNotificationArchetype extends InterfaceArchetyp
         }
     }
 
-    @NonNullByDefault
     static Builder builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
             final JavaTypeName parentName, final KeyArchetype key) {
         return new Builder(typeName, statement, parentName, key);
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    default Class<KeyedListNotification> contract() {
+        return KeyedListNotification.class;
     }
 }
