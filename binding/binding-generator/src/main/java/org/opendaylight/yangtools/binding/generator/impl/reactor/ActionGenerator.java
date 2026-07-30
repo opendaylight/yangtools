@@ -12,7 +12,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultActionRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.ActionArchetype;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.InputArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
@@ -28,7 +30,7 @@ final class ActionGenerator extends AbstractActionGenerator<ActionRuntimeType> {
 
     @Override
     ActionArchetype createTypeImpl(final JavaTypeName typeName,
-            final ActionEffectiveStatement statement, final Archetype input, final Archetype output) {
+            final ActionEffectiveStatement statement, final InputArchetype input, final OutputArchetype output) {
         final var builder = ActionArchetype.builder(typeName, statement, input, output, getParent().typeName());
         defaultImplementedInterace(builder);
         return builder.build();
