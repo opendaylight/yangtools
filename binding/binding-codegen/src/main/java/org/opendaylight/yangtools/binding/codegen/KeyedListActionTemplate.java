@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.binding.model.api.KeyedListActionArchetype;
  * Template for {@link KeyedListAction} specializations.
  */
 @NonNullByDefault
-final class KeyedListActionTemplate extends InterfaceTemplate<KeyedListActionArchetype> {
+final class KeyedListActionTemplate extends ArchetypeTemplate<KeyedListActionArchetype> {
     record Builder(KeyedListActionArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
@@ -32,7 +32,7 @@ final class KeyedListActionTemplate extends InterfaceTemplate<KeyedListActionArc
     }
 
     private KeyedListActionTemplate(final KeyedListActionArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root);
+        super(GeneratedClass.of(archetype), archetype, root);
     }
 
     @Override

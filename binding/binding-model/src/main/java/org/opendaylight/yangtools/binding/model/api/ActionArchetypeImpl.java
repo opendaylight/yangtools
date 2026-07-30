@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
@@ -18,27 +17,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 record ActionArchetypeImpl(
         JavaTypeName name,
         ActionEffectiveStatement statement,
-        List<AttachedAnnotation.ToType> annotations,
-        List<Type> implementsTypes,
-        List<MethodSignature> methodSignatures,
-        List<Archetype> enclosedTypes) implements ActionArchetype {
+        InputArchetype input,
+        OutputArchetype output) implements ActionArchetype {
     ActionArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(annotations);
-        requireNonNull(implementsTypes);
-        requireNonNull(methodSignatures);
-        requireNonNull(enclosedTypes);
-    }
-
-    @Override
-    public List<Type> getImplements() {
-        return implementsTypes;
-    }
-
-    @Override
-    public List<MethodSignature> getMethodDefinitions() {
-        return methodSignatures;
+        requireNonNull(input);
+        requireNonNull(output);
     }
 
     @Override
