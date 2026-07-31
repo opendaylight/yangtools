@@ -12,7 +12,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.entryObject;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -104,7 +103,7 @@ final class BuilderImplTemplate extends BaseTemplate {
             bb.eol(");");
         }
 
-        if (keyType != null && targetType.getImplements().contains(entryObject(targetType, keyType))) {
+        if (keyType != null) {
             final var allProps = new ArrayList<>(properties);
             final var keyProps = BuilderTemplate.keyConstructorArgs(keyType);
             for (var field : keyProps) {

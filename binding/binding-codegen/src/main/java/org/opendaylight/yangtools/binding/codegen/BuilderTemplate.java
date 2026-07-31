@@ -15,7 +15,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRAC
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.entryObject;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isListType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isMapType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isSetType;
@@ -377,7 +376,7 @@ final class BuilderTemplate extends BaseTemplate {
                 }
 
                 final var keyType = keyType();
-                if (keyType != null && targetType.getImplements().contains(entryObject(targetType, keyType))) {
+                if (keyType != null) {
                     final var allProps = new ArrayList<>(properties);
                     final var keyProps = keyConstructorArgs(keyType);
                     for (var field : keyProps) {
