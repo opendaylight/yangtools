@@ -75,7 +75,6 @@ class InterfaceGeneratorTest extends BaseCompilationTest {
             @Generated("mdsal-binding-generator")
             public interface Service
                 extends ChildOf<Services>,
-                        JavaDataContainer<Service>,
                         EntryObject<Service, ServiceKey> {
             """);
     }
