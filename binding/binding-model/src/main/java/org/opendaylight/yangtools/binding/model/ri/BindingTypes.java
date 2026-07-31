@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.InstanceNotification;
-import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
@@ -42,8 +41,6 @@ public final class BindingTypes {
     static final @NonNull ConcreteType AUGMENTATION = typeForClass(Augmentation.class);
     @VisibleForTesting
     static final @NonNull ConcreteType ENTRY_OBJECT = typeForClass(EntryObject.class);
-    @VisibleForTesting
-    static final @NonNull ConcreteType KEY = typeForClass(Key.class);
 
     private static final @NonNull ConcreteType CHILD_OF = typeForClass(ChildOf.class);
     private static final @NonNull ConcreteType INSTANCE_NOTIFICATION = typeForClass(InstanceNotification.class);
@@ -128,18 +125,6 @@ public final class BindingTypes {
     @NonNullByDefault
     public static ParameterizedType childOf(final Type type) {
         return ParameterizedType.of(CHILD_OF, type);
-    }
-
-    /**
-     * Type specializing {@link Key} for a particular type.
-     *
-     * @param type Type for which to specialize
-     * @return A parameterized type corresponding to {@code Key<Type>}
-     * @throws NullPointerException if {@code type} is {@code null}
-     */
-    @NonNullByDefault
-    public static ParameterizedType key(final Type type) {
-        return ParameterizedType.of(KEY, type);
     }
 
     /**
