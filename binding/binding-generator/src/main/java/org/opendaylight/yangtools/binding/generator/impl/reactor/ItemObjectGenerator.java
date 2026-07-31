@@ -38,12 +38,9 @@ final class ItemObjectGenerator extends ListGenerator {
         final var builder = ItemObjectArchetype.builder(typeName(), statement());
         addImplementsChildOf(builder);
         addUsesInterfaces(builder);
-        addConcreteInterfaceMethods(builder);
-
+        defaultImplementedInterace(builder);
         addAugmentable(builder);
-
         addGetterMethods(builder);
-
         return builder.build();
     }
 

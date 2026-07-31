@@ -28,7 +28,7 @@ final class NotificationGenerator extends AbstractNotificationGenerator {
             final NotificationEffectiveStatement statement) {
         final var builder = NotificationArchetype.builder(typeName, statement);
         addAugmentable(builder);
-        addConcreteInterfaceMethods(builder);
+        defaultImplementedInterace(builder);
         addUsesInterfaces(builder);
         addGetterMethods(builder);
         return builder.build();

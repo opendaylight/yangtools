@@ -39,7 +39,7 @@ final class GroupingTemplate extends InterfaceTemplate<GroupingArchetype> {
     private static final ConcreteType GROUPING = ConcreteType.ofClass(Grouping.class);
 
     private GroupingTemplate(final GroupingArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root, false);
+        super(archetype, root, false, false, false);
     }
 
     @Override

@@ -49,7 +49,7 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
         addImplementsChildOf(builder);
         addAugmentable(builder);
         addUsesInterfaces(builder);
-        addConcreteInterfaceMethods(builder);
+        defaultImplementedInterace(builder);
         addGetterMethods(builder);
         return builder.build();
     }

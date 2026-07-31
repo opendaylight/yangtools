@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static com.google.common.base.Verify.verify;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForNonnull;
@@ -18,6 +19,7 @@ import static org.opendaylight.yangtools.binding.contract.Naming.isRequireMethod
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.VerifyException;
+import com.google.common.collect.Iterators;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
@@ -30,6 +32,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.EntryObject;
+import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
@@ -39,7 +43,6 @@ import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
@@ -63,14 +66,28 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         JavaTypeName.create(Augmentation.class),
         JavaTypeName.create(EntryObject.class));
 
+    private static final @NonNull ConcreteType JAVA_DATACONTAINER = ConcreteType.ofClass(JavaDataContainer.class);
+
+    // implies default implementedInterface, on false just narrowed
+//    private final boolean concrete;
+    // implies Augmentable
     private final boolean augmentable;
+    // implies JavaDataContainer
+    private final boolean javaContract;
 
     private @Nullable TypeAnalysis typeAnalysis;
 
     @NonNullByDefault
-    InterfaceTemplate(final T archetype, final DataRootArchetype root, final boolean augmentable) {
+    InterfaceTemplate(final T archetype, final DataRootArchetype root, final boolean concrete,
+            final boolean augmentable, final boolean javaContract) {
         super(GeneratedClass.of(archetype), archetype, root);
+//        this.concrete = concrete;
+        this.javaContract = javaContract;
         this.augmentable = augmentable;
+        if (!concrete) {
+            verify(!augmentable, "Not concrete, cannot implement Augmentable");
+            verify(!javaContract, "Not concrete, cannot implement JavaDataContainer");
+        }
     }
 
     @Nullable DataContainerArchetype builderTarget() {
@@ -162,7 +179,14 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     //        subclass (TypeFragment?) does the equivalent of JavaFileTemplate.importedName(Type)
     @NonNullByDefault
     Iterator<? extends Type> extendsTypes() {
-        return archetype.getImplements().iterator();
+        final var it = archetype.getImplements().iterator();
+        return javaContract ? Iterators.concat(it, Iterators.singletonIterator(javaDataContainerType())) : it;
+    }
+
+    @NonNullByDefault
+    final Type javaDataContainerType() {
+        verify(javaContract, "Not available for abstract types");
+        return ParameterizedType.of(JAVA_DATACONTAINER, archetype);
     }
 
     BlockFragment constants() {
@@ -386,12 +410,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     }
 
     private @Nullable BlockBuilder generateJavaDataContainerMethods() {
-        if (archetype.getImplements().stream()
-                .noneMatch(iface -> iface.name().equals(BindingTypes.JAVA_DATACONTAINER.name()))) {
-            return null;
-        }
-
-        return newBlockBuilder()
+        return !javaContract ? null : newBlockBuilder()
             .nl()
             .blk(generateBindingHashCode())
             .nl()

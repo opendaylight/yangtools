@@ -56,7 +56,7 @@ final class EntryObjectGenerator extends ListGenerator {
         final var builder = EntryObjectArchetype.builder(typeName(), statement(), keyType);
         addImplementsChildOf(builder);
         addUsesInterfaces(builder);
-        addConcreteInterfaceMethods(builder);
+        defaultImplementedInterace(builder);
         addGetterMethods(builder);
         return builder.build();
     }

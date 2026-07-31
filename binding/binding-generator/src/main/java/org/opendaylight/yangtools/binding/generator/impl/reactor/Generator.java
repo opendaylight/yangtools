@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -244,18 +243,6 @@ public abstract class Generator implements Iterable<Generator> {
         }
 
         builder.addImplementsType(BindingTypes.childOf(TypeRef.of(ancestor.typeName())));
-    }
-
-    /**
-     * Add common methods implemented in a generated type. This includes {@link DataContainer#implementedInterface()} as
-     * well has {@code bindingHashCode()}, {@code bindingEquals()} and {@code bindingToString()}.
-     *
-     * @param builder Target builder
-     */
-    @NonNullByDefault
-    static final void addConcreteInterfaceMethods(final DataContainerArchetype.Builder builder) {
-        defaultImplementedInterace(builder);
-        builder.addImplementsType(ParameterizedType.of(BindingTypes.JAVA_DATACONTAINER, builder.typeRef()));
     }
 
     /**

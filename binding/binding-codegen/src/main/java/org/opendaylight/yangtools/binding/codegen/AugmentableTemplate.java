@@ -21,6 +21,6 @@ abstract sealed class AugmentableTemplate<T extends AugmentableArchetype> extend
                 ItemObjectTemplate, KeyedListNotificationTemplate, NotificationTemplate, RpcInputTemplate,
                 RpcOutputTemplate {
     AugmentableTemplate(final T archetype, final DataRootArchetype root) {
-        super(archetype, root, true);
+        super(archetype, root, true, true, true);
     }
 }
