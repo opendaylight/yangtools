@@ -14,10 +14,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.ChildOf;
-import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
@@ -30,8 +28,6 @@ public final class BindingTypes {
     static final ConcreteType AUGMENTABLE = cachedType(Augmentable.class);
     @VisibleForTesting
     static final ConcreteType AUGMENTATION = cachedType(Augmentation.class);
-    @VisibleForTesting
-    static final ConcreteType ENTRY_OBJECT = cachedType(EntryObject.class);
 
     private static final ConcreteType CHILD_OF = cachedType(ChildOf.class);
 
@@ -70,15 +66,5 @@ public final class BindingTypes {
      */
     public static ParameterizedType childOf(final Type type) {
         return ParameterizedType.of(CHILD_OF, type);
-    }
-
-    /**
-     * {@return a parameterized type corresponding to {@code EntryObject<Type, KeyType>}}
-     * @param type Type for which to specialize
-     * @param keyType the corresponding {@link KeyArchetype}
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    public static ParameterizedType entryObject(final Type type, final KeyArchetype keyType) {
-        return ParameterizedType.of(ENTRY_OBJECT, type, keyType);
     }
 }
