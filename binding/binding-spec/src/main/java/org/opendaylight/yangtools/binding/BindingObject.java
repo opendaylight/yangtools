@@ -18,12 +18,13 @@ package org.opendaylight.yangtools.binding;
  *   <li>{@code md:annotation}, represented by {@link Annotation}</li>
  *   <li>{@code rc:yang-data}, represented by {@link YangData}</li>
  *   <li>{@code grouping}, represented by {@link Grouping}</li>
+ *   <li>RFC7950 {@code notification} in a grouping, represented by {@link NotificationBody}</li>
  *   <li>all others, represented by {@link DataObject} and its further specializations</li>
  * </ul>
  *
  * @author Jie Han
  */
 public sealed interface BindingObject
-    permits Annotation, BaseIdentity, Grouping, DataObject, Key, OpaqueObject, TypeObject, YangData {
+    permits Annotation, BaseIdentity, Grouping, DataObject, Key, NotificationBody, OpaqueObject, TypeObject, YangData {
     // nothing else
 }
