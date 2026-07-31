@@ -44,7 +44,8 @@ final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> {
     private static final ConcreteType DATA_ROOT = ConcreteType.ofClass(DataRoot.class);
 
     private DataRootTemplate(final DataRootArchetype archetype) {
-        super(archetype, archetype, false);
+        // FIXME: should be Shape.AUGMENTATION
+        super(archetype, archetype, Shape.DATA_ROOT);
     }
 
     @Override

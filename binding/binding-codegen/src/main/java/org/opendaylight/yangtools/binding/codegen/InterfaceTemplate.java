@@ -29,7 +29,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.EntryObject;
+import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
@@ -39,7 +41,6 @@ import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
@@ -51,8 +52,41 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  */
 // TODO: split this class up into reusable components, i.e. use composition instead of inheritance
 abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetype> extends ArchetypeTemplate<T>
-    permits AugmentableTemplate, AugmentationTemplate, DataRootTemplate, GroupingTemplate, NotificationBodyTemplate,
-            YangDataTemplate {
+        permits AugmentableTemplate, AugmentationTemplate, DataRootTemplate, GroupingTemplate, NotificationBodyTemplate,
+                YangDataTemplate {
+
+    enum Shape {
+        /**
+         * The shape of a {@link Grouping}: narrows implemented interface, no augmentations, no
+         * equals/hashCode/toString.
+         */
+        GROUPING(false, false, false),
+        /**
+         * The shape of an {@link Augmentation}: provides implemented interface, no augmentations, provides
+         * equals/hashCode/toString.
+         */
+        AUGMENTATION(true, false, true),
+        /**
+         * The shape of a {@link EntryObject}: provides everyting.
+         */
+        ENTRY_OBJECT(true, true, true),
+        /**
+         * The shape of a {@link DataRoot}: provides implemented interface, but nothing else.
+         */
+        @Deprecated
+        DATA_ROOT(true, false, false);
+
+        boolean concrete;
+        boolean augmentable;
+        boolean contract;
+
+        Shape(final boolean concrete, final boolean augmentable, final boolean contract) {
+            this.concrete = concrete;
+            this.augmentable = augmentable;
+            this.contract = contract;
+        }
+    }
+
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
 
@@ -63,14 +97,18 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         JavaTypeName.create(Augmentation.class),
         JavaTypeName.create(EntryObject.class));
 
+    // implies default implementedInterface, on false just narrowed
+    //    private final boolean concrete;
     private final boolean augmentable;
+    private final boolean contract;
 
     private @Nullable TypeAnalysis typeAnalysis;
 
     @NonNullByDefault
-    InterfaceTemplate(final T archetype, final DataRootArchetype root, final boolean augmentable) {
+    InterfaceTemplate(final T archetype, final DataRootArchetype root, final Shape shape) {
         super(GeneratedClass.of(archetype), archetype, root);
-        this.augmentable = augmentable;
+        augmentable = shape.augmentable;
+        contract = shape.contract;
     }
 
     @Nullable DataContainerArchetype builderTarget() {
@@ -386,12 +424,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     }
 
     private @Nullable BlockBuilder generateJavaDataContainerMethods() {
-        if (archetype.getImplements().stream()
-                .noneMatch(iface -> iface.name().equals(BindingTypes.JAVA_DATACONTAINER.name()))) {
-            return null;
-        }
-
-        return newBlockBuilder()
+        return !contract ? null : newBlockBuilder()
             .nl()
             .blk(generateBindingHashCode())
             .nl()
