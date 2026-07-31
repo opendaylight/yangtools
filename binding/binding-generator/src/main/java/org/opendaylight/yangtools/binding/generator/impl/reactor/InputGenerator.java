@@ -47,7 +47,7 @@ final class InputGenerator
         final var builder = RpcInputArchetype.builder(typeName, statement);
         addAugmentable(builder);
         addUsesInterfaces(builder);
-        addConcreteInterfaceMethods(builder);
+        defaultImplementedInterace(builder);
         addGetterMethods(builder);
         return builder.build();
     }

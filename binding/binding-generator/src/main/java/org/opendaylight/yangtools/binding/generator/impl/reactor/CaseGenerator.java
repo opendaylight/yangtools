@@ -63,7 +63,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
         final var builder = CaseObjectArchetype.builder(typeName(), statement(), choice.getArchetype());
         addAugmentable(builder);
         addUsesInterfaces(builder);
-        addConcreteInterfaceMethods(builder);
+        defaultImplementedInterace(builder);
         addGetterMethods(builder);
         return builder.build();
     }
