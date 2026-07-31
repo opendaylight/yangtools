@@ -9,10 +9,12 @@ package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeTypes;
@@ -90,17 +92,22 @@ class Mdsal669Test {
             JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedUser"));
     }
 
+    @NonNullByDefault
     private static void assertInstances(final JavaTypeName groupingTypeName, final JavaTypeName... instanceTypeNames) {
         assertEquals(
             Arrays.stream(instanceTypeNames).map(Mdsal669Test::assertType).collect(Collectors.toSet()),
             Set.copyOf(assertGrouping(groupingTypeName).instantiations()));
     }
 
+    @NonNullByDefault
     private static GroupingRuntimeType assertGrouping(final JavaTypeName typeName) {
         return assertInstanceOf(GroupingRuntimeType.class, assertType(typeName));
     }
 
+    @NonNullByDefault
     private static RuntimeType assertType(final JavaTypeName typeName) {
-        return RUNTIME_TYPES.findSchema(typeName).orElseThrow();
+        final var ret = RUNTIME_TYPES.lookupRuntimeType(typeName);
+        assertNotNull(ret);
+        return ret;
     }
 }

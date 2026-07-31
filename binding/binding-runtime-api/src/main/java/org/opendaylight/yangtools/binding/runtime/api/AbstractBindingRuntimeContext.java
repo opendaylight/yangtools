@@ -25,10 +25,13 @@ import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.YangData;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Runtime Context for Java YANG Binding classes. It provides information derived from the backing effective model,
@@ -45,7 +48,7 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
                     throw new IllegalArgumentException("Supplied QName " + key + " is not a valid identity");
                 }
                 try {
-                    return loadClass(type.getIdentifier()).asSubclass(BaseIdentity.class);
+                    return loadChecked(BaseIdentity.class, type.getIdentifier());
                 } catch (ClassNotFoundException e) {
                     throw new IllegalArgumentException("Required class " + type + " was not found.", e);
                 } catch (ClassCastException e) {
@@ -54,12 +57,12 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
             }
         });
 
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractBindingRuntimeContext.class);
+
     @Override
     public final <T extends Augmentation<?>> AugmentRuntimeType getAugmentationDefinition(final Class<T> augClass) {
-        return getTypes().findSchema(JavaTypeName.create(augClass))
-            .filter(AugmentRuntimeType.class::isInstance)
-            .map(AugmentRuntimeType.class::cast)
-            .orElse(null);
+        return getTypes().lookupRuntimeType(JavaTypeName.create(augClass)) instanceof AugmentRuntimeType augment
+            ? augment : null;
     }
 
     @Override
@@ -69,30 +72,39 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
         checkArgument(!Action.class.isAssignableFrom(cls), "Supplied class must not be an action (%s is)", cls);
         checkArgument(!Notification.class.isAssignableFrom(cls), "Supplied class must not be a notification (%s is)",
             cls);
-        return (CompositeRuntimeType) getTypes().findSchema(JavaTypeName.create(cls)).orElse(null);
+        return (CompositeRuntimeType) getTypes().lookupRuntimeType(JavaTypeName.create(cls));
     }
 
     @Override
     public final ActionRuntimeType getActionDefinition(final Class<? extends Action<?, ?, ?>> cls) {
-        return (ActionRuntimeType) getTypes().findSchema(JavaTypeName.create(requireNonNull(cls))).orElse(null);
+        return (ActionRuntimeType) getTypes().lookupRuntimeType(JavaTypeName.create(requireNonNull(cls)));
     }
 
     @Override
     public final RpcRuntimeType getRpcDefinition(final Class<? extends Rpc<?, ?>> cls) {
-        return (RpcRuntimeType) getTypes().findSchema(JavaTypeName.create(cls)).orElse(null);
+        return (RpcRuntimeType) getTypes().lookupRuntimeType(JavaTypeName.create(cls));
     }
 
     @Override
     public final RuntimeType getTypeWithSchema(final Class<?> type) {
-        return getTypes().findSchema(JavaTypeName.create(type))
-            .orElseThrow(() -> new IllegalArgumentException("Failed to find schema for " + type));
+        final var ret = getTypes().lookupRuntimeType(JavaTypeName.create(type));
+        if (ret == null) {
+            throw new IllegalArgumentException("Failed to find schema for " + type);
+        }
+        return ret;
     }
 
     @Override
     public final Class<?> getClassForSchema(final Absolute schema) {
         final var child = getTypes().schemaTreeChild(schema);
-        checkArgument(child != null, "Failed to find binding type for %s", schema);
-        return loadClass(child);
+        if (child == null) {
+            throw new IllegalArgumentException("Failed to find binding type for " + schema);
+        }
+        try {
+            return loadClass(child.javaType());
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
@@ -107,12 +119,12 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
 
     @Override
     public final Class<? extends RpcInput> getRpcInput(final QName rpcName) {
-        return loadClass(getRpc(rpcName).input()).asSubclass(RpcInput.class);
+        return loadUnchecked(RpcInput.class, getRpc(rpcName).javaType().input());
     }
 
     @Override
     public final Class<? extends RpcOutput> getRpcOutput(final QName rpcName) {
-        return loadClass(getRpc(rpcName).output()).asSubclass(RpcOutput.class);
+        return loadUnchecked(RpcOutput.class, getRpc(rpcName).javaType().output());
     }
 
     private @NonNull RpcRuntimeType getRpc(final QName rpcName) {
@@ -123,18 +135,26 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public final Class<? extends YangData<?>> getYangDataClass(final YangDataName templateName) {
-        return (Class) loadClass(getTypes().findYangData(templateName)
-            .orElseThrow(() -> new IllegalArgumentException("Failed to find YangData for " + templateName)))
-            .asSubclass(YangData.class);
+        final var yangData = getTypes().lookupYangData(templateName);
+        if (yangData == null) {
+            throw new IllegalArgumentException("Failed to find YangData for " + templateName);
+        }
+        return loadUnchecked(YangData.class, yangData.javaType());
     }
 
-    private Class<?> loadClass(final RuntimeType type) {
+    private <T> @NonNull Class<T> loadUnchecked(final Class<? super T> expected, final @NonNull Archetype type) {
         try {
-            return loadClass(type.javaType());
-        } catch (final ClassNotFoundException e) {
+            return loadChecked(expected, type.name());
+        } catch (ClassNotFoundException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    private <T> @NonNull Class<T> loadChecked(final Class<? super T> expected, final @NonNull JavaTypeName type)
+            throws ClassNotFoundException {
+        final Class<T> actual = loadClass(type);
+        LOG.trace("Loaded {}", actual.asSubclass(expected));
+        return actual;
     }
 }

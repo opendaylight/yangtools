@@ -38,9 +38,9 @@ public interface BindingRuntimeContext extends Immutable {
 
     @NonNull BindingRuntimeTypes getTypes();
 
-    <T> @NonNull Class<T> loadClass(JavaTypeName type) throws ClassNotFoundException;
+    <T> @NonNull Class<T> loadClass(@NonNull JavaTypeName type) throws ClassNotFoundException;
 
-    default <T> @NonNull Class<T> loadClass(final Type type) throws ClassNotFoundException {
+    default <T> @NonNull Class<T> loadClass(final @NonNull Type type) throws ClassNotFoundException {
         return loadClass(type.name());
     }
 
@@ -64,7 +64,7 @@ public interface BindingRuntimeContext extends Immutable {
      * @return Schema of augmentation or null if augmentation is not known in this context
      * @throws NullPointerException if {@code augClass} is null
      */
-    <T extends Augmentation<?>> @Nullable AugmentRuntimeType getAugmentationDefinition(Class<T> augClass);
+    <T extends Augmentation<?>> @Nullable AugmentRuntimeType getAugmentationDefinition(@NonNull Class<T> augClass);
 
     /**
      * Returns defining {@link DataSchemaNode} for supplied class.
@@ -79,11 +79,11 @@ public interface BindingRuntimeContext extends Immutable {
      * @param cls Class which represents list, container, choice or case.
      * @return Schema node, from which class was generated.
      */
-    @Nullable CompositeRuntimeType getSchemaDefinition(Class<?> cls);
+    @Nullable CompositeRuntimeType getSchemaDefinition(@NonNull Class<?> cls);
 
-    @Nullable ActionRuntimeType getActionDefinition(Class<? extends Action<?, ?, ?>> cls);
+    @Nullable ActionRuntimeType getActionDefinition(@NonNull Class<? extends Action<?, ?, ?>> cls);
 
-    @Nullable RpcRuntimeType getRpcDefinition(Class<? extends Rpc<?, ?>> cls);
+    @Nullable RpcRuntimeType getRpcDefinition(@NonNull Class<? extends Rpc<?, ?>> cls);
 
     /**
      * Returns schema ({@link DataSchemaNode}, {@link AugmentationSchemaNode} or {@link TypeDefinition})
@@ -96,16 +96,16 @@ public interface BindingRuntimeContext extends Immutable {
      *     {@link DataSchemaNode}, {@link AugmentationSchemaNode} or {@link TypeDefinition}
      *     which was used to generate supplied class.
      */
-    @NonNull RuntimeType getTypeWithSchema(Class<?> type);
+    @NonNull RuntimeType getTypeWithSchema(@NonNull Class<?> type);
 
-    @NonNull Class<? extends RpcInput> getRpcInput(QName rpcName);
+    @NonNull Class<? extends RpcInput> getRpcInput(@NonNull QName rpcName);
 
-    @NonNull Class<? extends RpcOutput> getRpcOutput(QName rpcName);
+    @NonNull Class<? extends RpcOutput> getRpcOutput(@NonNull QName rpcName);
 
     // FIXME: 9.0.0: this needs to accept an EffectiveStatementInference
-    @NonNull Class<?> getClassForSchema(Absolute schema);
+    @NonNull Class<?> getClassForSchema(@NonNull Absolute schema);
 
-    @NonNull Class<? extends BaseIdentity> getIdentityClass(QName input);
+    @NonNull Class<? extends BaseIdentity> getIdentityClass(@NonNull QName input);
 
-    @NonNull Class<? extends YangData<?>> getYangDataClass(YangDataName templateName);
+    @NonNull Class<? extends YangData<?>> getYangDataClass(@NonNull YangDataName templateName);
 }

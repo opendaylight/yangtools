@@ -30,8 +30,8 @@ class Mdsal829Test {
     void testRunTimeTypes() {
         final var types = BindingRuntimeTypesFactory.createTypes(MODEL_CONTEXT);
         assertSame(MODEL_CONTEXT, types.modelContext());
-        final var schema = types.findSchema(
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal829.norev", "Mdsal829Data")).orElseThrow();
+        final var schema = types.lookupRuntimeType(
+            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal829.norev", "Mdsal829Data"));
         assertNotNull(schema);
     }
 }

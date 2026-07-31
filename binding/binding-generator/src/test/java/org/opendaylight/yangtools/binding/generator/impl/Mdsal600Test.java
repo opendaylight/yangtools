@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -51,8 +52,10 @@ class Mdsal600Test {
         final var runtimeTypes = new DefaultBindingRuntimeGenerator().generateTypeMapping(models);
 
         // Verify type-to-schema lookup
-        final var barType = runtimeTypes.findSchema(FOO.createEnclosed("Bar")).orElseThrow();
-        final var bazType = runtimeTypes.findSchema(FOO.createEnclosed("Baz")).orElseThrow();
+        final var barType = runtimeTypes.lookupRuntimeType(FOO.createEnclosed("Bar"));
+        assertNotNull(barType);
+        final var bazType = runtimeTypes.lookupRuntimeType(FOO.createEnclosed("Baz"));
+        assertNotNull(bazType);
 
         // Verify underlying schema lookup
         assertSame(barSchema, barType.statement());
