@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.binding.model.api.ActionArchetype;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.CaseArchetype;
+import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -126,7 +126,7 @@ final class BindingJavaFileGenerator {
                 case ActionArchetype archetype -> generateFile(new ActionTemplate.Builder(archetype, root));
                 case AugmentationArchetype archetype ->
                     generateBoth(AugmentationTemplate.Builder::new, archetype, root);
-                case CaseArchetype archetype -> generateBoth(CaseObjectTemplate.Builder::new, archetype, root);
+                case CaseObjectArchetype archetype -> generateBoth(CaseObjectTemplate.Builder::new, archetype, root);
                 case ChoiceInArchetype archetype -> generateFile(new ChoiceInTemplate.Builder(archetype, root));
                 case ContainerArchetype archetype -> generateBoth(ContainerTemplate.Builder::new, archetype, root);
                 case EntryObjectArchetype archetype -> generateBoth(EntryObjectTemplate.Builder::new, archetype, root);

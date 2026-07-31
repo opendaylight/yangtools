@@ -18,7 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
-import org.opendaylight.yangtools.binding.model.api.CaseArchetype;
+import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -169,9 +169,9 @@ class ChoiceCaseGenTypesTest {
         assertEquals(1, choices.size());
     }
 
-    private static CaseArchetype checkGeneratedCase(final List<Archetype> types, final String simpleName,
+    private static CaseObjectArchetype checkGeneratedCase(final List<Archetype> types, final String simpleName,
             final String pkgName) {
-        return checkGeneratedType(CaseArchetype.class, types, simpleName, pkgName);
+        return checkGeneratedType(CaseObjectArchetype.class, types, simpleName, pkgName);
     }
 
     private static <A extends InterfaceArchetype> A checkGeneratedType(final Class<A> clazz,

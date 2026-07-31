@@ -13,7 +13,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultCaseRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.CaseArchetype;
+import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -40,7 +40,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
     }
 
     @Override
-    CaseArchetype createTypeImpl() {
+    CaseObjectArchetype createTypeImpl() {
         // We also are implementing target choice's type. This is tricky, as we need to cover two distinct cases:
         // - being a child of a choice (i.e. normal definition)
         // - being a child of an augment (i.e. augmented into a choice)
@@ -60,7 +60,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
         // Most generators have a parent->child dependency due to parent methods' return types and therefore children
         // must not request parent's type. That is not true for choice->case relationship and hence we do not need to
         // go through DefaultType here
-        final var builder = CaseArchetype.builder(typeName(), statement(), choice.getArchetype());
+        final var builder = CaseObjectArchetype.builder(typeName(), statement(), choice.getArchetype());
         addAugmentable(builder);
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
@@ -75,7 +75,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
             @Override
             CaseRuntimeType build(final Archetype type, final CaseEffectiveStatement statement,
                     final List<RuntimeType> childTypes, final List<AugmentRuntimeType> augmentTypes) {
-                return new DefaultCaseRuntimeType((CaseArchetype) type, statement, childTypes, augmentTypes);
+                return new DefaultCaseRuntimeType((CaseObjectArchetype) type, statement, childTypes, augmentTypes);
             }
         };
     }
