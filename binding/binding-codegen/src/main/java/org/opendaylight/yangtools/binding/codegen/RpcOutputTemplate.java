@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * Template for {@link RpcOutput} specializations.
  */
 @NonNullByDefault
-final class RpcOutputTemplate extends InterfaceTemplate<RpcOutputArchetype> {
+final class RpcOutputTemplate extends AugmentableTemplate<RpcOutputArchetype> {
     record Builder(RpcOutputArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);

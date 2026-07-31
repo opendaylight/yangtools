@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
  * Template for a (non-existing) {@code CaseObject}.
  */
 @NonNullByDefault
-final class CaseObjectTemplate extends InterfaceTemplate<CaseObjectArchetype> {
+final class CaseObjectTemplate extends AugmentableTemplate<CaseObjectArchetype> {
     record Builder(CaseObjectArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);

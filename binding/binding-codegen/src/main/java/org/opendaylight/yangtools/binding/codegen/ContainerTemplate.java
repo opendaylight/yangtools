@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
  * Template for a {@link ContainerArchetype}.
  */
 @NonNullByDefault
-final class ContainerTemplate extends InterfaceTemplate<ContainerArchetype> {
+final class ContainerTemplate extends AugmentableTemplate<ContainerArchetype> {
     record Builder(ContainerArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);

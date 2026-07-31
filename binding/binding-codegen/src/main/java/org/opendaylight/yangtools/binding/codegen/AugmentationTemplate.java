@@ -32,6 +32,6 @@ final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype
     }
 
     private AugmentationTemplate(final AugmentationArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root);
+        super(archetype, root, false);
     }
 }

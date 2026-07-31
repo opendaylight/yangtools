@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
  * statement.
  */
 @NonNullByDefault
-final class ItemObjectTemplate extends InterfaceTemplate<ItemObjectArchetype> {
+final class ItemObjectTemplate extends AugmentableTemplate<ItemObjectArchetype> {
     record Builder(ItemObjectArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);

@@ -30,7 +30,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.EntryObject;
-import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
@@ -52,9 +51,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  */
 // TODO: split this class up into reusable components, i.e. use composition instead of inheritance
 abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetype> extends ArchetypeTemplate<T>
-    permits AugmentationTemplate, CaseObjectTemplate, ContainerTemplate, DataRootTemplate, EntryObjectTemplate,
-            GroupingTemplate, RpcInputTemplate, InstanceNotificationTemplate, ItemObjectTemplate,
-            KeyedListNotificationTemplate, NotificationBodyTemplate, NotificationTemplate, RpcOutputTemplate,
+    permits AugmentableTemplate, AugmentationTemplate, DataRootTemplate, GroupingTemplate, NotificationBodyTemplate,
             YangDataTemplate {
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
@@ -66,11 +63,14 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         JavaTypeName.create(Augmentation.class),
         JavaTypeName.create(EntryObject.class));
 
+    private final boolean augmentable;
+
     private @Nullable TypeAnalysis typeAnalysis;
 
     @NonNullByDefault
-    InterfaceTemplate(final T archetype, final DataRootArchetype root) {
+    InterfaceTemplate(final T archetype, final DataRootArchetype root, final boolean augmentable) {
         super(GeneratedClass.of(archetype), archetype, root);
+        this.augmentable = augmentable;
     }
 
     @Nullable DataContainerArchetype builderTarget() {
@@ -406,7 +406,6 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
             .at().eol(importedName(OVERRIDE))
             .str("default int javaHC()").jBlock(bb -> {
                 final var analysis = typeAnalysis();
-                final boolean augmentable = archetype instanceof AugmentableArchetype;
                 final var props = analysis.properties();
 
                 switch (props.size()) {
@@ -497,7 +496,6 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     }
 
     private @NonNull BlockBuilder generateBindingEquals() {
-        final var augmentable = archetype instanceof AugmentableArchetype;
         final var props = typeAnalysis().properties();
 
         return newBlockBuilder()
@@ -542,7 +540,6 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
             .at().eol(importedName(OVERRIDE))
             .str("default ").str(importedName(Types.STRING)).str(" javaTS()").jBlock(bb -> {
                 final var props = typeAnalysis().properties();
-                final var augmentable = archetype instanceof AugmentableArchetype;
 
                 bb.str("return ").str(importedName(CODEHELPERS));
                 switch (props.size()) {

@@ -44,7 +44,7 @@ final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> {
     private static final ConcreteType DATA_ROOT = ConcreteType.ofClass(DataRoot.class);
 
     private DataRootTemplate(final DataRootArchetype archetype) {
-        super(archetype, archetype);
+        super(archetype, archetype, false);
     }
 
     @Override
