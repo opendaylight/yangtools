@@ -13,7 +13,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,7 +48,6 @@ public final class Types {
     private static final @NonNull ConcreteType LIST_TYPE = cachedType(List.class);
     private static final @NonNull ConcreteType MAP_TYPE = cachedType(Map.class);
     private static final @NonNull ConcreteType SET_TYPE = cachedType(Set.class);
-    private static final @NonNull ConcreteType IMMUTABLE_SET_TYPE = cachedType(ImmutableSet.class);
     private static final @NonNull ParameterizedType LIST_TYPE_WILDCARD = ParameterizedType.of(LIST_TYPE);
     private static final @NonNull ParameterizedType SET_TYPE_WILDCARD = ParameterizedType.of(SET_TYPE);
 
@@ -136,18 +134,6 @@ public final class Types {
     @NonNullByDefault
     public static ParameterizedType setTypeFor(final Type valueType) {
         return ParameterizedType.of(SET_TYPE, valueType);
-    }
-
-    /**
-     * Returns an instance of {@link ParameterizedType} describing the typed {@link ImmutableSet}&lt;V&gt; with concrete
-     * type of value.
-     *
-     * @param valueType Value Type
-     * @return Description of generic type instance of ImmutableSet
-     */
-    @NonNullByDefault
-    public static ParameterizedType immutableSetTypeFor(final Type valueType) {
-        return ParameterizedType.of(IMMUTABLE_SET_TYPE, valueType);
     }
 
     /**
