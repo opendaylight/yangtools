@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.ri;
 
-import static org.opendaylight.yangtools.binding.model.ri.Types.typeForBuiltIn;
 import static org.opendaylight.yangtools.binding.model.ri.Types.typeForClass;
 
 import com.google.common.annotations.VisibleForTesting;
@@ -22,7 +21,6 @@ import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.Notification;
-import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
@@ -32,7 +30,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 public final class BindingTypes {
 
     public static final @NonNull ConcreteType DATA_OBJECT = typeForClass(DataObject.class);
-    public static final @NonNull ConcreteType UNION_TYPE_OBJECT = typeForBuiltIn(BuiltInType.UNION);
     public static final @NonNull ConcreteType JAVA_DATACONTAINER = typeForClass(JavaDataContainer.class);
 
     @VisibleForTesting

@@ -18,7 +18,6 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -91,16 +90,6 @@ public final class Types {
     @Deprecated(since = "15.1.0", forRemoval = true)
     public static @NonNull ConcreteType objectType() {
         return OBJECT;
-    }
-
-    /**
-     * Returns an instance of {@link ConcreteType} describing a {@link BuiltInType}.
-     *
-     * @param type {@link BuiltInType} to describe
-     * @return Description of the type
-     */
-    public static @NonNull ConcreteType typeForBuiltIn(final @NonNull BuiltInType<?> type) {
-        return typeForClass(type.javaClass());
     }
 
     /**

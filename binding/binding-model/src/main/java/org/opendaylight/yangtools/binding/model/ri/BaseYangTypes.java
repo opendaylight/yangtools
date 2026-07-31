@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.ri;
 
-import static org.opendaylight.yangtools.binding.model.ri.Types.typeForBuiltIn;
-
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -87,5 +85,15 @@ public final class BaseYangTypes {
 
     private BaseYangTypes() {
         // Hidden on purpose
+    }
+
+    /**
+     * Returns an instance of {@link ConcreteType} describing a {@link BuiltInType}.
+     *
+     * @param type {@link BuiltInType} to describe
+     * @return Description of the type
+     */
+    private static ConcreteType typeForBuiltIn(final BuiltInType<?> type) {
+        return Types.typeForClass(type.javaClass());
     }
 }

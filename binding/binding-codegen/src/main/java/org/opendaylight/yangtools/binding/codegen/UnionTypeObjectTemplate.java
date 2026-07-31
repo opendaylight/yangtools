@@ -13,7 +13,6 @@ import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_T
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BindingTypes.UNION_TYPE_OBJECT;
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.collect.Iterables;
@@ -30,6 +29,7 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
@@ -50,6 +50,8 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             return new UnionTypeObjectTemplate(type, root);
         }
     }
+
+    private static final @NonNull JavaTypeName UNION_TYPE_OBJECT = JavaTypeName.create(UnionTypeObject.class);
 
     private final @NonNull List<GeneratedProperty> allProperties;
     private final @NonNull List<GeneratedProperty> finalProperties;
