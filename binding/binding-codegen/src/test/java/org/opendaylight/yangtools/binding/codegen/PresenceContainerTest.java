@@ -56,9 +56,10 @@ class PresenceContainerTest {
             MODULE.findDataTreeChild(DIRECTORY_QNAME, USER_QNAME).orElseThrow());
         final var key = userList.keyStatement();
         assertNotNull(key);
+        final var parentName = JavaTypeName.create("foo", "parent");
         final var keyName = JavaTypeName.create("foo", "key");
         final var listName = JavaTypeName.create("foo", "list");
-        final var archetype = EntryObjectArchetype.builder(listName, userList,
+        final var archetype = EntryObjectArchetype.builder(listName, userList, parentName,
             new KeyArchetype(keyName, key, listName, List.of(ConcreteType.ofClass(String.class)))).build();
 
         assertFalse(BuilderTemplate.isNonPresenceContainer(archetype));
@@ -71,8 +72,8 @@ class PresenceContainerTest {
     void presenceContainerIsNonPresenceContainerTest() {
         final var scpContainer = assertInstanceOf(ContainerEffectiveStatement.class,
             MODULE.findDataTreeChild(DIRECTORY_QNAME, SCP_QNAME).orElseThrow());
-        assertFalse(BuilderTemplate.isNonPresenceContainer(
-            ContainerArchetype.builder(JavaTypeName.create("foo", "foo"), scpContainer).build()));
+        assertFalse(BuilderTemplate.isNonPresenceContainer(ContainerArchetype.builder(
+            JavaTypeName.create("foo", "foo"), scpContainer, JavaTypeName.create("foo", "parent")).build()));
     }
 
     /**
@@ -82,7 +83,7 @@ class PresenceContainerTest {
     void nonPresenceContainerIsNonPresenceContainerTest() {
         final var dataContainer = assertInstanceOf(ContainerEffectiveStatement.class,
             MODULE.findDataTreeChild(DIRECTORY_QNAME, DATA_QNAME).orElseThrow());
-        assertTrue(BuilderTemplate.isNonPresenceContainer(
-            ContainerArchetype.builder(JavaTypeName.create("foo", "foo"), dataContainer).build()));
+        assertTrue(BuilderTemplate.isNonPresenceContainer(ContainerArchetype.builder(
+            JavaTypeName.create("foo", "foo"), dataContainer, JavaTypeName.create("foo", "parent")).build()));
     }
 }

@@ -54,15 +54,11 @@ final class EntryObjectGenerator extends ListGenerator {
     @Override
     EntryObjectArchetype createTypeImpl() {
         final var keyType = keyGenerator.getArchetype();
-        final var builder = EntryObjectArchetype.builder(typeName(), statement(), keyType);
-        addImplementsChildOf(builder);
+        final var builder = EntryObjectArchetype.builder(typeName(), statement(), parentNameForChildOf(), keyType);
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
-
         builder.addImplementsType(BindingTypes.entryObject(builder.typeRef(), keyType));
-
         addGetterMethods(builder);
-
         return builder.build();
     }
 

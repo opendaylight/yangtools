@@ -18,18 +18,19 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface ItemObjectArchetype extends DataContainerArchetype.OfList permits ItemObjectArchetypeImpl {
+public sealed interface ItemObjectArchetype extends ChildOfArchetype.OfList permits ItemObjectArchetypeImpl {
     /**
      * A builder of {@link ItemObjectArchetype}s.
      */
-    final class Builder extends DataContainerArchetypeBuilder<Builder, ListEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final ListEffectiveStatement statement) {
-            super(typeName, statement);
+    final class Builder extends ChildOfArchetypeBuilder<Builder, ListEffectiveStatement> {
+        private Builder(final JavaTypeName typeName, final ListEffectiveStatement statement,
+                final JavaTypeName parentName) {
+            super(typeName, statement, parentName);
         }
 
         @Override
         public ItemObjectArchetype build() {
-            return new ItemObjectArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
+            return new ItemObjectArchetypeImpl(typeName, statement, parentName, implementsTypes(), methodDefinitions(),
                 enclosedTypes());
         }
 
@@ -44,7 +45,8 @@ public sealed interface ItemObjectArchetype extends DataContainerArchetype.OfLis
         }
     }
 
-    static Builder builder(final JavaTypeName typeName, final ListEffectiveStatement statement) {
-        return new Builder(typeName, statement);
+    static Builder builder(final JavaTypeName typeName, final ListEffectiveStatement statement,
+            final JavaTypeName parentName) {
+        return new Builder(typeName, statement, parentName);
     }
 }

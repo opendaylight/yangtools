@@ -13,7 +13,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BaseNotification;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.concepts.Mutable;
-import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
@@ -77,14 +76,6 @@ public sealed interface DataContainerArchetype extends Archetype
          * {@return a new immutable {@link DataContainerArchetype} instance}
          */
         DataContainerArchetype build();
-    }
-
-    /**
-     * An {@link DataContainerArchetype} for a {@code list} statement.
-     */
-    sealed interface OfList extends AugmentableArchetype permits EntryObjectArchetype, ItemObjectArchetype {
-        @Override
-        ListEffectiveStatement statement();
     }
 
     /**
