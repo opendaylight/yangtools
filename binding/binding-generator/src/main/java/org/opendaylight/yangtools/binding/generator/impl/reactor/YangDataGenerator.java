@@ -101,7 +101,7 @@ abstract sealed class YangDataGenerator
     final YangDataArchetype createTypeImpl() {
         final var builder = YangDataArchetype.builder(typeName(), statement());
         addUsesInterfaces(builder);
-        addConcreteInterfaceMethods(builder);
+        defaultImplementedInterace(builder);
         addGetterMethods(builder);
         return builder.build();
     }
