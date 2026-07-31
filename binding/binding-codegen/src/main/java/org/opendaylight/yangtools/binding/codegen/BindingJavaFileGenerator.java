@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
@@ -28,7 +29,6 @@ import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.InstanceNotificationArchetype;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
@@ -161,7 +161,7 @@ final class BindingJavaFileGenerator {
         }
     }
 
-    private <A extends InterfaceArchetype> void generateBoth(
+    private <A extends DataContainerArchetype> void generateBoth(
             final BiFunction<A, DataRootArchetype, Template.Builder> builderConstructor,
             final A archetype, final DataRootArchetype root) {
         final var template = builderConstructor.apply(archetype, root).build();
@@ -171,7 +171,7 @@ final class BindingJavaFileGenerator {
         generateBoth(ifaceTemplate, root);
     }
 
-    private <A extends InterfaceArchetype> void generateBoth(final InterfaceTemplate<?> template,
+    private <A extends DataContainerArchetype> void generateBoth(final InterfaceTemplate<?> template,
             final DataRootArchetype root) {
         final var builderTarget = template.builderTarget();
         if (builderTarget == null) {

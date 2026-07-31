@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresentation;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -329,7 +329,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
+    void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
         if (isAugmenting()) {
             // Do not process augmented nodes: they will be taken care of in their home augmentation
             return;
@@ -349,12 +349,12 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder builder, final Type returnType) {
+    MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder, final Type returnType) {
         return constructGetter(builder, returnType, Naming.getGetterMethodName(localName().getLocalName()));
     }
 
     @NonNullByDefault
-    final MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder builder,
+    final MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder,
             final Type returnType, final String methodName) {
         final var getMethod = builder.addMethod(methodName)
             .setReturnType(returnType)
@@ -367,19 +367,19 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    void constructRequire(final InterfaceArchetype.Builder builder, final Type returnType) {
+    void constructRequire(final DataContainerArchetype.Builder builder, final Type returnType) {
         // No-op in most cases
     }
 
     @NonNullByDefault
-    final void constructRequireImpl(final InterfaceArchetype.Builder builder, final Type returnType) {
+    final void constructRequireImpl(final DataContainerArchetype.Builder builder, final Type returnType) {
         constructGetter(builder, returnType, Naming.getRequireMethodName(localName().getLocalName()))
             .setDefault(true)
             .setMechanics(ValueMechanics.NONNULL);
     }
 
     @NonNullByDefault
-    void addAsGetterMethodOverride(final InterfaceArchetype.Builder builder) {
+    void addAsGetterMethodOverride(final DataContainerArchetype.Builder builder) {
         // No-op for most cases
     }
 

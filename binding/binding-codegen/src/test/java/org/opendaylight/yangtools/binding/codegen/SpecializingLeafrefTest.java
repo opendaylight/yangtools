@@ -25,8 +25,8 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -151,7 +151,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
         leafList1AndLeaf1Absence(GroupingArchetype.class, "BazGrp");
     }
 
-    private static void leafList1AndLeaf1Absence(final Class<? extends InterfaceArchetype> expected,
+    private static void leafList1AndLeaf1Absence(final Class<? extends DataContainerArchetype> expected,
             final String typeName) throws Exception {
         verifyMethodAbsence(expected, typeName, GET_LEAF1_NAME);
         verifyMethodAbsence(expected, typeName, GET_LEAFLIST1_NAME);
@@ -265,19 +265,20 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
         return content;
     }
 
-    private static void verifyMethodAbsence(final Class<? extends InterfaceArchetype> expected, final String typeName,
-            final String getterName) {
+    private static void verifyMethodAbsence(final Class<? extends DataContainerArchetype> expected,
+            final String typeName, final String getterName) {
         verifyReturnType(expected, typeName, getterName, null);
     }
 
-    private static void verifyReturnType(final Class<? extends InterfaceArchetype> expected, final String typeName,
+    private static void verifyReturnType(final Class<? extends DataContainerArchetype> expected, final String typeName,
             final String getterName, final Type returnType) {
         final var generated = typeByName(expected, typeName);
         assertNotNull(generated);
         assertEquals(returnType, returnTypeByMethodName(generated, getterName));
     }
 
-    private static <T extends InterfaceArchetype> @Nullable T typeByName(final Class<T> expected, final String name) {
+    private static <T extends DataContainerArchetype> @Nullable T typeByName(final Class<T> expected,
+            final String name) {
         for (var type : types) {
             if (type.simpleName().equals(name)) {
                 return assertInstanceOf(expected, type);
@@ -286,7 +287,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
         return null;
     }
 
-    private static Type returnTypeByMethodName(final InterfaceArchetype type, final String name) {
+    private static Type returnTypeByMethodName(final DataContainerArchetype type, final String name) {
         for (var m : type.getMethodDefinitions()) {
             if (m.getName().equals(name)) {
                 return m.getReturnType();

@@ -12,17 +12,17 @@ import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
- * The {@link InterfaceArchetype} for {@link DataObject}s  specializations generated for {@code list} statements without
- * a {@code key}.
+ * The {@link DataContainerArchetype} for {@link DataObject}s specializations generated for {@code list} statements
+ * without a {@code key}.
  *
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface ItemObjectArchetype extends InterfaceArchetype.OfList permits ItemObjectArchetypeImpl {
+public sealed interface ItemObjectArchetype extends DataContainerArchetype.OfList permits ItemObjectArchetypeImpl {
     /**
      * A builder of {@link ItemObjectArchetype}s.
      */
-    final class Builder extends InterfaceArchetypeBuilder<Builder, ListEffectiveStatement> {
+    final class Builder extends DataContainerArchetypeBuilder<Builder, ListEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final ListEffectiveStatement statement) {
             super(typeName, statement);
         }

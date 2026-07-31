@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * @since 15.0.0
  */
 public sealed interface Archetype extends Type
-        permits ChoiceInArchetype, FeatureArchetype, IdentityArchetype, InterfaceArchetype, OperationArchetype,
+        permits ChoiceInArchetype, DataContainerArchetype, FeatureArchetype, IdentityArchetype, OperationArchetype,
                 KeyArchetype, OpaqueObjectArchetype, TypeObjectArchetype {
     /**
      * {@return the {@link EffectiveStatement} from which the class was generated}

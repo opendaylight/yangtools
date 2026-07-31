@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -39,10 +39,10 @@ abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEff
     }
 
     @Override
-    abstract InterfaceArchetype createTypeImpl();
+    abstract DataContainerArchetype.OfList createTypeImpl();
 
     @Override
-    final MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder builder, final Type returnType) {
+    final MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder, final Type returnType) {
         final var ret = super.constructGetter(builder, returnType).setMechanics(ValueMechanics.NULLIFY_EMPTY);
 
         builder

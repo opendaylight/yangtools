@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 
 /**
- * The {@link InterfaceArchetype} for {@link RpcOutput} specializations.
+ * The {@link DataContainerArchetype} for {@link RpcOutput} specializations.
  *
  * @since 16.0.0
  */
@@ -21,7 +21,7 @@ public sealed interface RpcOutputArchetype extends AugmentableArchetype permits 
      * A builder of {@link RpcOutputArchetype}s.
      */
     @NonNullByDefault
-    final class Builder extends InterfaceArchetypeBuilder<Builder, OutputEffectiveStatement> {
+    final class Builder extends DataContainerArchetypeBuilder<Builder, OutputEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final OutputEffectiveStatement statement) {
             super(typeName, statement);
         }

@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 /**
- * The {@link InterfaceArchetype} for {@link ChildOf} specializations generated for {@code container} statements.
+ * The {@link DataContainerArchetype} for {@link ChildOf} specializations generated for {@code container} statements.
  *
  * @since 16.0.0
  */
@@ -21,7 +21,7 @@ public sealed interface ContainerArchetype extends AugmentableArchetype permits 
      * A builder of {@link ContainerArchetype}s.
      */
     @NonNullByDefault
-    final class Builder extends InterfaceArchetypeBuilder<Builder, ContainerEffectiveStatement> {
+    final class Builder extends DataContainerArchetypeBuilder<Builder, ContainerEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final ContainerEffectiveStatement statement) {
             super(typeName, statement);
         }

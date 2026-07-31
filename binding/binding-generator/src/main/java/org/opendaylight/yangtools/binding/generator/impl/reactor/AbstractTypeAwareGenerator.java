@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.RoutingContextAnnotation;
@@ -66,7 +66,7 @@ abstract class AbstractTypeAwareGenerator<
     }
 
     @Override
-    final MethodSignature.Builder constructGetter(final InterfaceArchetype.Builder builder, final Type returnType) {
+    final MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder, final Type returnType) {
         final var ret = super.constructGetter(builder, returnType);
         if (contextType != null) {
             ret.addAnnotation(new RoutingContextAnnotation(contextType.getArchetype()));
@@ -75,7 +75,7 @@ abstract class AbstractTypeAwareGenerator<
     }
 
     @Override
-    final void constructRequire(final InterfaceArchetype.Builder builder, final Type returnType) {
+    final void constructRequire(final DataContainerArchetype.Builder builder, final Type returnType) {
         constructRequireImpl(builder, returnType);
     }
 }

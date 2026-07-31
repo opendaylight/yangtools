@@ -23,8 +23,8 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeReference.R
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
@@ -485,7 +485,7 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     @Override
-    final void addAsGetterMethodOverride(final InterfaceArchetype.Builder builder) {
+    final void addAsGetterMethodOverride(final DataContainerArchetype.Builder builder) {
         if (!(refType instanceof ResolvedLeafref)) {
             // We are not dealing with a leafref or have nothing to add
             return;

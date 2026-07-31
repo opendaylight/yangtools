@@ -27,8 +27,8 @@ import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -55,7 +55,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
         }
 
         private Nested(final GeneratedClass enclosingClass, final JavaTypeName name,
-                final InterfaceArchetype targetType) {
+                final DataContainerArchetype targetType) {
             super(name, targetType);
             this.enclosingClass = requireNonNull(enclosingClass);
         }
@@ -125,7 +125,8 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
             super(genType);
         }
 
-        private TopLevel(final JavaTypeName builderName, final String implName, final InterfaceArchetype targetType) {
+        private TopLevel(final JavaTypeName builderName, final String implName,
+                final DataContainerArchetype targetType) {
             super(builderName, implName, targetType);
         }
 
@@ -188,14 +189,15 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     private final JavaTypeName name;
 
     // for BuilderTemplate's TopLevel class
-    private GeneratedClass(final JavaTypeName builderName, final String implName, final InterfaceArchetype targetType) {
+    private GeneratedClass(final JavaTypeName builderName, final String implName,
+            final DataContainerArchetype targetType) {
         name = requireNonNull(builderName);
         nestedClasses = Map.of(implName, new Nested(this, builderName.createEnclosed(implName), targetType));
         conflictingNames = Set.of();
     }
 
     // for BuilderImplTemplate's Nested class
-    private GeneratedClass(final JavaTypeName name, final InterfaceArchetype targetType) {
+    private GeneratedClass(final JavaTypeName name, final DataContainerArchetype targetType) {
         this.name = requireNonNull(name);
         nestedClasses = Map.of();
         final var set = collectAccessibleTypes(targetType);
@@ -221,7 +223,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
 
     private static void collectAccessibleTypes(final HashSet<String> set, final Archetype type) {
         // FIXME: narrow down?
-        if (type instanceof InterfaceArchetype iface) {
+        if (type instanceof DataContainerArchetype iface) {
             for (var impl : iface.getImplements()) {
                 if (impl instanceof Archetype archetype) {
                     appendEnclosedTypes(set, archetype);
@@ -250,7 +252,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     }
 
     static GeneratedClass.TopLevel of(final JavaTypeName builderName, final String implSimpleName,
-            final InterfaceArchetype targetType) {
+            final DataContainerArchetype targetType) {
         return new TopLevel(builderName, implSimpleName, targetType);
     }
 

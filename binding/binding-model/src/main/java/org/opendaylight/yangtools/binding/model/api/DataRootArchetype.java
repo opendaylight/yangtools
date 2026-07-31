@@ -13,19 +13,19 @@ import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
- * The {@link InterfaceArchetype} for {@link DataRoot} specializations.
+ * The {@link DataContainerArchetype} for {@link DataRoot} specializations.
  *
  * @since 15.0.0
  */
 // FIXME: seal to allow only DataRootArchetypeImpl
 @Beta
-public non-sealed interface DataRootArchetype extends InterfaceArchetype {
+public non-sealed interface DataRootArchetype extends DataContainerArchetype {
     /**
      * A builder of {@link DataRootArchetype} instances.
      */
     @Beta
     @NonNullByDefault
-    final class Builder extends InterfaceArchetypeBuilder<Builder, ModuleEffectiveStatement> {
+    final class Builder extends DataContainerArchetypeBuilder<Builder, ModuleEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final ModuleEffectiveStatement statement) {
             super(typeName, statement);
         }
