@@ -16,18 +16,12 @@ import java.util.List;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
-record TypeAnalysis(
-        @NonNull Set<BuilderGeneratedProperty> properties,
-        @Nullable ParameterizedType augmentType) {
+record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
     private static final Comparator<MethodSignature> METHOD_COMPARATOR = Comparator.comparing(MethodSignature::getName);
     private static final int GETTER_PREFIX_LENGTH = Naming.GETTER_PREFIX.length();
 
@@ -43,10 +37,8 @@ record TypeAnalysis(
     static TypeAnalysis of(final DataContainerArchetype type) {
         final var methods = new LinkedHashSet<MethodSignature>();
         methods.addAll(type.getMethodDefinitions());
-        final var augmentType = collectImplementedMethods(type, methods, type.getImplements());
-
-        return new TypeAnalysis(propertiesFromMethods(methods.stream().sorted(METHOD_COMPARATOR).toList()),
-            augmentType);
+        collectImplementedMethods(type, methods, type.getImplements());
+        return new TypeAnalysis(propertiesFromMethods(methods.stream().sorted(METHOD_COMPARATOR).toList()));
     }
 
     /**
@@ -55,50 +47,28 @@ record TypeAnalysis(
      *
      * @param methods set of method signatures
      * @param implementedIfcs list of implemented interfaces
-     * @return {@link ParameterizedType} of the implemented {@link Augmentation}, {@code null} if the type is not an
-     *         augmentation.
      */
-    private static @Nullable ParameterizedType collectImplementedMethods(
+    private static void collectImplementedMethods(
             final @NonNull DataContainerArchetype archetype, final @NonNull Set<MethodSignature> methods,
             final @NonNull List<Type> implementedIfcs) {
-        if (implementedIfcs.isEmpty()) {
-            return null;
-        }
-
-        ParameterizedType augmentType = null;
         for (var implementedIfc : implementedIfcs) {
-            switch (implementedIfc) {
-                case ParameterizedType parameterized -> {
-                    final var augmentableType = BindingTypes.extractAugmentableTarget(parameterized);
-                    if (augmentableType != null) {
-                        augmentType = BindingTypes.augmentation(augmentableType);
-                    }
-                }
-                // FIXME: narrow down?
-                case DataContainerArchetype ifc -> {
-                    for (var implMethod : ifc.getMethodDefinitions()) {
-                        if (JavaFileTemplate.hasOverrideAnnotation(implMethod)) {
+            // FIXME: narrow down?
+            if (implementedIfc instanceof DataContainerArchetype ifc) {
+                for (var implMethod : ifc.getMethodDefinitions()) {
+                    if (JavaFileTemplate.hasOverrideAnnotation(implMethod)) {
+                        methods.add(implMethod);
+                    } else {
+                        final var implMethodName = implMethod.getName();
+                        if (Naming.isGetterMethodName(implMethodName)
+                            && JavaFileTemplate.getterByName(methods, implMethodName) == null) {
                             methods.add(implMethod);
-                        } else {
-                            final var implMethodName = implMethod.getName();
-                            if (Naming.isGetterMethodName(implMethodName)
-                                && JavaFileTemplate.getterByName(methods, implMethodName) == null) {
-                                methods.add(implMethod);
-                            }
                         }
                     }
+                }
 
-                    final var augmentableType = collectImplementedMethods(archetype, methods, ifc.getImplements());
-                    if (augmentableType != null && augmentType == null) {
-                        augmentType = augmentableType;
-                    }
-                }
-                default -> {
-                    // no-op
-                }
+                collectImplementedMethods(archetype, methods, ifc.getImplements());
             }
         }
-        return augmentType;
     }
 
     /**

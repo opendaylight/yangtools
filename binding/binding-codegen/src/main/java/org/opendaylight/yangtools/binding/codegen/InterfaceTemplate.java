@@ -30,6 +30,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.EntryObject;
+import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
@@ -405,7 +406,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
             .at().eol(importedName(OVERRIDE))
             .str("default int javaHC()").jBlock(bb -> {
                 final var analysis = typeAnalysis();
-                final boolean augmentable = analysis.augmentType() != null;
+                final boolean augmentable = archetype instanceof AugmentableArchetype;
                 final var props = analysis.properties();
 
                 switch (props.size()) {
@@ -496,9 +497,8 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     }
 
     private @NonNull BlockBuilder generateBindingEquals() {
-        final var analysis = typeAnalysis();
-        final var augmentable = analysis.augmentType() != null;
-        final var props = analysis.properties();
+        final var augmentable = archetype instanceof AugmentableArchetype;
+        final var props = typeAnalysis().properties();
 
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
@@ -541,9 +541,8 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
             .str("default ").str(importedName(Types.STRING)).str(" javaTS()").jBlock(bb -> {
-                final var analysis = typeAnalysis();
-                final var props = analysis.properties();
-                final var augmentable = analysis.augmentType() != null;
+                final var props = typeAnalysis().properties();
+                final var augmentable = archetype instanceof AugmentableArchetype;
 
                 bb.str("return ").str(importedName(CODEHELPERS));
                 switch (props.size()) {

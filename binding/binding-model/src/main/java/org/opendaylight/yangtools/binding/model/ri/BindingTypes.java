@@ -10,9 +10,7 @@ package org.opendaylight.yangtools.binding.model.ri;
 import static org.opendaylight.yangtools.binding.model.ri.Types.cachedType;
 
 import com.google.common.annotations.VisibleForTesting;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.ChildOf;
@@ -24,19 +22,20 @@ import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
+@NonNullByDefault
 public final class BindingTypes {
 
-    public static final @NonNull ConcreteType DATA_OBJECT = cachedType(DataObject.class);
-    public static final @NonNull ConcreteType JAVA_DATACONTAINER = cachedType(JavaDataContainer.class);
+    public static final ConcreteType DATA_OBJECT = cachedType(DataObject.class);
+    public static final ConcreteType JAVA_DATACONTAINER = cachedType(JavaDataContainer.class);
 
     @VisibleForTesting
-    static final @NonNull ConcreteType AUGMENTABLE = cachedType(Augmentable.class);
+    static final ConcreteType AUGMENTABLE = cachedType(Augmentable.class);
     @VisibleForTesting
-    static final @NonNull ConcreteType AUGMENTATION = cachedType(Augmentation.class);
+    static final ConcreteType AUGMENTATION = cachedType(Augmentation.class);
     @VisibleForTesting
-    static final @NonNull ConcreteType ENTRY_OBJECT = cachedType(EntryObject.class);
+    static final ConcreteType ENTRY_OBJECT = cachedType(EntryObject.class);
 
-    private static final @NonNull ConcreteType CHILD_OF = cachedType(ChildOf.class);
+    private static final ConcreteType CHILD_OF = cachedType(ChildOf.class);
 
     private BindingTypes() {
         //  Hidden on purpose
@@ -49,7 +48,6 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code Augmentable<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    @NonNullByDefault
     public static ParameterizedType augmentable(final Type type) {
         return ParameterizedType.of(AUGMENTABLE, type);
     }
@@ -61,7 +59,6 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code Augmentation<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    @NonNullByDefault
     public static ParameterizedType augmentation(final Type type) {
         return ParameterizedType.of(AUGMENTATION, type);
     }
@@ -73,7 +70,6 @@ public final class BindingTypes {
      * @return A parameterized type corresponding to {@code ChildOf<Type>}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    @NonNullByDefault
     public static ParameterizedType childOf(final Type type) {
         return ParameterizedType.of(CHILD_OF, type);
     }
@@ -84,44 +80,7 @@ public final class BindingTypes {
      * @param keyType the corresponding {@link KeyArchetype}
      * @throws NullPointerException if any argument is {@code null}
      */
-    @NonNullByDefault
     public static ParameterizedType entryObject(final Type type, final KeyArchetype keyType) {
         return ParameterizedType.of(ENTRY_OBJECT, type, keyType);
-    }
-
-    /**
-     * Return the {@link Augmentable} type a parameterized {@link Augmentable} type references.
-     *
-     * @param type Parameterized type
-     * @return Augmentable target, or null if {@code type} does not match the result of {@link #augmentable(Type)} or
-     *         {@link #entryObject(Type, KeyArchetype)}
-     * @throws NullPointerException if {@code type} is {@code null}
-     */
-    public static @Nullable Type extractAugmentableTarget(final @NonNull ParameterizedType type) {
-        final var rawType = type.getRawType();
-        if (AUGMENTABLE.equals(rawType)) {
-            return onlyTypeArgument(type);
-        }
-        if (ENTRY_OBJECT.equals(rawType)) {
-            final var args = type.getActualTypeArguments();
-            if (args.size() == 2) {
-                final var arg = args.getFirst();
-                if (arg != null) {
-                    return arg;
-                }
-            }
-        }
-        return null;
-    }
-
-    private static @Nullable Type onlyTypeArgument(final @NonNull ParameterizedType type) {
-        final var args = type.getActualTypeArguments();
-        if (args.size() == 1) {
-            final var arg = args.getFirst();
-            if (arg != null) {
-                return arg;
-            }
-        }
-        return null;
     }
 }

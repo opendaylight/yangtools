@@ -21,6 +21,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
 import org.opendaylight.yangtools.binding.lib.AbstractDataContainer;
 import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
+import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
@@ -59,7 +60,6 @@ final class BuilderImplTemplate extends BaseTemplate {
         // cache things from builder
         final var targetType = builder.targetType;
         final var keyType = builder.keyType();
-        final var augmentType = builder.augmentType;
         final var properties = builder.properties;
 
         final var implIface = importedName(targetType);
@@ -77,14 +77,11 @@ final class BuilderImplTemplate extends BaseTemplate {
         bb
             .str("private static final class ").str(simpleName).str(" extends ");
         if (keyType != null) {
-            // EntryObject
             bb.gen(importedName(ABSTRACT_ENTRY_OBJECT), implIface, importedName(keyType));
+        } else if (targetType instanceof AugmentableArchetype) {
+            bb.gen(importedName(ABSTRACT_AUGMENTABLE), implIface);
         } else {
-            bb.gen(augmentType == null
-                // Augmentation, YangData
-                ? importedName(ABSTRACT_DATA_CONTAINER)
-                // everything else
-                : importedName(ABSTRACT_AUGMENTABLE), implIface);
+            bb.gen(importedName(ABSTRACT_DATA_CONTAINER), implIface);
         }
         bb.str(" implements ").str(implIface).oB();
 
@@ -99,7 +96,7 @@ final class BuilderImplTemplate extends BaseTemplate {
             .nl()
             .str(simpleName).str("(final ").str(builderName).str(" base)").oB();
 
-        if (augmentType != null) {
+        if (targetType instanceof AugmentableArchetype) {
             bb.str("super(base." + BuilderTemplate.AUGMENTATION_FIELD);
             if (keyType != null) {
                 bb.str(", extractKey(base)");

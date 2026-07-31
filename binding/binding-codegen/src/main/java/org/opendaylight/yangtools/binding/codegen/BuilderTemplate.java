@@ -36,6 +36,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
@@ -46,6 +47,7 @@ import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 
 /**
@@ -72,8 +74,7 @@ final class BuilderTemplate extends BaseTemplate {
             //        - augmentable
             //        - entry object (implies augmentable)
             //        we should have three separate classes instead of @Nullable fields for the latter two cases
-            return new BuilderTemplate(javaType, javaType.getNestedClass(implName), type, analysis.properties(),
-                analysis.augmentType());
+            return new BuilderTemplate(javaType, javaType.getNestedClass(implName), type, analysis.properties());
         }
     }
 
@@ -83,11 +84,6 @@ final class BuilderTemplate extends BaseTemplate {
     static final @NonNull String AUGMENTATION_FIELD = "augmentation";
 
     private static final @NonNull JavaTypeName GROUPING = JavaTypeName.create(Grouping.class);
-
-    /**
-     * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME.
-     */
-    final ParameterizedType augmentType;
 
     /**
      * Set of class attributes (fields) which are derived from the getter methods names.
@@ -103,13 +99,11 @@ final class BuilderTemplate extends BaseTemplate {
 
     @NonNullByDefault
     private BuilderTemplate(final GeneratedClass.TopLevel javaType, final GeneratedClass.Nested implJavaType,
-            final DataContainerArchetype targetType, final Set<BuilderGeneratedProperty> properties,
-            final @Nullable ParameterizedType augmentType) {
+            final DataContainerArchetype targetType, final Set<BuilderGeneratedProperty> properties) {
         super(javaType);
         this.implJavaType = requireNonNull(implJavaType);
         this.targetType = requireNonNull(targetType);
         this.properties = requireNonNull(properties);
-        this.augmentType = augmentType;
     }
 
     private @NonNull String simpleName() {
@@ -131,8 +125,10 @@ final class BuilderTemplate extends BaseTemplate {
 //            .nl()
 //            .blk(constantsDeclarations())
             .nl();
-        if (augmentType != null) {
-            final var augmentTypeRef = importedName(augmentType);
+
+        final var isAugmentable = targetType instanceof AugmentableArchetype;
+        if (isAugmentable) {
+            final var augmentTypeRef = importedName(BindingTypes.augmentation(targetType));
             final var mapTypeRef = importedName(JU_MAP);
 
             bb.str(mapTypeRef).str("<").str(importedName(CLASS)).str("<? extends ").str(augmentTypeRef).str(">, ")
@@ -164,7 +160,7 @@ final class BuilderTemplate extends BaseTemplate {
             .blk(generateEmptyInstance())
             .nl()
             .blk(generateGetters(false));
-        if (augmentType != null) {
+        if (isAugmentable) {
             bb.nl().blk(generateAugmentation());
         }
 
@@ -372,7 +368,7 @@ final class BuilderTemplate extends BaseTemplate {
     private BlockBuilder generateCopyConstructor(final Type fromType) {
         return newBlockBuilder()
             .str(simpleName()).str("(final ").str(importedName(fromType)).str(" base)").jBlock(bb -> {
-                if (augmentType != null) {
+                if (targetType instanceof AugmentableArchetype) {
                     bb
                         .eol("final var aug = base.augmentations();")
                         .str("if (!aug.isEmpty())").oB()
@@ -814,8 +810,8 @@ final class BuilderTemplate extends BaseTemplate {
             bb.blk(generateSetter(property));
         }
         bb.newLine();
-        if (augmentType != null) {
-            final var augmentTypeRef = importedName(augmentType);
+        if (targetType instanceof AugmentableArchetype) {
+            final var augmentTypeRef = importedName(BindingTypes.augmentation(targetType));
             final var hashMapRef = importedName(JU_HASHMAP);
             bb
                 .txt("""
@@ -923,8 +919,8 @@ final class BuilderTemplate extends BaseTemplate {
             .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentType} is {@code null}")
             .eol(" */")
             .at().str(importedName(SUPPRESS_WARNINGS)).eol("({ \"unchecked\", \"checkstyle:methodTypeParameterName\"})")
-            .str("public <E$$ extends ").str(importedName(augmentType)).str("> E$$ augmentation(")
-                .gen(importedName(CLASS), "E$$").str(" augmentationType)").oB()
+            .str("public <E$$ extends ").str(importedName(BindingTypes.augmentation(targetType)))
+                .str("> E$$ augmentation(").gen(importedName(CLASS), "E$$").str(" augmentationType)").oB()
                 .str("return (E$$) " + AUGMENTATION_FIELD + ".get(").str(importedName(JU_OBJECTS))
                     .eol(".requireNonNull(augmentationType));")
             .cB();
