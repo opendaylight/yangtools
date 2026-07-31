@@ -9,10 +9,16 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.Iterators;
+import java.util.Iterator;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EntryObject;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
  * Template for {@link EntryObject} specializations.
@@ -31,8 +37,20 @@ final class EntryObjectTemplate extends ChildOfTemplate<EntryObjectArchetype> {
         }
     }
 
+    private static final ConcreteType ENTRY_OBJECT = ConcreteType.ofClass(EntryObject.class);
+
     private EntryObjectTemplate(final EntryObjectArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
+    }
+
+    @Override
+    @NonNull EntryObjectArchetype builderTarget() {
+        return archetype;
+    }
+
+    @Override
+    Iterator<? extends Type> extendsAfterChildOf() {
+        return Iterators.singletonIterator(ParameterizedType.of(ENTRY_OBJECT, archetype, archetype.key()));
     }
 
     @Override
