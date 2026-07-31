@@ -14,7 +14,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.util.concurrent.ListenableFuture;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -48,7 +47,6 @@ public final class Types {
     public static final @NonNull ConcreteType OBJECT = cachedType(Object.class);
 
     private static final @NonNull ConcreteType LIST_TYPE = cachedType(List.class);
-    private static final @NonNull ConcreteType LISTENABLE_FUTURE = cachedType(ListenableFuture.class);
     private static final @NonNull ConcreteType MAP_TYPE = cachedType(Map.class);
     private static final @NonNull ConcreteType SET_TYPE = cachedType(Set.class);
     private static final @NonNull ConcreteType IMMUTABLE_SET_TYPE = cachedType(ImmutableSet.class);
@@ -188,17 +186,5 @@ public final class Types {
 
     public static boolean isListType(final ParameterizedType type) {
         return LIST_TYPE.equals(type.getRawType());
-    }
-
-    /**
-     * Returns an instance of {@link ParameterizedType} describing the typed {@link ListenableFuture}&lt;V&gt;
-     * with concrete type of value.
-     *
-     * @param valueType Value Type
-     * @return Description of type instance of ListenableFuture
-     */
-    @NonNullByDefault
-    public static ParameterizedType listenableFutureTypeFor(final Type valueType) {
-        return ParameterizedType.of(LISTENABLE_FUTURE, valueType);
     }
 }
