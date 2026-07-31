@@ -30,11 +30,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 abstract sealed class DataContainerArchetypeBuilder<
         B extends DataContainerArchetypeBuilder<B, S>,
         S extends EffectiveStatement<?, ?>> implements DataContainerArchetype.Builder
-        permits AugmentationArchetype.Builder, CaseObjectArchetype.Builder, ContainerArchetype.Builder,
-                DataRootArchetype.Builder, EntryObjectArchetype.Builder, GroupingArchetype.Builder,
-                RpcInputArchetype.Builder, InstanceNotificationArchetype.Builder, ItemObjectArchetype.Builder,
-                KeyedListNotificationArchetype.Builder, NotificationArchetype.Builder,
-                NotificationBodyArchetype.Builder, RpcOutputArchetype.Builder, YangDataArchetype.Builder {
+        permits AugmentationArchetype.Builder, CaseObjectArchetype.Builder, ChildOfArchetypeBuilder,
+                DataRootArchetype.Builder, GroupingArchetype.Builder, RpcInputArchetype.Builder,
+                InstanceNotificationArchetype.Builder, KeyedListNotificationArchetype.Builder,
+                NotificationArchetype.Builder, NotificationBodyArchetype.Builder, RpcOutputArchetype.Builder,
+                YangDataArchetype.Builder {
     final @NonNull JavaTypeName typeName;
     final @NonNull S statement;
 

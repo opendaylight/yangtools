@@ -28,7 +28,8 @@ class InterfaceArchetypeBuilderTest {
 
     @Test
     void addMethodTest() {
-        var generatedTypeBuilder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
+        var generatedTypeBuilder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement,
+            JavaTypeName.create("my.package", "MyParent"));
 
         var methodBuilder = generatedTypeBuilder.addMethod("myMethodName").setReturnType(Types.BOOLEAN);
         assertNotNull(methodBuilder);
@@ -49,13 +50,15 @@ class InterfaceArchetypeBuilderTest {
 
     @Test
     void addImplementsTypeIllegalArgumentTest() {
-        final var builder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement,
+            JavaTypeName.create("my.package", "MyParent"));
         assertThrows(NullPointerException.class, () -> builder.addImplementsType((Type) null));
     }
 
     @Test
     void addImplementsTypeTest() {
-        var generatedTypeBuilder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
+        var generatedTypeBuilder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement,
+            JavaTypeName.create("my.package", "MyParent"));
 
         assertEquals(generatedTypeBuilder,
                 generatedTypeBuilder.addImplementsType(ConcreteType.ofClass(Serializable.class)));
@@ -74,7 +77,8 @@ class InterfaceArchetypeBuilderTest {
 
     @Test
     void addEnclosingTransferObjectIllegalArgumentTest2() {
-        final var builder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
+        final var builder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement,
+            JavaTypeName.create("my.package", "MyParent"));
         assertThrows(NullPointerException.class, () -> builder.addEnclosedType(null));
     }
 }

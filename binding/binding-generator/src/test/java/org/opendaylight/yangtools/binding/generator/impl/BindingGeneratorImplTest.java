@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.NotificationArchetype;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -64,45 +63,10 @@ class BindingGeneratorImplTest {
         assertNotNull(myList2);
         assertNotNull(myContainer2);
 
-        Type childOfParamType = null;
-        for (var type : myContainer.getImplements()) {
-            if (type.simpleName().equals("ChildOf")) {
-                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments().getFirst();
-                break;
-            }
-        }
-        assertNotNull(childOfParamType);
-        assertEquals("ChoiceTestData", childOfParamType.simpleName());
-
-        childOfParamType = null;
-        for (var type : myList.getImplements()) {
-            if (type.simpleName().equals("ChildOf")) {
-                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments().getFirst();
-                break;
-            }
-        }
-        assertNotNull(childOfParamType);
-        assertEquals("ChoiceTestData", childOfParamType.simpleName());
-
-        childOfParamType = null;
-        for (var type : myContainer2.getImplements()) {
-            if (type.simpleName().equals("ChildOf")) {
-                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments().getFirst();
-                break;
-            }
-        }
-        assertNotNull(childOfParamType);
-        assertEquals("Myrootcontainer", childOfParamType.simpleName());
-
-        childOfParamType = null;
-        for (var type : myList2.getImplements()) {
-            if (type.simpleName().equals("ChildOf")) {
-                childOfParamType = assertInstanceOf(ParameterizedType.class, type).getActualTypeArguments().getFirst();
-                break;
-            }
-        }
-        assertNotNull(childOfParamType);
-        assertEquals("Myrootcontainer", childOfParamType.simpleName());
+        assertEquals("ChoiceTestData", myContainer.parentName().simpleName());
+        assertEquals("ChoiceTestData", myList.parentName().simpleName());
+        assertEquals("Myrootcontainer", myContainer2.parentName().simpleName());
+        assertEquals("Myrootcontainer", myList2.parentName().simpleName());
     }
 
     @Test

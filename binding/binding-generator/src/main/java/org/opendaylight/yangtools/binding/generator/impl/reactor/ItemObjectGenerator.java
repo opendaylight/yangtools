@@ -35,15 +35,11 @@ final class ItemObjectGenerator extends ListGenerator {
 
     @Override
     ItemObjectArchetype createTypeImpl() {
-        final var builder = ItemObjectArchetype.builder(typeName(), statement());
-        addImplementsChildOf(builder);
+        final var builder = ItemObjectArchetype.builder(typeName(), statement(), parentNameForChildOf());
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
-
         addAugmentable(builder);
-
         addGetterMethods(builder);
-
         return builder.build();
     }
 

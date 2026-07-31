@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
  * Template for {@link EntryObject} specializations.
  */
 @NonNullByDefault
-final class EntryObjectTemplate extends AugmentableTemplate<EntryObjectArchetype> {
+final class EntryObjectTemplate extends ChildOfTemplate<EntryObjectArchetype> {
     record Builder(EntryObjectArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
