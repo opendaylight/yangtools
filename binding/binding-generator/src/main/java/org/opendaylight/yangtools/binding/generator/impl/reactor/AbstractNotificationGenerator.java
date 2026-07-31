@@ -12,7 +12,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
@@ -48,16 +48,16 @@ abstract sealed class AbstractNotificationGenerator
     }
 
     @Override
-    final InterfaceArchetype.OfNotification createTypeImpl() {
+    final DataContainerArchetype.OfNotification createTypeImpl() {
         return createTypeImpl(typeName(), statement());
     }
 
     @NonNullByDefault
-    abstract InterfaceArchetype.OfNotification createTypeImpl(JavaTypeName typeName,
+    abstract DataContainerArchetype.OfNotification createTypeImpl(JavaTypeName typeName,
         NotificationEffectiveStatement statement);
 
     @Override
-    final void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
+    final void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
         // Notifications are a distinct concept
     }
 
@@ -68,7 +68,8 @@ abstract sealed class AbstractNotificationGenerator
             @Override
             NotificationRuntimeType build(final Archetype type, final NotificationEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultNotificationRuntimeType((InterfaceArchetype) type, statement, children, augments);
+                return new DefaultNotificationRuntimeType((DataContainerArchetype.OfNotification) type, statement,
+                    children, augments);
             }
         };
     }

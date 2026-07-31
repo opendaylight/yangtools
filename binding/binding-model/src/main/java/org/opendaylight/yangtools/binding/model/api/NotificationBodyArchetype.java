@@ -12,16 +12,16 @@ import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
- * The {@link InterfaceArchetype} for {@link NotificationBody} specializations.
+ * The {@link DataContainerArchetype} for {@link NotificationBody} specializations.
  *
  * @since 16.0.0
  */
-public sealed interface NotificationBodyArchetype extends InterfaceArchetype permits NotificationBodyArchetypeImpl {
+public sealed interface NotificationBodyArchetype extends DataContainerArchetype permits NotificationBodyArchetypeImpl {
     /**
      * A builder of {@link NotificationBodyArchetype}s.
      */
     @NonNullByDefault
-    final class Builder extends InterfaceArchetypeBuilder<Builder, NotificationEffectiveStatement> {
+    final class Builder extends DataContainerArchetypeBuilder<Builder, NotificationEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement) {
             super(typeName, statement);
         }

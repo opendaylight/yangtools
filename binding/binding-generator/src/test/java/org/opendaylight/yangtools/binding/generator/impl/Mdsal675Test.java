@@ -22,9 +22,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype.Anydata;
@@ -228,14 +228,14 @@ class Mdsal675Test {
         }
     }
 
-    private static void assertHasMethod(final InterfaceArchetype genType, final String methodName,
+    private static void assertHasMethod(final DataContainerArchetype genType, final String methodName,
             final Type returnType) {
         assertThat(genType.getMethodDefinitions())
             .anyMatch(method -> methodName.equals(method.getName()) && returnType.equals(method.getReturnType()));
     }
 
     @NonNullByDefault
-    private static void assertImplements(final InterfaceArchetype genType, final Type implementedType) {
+    private static void assertImplements(final DataContainerArchetype genType, final Type implementedType) {
         assertThat(genType.getImplements()).contains(implementedType);
     }
 }

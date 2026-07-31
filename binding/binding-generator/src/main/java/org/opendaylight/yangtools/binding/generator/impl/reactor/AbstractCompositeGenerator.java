@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
@@ -107,6 +107,7 @@ import org.slf4j.LoggerFactory;
  * with linking original instances in the tree iteration order. The part dealing with augment attachment lives mostly
  * in {@link AugmentRequirement}.
  */
+// FIXME: rename to DataContainerGenerator
 public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?, ?>, R extends CompositeRuntimeType>
         extends AbstractExplicitGenerator<S, R> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCompositeGenerator.class);
@@ -458,19 +459,19 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
      * @param builder Target builder
      */
     @NonNullByDefault
-    final void addUsesInterfaces(final InterfaceArchetype.Builder builder) {
+    final void addUsesInterfaces(final DataContainerArchetype.Builder builder) {
         for (var grp : groupings) {
             builder.addImplementsType(grp.getGeneratedType());
         }
     }
 
     @NonNullByDefault
-    static final void addAugmentable(final InterfaceArchetype.Builder builder) {
+    static final void addAugmentable(final DataContainerArchetype.Builder builder) {
         builder.addImplementsType(BindingTypes.augmentable(builder.typeRef()));
     }
 
     @NonNullByDefault
-    final void addGetterMethods(final InterfaceArchetype.Builder builder) {
+    final void addGetterMethods(final DataContainerArchetype.Builder builder) {
         for (var child : this) {
             // Only process explicit generators here
             if (child instanceof AbstractExplicitGenerator<?, ?> explicit) {

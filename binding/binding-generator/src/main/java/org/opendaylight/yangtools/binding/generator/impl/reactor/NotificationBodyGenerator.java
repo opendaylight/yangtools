@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationBodyRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.WildcardType;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -54,7 +54,7 @@ final class NotificationBodyGenerator
     }
 
     @Override
-    void addAsGetterMethod(final InterfaceArchetype.Builder builder) {
+    void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
         // Notifications are a distinct concept
     }
 

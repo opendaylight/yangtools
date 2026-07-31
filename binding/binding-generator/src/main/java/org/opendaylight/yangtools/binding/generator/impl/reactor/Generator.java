@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
@@ -224,7 +224,7 @@ public abstract class Generator implements Iterable<Generator> {
         return helper;
     }
 
-    final void addImplementsChildOf(final InterfaceArchetype.Builder builder) {
+    final void addImplementsChildOf(final DataContainerArchetype.Builder builder) {
         var ancestor = getParent();
         while (true) {
             // choice/case hierarchy does not factor into 'ChildOf' hierarchy, hence we need to skip them
@@ -253,7 +253,7 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder Target builder
      */
     @NonNullByDefault
-    static final void addConcreteInterfaceMethods(final InterfaceArchetype.Builder builder) {
+    static final void addConcreteInterfaceMethods(final DataContainerArchetype.Builder builder) {
         defaultImplementedInterace(builder);
         builder.addImplementsType(ParameterizedType.of(BindingTypes.JAVA_DATACONTAINER, builder.typeRef()));
     }
@@ -264,14 +264,14 @@ public abstract class Generator implements Iterable<Generator> {
      * @param builder Target builder
      */
     @NonNullByDefault
-    static final void defaultImplementedInterace(final InterfaceArchetype.Builder builder) {
+    static final void defaultImplementedInterace(final DataContainerArchetype.Builder builder) {
         defineImplementedInterfaceMethod(builder, builder.typeRef()).setDefault(true);
     }
 
     @NonNullByDefault
-    static final MethodSignature.Builder defineImplementedInterfaceMethod(final InterfaceArchetype.Builder typeBuilder,
+    static final MethodSignature.Builder defineImplementedInterfaceMethod(final DataContainerArchetype.Builder builder,
             final Type classType) {
-        return typeBuilder
+        return builder
             .addMethod(Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME)
             .setReturnType(classType(classType))
             .addAnnotation(OverrideAnnotation.INSTANCE);

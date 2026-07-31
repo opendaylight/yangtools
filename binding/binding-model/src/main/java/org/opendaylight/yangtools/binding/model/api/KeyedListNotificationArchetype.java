@@ -13,17 +13,17 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
- * The {@link InterfaceArchetype} for {@link KeyedListNotification} specializations.
+ * The {@link DataContainerArchetype} for {@link KeyedListNotification} specializations.
  *
  * @since 16.0.0
  */
-public sealed interface KeyedListNotificationArchetype extends InterfaceArchetype.OfNotification
+public sealed interface KeyedListNotificationArchetype extends DataContainerArchetype.OfNotification
         permits KeyedListNotificationArchetypeImpl {
     /**
      * A builder of {@link KeyedListNotificationArchetype}s.
      */
     @NonNullByDefault
-    final class Builder extends InterfaceArchetypeBuilder<Builder, NotificationEffectiveStatement> {
+    final class Builder extends DataContainerArchetypeBuilder<Builder, NotificationEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
                 final JavaTypeName parentName, final KeyArchetype key) {
             super(typeName, statement);

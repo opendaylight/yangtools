@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.binding.model.api;
 import org.opendaylight.yangtools.binding.Augmentable;
 
 /**
- * An {@link InterfaceArchetype} for an {@link Augmentable} interface.
+ * An {@link DataContainerArchetype} for an {@link Augmentable} interface.
  */
-public sealed interface AugmentableArchetype extends InterfaceArchetype
-    permits CaseObjectArchetype, ContainerArchetype, RpcInputArchetype, InterfaceArchetype.OfList,
-            InterfaceArchetype.OfNotification, RpcOutputArchetype {
+public sealed interface AugmentableArchetype extends DataContainerArchetype
+    permits CaseObjectArchetype, ContainerArchetype, RpcInputArchetype, DataContainerArchetype.OfList,
+            DataContainerArchetype.OfNotification, RpcOutputArchetype {
     // nothing else
 }

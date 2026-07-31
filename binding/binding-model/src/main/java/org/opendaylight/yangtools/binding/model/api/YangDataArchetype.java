@@ -12,16 +12,16 @@ import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 
 /**
- * The {@link InterfaceArchetype} for {@link YangData} specializations.
+ * The {@link DataContainerArchetype} for {@link YangData} specializations.
  *
  * @since 16.0.0
  */
-public sealed interface YangDataArchetype extends InterfaceArchetype permits YangDataArchetypeImpl {
+public sealed interface YangDataArchetype extends DataContainerArchetype permits YangDataArchetypeImpl {
     /**
      * A builder of {@link YangDataArchetype}s.
      */
     @NonNullByDefault
-    final class Builder extends InterfaceArchetypeBuilder<Builder, YangDataEffectiveStatement> {
+    final class Builder extends DataContainerArchetypeBuilder<Builder, YangDataEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final YangDataEffectiveStatement statement) {
             super(typeName, statement);
         }

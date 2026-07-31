@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -40,7 +40,7 @@ record TypeAnalysis(
      * to the type, expressed as properties.
      */
     @NonNullByDefault
-    static TypeAnalysis of(final InterfaceArchetype type) {
+    static TypeAnalysis of(final DataContainerArchetype type) {
         final var methods = new LinkedHashSet<MethodSignature>();
         methods.addAll(type.getMethodDefinitions());
         final var augmentType = collectImplementedMethods(type, methods, type.getImplements());
@@ -58,8 +58,9 @@ record TypeAnalysis(
      * @return {@link ParameterizedType} of the implemented {@link Augmentation}, {@code null} if the type is not an
      *         augmentation.
      */
-    private static @Nullable ParameterizedType collectImplementedMethods(final @NonNull InterfaceArchetype archetype,
-            final @NonNull Set<MethodSignature> methods, final @NonNull List<Type> implementedIfcs) {
+    private static @Nullable ParameterizedType collectImplementedMethods(
+            final @NonNull DataContainerArchetype archetype, final @NonNull Set<MethodSignature> methods,
+            final @NonNull List<Type> implementedIfcs) {
         if (implementedIfcs.isEmpty()) {
             return null;
         }
@@ -74,7 +75,7 @@ record TypeAnalysis(
                     }
                 }
                 // FIXME: narrow down?
-                case InterfaceArchetype ifc -> {
+                case DataContainerArchetype ifc -> {
                     for (var implMethod : ifc.getMethodDefinitions()) {
                         if (JavaFileTemplate.hasOverrideAnnotation(implMethod)) {
                             methods.add(implMethod);

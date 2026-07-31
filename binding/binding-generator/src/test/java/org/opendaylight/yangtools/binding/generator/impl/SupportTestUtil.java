@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -22,7 +22,7 @@ final class SupportTestUtil {
         // Hidden on purpose
     }
 
-    static void containsMethods(final InterfaceArchetype genType, final NameTypePattern... searchedSignsWhat) {
+    static void containsMethods(final DataContainerArchetype genType, final NameTypePattern... searchedSignsWhat) {
         containsMethods(genType.getMethodDefinitions(), searchedSignsWhat);
     }
 
@@ -71,7 +71,7 @@ final class SupportTestUtil {
         return sb.toString();
     }
 
-    static void containsInterface(final String interfaceNameSearched, final InterfaceArchetype genType) {
+    static void containsInterface(final String interfaceNameSearched, final DataContainerArchetype genType) {
         for (var caseCImplement : genType.getImplements()) {
             if (resolveFullNameOfReturnType(caseCImplement).equals(interfaceNameSearched)) {
                 return;

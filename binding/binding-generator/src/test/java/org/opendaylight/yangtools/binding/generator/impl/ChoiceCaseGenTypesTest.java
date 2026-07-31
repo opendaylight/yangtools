@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class ChoiceCaseGenTypesTest {
@@ -174,12 +174,12 @@ class ChoiceCaseGenTypesTest {
         return checkGeneratedType(CaseObjectArchetype.class, types, simpleName, pkgName);
     }
 
-    private static <A extends InterfaceArchetype> A checkGeneratedType(final Class<A> clazz,
+    private static <A extends DataContainerArchetype> A checkGeneratedType(final Class<A> clazz,
             final List<Archetype> types, final String simpleName, final String pkgName) {
         return checkGeneratedType(clazz, types, simpleName, pkgName, 1);
     }
 
-    private static <A extends InterfaceArchetype> A checkGeneratedType(final Class<A> clazz,
+    private static <A extends DataContainerArchetype> A checkGeneratedType(final Class<A> clazz,
             final List<Archetype> types, final String simpleName, final String pkgName, final int occurences) {
         @Nullable A found = null;
         int count = 0;

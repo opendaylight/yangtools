@@ -26,11 +26,11 @@ import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
@@ -307,7 +307,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
 
     // FIXME: return a Block
     @NonNullByDefault
-    final BlockBuilder checkFieldValue(final InterfaceArchetype type, final GeneratedProperty property,
+    final BlockBuilder checkFieldValue(final DataContainerArchetype type, final GeneratedProperty property,
             final Restrictions restrictions, final Type actualType, final String value) {
         verify(!restrictions.isEmpty());
 

@@ -12,16 +12,16 @@ import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 
 /**
- * The {@link InterfaceArchetype} for {@link Grouping} specializations.
+ * The {@link DataContainerArchetype} for {@link Grouping} specializations.
  *
  * @since 16.0.0
  */
-public sealed interface GroupingArchetype extends InterfaceArchetype permits GroupingArchetypeImpl {
+public sealed interface GroupingArchetype extends DataContainerArchetype permits GroupingArchetypeImpl {
     /**
      * A builder of {@link GroupingArchetype}s.
      */
     @NonNullByDefault
-    final class Builder extends InterfaceArchetypeBuilder<Builder, GroupingEffectiveStatement> {
+    final class Builder extends DataContainerArchetypeBuilder<Builder, GroupingEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final GroupingEffectiveStatement statement) {
             super(typeName, statement);
         }

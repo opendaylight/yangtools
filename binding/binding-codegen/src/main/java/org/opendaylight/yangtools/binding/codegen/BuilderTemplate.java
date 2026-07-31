@@ -37,10 +37,10 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -53,7 +53,7 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
  */
 final class BuilderTemplate extends BaseTemplate {
     @NonNullByDefault
-    record Builder(InterfaceArchetype type) implements Template.Builder {
+    record Builder(DataContainerArchetype type) implements Template.Builder {
         Builder {
             requireNonNull(type);
         }
@@ -97,13 +97,13 @@ final class BuilderTemplate extends BaseTemplate {
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
     //        implementations of its methods
-    final @NonNull InterfaceArchetype targetType;
+    final @NonNull DataContainerArchetype targetType;
 
     private final GeneratedClass.@NonNull Nested implJavaType;
 
     @NonNullByDefault
     private BuilderTemplate(final GeneratedClass.TopLevel javaType, final GeneratedClass.Nested implJavaType,
-            final InterfaceArchetype targetType, final Set<BuilderGeneratedProperty> properties,
+            final DataContainerArchetype targetType, final Set<BuilderGeneratedProperty> properties,
             final @Nullable ParameterizedType augmentType) {
         super(javaType);
         this.implJavaType = requireNonNull(implJavaType);
@@ -231,7 +231,7 @@ final class BuilderTemplate extends BaseTemplate {
         boolean first = true;
         for (var impl : targetType.getImplements()) {
             // FIXME: narrow down?
-            if (impl instanceof InterfaceArchetype genType) {
+            if (impl instanceof DataContainerArchetype genType) {
                 if (first) {
                     first = false;
                 } else {
@@ -246,7 +246,7 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Generate constructor with argument of given type.
      */
-    private @NonNull BlockBuilder generateConstructorFromIfc(final @NonNull InterfaceArchetype genType) {
+    private @NonNull BlockBuilder generateConstructorFromIfc(final @NonNull DataContainerArchetype genType) {
         final var bb = newBlockBuilder();
         if (hasNonDefaultMethods(genType)) {
             final var typeName = importedName(genType);
@@ -263,7 +263,7 @@ final class BuilderTemplate extends BaseTemplate {
         }
         for (var implTypeImplement : genType.getImplements()) {
             // FIXME: narrow down?
-            if (implTypeImplement instanceof InterfaceArchetype implType) {
+            if (implTypeImplement instanceof DataContainerArchetype implType) {
                 bb.blk(generateConstructorFromIfc(implType));
             }
         }
@@ -272,7 +272,7 @@ final class BuilderTemplate extends BaseTemplate {
 
     private @Nullable BlockBuilder printConstructorPropertySetter(final Type implementedIfc) {
         // FIXME: narrow down?
-        if (!(implementedIfc instanceof InterfaceArchetype ifc)) {
+        if (!(implementedIfc instanceof DataContainerArchetype ifc)) {
             return null;
         }
 
@@ -292,7 +292,7 @@ final class BuilderTemplate extends BaseTemplate {
     private @Nullable BlockBuilder printConstructorPropertySetter(final Type implementedIfc,
             final Set<MethodSignature> alreadySetProperties) {
         // FIXME: narrow down?
-        if (!(implementedIfc instanceof InterfaceArchetype ifc)) {
+        if (!(implementedIfc instanceof DataContainerArchetype ifc)) {
             return null;
         }
 
@@ -310,7 +310,7 @@ final class BuilderTemplate extends BaseTemplate {
         return bb;
     }
 
-    private static Set<MethodSignature> getSpecifiedGetters(final InterfaceArchetype type) {
+    private static Set<MethodSignature> getSpecifiedGetters(final DataContainerArchetype type) {
         return type.getMethodDefinitions().stream()
             .filter(JavaFileTemplate::hasOverrideAnnotation)
             .collect(ImmutableSet.toImmutableSet());
@@ -401,7 +401,7 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     @NonNullByDefault
-    private BlockBuilder generateMethodFieldsFromComment(final InterfaceArchetype type) {
+    private BlockBuilder generateMethodFieldsFromComment(final DataContainerArchetype type) {
         // FIXME: create a specialized JavadocBuilder to help with this
         final var bb = newBlockBuilder().txt("""
                     /**
@@ -426,13 +426,13 @@ final class BuilderTemplate extends BaseTemplate {
      * Method is used to find out if given type implements any interface from uses.
      */
     @NonNullByDefault
-    private boolean hasImplementsFromUses(final InterfaceArchetype type) {
+    private boolean hasImplementsFromUses(final DataContainerArchetype type) {
         // FIXME: narrow down?
         return getAllIfcs(type).stream().anyMatch(BuilderTemplate::hasNonDefaultMethods);
     }
 
-    private @Nullable BlockBuilder generateIfCheck(final @NonNull InterfaceArchetype archetype,
-            final List<InterfaceArchetype> done) {
+    private @Nullable BlockBuilder generateIfCheck(final @NonNull DataContainerArchetype archetype,
+            final List<DataContainerArchetype> done) {
         return !hasNonDefaultMethods(archetype) ? null : newBlockBuilder()
             .str("if (arg instanceof ").str(importedName(archetype)).str(" castArg)").oB()
                 .blk(printPropertySetter(archetype))
@@ -442,7 +442,7 @@ final class BuilderTemplate extends BaseTemplate {
 
     private @Nullable BlockBuilder printPropertySetter(final Type implementedIfc) {
         // FIXME: narrow down?
-        if (!(implementedIfc instanceof InterfaceArchetype ifc)) {
+        if (!(implementedIfc instanceof DataContainerArchetype ifc)) {
             return null;
         }
 
@@ -497,14 +497,15 @@ final class BuilderTemplate extends BaseTemplate {
         return getter;
     }
 
-    private static @Nullable MethodSignature getterByName(final InterfaceArchetype implType, final String getterName) {
+    private static @Nullable MethodSignature getterByName(final DataContainerArchetype implType,
+            final String getterName) {
         final var getter = getterByName(nonDefaultMethods(implType), getterName);
         if (getter != null) {
             return getter;
         }
         for (var ifc : implType.getImplements()) {
             // FIXME: narrow down?
-            if (ifc instanceof InterfaceArchetype genInterface) {
+            if (ifc instanceof DataContainerArchetype genInterface) {
                 final var getterImpl = getterByName(genInterface, getterName);
                 if (getterImpl != null) {
                     return getterImpl;
@@ -526,11 +527,11 @@ final class BuilderTemplate extends BaseTemplate {
         return !(type2 instanceof ParameterizedType);
     }
 
-    private static List<InterfaceArchetype> getBaseIfcs(final InterfaceArchetype type) {
-        final var baseIfcs = new ArrayList<InterfaceArchetype>();
+    private static List<DataContainerArchetype> getBaseIfcs(final DataContainerArchetype type) {
+        final var baseIfcs = new ArrayList<DataContainerArchetype>();
         for (var ifc : type.getImplements()) {
             // FIXME: narrow down?
-            if (ifc instanceof InterfaceArchetype genType && hasNonDefaultMethods(genType)) {
+            if (ifc instanceof DataContainerArchetype genType && hasNonDefaultMethods(genType)) {
                 baseIfcs.add(genType);
             }
         }
@@ -538,16 +539,16 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     @NonNullByDefault
-    private Set<InterfaceArchetype> getAllIfcs(final Type type) {
+    private Set<DataContainerArchetype> getAllIfcs(final Type type) {
         // FIXME: narrow down?
-        if (!(type instanceof InterfaceArchetype ifc)) {
+        if (!(type instanceof DataContainerArchetype ifc)) {
             return Set.of();
         }
 
-        final var baseIfcs = new HashSet<InterfaceArchetype>();
+        final var baseIfcs = new HashSet<DataContainerArchetype>();
         for (var impl : ifc.getImplements()) {
             // FIXME: narrow down?
-            if (impl instanceof InterfaceArchetype genType && hasNonDefaultMethods(genType)) {
+            if (impl instanceof DataContainerArchetype genType && hasNonDefaultMethods(genType)) {
                 baseIfcs.add(genType);
             }
             baseIfcs.addAll(getAllIfcs(impl));
@@ -963,12 +964,12 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     @NonNullByDefault
-    static boolean hasNonDefaultMethods(final InterfaceArchetype type) {
+    static boolean hasNonDefaultMethods(final DataContainerArchetype type) {
         return type.getMethodDefinitions().stream().anyMatch(def -> !def.isDefault());
     }
 
     @NonNullByDefault
-    static Collection<MethodSignature> nonDefaultMethods(final InterfaceArchetype type) {
+    static Collection<MethodSignature> nonDefaultMethods(final DataContainerArchetype type) {
         return Collections2.filter(type.getMethodDefinitions(), def -> !def.isDefault());
     }
 
@@ -980,7 +981,7 @@ final class BuilderTemplate extends BaseTemplate {
      *     {@code false} otherwise.
      */
     @NonNullByDefault
-    static boolean isNonPresenceContainer(final InterfaceArchetype type) {
+    static boolean isNonPresenceContainer(final DataContainerArchetype type) {
         return type instanceof ContainerArchetype container && container.statement().presenceStatement() == null;
     }
 }

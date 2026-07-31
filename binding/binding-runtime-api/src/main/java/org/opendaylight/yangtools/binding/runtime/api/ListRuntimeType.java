@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.binding.runtime.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -41,7 +41,7 @@ public sealed interface ListRuntimeType extends AugmentableRuntimeType, DataRunt
     }
 
     @Override
-    InterfaceArchetype.OfList javaType();
+    DataContainerArchetype.OfList javaType();
 
     @Override
     ListEffectiveStatement statement();

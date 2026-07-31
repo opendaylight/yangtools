@@ -15,16 +15,16 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 
 /**
- * The {@link InterfaceArchetype} for {@link Augmentation} specializations.
+ * The {@link DataContainerArchetype} for {@link Augmentation} specializations.
  *
  * @since 16.0.0
  */
-public sealed interface AugmentationArchetype extends InterfaceArchetype permits AugmentationArchetypeImpl {
+public sealed interface AugmentationArchetype extends DataContainerArchetype permits AugmentationArchetypeImpl {
     /**
      * A builder of {@link AugmentationArchetype}s.
      */
     @NonNullByDefault
-    final class Builder extends InterfaceArchetypeBuilder<Builder, AugmentEffectiveStatement> {
+    final class Builder extends DataContainerArchetypeBuilder<Builder, AugmentEffectiveStatement> {
         private final AugmentableArchetype target;
 
         private Builder(final JavaTypeName typeName, final AugmentEffectiveStatement statement,

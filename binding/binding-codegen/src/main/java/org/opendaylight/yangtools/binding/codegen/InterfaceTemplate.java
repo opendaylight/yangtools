@@ -30,9 +30,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.EntryObject;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
@@ -47,10 +47,10 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
- * Base class for code generators based on {@link InterfaceArchetype}.
+ * Base class for code generators based on {@link DataContainerArchetype}.
  */
 // TODO: split this class up into reusable components, i.e. use composition instead of inheritance
-abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> extends ArchetypeTemplate<T>
+abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetype> extends ArchetypeTemplate<T>
     permits AugmentationTemplate, CaseObjectTemplate, ContainerTemplate, DataRootTemplate, EntryObjectTemplate,
             GroupingTemplate, RpcInputTemplate, InstanceNotificationTemplate, ItemObjectTemplate,
             KeyedListNotificationTemplate, NotificationBodyTemplate, NotificationTemplate, RpcOutputTemplate,
@@ -72,7 +72,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull InterfaceArchetype> e
         super(GeneratedClass.of(archetype), archetype, root);
     }
 
-    @Nullable InterfaceArchetype builderTarget() {
+    @Nullable DataContainerArchetype builderTarget() {
         return archetype.getImplements().stream().map(Type::name).anyMatch(BUILDER_INTERFACES::contains) ? archetype
             : null;
     }

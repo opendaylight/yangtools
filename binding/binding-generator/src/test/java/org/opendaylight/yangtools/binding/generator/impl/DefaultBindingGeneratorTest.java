@@ -24,10 +24,10 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -312,7 +312,7 @@ public class DefaultBindingGeneratorTest {
             assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, ContainerArchetype.class, "getYangInt8Type").getReturnType());
     }
 
-    private static <A extends InterfaceArchetype> MethodSignature assertGeneratedMethod(final JavaTypeName typeName,
+    private static <A extends DataContainerArchetype> MethodSignature assertGeneratedMethod(final JavaTypeName typeName,
             final Class<A> archetypeClass, final String methodName) {
         return assertGeneratedMethod(
             assertInstanceOf(archetypeClass, assertGeneratedType(typeName)).getMethodDefinitions(), methodName);
