@@ -28,17 +28,17 @@ abstract sealed class AbstractInstanceNotificationGenerator extends AbstractNoti
     @Override
     final DataContainerArchetype.OfNotification createTypeImpl(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement) {
-        final var parent = getParent();
+        final var parentName = getParent().typeName();
         final var orig = getOriginal();
-        return equals(orig) ? createTypeImpl(typeName, statement, parent)
-            : createTypeImpl(typeName, statement, parent, orig.getGeneratedType());
+        return equals(orig) ? createTypeImpl(typeName, statement, parentName)
+            : createTypeImpl(typeName, statement, parentName, orig.getGeneratedType());
     }
 
     @NonNullByDefault
     abstract DataContainerArchetype.OfNotification createTypeImpl(JavaTypeName typeName,
-        NotificationEffectiveStatement statement, AbstractCompositeGenerator<?, ?> parent);
+        NotificationEffectiveStatement statement, JavaTypeName parentName);
 
     @NonNullByDefault
     abstract DataContainerArchetype.OfNotification createTypeImpl(JavaTypeName typeName,
-        NotificationEffectiveStatement statement, AbstractCompositeGenerator<?, ?> parent, Archetype original);
+        NotificationEffectiveStatement statement, JavaTypeName parentName, Archetype original);
 }

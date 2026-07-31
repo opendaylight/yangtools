@@ -18,12 +18,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 record KeyedListNotificationArchetypeImpl(
         JavaTypeName name,
         NotificationEffectiveStatement statement,
+        JavaTypeName parentName,
         List<Type> implementsTypes,
         List<MethodSignature> methodSignatures,
         List<Archetype> enclosedTypes) implements KeyedListNotificationArchetype {
     KeyedListNotificationArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
+        requireNonNull(parentName);
         requireNonNull(implementsTypes);
         requireNonNull(methodSignatures);
         requireNonNull(enclosedTypes);
@@ -51,6 +53,8 @@ record KeyedListNotificationArchetypeImpl(
 
     @Override
     public String toString() {
-        return TypeMethods.toString(KeyedListNotificationArchetype.class, this);
+        return TypeMethods.toStringHelper(KeyedListNotificationArchetype.class, this)
+            .add("parentName", parentName)
+            .toString();
     }
 }

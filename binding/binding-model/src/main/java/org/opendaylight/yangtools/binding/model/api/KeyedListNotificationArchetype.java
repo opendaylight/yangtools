@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import static java.util.Objects.requireNonNull;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
@@ -24,18 +25,18 @@ public sealed interface KeyedListNotificationArchetype extends DataContainerArch
      */
     @NonNullByDefault
     final class Builder extends DataContainerArchetypeBuilder<Builder, NotificationEffectiveStatement> {
+        private final JavaTypeName parentName;
+
         private Builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
-                final JavaTypeName parentName, final KeyArchetype key) {
+                final JavaTypeName parentName) {
             super(typeName, statement);
-            // FIXME: InstanceNotificationTemplate should be performing the equivalent of these
-            addImplementsType(BindingTypes.DATA_OBJECT);
-            addImplementsType(BindingTypes.keyedListNotification(TypeRef.of(typeName), TypeRef.of(parentName), key));
+            this.parentName = requireNonNull(parentName);
         }
 
         @Override
         public KeyedListNotificationArchetype build() {
-            return new KeyedListNotificationArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
-                enclosedTypes());
+            return new KeyedListNotificationArchetypeImpl(typeName, statement, parentName, implementsTypes(),
+                methodDefinitions(), enclosedTypes());
         }
 
         @Override
@@ -51,7 +52,12 @@ public sealed interface KeyedListNotificationArchetype extends DataContainerArch
 
     @NonNullByDefault
     static Builder builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
-            final JavaTypeName parentName, final KeyArchetype key) {
-        return new Builder(typeName, statement, parentName, key);
+            final JavaTypeName parentName) {
+        return new Builder(typeName, statement, parentName);
     }
+
+    /**
+     * {@return the {@link JavaTypeName} of the archetype in which this notification is defined}
+     */
+    JavaTypeName parentName();
 }

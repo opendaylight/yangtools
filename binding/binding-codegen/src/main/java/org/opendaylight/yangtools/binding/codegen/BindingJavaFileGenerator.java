@@ -141,7 +141,8 @@ final class BindingJavaFileGenerator {
                     generateFile(new KeyedListActionTemplate.Builder(archetype, root,
                         entryToKey.get(archetype.parentName())));
                 case KeyedListNotificationArchetype archetype ->
-                    generateBoth(KeyedListNotificationTemplate.Builder::new, archetype, root);
+                    generateBoth(new KeyedListNotificationTemplate.Builder(archetype, root,
+                        entryToKey.get(archetype.parentName())).build(), root);
                 case NotificationArchetype archetype ->
                     generateBoth(NotificationTemplate.Builder::new, archetype, root);
                 case NotificationBodyArchetype archetype ->

@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.EntryObject;
-import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
@@ -38,25 +37,9 @@ public final class BindingTypes {
     static final @NonNull ConcreteType ENTRY_OBJECT = cachedType(EntryObject.class);
 
     private static final @NonNull ConcreteType CHILD_OF = cachedType(ChildOf.class);
-    private static final @NonNull ConcreteType KEYED_LIST_NOTIFICATION = cachedType(KeyedListNotification.class);
 
     private BindingTypes() {
         //  Hidden on purpose
-    }
-
-    /**
-     * Type specializing {@link KeyedListNotification} for a particular type.
-     *
-     * @param concreteType The concrete type of this notification
-     * @param parent Type of parent defining the notification
-     * @param keyType Type of parent's key
-     * @return A parameterized type corresponding to {@code KeyedInstanceNotification<ConcreteType, ParentKey, Parent>}
-     * @throws NullPointerException if any argument is {@code null}
-     */
-    @NonNullByDefault
-    public static ParameterizedType keyedListNotification(final Type concreteType, final Type parent,
-            final KeyArchetype keyType) {
-        return ParameterizedType.of(KEYED_LIST_NOTIFICATION, concreteType, parent, keyType);
     }
 
     /**

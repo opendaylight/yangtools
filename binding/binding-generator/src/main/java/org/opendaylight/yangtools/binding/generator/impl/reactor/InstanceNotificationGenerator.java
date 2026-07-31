@@ -26,8 +26,8 @@ final class InstanceNotificationGenerator extends AbstractInstanceNotificationGe
 
     @Override
     InstanceNotificationArchetype createTypeImpl(final JavaTypeName typeName,
-            final NotificationEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
-        final var builder = newBuilder(typeName, statement, parent);
+            final NotificationEffectiveStatement statement, final JavaTypeName parentName) {
+        final var builder = newBuilder(typeName, statement, parentName);
         addUsesInterfaces(builder);
         addGetterMethods(builder);
         return builder.build();
@@ -35,15 +35,14 @@ final class InstanceNotificationGenerator extends AbstractInstanceNotificationGe
 
     @Override
     InstanceNotificationArchetype createTypeImpl(final JavaTypeName typeName,
-            final NotificationEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent,
-            final Archetype original) {
-        return newBuilder(typeName, statement, parent).addImplementsType(original).build();
+            final NotificationEffectiveStatement statement, final JavaTypeName parentName, final Archetype original) {
+        return newBuilder(typeName, statement, parentName).addImplementsType(original).build();
     }
 
     @NonNullByDefault
     private static InstanceNotificationArchetype.Builder newBuilder(final JavaTypeName typeName,
-            final NotificationEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
-        final var builder = InstanceNotificationArchetype.builder(typeName, statement, parent.typeName());
+            final NotificationEffectiveStatement statement, final JavaTypeName parentName) {
+        final var builder = InstanceNotificationArchetype.builder(typeName, statement, parentName);
         addAugmentable(builder);
         addConcreteInterfaceMethods(builder);
         return builder;

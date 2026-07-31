@@ -9,30 +9,62 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.Iterators;
+import java.util.Iterator;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.KeyedListNotification;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyedListNotificationArchetype;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 
 /**
  * Template for a {@link KeyedListNotificationArchetype}.
  */
 @NonNullByDefault
 final class KeyedListNotificationTemplate extends InterfaceTemplate<KeyedListNotificationArchetype> {
-    record Builder(KeyedListNotificationArchetype type, DataRootArchetype root) implements Template.Builder {
+    record Builder(
+            KeyedListNotificationArchetype type,
+            DataRootArchetype root,
+            JavaTypeName keyName) implements Template.Builder {
         Builder {
             requireNonNull(type);
+            requireNonNull(root);
             requireNonNull(root);
         }
 
         @Override
         public KeyedListNotificationTemplate build() {
-            return new KeyedListNotificationTemplate(type, root);
+            return new KeyedListNotificationTemplate(type, root, keyName);
         }
     }
 
+    private static final ConcreteType KEYED_LIST_NOTIFICATION = ConcreteType.ofClass(KeyedListNotification.class);
+
+    private final JavaTypeName keyName;
+
     private KeyedListNotificationTemplate(final KeyedListNotificationArchetype archetype,
-            final DataRootArchetype root) {
+            final DataRootArchetype root, final JavaTypeName keyName) {
         super(archetype, root);
+        this.keyName = requireNonNull(keyName);
+    }
+
+    @Override
+    @NonNull KeyedListNotificationArchetype builderTarget() {
+        return archetype;
+    }
+
+    @Override
+    Iterator<? extends Type> extendsTypes() {
+        return Iterators.concat(
+            Iterators.forArray(NotificationTemplate.DATA_OBJECT,
+                ParameterizedType.of(KEYED_LIST_NOTIFICATION, archetype, TypeRef.of(archetype.parentName()),
+                    TypeRef.of(keyName))),
+            super.extendsTypes());
     }
 
     @Override
