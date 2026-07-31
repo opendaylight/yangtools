@@ -15,7 +15,6 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
-import org.opendaylight.yangtools.binding.BaseIdentity;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
@@ -26,7 +25,6 @@ class BindingTypesTest {
     void staticBindingTypesTest() {
         assertEquals(Types.typeForClass(Augmentable.class), BindingTypes.AUGMENTABLE);
         assertEquals(Types.typeForClass(Augmentation.class), BindingTypes.AUGMENTATION);
-        assertEquals(Types.typeForClass(BaseIdentity.class), BindingTypes.BASE_IDENTITY);
         assertEquals(Types.typeForClass(DataObject.class), BindingTypes.DATA_OBJECT);
         assertEquals(Types.typeForClass(EntryObject.class), BindingTypes.ENTRY_OBJECT);
         assertEquals(Types.typeForClass(Key.class), BindingTypes.KEY);

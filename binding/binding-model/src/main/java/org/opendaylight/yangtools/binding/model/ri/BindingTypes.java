@@ -17,7 +17,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.ChildOf;
-import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.InstanceNotification;
@@ -33,8 +32,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 
 public final class BindingTypes {
 
-    public static final @NonNull ConcreteType BASE_IDENTITY = typeForBuiltIn(BuiltInType.IDENTITYREF);
-    public static final @NonNull ConcreteType DATA_CONTAINER = typeForClass(DataContainer.class);
     public static final @NonNull ConcreteType DATA_OBJECT = typeForClass(DataObject.class);
     public static final @NonNull ConcreteType UNION_TYPE_OBJECT = typeForBuiltIn(BuiltInType.UNION);
     public static final @NonNull ConcreteType JAVA_DATACONTAINER = typeForClass(JavaDataContainer.class);
