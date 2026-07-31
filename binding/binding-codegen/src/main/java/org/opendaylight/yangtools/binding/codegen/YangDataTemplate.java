@@ -46,7 +46,7 @@ final class YangDataTemplate extends InterfaceTemplate<YangDataArchetype> {
     private static final ConcreteType YANG_DATA = ConcreteType.ofClass(YangData.class);
 
     private YangDataTemplate(final YangDataArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root);
+        super(archetype, root, false);
     }
 
     @Override

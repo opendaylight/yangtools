@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * Template for a {@link NotificationArchetype}.
  */
 @NonNullByDefault
-final class NotificationTemplate extends InterfaceTemplate<NotificationArchetype> {
+final class NotificationTemplate extends AugmentableTemplate<NotificationArchetype> {
     record Builder(NotificationArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);

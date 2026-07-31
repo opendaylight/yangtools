@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * Template for {@link RpcInput} specializations.
  */
 @NonNullByDefault
-final class RpcInputTemplate extends InterfaceTemplate<RpcInputArchetype> {
+final class RpcInputTemplate extends AugmentableTemplate<RpcInputArchetype> {
     record Builder(RpcInputArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);

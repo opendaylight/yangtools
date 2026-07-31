@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
  * Template for a {@link KeyedListNotificationArchetype}.
  */
 @NonNullByDefault
-final class KeyedListNotificationTemplate extends InterfaceTemplate<KeyedListNotificationArchetype> {
+final class KeyedListNotificationTemplate extends AugmentableTemplate<KeyedListNotificationArchetype> {
     record Builder(
             KeyedListNotificationArchetype type,
             DataRootArchetype root,
