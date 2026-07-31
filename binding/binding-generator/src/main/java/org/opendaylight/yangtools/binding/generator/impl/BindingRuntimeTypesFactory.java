@@ -18,10 +18,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.AbstractExplicitGenerator;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.Generator;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.GeneratorReactor;
@@ -32,7 +30,6 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeTypes;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
@@ -233,80 +230,41 @@ final class BindingRuntimeTypesFactory implements Mutable {
     private void collectSubstsForAugment(
             final Map<AugmentRuntimeType, List<EffectiveStatement<?, ?>>> augToChildrenStmts) {
         // let's use allStmts for now
-        for (var runtimeType : allTypes.values()) {
+        for (var type : allTypes.values()) {
             // skip types that are not interesting
-            if (!(runtimeType instanceof AugmentRuntimeType augmentType)) {
+            if (!(type instanceof AugmentRuntimeType runtime)) {
                 continue;
             }
-            final var archetype = augmentType.javaType();
 
-            for (final var entryAugToChildren : augToChildrenStmts.entrySet()) {
+            final var runtimeType = runtime.javaType();
+            for (final var entry : augToChildrenStmts.entrySet()) {
+                final var substit = entry.getKey();
                 // do not compare the same instance to itself
-                if (augmentType.equals(entryAugToChildren.getKey())) {
+                if (runtime.equals(substit)) {
                     continue;
                 }
-                final var substitution = entryAugToChildren.getKey();
-                final var substitChildren = entryAugToChildren.getValue();
-                final var substitIfaces = substitution.javaType().getImplements();
 
-                final var runtimeTypeChildren = augToChildrenStmts.get(runtimeType);
-                final var runtimeTypeIfaces = archetype.getImplements();
+                final var substitChildren = entry.getValue();
+                final var substitType = substit.javaType();
+                final var substitIfaces = substitType.getImplements();
+
+                final var runtimeChildren = augToChildrenStmts.get(runtime);
+                final var runtimeIfaces = runtimeType.getImplements();
 
                 boolean substitutional;
                 // check if both have same interfaces
-                substitutional = substitIfaces.equals(runtimeTypeIfaces);
+                substitutional = substitIfaces.equals(runtimeIfaces);
                 // check if both have same children
-                substitutional &= substitChildren.equals(runtimeTypeChildren);
+                substitutional &= substitChildren.equals(runtimeChildren);
                 // the last check needs to verify if they have the same target class
-                substitutional &= haveSameTarget(augmentType, substitution);
+                substitutional &= runtimeType.target().equals(substitType.target());
 
-                // if the 'augmentType' can be substituted for 'substitution', add it to the map
+                // if the 'runtime' can be substituted for 'substit', add it to the map
                 if (substitutional) {
-                    augmentToSubstitutionAugments.put(archetype, substitution);
+                    augmentToSubstitutionAugments.put(runtimeType, substit);
                 }
             }
         }
-    }
-
-    /**
-     * This method tells us, whether the two runtime types augment the same element.
-     *
-     * <p>One of the requirements for substitution is that the augmentations target the same class.
-     *
-     * @param type         {@link AugmentRuntimeType} type for whose substitutions we are looking
-     * @param substitution Candidate that can be used as a substitution
-     * @return whether the parameters augment the same element
-     */
-    private static boolean haveSameTarget(final AugmentRuntimeType type, final AugmentRuntimeType substitution) {
-        final var typeAugmentation = getAugmentationInterface(type);
-        if (typeAugmentation.isEmpty()) {
-            LOG.error("AugmentRuntimeType {} does not have augmentation target (missing augmentation interface)", type);
-            return false;
-        }
-
-        final var substitutionAugmentation = getAugmentationInterface(substitution);
-        if (substitutionAugmentation.isEmpty()) {
-            LOG.error("AugmentRuntimeType {} does not have augmentation target (missing augmentation interface)",
-                substitution);
-            return false;
-        }
-
-        // augmentation has exactly 1 argument ... Augmentation<T> (we want the T), we can access it on index 0
-        final var typeAugTarget = typeAugmentation.orElseThrow().getActualTypeArguments().getFirst();
-        final var substitutionAugTarget = substitutionAugmentation.orElseThrow().getActualTypeArguments().getFirst();
-
-        return typeAugTarget.equals(substitutionAugTarget);
-    }
-
-    private static Optional<ParameterizedType> getAugmentationInterface(final AugmentRuntimeType runtimeType) {
-        // create a reference
-        final var augBase = JavaTypeName.create(Augmentation.class);
-        // get all interfaces
-        final var interfaces = runtimeType.javaType().getImplements();
-        // filter them to get just the augmentation
-        final var augmentation = interfaces.stream().filter(iface -> iface.name().equals(augBase)).findFirst();
-
-        return augmentation.map(ParameterizedType.class::cast);
     }
 
     private static <K, V> void safePut(final Map<K, V> map, final String name, final K key, final V value) {
