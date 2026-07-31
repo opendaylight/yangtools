@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import static java.util.Objects.requireNonNull;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.InstanceNotification;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
@@ -24,18 +25,18 @@ public sealed interface InstanceNotificationArchetype extends DataContainerArche
      */
     @NonNullByDefault
     final class Builder extends DataContainerArchetypeBuilder<Builder, NotificationEffectiveStatement> {
+        private final JavaTypeName parentName;
+
         private Builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
                 final JavaTypeName parentName) {
             super(typeName, statement);
-            // FIXME: InstanceNotificationTemplate should be performing the equivalent of these
-            addImplementsType(BindingTypes.DATA_OBJECT);
-            addImplementsType(BindingTypes.instanceNotification(TypeRef.of(typeName), TypeRef.of(parentName)));
+            this.parentName = requireNonNull(parentName);
         }
 
         @Override
         public InstanceNotificationArchetype build() {
-            return new InstanceNotificationArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
-                enclosedTypes());
+            return new InstanceNotificationArchetypeImpl(typeName, statement, parentName, implementsTypes(),
+                methodDefinitions(), enclosedTypes());
         }
 
         @Override
@@ -54,4 +55,9 @@ public sealed interface InstanceNotificationArchetype extends DataContainerArche
             final JavaTypeName parentName) {
         return new Builder(typeName, statement, parentName);
     }
+
+    /**
+     * {@return the {@link JavaTypeName} of the archetype in which this notification is defined}
+     */
+    JavaTypeName parentName();
 }
