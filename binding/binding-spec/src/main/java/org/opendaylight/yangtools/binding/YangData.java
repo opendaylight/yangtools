@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding;
 
+import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
+
 /**
  * A piece of YANG-modeled data, as defined by <a href="https://www.rfc-editor.org/rfc/rfc8040">RESTCONF</a>
  * {@code yang-data extension}.
@@ -26,7 +28,7 @@ package org.opendaylight.yangtools.binding;
  *
  * @param <T> Generated interface type
  */
-public non-sealed interface YangData<T extends YangData<T>> extends BindingObject, DataContainer {
+public non-sealed interface YangData<T extends YangData<T>> extends BindingObject, DataContainer, JavaDataContainer<T> {
     @Override
     Class<T> implementedInterface();
 }
