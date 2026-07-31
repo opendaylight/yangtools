@@ -18,9 +18,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
  *
  * @since 16.0.0
  */
-public sealed interface CaseArchetype extends AugmentableArchetype permits CaseArchetypeImpl {
+public sealed interface CaseObjectArchetype extends AugmentableArchetype permits CaseObjectArchetypeImpl {
     /**
-     * A builder of {@link CaseArchetype}s.
+     * A builder of {@link CaseObjectArchetype}s.
      */
     @NonNullByDefault
     final class Builder extends InterfaceArchetypeBuilder<Builder, CaseEffectiveStatement> {
@@ -36,14 +36,14 @@ public sealed interface CaseArchetype extends AugmentableArchetype permits CaseA
         }
 
         @Override
-        public CaseArchetype build() {
-            return new CaseArchetypeImpl(typeName, statement, choice, implementsTypes(), methodDefinitions(),
+        public CaseObjectArchetype build() {
+            return new CaseObjectArchetypeImpl(typeName, statement, choice, implementsTypes(), methodDefinitions(),
                 enclosedTypes());
         }
 
         @Override
-        Class<CaseArchetype> archetypeClass() {
-            return CaseArchetype.class;
+        Class<CaseObjectArchetype> archetypeClass() {
+            return CaseObjectArchetype.class;
         }
 
         @Override

@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 abstract sealed class InterfaceArchetypeBuilder<
         B extends InterfaceArchetypeBuilder<B, S>,
         S extends EffectiveStatement<?, ?>> implements InterfaceArchetype.Builder
-        permits AugmentationArchetype.Builder, CaseArchetype.Builder, ContainerArchetype.Builder,
+        permits AugmentationArchetype.Builder, CaseObjectArchetype.Builder, ContainerArchetype.Builder,
                 DataRootArchetype.Builder, EntryObjectArchetype.Builder, GroupingArchetype.Builder,
                 InputArchetype.Builder, InstanceNotificationArchetype.Builder, ItemObjectArchetype.Builder,
                 KeyedListNotificationArchetype.Builder, NotificationArchetype.Builder,

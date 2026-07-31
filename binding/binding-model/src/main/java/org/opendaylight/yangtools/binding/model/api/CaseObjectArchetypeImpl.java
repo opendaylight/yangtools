@@ -15,14 +15,14 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 
 @NonNullByDefault
-record CaseArchetypeImpl(
+record CaseObjectArchetypeImpl(
         JavaTypeName name,
         CaseEffectiveStatement statement,
         ChoiceInArchetype choice,
         List<Type> implementsTypes,
         List<MethodSignature> methodSignatures,
-        List<Archetype> enclosedTypes) implements CaseArchetype {
-    CaseArchetypeImpl {
+        List<Archetype> enclosedTypes) implements CaseObjectArchetype {
+    CaseObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(implementsTypes);
@@ -53,6 +53,6 @@ record CaseArchetypeImpl(
 
     @Override
     public String toString() {
-        return TypeMethods.toString(CaseArchetype.class, this);
+        return TypeMethods.toString(CaseObjectArchetype.class, this);
     }
 }

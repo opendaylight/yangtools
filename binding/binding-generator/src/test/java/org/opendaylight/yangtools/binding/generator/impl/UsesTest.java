@@ -15,7 +15,7 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
-import org.opendaylight.yangtools.binding.model.api.CaseArchetype;
+import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
@@ -89,12 +89,12 @@ class UsesTest {
 
         GroupingArchetype groupingCaseTest = null;
         int groupingCaseTestCounter = 0;
-        CaseArchetype caseC = null;
+        CaseObjectArchetype caseC = null;
         int caseCCounter = 0;
         for (var genType : genTypes) {
             switch (genType.simpleName()) {
                 case "C" -> {
-                    caseC = assertInstanceOf(CaseArchetype.class, genType);
+                    caseC = assertInstanceOf(CaseObjectArchetype.class, genType);
                     caseCCounter++;
                 }
                 case "GroupingCaseTest" -> {

@@ -10,15 +10,15 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.CaseArchetype;
+import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 
 /**
  * Template for a (non-existing) {@code CaseObject}.
  */
 @NonNullByDefault
-final class CaseObjectTemplate extends InterfaceTemplate<CaseArchetype> {
-    record Builder(CaseArchetype type, DataRootArchetype root) implements Template.Builder {
+final class CaseObjectTemplate extends InterfaceTemplate<CaseObjectArchetype> {
+    record Builder(CaseObjectArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
             requireNonNull(root);
@@ -30,7 +30,7 @@ final class CaseObjectTemplate extends InterfaceTemplate<CaseArchetype> {
         }
     }
 
-    private CaseObjectTemplate(final CaseArchetype archetype, final DataRootArchetype root) {
+    private CaseObjectTemplate(final CaseObjectArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
     }
 
