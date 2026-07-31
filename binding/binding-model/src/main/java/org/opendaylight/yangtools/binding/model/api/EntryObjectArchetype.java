@@ -19,22 +19,23 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface EntryObjectArchetype extends DataContainerArchetype.OfList permits EntryObjectArchetypeImpl {
+public sealed interface EntryObjectArchetype extends ChildOfArchetype.OfList permits EntryObjectArchetypeImpl {
     /**
      * A builder of {@link EntryObjectArchetype}s.
      */
-    final class Builder extends DataContainerArchetypeBuilder<Builder, ListEffectiveStatement> {
+    final class Builder extends ChildOfArchetypeBuilder<Builder, ListEffectiveStatement> {
         private final KeyArchetype key;
 
-        private Builder(final JavaTypeName typeName, final ListEffectiveStatement statement, final KeyArchetype key) {
-            super(typeName, statement);
+        private Builder(final JavaTypeName typeName, final ListEffectiveStatement statement,
+                final JavaTypeName parentName, final KeyArchetype key) {
+            super(typeName, statement, parentName);
             this.key = requireNonNull(key);
         }
 
         @Override
         public EntryObjectArchetype build() {
-            return new EntryObjectArchetypeImpl(typeName, statement, key, implementsTypes(), methodDefinitions(),
-                enclosedTypes());
+            return new EntryObjectArchetypeImpl(typeName, statement, parentName, key, implementsTypes(),
+                methodDefinitions(), enclosedTypes());
         }
 
         @Override
@@ -49,8 +50,8 @@ public sealed interface EntryObjectArchetype extends DataContainerArchetype.OfLi
     }
 
     static Builder builder(final JavaTypeName typeName, final ListEffectiveStatement statement,
-            final KeyArchetype key) {
-        return new Builder(typeName, statement, key);
+            final JavaTypeName parentName, final KeyArchetype key) {
+        return new Builder(typeName, statement, parentName, key);
     }
 
     /**

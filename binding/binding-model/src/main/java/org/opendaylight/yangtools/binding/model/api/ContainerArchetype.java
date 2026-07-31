@@ -16,19 +16,20 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
  *
  * @since 16.0.0
  */
-public sealed interface ContainerArchetype extends AugmentableArchetype permits ContainerArchetypeImpl {
+public sealed interface ContainerArchetype extends ChildOfArchetype permits ContainerArchetypeImpl {
     /**
      * A builder of {@link ContainerArchetype}s.
      */
     @NonNullByDefault
-    final class Builder extends DataContainerArchetypeBuilder<Builder, ContainerEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final ContainerEffectiveStatement statement) {
-            super(typeName, statement);
+    final class Builder extends ChildOfArchetypeBuilder<Builder, ContainerEffectiveStatement> {
+        private Builder(final JavaTypeName typeName, final ContainerEffectiveStatement statement,
+                final JavaTypeName parentName) {
+            super(typeName, statement, parentName);
         }
 
         @Override
         public ContainerArchetype build() {
-            return new ContainerArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
+            return new ContainerArchetypeImpl(typeName, statement, parentName, implementsTypes(), methodDefinitions(),
                 enclosedTypes());
         }
 
@@ -44,8 +45,9 @@ public sealed interface ContainerArchetype extends AugmentableArchetype permits 
     }
 
     @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final ContainerEffectiveStatement statement) {
-        return new Builder(typeName, statement);
+    static Builder builder(final JavaTypeName typeName, final ContainerEffectiveStatement statement,
+            final JavaTypeName parentName) {
+        return new Builder(typeName, statement, parentName);
     }
 
     @Override

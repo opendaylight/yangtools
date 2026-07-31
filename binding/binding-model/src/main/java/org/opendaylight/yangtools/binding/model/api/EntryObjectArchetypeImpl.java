@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 record EntryObjectArchetypeImpl(
         JavaTypeName name,
         ListEffectiveStatement statement,
+        JavaTypeName parentName,
         KeyArchetype key,
         List<Type> implementsTypes,
         List<MethodSignature> methodSignatures,

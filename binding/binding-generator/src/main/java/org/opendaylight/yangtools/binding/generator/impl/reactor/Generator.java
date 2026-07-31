@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -222,28 +221,6 @@ public abstract class Generator implements Iterable<Generator> {
 
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         return helper;
-    }
-
-    final void addImplementsChildOf(final DataContainerArchetype.Builder builder) {
-        var ancestor = getParent();
-        while (true) {
-            // choice/case hierarchy does not factor into 'ChildOf' hierarchy, hence we need to skip them
-            if (ancestor instanceof CaseGenerator || ancestor instanceof ChoiceGenerator) {
-                ancestor = ancestor.getParent();
-                continue;
-            }
-
-            // if we into a choice we need to follow the hierararchy of that choice
-            if (ancestor instanceof AbstractAugmentGenerator augment
-                && augment.targetGenerator() instanceof ChoiceGenerator targetChoice) {
-                ancestor = targetChoice;
-                continue;
-            }
-
-            break;
-        }
-
-        builder.addImplementsType(BindingTypes.childOf(TypeRef.of(ancestor.typeName())));
     }
 
     /**

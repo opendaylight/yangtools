@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 record ContainerArchetypeImpl(
         JavaTypeName name,
         ContainerEffectiveStatement statement,
+        JavaTypeName parentName,
         List<Type> implementsTypes,
         List<MethodSignature> methodSignatures,
         List<Archetype> enclosedTypes) implements ContainerArchetype {
