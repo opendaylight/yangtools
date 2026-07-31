@@ -11,13 +11,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.EntryObject;
-import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 
 class BindingTypesTest {
@@ -59,17 +57,5 @@ class BindingTypesTest {
     void testAugmentation() {
         final var augmentationType = BindingTypes.augmentation(Types.objectType());
         assertEquals("Augmentation", augmentationType.simpleName());
-    }
-
-    @Test
-    void testNotificationNull() {
-        assertThrows(NullPointerException.class, () -> BindingTypes.notification(null));
-    }
-
-    @Test
-    void testNotification() {
-        final var notificationType = BindingTypes.notification(Types.objectType());
-        assertEquals(ConcreteType.ofClass(Notification.class), notificationType.getRawType());
-        assertEquals(List.of(Types.objectType()), notificationType.getActualTypeArguments());
     }
 }

@@ -9,9 +9,17 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.Iterators;
+import java.util.Iterator;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.Notification;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.NotificationArchetype;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
  * Template for a {@link NotificationArchetype}.
@@ -30,8 +38,23 @@ final class NotificationTemplate extends InterfaceTemplate<NotificationArchetype
         }
     }
 
+    private static final ConcreteType DATA_OBJECT = ConcreteType.ofClass(DataObject.class);
+    private static final ConcreteType NOTIFICATION = ConcreteType.ofClass(Notification.class);
+
     private NotificationTemplate(final NotificationArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
+    }
+
+    @Override
+    @NonNull NotificationArchetype builderTarget() {
+        return archetype;
+    }
+
+    @Override
+    Iterator<? extends Type> extendsTypes() {
+        return Iterators.concat(
+            Iterators.forArray(DATA_OBJECT, ParameterizedType.of(NOTIFICATION, archetype)),
+            super.extendsTypes());
     }
 
     @Override

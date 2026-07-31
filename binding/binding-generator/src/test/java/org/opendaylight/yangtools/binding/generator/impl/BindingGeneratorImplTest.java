@@ -121,22 +121,16 @@ class BindingGeneratorImplTest {
         assertNotNull(foo);
 
         Type childOf = null;
-        Type dataObject = null;
-        for (var type :  foo.getImplements()) {
+        for (var type : foo.getImplements()) {
             switch (type.simpleName()) {
-                case "ChildOf":
-                    childOf = type;
-                    break;
-                case "DataObject":
-                    dataObject = type;
-                    break;
-                default:
+                case "ChildOf" -> childOf = type;
+                default -> {
                     // ignore
+                }
             }
         }
 
         assertNull(childOf);
-        assertNotNull(dataObject);
     }
 
     @Test
