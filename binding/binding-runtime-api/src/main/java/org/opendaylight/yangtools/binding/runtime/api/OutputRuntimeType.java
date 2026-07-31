@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
-import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
+import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 
 /**
@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
  */
 public non-sealed interface OutputRuntimeType extends ContainerLikeRuntimeType {
     @Override
-    OutputArchetype javaType();
+    RpcOutputArchetype javaType();
 
     @Override
     OutputEffectiveStatement statement();

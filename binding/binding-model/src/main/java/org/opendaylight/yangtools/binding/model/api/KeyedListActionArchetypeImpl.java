@@ -18,7 +18,7 @@ record KeyedListActionArchetypeImpl(
         JavaTypeName name,
         ActionEffectiveStatement statement,
         RpcInputArchetype input,
-        OutputArchetype output,
+        RpcOutputArchetype output,
         JavaTypeName parentName) implements KeyedListActionArchetype {
     KeyedListActionArchetypeImpl {
         requireNonNull(name);

@@ -23,11 +23,11 @@ public sealed interface ActionArchetype extends OperationArchetype.OfAction perm
      * @param name the archetype's {@link JavaTypeName}}
      * @param statement the {@link ActionEffectiveStatement}
      * @param input the {@link RpcInputArchetype} of the action's input
-     * @param output the {@link OutputArchetype} of the action's output
+     * @param output the {@link RpcOutputArchetype} of the action's output
      * @param parentName the name of the parent archetype
      */
     static ActionArchetype of(final JavaTypeName name, final ActionEffectiveStatement statement,
-            final RpcInputArchetype input, final OutputArchetype output, final JavaTypeName parentName) {
+            final RpcInputArchetype input, final RpcOutputArchetype output, final JavaTypeName parentName) {
         return new ActionArchetypeImpl(name, statement, input, output, parentName);
     }
 

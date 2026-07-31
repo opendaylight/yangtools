@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultOutputRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
+import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.OutputRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
  * Generator corresponding to an {@code output} statement.
  */
 final class OutputGenerator
-        extends OperationContainerGenerator<OutputEffectiveStatement, OutputRuntimeType, OutputArchetype> {
+        extends OperationContainerGenerator<OutputEffectiveStatement, OutputRuntimeType, RpcOutputArchetype> {
     @NonNullByDefault
     OutputGenerator(final OutputEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
@@ -41,8 +41,8 @@ final class OutputGenerator
     }
 
     @Override
-    OutputArchetype createTypeImpl(final JavaTypeName typeName, final OutputEffectiveStatement statement) {
-        final var builder = OutputArchetype.builder(typeName, statement);
+    RpcOutputArchetype createTypeImpl(final JavaTypeName typeName, final OutputEffectiveStatement statement) {
+        final var builder = RpcOutputArchetype.builder(typeName, statement);
         addAugmentable(builder);
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
@@ -57,7 +57,7 @@ final class OutputGenerator
             @Override
             OutputRuntimeType build(final Archetype type, final OutputEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultOutputRuntimeType((OutputArchetype) type, statement, children, augments);
+                return new DefaultOutputRuntimeType((RpcOutputArchetype) type, statement, children, augments);
             }
         };
     }

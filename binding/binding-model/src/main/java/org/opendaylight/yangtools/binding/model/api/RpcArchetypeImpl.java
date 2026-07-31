@@ -30,7 +30,7 @@ public record RpcArchetypeImpl(
         JavaTypeName name,
         RpcEffectiveStatement statement,
         RpcInputArchetype input,
-        OutputArchetype output) implements RpcArchetype {
+        RpcOutputArchetype output) implements RpcArchetype {
     public RpcArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);

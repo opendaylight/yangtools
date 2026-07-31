@@ -18,7 +18,7 @@ record ActionArchetypeImpl(
         JavaTypeName name,
         ActionEffectiveStatement statement,
         RpcInputArchetype input,
-        OutputArchetype output,
+        RpcOutputArchetype output,
         JavaTypeName parentName) implements ActionArchetype {
     ActionArchetypeImpl {
         requireNonNull(name);
