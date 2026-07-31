@@ -13,8 +13,8 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultInputRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.InputArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.InputRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
  * a conflict.
  */
 final class InputGenerator
-        extends OperationContainerGenerator<InputEffectiveStatement, InputRuntimeType, InputArchetype> {
+        extends OperationContainerGenerator<InputEffectiveStatement, InputRuntimeType, RpcInputArchetype> {
     @NonNullByDefault
     InputGenerator(final InputEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
         super(statement, parent);
@@ -43,8 +43,8 @@ final class InputGenerator
     }
 
     @Override
-    InputArchetype createTypeImpl(final JavaTypeName typeName, final InputEffectiveStatement statement) {
-        final var builder = InputArchetype.builder(typeName, statement);
+    RpcInputArchetype createTypeImpl(final JavaTypeName typeName, final InputEffectiveStatement statement) {
+        final var builder = RpcInputArchetype.builder(typeName, statement);
         addAugmentable(builder);
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
@@ -59,7 +59,7 @@ final class InputGenerator
             @Override
             InputRuntimeType build(final Archetype type, final InputEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultInputRuntimeType((InputArchetype) type, statement, children, augments);
+                return new DefaultInputRuntimeType((RpcInputArchetype) type, statement, children, augments);
             }
         };
     }

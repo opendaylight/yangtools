@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 record ActionArchetypeImpl(
         JavaTypeName name,
         ActionEffectiveStatement statement,
-        InputArchetype input,
+        RpcInputArchetype input,
         OutputArchetype output,
         JavaTypeName parentName) implements ActionArchetype {
     ActionArchetypeImpl {

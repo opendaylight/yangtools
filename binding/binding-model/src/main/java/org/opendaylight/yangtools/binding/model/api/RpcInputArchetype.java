@@ -16,9 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
  *
  * @since 16.0.0
  */
-public sealed interface InputArchetype extends AugmentableArchetype permits InputArchetypeImpl {
+public sealed interface RpcInputArchetype extends AugmentableArchetype permits RpcInputArchetypeImpl {
     /**
-     * A builder of {@link InputArchetype}s.
+     * A builder of {@link RpcInputArchetype}s.
      */
     @NonNullByDefault
     final class Builder extends InterfaceArchetypeBuilder<Builder, InputEffectiveStatement> {
@@ -27,13 +27,14 @@ public sealed interface InputArchetype extends AugmentableArchetype permits Inpu
         }
 
         @Override
-        public InputArchetype build() {
-            return new InputArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(), enclosedTypes());
+        public RpcInputArchetype build() {
+            return new RpcInputArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
+                enclosedTypes());
         }
 
         @Override
-        Class<InputArchetype> archetypeClass() {
-            return InputArchetype.class;
+        Class<RpcInputArchetype> archetypeClass() {
+            return RpcInputArchetype.class;
         }
 
         @Override
