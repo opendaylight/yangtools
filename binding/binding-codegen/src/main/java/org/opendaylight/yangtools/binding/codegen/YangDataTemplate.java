@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 
 /**
@@ -44,7 +43,7 @@ final class YangDataTemplate extends InterfaceTemplate<YangDataArchetype> {
     }
 
     private static final JavaTypeName YANG_DATA_NAME = JavaTypeName.create(YangDataName.class);
-    private static final ConcreteType YANG_DATA = Types.typeForClass(YangData.class);
+    private static final ConcreteType YANG_DATA = ConcreteType.ofClass(YangData.class);
 
     private YangDataTemplate(final YangDataArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);

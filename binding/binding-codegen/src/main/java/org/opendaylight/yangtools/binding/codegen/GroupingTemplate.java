@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 
 /**
  * Template for {@link Grouping} specializations.
@@ -37,7 +36,7 @@ final class GroupingTemplate extends InterfaceTemplate<GroupingArchetype> {
         }
     }
 
-    private static final ConcreteType GROUPING = Types.typeForClass(Grouping.class);
+    private static final ConcreteType GROUPING = ConcreteType.ofClass(Grouping.class);
 
     private GroupingTemplate(final GroupingArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);

@@ -95,7 +95,7 @@ public final class Types {
      * @param cls Class to describe
      * @return Description of class
      * @deprecated Use publicly-accessible constants and methods in this class, {@link BaseYangTypes} and
-     *             {@link BindingTypes}.
+     *             {@link BindingTypes} or {@link ConcreteType#ofClass(Class)}.
      */
     @Deprecated(since = "16.0.0", forRemoval = true)
     public static @NonNull ConcreteType typeForClass(final @NonNull Class<?> cls) {
