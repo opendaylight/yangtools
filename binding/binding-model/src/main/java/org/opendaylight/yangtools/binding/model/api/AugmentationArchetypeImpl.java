@@ -53,6 +53,6 @@ record AugmentationArchetypeImpl(
 
     @Override
     public String toString() {
-        return TypeMethods.toString(AugmentationArchetype.class, this);
+        return TypeMethods.toStringHelper(AugmentationArchetype.class, this).add("target", target.name()).toString();
     }
 }

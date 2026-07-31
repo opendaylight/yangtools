@@ -9,10 +9,16 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.Iterators;
+import java.util.Iterator;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
  * Template for {@link Augmentation} specializations.
@@ -31,7 +37,21 @@ final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype
         }
     }
 
+    private static final ConcreteType AUGMENTATION = ConcreteType.ofClass(Augmentation.class);
+
     private AugmentationTemplate(final AugmentationArchetype archetype, final DataRootArchetype root) {
         super(archetype, root, false);
+    }
+
+    @Override
+    @NonNull AugmentationArchetype builderTarget() {
+        return archetype;
+    }
+
+    @Override
+    Iterator<? extends Type> extendsTypes() {
+        return Iterators.concat(
+            Iterators.singletonIterator(ParameterizedType.of(AUGMENTATION, archetype.target())),
+            super.extendsTypes());
     }
 }

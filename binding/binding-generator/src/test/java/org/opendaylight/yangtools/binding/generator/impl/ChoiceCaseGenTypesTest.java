@@ -116,7 +116,7 @@ class ChoiceCaseGenTypesTest {
         // case
         final var partialLock1 = checkGeneratedType(AugmentationArchetype.class, genTypes, "PartialLock1", augment);
         containsMethods(partialLock1, new NameTypePattern("getAugCaseByChoice", "AugCaseByChoice"));
-        containsInterface("Augmentation<PartialLock>", partialLock1);
+        assertEquals("PartialLock", partialLock1.target().simpleName());
 
         // choice
         assertChoice(genTypes, "AugCaseByChoice",
@@ -137,7 +137,7 @@ class ChoiceCaseGenTypesTest {
         // augment "/nm:netconf-state/nm:datastores/nm:datastore" {
         final var datastore1 = checkGeneratedType(AugmentationArchetype.class, genTypes, "Datastore1", augment);
         containsMethods(datastore1, new NameTypePattern("getStorageFormat", "StorageFormat"));
-        containsInterface("Augmentation<Datastore>", datastore1);
+        assertEquals("Datastore", datastore1.target().simpleName());
 
         // choice
         assertChoice(genTypes, "StorageFormat", augment + ".netconf.state.datastores.datastore");
