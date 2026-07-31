@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultMapRuntimeTyp
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
@@ -58,11 +57,7 @@ final class EntryObjectGenerator extends ListGenerator {
         addImplementsChildOf(builder);
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
-
-        builder.addImplementsType(BindingTypes.entryObject(builder.typeRef(), keyType));
-
         addGetterMethods(builder);
-
         return builder.build();
     }
 
