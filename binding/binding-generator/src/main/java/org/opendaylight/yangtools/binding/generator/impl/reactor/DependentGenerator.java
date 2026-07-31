@@ -14,10 +14,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 /**
  * A simple {@link Generator} which (potentially) has dependencies on other generators.
  */
-abstract class AbstractDependentGenerator<S extends EffectiveStatement<?, ?>, R extends RuntimeType>
+public abstract sealed class DependentGenerator<S extends EffectiveStatement<?, ?>, R extends RuntimeType>
         extends AbstractExplicitGenerator<S, R> {
     @NonNullByDefault
-    AbstractDependentGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
+    AbstractDependentGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

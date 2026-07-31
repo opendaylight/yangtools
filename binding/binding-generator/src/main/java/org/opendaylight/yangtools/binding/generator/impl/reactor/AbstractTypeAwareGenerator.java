@@ -25,14 +25,14 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Common base class for {@link LeafGenerator} and {@link LeafListGenerator}.
  */
-abstract class AbstractTypeAwareGenerator<
+abstract sealed class AbstractTypeAwareGenerator<
         S extends TypeEffectiveStatement.MandatoryIn<QName, ?> & WithQNameArgument<?> & DataTreeEffectiveStatement<?>,
         R extends RuntimeType,
         G extends AbstractTypeAwareGenerator<S, R, G>> extends AbstractTypeObjectGenerator<S, R> {
     private IdentityGenerator contextType;
 
     @NonNullByDefault
-    AbstractTypeAwareGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
+    AbstractTypeAwareGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

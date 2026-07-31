@@ -41,8 +41,8 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  *
  * <p>Overall the tree layout guides the allocation of Java package and top-level class namespaces.
  */
-public abstract class Generator implements Iterable<Generator> {
-    private final AbstractCompositeGenerator<?, ?> parent;
+public abstract sealed class Generator implements Iterable<Generator> permits AbstractExplicitGenerator {
+    private final DataContainerGenerator<?, ?> parent;
 
     private Optional<Member> member;
     private GeneratorResult result;
@@ -54,7 +54,7 @@ public abstract class Generator implements Iterable<Generator> {
     }
 
     @NonNullByDefault
-    Generator(final AbstractCompositeGenerator<?, ?> parent) {
+    Generator(final DataContainerGenerator<?, ?> parent) {
         this.parent = requireNonNull(parent);
     }
 
@@ -68,12 +68,12 @@ public abstract class Generator implements Iterable<Generator> {
     }
 
     /**
-     * Return the {@link AbstractCompositeGenerator} inside which this generator is defined. It is illegal to call this
+     * Return the {@link DataContainerGenerator} inside which this generator is defined. It is illegal to call this
      * method on a {@link ModuleGenerator}.
      *
      * @return Parent generator
      */
-    final @NonNull AbstractCompositeGenerator<?, ?> getParent() {
+    final @NonNull DataContainerGenerator<?, ?> getParent() {
         final var ret = parent;
         if (ret != null) {
             return ret;
@@ -208,7 +208,7 @@ public abstract class Generator implements Iterable<Generator> {
         return JavaTypeName.create(getPackageParent().javaPackage(), assignedName());
     }
 
-    @NonNull AbstractCompositeGenerator<?, ?> getPackageParent() {
+    @NonNull DataContainerGenerator<?, ?> getPackageParent() {
         return getParent();
     }
 

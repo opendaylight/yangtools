@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * Generator corresponding to a {@code module} statement. These generators are roots for generating types for a
  * particular {@link QNameModule} as mapped into the root package.
  */
-public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffectiveStatement, ModuleRuntimeType> {
+public final class ModuleGenerator extends DataContainerGenerator<ModuleEffectiveStatement, ModuleRuntimeType> {
     /**
      * Note that for sake of simplicity of lookup and child mapping, this instance serves as the root for all child
      * generators, but mapping to {@link CollisionDomain}s and their {@link Member}s is rather weird. This generator
@@ -66,7 +66,7 @@ public final class ModuleGenerator extends AbstractCompositeGenerator<ModuleEffe
     }
 
     @Override
-    AbstractCompositeGenerator<?, ?> getPackageParent() {
+    DataContainerGenerator<?, ?> getPackageParent() {
         return this;
     }
 

@@ -43,8 +43,9 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * A generator corresponding to a {@code augment} statement. This class is further specialized for the two distinct uses
  * an augment is used.
  */
-abstract class AbstractAugmentGenerator
-        extends AbstractCompositeGenerator<AugmentEffectiveStatement, AugmentRuntimeType> {
+abstract sealed class AbstractAugmentGenerator
+        extends DataContainerGenerator<AugmentEffectiveStatement, AugmentRuntimeType>
+        permits ModuleAugmentGenerator, UsesAugmentGenerator {
     /**
      * Comparator comparing target path length. This is useful for quickly determining order the order in which two
      * (or more) {@link AbstractAugmentGenerator}s need to be evaluated. This is necessary when augments are layered on
@@ -89,10 +90,10 @@ abstract class AbstractAugmentGenerator
         return otherIt.hasNext() ? -1 : 0;
     };
 
-    private AbstractCompositeGenerator<?, ?> targetGen;
+    private DataContainerGenerator<?, ?> targetGen;
 
     @NonNullByDefault
-    AbstractAugmentGenerator(final AugmentEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
+    AbstractAugmentGenerator(final AugmentEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
@@ -218,12 +219,12 @@ abstract class AbstractAugmentGenerator
         };
     }
 
-    final void setTargetGenerator(final AbstractCompositeGenerator<?, ?> targetGenerator) {
+    final void setTargetGenerator(final DataContainerGenerator<?, ?> targetGenerator) {
         verify(targetGen == null, "Attempted to relink %s, already have target %s", this, targetGen);
         targetGen = requireNonNull(targetGenerator);
     }
 
-    final @NonNull AbstractCompositeGenerator<?, ?> targetGenerator() {
+    final @NonNull DataContainerGenerator<?, ?> targetGenerator() {
         final var ret = targetGen;
         if (ret != null) {
             return ret;
