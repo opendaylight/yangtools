@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 record InstanceNotificationArchetypeImpl(
         JavaTypeName name,
         NotificationEffectiveStatement statement,
+        JavaTypeName parentName,
         List<Type> implementsTypes,
         List<MethodSignature> methodSignatures,
         List<Archetype> enclosedTypes) implements InstanceNotificationArchetype {
@@ -51,6 +52,8 @@ record InstanceNotificationArchetypeImpl(
 
     @Override
     public String toString() {
-        return TypeMethods.toString(InstanceNotificationArchetype.class, this);
+        return TypeMethods.toStringHelper(InstanceNotificationArchetype.class, this)
+            .add("parentName", parentName)
+            .toString();
     }
 }

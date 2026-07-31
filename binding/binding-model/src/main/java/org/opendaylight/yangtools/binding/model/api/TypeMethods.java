@@ -72,11 +72,7 @@ final class TypeMethods {
      */
     @NonNullByDefault
     static <A extends DataContainerArchetype> String toString(final Class<A> archetypeClass, final A self) {
-        final var helper = MoreObjects.toStringHelper(archetypeClass).add("name", self.name());
-        addNonEmpty(helper, "implements", self.getImplements());
-        addNonEmpty(helper, "enclosedTypes", self.enclosedTypes());
-        addNonEmpty(helper, "methods", self.getMethodDefinitions());
-        return helper.toString();
+        return toStringHelper(archetypeClass, self).toString();
     }
 
     /**
@@ -93,12 +89,30 @@ final class TypeMethods {
     }
 
     /**
+     * Helper for implementations of {@link DataContainerArchetype#toString()}.
+     *
+     * @param <A> the {@link DataContainerArchetype} type
+     * @param archetypeClass the archetype class
+     * @param self the archetype
+     * @return a {@link ToStringHelper}
+     */
+    @NonNullByDefault
+    static <A extends DataContainerArchetype> ToStringHelper toStringHelper(final Class<A> archetypeClass,
+            final A self) {
+        final var helper = MoreObjects.toStringHelper(archetypeClass).add("name", self.name());
+        addNonEmpty(helper, "implements", self.getImplements());
+        addNonEmpty(helper, "enclosedTypes", self.enclosedTypes());
+        addNonEmpty(helper, "methods", self.getMethodDefinitions());
+        return helper;
+    }
+
+    /**
      * Helper for implementations of {@link OperationArchetype#toString()}.
      *
      * @param <A> the {@link OperationArchetype} type
      * @param archetypeClass the archetype class
      * @param self the archetype
-     * @return a String
+     * @return a {@link ToStringHelper}
      */
     @NonNullByDefault
     static <A extends OperationArchetype> ToStringHelper toStringHelper(final Class<A> archetypeClass, final A self) {

@@ -38,7 +38,8 @@ final class NotificationTemplate extends InterfaceTemplate<NotificationArchetype
         }
     }
 
-    private static final ConcreteType DATA_OBJECT = ConcreteType.ofClass(DataObject.class);
+    static final ConcreteType DATA_OBJECT = ConcreteType.ofClass(DataObject.class);
+
     private static final ConcreteType NOTIFICATION = ConcreteType.ofClass(Notification.class);
 
     private NotificationTemplate(final NotificationArchetype archetype, final DataRootArchetype root) {

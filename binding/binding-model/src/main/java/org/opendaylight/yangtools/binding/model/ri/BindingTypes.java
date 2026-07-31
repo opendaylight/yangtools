@@ -39,24 +39,10 @@ public final class BindingTypes {
     static final @NonNull ConcreteType ENTRY_OBJECT = cachedType(EntryObject.class);
 
     private static final @NonNull ConcreteType CHILD_OF = cachedType(ChildOf.class);
-    private static final @NonNull ConcreteType INSTANCE_NOTIFICATION = cachedType(InstanceNotification.class);
     private static final @NonNull ConcreteType KEYED_LIST_NOTIFICATION = cachedType(KeyedListNotification.class);
 
     private BindingTypes() {
         //  Hidden on purpose
-    }
-
-    /**
-     * Type specializing {@link InstanceNotification} for a particular type.
-     *
-     * @param concreteType The concrete type of this notification
-     * @param parent Type of parent defining the notification
-     * @return A parameterized type corresponding to {@code InstanceNotification<ConcreteType, Parent>}
-     * @throws NullPointerException if {@code parent} is {@code null}
-     */
-    @NonNullByDefault
-    public static ParameterizedType instanceNotification(final Type concreteType, final Type parent) {
-        return ParameterizedType.of(INSTANCE_NOTIFICATION, concreteType, parent);
     }
 
     /**

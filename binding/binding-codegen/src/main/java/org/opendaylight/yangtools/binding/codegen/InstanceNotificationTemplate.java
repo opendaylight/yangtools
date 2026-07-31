@@ -9,9 +9,17 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.Iterators;
+import java.util.Iterator;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.InstanceNotification;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.InstanceNotificationArchetype;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 
 /**
  * Template for a {@link InstanceNotificationArchetype}.
@@ -30,9 +38,24 @@ final class InstanceNotificationTemplate extends InterfaceTemplate<InstanceNotif
         }
     }
 
+    private static final ConcreteType INSTANCE_NOTIFICATION = ConcreteType.ofClass(InstanceNotification.class);
+
     private InstanceNotificationTemplate(final InstanceNotificationArchetype archetype,
             final DataRootArchetype root) {
         super(archetype, root);
+    }
+
+    @Override
+    @NonNull InstanceNotificationArchetype builderTarget() {
+        return archetype;
+    }
+
+    @Override
+    Iterator<? extends Type> extendsTypes() {
+        return Iterators.concat(
+            Iterators.forArray(NotificationTemplate.DATA_OBJECT,
+                ParameterizedType.of(INSTANCE_NOTIFICATION, archetype, TypeRef.of(archetype.parentName()))),
+            super.extendsTypes());
     }
 
     @Override
