@@ -26,7 +26,7 @@ class TypesTest {
 
     @Test
     void testPrimitiveType() {
-        final var primitiveType = Types.typeForClass(String[].class);
+        final var primitiveType = Types.cachedType(String[].class);
         assertEquals("String[]", primitiveType.simpleName());
     }
 

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.model.ri;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -36,20 +38,20 @@ public final class Types {
             }
         });
 
-    public static final @NonNull ConcreteType BOOLEAN = typeForClass(Boolean.class);
-    public static final @NonNull ConcreteType BYTE_ARRAY = typeForClass(byte[].class);
-    public static final @NonNull ConcreteType CLASS = typeForClass(Class.class);
-    public static final @NonNull ConcreteType STRING = typeForClass(String.class);
-    public static final @NonNull ConcreteType VOID = typeForClass(Void.class);
+    public static final @NonNull ConcreteType BOOLEAN = cachedType(Boolean.class);
+    public static final @NonNull ConcreteType BYTE_ARRAY = cachedType(byte[].class);
+    public static final @NonNull ConcreteType CLASS = cachedType(Class.class);
+    public static final @NonNull ConcreteType STRING = cachedType(String.class);
+    public static final @NonNull ConcreteType VOID = cachedType(Void.class);
 
     @Beta
-    public static final @NonNull ConcreteType OBJECT = typeForClass(Object.class);
+    public static final @NonNull ConcreteType OBJECT = cachedType(Object.class);
 
-    private static final @NonNull ConcreteType LIST_TYPE = typeForClass(List.class);
-    private static final @NonNull ConcreteType LISTENABLE_FUTURE = typeForClass(ListenableFuture.class);
-    private static final @NonNull ConcreteType MAP_TYPE = typeForClass(Map.class);
-    private static final @NonNull ConcreteType SET_TYPE = typeForClass(Set.class);
-    private static final @NonNull ConcreteType IMMUTABLE_SET_TYPE = typeForClass(ImmutableSet.class);
+    private static final @NonNull ConcreteType LIST_TYPE = cachedType(List.class);
+    private static final @NonNull ConcreteType LISTENABLE_FUTURE = cachedType(ListenableFuture.class);
+    private static final @NonNull ConcreteType MAP_TYPE = cachedType(Map.class);
+    private static final @NonNull ConcreteType SET_TYPE = cachedType(Set.class);
+    private static final @NonNull ConcreteType IMMUTABLE_SET_TYPE = cachedType(ImmutableSet.class);
     private static final @NonNull ParameterizedType LIST_TYPE_WILDCARD = ParameterizedType.of(LIST_TYPE);
     private static final @NonNull ParameterizedType SET_TYPE_WILDCARD = ParameterizedType.of(SET_TYPE);
 
@@ -97,9 +99,17 @@ public final class Types {
      *
      * @param cls Class to describe
      * @return Description of class
+     * @deprecated Use publicly-accessible constants and methods in this class, {@link BaseYangTypes} and
+     *             {@link BindingTypes}.
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static @NonNull ConcreteType typeForClass(final @NonNull Class<?> cls) {
-        return TYPE_CACHE.getUnchecked(cls);
+        return cachedType(cls);
+    }
+
+    @NonNullByDefault
+    static ConcreteType cachedType(final Class<?> cls) {
+        return TYPE_CACHE.getUnchecked(requireNonNull(cls));
     }
 
     /**

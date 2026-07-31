@@ -22,10 +22,10 @@ import org.opendaylight.yangtools.binding.Notification;
 class BindingTypesTest {
     @Test
     void staticBindingTypesTest() {
-        assertEquals(Types.typeForClass(Augmentable.class), BindingTypes.AUGMENTABLE);
-        assertEquals(Types.typeForClass(Augmentation.class), BindingTypes.AUGMENTATION);
-        assertEquals(Types.typeForClass(DataObject.class), BindingTypes.DATA_OBJECT);
-        assertEquals(Types.typeForClass(EntryObject.class), BindingTypes.ENTRY_OBJECT);
+        assertEquals(Types.cachedType(Augmentable.class), BindingTypes.AUGMENTABLE);
+        assertEquals(Types.cachedType(Augmentation.class), BindingTypes.AUGMENTATION);
+        assertEquals(Types.cachedType(DataObject.class), BindingTypes.DATA_OBJECT);
+        assertEquals(Types.cachedType(EntryObject.class), BindingTypes.ENTRY_OBJECT);
     }
 
     @Test
@@ -68,7 +68,7 @@ class BindingTypesTest {
     @Test
     void testNotification() {
         final var notificationType = BindingTypes.notification(Types.objectType());
-        assertEquals(Types.typeForClass(Notification.class), notificationType.getRawType());
+        assertEquals(Types.cachedType(Notification.class), notificationType.getRawType());
         assertEquals(List.of(Types.objectType()), notificationType.getActualTypeArguments());
     }
 }

@@ -94,6 +94,6 @@ public final class BaseYangTypes {
      * @return Description of the type
      */
     private static ConcreteType typeForBuiltIn(final BuiltInType<?> type) {
-        return Types.typeForClass(type.javaClass());
+        return Types.cachedType(type.javaClass());
     }
 }

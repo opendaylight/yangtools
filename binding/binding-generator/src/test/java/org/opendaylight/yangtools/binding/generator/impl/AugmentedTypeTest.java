@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -108,7 +109,7 @@ class AugmentedTypeTest {
             }
         }
         assertNotNull(gtTunnelId, "tunnelId is null");
-        assertEquals(Types.typeForClass(Integer.class), gtTunnelId.getReturnType());
+        assertEquals(BaseYangTypes.INT32_TYPE, gtTunnelId.getReturnType());
 
         // 'NetworkLink2'
         assertNotNull(gtNetworkLink2, "NetworkLink2 is null");

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.ri;
 
-import static org.opendaylight.yangtools.binding.model.ri.Types.typeForClass;
+import static org.opendaylight.yangtools.binding.model.ri.Types.cachedType;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.eclipse.jdt.annotation.NonNull;
@@ -29,20 +29,20 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 
 public final class BindingTypes {
 
-    public static final @NonNull ConcreteType DATA_OBJECT = typeForClass(DataObject.class);
-    public static final @NonNull ConcreteType JAVA_DATACONTAINER = typeForClass(JavaDataContainer.class);
+    public static final @NonNull ConcreteType DATA_OBJECT = cachedType(DataObject.class);
+    public static final @NonNull ConcreteType JAVA_DATACONTAINER = cachedType(JavaDataContainer.class);
 
     @VisibleForTesting
-    static final @NonNull ConcreteType AUGMENTABLE = typeForClass(Augmentable.class);
+    static final @NonNull ConcreteType AUGMENTABLE = cachedType(Augmentable.class);
     @VisibleForTesting
-    static final @NonNull ConcreteType AUGMENTATION = typeForClass(Augmentation.class);
+    static final @NonNull ConcreteType AUGMENTATION = cachedType(Augmentation.class);
     @VisibleForTesting
-    static final @NonNull ConcreteType ENTRY_OBJECT = typeForClass(EntryObject.class);
+    static final @NonNull ConcreteType ENTRY_OBJECT = cachedType(EntryObject.class);
 
-    private static final @NonNull ConcreteType CHILD_OF = typeForClass(ChildOf.class);
-    private static final @NonNull ConcreteType INSTANCE_NOTIFICATION = typeForClass(InstanceNotification.class);
-    private static final @NonNull ConcreteType KEYED_LIST_NOTIFICATION = typeForClass(KeyedListNotification.class);
-    private static final @NonNull ConcreteType NOTIFICATION = typeForClass(Notification.class);
+    private static final @NonNull ConcreteType CHILD_OF = cachedType(ChildOf.class);
+    private static final @NonNull ConcreteType INSTANCE_NOTIFICATION = cachedType(InstanceNotification.class);
+    private static final @NonNull ConcreteType KEYED_LIST_NOTIFICATION = cachedType(KeyedListNotification.class);
+    private static final @NonNull ConcreteType NOTIFICATION = cachedType(Notification.class);
 
     private BindingTypes() {
         //  Hidden on purpose

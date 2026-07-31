@@ -40,8 +40,7 @@ class Mdsal675Test {
     private static final String PACKAGE2 = "org.opendaylight.yang.gen.v1.urn.test.yang.data.naming.norev.";
     private static final String MODULE_CLASS_NAME = PACKAGE + "YangDataDemoData";
     private static final String ROOT_CONTAINER_CLASS_NAME = PACKAGE + "RootContainer";
-    private static final Map<String, Type> INTERFACE_METHODS =
-            Map.of("implementedInterface", Types.typeForClass(Class.class));
+    private static final Map<String, Type> INTERFACE_METHODS = Map.of("implementedInterface", Types.CLASS);
 
     @Test
     void yangDataGen() {
