@@ -34,6 +34,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -207,7 +208,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 final var child = type.schemaTreeChild(qname);
                 if (child == null) {
                     final var module = qname.getModule();
-                    if (type.findModule(module).isEmpty()) {
+                    if (type.lookupModule(module) == null) {
                         throw new MissingSchemaException(
                             "Module " + module + " is not present in current schema context.");
                     }
@@ -225,7 +226,10 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 }
                 if (childSchema instanceof AnydataSchemaNode || childSchema instanceof AnyxmlSchemaNode
                     || childSchema instanceof LeafSchemaNode || childSchema instanceof LeafListSchemaNode) {
-                    final var module = type.findModule(qname.getModule()).orElseThrow();
+                    final var module = type.lookupModule(qname.getModule());
+                    if (module == null) {
+                        throw new NoSuchElementException("Cannot find module for " + qname);
+                    }
                     final var moduleChildren = getLeafNodes(context.loadClass(module.javaType()), module.statement());
                     for (var moduleChild : moduleChildren.values()) {
                         if (qname.equals(moduleChild.getDomPathArgument().getNodeType())) {
@@ -350,8 +354,10 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public ContainerLikeCodecContext<?> load(final Class<?> key) {
-                final var runtimeType = context.getTypes().findSchema(JavaTypeName.create(key))
-                    .orElseThrow(() -> new IllegalArgumentException(key + " is not a known class"));
+                final var runtimeType = context.getTypes().lookupRuntimeType(JavaTypeName.create(key));
+                if (runtimeType == null) {
+                    throw new IllegalArgumentException(key + " is not a known class");
+                }
                 if (RpcInput.class.isAssignableFrom(key) && runtimeType instanceof InputRuntimeType input) {
                     // FIXME: accurate type
                     return new ContainerLikeCodecContext(key, input, BindingCodecContext.this);

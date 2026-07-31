@@ -10,9 +10,8 @@ package org.opendaylight.yangtools.binding.runtime.api;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -27,13 +26,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absol
  * The result of BindingGenerator run. Contains mapping between Types and SchemaNodes.
  */
 @Beta
+@NonNullByDefault
 public interface BindingRuntimeTypes extends RuntimeTypeContainer, Immutable {
     /**
      * Return the {@link EffectiveModelContext} underlying this object.
      *
      * @return the {@link EffectiveModelContext} underlying this object
      */
-    @NonNull EffectiveModelContext modelContext();
+    EffectiveModelContext modelContext();
 
     /**
      * Lookup {@link IdentityRuntimeType} by its QNamme.
@@ -42,13 +42,13 @@ public interface BindingRuntimeTypes extends RuntimeTypeContainer, Immutable {
      * @return {@link IdentityRuntimeType} or {@code null}
      * @throws NullPointerException if {@code qname} is {@code null}
      */
-    @Nullable IdentityRuntimeType identityChild(@NonNull QName qname);
+    @Nullable IdentityRuntimeType identityChild(QName qname);
 
-    Optional<RuntimeType> findSchema(JavaTypeName typeName);
+    @Nullable RuntimeType lookupRuntimeType(JavaTypeName typeName);
 
-    Optional<ModuleRuntimeType> findModule(QNameModule module);
+    @Nullable ModuleRuntimeType lookupModule(QNameModule module);
 
-    Optional<YangDataRuntimeType> findYangData(YangDataName templateName);
+    @Nullable YangDataRuntimeType lookupYangData(YangDataName templateName);
 
     default @Nullable RuntimeType schemaTreeChild(final Absolute path) {
         final var it = path.getNodeIdentifiers().iterator();
@@ -103,7 +103,7 @@ public interface BindingRuntimeTypes extends RuntimeTypeContainer, Immutable {
      * @return The set of {@link CaseRuntimeType}s known to this instance
      * @throws NullPointerException if {@code ChoiceRuntimeType} is null
      */
-    @NonNull Set<CaseRuntimeType> allCaseChildren(ChoiceRuntimeType choiceType);
+    Set<CaseRuntimeType> allCaseChildren(ChoiceRuntimeType choiceType);
 
     /**
      * Get all {@link CaseRuntimeType}s that can be used to substitute the {@code caseType},
@@ -116,7 +116,7 @@ public interface BindingRuntimeTypes extends RuntimeTypeContainer, Immutable {
      *         If no substitution is associated with given {@code caseType}, an empty {@link ImmutableList} is returned
      * @throws NullPointerException if {@code caseType} is null
      */
-    @NonNull List<CaseRuntimeType> getSubstitutionsForCase(CaseRuntimeType caseType);
+    List<CaseRuntimeType> getSubstitutionsForCase(CaseRuntimeType caseType);
 
     /**
      * Get all {@link AugmentRuntimeType}s that can be used to substitute the {@code augmentType},
@@ -131,5 +131,5 @@ public interface BindingRuntimeTypes extends RuntimeTypeContainer, Immutable {
      *         an empty {@link ImmutableList} is returned
      * @throws NullPointerException if {@code augmentType} is null
      */
-    @NonNull List<AugmentRuntimeType> getSubstitutionsForAugment(AugmentRuntimeType augmentType);
+    List<AugmentRuntimeType> getSubstitutionsForAugment(AugmentRuntimeType augmentType);
 }

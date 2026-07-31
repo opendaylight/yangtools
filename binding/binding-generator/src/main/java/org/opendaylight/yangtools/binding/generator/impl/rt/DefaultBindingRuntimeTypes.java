@@ -19,7 +19,6 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
@@ -82,8 +81,8 @@ public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
     }
 
     @Override
-    public Optional<RuntimeType> findSchema(final JavaTypeName typeName) {
-        return Optional.ofNullable(types.get(requireNonNull(typeName)));
+    public RuntimeType lookupRuntimeType(final JavaTypeName typeName) {
+        return types.get(requireNonNull(typeName));
     }
 
     @Override
@@ -100,14 +99,14 @@ public final class DefaultBindingRuntimeTypes implements BindingRuntimeTypes {
     }
 
     @Override
-    public Optional<ModuleRuntimeType> findModule(final QNameModule module) {
-        return Optional.ofNullable(modulesByNamespace.get(module));
+    public ModuleRuntimeType lookupModule(final QNameModule module) {
+        return modulesByNamespace.get(module);
     }
 
     @Override
-    public Optional<YangDataRuntimeType> findYangData(final YangDataName templateName) {
+    public YangDataRuntimeType lookupYangData(final YangDataName templateName) {
         final var module = modulesByNamespace.get(templateName.module());
-        return module == null ? Optional.empty() : Optional.ofNullable(module.yangDataChild(templateName));
+        return module == null ? null : module.yangDataChild(templateName);
     }
 
     @Override
