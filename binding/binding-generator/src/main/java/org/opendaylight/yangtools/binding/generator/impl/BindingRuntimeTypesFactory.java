@@ -229,6 +229,8 @@ final class BindingRuntimeTypesFactory implements Mutable {
      */
     private void collectSubstsForAugment(
             final Map<AugmentRuntimeType, List<EffectiveStatement<?, ?>>> augToChildrenStmts) {
+        final var sw = Stopwatch.createStarted();
+
         // let's use allStmts for now
         for (var type : allTypes.values()) {
             // skip types that are not interesting
@@ -236,35 +238,43 @@ final class BindingRuntimeTypesFactory implements Mutable {
                 continue;
             }
 
+            // loop invariants
             final var runtimeType = runtime.javaType();
+            final var runtimeTarget = runtimeType.target();
+            final var runtimeIfaces = runtimeType.getImplements();
+            final var runtimeChildren = augToChildrenStmts.get(runtime);
+
             for (final var entry : augToChildrenStmts.entrySet()) {
-                final var substit = entry.getKey();
                 // do not compare the same instance to itself
+                final var substit = entry.getKey();
                 if (runtime.equals(substit)) {
                     continue;
                 }
 
-                final var substitChildren = entry.getValue();
+                // check if both have the same target type
                 final var substitType = substit.javaType();
-                final var substitIfaces = substitType.getImplements();
-
-                final var runtimeChildren = augToChildrenStmts.get(runtime);
-                final var runtimeIfaces = runtimeType.getImplements();
-
-                boolean substitutional;
-                // check if both have same interfaces
-                substitutional = substitIfaces.equals(runtimeIfaces);
-                // check if both have same children
-                substitutional &= substitChildren.equals(runtimeChildren);
-                // the last check needs to verify if they have the same target class
-                substitutional &= runtimeType.target().equals(substitType.target());
-
-                // if the 'runtime' can be substituted for 'substit', add it to the map
-                if (substitutional) {
-                    augmentToSubstitutionAugments.put(runtimeType, substit);
+                if (!runtimeTarget.equals(substitType.target())) {
+                    continue;
                 }
+
+                // check if both have same interfaces
+                final var substitIfaces = substitType.getImplements();
+                if (!runtimeIfaces.equals(substitIfaces)) {
+                    continue;
+                }
+
+                // check if both have same children
+                final var substitChildren = entry.getValue();
+                if (!runtimeChildren.equals(substitChildren)) {
+                    continue;
+                }
+
+                // everything checks out: 'runtime' can be substituted for 'substit', add it to the map
+                augmentToSubstitutionAugments.put(runtimeType, substit);
             }
         }
+
+        LOG.debug("Established {} augment substitutions in {}", augmentToSubstitutionAugments.size(), sw);
     }
 
     private static <K, V> void safePut(final Map<K, V> map, final String name, final K key, final V value) {
