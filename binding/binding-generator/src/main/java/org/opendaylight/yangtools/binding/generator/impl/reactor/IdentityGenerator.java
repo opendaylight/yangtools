@@ -24,12 +24,11 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to a {@code identity} statement.
  */
-public final class IdentityGenerator
-        extends AbstractDependentGenerator<IdentityEffectiveStatement, IdentityRuntimeType> {
+public final class IdentityGenerator extends DependentGenerator<IdentityEffectiveStatement, IdentityRuntimeType> {
     private List<IdentityGenerator> baseIdentities = null;
 
     @NonNullByDefault
-    IdentityGenerator(final IdentityEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
+    IdentityGenerator(final IdentityEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

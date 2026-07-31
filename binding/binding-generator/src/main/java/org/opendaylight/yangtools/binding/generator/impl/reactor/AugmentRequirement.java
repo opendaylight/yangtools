@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.VerifyException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -40,11 +40,11 @@ final class AugmentRequirement implements Mutable {
     private final @NonNull AbstractAugmentGenerator augment;
     private final @NonNull Iterator<QName> remaining;
 
-    private @NonNull AbstractCompositeGenerator<?, ?> target;
+    private @NonNull DataContainerGenerator<?, ?> target;
     private QNameModule localNamespace;
     private QName qname;
 
-    private AugmentRequirement(final AbstractAugmentGenerator augment, final AbstractCompositeGenerator<?, ?> target) {
+    private AugmentRequirement(final AbstractAugmentGenerator augment, final DataContainerGenerator<?, ?> target) {
         this.augment = requireNonNull(augment);
         this.target = requireNonNull(target);
         remaining = augment.statement().argument().getNodeIdentifiers().iterator();
@@ -118,14 +118,16 @@ final class AugmentRequirement implements Mutable {
         return LinkageProgress.NONE;
     }
 
-    private @NonNull LinkageProgress moveTo(final @NonNull AbstractCompositeGenerator<?, ?> newTarget) {
+    private @NonNull LinkageProgress moveTo(final @NonNull DataContainerGenerator<?, ?> newTarget) {
         target = newTarget;
         return tryProgress();
     }
 
     private @NonNull LinkageProgress progressTo(final @NonNull AbstractExplicitGenerator<?, ?> newTarget) {
-        verify(newTarget instanceof AbstractCompositeGenerator, "Unexpected generator %s", newTarget);
-        target = (AbstractCompositeGenerator<?, ?>) newTarget;
+        if (!(newTarget instanceof DataContainerGenerator<?, ?> newContainer)) {
+            throw new VerifyException("Unexpected generator " + newTarget);
+        }
+        target = (DataContainerGenerator<?, ?>) newTarget;
         qname = remaining.hasNext() ? remaining.next() : null;
         return tryProgress();
     }

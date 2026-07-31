@@ -245,7 +245,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         for (var gen : parent) {
             gen.ensureMember();
             collectCollisionDomains(result, gen);
-            if (gen instanceof AbstractCompositeGenerator<?, ?> compositeGen) {
+            if (gen instanceof DataContainerGenerator<?, ?> compositeGen) {
                 result.add(compositeGen.domain());
             }
         }
@@ -364,7 +364,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
     // Note: unlike other methods, this method pushes matching child to the stack
     private void linkUsesDependencies(final Iterable<? extends Generator> parent) {
         for (var child : parent) {
-            if (child instanceof AbstractCompositeGenerator<?, ?> composite) {
+            if (child instanceof DataContainerGenerator<?, ?> composite) {
                 LOG.trace("Visiting composite {}", composite);
                 stack.push(composite);
                 composite.linkUsesDependencies(this);
@@ -400,9 +400,9 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
 
     private void linkDependencies(final Iterable<? extends Generator> parent) {
         for (var child : parent) {
-            if (child instanceof AbstractDependentGenerator<?, ?> dependent) {
+            if (child instanceof DependentGenerator<?, ?> dependent) {
                 dependent.linkDependencies(this);
-            } else if (child instanceof AbstractCompositeGenerator) {
+            } else if (child instanceof DataContainerGenerator) {
                 stack.push(child);
                 linkDependencies(child);
                 stack.pop();
@@ -413,10 +413,12 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
     private void bindTypeDefinition(final Iterable<? extends Generator> parent) {
         for (var child : parent) {
             stack.push(child);
-            if (child instanceof AbstractTypeObjectGenerator<?, ?> typeObject) {
-                typeObject.bindTypeDefinition(this);
-            } else if (child instanceof AbstractCompositeGenerator) {
-                bindTypeDefinition(child);
+            switch (child) {
+                case AbstractTypeObjectGenerator<?, ?> gen -> typeObject.bindTypeDefinition(this);
+                case DataContainerGenerator gen - bindTypeDefinition(child);
+                default -> {
+                    // no-op
+                }
             }
             stack.pop();
         }
@@ -468,7 +470,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
 
     private static void freezeGroupingUsers(final Iterable<? extends Generator> parent) {
         for (var child : parent) {
-            if (child instanceof AbstractCompositeGenerator<?, ?> composite) {
+            if (child instanceof DataContainerGenerator<?, ?> composite) {
                 if (composite instanceof GroupingGenerator grouping) {
                     grouping.freezeUsers();
                 }

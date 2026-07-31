@@ -18,12 +18,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 
 /**
  * Utility to resolve instantiated {@code augment} statements to their {@link AbstractAugmentGenerator} counterparts.
- * This is essentially a stack of {@link AbstractCompositeGenerator}s which should be examined.
+ * This is essentially a stack of {@link DataContainerGenerator}s which should be examined.
  */
 final class AugmentResolver implements Mutable {
-    private final Deque<AbstractCompositeGenerator<?, ?>> stack = new ArrayDeque<>();
+    private final Deque<DataContainerGenerator<?, ?>> stack = new ArrayDeque<>();
 
-    void enter(final AbstractCompositeGenerator<?, ?> generator) {
+    void enter(final DataContainerGenerator<?, ?> generator) {
         stack.push(requireNonNull(generator));
     }
 
@@ -41,7 +41,7 @@ final class AugmentResolver implements Mutable {
         throw new IllegalStateException("Failed to resolve " + statement + " in " + stack);
     }
 
-    private @Nullable AbstractAugmentGenerator findAugment(final AbstractCompositeGenerator<?, ?> generator,
+    private @Nullable AbstractAugmentGenerator findAugment(final DataContainerGenerator<?, ?> generator,
             final AugmentEffectiveStatement statement) {
         for (var augment : generator.augments()) {
             if (augment.matchesInstantiated(statement)) {

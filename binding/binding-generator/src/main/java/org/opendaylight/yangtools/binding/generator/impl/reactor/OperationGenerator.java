@@ -25,7 +25,7 @@ public abstract sealed class OperationGenerator<
         R extends OperationRuntimeType> extends CompositeSchemaTreeGenerator<S, R>
         permits AbstractActionGenerator, RpcGenerator {
     @NonNullByDefault
-    OperationGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
+    OperationGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

@@ -14,12 +14,12 @@ import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 /**
- * Abstract base class for {@link AbstractCompositeGenerator}s which are also {@link SchemaTreeChild}ren.
+ * Abstract base class for {@link DataContainerGenerator}s which are also {@link SchemaTreeChild}ren.
  */
 abstract class CompositeSchemaTreeGenerator<S extends SchemaTreeEffectiveStatement<?>, R extends CompositeRuntimeType>
-        extends AbstractCompositeGenerator<S, R> {
+        extends DataContainerGenerator<S, R> {
     @NonNullByDefault
-    CompositeSchemaTreeGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
+    CompositeSchemaTreeGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

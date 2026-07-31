@@ -27,7 +27,7 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
     private final @NonNull EntryObjectGenerator listGen;
 
     @NonNullByDefault
-    KeyGenerator(final KeyEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent,
+    KeyGenerator(final KeyEffectiveStatement statement, final DataContainerGenerator<?, ?> parent,
             final EntryObjectGenerator listGen) {
         super(statement, parent);
         this.listGen = requireNonNull(listGen);

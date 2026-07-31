@@ -194,9 +194,10 @@ import org.slf4j.LoggerFactory;
  * type indirection in YANG constructs is therefore explicitly excluded from the generated Java code, but the Binding
  * Specification still takes them into account when determining types as outlined above.
  */
-abstract class AbstractTypeObjectGenerator<
+abstract sealed class AbstractTypeObjectGenerator<
         S extends TypeEffectiveStatement.MandatoryIn<QName, ?> & TypeDefinitionCompat.WithQNameArgument<?>,
-        R extends RuntimeType> extends AbstractDependentGenerator<S, R> {
+        R extends RuntimeType> extends DependentGenerator<S, R>
+        permits AbstractTypeAwareGenerator, TypedefGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTypeObjectGenerator.class);
 
@@ -226,7 +227,7 @@ abstract class AbstractTypeObjectGenerator<
     private Type methodReturnTypeElement;
 
     @NonNullByDefault
-    AbstractTypeObjectGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
+    AbstractTypeObjectGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
         support = TypeObjectSupport.of(statement().typeStatement());
     }

@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStatement, ListRuntimeType>
         permits EntryObjectGenerator, ItemObjectGenerator {
     @NonNullByDefault
-    ListGenerator(final ListEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
+    ListGenerator(final ListEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

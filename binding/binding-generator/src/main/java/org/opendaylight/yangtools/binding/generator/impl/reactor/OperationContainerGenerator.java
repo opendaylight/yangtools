@@ -25,7 +25,7 @@ abstract sealed class OperationContainerGenerator<
         A extends AugmentableArchetype> extends CompositeSchemaTreeGenerator<S, R>
         permits InputGenerator, OutputGenerator {
     @NonNullByDefault
-    OperationContainerGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
+    OperationContainerGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
@@ -35,7 +35,7 @@ abstract sealed class OperationContainerGenerator<
     }
 
     @Override
-    final AbstractCompositeGenerator<?, ?> getPackageParent() {
+    final DataContainerGenerator<?, ?> getPackageParent() {
         return getParent().getParent();
     }
 

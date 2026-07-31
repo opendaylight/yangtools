@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
  */
 final class ItemObjectGenerator extends ListGenerator {
     @NonNullByDefault
-    ItemObjectGenerator(final ListEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
+    ItemObjectGenerator(final ListEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

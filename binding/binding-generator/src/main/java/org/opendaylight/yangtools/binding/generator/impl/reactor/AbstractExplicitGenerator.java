@@ -41,8 +41,9 @@ import org.slf4j.LoggerFactory;
  * An explicit {@link Generator}, associated with a particular {@link EffectiveStatement}.
  */
 // FIXME: unify this with Generator
-public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, ?>, R extends RuntimeType>
-        extends Generator implements CopyableNode, StatementRepresentation<S> {
+public abstract sealed class AbstractExplicitGenerator<S extends EffectiveStatement<?, ?>, R extends RuntimeType>
+        extends Generator implements CopyableNode, StatementRepresentation<S>
+        permits DependentGenerator, DataContainerGenerator, FeatureGenerator, KeyGenerator, OpaqueObjectGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractExplicitGenerator.class);
 
     private final @NonNull S statement;
@@ -73,7 +74,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    AbstractExplicitGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
+    AbstractExplicitGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
         super(parent);
         this.statement = requireNonNull(statement);
     }
