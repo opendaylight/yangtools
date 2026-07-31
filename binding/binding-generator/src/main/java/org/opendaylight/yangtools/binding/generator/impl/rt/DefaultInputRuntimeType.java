@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.InputArchetype;
+import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.InputRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -16,13 +16,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 
 public final class DefaultInputRuntimeType extends AbstractAugmentableRuntimeType<InputEffectiveStatement>
         implements InputRuntimeType {
-    public DefaultInputRuntimeType(final InputArchetype bindingType, final InputEffectiveStatement statement,
+    public DefaultInputRuntimeType(final RpcInputArchetype bindingType, final InputEffectiveStatement statement,
             final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
         super(bindingType, statement, children, augments);
     }
 
     @Override
-    public InputArchetype javaType() {
-        return (InputArchetype) super.javaType();
+    public RpcInputArchetype javaType() {
+        return (RpcInputArchetype) super.javaType();
     }
 }

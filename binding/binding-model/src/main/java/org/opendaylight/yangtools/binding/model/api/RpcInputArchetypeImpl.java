@@ -15,13 +15,13 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 
 @NonNullByDefault
-record InputArchetypeImpl(
+record RpcInputArchetypeImpl(
         JavaTypeName name,
         InputEffectiveStatement statement,
         List<Type> implementsTypes,
         List<MethodSignature> methodSignatures,
-        List<Archetype> enclosedTypes) implements InputArchetype {
-    InputArchetypeImpl {
+        List<Archetype> enclosedTypes) implements RpcInputArchetype {
+    RpcInputArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(implementsTypes);
@@ -51,6 +51,6 @@ record InputArchetypeImpl(
 
     @Override
     public String toString() {
-        return TypeMethods.toString(InputArchetype.class, this);
+        return TypeMethods.toString(RpcInputArchetype.class, this);
     }
 }

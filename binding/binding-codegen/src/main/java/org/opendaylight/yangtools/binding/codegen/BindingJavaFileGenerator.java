@@ -27,7 +27,6 @@ import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
-import org.opendaylight.yangtools.binding.model.api.InputArchetype;
 import org.opendaylight.yangtools.binding.model.api.InstanceNotificationArchetype;
 import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
@@ -40,6 +39,7 @@ import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcArchetype;
+import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
@@ -133,7 +133,6 @@ final class BindingJavaFileGenerator {
                 case FeatureArchetype archetype -> generateFile(new FeatureTemplate.Builder(archetype, root));
                 case GroupingArchetype archetype -> generateFile(new GroupingTemplate.Builder(archetype, root));
                 case IdentityArchetype archetype -> generateFile(new IdentityTemplate.Builder(archetype, root));
-                case InputArchetype archetype -> generateBoth(RpcInputTemplate.Builder::new, archetype, root);
                 case InstanceNotificationArchetype archetype ->
                     generateBoth(InstanceNotificationTemplate.Builder::new, archetype, root);
                 case ItemObjectArchetype archetype -> generateBoth(ItemObjectTemplate.Builder::new, archetype, root);
@@ -145,12 +144,13 @@ final class BindingJavaFileGenerator {
                     generateBoth(KeyedListNotificationTemplate.Builder::new, archetype, root);
                 case NotificationArchetype archetype ->
                     generateBoth(NotificationTemplate.Builder::new, archetype, root);
-                case OutputArchetype archetype -> generateBoth(RpcOutputTemplate.Builder::new, archetype, root);
                 case NotificationBodyArchetype archetype ->
                     generateFile(new NotificationBodyTemplate.Builder(archetype, root));
+                case OutputArchetype archetype -> generateBoth(RpcOutputTemplate.Builder::new, archetype, root);
                 case OpaqueObjectArchetype<?> archetype ->
                     generateFile(new OpaqueObjectTemplate.Builder(archetype, root));
                 case RpcArchetype archetype -> generateFile(new RpcTemplate.Builder(archetype, root));
+                case RpcInputArchetype archetype -> generateBoth(RpcInputTemplate.Builder::new, archetype, root);
                 case YangDataArchetype archetype -> generateBoth(YangDataTemplate.Builder::new, archetype, root);
             }
         }

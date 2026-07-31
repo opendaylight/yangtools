@@ -40,7 +40,7 @@ public sealed interface OperationArchetype extends Archetype permits OperationAr
     /**
      * {@return the archetype for operation's input}
      */
-    InputArchetype input();
+    RpcInputArchetype input();
 
     /**
      * {@return the archetype for operation's output}

@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.binding.Augmentable;
  * An {@link InterfaceArchetype} for an {@link Augmentable} interface.
  */
 public sealed interface AugmentableArchetype extends InterfaceArchetype
-    permits CaseObjectArchetype, ContainerArchetype, InputArchetype, InterfaceArchetype.OfList,
+    permits CaseObjectArchetype, ContainerArchetype, RpcInputArchetype, InterfaceArchetype.OfList,
             InterfaceArchetype.OfNotification, OutputArchetype {
     // nothing else
 }

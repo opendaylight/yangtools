@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 public record RpcArchetypeImpl(
         JavaTypeName name,
         RpcEffectiveStatement statement,
-        InputArchetype input,
+        RpcInputArchetype input,
         OutputArchetype output) implements RpcArchetype {
     public RpcArchetypeImpl {
         requireNonNull(name);
