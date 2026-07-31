@@ -156,7 +156,7 @@ abstract class AbstractAugmentGenerator
 
         final var builder = AugmentationArchetype.builder(typeName(), statement(), target);
         addUsesInterfaces(builder);
-        addConcreteInterfaceMethods(builder);
+        defaultImplementedInterace(builder);
         addGetterMethods(builder);
         return builder.build();
     }

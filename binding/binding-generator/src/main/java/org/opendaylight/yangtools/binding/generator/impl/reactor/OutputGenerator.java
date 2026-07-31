@@ -45,7 +45,7 @@ final class OutputGenerator
         final var builder = RpcOutputArchetype.builder(typeName, statement);
         addAugmentable(builder);
         addUsesInterfaces(builder);
-        addConcreteInterfaceMethods(builder);
+        defaultImplementedInterace(builder);
         addGetterMethods(builder);
         return builder.build();
     }
