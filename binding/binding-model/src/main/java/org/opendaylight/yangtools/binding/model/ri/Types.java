@@ -37,7 +37,6 @@ public final class Types {
         });
 
     public static final @NonNull ConcreteType BOOLEAN = cachedType(Boolean.class);
-    public static final @NonNull ConcreteType BYTE_ARRAY = cachedType(byte[].class);
     public static final @NonNull ConcreteType CLASS = cachedType(Class.class);
     public static final @NonNull ConcreteType STRING = cachedType(String.class);
     public static final @NonNull ConcreteType VOID = cachedType(Void.class);

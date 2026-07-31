@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -46,7 +46,7 @@ class Mdsal406TypeObjectTest {
             generateTypes.stream().filter(type -> type.canonicalName()
                 .equals("org.opendaylight.yang.gen.v1.urn.opendaylight.test.rev131008.MyBinary")).findFirst()
                 .orElseThrow());
-        assertEquals(Types.BYTE_ARRAY, typedefType.valueType());
+        assertEquals(BaseYangTypes.BINARY_TYPE, typedefType.valueType());
     }
 
     @Test
