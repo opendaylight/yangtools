@@ -13,9 +13,9 @@ package org.opendaylight.yangtools.binding;
  * <p>All interfaces generated from YANG Augmentation statement must implement this interface with parameter {@code P}
  * which uniquely points to it's target class.
  *
- * @param <T> Class to which this implementation is extension.
+ * @param <A> Class to which this implementation is extension.
  */
-public interface Augmentation<T> extends DataObject {
-    @Override
-    Class<? extends Augmentation<T>> implementedInterface();
+public non-sealed interface Augmentation<T extends Augmentation<T, A> & G, A extends Augmentable<?>>
+        extends DataObject, ParentObject<T> {
+    // nothing else
 }

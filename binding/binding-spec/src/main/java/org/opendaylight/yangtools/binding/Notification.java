@@ -13,7 +13,6 @@ package org.opendaylight.yangtools.binding;
  * interface. In case they do, {@link EventInstantAware#eventInstant()} returns the time when this notification was
  * generated.
  */
-public non-sealed interface Notification<T extends Notification<T> & DataObject> extends BaseNotification {
-    @Override
-    Class<T> implementedInterface();
+public non-sealed interface Notification<T extends Notification<T> & G> extends BaseNotification, Augmentable<T> {
+    // nothing else
 }

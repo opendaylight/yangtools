@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Pantheon Technologies, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2026 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,9 +8,11 @@
 package org.opendaylight.yangtools.binding;
 
 /**
- * Marker interface for all interfaces generated for {@code output} statement within an {@code action} or an {@code rpc}
- * statement.
+ * A marker interface serving as a proof of interface composition. All non-sealed interfaces require this interface to
+ * be combined with them to form their concrete argument.
+ *
+ * @since 16.0.0
  */
-public interface RpcOutput<T extends RpcInput<T> & G> extends ParentObject<T> {
+public interface G {
     // nothing else
 }

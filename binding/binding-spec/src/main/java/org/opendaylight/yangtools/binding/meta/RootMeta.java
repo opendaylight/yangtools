@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataRoot;
+import org.opendaylight.yangtools.binding.G;
 import org.opendaylight.yangtools.binding.lib.UnsafeAccessSupport;
 import org.opendaylight.yangtools.concepts.Immutable;
 
@@ -23,7 +24,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @param unsafeAccess the {@link UnsafeAccess} servicing classes belonging to this YANG module
  * @since 15.0.0
  */
-public record RootMeta<R extends DataRoot<R>>(
+public record RootMeta<R extends DataRoot<R> & G>(
         @NonNull Class<R> rootClass,
         @NonNull YangModuleInfo moduleInfo,
         @NonNull UnsafeAccess unsafeAccess) implements Immutable {

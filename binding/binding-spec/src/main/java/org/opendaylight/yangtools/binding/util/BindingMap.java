@@ -19,6 +19,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.EntryObject;
+import org.opendaylight.yangtools.binding.G;
 import org.opendaylight.yangtools.binding.Key;
 
 /**
@@ -465,7 +466,7 @@ public final class BindingMap {
      * @param <V> the {@code Map}'s value type
      * @return A {@link Builder} instance.
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Builder<K, V> orderedBuilder() {
+    public static <K extends Key<V>, V extends EntryObject<V, ?, K> & G> @NonNull Builder<K, V> orderedBuilder() {
         return orderedBuilder(Builder.DEFAULT_INITIAL_CAPACITY);
     }
 
@@ -478,7 +479,7 @@ public final class BindingMap {
      * @param expectedSize Expected number of values in the resulting map
      * @return A {@link Builder} instance.
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Builder<K, V> orderedBuilder(
+    public static <K extends Key<V>, V extends EntryObject<V, ?, K> & G> @NonNull Builder<K, V> orderedBuilder(
             final int expectedSize) {
         return new OrderedBuilder<>(expectedSize);
     }
@@ -489,7 +490,7 @@ public final class BindingMap {
      * @param <K> the {@code Map}'s key type
      * @param <V> the {@code Map}'s value type
      */
-    public abstract static class Builder<K extends Key<V>, V extends EntryObject<V, K>> {
+    public abstract static class Builder<K extends Key<V>, V extends EntryObject<V, ?, K> & G> {
         static final int DEFAULT_INITIAL_CAPACITY = 4;
 
         Builder() {

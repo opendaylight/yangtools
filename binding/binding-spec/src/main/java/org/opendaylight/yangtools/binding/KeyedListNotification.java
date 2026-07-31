@@ -18,7 +18,7 @@ package org.opendaylight.yangtools.binding;
  * @param <K> Parent data tree key type
  */
 public interface KeyedListNotification<
-        N extends KeyedListNotification<N, E, K>,
+        N extends KeyedListNotification<N, E, K> & G,
         E extends EntryObject<E, K>,
         K extends Key<E>> extends InstanceNotification<N, E> {
     // nothing else

@@ -10,13 +10,14 @@ package org.opendaylight.yangtools.binding.test.mock;
 import java.io.InputStream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
+import org.opendaylight.yangtools.binding.G;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.lib.UnsafeAccessSupport;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
 import org.opendaylight.yangtools.yang.common.QName;
 
-public interface FooData extends DataRoot<FooData> {
+public interface FooData extends G, DataRoot<FooData> {
     @NonNullByDefault
     RootMeta<FooData> META = new RootMeta<>(FooData.class,
         // Note: this usually supplied via YangModuleInfoProvider reference

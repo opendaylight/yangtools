@@ -18,6 +18,7 @@ package org.opendaylight.yangtools.binding;
  *
  * @param <P> Parent {@link DataContainer} type
  */
-public interface ChildOf<P extends DataContainer> extends DataObject {
+public non-sealed interface ChildOf<T extends ChildOf<T, P> & G, P extends DataContainer>
+        extends DataObject, ParentObject<T> {
     // Nothing else
 }

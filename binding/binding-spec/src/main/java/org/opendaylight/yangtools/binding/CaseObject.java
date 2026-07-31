@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2026 PANTHEON.tech, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.binding;
 
 /**
- * Data Root of YANG module.
+ *
  */
-public non-sealed interface DataRoot<T extends DataRoot<T> & G> extends ParentObject<T> {
-    @Override
-    Class<T> implementedInterface();
+public non-sealed interface CaseObject<T extends CaseObject<T, C> & G, C extends ChoiceIn<?, ?>>
+        extends DataObject, ParentObject<T> {
+    // nothing else
 }

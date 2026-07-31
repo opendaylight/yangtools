@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.binding;
 
 /**
- * Data container is an interface which has structured contents and can can as an interior node of a
+ * Data container is an interface which has structured contents and can act as an interior node of a
  * {@link DataContainer}.
  *
  * @author Tony Tkacik
  */
-public non-sealed interface DataObject extends DataContainer, BindingObject {
+public sealed interface DataObject extends DataContainer, BindingObject permits Augmentation, CaseObject, ChildOf {
     @Override
     Class<? extends DataObject> implementedInterface();
 }

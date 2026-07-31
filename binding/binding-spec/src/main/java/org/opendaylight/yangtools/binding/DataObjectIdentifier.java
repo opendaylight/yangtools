@@ -145,27 +145,27 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
         return new DataObjectIdentifierBuilderWithKey<>(new KeyStep<>(listItem, requireNonNull(caze), listKey));
     }
 
-    static <R extends DataRoot<R>, T extends ChildOf<? super R>>
+    static <R extends DataRoot<R> & G, T extends ChildOf<? super R>>
             @NonNull Builder<T> builderOfInherited(final @NonNull Class<R> root, final @NonNull Class<T> container) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
         return new DataObjectIdentifierBuilder<>(DataObjectStep.of(container));
     }
 
-    static <R extends DataRoot<R>, C extends ChoiceIn<? super R> & DataObject, T extends ChildOf<? super C>>
+    static <R extends DataRoot<R> & G, C extends ChoiceIn<? super R> & DataObject, T extends ChildOf<? super C>>
             @NonNull Builder<T> builderOfInherited(final Class<R> root,
                 final Class<C> caze, final Class<T> container) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
         return new DataObjectIdentifierBuilder<>(DataObjectStep.of(caze, container));
     }
 
-    static <R extends DataRoot<R>, N extends EntryObject<N, K> & ChildOf<? super R>, K extends Key<N>>
+    static <R extends DataRoot<R> & G, N extends EntryObject<N, K> & ChildOf<? super R>, K extends Key<N>>
             Builder.@NonNull WithKey<N, K> builderOfInherited(final @NonNull Class<R> root,
                 final @NonNull Class<N> listItem, final @NonNull K listKey) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
         return new DataObjectIdentifierBuilderWithKey<>(new KeyStep<>(listItem, listKey));
     }
 
-    static <R extends DataRoot<R>, C extends ChoiceIn<? super R> & DataObject,
+    static <R extends DataRoot<R> & G, C extends ChoiceIn<? super R> & DataObject,
             N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
             Builder.@NonNull WithKey<N, K> builderOfInherited(final Class<R> root,
                 final Class<C> caze, final Class<N> listItem, final K listKey) {

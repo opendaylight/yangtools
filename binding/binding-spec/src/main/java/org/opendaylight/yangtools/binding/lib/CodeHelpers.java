@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
+import org.opendaylight.yangtools.binding.G;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.UnsafeSecret;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
@@ -51,7 +52,7 @@ public final class CodeHelpers {
     /**
      * Compare {@link Augmentation} by their canonical class name.
      */
-    private static final Comparator<Augmentation<?>> AUGMENTATION_BY_CANONICAL_NAME =
+    private static final Comparator<Augmentation<?, ?>> AUGMENTATION_BY_CANONICAL_NAME =
         Comparator.comparing(aug -> aug.implementedInterface().getCanonicalName());
 
     private CodeHelpers() {
@@ -919,7 +920,7 @@ public final class CodeHelpers {
     }
 
     @NonNullByDefault
-    private static int hashAugmentations(final Collection<? extends Augmentation<?>> augmentations) {
+    private static int hashAugmentations(final Collection<? extends Augmentation<?, ?>> augmentations) {
         int result = 0;
         for (var augmentation : augmentations) {
             result += augmentation.hashCode();
@@ -1008,7 +1009,7 @@ public final class CodeHelpers {
      * @since 16.0.0
      */
     @NonNullByDefault
-    public static <T extends Augmentable<T> & DataContainer> String jcTS0(final T augmentable) {
+    public static <T extends Augmentable<T> & G> String jcTS0(final T augmentable) {
         final var clazz = augmentable.implementedInterface();
         final var augmentations = augmentable.augmentations();
         return augmentations.isEmpty() ? jcTS0(clazz) : jcTSB(clazz, augmentations).build();
@@ -1047,7 +1048,7 @@ public final class CodeHelpers {
      * @since 16.0.0
      */
     @NonNullByDefault
-    public static <T extends Augmentable<T> & DataContainer> String jcTS1(final T augmentable, final String name,
+    public static <T extends Augmentable<T> & G>String jcTS1(final T augmentable, final String name,
             final @Nullable Object value) {
         return value == null ? jcTS0(augmentable) : jcTSB(augmentable).addProp(name, value).build();
     }
@@ -1061,7 +1062,7 @@ public final class CodeHelpers {
      * @since 16.0.0
      */
     @NonNullByDefault
-    public static <T extends Augmentable<T> & DataContainer> String jcTS1(final T augmentable,  final String name,
+    public static <T extends Augmentable<T> & G> String jcTS1(final T augmentable,  final String name,
             final byte @Nullable [] value) {
         return value == null ? jcTS0(augmentable) : jcTSB(augmentable).addProp(name, value).build();
     }
@@ -1083,15 +1084,14 @@ public final class CodeHelpers {
      * @since 16.0.0
      */
     @NonNullByDefault
-    public static <T extends Augmentable<T> & DataContainer> JavaTSBuilder jcTSB(final T augmentable) {
+    public static <T extends Augmentable<T> & G> JavaTSBuilder jcTSB(final T augmentable) {
         final var clazz = augmentable.implementedInterface();
         final var augmentations = augmentable.augmentations();
         return augmentations.isEmpty() ? jcTSB(clazz) : jcTSB(clazz, augmentations);
     }
 
-    private static <T extends Augmentable<T> & DataContainer> @NonNull JavaTSBuilder jcTSB(
-            final @NonNull Class<?> clazz,
-            final @NonNull Map<Class<? extends Augmentation<T>>, @NonNull Augmentation<T>> augmentations) {
+    private static <T extends Augmentable<T> & G> @NonNull JavaTSBuilder jcTSB(final @NonNull Class<T> clazz,
+            final @NonNull Map<Class<? extends Augmentation<?, T>>, @NonNull Augmentation<?, T>> augmentations) {
         return new JavaTSBuilder(clazz,
             augmentations.values().stream().sorted(AUGMENTATION_BY_CANONICAL_NAME).toList());
     }

@@ -8,7 +8,8 @@
 package org.opendaylight.yangtools.binding.test.mock;
 
 import org.opendaylight.yangtools.binding.ChildOf;
+import org.opendaylight.yangtools.binding.G;
 
-public interface FooChild extends ChildOf<GroupingFoo> {
+public interface FooChild extends ChildOf<FooChild, GroupingFoo>, G {
 
 }

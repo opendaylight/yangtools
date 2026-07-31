@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.binding.DataObjectReference.Builder;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.ExactDataObjectStep;
+import org.opendaylight.yangtools.binding.G;
 import org.opendaylight.yangtools.binding.InexactDataObjectStep;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyStep;
@@ -63,12 +64,12 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
     }
 
     @Override
-    public <A extends Augmentation<? super T>> Builder<A> augmentation(final Class<A> augmentation) {
+    public <A extends Augmentation<?, ? super T>> Builder<A> augmentation(final Class<A> augmentation) {
         return append(new NodeStep<>(augmentation));
     }
 
     @Override
-    public <N extends ChildOf<? super T>> Builder<N> child(final Class<N> container) {
+    public <N extends ChildOf<N, ? super T> & G> Builder<N> child(final Class<N> container) {
         return append(DataObjectStep.of(container));
     }
 
@@ -79,7 +80,7 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
     }
 
     @Override
-    public <N extends EntryObject<N, K> & ChildOf<? super T>, K extends Key<N>> WithKey<N, K> child(
+    public <N extends EntryObject<N, ? super T, K> & G, K extends Key<N>> WithKey<N, K> child(
             final Class<N> listItem, final K listKey) {
         return append(new KeyStep<>(listItem, listKey));
     }
@@ -96,7 +97,8 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
 
     abstract <X extends DataObject> @NonNull Builder<X> append(@NonNull DataObjectStep<X> step);
 
-    abstract <X extends EntryObject<X, Y>, Y extends Key<X>> @NonNull WithKey<X, Y> append(@NonNull KeyStep<Y, X> step);
+    abstract <X extends EntryObject<X, ?, Y> & G, Y extends Key<X>> @NonNull WithKey<X, Y> append(
+        @NonNull KeyStep<Y, X> step);
 
     final boolean wildcard() {
         return wildcard;

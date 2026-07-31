@@ -11,6 +11,7 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
+import org.opendaylight.yangtools.binding.G;
 import org.opendaylight.yangtools.binding.YangFeature;
 
 /**
@@ -18,7 +19,7 @@ import org.opendaylight.yangtools.binding.YangFeature;
  * {@link ServiceLoader} framework.
  */
 @NonNullByDefault
-public interface YangFeatureProvider<R extends DataRoot<R>> {
+public interface YangFeatureProvider<R extends DataRoot<R> & G> {
     /**
      * Return the module this provider recognizes. It is implied that any feature defined in this module and not
      * advertized by any provider is unavailable.

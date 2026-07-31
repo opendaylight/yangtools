@@ -40,17 +40,17 @@ public abstract sealed class AbstractDataObjectIdentifierBuilder<T extends DataO
     }
 
     @Override
-    public final <A extends Augmentation<? super T>> Builder<A> augmentation(final Class<A> augmentation) {
+    public final <A extends Augmentation<?, ? super T>> Builder<A> augmentation(final Class<A> augmentation) {
         return append(new NodeStep<>(augmentation));
     }
 
     @Override
-    public final <N extends ChildOf<? super T>> Builder<N> child(final Class<N> container) {
+    public final <N extends ChildOf<?, ? super T>> Builder<N> child(final Class<N> container) {
         return append(DataObjectStep.of(container));
     }
 
     @Override
-    public final <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>> Builder<N> child(
+    public final <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<?, ? super C>> Builder<N> child(
             final Class<C> caze, final Class<N> container) {
         return append(DataObjectStep.of(caze, container));
     }

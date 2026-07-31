@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectReference.Builder.WithKey;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.EntryObject;
+import org.opendaylight.yangtools.binding.G;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyStep;
 
@@ -42,7 +43,7 @@ public final class DataObjectReferenceBuilderWithKey<T extends EntryObject<T, K>
 
     @Override
     @SuppressWarnings("unchecked")
-    <X extends EntryObject<X, Y>, Y extends Key<X>> DataObjectReferenceBuilderWithKey<X, Y> append(
+    <X extends EntryObject<X, ?, Y> & G, Y extends Key<X>> DataObjectReferenceBuilderWithKey<X, Y> append(
             final KeyStep<Y, X> step) {
         appendItem(step);
         return (DataObjectReferenceBuilderWithKey<X, Y>) this;

@@ -8,8 +8,9 @@
 package org.opendaylight.yangtools.binding.test.mock;
 
 import org.opendaylight.yangtools.binding.DataRoot;
+import org.opendaylight.yangtools.binding.G;
 
-public interface NodesData extends DataRoot<NodesData> {
+public interface NodesData extends G, DataRoot<NodesData> {
     @Override
     default Class<NodesData> implementedInterface() {
         return NodesData.class;
