@@ -34,7 +34,7 @@ abstract sealed class InterfaceArchetypeBuilder<
                 DataRootArchetype.Builder, EntryObjectArchetype.Builder, GroupingArchetype.Builder,
                 RpcInputArchetype.Builder, InstanceNotificationArchetype.Builder, ItemObjectArchetype.Builder,
                 KeyedListNotificationArchetype.Builder, NotificationArchetype.Builder,
-                NotificationBodyArchetype.Builder, OutputArchetype.Builder, YangDataArchetype.Builder {
+                NotificationBodyArchetype.Builder, RpcOutputArchetype.Builder, YangDataArchetype.Builder {
     final @NonNull JavaTypeName typeName;
     final @NonNull S statement;
 

@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyedListActionArchetype;
-import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
+import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 /**
@@ -25,7 +25,7 @@ final class KeyedListActionGenerator extends AbstractActionGenerator {
 
     @Override
     KeyedListActionArchetype createTypeImpl(final JavaTypeName typeName,
-            final ActionEffectiveStatement statement, final RpcInputArchetype input, final OutputArchetype output,
+            final ActionEffectiveStatement statement, final RpcInputArchetype input, final RpcOutputArchetype output,
             final JavaTypeName parentName) {
         return KeyedListActionArchetype.of(typeName, statement, input, output, parentName);
     }

@@ -15,13 +15,13 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 
 @NonNullByDefault
-record OutputArchetypeImpl(
+record RpcOutputArchetypeImpl(
         JavaTypeName name,
         OutputEffectiveStatement statement,
         List<Type> implementsTypes,
         List<MethodSignature> methodSignatures,
-        List<Archetype> enclosedTypes) implements OutputArchetype {
-    OutputArchetypeImpl {
+        List<Archetype> enclosedTypes) implements RpcOutputArchetype {
+    RpcOutputArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(implementsTypes);
@@ -51,6 +51,6 @@ record OutputArchetypeImpl(
 
     @Override
     public String toString() {
-        return TypeMethods.toString(OutputArchetype.class, this);
+        return TypeMethods.toString(RpcOutputArchetype.class, this);
     }
 }

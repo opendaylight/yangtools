@@ -16,9 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
  *
  * @since 16.0.0
  */
-public sealed interface OutputArchetype extends AugmentableArchetype permits OutputArchetypeImpl {
+public sealed interface RpcOutputArchetype extends AugmentableArchetype permits RpcOutputArchetypeImpl {
     /**
-     * A builder of {@link OutputArchetype}s.
+     * A builder of {@link RpcOutputArchetype}s.
      */
     @NonNullByDefault
     final class Builder extends InterfaceArchetypeBuilder<Builder, OutputEffectiveStatement> {
@@ -27,14 +27,14 @@ public sealed interface OutputArchetype extends AugmentableArchetype permits Out
         }
 
         @Override
-        public OutputArchetype build() {
-            return new OutputArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
+        public RpcOutputArchetype build() {
+            return new RpcOutputArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
                 enclosedTypes());
         }
 
         @Override
-        Class<OutputArchetype> archetypeClass() {
-            return OutputArchetype.class;
+        Class<RpcOutputArchetype> archetypeClass() {
+            return RpcOutputArchetype.class;
         }
 
         @Override

@@ -37,9 +37,9 @@ import org.opendaylight.yangtools.binding.model.api.KeyedListNotificationArchety
 import org.opendaylight.yangtools.binding.model.api.NotificationArchetype;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.OutputArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
+import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
@@ -146,11 +146,11 @@ final class BindingJavaFileGenerator {
                     generateBoth(NotificationTemplate.Builder::new, archetype, root);
                 case NotificationBodyArchetype archetype ->
                     generateFile(new NotificationBodyTemplate.Builder(archetype, root));
-                case OutputArchetype archetype -> generateBoth(RpcOutputTemplate.Builder::new, archetype, root);
                 case OpaqueObjectArchetype<?> archetype ->
                     generateFile(new OpaqueObjectTemplate.Builder(archetype, root));
                 case RpcArchetype archetype -> generateFile(new RpcTemplate.Builder(archetype, root));
                 case RpcInputArchetype archetype -> generateBoth(RpcInputTemplate.Builder::new, archetype, root);
+                case RpcOutputArchetype archetype -> generateBoth(RpcOutputTemplate.Builder::new, archetype, root);
                 case YangDataArchetype archetype -> generateBoth(YangDataTemplate.Builder::new, archetype, root);
             }
         }

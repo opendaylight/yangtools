@@ -14,6 +14,6 @@ import org.opendaylight.yangtools.binding.Augmentable;
  */
 public sealed interface AugmentableArchetype extends InterfaceArchetype
     permits CaseObjectArchetype, ContainerArchetype, RpcInputArchetype, InterfaceArchetype.OfList,
-            InterfaceArchetype.OfNotification, OutputArchetype {
+            InterfaceArchetype.OfNotification, RpcOutputArchetype {
     // nothing else
 }
