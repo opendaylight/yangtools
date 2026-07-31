@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 
 /**
  * Template for {@link RpcInput} specializations.
@@ -37,7 +36,7 @@ final class RpcInputTemplate extends InterfaceTemplate<RpcInputArchetype> {
         }
     }
 
-    private static final ConcreteType RPC_INPUT = Types.typeForClass(RpcInput.class);
+    private static final ConcreteType RPC_INPUT = ConcreteType.ofClass(RpcInput.class);
 
     private RpcInputTemplate(final RpcInputArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);

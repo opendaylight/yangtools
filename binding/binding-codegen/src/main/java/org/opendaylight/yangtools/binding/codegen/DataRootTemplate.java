@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 
 /**
  * Template for {@link DataRoot} specializations.
@@ -42,7 +41,7 @@ final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> {
     }
 
     private static final JavaTypeName ROOT_META = JavaTypeName.create(RootMeta.class);
-    private static final ConcreteType DATA_ROOT = Types.typeForClass(DataRoot.class);
+    private static final ConcreteType DATA_ROOT = ConcreteType.ofClass(DataRoot.class);
 
     private DataRootTemplate(final DataRootArchetype archetype) {
         super(archetype, archetype);

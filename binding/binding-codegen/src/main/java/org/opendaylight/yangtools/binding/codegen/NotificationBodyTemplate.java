@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 
 /**
  * Template for {@link NotificationBody} specializations.
@@ -38,7 +37,7 @@ final class NotificationBodyTemplate extends InterfaceTemplate<NotificationBodyA
         }
     }
 
-    private static final ConcreteType NOTIFICATION_BODY = Types.typeForClass(NotificationBody.class);
+    private static final ConcreteType NOTIFICATION_BODY = ConcreteType.ofClass(NotificationBody.class);
 
     private NotificationBodyTemplate(final NotificationBodyArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);

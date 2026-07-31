@@ -58,17 +58,17 @@ class InterfaceArchetypeBuilderTest {
         var generatedTypeBuilder = ContainerArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement);
 
         assertEquals(generatedTypeBuilder,
-                generatedTypeBuilder.addImplementsType(Types.typeForClass(Serializable.class)));
-        assertEquals(generatedTypeBuilder, generatedTypeBuilder.addImplementsType(Types.typeForClass(Runnable.class)));
+                generatedTypeBuilder.addImplementsType(ConcreteType.ofClass(Serializable.class)));
+        assertEquals(generatedTypeBuilder, generatedTypeBuilder.addImplementsType(ConcreteType.ofClass(Runnable.class)));
 
         var instance = generatedTypeBuilder.build();
         var implementTypes = instance.getImplements();
 
         assertEquals(2, implementTypes.size());
 
-        assertTrue(implementTypes.contains(Types.typeForClass(Serializable.class)));
-        assertTrue(implementTypes.contains(Types.typeForClass(Runnable.class)));
-        assertFalse(implementTypes.contains(Types.typeForClass(Throwable.class)));
+        assertTrue(implementTypes.contains(ConcreteType.ofClass(Serializable.class)));
+        assertTrue(implementTypes.contains(ConcreteType.ofClass(Runnable.class)));
+        assertFalse(implementTypes.contains(ConcreteType.ofClass(Throwable.class)));
     }
 
     @Test

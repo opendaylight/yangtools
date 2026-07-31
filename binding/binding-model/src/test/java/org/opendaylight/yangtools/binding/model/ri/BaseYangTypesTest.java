@@ -26,6 +26,6 @@ class BaseYangTypesTest {
         assertEquals("Map", stringBooleanMap.simpleName());
         assertEquals(2, stringBooleanMap.getActualTypeArguments().size());
 
-        assertEquals(Types.cachedType(BindingInstanceIdentifier.class), BaseYangTypes.INSTANCE_IDENTIFIER);
+        assertEquals(ConcreteType.ofClass(BindingInstanceIdentifier.class), BaseYangTypes.INSTANCE_IDENTIFIER);
     }
 }

@@ -23,6 +23,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -87,7 +88,7 @@ public class DefaultBindingGeneratorTest {
         final var enumsType = assertInstanceOf(ParameterizedType.class,
             assertGeneratedMethod(bDataMethods, "getEnums").getReturnType());
 
-        assertEquals(Types.typeForClass(Set.class), enumsType.getRawType());
+        assertEquals(ConcreteType.ofClass(Set.class), enumsType.getRawType());
         final var enumsTypeArgs = enumsType.getActualTypeArguments();
         assertEquals(1, enumsTypeArgs.size());
         assertEquals(TEST_TYPE_PROVIDER + ".Foo.ListOfEnums", enumsTypeArgs.getFirst().canonicalName());
