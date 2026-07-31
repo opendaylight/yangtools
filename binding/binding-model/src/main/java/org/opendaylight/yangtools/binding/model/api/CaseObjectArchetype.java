@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 
 /**
- * The {@link InterfaceArchetype} for individual cases in a {@link ChoiceInArchetype}.
+ * The {@link DataContainerArchetype} for individual cases in a {@link ChoiceInArchetype}.
  *
  * @since 16.0.0
  */
@@ -23,7 +23,7 @@ public sealed interface CaseObjectArchetype extends AugmentableArchetype permits
      * A builder of {@link CaseObjectArchetype}s.
      */
     @NonNullByDefault
-    final class Builder extends InterfaceArchetypeBuilder<Builder, CaseEffectiveStatement> {
+    final class Builder extends DataContainerArchetypeBuilder<Builder, CaseEffectiveStatement> {
         private final ChoiceInArchetype choice;
 
         private Builder(final JavaTypeName typeName, final CaseEffectiveStatement statement,

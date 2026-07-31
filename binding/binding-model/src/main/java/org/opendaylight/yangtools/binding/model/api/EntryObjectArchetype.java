@@ -14,16 +14,16 @@ import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
- * The {@link InterfaceArchetype} for {@link EntryObject} specializations.
+ * The {@link DataContainerArchetype} for {@link EntryObject} specializations.
  *
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface EntryObjectArchetype extends InterfaceArchetype.OfList permits EntryObjectArchetypeImpl {
+public sealed interface EntryObjectArchetype extends DataContainerArchetype.OfList permits EntryObjectArchetypeImpl {
     /**
      * A builder of {@link EntryObjectArchetype}s.
      */
-    final class Builder extends InterfaceArchetypeBuilder<Builder, ListEffectiveStatement> {
+    final class Builder extends DataContainerArchetypeBuilder<Builder, ListEffectiveStatement> {
         private final KeyArchetype key;
 
         private Builder(final JavaTypeName typeName, final ListEffectiveStatement statement, final KeyArchetype key) {

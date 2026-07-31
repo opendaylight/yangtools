@@ -11,28 +11,28 @@ import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BaseNotification;
+import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
- * An {@link Archetype} which results in an interface with zero or more methods.
+ * An {@link Archetype} for a {@link DataContainer}.
  *
  * @since 16.0.0
  */
-// FIXME: rename to DataContainerArchetype
 @Beta
 @NonNullByDefault
-public sealed interface InterfaceArchetype extends Archetype
+public sealed interface DataContainerArchetype extends Archetype
         permits AugmentableArchetype, AugmentationArchetype, DataRootArchetype, GroupingArchetype,
                 NotificationBodyArchetype, YangDataArchetype {
     /**
-     * Base interface for builders resulting in an {@link InterfaceArchetype}.
+     * Base interface for builders resulting in an {@link DataContainerArchetype}.
      *
      * @since 16.0.0
      */
     @Beta
-    sealed interface Builder extends Mutable permits InterfaceArchetypeBuilder {
+    sealed interface Builder extends Mutable permits DataContainerArchetypeBuilder {
         /**
          * {@return a {@link TypeRef} to the type this builder produces}
          */
@@ -74,13 +74,13 @@ public sealed interface InterfaceArchetype extends Archetype
         MethodSignature.Builder addMethod(String name);
 
         /**
-         * {@return a new immutable {@link InterfaceArchetype} instance}
+         * {@return a new immutable {@link DataContainerArchetype} instance}
          */
-        InterfaceArchetype build();
+        DataContainerArchetype build();
     }
 
     /**
-     * An {@link InterfaceArchetype} for a {@code list} statement.
+     * An {@link DataContainerArchetype} for a {@code list} statement.
      */
     sealed interface OfList extends AugmentableArchetype permits EntryObjectArchetype, ItemObjectArchetype {
         @Override
@@ -88,8 +88,8 @@ public sealed interface InterfaceArchetype extends Archetype
     }
 
     /**
-     * An {@link InterfaceArchetype} for a {@code notification} statement. Implementations of this archetype result in
-     * a subclass of {@link BaseNotification} and the hierarchy of this class reflects that. These are not to be
+     * An {@link DataContainerArchetype} for a {@code notification} statement. Implementations of this archetype result
+     * in a subclass of {@link BaseNotification} and the hierarchy of this class reflects that. These are not to be
      * confused with {@link NotificationBodyArchetype}.
      */
     sealed interface OfNotification extends AugmentableArchetype

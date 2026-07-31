@@ -12,7 +12,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnydataRuntimeType;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnyxmlRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.InterfaceArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -115,7 +115,7 @@ abstract class OpaqueObjectGenerator<
     abstract OpaqueObjectArchetype<S> createTypeImpl(JavaTypeName name, S statement);
 
     @Override
-    void constructRequire(final InterfaceArchetype.Builder builder, final Type returnType) {
+    void constructRequire(final DataContainerArchetype.Builder builder, final Type returnType) {
         constructRequireImpl(builder, returnType);
     }
 

@@ -63,15 +63,15 @@ final class TypeMethods {
     }
 
     /**
-     * Implementation of {@link InterfaceArchetype#toString()}.
+     * Implementation of {@link DataContainerArchetype#toString()}.
      *
-     * @param <A> the {@link InterfaceArchetype} type
+     * @param <A> the {@link DataContainerArchetype} type
      * @param archetypeClass the archetype class
      * @param self the archetype
      * @return a String
      */
     @NonNullByDefault
-    static <A extends InterfaceArchetype> String toString(final Class<A> archetypeClass, final A self) {
+    static <A extends DataContainerArchetype> String toString(final Class<A> archetypeClass, final A self) {
         final var helper = MoreObjects.toStringHelper(archetypeClass).add("name", self.name());
         addNonEmpty(helper, "implements", self.getImplements());
         addNonEmpty(helper, "enclosedTypes", self.enclosedTypes());

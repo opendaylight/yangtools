@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 
 /**
- * The {@link InterfaceArchetype} for {@link RpcInput} specializations.
+ * The {@link DataContainerArchetype} for {@link RpcInput} specializations.
  *
  * @since 16.0.0
  */
@@ -21,7 +21,7 @@ public sealed interface RpcInputArchetype extends AugmentableArchetype permits R
      * A builder of {@link RpcInputArchetype}s.
      */
     @NonNullByDefault
-    final class Builder extends InterfaceArchetypeBuilder<Builder, InputEffectiveStatement> {
+    final class Builder extends DataContainerArchetypeBuilder<Builder, InputEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final InputEffectiveStatement statement) {
             super(typeName, statement);
         }

@@ -22,14 +22,14 @@ import org.opendaylight.yangtools.util.LazyCollections;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
- * Common base class for {@link InterfaceArchetype.Builder} implementations.
+ * Common base class for {@link DataContainerArchetype.Builder} implementations.
  *
  * @param <B> concrete builder type
  * @param <S> EffectiveStatement type
  */
-abstract sealed class InterfaceArchetypeBuilder<
-        B extends InterfaceArchetypeBuilder<B, S>,
-        S extends EffectiveStatement<?, ?>> implements InterfaceArchetype.Builder
+abstract sealed class DataContainerArchetypeBuilder<
+        B extends DataContainerArchetypeBuilder<B, S>,
+        S extends EffectiveStatement<?, ?>> implements DataContainerArchetype.Builder
         permits AugmentationArchetype.Builder, CaseObjectArchetype.Builder, ContainerArchetype.Builder,
                 DataRootArchetype.Builder, EntryObjectArchetype.Builder, GroupingArchetype.Builder,
                 RpcInputArchetype.Builder, InstanceNotificationArchetype.Builder, ItemObjectArchetype.Builder,
@@ -43,7 +43,7 @@ abstract sealed class InterfaceArchetypeBuilder<
     private List<Archetype> enclosedTypes = List.of();
 
     @NonNullByDefault
-    InterfaceArchetypeBuilder(final JavaTypeName typeName, final S statement) {
+    DataContainerArchetypeBuilder(final JavaTypeName typeName, final S statement) {
         this.typeName = requireNonNull(typeName);
         this.statement = requireNonNull(statement);
     }
@@ -117,7 +117,7 @@ abstract sealed class InterfaceArchetypeBuilder<
      * {@return the class of the archetype produced by this builder}
      */
     @NonNullByDefault
-    abstract Class<? extends InterfaceArchetype> archetypeClass();
+    abstract Class<? extends DataContainerArchetype> archetypeClass();
 
     /**
      * {@return {@code this} in a type-safe way}
