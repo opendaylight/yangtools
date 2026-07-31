@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 
 /**
  * Marker interface for YANG-defined instance {@code notification}s. A concrete InstanceNotification and its
@@ -15,10 +16,10 @@ import org.eclipse.jdt.annotation.NonNull;
  * {@link EventInstantAware#eventInstant()} returns the time when this notification was generated.
  *
  * @param <N> Concrete notification type
- * @param <T> Parent data tree instance type
+ * @param <D> Parent data tree instance type
  */
-public non-sealed interface InstanceNotification<N extends InstanceNotification<N, T>, T extends DataObject>
-        extends BaseNotification {
+public non-sealed interface InstanceNotification<N extends InstanceNotification<N, D>, D extends DataObject>
+        extends BaseNotification, Augmentable<N>, JavaDataContainer<N> {
     @Override
     @NonNull Class<N> implementedInterface();
 }

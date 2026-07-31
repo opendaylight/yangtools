@@ -43,8 +43,7 @@ final class InstanceNotificationGenerator extends AbstractInstanceNotificationGe
     private static InstanceNotificationArchetype.Builder newBuilder(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement, final JavaTypeName parentName) {
         final var builder = InstanceNotificationArchetype.builder(typeName, statement, parentName);
-        addAugmentable(builder);
-        addConcreteInterfaceMethods(builder);
+        defaultImplementedInterace(builder);
         return builder;
     }
 }
