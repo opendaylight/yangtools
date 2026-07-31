@@ -53,6 +53,6 @@ record CaseObjectArchetypeImpl(
 
     @Override
     public String toString() {
-        return TypeMethods.toString(CaseObjectArchetype.class, this);
+        return TypeMethods.toStringHelper(CaseObjectArchetype.class, this).add("choice", choice.name()).toString();
     }
 }

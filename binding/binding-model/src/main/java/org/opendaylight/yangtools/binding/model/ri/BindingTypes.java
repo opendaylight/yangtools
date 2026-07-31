@@ -14,7 +14,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.ChildOf;
-import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -25,7 +24,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 @NonNullByDefault
 public final class BindingTypes {
 
-    public static final ConcreteType DATA_OBJECT = cachedType(DataObject.class);
     public static final ConcreteType JAVA_DATACONTAINER = cachedType(JavaDataContainer.class);
 
     @VisibleForTesting
