@@ -42,8 +42,7 @@ final class KeyedListNotificationGenerator extends AbstractInstanceNotificationG
     private static KeyedListNotificationArchetype.Builder newBuilder(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement, final JavaTypeName parentName) {
         final var builder = KeyedListNotificationArchetype.builder(typeName, statement, parentName);
-        addAugmentable(builder);
-        addConcreteInterfaceMethods(builder);
+        defaultImplementedInterace(builder);
         return builder;
     }
 }

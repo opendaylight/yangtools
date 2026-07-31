@@ -14,10 +14,12 @@ package org.opendaylight.yangtools.binding;
  * {@link EventInstantAware#eventInstant()} returns the time when this notification was generated.
  *
  * @param <N> Concrete notification type
- * @param <T> Parent data tree instance type
+ * @param <E> Parent data tree instance type
  * @param <K> Parent data tree key type
  */
-public interface KeyedListNotification<N extends KeyedListNotification<N, T, K>, T extends EntryObject<T, K>,
-    K extends Key<T>> extends InstanceNotification<N, T> {
-
+public interface KeyedListNotification<
+        N extends KeyedListNotification<N, E, K>,
+        E extends EntryObject<E, K>,
+        K extends Key<E>> extends InstanceNotification<N, E> {
+    // nothing else
 }
