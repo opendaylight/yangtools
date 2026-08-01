@@ -21,7 +21,7 @@ abstract sealed class AbstractInstanceNotificationGenerator extends AbstractNoti
         permits InstanceNotificationGenerator, KeyedListNotificationGenerator {
     @NonNullByDefault
     AbstractInstanceNotificationGenerator(final NotificationEffectiveStatement statement,
-            final AbstractCompositeGenerator<?, ?> parent) {
+            final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

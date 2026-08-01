@@ -64,7 +64,7 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
     }
 
     @NonNullByDefault
-    ChoiceGenerator(final ChoiceEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
+    ChoiceGenerator(final ChoiceEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

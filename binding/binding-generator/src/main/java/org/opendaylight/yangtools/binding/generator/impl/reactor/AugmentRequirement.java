@@ -7,15 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.VerifyException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -40,21 +41,24 @@ final class AugmentRequirement implements Mutable {
     private final @NonNull AbstractAugmentGenerator augment;
     private final @NonNull Iterator<QName> remaining;
 
-    private @NonNull AbstractCompositeGenerator<?, ?> target;
+    private @NonNull DataContainerGenerator<?, ?> target;
     private QNameModule localNamespace;
     private QName qname;
 
-    private AugmentRequirement(final AbstractAugmentGenerator augment, final AbstractCompositeGenerator<?, ?> target) {
+    @NonNullByDefault
+    private AugmentRequirement(final AbstractAugmentGenerator augment, final DataContainerGenerator<?, ?> target) {
         this.augment = requireNonNull(augment);
         this.target = requireNonNull(target);
         remaining = augment.statement().argument().getNodeIdentifiers().iterator();
         qname = remaining.next();
     }
 
+    @NonNullByDefault
     AugmentRequirement(final ModuleAugmentGenerator augment, final ModuleGenerator module) {
         this((AbstractAugmentGenerator) augment, module);
     }
 
+    @NonNullByDefault
     AugmentRequirement(final UsesAugmentGenerator augment, final GroupingGenerator grouping) {
         this((AbstractAugmentGenerator) augment, grouping);
         // Starting in a grouping: squash namespace references to the grouping's namespace
@@ -62,7 +66,8 @@ final class AugmentRequirement implements Mutable {
         squashNamespaces.add(qname.getModule());
     }
 
-    @NonNull LinkageProgress resolve() {
+    @NonNullByDefault
+    LinkageProgress resolve() {
         return qname == null ? resolveAsTarget() : resolveAsChild();
     }
 
@@ -118,14 +123,16 @@ final class AugmentRequirement implements Mutable {
         return LinkageProgress.NONE;
     }
 
-    private @NonNull LinkageProgress moveTo(final @NonNull AbstractCompositeGenerator<?, ?> newTarget) {
+    private @NonNull LinkageProgress moveTo(final @NonNull DataContainerGenerator<?, ?> newTarget) {
         target = newTarget;
         return tryProgress();
     }
 
     private @NonNull LinkageProgress progressTo(final @NonNull AbstractExplicitGenerator<?, ?> newTarget) {
-        verify(newTarget instanceof AbstractCompositeGenerator, "Unexpected generator %s", newTarget);
-        target = (AbstractCompositeGenerator<?, ?>) newTarget;
+        if (!(newTarget instanceof DataContainerGenerator<?, ?> targetContainer)) {
+            throw new VerifyException("Unexpected generator " + newTarget);
+        }
+        target = targetContainer;
         qname = remaining.hasNext() ? remaining.next() : null;
         return tryProgress();
     }

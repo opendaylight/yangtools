@@ -208,12 +208,12 @@ final class CollisionDomain {
         }
     }
 
-    private final AbstractCompositeGenerator<?, ?> gen;
+    private final DataContainerGenerator<?, ?> gen;
 
     private List<Member> members = List.of();
     private boolean solved;
 
-    CollisionDomain(final AbstractCompositeGenerator<?, ?> gen) {
+    CollisionDomain(final DataContainerGenerator<?, ?> gen) {
         this.gen = requireNonNull(gen);
     }
 

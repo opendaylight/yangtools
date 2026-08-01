@@ -109,10 +109,9 @@ import org.slf4j.LoggerFactory;
  * with linking original instances in the tree iteration order. The part dealing with augment attachment lives mostly
  * in {@link AugmentRequirement}.
  */
-// FIXME: rename to DataContainerGenerator
-public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?, ?>, R extends CompositeRuntimeType>
+public abstract class DataContainerGenerator<S extends EffectiveStatement<?, ?>, R extends CompositeRuntimeType>
         extends AbstractExplicitGenerator<S, R> {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractCompositeGenerator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DataContainerGenerator.class);
 
     // FIXME: we want to allocate this lazily to lower memory footprint
     private final @NonNull CollisionDomain domain = new CollisionDomain(this);
@@ -136,7 +135,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
      * have some children which have not completed linking. Once we have completed linking of all children, including
      * {@link #unlinkedChildren}, this will be set to {@code null}.
      */
-    private List<AbstractCompositeGenerator<?, ?>> unlinkedComposites = List.of();
+    private List<DataContainerGenerator<?, ?>> unlinkedComposites = List.of();
     /**
      * List of children which have not had their original linked. This list starts of as null. When we first attempt
      * linkage, it becomes non-null.
@@ -144,13 +143,13 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     private List<Generator> unlinkedChildren;
 
     @NonNullByDefault
-    AbstractCompositeGenerator(final S statement) {
+    DataContainerGenerator(final S statement) {
         super(statement);
         childGenerators = createChildren(statement);
     }
 
     @NonNullByDefault
-    AbstractCompositeGenerator(final S statement, final AbstractCompositeGenerator<?, ?> parent) {
+    DataContainerGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
         childGenerators = createChildren(statement);
     }
@@ -206,7 +205,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                 // Final step, return child
                 return ret;
             }
-            if (ret instanceof AbstractCompositeGenerator<?, ?> composite) {
+            if (ret instanceof DataContainerGenerator<?, ?> composite) {
                 // We know how to descend down
                 return composite.findGenerator(childStrategy, stmtPath, next);
             }
@@ -287,7 +286,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
         for (var child : childGenerators) {
             switch (child) {
                 case GroupingGenerator grouping -> skippedChildren.add(grouping);
-                case AbstractCompositeGenerator<?, ?> composite -> composite.linkUsedGroupings(skippedChildren);
+                case DataContainerGenerator<?, ?> composite -> composite.linkUsedGroupings(skippedChildren);
                 default -> {
                     // no-op
                 }
@@ -300,7 +299,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
             if (child instanceof UsesAugmentGenerator uses) {
                 requirements.add(uses.startLinkage());
             }
-            if (child instanceof AbstractCompositeGenerator<?, ?> composite) {
+            if (child instanceof DataContainerGenerator<?, ?> composite) {
                 composite.startUsesAugmentLinkage(requirements);
             }
         }
@@ -342,7 +341,7 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
                     it.remove();
 
                     // If this is a composite generator we need to process is further
-                    if (explicit instanceof AbstractCompositeGenerator<?, ?> composite) {
+                    if (explicit instanceof DataContainerGenerator<?, ?> composite) {
                         if (unlinkedComposites.isEmpty()) {
                             unlinkedComposites = new ArrayList<>();
                         }
@@ -380,13 +379,13 @@ public abstract class AbstractCompositeGenerator<S extends EffectiveStatement<?,
     }
 
     @Override
-    final AbstractCompositeGenerator<S, R> getOriginal() {
-        return (AbstractCompositeGenerator<S, R>) super.getOriginal();
+    final DataContainerGenerator<S, R> getOriginal() {
+        return (DataContainerGenerator<S, R>) super.getOriginal();
     }
 
     @Override
-    final AbstractCompositeGenerator<S, R> tryOriginal() {
-        return (AbstractCompositeGenerator<S, R>) super.tryOriginal();
+    final DataContainerGenerator<S, R> tryOriginal() {
+        return (DataContainerGenerator<S, R>) super.tryOriginal();
     }
 
     final <X extends EffectiveStatement<?, ?>, Y extends RuntimeType> @Nullable OriginalLink<X, Y> originalChild(

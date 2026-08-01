@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
  */
 final class ActionGenerator extends AbstractActionGenerator {
     @NonNullByDefault
-    ActionGenerator(final ActionEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
+    ActionGenerator(final ActionEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
