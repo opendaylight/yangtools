@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import com.google.common.base.VerifyException;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OperationArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
@@ -35,7 +36,7 @@ public abstract sealed class OperationGenerator<
     }
 
     @Override
-    final void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
+    final void addAsGetterMethod(final List<MethodSignature> list) {
         // RPCs/Actions are a separate concept
     }
 

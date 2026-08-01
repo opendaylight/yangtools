@@ -20,6 +20,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
@@ -474,10 +475,12 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
 
     @NonNullByDefault
     final void addGetterMethods(final DataContainerArchetype.Builder builder) {
+        final var methods = new ArrayList<MethodSignature>();
+
         for (var child : this) {
             // Only process explicit generators here
             if (child instanceof AbstractExplicitGenerator<?, ?> explicit) {
-                explicit.addAsGetterMethod(builder);
+                explicit.addAsGetterMethod(methods);
             }
 
             final var enclosedType = child.enclosedType();
@@ -489,6 +492,8 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
                 default -> throw new VerifyException("Unhandled enclosed type %s in %s".formatted(enclosedType, child));
             }
         }
+
+        // FIXME: set to builder
     }
 
     private @NonNull List<Generator> createChildren(final EffectiveStatement<?, ?> statement) {

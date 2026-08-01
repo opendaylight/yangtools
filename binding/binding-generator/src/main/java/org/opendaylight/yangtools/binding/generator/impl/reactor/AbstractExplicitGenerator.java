@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -329,7 +330,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
+    void addAsGetterMethod(final List<MethodSignature> list) {
         if (isAugmenting()) {
             // Do not process augmented nodes: they will be taken care of in their home augmentation
             return;
@@ -339,13 +340,29 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
             // grouping. There is one exception to this rule: 'type leafref' can use a relative path to point
             // outside of its home grouping. In this case we need to examine the instantiation until we succeed in
             // resolving the reference.
-            addAsGetterMethodOverride(builder);
+            addAsGetterMethodOverride(list);
             return;
         }
 
         final var returnType = methodReturnType();
-        constructGetter(builder, returnType);
-        constructRequire(builder, returnType);
+        addGetter(list, returnType);
+        addRequire(list, returnType);
+    }
+
+    @NonNullByDefault
+    void addGetter(final List<MethodSignature> list, final Type returnType) {
+        list.add(constructGetter(returnType, Naming.getGetterMethodName(localName().getLocalName())));
+    }
+
+    @NonNullByDefault
+    void addRequire(final List<MethodSignature> list, final Type returnType) {
+        // No-op in most cases
+    }
+
+    @NonNullByDefault
+    final MethodSignature newGetter(final Type returnType, final String methodName) {
+        // FIXME: implement this
+        throw new UnsupportedOperationException();
     }
 
     @NonNullByDefault
@@ -379,7 +396,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    void addAsGetterMethodOverride(final DataContainerArchetype.Builder builder) {
+    void addAsGetterMethodOverride(final List<MethodSignature> list) {
         // No-op for most cases
     }
 

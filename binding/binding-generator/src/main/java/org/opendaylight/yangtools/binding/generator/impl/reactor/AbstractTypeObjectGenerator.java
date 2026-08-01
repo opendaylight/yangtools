@@ -21,10 +21,11 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.TypeObject;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeReference.ResolvedLeafref;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
@@ -485,7 +486,7 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     @Override
-    final void addAsGetterMethodOverride(final DataContainerArchetype.Builder builder) {
+    final void addAsGetterMethodOverride(final List<MethodSignature> list) {
         if (!(refType instanceof ResolvedLeafref)) {
             // We are not dealing with a leafref or have nothing to add
             return;
@@ -500,10 +501,13 @@ abstract class AbstractTypeObjectGenerator<
         // Note: this may we wrapped for leaf-list, hence we need to deal with that
         final var myType = methodReturnType();
         LOG.trace("Override of {} to {}", this, myType);
-        constructGetter(builder, myType)
-            .addAnnotation(OverrideAnnotation.INSTANCE)
-            .addAnnotation(deprecatedAnnotation(statement()));
+
+        final var deprecated = deprecatedAnnotation(statement());
+        list.add(constructGetter(myType, deprecated == null ? List.of(OverrideAnnotation.INSTANCE)
+            : List.of(OverrideAnnotation.INSTANCE, deprecated)));
     }
+
+    abstract @NonNull MethodSignature constructGetter(Type type, List<AttachedAnnotation.ToMethod> annotations);
 
     @Override
     final TypeObjectArchetype<?> createTypeImpl() {
