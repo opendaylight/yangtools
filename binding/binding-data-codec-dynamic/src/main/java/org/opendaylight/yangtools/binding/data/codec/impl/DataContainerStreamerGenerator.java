@@ -27,7 +27,6 @@ import net.bytebuddy.description.field.FieldDescription;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDefinition.Sort;
-import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.description.type.TypeDescription.Generic;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.dynamic.scaffold.InstrumentedType;
@@ -72,15 +71,17 @@ import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
+import org.opendaylight.yangtools.yang.model.api.meta.DataContainerCompat;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,7 +162,7 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
 
     private final CodecContextFactory registry;
     private final StackManipulation startEvent;
-    private final DataNodeContainer schema;
+    private final DataContainerCompat<?, ?> statement;
     private final Class<?> type;
     private final DataContainerArchetype archetype;
 
@@ -185,7 +186,11 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
             case RpcOutputArchetype unused -> classUnknownSizeMethod(START_CONTAINER_NODE, type);
             default -> throw new UnsupportedOperationException("Unsupported type " + archetype);
         };
-        schema = (DataNodeContainer) archetype.statement();
+        final var stmt = archetype.statement();
+        if (!(stmt instanceof DataContainerCompat<?, ?> compat)) {
+            throw new UnsupportedOperationException("Unsupported statement " + stmt);
+        }
+        statement = compat;
     }
 
     @NonNullByDefault
@@ -220,10 +225,12 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
         final var props = collectAllProperties(archetype);
         final var childStreams = new ArrayList<ChildStream>(props.size());
 
-        // FIXME: we should be picking this up from DataContainerArchetype, which would take are of:
-        //        - filtering out
-        //        - that takes care of
-        for (var schemaChild : schema.getChildNodes()) {
+        // FIXME: we are using DataSchemaNode for three things:
+        //        - the String in QName.getLocalName
+        //        - expected method return type and value type (for lists)
+        //        - whether or not to use ordered on unordered (for lists and leaf-lists)
+        //        all of that should be available from DataContainerArchetype
+        for (var schemaChild : statement.toDataNodeContainer().getChildNodes()) {
             if (!schemaChild.isAugmenting()) {
                 final var getterName = BindingSchemaMapping.getGetterMethodName(schemaChild);
                 final Method getter;
@@ -233,9 +240,13 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
                     throw new IllegalStateException("Failed to find getter " + getterName, e);
                 }
 
-                final var childStream = createStream(loader, props, schemaChild, getter);
-                if (childStream != null) {
-                    childStreams.add(childStream);
+                if (schemaChild instanceof EffectiveStatementEquivalent<?> equiv) {
+                    final var childStream = createStream(loader, props, getter, equiv.asEffectiveStatement());
+                    if (childStream != null) {
+                        childStreams.add(childStream);
+                    }
+                } else {
+                    LOG.warn("Ignoring {} due to incompatible schema {}", getter, schemaChild);
                 }
             }
         }
@@ -261,54 +272,58 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
         return result;
     }
 
-    private ChildStream createStream(final BindingClassLoader loader, final ImmutableMap<String, Type> props,
-            final DataSchemaNode childSchema, final Method getter) {
-        if (childSchema instanceof LeafSchemaNode) {
-            return qnameChildStream(STREAM_LEAF, getter, childSchema);
-        }
-        if (childSchema instanceof ContainerSchemaNode) {
-            return containerChildStream(getter);
-        }
-        if (childSchema instanceof ListSchemaNode listSchema) {
-            final var getterName = getter.getName();
-            final var childType = props.get(getterName);
-            if (!(childType instanceof ParameterizedType paramType)) {
-                throw new VerifyException("Unexpected type " + childType + " for " + getterName);
+    private ChildStream createStream(final BindingClassLoader loader, final ImmutableMap<String, Type> properties,
+            final Method getter, final EffectiveStatement<?, ?> schema) {
+        return switch (schema) {
+            case AnydataEffectiveStatement stmt -> qnameChildStream(STREAM_ANYDATA, getter, stmt.argument());
+            case AnyxmlEffectiveStatement stmt -> qnameChildStream(STREAM_ANYXML, getter, stmt.argument());
+            case ChoiceEffectiveStatement unused -> choiceChildStream(getter);
+            case ContainerEffectiveStatement stmt -> containerChildStream(getter);
+            case LeafEffectiveStatement stmt -> qnameChildStream(STREAM_LEAF, getter, stmt.argument());
+            case LeafListEffectiveStatement stmt ->
+                qnameChildStream(switch (stmt.effectiveOrdering()) {
+                    case SYSTEM -> STREAM_LEAF_LIST;
+                    case USER -> STREAM_ORDERED_LEAF_LIST;
+                }, getter, stmt.argument());
+            case ListEffectiveStatement stmt -> {
+                // FIXME: Reflection over encoding of actual method return type. There are two possibilities here:
+                //        - we have generated an EntryObject, in which case we see Map<FooKey, Foo>
+                //        - we have an ItemObject, in which case we see List<Foo>
+                final var getterName = getter.getName();
+                final var childType = properties.get(getterName);
+                if (!(childType instanceof ParameterizedType paramType)) {
+                    throw new VerifyException("Unexpected type " + childType + " for " + getterName);
+                }
+
+                final var params = paramType.getActualTypeArguments();
+                final StackManipulation method;
+                final Class<?> valueClass;
+                switch (params.size()) {
+                    case 1 -> {
+                        valueClass = loadTypeClass(loader, params.getFirst());
+                        method = stmt.keyStatement() == null ? STREAM_LIST : STREAM_ORDERED_MAP;
+                    }
+                    case 2 -> {
+                        // make sure the key is loaded
+                        loadTypeClass(loader, params.getFirst());
+                        valueClass = loadTypeClass(loader, params.getLast());
+                        method = STREAM_MAP;
+                    }
+                    default -> throw new VerifyException("Unexpected type " + paramType + " for " + stmt);
+                }
+
+                yield listChildStream(getter, valueClass.asSubclass(DataObject.class), method);
             }
-
-            final var params = paramType.getActualTypeArguments();
-            final Class<?> valueClass;
-            if (!listSchema.isUserOrdered() && !listSchema.getKeyDefinition().isEmpty()) {
-                loadTypeClass(loader, params.getFirst());
-                valueClass = loadTypeClass(loader, params.get(1));
-            } else {
-                valueClass = loadTypeClass(loader, params.getFirst());
+            default -> {
+                LOG.debug("Ignoring {} due to unhandled schema {}", getter, schema);
+                yield null;
             }
-
-            return listChildStream(getter, valueClass.asSubclass(DataObject.class), listSchema);
-        }
-        if (childSchema instanceof ChoiceSchemaNode) {
-            return choiceChildStream(getter);
-        }
-        if (childSchema instanceof AnydataSchemaNode) {
-            return qnameChildStream(STREAM_ANYDATA, getter, childSchema);
-        }
-        if (childSchema instanceof AnyxmlSchemaNode) {
-            return qnameChildStream(STREAM_ANYXML, getter, childSchema);
-        }
-        if (childSchema instanceof LeafListSchemaNode leafListSchema) {
-            return qnameChildStream(leafListSchema.isUserOrdered() ? STREAM_ORDERED_LEAF_LIST : STREAM_LEAF_LIST,
-                getter, childSchema);
-        }
-
-        LOG.debug("Ignoring {} due to unhandled schema {}", getter, childSchema);
-        return null;
+        };
     }
 
+    // streamChoice(Foo.class, reg, stream, obj.getFoo())
     private static ChildStream choiceChildStream(final Method getter) {
-        // streamChoice(Foo.class, reg, stream, obj.getFoo())
-        return new ChildStream(
-            ClassConstant.of(Sort.describe(getter.getReturnType()).asErasure()),
+        return new ChildStream(ClassConstant.of(Sort.describe(getter.getReturnType()).asErasure()),
             REG,
             STREAM,
             OBJ,
@@ -316,11 +331,9 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
             STREAM_CHOICE);
     }
 
+    // streamContainer(FooStreamer.INSTANCE, reg, stream, obj.getFoo())
     private ChildStream containerChildStream(final Method getter) {
-        final Class<? extends DataObject> itemClass = getter.getReturnType().asSubclass(DataObject.class);
-        final DataContainerStreamer<?> streamer = registry.getDataContainerStreamer(itemClass);
-
-        // streamContainer(FooStreamer.INSTANCE, reg, stream, obj.getFoo())
+        final var streamer = registry.getDataContainerStreamer(getter.getReturnType().asSubclass(DataObject.class));
         return new ChildStream(streamer,
             streamerInstance(streamer),
             REG,
@@ -330,17 +343,10 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
             STREAM_CONTAINER);
     }
 
+    // <METHOD>(Foo.class, FooStreamer.INSTACE, reg, stream, obj.getFoo())
     private ChildStream listChildStream(final Method getter, final Class<? extends DataObject> itemClass,
-            final ListSchemaNode childSchema) {
-        final DataContainerStreamer<?> streamer = registry.getDataContainerStreamer(itemClass);
-        final StackManipulation method;
-        if (childSchema.getKeyDefinition().isEmpty()) {
-            method = STREAM_LIST;
-        } else {
-            method = childSchema.isUserOrdered() ? STREAM_ORDERED_MAP : STREAM_MAP;
-        }
-
-        // <METHOD>(Foo.class, FooStreamer.INSTACE, reg, stream, obj.getFoo())
+            final StackManipulation method) {
+        final var streamer = registry.getDataContainerStreamer(itemClass);
         return new ChildStream(streamer,
             ClassConstant.of(Sort.describe(itemClass).asErasure()),
             streamerInstance(streamer),
@@ -351,12 +357,11 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
             method);
     }
 
+    // <METHOD>(stream, "foo", obj.getFoo())
     private static ChildStream qnameChildStream(final StackManipulation method, final Method getter,
-            final DataSchemaNode schema) {
-        // <METHOD>(stream, "foo", obj.getFoo())
-        return new ChildStream(
-            STREAM,
-            new TextConstant(schema.getQName().getLocalName()),
+            final QName qname) {
+        return new ChildStream(STREAM,
+            new TextConstant(qname.getLocalName()),
             OBJ,
             invokeMethod(getter),
             method);
@@ -370,12 +375,12 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
         }
     }
 
+    // <METHOD>(Foo.class, UNKNOWN_SIZE)
     private static StackManipulation classUnknownSizeMethod(final StackManipulation method, final Class<?> type) {
-        // <METHOD>(Foo.class, UNKNOWN_SIZE)
         return new StackManipulation.Compound(
-                ClassConstant.of(Sort.describe(type).asErasure()),
-                UNKNOWN_SIZE,
-                method);
+            ClassConstant.of(Sort.describe(type).asErasure()),
+            UNKNOWN_SIZE,
+            method);
     }
 
     private static ImmutableMap<String, Type> collectAllProperties(final DataContainerArchetype type) {
@@ -404,31 +409,29 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
         }
     }
 
-    private static final class SerializeImplementation implements Implementation {
-        private final List<ChildStream> children;
-        private final StackManipulation startEvent;
-        private final Class<?> bindingInterface;
-
-        SerializeImplementation(final Class<?> bindingInterface, final StackManipulation startEvent,
-                final List<ChildStream> children) {
-            this.bindingInterface = requireNonNull(bindingInterface);
-            this.startEvent = requireNonNull(startEvent);
-            this.children = requireNonNull(children);
+    private record SerializeImplementation(
+            Class<?> bindingInterface,
+            StackManipulation startEvent,
+            List<ChildStream> children) implements Implementation {
+        SerializeImplementation {
+            requireNonNull(bindingInterface);
+            requireNonNull(startEvent);
+            requireNonNull(children);
         }
 
         @Override
         public InstrumentedType prepare(final InstrumentedType instrumentedType) {
             return instrumentedType
-                    // private static final This INSTANCE = new This()
-                    .withField(new FieldDescription.Token(INSTANCE_FIELD,
-                        Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC,
-                        instrumentedType.asGenericType()))
-                    .withInitializer(InitializeInstanceField.INSTANCE);
+                // private static final This INSTANCE = new This()
+                .withField(new FieldDescription.Token(INSTANCE_FIELD,
+                    Opcodes.ACC_PUBLIC | Opcodes.ACC_STATIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC,
+                    instrumentedType.asGenericType()))
+                .withInitializer(InitializeInstanceField.INSTANCE);
         }
 
         @Override
         public ByteCodeAppender appender(final Target implementationTarget) {
-            final List<StackManipulation> manipulations = new ArrayList<>(children.size() + 6);
+            final var manipulations = new ArrayList<StackManipulation>(children.size() + 6);
 
             // stream.<START_EVENT>(...)
             manipulations.add(STREAM);
@@ -480,15 +483,19 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
         @Override
         public Size apply(final MethodVisitor methodVisitor, final Context implementationContext,
                 final MethodDescription instrumentedMethod) {
-            final TypeDescription instrumentedType = implementationContext.getInstrumentedType();
-            StackManipulation.Size operandStackSize = new StackManipulation.Compound(
-                TypeCreation.of(instrumentedType),
-                Duplication.SINGLE,
-                MethodInvocation.invoke(instrumentedType.getDeclaredMethods()
-                    .filter(IS_DEFAULT_CONSTRUCTOR).getOnly().asDefined()),
-                putField(instrumentedType, INSTANCE_FIELD))
-                    .apply(methodVisitor, implementationContext);
-            return new Size(operandStackSize.getMaximalSize(), instrumentedMethod.getStackSize());
+            final var instrumentedType = implementationContext.getInstrumentedType();
+            return new Size(
+                new StackManipulation.Compound(
+                    TypeCreation.of(instrumentedType),
+                    Duplication.SINGLE,
+                    MethodInvocation.invoke(instrumentedType.getDeclaredMethods()
+                        .filter(IS_DEFAULT_CONSTRUCTOR)
+                        .getOnly()
+                        .asDefined()),
+                    putField(instrumentedType, INSTANCE_FIELD))
+                    .apply(methodVisitor, implementationContext)
+                    .getMaximalSize(),
+                instrumentedMethod.getStackSize());
         }
     }
 }
