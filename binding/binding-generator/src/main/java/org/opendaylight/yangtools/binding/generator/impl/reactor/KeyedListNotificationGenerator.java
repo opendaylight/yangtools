@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyedListNotificationArchetype;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
@@ -17,17 +19,17 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 /**
  * A {@link NotificationGenerator} generating {@link KeyedListNotification}s.
  */
+@NonNullByDefault
 final class KeyedListNotificationGenerator extends AbstractInstanceNotificationGenerator {
-    @NonNullByDefault
     KeyedListNotificationGenerator(final NotificationEffectiveStatement statement, final EntryObjectGenerator parent) {
         super(statement, parent);
     }
 
     @Override
     KeyedListNotificationArchetype createTypeImpl(final JavaTypeName typeName,
-            final NotificationEffectiveStatement statement, final JavaTypeName parentName) {
-        final var builder = KeyedListNotificationArchetype.builder(typeName, statement, parentName);
-        addUsesInterfaces(builder);
+            final NotificationEffectiveStatement statement, final JavaTypeName parentName,
+            final List<GroupingArchetype> groupings) {
+        final var builder = KeyedListNotificationArchetype.builder(typeName, statement, parentName, groupings);
         addGetterMethods(builder);
         return builder.build();
     }
@@ -35,9 +37,7 @@ final class KeyedListNotificationGenerator extends AbstractInstanceNotificationG
     @Override
     KeyedListNotificationArchetype createTypeImpl(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement, final JavaTypeName parentName,
-            final NotificationBodyArchetype original) {
-        return KeyedListNotificationArchetype.builder(typeName, statement, parentName)
-            .addImplementsType(original)
-            .build();
+            final NotificationBodyArchetype notificationBody) {
+        return KeyedListNotificationArchetype.of(typeName, statement, parentName, notificationBody);
     }
 }

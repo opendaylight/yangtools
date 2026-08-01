@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.InstanceNotification;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.InstanceNotificationArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
@@ -17,8 +19,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 /**
  * A {@link NotificationGenerator} producing {@link InstanceNotification}s.
  */
+@NonNullByDefault
 final class InstanceNotificationGenerator extends AbstractInstanceNotificationGenerator {
-    @NonNullByDefault
     InstanceNotificationGenerator(final NotificationEffectiveStatement statement,
             final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
@@ -26,9 +28,9 @@ final class InstanceNotificationGenerator extends AbstractInstanceNotificationGe
 
     @Override
     InstanceNotificationArchetype createTypeImpl(final JavaTypeName typeName,
-            final NotificationEffectiveStatement statement, final JavaTypeName parentName) {
-        final var builder = InstanceNotificationArchetype.builder(typeName, statement, parentName);
-        addUsesInterfaces(builder);
+            final NotificationEffectiveStatement statement, final JavaTypeName parentName,
+            final List<GroupingArchetype> groupings) {
+        final var builder = InstanceNotificationArchetype.builder(typeName, statement, parentName, groupings);
         addGetterMethods(builder);
         return builder.build();
     }
@@ -36,9 +38,7 @@ final class InstanceNotificationGenerator extends AbstractInstanceNotificationGe
     @Override
     InstanceNotificationArchetype createTypeImpl(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement, final JavaTypeName parentName,
-            final NotificationBodyArchetype original) {
-        return InstanceNotificationArchetype.builder(typeName, statement, parentName)
-            .addImplementsType(original)
-            .build();
+            final NotificationBodyArchetype notificationBody) {
+        return InstanceNotificationArchetype.of(typeName, statement, parentName, notificationBody);
     }
 }

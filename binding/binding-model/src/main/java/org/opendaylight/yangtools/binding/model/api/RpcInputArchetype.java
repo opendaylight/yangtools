@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
@@ -22,13 +23,14 @@ public sealed interface RpcInputArchetype extends AugmentableArchetype permits R
      */
     @NonNullByDefault
     final class Builder extends DataContainerArchetypeBuilder<Builder, InputEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final InputEffectiveStatement statement) {
-            super(typeName, statement);
+        private Builder(final JavaTypeName typeName, final InputEffectiveStatement statement,
+                final List<GroupingArchetype> groupings) {
+            super(typeName, statement, groupings);
         }
 
         @Override
         public RpcInputArchetype build() {
-            return new RpcInputArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
+            return new RpcInputArchetypeImpl(typeName, statement, implementsTypes, methodDefinitions(),
                 enclosedTypes());
         }
 
@@ -44,8 +46,9 @@ public sealed interface RpcInputArchetype extends AugmentableArchetype permits R
     }
 
     @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final InputEffectiveStatement statement) {
-        return new Builder(typeName, statement);
+    static Builder builder(final JavaTypeName typeName, final InputEffectiveStatement statement,
+            final List<GroupingArchetype> groupings) {
+        return new Builder(typeName, statement, groupings);
     }
 
     @Override

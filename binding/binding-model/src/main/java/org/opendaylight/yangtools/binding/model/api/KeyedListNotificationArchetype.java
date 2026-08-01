@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
@@ -18,24 +19,24 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  *
  * @since 16.0.0
  */
+@NonNullByDefault
 public sealed interface KeyedListNotificationArchetype extends DataContainerArchetype.OfNotification
-        permits KeyedListNotificationArchetypeImpl {
+        permits KeyedListNotificationArchetypeFromGrouping, KeyedListNotificationArchetypeImpl {
     /**
      * A builder of {@link KeyedListNotificationArchetype}s.
      */
-    @NonNullByDefault
     final class Builder extends DataContainerArchetypeBuilder<Builder, NotificationEffectiveStatement> {
         private final JavaTypeName parentName;
 
         private Builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
-                final JavaTypeName parentName) {
-            super(typeName, statement);
+                final JavaTypeName parentName, final List<GroupingArchetype> groupings) {
+            super(typeName, statement, groupings);
             this.parentName = requireNonNull(parentName);
         }
 
         @Override
         public KeyedListNotificationArchetype build() {
-            return new KeyedListNotificationArchetypeImpl(typeName, statement, parentName, implementsTypes(),
+            return new KeyedListNotificationArchetypeImpl(typeName, statement, parentName, implementsTypes,
                 methodDefinitions(), enclosedTypes());
         }
 
@@ -50,10 +51,15 @@ public sealed interface KeyedListNotificationArchetype extends DataContainerArch
         }
     }
 
-    @NonNullByDefault
     static Builder builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
-            final JavaTypeName parentName) {
-        return new Builder(typeName, statement, parentName);
+            final JavaTypeName parentName, final List<GroupingArchetype> groupings) {
+        return new Builder(typeName, statement, parentName, groupings);
+    }
+
+    static KeyedListNotificationArchetype of(final JavaTypeName typeName,
+            final NotificationEffectiveStatement statement, final JavaTypeName parentName,
+            final NotificationBodyArchetype notificationBody) {
+        return new KeyedListNotificationArchetypeFromGrouping(typeName, statement, parentName, notificationBody);
     }
 
     /**

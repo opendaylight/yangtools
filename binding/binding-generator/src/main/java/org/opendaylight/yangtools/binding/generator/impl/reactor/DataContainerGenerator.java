@@ -18,7 +18,10 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
@@ -174,7 +177,7 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
         return createBuilder(statement()).populate(new AugmentResolver(), this).build(verifyGeneratedType(type));
     }
 
-    abstract @NonNull CompositeRuntimeTypeBuilder<S, R> createBuilder(S statement);
+    abstract @NonNull CompositeRuntimeTypeBuilder<S, R> createBuilder(@NonNull S statement);
 
     @Override
     final R createInternalRuntimeType(final AugmentResolver resolver, final S statement, final Type type) {
@@ -451,18 +454,14 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
         return null;
     }
 
-    /**
-     * Update the specified builder to implement interfaces generated for the {@code grouping} statements this generator
-     * is using.
-     *
-     * @param builder Target builder
-     */
-    @NonNullByDefault
-    final void addUsesInterfaces(final DataContainerArchetype.Builder builder) {
-        for (var grp : groupings) {
-            builder.addImplementsType(grp.getGeneratedType());
-        }
+    @Override
+    final Archetype createTypeImpl() {
+        return createTypeImpl(typeName(), statement(), groupings.isEmpty() ? List.of()
+            : groupings.stream().map(GroupingGenerator::getGeneratedType).toList());
     }
+
+    @NonNullByDefault
+    abstract Archetype createTypeImpl(JavaTypeName typeName, @NonNull S statement, List<GroupingArchetype> groupings);
 
     @NonNullByDefault
     final void addGetterMethods(final DataContainerArchetype.Builder builder) {

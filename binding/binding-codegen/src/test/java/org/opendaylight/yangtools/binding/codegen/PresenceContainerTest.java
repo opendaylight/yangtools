@@ -60,7 +60,7 @@ class PresenceContainerTest {
         final var keyName = JavaTypeName.create("foo", "key");
         final var listName = JavaTypeName.create("foo", "list");
         final var archetype = EntryObjectArchetype.builder(listName, userList, parentName,
-            new KeyArchetype(keyName, key, listName, List.of(ConcreteType.ofClass(String.class)))).build();
+            new KeyArchetype(keyName, key, listName, List.of(ConcreteType.ofClass(String.class))), List.of()).build();
 
         assertFalse(BuilderTemplate.isNonPresenceContainer(archetype));
     }
@@ -73,7 +73,7 @@ class PresenceContainerTest {
         final var scpContainer = assertInstanceOf(ContainerEffectiveStatement.class,
             MODULE.findDataTreeChild(DIRECTORY_QNAME, SCP_QNAME).orElseThrow());
         assertFalse(BuilderTemplate.isNonPresenceContainer(ContainerObjectArchetype.builder(
-            JavaTypeName.create("foo", "foo"), scpContainer, JavaTypeName.create("foo", "parent")).build()));
+            JavaTypeName.create("foo", "foo"), scpContainer, JavaTypeName.create("foo", "parent"), List.of()).build()));
     }
 
     /**
@@ -84,6 +84,7 @@ class PresenceContainerTest {
         final var dataContainer = assertInstanceOf(ContainerEffectiveStatement.class,
             MODULE.findDataTreeChild(DIRECTORY_QNAME, DATA_QNAME).orElseThrow());
         assertTrue(BuilderTemplate.isNonPresenceContainer(ContainerObjectArchetype.builder(
-            JavaTypeName.create("foo", "foo"), dataContainer, JavaTypeName.create("foo", "parent")).build()));
+            JavaTypeName.create("foo", "foo"), dataContainer, JavaTypeName.create("foo", "parent"), List.of())
+            .build()));
     }
 }

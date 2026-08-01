@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -40,7 +41,7 @@ class MethodSignatureBuilderTest {
         final var signatureBuilderImpl6 = MethodSignature.builder("testMethod");
         final var returnType = ContainerObjectArchetype.builder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "Address"), statement,
-            JavaTypeName.create("org.opendaylight.yangtools.test", "Parent"))
+            JavaTypeName.create("org.opendaylight.yangtools.test", "Parent"), List.of())
             .build();
         signatureBuilderImpl6.setReturnType(returnType);
 

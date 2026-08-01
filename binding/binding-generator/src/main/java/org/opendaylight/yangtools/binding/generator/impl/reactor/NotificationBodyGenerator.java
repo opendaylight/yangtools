@@ -9,12 +9,15 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import com.google.common.base.VerifyException;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationBodyRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationBodyRuntimeType;
@@ -43,9 +46,9 @@ final class NotificationBodyGenerator
     }
 
     @Override
-    NotificationBodyArchetype createTypeImpl() {
-        final var builder = NotificationBodyArchetype.builder(typeName(), statement());
-        addUsesInterfaces(builder);
+    NotificationBodyArchetype createTypeImpl(final JavaTypeName typeName,
+            final NotificationEffectiveStatement statement, final List<@NonNull GroupingArchetype> groupings) {
+        final var builder = NotificationBodyArchetype.builder(typeName, statement, groupings);
         addGetterMethods(builder);
         return builder.build();
     }

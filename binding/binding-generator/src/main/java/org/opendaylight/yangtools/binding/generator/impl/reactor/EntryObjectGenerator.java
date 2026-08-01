@@ -15,6 +15,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultMapRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -51,10 +53,11 @@ final class EntryObjectGenerator extends ListGenerator {
     }
 
     @Override
-    EntryObjectArchetype createTypeImpl() {
+    EntryObjectArchetype createTypeImpl(final JavaTypeName typeName, final ListEffectiveStatement statement,
+            final List<@NonNull GroupingArchetype> groupings) {
         final var keyType = keyGenerator.getArchetype();
-        final var builder = EntryObjectArchetype.builder(typeName(), statement(), parentNameForChildOf(), keyType);
-        addUsesInterfaces(builder);
+        final var builder = EntryObjectArchetype.builder(typeName, statement, parentNameForChildOf(), keyType,
+            groupings);
         addGetterMethods(builder);
         return builder.build();
     }

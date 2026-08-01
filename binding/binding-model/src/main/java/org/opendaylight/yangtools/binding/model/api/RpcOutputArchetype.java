@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
@@ -22,13 +23,14 @@ public sealed interface RpcOutputArchetype extends AugmentableArchetype permits 
      */
     @NonNullByDefault
     final class Builder extends DataContainerArchetypeBuilder<Builder, OutputEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final OutputEffectiveStatement statement) {
-            super(typeName, statement);
+        private Builder(final JavaTypeName typeName, final OutputEffectiveStatement statement,
+                final List<GroupingArchetype> groupings) {
+            super(typeName, statement, groupings);
         }
 
         @Override
         public RpcOutputArchetype build() {
-            return new RpcOutputArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
+            return new RpcOutputArchetypeImpl(typeName, statement, implementsTypes, methodDefinitions(),
                 enclosedTypes());
         }
 
@@ -44,8 +46,9 @@ public sealed interface RpcOutputArchetype extends AugmentableArchetype permits 
     }
 
     @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final OutputEffectiveStatement statement) {
-        return new Builder(typeName, statement);
+    static Builder builder(final JavaTypeName typeName, final OutputEffectiveStatement statement,
+            final List<GroupingArchetype> groupings) {
+        return new Builder(typeName, statement, groupings);
     }
 
     @Override

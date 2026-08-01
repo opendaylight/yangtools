@@ -8,10 +8,13 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultListRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -34,9 +37,9 @@ final class ItemObjectGenerator extends ListGenerator {
     }
 
     @Override
-    ItemObjectArchetype createTypeImpl() {
-        final var builder = ItemObjectArchetype.builder(typeName(), statement(), parentNameForChildOf());
-        addUsesInterfaces(builder);
+    ItemObjectArchetype createTypeImpl(final JavaTypeName typeName, final ListEffectiveStatement statement,
+            final List<@NonNull GroupingArchetype> groupings) {
+        final var builder = ItemObjectArchetype.builder(typeName, statement, parentNameForChildOf(), groupings);
         addGetterMethods(builder);
         return builder.build();
     }

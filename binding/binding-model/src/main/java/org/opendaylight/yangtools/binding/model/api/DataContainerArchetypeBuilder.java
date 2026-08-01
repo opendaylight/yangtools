@@ -35,17 +35,24 @@ abstract sealed class DataContainerArchetypeBuilder<
                 InstanceNotificationArchetype.Builder, KeyedListNotificationArchetype.Builder,
                 NotificationArchetype.Builder, NotificationBodyArchetype.Builder, RpcOutputArchetype.Builder,
                 YangDataArchetype.Builder {
+    @NonNullByDefault
+    final List<Type> implementsTypes;
     final @NonNull JavaTypeName typeName;
     final @NonNull S statement;
 
-    private List<DataContainerArchetype> implementsTypes = List.of();
     private List<MethodSignature.Builder> methodDefinitions = List.of();
-    private List<Archetype> enclosedTypes = List.of();
+    private List<@NonNull Archetype> enclosedTypes = List.of();
 
     @NonNullByDefault
-    DataContainerArchetypeBuilder(final JavaTypeName typeName, final S statement) {
+    DataContainerArchetypeBuilder(final JavaTypeName typeName, final S statement,
+            final List<? extends DataContainerArchetype> implementsTypes) {
         this.typeName = requireNonNull(typeName);
         this.statement = requireNonNull(statement);
+        this.implementsTypes = switch (implementsTypes.size()) {
+            case 0 -> List.of();
+            case 1 -> Collections.singletonList(requireNonNull(implementsTypes.getFirst()));
+            default -> List.copyOf(implementsTypes);
+        };
     }
 
     @Override
@@ -68,23 +75,6 @@ abstract sealed class DataContainerArchetypeBuilder<
             case 0 -> List.of();
             case 1 -> Collections.singletonList(enclosedTypes.getFirst());
             default -> List.copyOf(enclosedTypes);
-        };
-    }
-
-    @Override
-    public final @NonNull B addImplementsType(final DataContainerArchetype genType) {
-        checkArgument(!implementsTypes.contains(requireNonNull(genType)),
-            "This generated type already contains equal implements type.");
-        implementsTypes = LazyCollections.lazyAdd(implementsTypes, genType);
-        return thisInstance();
-    }
-
-    @NonNullByDefault
-    final List<Type> implementsTypes() {
-        return switch (implementsTypes.size()) {
-            case 0 -> List.of();
-            case 1 -> Collections.singletonList(implementsTypes.getFirst());
-            default -> List.copyOf(implementsTypes);
         };
     }
 

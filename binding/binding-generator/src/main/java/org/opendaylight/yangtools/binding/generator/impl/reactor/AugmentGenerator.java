@@ -25,6 +25,8 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -149,14 +151,14 @@ public abstract sealed class AugmentGenerator
     }
 
     @Override
-    final AugmentationArchetype createTypeImpl() {
+    final AugmentationArchetype createTypeImpl(final JavaTypeName typeName, final AugmentEffectiveStatement statement,
+            final List<@NonNull GroupingArchetype> groupings) {
         final var targetType = targetGenerator().getGeneratedType();
         if (!(targetType instanceof AugmentableArchetype target)) {
             throw new VerifyException("Unexpected target " + targetType);
         }
 
-        final var builder = AugmentationArchetype.builder(typeName(), statement(), target);
-        addUsesInterfaces(builder);
+        final var builder = AugmentationArchetype.builder(typeName, statement, target, groupings);
         addGetterMethods(builder);
         return builder.build();
     }

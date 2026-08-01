@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import com.google.common.base.VerifyException;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
@@ -17,9 +20,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  * Abstract base generator corresponding to a {@code notification} statement used somewhere else than the top-level,
  * e.g. the semantics introduced in RFC7950.
  */
+@NonNullByDefault
 abstract sealed class AbstractInstanceNotificationGenerator extends AbstractNotificationGenerator
         permits InstanceNotificationGenerator, KeyedListNotificationGenerator {
-    @NonNullByDefault
     AbstractInstanceNotificationGenerator(final NotificationEffectiveStatement statement,
             final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
@@ -27,18 +30,25 @@ abstract sealed class AbstractInstanceNotificationGenerator extends AbstractNoti
 
     @Override
     final DataContainerArchetype.OfNotification createTypeImpl(final JavaTypeName typeName,
-            final NotificationEffectiveStatement statement) {
+            final NotificationEffectiveStatement statement, final List<GroupingArchetype> groupings) {
         final var parentName = getParent().typeName();
         final var orig = getOriginal();
-        return equals(orig) ? createTypeImpl(typeName, statement, parentName)
-            : createTypeImpl(typeName, statement, parentName, (NotificationBodyArchetype) orig.getGeneratedType());
+        if (orig.equals(this)) {
+            return createTypeImpl(typeName, statement, parentName, groupings);
+        }
+        final var origArchetype = orig.getGeneratedType();
+        if (!(origArchetype instanceof NotificationBodyArchetype notificationBody)) {
+            throw new VerifyException("Unexpected original " + origArchetype);
+        }
+        if (!groupings.isEmpty()) {
+            throw new VerifyException("Unexpected groupings in " + statement);
+        }
+        return createTypeImpl(typeName, statement, parentName, notificationBody);
     }
 
-    @NonNullByDefault
     abstract DataContainerArchetype.OfNotification createTypeImpl(JavaTypeName typeName,
-        NotificationEffectiveStatement statement, JavaTypeName parentName);
+        NotificationEffectiveStatement statement, JavaTypeName parentName, List<GroupingArchetype> groupings);
 
-    @NonNullByDefault
     abstract DataContainerArchetype.OfNotification createTypeImpl(JavaTypeName typeName,
-        NotificationEffectiveStatement statement, JavaTypeName parentName, NotificationBodyArchetype original);
+        NotificationEffectiveStatement statement, JavaTypeName parentName, NotificationBodyArchetype notificationBody);
 }
