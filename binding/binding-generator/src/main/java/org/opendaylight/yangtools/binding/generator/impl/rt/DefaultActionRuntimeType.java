@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
-public final class DefaultActionRuntimeType extends AbstractOperationRuntimeType<ActionEffectiveStatement>
+public final class DefaultActionRuntimeType extends AbstractCompositeRuntimeType<ActionEffectiveStatement>
         implements ActionRuntimeType {
     public DefaultActionRuntimeType(final OperationArchetype.OfAction bindingType,
             final ActionEffectiveStatement statement, final List<RuntimeType> children) {

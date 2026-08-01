@@ -15,18 +15,7 @@ import org.opendaylight.yangtools.binding.model.api.OperationArchetype;
  * {@code rpc} statements.
  */
 @NonNullByDefault
-public interface OperationRuntimeType extends CompositeRuntimeType {
+public sealed interface OperationRuntimeType extends CompositeRuntimeType permits ActionRuntimeType, RpcRuntimeType {
     @Override
     OperationArchetype javaType();
-
-    // FIXME: remove these: the archetypes are available from javaType() and the statements are exposed from statement()
-    /**
-     * {@return the run-time type for this operation input}
-     */
-    InputRuntimeType input();
-
-    /**
-     * {@return the run-time type for this operation's output}
-     */
-    OutputRuntimeType output();
 }
