@@ -17,17 +17,18 @@ import net.bytebuddy.implementation.bytecode.member.FieldAccess;
 import net.bytebuddy.implementation.bytecode.member.FieldAccess.Defined;
 import net.bytebuddy.implementation.bytecode.member.MethodInvocation;
 import net.bytebuddy.matcher.ElementMatchers;
+import org.eclipse.jdt.annotation.NonNull;
 
 final class ByteBuddyUtils {
     private ByteBuddyUtils() {
         // Hidden on purpose
     }
 
-    static StackManipulation invokeMethod(final Method method) {
+    static @NonNull StackManipulation invokeMethod(final Method method) {
         return MethodInvocation.invoke(describe(method));
     }
 
-    static StackManipulation invokeMethod(final Class<?> clazz, final String name, final Class<?>... args) {
+    static @NonNull StackManipulation invokeMethod(final Class<?> clazz, final String name, final Class<?>... args) {
         return MethodInvocation.invoke(describe(clazz, name, args));
     }
 

@@ -13,12 +13,9 @@ import static org.opendaylight.yangtools.binding.data.codec.impl.ByteBuddyUtils.
 import static org.opendaylight.yangtools.binding.data.codec.impl.ByteBuddyUtils.putField;
 
 import com.google.common.base.VerifyException;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +43,7 @@ import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;
 import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
@@ -66,6 +64,7 @@ import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
@@ -102,24 +101,24 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
     private static final StackManipulation UNKNOWN_SIZE = IntegerConstant.forValue(
         BindingStreamEventWriter.UNKNOWN_SIZE);
 
-    private static final StackManipulation START_AUGMENTATION_NODE = invokeMethod(BindingStreamEventWriter.class,
-        "startAugmentationNode", Class.class);
-    private static final StackManipulation START_CASE = invokeMethod(BindingStreamEventWriter.class,
-        "startCase", Class.class, int.class);
-    private static final StackManipulation START_CONTAINER_NODE = invokeMethod(BindingStreamEventWriter.class,
-        "startContainerNode", Class.class, int.class);
-    private static final StackManipulation END_NODE = invokeMethod(BindingStreamEventWriter.class,
-        "endNode");
+    private static final @NonNull StackManipulation START_AUGMENTATION_NODE =
+        invokeMethod(BindingStreamEventWriter.class, "startAugmentationNode", Class.class);
+    private static final @NonNull StackManipulation START_CASE =
+        invokeMethod(BindingStreamEventWriter.class, "startCase", Class.class, int.class);
+    private static final @NonNull StackManipulation START_CONTAINER_NODE =
+        invokeMethod(BindingStreamEventWriter.class, "startContainerNode", Class.class, int.class);
+    private static final @NonNull StackManipulation END_NODE =
+        invokeMethod(BindingStreamEventWriter.class, "endNode");
 
     // startMapEntryNode(obj.key(), UNKNOWN_SIZE)
-    private static final StackManipulation START_MAP_ENTRY_NODE = new StackManipulation.Compound(
+    private static final @NonNull StackManipulation START_MAP_ENTRY_NODE = new StackManipulation.Compound(
         OBJ,
         invokeMethod(KeyAware.class, Naming.KEY_AWARE_KEY_NAME),
         UNKNOWN_SIZE,
         invokeMethod(BindingStreamEventWriter.class, "startMapEntryNode", Key.class, int.class));
 
     // startUnkeyedListItem(UNKNOWN_SIZE)
-    private static final StackManipulation START_UNKEYED_LIST_ITEM = new StackManipulation.Compound(
+    private static final @NonNull StackManipulation START_UNKEYED_LIST_ITEM = new StackManipulation.Compound(
         UNKNOWN_SIZE,
         invokeMethod(BindingStreamEventWriter.class, "startUnkeyedListItem", int.class));
 
@@ -160,11 +159,11 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
 
     private static final String INSTANCE_FIELD = "INSTANCE";
 
-    private final CodecContextFactory registry;
-    private final StackManipulation startEvent;
-    private final DataContainerCompat<?, ?> statement;
-    private final Class<?> type;
-    private final DataContainerArchetype archetype;
+    private final @NonNull DataContainerCompat<?, ?> statement;
+    private final @NonNull DataContainerArchetype archetype;
+    private final @NonNull CodecContextFactory registry;
+    private final @NonNull StackManipulation startEvent;
+    private final @NonNull Class<?> type;
 
     private DataContainerStreamerGenerator(final CodecContextFactory registry, final DataContainerArchetype archetype,
             final Class<?> type) {
@@ -222,8 +221,7 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
 
         @SuppressWarnings("unchecked")
         final var builder = (Builder<T>) TEMPLATE.name(fqcn);
-        final var props = collectAllProperties(archetype);
-        final var childStreams = new ArrayList<ChildStream>(props.size());
+        final var childStreams = new ArrayList<ChildStream>();
 
         // FIXME: we are using DataSchemaNode for three things:
         //        - the String in QName.getLocalName
@@ -241,7 +239,7 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
                 }
 
                 if (schemaChild instanceof EffectiveStatementEquivalent<?> equiv) {
-                    final var childStream = createStream(loader, props, getter, equiv.asEffectiveStatement());
+                    final var childStream = createStream(loader, getter, equiv.asEffectiveStatement());
                     if (childStream != null) {
                         childStreams.add(childStream);
                     }
@@ -251,11 +249,11 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
             }
         }
 
-        final var depBuilder = ImmutableList.<Class<?>>builder();
+        final var dependencies = new ArrayList<Class<?>>();
         for (var childStream : childStreams) {
             final var dependency = childStream.getDependency();
             if (dependency != null) {
-                depBuilder.add(dependency);
+                dependencies.add(dependency);
             }
         }
 
@@ -266,14 +264,14 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
                 .throwing(BB_IOX)
                 .intercept(new SerializeImplementation(bindingInterface, startEvent, childStreams))
                 .make()),
-            depBuilder.build());
+            dependencies);
 
         LOG.trace("Definition of {} done", fqcn);
         return result;
     }
 
-    private ChildStream createStream(final BindingClassLoader loader, final ImmutableMap<String, Type> properties,
-            final Method getter, final EffectiveStatement<?, ?> schema) {
+    private ChildStream createStream(final BindingClassLoader loader, final Method getter,
+            final EffectiveStatement<?, ?> schema) {
         return switch (schema) {
             case AnydataEffectiveStatement stmt -> qnameChildStream(STREAM_ANYDATA, getter, stmt.argument());
             case AnyxmlEffectiveStatement stmt -> qnameChildStream(STREAM_ANYXML, getter, stmt.argument());
@@ -289,10 +287,10 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
                 // FIXME: Reflection over encoding of actual method return type. There are two possibilities here:
                 //        - we have generated an EntryObject, in which case we see Map<FooKey, Foo>
                 //        - we have an ItemObject, in which case we see List<Foo>
-                final var getterName = getter.getName();
-                final var childType = properties.get(getterName);
-                if (!(childType instanceof ParameterizedType paramType)) {
-                    throw new VerifyException("Unexpected type " + childType + " for " + getterName);
+                final var signature =  getMethod(getter.getName());
+                final var returnType = signature.getReturnType();
+                if (!(returnType instanceof ParameterizedType paramType)) {
+                    throw new VerifyException("Unexpected method " + signature);
                 }
 
                 final var params = paramType.getActualTypeArguments();
@@ -321,8 +319,35 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
         };
     }
 
+    private @NonNull MethodSignature getMethod(final String methodName) {
+        final var method = lookupMethod(archetype, methodName);
+        if (method == null) {
+            throw new VerifyException("No method for " + methodName + " in " + archetype);
+        }
+        return method;
+    }
+
+    private static @Nullable MethodSignature lookupMethod(final DataContainerArchetype archetype,
+            final String methodName) {
+        for (var method : archetype.getMethodDefinitions()) {
+            if (methodName.equals(method.getName())) {
+                return method;
+            }
+        }
+        for (var type : archetype.getImplements()) {
+            // FIXME: narrow down?
+            if (type instanceof DataContainerArchetype dataContainer) {
+                final var found = lookupMethod(dataContainer, methodName);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
+    }
+
     // streamChoice(Foo.class, reg, stream, obj.getFoo())
-    private static ChildStream choiceChildStream(final Method getter) {
+    private static @NonNull ChildStream choiceChildStream(final Method getter) {
         return new ChildStream(ClassConstant.of(Sort.describe(getter.getReturnType()).asErasure()),
             REG,
             STREAM,
@@ -332,7 +357,7 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
     }
 
     // streamContainer(FooStreamer.INSTANCE, reg, stream, obj.getFoo())
-    private ChildStream containerChildStream(final Method getter) {
+    private @NonNull ChildStream containerChildStream(final Method getter) {
         final var streamer = registry.getDataContainerStreamer(getter.getReturnType().asSubclass(DataObject.class));
         return new ChildStream(streamer,
             streamerInstance(streamer),
@@ -344,7 +369,7 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
     }
 
     // <METHOD>(Foo.class, FooStreamer.INSTACE, reg, stream, obj.getFoo())
-    private ChildStream listChildStream(final Method getter, final Class<? extends DataObject> itemClass,
+    private @NonNull ChildStream listChildStream(final Method getter, final Class<? extends DataObject> itemClass,
             final StackManipulation method) {
         final var streamer = registry.getDataContainerStreamer(itemClass);
         return new ChildStream(streamer,
@@ -358,7 +383,7 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
     }
 
     // <METHOD>(stream, "foo", obj.getFoo())
-    private static ChildStream qnameChildStream(final StackManipulation method, final Method getter,
+    private static @NonNull ChildStream qnameChildStream(final StackManipulation method, final Method getter,
             final QName qname) {
         return new ChildStream(STREAM,
             new TextConstant(qname.getLocalName()),
@@ -376,29 +401,12 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
     }
 
     // <METHOD>(Foo.class, UNKNOWN_SIZE)
+    @NonNullByDefault
     private static StackManipulation classUnknownSizeMethod(final StackManipulation method, final Class<?> type) {
         return new StackManipulation.Compound(
             ClassConstant.of(Sort.describe(type).asErasure()),
             UNKNOWN_SIZE,
             method);
-    }
-
-    private static ImmutableMap<String, Type> collectAllProperties(final DataContainerArchetype type) {
-        final var props = new HashMap<String, Type>();
-        collectAllProperties(type, props);
-        return ImmutableMap.copyOf(props);
-    }
-
-    private static void collectAllProperties(final DataContainerArchetype type, final Map<String, Type> hashMap) {
-        for (var definition : type.getMethodDefinitions()) {
-            hashMap.put(definition.getName(), definition.getReturnType());
-        }
-        for (var parent : type.getImplements()) {
-            // FIXME: narrow down?
-            if (parent instanceof DataContainerArchetype implemented) {
-                collectAllProperties(implemented, hashMap);
-            }
-        }
     }
 
     private static Class<?> loadTypeClass(final BindingClassLoader loader, final Type type) {
