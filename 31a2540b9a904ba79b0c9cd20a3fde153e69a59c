@@ -91,6 +91,29 @@
       },
       "revId": "31a2540b9a904ba79b0c9cd20a3fde153e69a59c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c8d7be4d_999cc24a",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStreamPerformanceTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 226,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-08-01T21:29:35Z",
+      "side": 1,
+      "message": "just do List.copyOf()",
+      "range": {
+        "startLine": 226,
+        "startChar": 15,
+        "endLine": 226,
+        "endChar": 44
+      },
+      "revId": "31a2540b9a904ba79b0c9cd20a3fde153e69a59c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
