@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
@@ -27,14 +28,14 @@ public sealed interface AugmentationArchetype extends DataContainerArchetype per
         private final AugmentableArchetype target;
 
         private Builder(final JavaTypeName typeName, final AugmentEffectiveStatement statement,
-                final AugmentableArchetype target) {
-            super(typeName, statement);
+                final AugmentableArchetype target, final List<GroupingArchetype> groupings) {
+            super(typeName, statement, groupings);
             this.target = requireNonNull(target);
         }
 
         @Override
         public AugmentationArchetype build() {
-            return new AugmentationArchetypeImpl(typeName, statement, target, implementsTypes(), methodDefinitions(),
+            return new AugmentationArchetypeImpl(typeName, statement, target, implementsTypes, methodDefinitions(),
                 enclosedTypes());
         }
 
@@ -51,8 +52,8 @@ public sealed interface AugmentationArchetype extends DataContainerArchetype per
 
     @NonNullByDefault
     static Builder builder(final JavaTypeName typeName, final AugmentEffectiveStatement statement,
-            final AugmentableArchetype target) {
-        return new Builder(typeName, statement, target);
+            final AugmentableArchetype target, final List<GroupingArchetype> groupings) {
+        return new Builder(typeName, statement, target, groupings);
     }
 
     @Override

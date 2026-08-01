@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -26,8 +27,9 @@ abstract sealed class ChildOfArchetypeBuilder<
     final @NonNull JavaTypeName parentName;
 
     @NonNullByDefault
-    ChildOfArchetypeBuilder(final JavaTypeName typeName, final S statement, final JavaTypeName parentName) {
-        super(typeName, statement);
+    ChildOfArchetypeBuilder(final JavaTypeName typeName, final S statement, final List<GroupingArchetype> groupings,
+            final JavaTypeName parentName) {
+        super(typeName, statement, groupings);
         this.parentName = requireNonNull(parentName);
     }
 }

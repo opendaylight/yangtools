@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
@@ -26,13 +27,14 @@ public non-sealed interface DataRootArchetype extends DataContainerArchetype {
     @Beta
     @NonNullByDefault
     final class Builder extends DataContainerArchetypeBuilder<Builder, ModuleEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final ModuleEffectiveStatement statement) {
-            super(typeName, statement);
+        private Builder(final JavaTypeName typeName, final ModuleEffectiveStatement statement,
+                final List<GroupingArchetype> groupings) {
+            super(typeName, statement, groupings);
         }
 
         @Override
         public DataRootArchetype build() {
-            return new DataRootArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
+            return new DataRootArchetypeImpl(typeName, statement, implementsTypes, methodDefinitions(),
                 enclosedTypes());
         }
 
@@ -48,8 +50,9 @@ public non-sealed interface DataRootArchetype extends DataContainerArchetype {
     }
 
     @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final ModuleEffectiveStatement statement) {
-        return new Builder(typeName, statement);
+    static Builder builder(final JavaTypeName typeName, final ModuleEffectiveStatement statement,
+            final List<GroupingArchetype> groupings) {
+        return new Builder(typeName, statement, groupings);
     }
 
     @Override

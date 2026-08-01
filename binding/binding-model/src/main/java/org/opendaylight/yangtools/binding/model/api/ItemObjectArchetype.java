@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -24,13 +25,13 @@ public sealed interface ItemObjectArchetype extends ChildOfArchetype.OfList perm
      */
     final class Builder extends ChildOfArchetypeBuilder<Builder, ListEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final ListEffectiveStatement statement,
-                final JavaTypeName parentName) {
-            super(typeName, statement, parentName);
+                final JavaTypeName parentName, final List<GroupingArchetype> groupings) {
+            super(typeName, statement, groupings, parentName);
         }
 
         @Override
         public ItemObjectArchetype build() {
-            return new ItemObjectArchetypeImpl(typeName, statement, parentName, implementsTypes(), methodDefinitions(),
+            return new ItemObjectArchetypeImpl(typeName, statement, parentName, implementsTypes, methodDefinitions(),
                 enclosedTypes());
         }
 
@@ -46,7 +47,7 @@ public sealed interface ItemObjectArchetype extends ChildOfArchetype.OfList perm
     }
 
     static Builder builder(final JavaTypeName typeName, final ListEffectiveStatement statement,
-            final JavaTypeName parentName) {
-        return new Builder(typeName, statement, parentName);
+            final JavaTypeName parentName, final List<GroupingArchetype> groupings) {
+        return new Builder(typeName, statement, parentName, groupings);
     }
 }

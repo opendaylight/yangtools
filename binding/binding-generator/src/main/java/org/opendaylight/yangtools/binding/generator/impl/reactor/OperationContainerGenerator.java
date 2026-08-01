@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
@@ -52,7 +54,8 @@ abstract sealed class OperationContainerGenerator<
     }
 
     @Override
-    final A createTypeImpl() {
+    final A createTypeImpl(final JavaTypeName typeName, final S statement,
+            final List<@NonNull GroupingArchetype> groupings) {
         if (getParent() instanceof ActionGenerator actionParent && actionParent.isAddedByUses()) {
             //        final ActionDefinition orig = findOrigAction(parentSchema, action).get();
             //        // Original definition may live in a different module, make sure we account for that
@@ -62,8 +65,9 @@ abstract sealed class OperationContainerGenerator<
             //        output = context.addAliasType(origContext, orig.getOutput(), action.getOutput());
             throw new UnsupportedOperationException("Lookup in original");
         }
-        return createTypeImpl(typeName(), statement());
+        return createArchetype(typeName, statement, groupings);
     }
 
-    abstract @NonNull A createTypeImpl(@NonNull JavaTypeName typeName, @NonNull S statement);
+    @NonNullByDefault
+    abstract @NonNull A createArchetype(JavaTypeName typeName, @NonNull S statement, List<GroupingArchetype> groupings);
 }

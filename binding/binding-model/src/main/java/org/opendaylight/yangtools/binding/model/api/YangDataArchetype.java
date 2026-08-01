@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
@@ -22,13 +23,14 @@ public sealed interface YangDataArchetype extends DataContainerArchetype permits
      */
     @NonNullByDefault
     final class Builder extends DataContainerArchetypeBuilder<Builder, YangDataEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final YangDataEffectiveStatement statement) {
-            super(typeName, statement);
+        private Builder(final JavaTypeName typeName, final YangDataEffectiveStatement statement,
+                final List<GroupingArchetype> groupings) {
+            super(typeName, statement, groupings);
         }
 
         @Override
         public YangDataArchetype build() {
-            return new YangDataArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
+            return new YangDataArchetypeImpl(typeName, statement, implementsTypes, methodDefinitions(),
                 enclosedTypes());
         }
 
@@ -44,8 +46,9 @@ public sealed interface YangDataArchetype extends DataContainerArchetype permits
     }
 
     @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final YangDataEffectiveStatement statement) {
-        return new Builder(typeName, statement);
+    static Builder builder(final JavaTypeName typeName, final YangDataEffectiveStatement statement,
+            final List<GroupingArchetype> groupings) {
+        return new Builder(typeName, statement, groupings);
     }
 
     @Override

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -27,14 +28,14 @@ public sealed interface EntryObjectArchetype extends ChildOfArchetype.OfList per
         private final KeyArchetype key;
 
         private Builder(final JavaTypeName typeName, final ListEffectiveStatement statement,
-                final JavaTypeName parentName, final KeyArchetype key) {
-            super(typeName, statement, parentName);
+                final JavaTypeName parentName, final KeyArchetype key, final List<GroupingArchetype> groupings) {
+            super(typeName, statement, groupings, parentName);
             this.key = requireNonNull(key);
         }
 
         @Override
         public EntryObjectArchetype build() {
-            return new EntryObjectArchetypeImpl(typeName, statement, parentName, key, implementsTypes(),
+            return new EntryObjectArchetypeImpl(typeName, statement, parentName, key, implementsTypes,
                 methodDefinitions(), enclosedTypes());
         }
 
@@ -50,8 +51,8 @@ public sealed interface EntryObjectArchetype extends ChildOfArchetype.OfList per
     }
 
     static Builder builder(final JavaTypeName typeName, final ListEffectiveStatement statement,
-            final JavaTypeName parentName, final KeyArchetype key) {
-        return new Builder(typeName, statement, parentName, key);
+            final JavaTypeName parentName, final KeyArchetype key, final List<GroupingArchetype> groupings) {
+        return new Builder(typeName, statement, parentName, key, groupings);
     }
 
     /**

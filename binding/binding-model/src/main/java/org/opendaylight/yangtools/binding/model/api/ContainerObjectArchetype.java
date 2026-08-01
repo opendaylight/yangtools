@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
@@ -23,13 +24,13 @@ public sealed interface ContainerObjectArchetype extends ChildOfArchetype permit
     @NonNullByDefault
     final class Builder extends ChildOfArchetypeBuilder<Builder, ContainerEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final ContainerEffectiveStatement statement,
-                final JavaTypeName parentName) {
-            super(typeName, statement, parentName);
+                final JavaTypeName parentName, final List<GroupingArchetype> groupings) {
+            super(typeName, statement, groupings, parentName);
         }
 
         @Override
         public ContainerObjectArchetype build() {
-            return new ContainerObjectArchetypeImpl(typeName, statement, parentName, implementsTypes(),
+            return new ContainerObjectArchetypeImpl(typeName, statement, parentName, implementsTypes,
                 methodDefinitions(), enclosedTypes());
         }
 
@@ -46,8 +47,8 @@ public sealed interface ContainerObjectArchetype extends ChildOfArchetype permit
 
     @NonNullByDefault
     static Builder builder(final JavaTypeName typeName, final ContainerEffectiveStatement statement,
-            final JavaTypeName parentName) {
-        return new Builder(typeName, statement, parentName);
+            final JavaTypeName parentName, final List<GroupingArchetype> groupings) {
+        return new Builder(typeName, statement, parentName, groupings);
     }
 
     @Override

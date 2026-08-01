@@ -8,11 +8,13 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultInputRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -43,9 +45,9 @@ final class InputGenerator
     }
 
     @Override
-    RpcInputArchetype createTypeImpl(final JavaTypeName typeName, final InputEffectiveStatement statement) {
-        final var builder = RpcInputArchetype.builder(typeName, statement);
-        addUsesInterfaces(builder);
+    RpcInputArchetype createArchetype(final JavaTypeName typeName, final InputEffectiveStatement statement,
+            final List<@NonNull GroupingArchetype> groupings) {
+        final var builder = RpcInputArchetype.builder(typeName, statement, groupings);
         addGetterMethods(builder);
         return builder.build();
     }

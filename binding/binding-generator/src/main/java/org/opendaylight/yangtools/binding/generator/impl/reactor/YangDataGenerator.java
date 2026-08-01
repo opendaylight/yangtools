@@ -17,6 +17,8 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultYangDataRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -98,9 +100,9 @@ abstract sealed class YangDataGenerator
     }
 
     @Override
-    final YangDataArchetype createTypeImpl() {
-        final var builder = YangDataArchetype.builder(typeName(), statement());
-        addUsesInterfaces(builder);
+    final YangDataArchetype createTypeImpl(final JavaTypeName typeName, final YangDataEffectiveStatement statement,
+            final List<@NonNull GroupingArchetype> groupings) {
+        final var builder = YangDataArchetype.builder(typeName, statement, groupings);
         addGetterMethods(builder);
         return builder.build();
     }

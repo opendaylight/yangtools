@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
@@ -48,13 +49,8 @@ abstract sealed class AbstractNotificationGenerator
     }
 
     @Override
-    final DataContainerArchetype.OfNotification createTypeImpl() {
-        return createTypeImpl(typeName(), statement());
-    }
-
-    @NonNullByDefault
     abstract DataContainerArchetype.OfNotification createTypeImpl(JavaTypeName typeName,
-        NotificationEffectiveStatement statement);
+        NotificationEffectiveStatement statement, List<GroupingArchetype> groupings);
 
     @Override
     final void addAsGetterMethod(final DataContainerArchetype.Builder builder) {

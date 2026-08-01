@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
@@ -23,13 +24,14 @@ public sealed interface NotificationArchetype extends DataContainerArchetype.OfN
      */
     @NonNullByDefault
     final class Builder extends DataContainerArchetypeBuilder<Builder, NotificationEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement) {
-            super(typeName, statement);
+        private Builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
+                final List<GroupingArchetype> groupings) {
+            super(typeName, statement, groupings);
         }
 
         @Override
         public NotificationArchetype build() {
-            return new NotificationArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
+            return new NotificationArchetypeImpl(typeName, statement, implementsTypes, methodDefinitions(),
                 enclosedTypes());
         }
 
@@ -45,7 +47,8 @@ public sealed interface NotificationArchetype extends DataContainerArchetype.OfN
     }
 
     @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement) {
-        return new Builder(typeName, statement);
+    static Builder builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
+            final List<GroupingArchetype> groupings) {
+        return new Builder(typeName, statement, groupings);
     }
 }
