@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
@@ -503,8 +504,16 @@ abstract class AbstractTypeObjectGenerator<
         LOG.trace("Override of {} to {}", this, myType);
 
         final var deprecated = deprecatedAnnotation(statement());
+        constructGetter(builder, myType);
+
         list.add(constructGetter(myType, deprecated == null ? List.of(OverrideAnnotation.INSTANCE)
             : List.of(OverrideAnnotation.INSTANCE, deprecated)));
+    }
+
+    @Override
+    final MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder,
+            final Type returnType) {
+        return super.constructGetter(builder, returnType);
     }
 
     abstract @NonNull MethodSignature constructGetter(Type type, List<AttachedAnnotation.ToMethod> annotations);

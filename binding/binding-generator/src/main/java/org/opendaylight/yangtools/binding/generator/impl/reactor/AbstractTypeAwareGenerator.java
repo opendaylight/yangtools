@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -63,6 +65,11 @@ abstract class AbstractTypeAwareGenerator<
     @Override
     final TypeObjectArchetype.OfClass<?> createDerivedType(final TypeObjectArchetype.OfClass<?> baseType) {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    final MethodSignature constructGetter(final Type type, final List<AttachedAnnotation.ToMethod> annotations) {
+
     }
 
     @Override
