@@ -38,6 +38,7 @@ import java.util.ServiceLoader;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.binding.Action;
@@ -164,23 +165,25 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         }
     };
 
-    private final LoadingCache<Class<?>, DataContainerStreamer<?>> streamers = CacheBuilder.newBuilder()
-        .build(new CacheLoader<>() {
+    // These two are related and loading a value into one easily triggers a load in the other, potentially looping back,
+    // We need population to be atomic (to prevent defining multiple classes), so we cannot use ConcurrentHashMaps here.
+    @NonNullByDefault
+    private final LoadingCache<Class<?>, DataContainerStreamer<?>> streamers = CacheBuilder.newBuilder().build(
+        new CacheLoader<>() {
             @Override
-            public DataContainerStreamer<?> load(final Class<?> key) throws ReflectiveOperationException {
-                final var streamer = DataContainerStreamerGenerator.generateStreamer(loader, BindingCodecContext.this,
-                    key);
-                final var instance = streamer.getDeclaredField(DataContainerStreamerGenerator.INSTANCE_FIELD);
-                return (DataContainerStreamer<?>) instance.get(null);
+            public DataContainerStreamer<?> load(final Class<?> type) {
+                return loadDataContainerStreamer(type);
             }
         });
-    private final LoadingCache<Class<?>, DataContainerSerializer> serializers = CacheBuilder.newBuilder()
-        .build(new CacheLoader<>() {
+    @NonNullByDefault
+    private final LoadingCache<Class<?>, DataContainerSerializer> serializers = CacheBuilder.newBuilder().build(
+        new CacheLoader<>() {
             @Override
-            public DataContainerSerializer load(final Class<?> key) throws ExecutionException {
-                return new DataContainerSerializer(BindingCodecContext.this, streamers.get(key));
+            public DataContainerSerializer load(final Class<?> type) throws ExecutionException {
+                return loadEventStreamSerializer(type);
             }
         });
+
     private final LoadingCache<Class<? extends DataObject>, DataContainerCodecContext<?, ?, ?>> childrenByClass =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
@@ -415,12 +418,22 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     public DataContainerSerializer getEventStreamSerializer(final Class<?> type) {
-        return serializers.getUnchecked(type);
+        return serializers.getUnchecked(requireNonNull(type));
+    }
+
+    @NonNullByDefault
+    private DataContainerSerializer loadEventStreamSerializer(final Class<?> type) throws ExecutionException {
+        return new DataContainerSerializer(this, streamers.get(type));
     }
 
     @Override
     public DataContainerStreamer<?> getDataContainerStreamer(final Class<?> type) {
-        return streamers.getUnchecked(type);
+        return streamers.getUnchecked(requireNonNull(type));
+    }
+
+    @NonNullByDefault
+    private DataContainerStreamer<?> loadDataContainerStreamer(final Class<?> type) {
+        return DataContainerStreamerGenerator.generateStreamer(loader, this, type);
     }
 
     @Override

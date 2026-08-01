@@ -47,6 +47,7 @@ import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;
 import net.bytebuddy.matcher.ElementMatcher;
 import net.bytebuddy.matcher.ElementMatchers;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.DataContainer;
@@ -59,28 +60,31 @@ import org.opendaylight.yangtools.binding.data.codec.spi.BindingSchemaMapping;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader.ClassGenerator;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader.GeneratorResult;
+import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
+import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
+import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
+import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerLike;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> implements ClassGenerator<T> {
-    static final String INSTANCE_FIELD = "INSTANCE";
-
     private static final Logger LOG = LoggerFactory.getLogger(DataContainerStreamerGenerator.class);
     private static final Generic BB_VOID = TypeDefinition.Sort.describe(void.class);
     private static final Generic BB_DATA_CONTAINER = TypeDefinition.Sort.describe(DataContainer.class);
@@ -153,47 +157,57 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
         invokeMethod(DataContainerStreamer.class, "streamAugmentations", DataContainerSerializerRegistry.class,
             BindingStreamEventWriter.class, Augmentable.class));
 
+    private static final String INSTANCE_FIELD = "INSTANCE";
+
     private final CodecContextFactory registry;
     private final StackManipulation startEvent;
     private final DataNodeContainer schema;
     private final Class<?> type;
-    private final DataContainerArchetype genType;
+    private final DataContainerArchetype archetype;
 
-    private DataContainerStreamerGenerator(final CodecContextFactory registry, final DataContainerArchetype genType,
-            final DataNodeContainer schema, final Class<?> type, final StackManipulation startEvent) {
+    private DataContainerStreamerGenerator(final CodecContextFactory registry, final DataContainerArchetype archetype,
+            final Class<?> type) {
         this.registry = requireNonNull(registry);
-        this.genType = requireNonNull(genType);
-        this.schema = requireNonNull(schema);
+        this.archetype = requireNonNull(archetype);
         this.type = requireNonNull(type);
-        this.startEvent = requireNonNull(startEvent);
+        startEvent = switch (archetype) {
+            case AugmentationArchetype unused ->
+                // startAugmentationNode(Foo.class)
+                new StackManipulation.Compound(ClassConstant.of(Sort.describe(type).asErasure()),
+                    START_AUGMENTATION_NODE);
+            case CaseObjectArchetype unused -> classUnknownSizeMethod(START_CASE, type);
+            case EntryObjectArchetype unused -> START_MAP_ENTRY_NODE;
+            case ItemObjectArchetype unused -> START_UNKEYED_LIST_ITEM;
+            case AugmentableArchetype.OfNotification unused -> classUnknownSizeMethod(START_CONTAINER_NODE, type);
+            case ContainerObjectArchetype unused -> classUnknownSizeMethod(START_CONTAINER_NODE, type);
+            case NotificationBodyArchetype unused -> classUnknownSizeMethod(START_CONTAINER_NODE, type);
+            case RpcInputArchetype unused -> classUnknownSizeMethod(START_CONTAINER_NODE, type);
+            case RpcOutputArchetype unused -> classUnknownSizeMethod(START_CONTAINER_NODE, type);
+            default -> throw new UnsupportedOperationException("Unsupported type " + archetype);
+        };
+        schema = (DataNodeContainer) archetype.statement();
     }
 
-    static Class<? extends DataContainerStreamer<?>> generateStreamer(final BindingClassLoader loader,
+    @NonNullByDefault
+    static DataContainerStreamer<?> generateStreamer(final BindingClassLoader loader,
             final CodecContextFactory registry, final Class<?> type) {
-
-        final var typeAndSchema = registry.runtimeContext().getTypeWithSchema(type);
-        final var schema = typeAndSchema.statement();
-
-        final StackManipulation startEvent;
-        if (schema instanceof ContainerLike || schema instanceof NotificationDefinition) {
-            startEvent = classUnknownSizeMethod(START_CONTAINER_NODE, type);
-        } else if (schema instanceof ListSchemaNode listSchema) {
-            startEvent = listSchema.getKeyDefinition().isEmpty() ? START_UNKEYED_LIST_ITEM : START_MAP_ENTRY_NODE;
-        } else if (schema instanceof AugmentationSchemaNode) {
-            // startAugmentationNode(Foo.class)
-            startEvent = new StackManipulation.Compound(
-                ClassConstant.of(Sort.describe(type).asErasure()),
-                START_AUGMENTATION_NODE);
-        } else if (schema instanceof CaseSchemaNode) {
-            startEvent = classUnknownSizeMethod(START_CASE, type);
-        } else {
-            throw new UnsupportedOperationException("Schema type " + schema.getClass() + " is not supported");
+        final var archetype = registry.runtimeContext().getTypeWithSchema(type).javaType();
+        if (!(archetype instanceof DataContainerArchetype dataContainer)) {
+            throw new IllegalArgumentException(type + " is not a DataContainer");
         }
 
-        return CodecPackage.STREAMER.generateClass(loader, type,
-            // FIXME: cast to GeneratedType: we really should adjust getTypeWithSchema()
-            new DataContainerStreamerGenerator<>(registry, (DataContainerArchetype) typeAndSchema.javaType(),
-                (DataNodeContainer) schema, type, startEvent));
+        final var clazz = CodecPackage.STREAMER.generateClass(loader, type,
+            new DataContainerStreamerGenerator<>(registry, dataContainer, type));
+        final Object instance;
+        try {
+            instance = clazz.getField(INSTANCE_FIELD).get(null);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new VerifyException("Inaccessible streamer instance", e);
+        }
+        if (!(instance instanceof DataContainerStreamer<?> streamer)) {
+            throw new VerifyException("Not a DataContainerSteamer: " + instance);
+        }
+        return streamer;
     }
 
     @Override
@@ -202,13 +216,16 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
         LOG.trace("Definining streamer {}", fqcn);
 
         @SuppressWarnings("unchecked")
-        Builder<T> builder = (Builder<T>) TEMPLATE.name(fqcn);
+        final var builder = (Builder<T>) TEMPLATE.name(fqcn);
+        final var props = collectAllProperties(archetype);
+        final var childStreams = new ArrayList<ChildStream>(props.size());
 
-        final ImmutableMap<String, Type> props = collectAllProperties(genType);
-        final List<ChildStream> children = new ArrayList<>(props.size());
-        for (final DataSchemaNode schemaChild : schema.getChildNodes()) {
+        // FIXME: we should be picking this up from DataContainerArchetype, which would take are of:
+        //        - filtering out
+        //        - that takes care of
+        for (var schemaChild : schema.getChildNodes()) {
             if (!schemaChild.isAugmenting()) {
-                final String getterName = BindingSchemaMapping.getGetterMethodName(schemaChild);
+                final var getterName = BindingSchemaMapping.getGetterMethodName(schemaChild);
                 final Method getter;
                 try {
                     getter = type.getMethod(getterName);
@@ -216,26 +233,28 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
                     throw new IllegalStateException("Failed to find getter " + getterName, e);
                 }
 
-                final ChildStream child = createStream(loader, props, schemaChild, getter);
-                if (child != null) {
-                    children.add(child);
+                final var childStream = createStream(loader, props, schemaChild, getter);
+                if (childStream != null) {
+                    childStreams.add(childStream);
                 }
             }
         }
 
-        final ImmutableList.Builder<Class<?>> depBuilder = ImmutableList.builder();
-        for (ChildStream child : children) {
-            final Class<?> dependency = child.getDependency();
+        final var depBuilder = ImmutableList.<Class<?>>builder();
+        for (var childStream : childStreams) {
+            final var dependency = childStream.getDependency();
             if (dependency != null) {
                 depBuilder.add(dependency);
             }
         }
 
-        final GeneratorResult<T> result = GeneratorResult.of(new UnloadedLoadableClass<>(builder
-            .defineMethod("serialize", BB_VOID, Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC)
+        final var result = GeneratorResult.<T>of(
+            new UnloadedLoadableClass<>(builder
+                .defineMethod("serialize", BB_VOID, Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC)
                 .withParameters(BB_DOSR, BB_DATA_CONTAINER, BB_BESV)
                 .throwing(BB_IOX)
-            .intercept(new SerializeImplementation(bindingInterface, startEvent, children)).make()),
+                .intercept(new SerializeImplementation(bindingInterface, startEvent, childStreams))
+                .make()),
             depBuilder.build());
 
         LOG.trace("Definition of {} done", fqcn);
