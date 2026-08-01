@@ -7,18 +7,18 @@
  */
 package org.opendaylight.yangtools.binding.loader;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.base.VerifyException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.HexFormat;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNull;
@@ -100,35 +100,31 @@ public abstract sealed class BindingClassLoader extends ClassLoader
      * @param <T> Type of generated class.
      */
     public static final class GeneratorResult<T> {
-        private final @NonNull ImmutableSet<Class<?>> dependecies;
-        private final @NonNull LoadableClass<T> source;
+        final @NonNull List<Class<?>> dependencies;
+        final @NonNull LoadableClass<T> source;
 
-        GeneratorResult(final LoadableClass<T> source, final ImmutableSet<Class<?>> dependecies) {
+        private GeneratorResult(final LoadableClass<T> source, final List<Class<?>> dependencies) {
             this.source = requireNonNull(source);
-            this.dependecies = requireNonNull(dependecies);
+            this.dependencies = requireNonNull(dependencies);
         }
 
-        public static <T> @NonNull GeneratorResult<T> of(final LoadableClass<T> source) {
-            return new GeneratorResult<>(source, ImmutableSet.of());
+        public static <T> @NonNull GeneratorResult<T> of(final @NonNull LoadableClass<T> source) {
+            return new GeneratorResult<>(source, List.of());
         }
 
-        public static <T> @NonNull GeneratorResult<T> of(final LoadableClass<T> source,
-                final Collection<Class<?>> dependencies) {
-            return dependencies.isEmpty() ? of(source)
-                : new GeneratorResult<>(source, ImmutableSet.copyOf(dependencies));
-        }
-
-        @NonNull LoadableClass<T> source() {
-            return source;
-        }
-
-        @NonNull ImmutableSet<Class<?>> getDependencies() {
-            return dependecies;
+        public static <T> @NonNull GeneratorResult<T> of(final @NonNull LoadableClass<T> source,
+                final @NonNull Collection<Class<?>> dependencies) {
+            return dependencies.isEmpty() ? of(source) : new GeneratorResult<>(source, dependencies.stream()
+                .<Class<?>>map(dependency -> requireNonNull(dependency))
+                .distinct()
+                .toList());
         }
     }
 
     static {
-        verify(ClassLoader.registerAsParallelCapable());
+        if (!ClassLoader.registerAsParallelCapable()) {
+            throw new VerifyException("Failed to register as parallel capable");
+        }
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(BindingClassLoader.class);
@@ -248,15 +244,19 @@ public abstract sealed class BindingClassLoader extends ClassLoader
             // Attempt to find a loaded class
             final var existing = findLoadedClass(fqcn);
             if (existing != null) {
-                return (Class<T>) existing;
+                @SuppressWarnings("unchecked")
+                final var ret = (Class<T>) existing;
+                return ret;
             }
 
             final var result = generator.generateClass(this, fqcn, bindingInterface);
-            final var source = result.source();
-            verify(fqcn.equals(source.name()), "Unexpected class in %s", source);
-            dumpBytecode(source);
+            final var source = result.source;
+            if (!fqcn.equals(source.name())) {
+                throw new VerifyException("Unexpected class in " + source);
+            }
 
-            processDependencies(result.getDependencies());
+            dumpBytecode(source);
+            processDependencies(result.dependencies);
             return generator.customizeLoading(() -> source.load(this));
         }
     }
@@ -265,16 +265,19 @@ public abstract sealed class BindingClassLoader extends ClassLoader
     public final Class<?> loadClass(final String fqcn, final byte[] byteCode) {
         synchronized (getClassLoadingLock(fqcn)) {
             final var existing = findLoadedClass(fqcn);
-            verify(existing == null, "Attempted to load existing %s", existing);
+            if (existing != null) {
+                throw new VerifyException("Attempted to load existing " + existing);
+            }
             return defineClass(fqcn, byteCode, 0, byteCode.length);
         }
     }
 
-    private void processDependencies(final Collection<Class<?>> deps) {
+    private void processDependencies(final List<Class<?>> deps) {
         final var depLoaders = new HashSet<LeafBindingClassLoader>();
         for (var dep : deps) {
-            final var depLoader = dep.getClassLoader();
-            verify(depLoader instanceof BindingClassLoader, "Dependency %s is not a generated class", dep);
+            if (!(dep.getClassLoader() instanceof BindingClassLoader depLoader)) {
+                throw new VerifyException("Dependency " + dep + " is not a generated class");
+            }
             if (equals(depLoader)) {
                 // Same loader, skip
                 continue;
@@ -285,8 +288,10 @@ public abstract sealed class BindingClassLoader extends ClassLoader
             } catch (ClassNotFoundException e) {
                 LOG.debug("Cannot find {} in local loader, attempting to compensate", dep, e);
                 // Root loader is always visible from a leaf, hence the dependency can only be a leaf
-                verify(depLoader instanceof LeafBindingClassLoader, "Dependency loader %s is not a leaf", depLoader);
-                depLoaders.add((LeafBindingClassLoader) depLoader);
+                if (!(depLoader instanceof LeafBindingClassLoader leafLoeader)) {
+                    throw new VerifyException("Dependency loader " + depLoader + " is not a leaf", e);
+                }
+                depLoaders.add(leafLoeader);
             }
         }
 
