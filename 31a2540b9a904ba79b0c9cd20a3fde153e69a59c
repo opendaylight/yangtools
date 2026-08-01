@@ -1,0 +1,96 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "84783e8d_532d4c3e",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStreamPerformanceTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-08-01T20:53:48Z",
+      "side": 1,
+      "message": "we have a dedicated directory for all benchmarks",
+      "range": {
+        "startLine": 8,
+        "startChar": 8,
+        "endLine": 8,
+        "endChar": 55
+      },
+      "revId": "31a2540b9a904ba79b0c9cd20a3fde153e69a59c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a7123eae_6d61a406",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStreamPerformanceTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 81,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-08-01T20:53:48Z",
+      "side": 1,
+      "message": "should be based on DatabindContext to measure the preferred integration point",
+      "range": {
+        "startLine": 81,
+        "startChar": 18,
+        "endLine": 81,
+        "endChar": 60
+      },
+      "revId": "31a2540b9a904ba79b0c9cd20a3fde153e69a59c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "c0433c0f_144f584e",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStreamPerformanceTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-08-01T20:53:48Z",
+      "side": 1,
+      "message": "so we get a mini-framework with the test\n\nhttps://github.com/openjdk/jmh#java-microbenchmark-harness-jmh",
+      "range": {
+        "startLine": 115,
+        "startChar": 11,
+        "endLine": 115,
+        "endChar": 26
+      },
+      "revId": "31a2540b9a904ba79b0c9cd20a3fde153e69a59c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7b8b969a_e9319ff6",
+        "filename": "codec/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStreamPerformanceTest.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-08-01T20:53:48Z",
+      "side": 1,
+      "message": "https://shipilev.net/blog/2014/nanotrusting-nanotime/",
+      "range": {
+        "startLine": 119,
+        "startChar": 35,
+        "endLine": 119,
+        "endChar": 50
+      },
+      "revId": "31a2540b9a904ba79b0c9cd20a3fde153e69a59c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
