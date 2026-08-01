@@ -16,8 +16,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
 /**
  * Abstract base class for {@link DataContainerGenerator}s which are also {@link SchemaTreeChild}ren.
  */
-abstract class CompositeSchemaTreeGenerator<S extends SchemaTreeEffectiveStatement<?>, R extends CompositeRuntimeType>
-        extends DataContainerGenerator<S, R> {
+abstract sealed class CompositeSchemaTreeGenerator<
+        S extends SchemaTreeEffectiveStatement<?>,
+        R extends CompositeRuntimeType> extends DataContainerGenerator<S, R>
+        permits AbstractNotificationGenerator, CaseGenerator, ChoiceGenerator, ContainerGenerator, ListGenerator,
+                NotificationBodyGenerator, OperationContainerGenerator, OperationGenerator {
     @NonNullByDefault
     CompositeSchemaTreeGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);

@@ -109,8 +109,9 @@ import org.slf4j.LoggerFactory;
  * with linking original instances in the tree iteration order. The part dealing with augment attachment lives mostly
  * in {@link AugmentRequirement}.
  */
-public abstract class DataContainerGenerator<S extends EffectiveStatement<?, ?>, R extends CompositeRuntimeType>
-        extends AbstractExplicitGenerator<S, R> {
+public abstract sealed class DataContainerGenerator<S extends EffectiveStatement<?, ?>, R extends CompositeRuntimeType>
+        extends AbstractExplicitGenerator<S, R>
+        permits AugmentGenerator, CompositeSchemaTreeGenerator, GroupingGenerator, ModuleGenerator, YangDataGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(DataContainerGenerator.class);
 
     // FIXME: we want to allocate this lazily to lower memory footprint
