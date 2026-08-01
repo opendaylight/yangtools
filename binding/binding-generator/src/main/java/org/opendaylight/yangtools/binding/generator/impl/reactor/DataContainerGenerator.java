@@ -20,6 +20,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
@@ -454,18 +456,15 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
         return null;
     }
 
-    /**
-     * Update the specified builder to implement interfaces generated for the {@code grouping} statements this generator
-     * is using.
-     *
-     * @param builder Target builder
-     */
-    @NonNullByDefault
-    final void addUsesInterfaces(final DataContainerArchetype.Builder builder) {
-        for (var grp : groupings) {
-            builder.addImplementsType(grp.getGeneratedType());
-        }
+    @Override
+    final DataContainerArchetype createTypeImpl() {
+        return createTypeImpl(typeName(), statement(), groupings.isEmpty() ? List.of()
+            : groupings.stream().map(GroupingGenerator::getGeneratedType).toList());
     }
+
+    @NonNullByDefault
+    abstract DataContainerArchetype createTypeImpl(JavaTypeName typeName, @NonNull S statement,
+        List<GroupingArchetype> groupings);
 
     @NonNullByDefault
     static final void addAugmentable(final DataContainerArchetype.Builder builder) {
