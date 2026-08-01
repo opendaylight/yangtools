@@ -18,6 +18,8 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultModuleRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ModuleRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -81,9 +83,9 @@ public final class ModuleGenerator extends DataContainerGenerator<ModuleEffectiv
     }
 
     @Override
-    DataRootArchetype createTypeImpl() {
-        final var builder = DataRootArchetype.builder(typeName(), statement());
-        addUsesInterfaces(builder);
+    DataRootArchetype createTypeImpl(final JavaTypeName typeName, final ModuleEffectiveStatement statement,
+            final List<@NonNull GroupingArchetype> groupings) {
+        final var builder = DataRootArchetype.builder(typeName, statement, groupings);
         addGetterMethods(builder);
         return builder.build();
     }

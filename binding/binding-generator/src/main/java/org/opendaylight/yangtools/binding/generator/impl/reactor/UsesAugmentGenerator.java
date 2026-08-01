@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
@@ -49,7 +49,11 @@ final class UsesAugmentGenerator extends AugmentGenerator {
         //    are then updated according to the "refine" and "augment" statements.
         //
         // Our parent here is *not* the 'uses' statement, but rather the statement which contains it.
-        return new AugmentRequirement(this, verifyNotNull(grouping, "Unresolved grouping in %s", this));
+        final var local = grouping;
+        if (local == null) {
+            throw new VerifyException("Unresolved grouping in " + this);
+        }
+        return new AugmentRequirement(this, local);
     }
 
     @Override

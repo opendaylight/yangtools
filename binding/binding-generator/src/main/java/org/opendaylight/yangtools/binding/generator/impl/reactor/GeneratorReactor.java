@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
@@ -62,7 +63,8 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
 
     private final Deque<Iterable<? extends Generator>> stack = new ArrayDeque<>();
     private final @NonNull Map<QNameModule, ModuleGenerator> generators;
-    private final @NonNull List<ModuleGenerator> children;
+    @NonNullByDefault
+    private final List<ModuleGenerator> children;
     private final @NonNull SchemaInferenceStack inferenceStack;
 
     private State state = State.INITIALIZED;

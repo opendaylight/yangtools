@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
@@ -15,6 +16,8 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultContainerRunt
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -44,9 +47,9 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     }
 
     @Override
-    ContainerObjectArchetype createTypeImpl() {
-        final var builder = ContainerObjectArchetype.builder(typeName(), statement(), parentNameForChildOf());
-        addUsesInterfaces(builder);
+    ContainerObjectArchetype createTypeImpl(final JavaTypeName typeName, final ContainerEffectiveStatement statement,
+            final List<@NonNull GroupingArchetype> groupings) {
+        final var builder = ContainerObjectArchetype.builder(typeName, statement, parentNameForChildOf(), groupings);
         addGetterMethods(builder);
         return builder.build();
     }

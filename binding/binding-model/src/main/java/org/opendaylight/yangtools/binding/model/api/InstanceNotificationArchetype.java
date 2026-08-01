@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
@@ -18,24 +19,24 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  *
  * @since 16.0.0
  */
+@NonNullByDefault
 public sealed interface InstanceNotificationArchetype extends DataContainerArchetype.OfNotification
-        permits InstanceNotificationArchetypeImpl {
+        permits InstanceNotificationArchetypeFromGrouping, InstanceNotificationArchetypeImpl {
     /**
      * A builder of {@link InstanceNotificationArchetype}s.
      */
-    @NonNullByDefault
     final class Builder extends DataContainerArchetypeBuilder<Builder, NotificationEffectiveStatement> {
         private final JavaTypeName parentName;
 
         private Builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
-                final JavaTypeName parentName) {
-            super(typeName, statement);
+                final JavaTypeName parentName, final List<? extends DataContainerArchetype> implementsTypes) {
+            super(typeName, statement, implementsTypes);
             this.parentName = requireNonNull(parentName);
         }
 
         @Override
         public InstanceNotificationArchetype build() {
-            return new InstanceNotificationArchetypeImpl(typeName, statement, parentName, implementsTypes(),
+            return new InstanceNotificationArchetypeImpl(typeName, statement, parentName, implementsTypes,
                 methodDefinitions(), enclosedTypes());
         }
 
@@ -50,10 +51,14 @@ public sealed interface InstanceNotificationArchetype extends DataContainerArche
         }
     }
 
-    @NonNullByDefault
     static Builder builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
-            final JavaTypeName parentName) {
-        return new Builder(typeName, statement, parentName);
+            final JavaTypeName parentName, final List<GroupingArchetype> groupings) {
+        return new Builder(typeName, statement, parentName, groupings);
+    }
+
+    static InstanceNotificationArchetype of(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
+            final JavaTypeName parentName, final NotificationBodyArchetype notificationBody) {
+        return new InstanceNotificationArchetypeFromGrouping(typeName, statement, parentName, notificationBody);
     }
 
     /**

@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Notification;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.NotificationArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
@@ -25,9 +28,8 @@ final class NotificationGenerator extends AbstractNotificationGenerator {
 
     @Override
     NotificationArchetype createTypeImpl(final JavaTypeName typeName,
-            final NotificationEffectiveStatement statement) {
-        final var builder = NotificationArchetype.builder(typeName, statement);
-        addUsesInterfaces(builder);
+            final NotificationEffectiveStatement statement, final List<@NonNull GroupingArchetype> groupings) {
+        final var builder = NotificationArchetype.builder(typeName, statement, groupings);
         addGetterMethods(builder);
         return builder.build();
     }

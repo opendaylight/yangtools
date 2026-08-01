@@ -54,14 +54,6 @@ public sealed interface DataContainerArchetype extends Archetype
         Builder addEnclosedType(Archetype genType);
 
         /**
-         * Add Type to implements.
-         *
-         * @param genType Type to implement
-         * @return <code>true</code> if the addition of type is successful.
-         */
-        Builder addImplementsType(DataContainerArchetype genType);
-
-        /**
          * Add new Method Signature definition for Generated Type Builder and returns Method Signature Builder
          * for specifying all Method parameters.<br>
          * Name of Method cannot be <code>null</code>, if it is <code>null</code> the method SHOULD throw

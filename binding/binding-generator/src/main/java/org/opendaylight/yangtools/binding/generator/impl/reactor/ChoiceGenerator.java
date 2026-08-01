@@ -15,6 +15,8 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultChoiceRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ChoiceRuntimeType;
@@ -84,8 +86,12 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
     }
 
     @Override
-    ChoiceInArchetype createTypeImpl() {
-        return new ChoiceInArchetype(typeName(), statement(), getParent().typeName());
+    ChoiceInArchetype createTypeImpl(final JavaTypeName typeName, final ChoiceEffectiveStatement statement,
+            final List<GroupingArchetype> groupings) {
+        if (!groupings.isEmpty()) {
+            throw new VerifyException("Illegal grouping in " + statement);
+        }
+        return new ChoiceInArchetype(typeName, statement, getParent().typeName());
     }
 
     @Override

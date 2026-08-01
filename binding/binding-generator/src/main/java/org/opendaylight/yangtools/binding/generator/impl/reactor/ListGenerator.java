@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.model.api.ChildOfArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -22,9 +25,9 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to a {@code list} statement.
  */
+@NonNullByDefault
 abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStatement, ListRuntimeType>
         permits EntryObjectGenerator, ItemObjectGenerator {
-    @NonNullByDefault
     ListGenerator(final ListEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
     }
@@ -40,7 +43,8 @@ abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEff
     }
 
     @Override
-    abstract ChildOfArchetype.OfList createTypeImpl();
+    abstract ChildOfArchetype.OfList createTypeImpl(JavaTypeName typeName, ListEffectiveStatement statement,
+        List<GroupingArchetype> groupings);
 
     @Override
     final MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder, final Type returnType) {

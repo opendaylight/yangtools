@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
@@ -22,13 +23,14 @@ public sealed interface GroupingArchetype extends DataContainerArchetype permits
      */
     @NonNullByDefault
     final class Builder extends DataContainerArchetypeBuilder<Builder, GroupingEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final GroupingEffectiveStatement statement) {
-            super(typeName, statement);
+        private Builder(final JavaTypeName typeName, final GroupingEffectiveStatement statement,
+                final List<GroupingArchetype> groupings) {
+            super(typeName, statement, groupings);
         }
 
         @Override
         public GroupingArchetype build() {
-            return new GroupingArchetypeImpl(typeName, statement, implementsTypes(), methodDefinitions(),
+            return new GroupingArchetypeImpl(typeName, statement, implementsTypes, methodDefinitions(),
                 enclosedTypes());
         }
 
@@ -44,8 +46,9 @@ public sealed interface GroupingArchetype extends DataContainerArchetype permits
     }
 
     @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final GroupingEffectiveStatement statement) {
-        return new Builder(typeName, statement);
+    static Builder builder(final JavaTypeName typeName, final GroupingEffectiveStatement statement,
+            final List<GroupingArchetype> groupings) {
+        return new Builder(typeName, statement, groupings);
     }
 
     @Override
