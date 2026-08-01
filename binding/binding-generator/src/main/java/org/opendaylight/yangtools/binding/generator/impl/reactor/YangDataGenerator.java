@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * Generator corresponding to a {@code rc:yang-data} statement.
  */
 abstract sealed class YangDataGenerator
-        extends AbstractCompositeGenerator<YangDataEffectiveStatement, YangDataRuntimeType> {
+        extends DataContainerGenerator<YangDataEffectiveStatement, YangDataRuntimeType> {
     private static final class WithIdentifier extends YangDataGenerator {
         private final @NonNull Unqualified identifier;
 

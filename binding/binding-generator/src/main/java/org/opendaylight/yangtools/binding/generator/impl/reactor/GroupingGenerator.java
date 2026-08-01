@@ -26,19 +26,19 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to a {@code grouping} statement.
  */
-final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffectiveStatement, GroupingRuntimeType> {
+final class GroupingGenerator extends DataContainerGenerator<GroupingEffectiveStatement, GroupingRuntimeType> {
     // Linkage towards concrete data tree instantiations of this grouping. This can contain two different kinds of
     // generators:
     // - GroupingGenerators which provide next step in the linkage
     // - other composite generators, which are the actual instantiations
-    private List<AbstractCompositeGenerator<?, ?>> users;
+    private List<DataContainerGenerator<?, ?>> users;
 
     @NonNullByDefault
-    GroupingGenerator(final GroupingEffectiveStatement statement, final AbstractCompositeGenerator<?, ?> parent) {
+    GroupingGenerator(final GroupingEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
-    void addUser(final AbstractCompositeGenerator<?, ?> user) {
+    void addUser(final DataContainerGenerator<?, ?> user) {
         if (users == null) {
             // We are adding the first user: allocate a small set and notify the groupings we use that we are a user
             users = new ArrayList<>();
@@ -89,7 +89,7 @@ final class GroupingGenerator extends AbstractCompositeGenerator<GroupingEffecti
         }
 
         final var vectors = local.stream()
-            .map(AbstractCompositeGenerator::getRuntimeType)
+            .map(DataContainerGenerator::getRuntimeType)
             .distinct()
             .collect(Collectors.toUnmodifiableList());
 

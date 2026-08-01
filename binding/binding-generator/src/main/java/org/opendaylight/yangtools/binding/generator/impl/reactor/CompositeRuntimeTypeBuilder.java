@@ -38,7 +38,7 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
 
     @NonNullByDefault
     final CompositeRuntimeTypeBuilder<S, R> populate(final AugmentResolver resolver,
-            final AbstractCompositeGenerator<S, R> generator) {
+            final DataContainerGenerator<S, R> generator) {
         resolver.enter(generator);
         try {
             processGenerator(resolver, generator);
@@ -87,7 +87,7 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
     }
 
     @NonNullByDefault
-    private void processGenerator(final AugmentResolver resolver, final AbstractCompositeGenerator<S, R> generator) {
+    private void processGenerator(final AugmentResolver resolver, final DataContainerGenerator<S, R> generator) {
         // Figure out which augments are valid in target statement and record their RuntimeTypes.
         // We will pass the latter to create method. We will use the former to perform replacement lookups instead
         // of 'this.augments'. That is necessary because 'this.augments' holds all augments targeting the GeneratedType,
@@ -127,7 +127,7 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
     // statement is either local or added via 'uses' -- in either case it has namespace equal to whatever the local
     // namespace is and there can be no conflicts on QName.getLocalName(). That simplifies things a ton.
     private static <S extends SchemaTreeEffectiveStatement<?>> AbstractExplicitGenerator<S, ?> findChildGenerator(
-            final AbstractCompositeGenerator<?, ?> parent, final String localName) {
+            final DataContainerGenerator<?, ?> parent, final String localName) {
         // Search direct children first ...
         for (var child : parent) {
             if (child instanceof AbstractExplicitGenerator<?, ?> gen) {
@@ -149,7 +149,7 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
         }
 
         // ... and finally anything along instantiation axis ...
-        final var origParent = (AbstractCompositeGenerator<?, ?>) parent.previous();
+        final var origParent = (DataContainerGenerator<?, ?>) parent.previous();
         return origParent == null ? null : findChildGenerator(origParent, localName);
     }
 }

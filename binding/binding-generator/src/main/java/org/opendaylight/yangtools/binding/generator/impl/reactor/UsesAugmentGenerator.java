@@ -29,7 +29,7 @@ final class UsesAugmentGenerator extends AbstractAugmentGenerator {
 
     @NonNullByDefault
     UsesAugmentGenerator(final AugmentEffectiveStatement statement, final UsesEffectiveStatement uses,
-            final AbstractCompositeGenerator<?, ?> parent) {
+            final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
         this.uses = requireNonNull(uses);
     }
