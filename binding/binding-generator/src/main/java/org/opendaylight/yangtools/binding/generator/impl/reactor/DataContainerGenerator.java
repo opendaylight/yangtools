@@ -122,7 +122,7 @@ public abstract class DataContainerGenerator<S extends EffectiveStatement<?, ?>,
      * incarnation. This list is an evolving entity until after we have finished linkage of original statements. It is
      * expected to be stable at the start of {@code step 2} in {@link GeneratorReactor#execute(TypeBuilderFactory)}.
      */
-    private @NonNull List<AbstractAugmentGenerator> augments = List.of();
+    private @NonNull List<AugmentGenerator> augments = List.of();
 
     /**
      * List of {@code grouping} statements this statement references. This field is set once by
@@ -159,7 +159,7 @@ public abstract class DataContainerGenerator<S extends EffectiveStatement<?, ?>,
         return childGenerators.iterator();
     }
 
-    final @NonNull List<AbstractAugmentGenerator> augments() {
+    final @NonNull List<AugmentGenerator> augments() {
         return augments;
     }
 
@@ -305,7 +305,7 @@ public abstract class DataContainerGenerator<S extends EffectiveStatement<?, ?>,
         }
     }
 
-    final void addAugment(final AbstractAugmentGenerator augment) {
+    final void addAugment(final AugmentGenerator augment) {
         if (augments.isEmpty()) {
             augments = new ArrayList<>(2);
         }
@@ -415,7 +415,7 @@ public abstract class DataContainerGenerator<S extends EffectiveStatement<?, ?>,
         return found != null ? found : findInferredGenerator(qname);
     }
 
-    final @Nullable AbstractAugmentGenerator findAugmentForGenerator(final QName qname) {
+    final @Nullable AugmentGenerator findAugmentForGenerator(final QName qname) {
         for (var augment : augments) {
             final var gen = augment.findSchemaTreeGenerator(qname);
             if (gen != null) {
@@ -492,7 +492,7 @@ public abstract class DataContainerGenerator<S extends EffectiveStatement<?, ?>,
 
     private @NonNull List<Generator> createChildren(final EffectiveStatement<?, ?> statement) {
         final var tmp = new ArrayList<Generator>();
-        final var tmpAug = new ArrayList<AbstractAugmentGenerator>();
+        final var tmpAug = new ArrayList<AugmentGenerator>();
 
         for (var stmt : statement.effectiveSubstatements()) {
             switch (stmt) {
@@ -617,7 +617,7 @@ public abstract class DataContainerGenerator<S extends EffectiveStatement<?, ?>,
         // interdependencies, hence we do not need to worry about them. This is extremely important, as there are a
         // number of places where we would have to either move the logic to parent statement and explicitly filter/sort
         // substatements to establish this order.
-        tmpAug.sort(AbstractAugmentGenerator.COMPARATOR);
+        tmpAug.sort(AugmentGenerator.COMPARATOR);
         tmp.addAll(tmpAug);
         return List.copyOf(tmp);
     }

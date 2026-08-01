@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 /**
  * Generator corresponding to a {@code augment} statement used as a child of a {@code uses} statement.
  */
-final class UsesAugmentGenerator extends AbstractAugmentGenerator {
+final class UsesAugmentGenerator extends AugmentGenerator {
     private final @NonNull UsesEffectiveStatement uses;
 
     private GroupingGenerator grouping;

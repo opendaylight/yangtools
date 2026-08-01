@@ -37,7 +37,7 @@ abstract class CompositeSchemaTreeGenerator<S extends SchemaTreeEffectiveStateme
             }
 
             // if we into a choice we need to follow the hierararchy of that choice
-            if (ancestor instanceof AbstractAugmentGenerator augment
+            if (ancestor instanceof AugmentGenerator augment
                 && augment.targetGenerator() instanceof ChoiceGenerator targetChoice) {
                 ancestor = targetChoice;
                 continue;
