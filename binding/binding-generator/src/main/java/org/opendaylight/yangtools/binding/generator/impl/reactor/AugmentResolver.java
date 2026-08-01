@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 
 /**
- * Utility to resolve instantiated {@code augment} statements to their {@link AbstractAugmentGenerator} counterparts.
+ * Utility to resolve instantiated {@code augment} statements to their {@link AugmentGenerator} counterparts.
  * This is essentially a stack of {@link DataContainerGenerator}s which should be examined.
  */
 final class AugmentResolver implements Mutable {
@@ -31,7 +31,7 @@ final class AugmentResolver implements Mutable {
         stack.pop();
     }
 
-    @NonNull AbstractAugmentGenerator getAugment(final AugmentEffectiveStatement statement) {
+    @NonNull AugmentGenerator getAugment(final AugmentEffectiveStatement statement) {
         for (var generator : stack) {
             final var found = findAugment(generator, statement);
             if (found != null) {
@@ -41,7 +41,7 @@ final class AugmentResolver implements Mutable {
         throw new IllegalStateException("Failed to resolve " + statement + " in " + stack);
     }
 
-    private @Nullable AbstractAugmentGenerator findAugment(final DataContainerGenerator<?, ?> generator,
+    private @Nullable AugmentGenerator findAugment(final DataContainerGenerator<?, ?> generator,
             final AugmentEffectiveStatement statement) {
         for (var augment : generator.augments()) {
             if (augment.matchesInstantiated(statement)) {

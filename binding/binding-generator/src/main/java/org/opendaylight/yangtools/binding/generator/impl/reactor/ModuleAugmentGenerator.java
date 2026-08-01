@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveSt
 /**
  * Generator corresponding to a {@code augment} statement used as a child of a {@code module} statement.
  */
-final class ModuleAugmentGenerator extends AbstractAugmentGenerator {
+final class ModuleAugmentGenerator extends AugmentGenerator {
     @NonNullByDefault
     ModuleAugmentGenerator(final AugmentEffectiveStatement statement, final ModuleGenerator parent) {
         super(statement, parent);

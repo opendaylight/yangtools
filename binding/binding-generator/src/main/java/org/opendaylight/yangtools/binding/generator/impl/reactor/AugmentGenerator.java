@@ -43,10 +43,12 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * A generator corresponding to a {@code augment} statement. This class is further specialized for the two distinct uses
  * an augment is used.
  */
-abstract class AbstractAugmentGenerator extends DataContainerGenerator<AugmentEffectiveStatement, AugmentRuntimeType> {
+public abstract sealed class AugmentGenerator
+        extends DataContainerGenerator<AugmentEffectiveStatement, AugmentRuntimeType>
+        permits ModuleAugmentGenerator, UsesAugmentGenerator {
     /**
      * Comparator comparing target path length. This is useful for quickly determining order the order in which two
-     * (or more) {@link AbstractAugmentGenerator}s need to be evaluated. This is necessary when augments are layered on
+     * (or more) {@link AugmentGenerator}s need to be evaluated. This is necessary when augments are layered on
      * top of each other:
      * <pre>
      *   <code>
@@ -70,7 +72,7 @@ abstract class AbstractAugmentGenerator extends DataContainerGenerator<AugmentEf
      * result in changing the results of {@link #createMember(CollisionDomain)} and make upgrades rather unpredictable.
      * We solve this by using {@link QName#compareTo(QName)} to determine order.
      */
-    static final Comparator<? super AbstractAugmentGenerator> COMPARATOR = (o1, o2) -> {
+    static final Comparator<? super AugmentGenerator> COMPARATOR = (o1, o2) -> {
         final var thisIt = o1.statement().argument().getNodeIdentifiers().iterator();
         final var otherIt = o2.statement().argument().getNodeIdentifiers().iterator();
 
@@ -91,7 +93,7 @@ abstract class AbstractAugmentGenerator extends DataContainerGenerator<AugmentEf
     private DataContainerGenerator<?, ?> targetGen;
 
     @NonNullByDefault
-    AbstractAugmentGenerator(final AugmentEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
+    AugmentGenerator(final AugmentEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
@@ -138,7 +140,7 @@ abstract class AbstractAugmentGenerator extends DataContainerGenerator<AugmentEf
             if (gen == this) {
                 break;
             }
-            if (gen instanceof AbstractAugmentGenerator aug && target.equalRoot(aug.targetGenerator().getMember())) {
+            if (gen instanceof AugmentGenerator aug && target.equalRoot(aug.targetGenerator().getMember())) {
                 offset++;
             }
         }

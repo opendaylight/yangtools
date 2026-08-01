@@ -189,7 +189,7 @@ final class CollisionDomain {
     private final class AugmentSecondary extends Secondary {
         private final SchemaNodeIdentifier packageSuffix;
 
-        AugmentSecondary(final AbstractAugmentGenerator gen, final Member primary, final String classSuffix,
+        AugmentSecondary(final AugmentGenerator gen, final Member primary, final String classSuffix,
                 final SchemaNodeIdentifier packageSuffix) {
             super(gen, primary, classSuffix);
             this.packageSuffix = requireNonNull(packageSuffix);
@@ -240,7 +240,7 @@ final class CollisionDomain {
             memberGen.statement().argument()));
     }
 
-    @NonNull Member addSecondary(final AbstractAugmentGenerator memberGen, final Member classPrimary,
+    @NonNull Member addSecondary(final AugmentGenerator memberGen, final Member classPrimary,
             final String classSuffix, final SchemaNodeIdentifier packageSuffix) {
         return addMember(new AugmentSecondary(memberGen, classPrimary, classSuffix, packageSuffix));
     }

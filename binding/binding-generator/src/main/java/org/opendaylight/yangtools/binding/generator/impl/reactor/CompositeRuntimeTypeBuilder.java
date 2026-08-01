@@ -82,7 +82,7 @@ abstract class CompositeRuntimeTypeBuilder<S extends EffectiveStatement<?, ?>, R
     }
 
     @NonNullByDefault
-    void processAugment(final AugmentResolver resolver, final AbstractAugmentGenerator augment) {
+    void processAugment(final AugmentResolver resolver, final AugmentGenerator augment) {
         augmentTypes.add(augment.runtimeTypeIn(resolver, statement));
     }
 

@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
  */
 final class AugmentRequirement implements Mutable {
     private final @NonNull Set<QNameModule> squashNamespaces = new HashSet<>(4);
-    private final @NonNull AbstractAugmentGenerator augment;
+    private final @NonNull AugmentGenerator augment;
     private final @NonNull Iterator<QName> remaining;
 
     private @NonNull DataContainerGenerator<?, ?> target;
@@ -46,7 +46,7 @@ final class AugmentRequirement implements Mutable {
     private QName qname;
 
     @NonNullByDefault
-    private AugmentRequirement(final AbstractAugmentGenerator augment, final DataContainerGenerator<?, ?> target) {
+    private AugmentRequirement(final AugmentGenerator augment, final DataContainerGenerator<?, ?> target) {
         this.augment = requireNonNull(augment);
         this.target = requireNonNull(target);
         remaining = augment.statement().argument().getNodeIdentifiers().iterator();
@@ -55,12 +55,12 @@ final class AugmentRequirement implements Mutable {
 
     @NonNullByDefault
     AugmentRequirement(final ModuleAugmentGenerator augment, final ModuleGenerator module) {
-        this((AbstractAugmentGenerator) augment, module);
+        this((AugmentGenerator) augment, module);
     }
 
     @NonNullByDefault
     AugmentRequirement(final UsesAugmentGenerator augment, final GroupingGenerator grouping) {
-        this((AbstractAugmentGenerator) augment, grouping);
+        this((AugmentGenerator) augment, grouping);
         // Starting in a grouping: squash namespace references to the grouping's namespace
         localNamespace = grouping.getQName().getModule();
         squashNamespaces.add(qname.getModule());

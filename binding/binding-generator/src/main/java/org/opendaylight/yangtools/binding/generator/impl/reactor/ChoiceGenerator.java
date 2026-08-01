@@ -35,7 +35,7 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
         }
 
         @Override
-        void processAugment(final AugmentResolver resolver, final AbstractAugmentGenerator augment) {
+        void processAugment(final AugmentResolver resolver, final AugmentGenerator augment) {
             augment.fillRuntimeCasesIn(resolver, statement(), augmentedCases);
         }
 
