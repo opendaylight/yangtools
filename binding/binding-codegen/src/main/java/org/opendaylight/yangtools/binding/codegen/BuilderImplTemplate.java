@@ -14,7 +14,7 @@ import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
@@ -107,7 +107,7 @@ final class BuilderImplTemplate extends BaseTemplate {
             final var allProps = new ArrayList<>(properties);
             final var keyProps = BuilderTemplate.keyConstructorArgs(keyType);
             for (var field : keyProps) {
-                BuilderTemplate.removeProperty(allProps, field.getName());
+                BuilderTemplate.removeField(allProps, field.getName());
             }
 
             bb.eol("final var key = key();");
@@ -161,25 +161,24 @@ final class BuilderImplTemplate extends BaseTemplate {
                 // getFoo()
                 bb
                     .at().eol(importedName(OVERRIDE))
-                    .str("public ").str(importedReturnType(field)).sp().str(getterMethodName(field)).str("()").oB()
+                    .str("public ").str(importedReturnType(field)).sp().str(field.methodName()).str("()").oB()
                         .str("return ");
-                final var fieldName = fieldName(field);
-                if (field.getReturnType().isArray()) {
-                    bb.str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
+                if (field.isBinary()) {
+                    bb.str(importedName(CODEHELPERS)).str(".copyArray(").str(field.name()).eol(");");
                 } else {
-                    bb.str(fieldName).eS();
+                    bb.str(field.name()).eS();
                 }
                 bb.cB();
 
                 // nonnullFoo() for structural containers
-                if (field.getReturnType() instanceof ContainerObjectArchetype fieldType
+                if (field.method().getReturnType() instanceof ContainerObjectArchetype fieldType
                     && BuilderTemplate.isNonPresenceContainer(fieldType)) {
                     bb
                         .nl()
                         .at().eol(override)
                         .str("public ").str(importedName(fieldType)).str(" " + NONNULL_PREFIX)
-                            .str(toFirstUpper(field.getName())).str("()").oB()
-                            .str("var tmp = ").str(getterMethodName(field)).eol("();")
+                            .str(toFirstUpper(field.name())).str("()").oB()
+                            .str("var tmp = ").str(field.methodName()).eol("();")
                             .str("return tmp != null ? tmp : ")
                                 // FIXME: better reference to FooBuilder.empty()
                                 .str(fieldType.canonicalName()).eol(BUILDER_SUFFIX + ".empty();")
@@ -196,14 +195,15 @@ final class BuilderImplTemplate extends BaseTemplate {
         return bb.cB();
     }
 
-    private void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props) {
-        for (var field : props) {
-            bb.str("this.").str(fieldName(field)).str(" = ");
+    private void appendCopyNonKeys(final BlockBuilder bb, final List<BuilderField> fields) {
+        for (var field : fields) {
+            bb.str("this.").str(field.name()).str(" = ");
 
-            if (field.getMechanics() == ValueMechanics.NULLIFY_EMPTY) {
-                bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(field.getGetterName()).eol("());");
+            final var method = field.method();
+            if (method.getMechanics() == ValueMechanics.NULLIFY_EMPTY) {
+                bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(method.getName()).eol("());");
             } else {
-                bb.str("base.").str(field.getGetterName()).eol("();");
+                bb.str("base.").str(method.getName()).eol("();");
             }
         }
     }

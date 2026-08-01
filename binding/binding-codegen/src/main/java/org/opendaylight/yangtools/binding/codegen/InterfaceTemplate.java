@@ -18,8 +18,8 @@ import static org.opendaylight.yangtools.binding.contract.Naming.isRequireMethod
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.VerifyException;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -439,9 +439,9 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
             .at().eol(importedName(OVERRIDE))
             .str("default int javaHC()").jBlock(bb -> {
                 final var analysis = typeAnalysis();
-                final var props = analysis.properties();
+                final var fields = analysis.fields();
 
-                switch (props.size()) {
+                switch (fields.size()) {
                     case 0 -> {
                         if (augmentable) {
                             bb.str("return ").str(importedName(CODEHELPERS)).eol(".jcHC0(this);");
@@ -450,29 +450,29 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
                         }
                     }
                     case 1 -> {
-                        final var property = props.iterator().next();
+                        final var field = fields.iterator().next();
                         bb.str("return ").str(importedName(CODEHELPERS)).str(".jcHC1(");
                         if (augmentable) {
                             bb.str("this, ");
                         }
-                        bb.str(getterMethodName(property)).eol("());");
+                        bb.str(getterMethodName(field)).eol("());");
                     }
                     // TODO: consider specializing for N=2 (sngle line) for the cost of 8 new methods in CodeHelpers
-                    default -> appendBindingHashCode(bb, props);
+                    default -> appendBindingHashCode(bb, fields);
                 }
             }).nl();
     }
 
     @NonNullByDefault
-    private void appendBindingHashCode(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props) {
+    private void appendBindingHashCode(final BlockBuilder bb, final List<BuilderField> fields) {
         // determine the composition of properties: 'type binary' fields map to byte[] and therefore have to be hashed
         // via Arrays.hashCode(), not Objects.hashCode()
-        final int size = props.size();
+        final int size = fields.size();
         final boolean[] isBinary = new boolean[size];
         int cnt = 0;
         int binaryCount = 0;
-        for (var prop : props) {
-            final var tmp = prop.getReturnType().isArray();
+        for (var field : fields) {
+            final var tmp = field.isBinary();
             if (tmp) {
                 binaryCount++;
             }
@@ -489,7 +489,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
             bb.newLine();
         }
 
-        final var it = props.iterator();
+        final var it = fields.iterator();
         if (useN) {
             appendBindingHashCodeArgs(bb, it);
         } else {
@@ -499,10 +499,10 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     }
 
     // all properties are the same: just pass them down to CodeHelpers
-    private static void appendBindingHashCodeArgs(final BlockBuilder bb, final Iterator<BuilderGeneratedProperty> it) {
+    private static void appendBindingHashCodeArgs(final BlockBuilder bb, final Iterator<BuilderField> it) {
         while (true) {
-            final var prop = it.next();
-            bb.ind(getterMethodName(prop)).str("()");
+            final var field = it.next();
+            bb.ind(field.methodName()).str("()");
             if (!it.hasNext()) {
                 break;
             }
@@ -511,15 +511,15 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     }
 
     // we have at least one Object and one byte[] property: compute their hashCode() ourselves
-    private void appendBindingHashCodeArgs(final BlockBuilder bb, final Iterator<BuilderGeneratedProperty> it,
+    private void appendBindingHashCodeArgs(final BlockBuilder bb, final Iterator<BuilderField> it,
             final boolean[] isBinary) {
         final var arrays = importedName(JU_ARRAYS);
         final var objects = importedName(JU_OBJECTS);
 
         int cnt = 0;
         while (true) {
-            final var prop = it.next();
-            bb.ind(isBinary[cnt++] ? arrays : objects).str(".hashCode(").str(getterMethodName(prop)).str("())");
+            final var field = it.next();
+            bb.ind(isBinary[cnt++] ? arrays : objects).str(".hashCode(").str(field.methodName()).str("())");
             if (!it.hasNext()) {
                 break;
             }
@@ -528,13 +528,13 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     }
 
     private @NonNull BlockBuilder generateBindingEquals() {
-        final var props = typeAnalysis().properties();
+        final var fields = typeAnalysis().fields();
 
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
             // FIXME: selfref instead of canonicalName
             .str("default boolean javaEQ(").str(archetype.canonicalName()).str(" obj)").jBlock(bb -> {
-                if (props.isEmpty() && !augmentable) {
+                if (fields.isEmpty() && !augmentable) {
                     bb.str(importedName(JU_OBJECTS)).eol(".requireNonNull(obj);");
                     bb.eol("return true;");
                     return;
@@ -542,15 +542,15 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
 
                 bb.str("return ");
                 boolean notFirst = false;
-                for (var property : ByTypeMemberComparator.sort(props)) {
+                for (var field : ByTypeMemberComparator.sort(fields)) {
                     if (notFirst) {
                         bb.nl().ind("&& ");
                     } else {
                         notFirst = true;
                     }
 
-                    final var getterName = property.getGetterName();
-                    bb.str(importedUtilClass(property)).str(".equals(").str(getterName).str("(), obj.")
+                    final var getterName = field.methodName();
+                    bb.str(importedUtilClass(field)).str(".equals(").str(getterName).str("(), obj.")
                         .str(getterName).str("())");
                 }
                 if (augmentable) {
@@ -571,20 +571,20 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
             .str("default ").str(importedName(Types.STRING)).str(" javaTS()").jBlock(bb -> {
-                final var props = typeAnalysis().properties();
+                final var fields = typeAnalysis().fields();
 
                 bb.str("return ").str(importedName(CODEHELPERS));
-                switch (props.size()) {
+                switch (fields.size()) {
                     case 0 -> firstToStringArg(bb.str(".jcTS0(")).eol(");");
                     case 1 -> {
-                        final var prop = props.iterator().next();
-                        firstToStringArg(bb.str(".jcTS1(")).str(", ").jStr(prop.getName()).str(", ")
-                            .str(prop.getGetterName()).eol("());");
+                        final var field = fields.iterator().next();
+                        firstToStringArg(bb.str(".jcTS1(")).str(", ").jStr(field.name()).str(", ")
+                            .str(field.methodName()).eol("());");
                     }
                     default -> {
                         firstToStringArg(bb.str(".jcTSB(")).eol(")");
-                        for (var prop : props) {
-                            bb.ind(".prop(").jStr(prop.getName()).str(", ").str(prop.getGetterName()).eol("())");
+                        for (var field : fields) {
+                            bb.ind(".prop(").jStr(field.name()).str(", ").str(field.methodName()).eol("())");
                         }
                         bb.ind().eol(".build();");
                     }

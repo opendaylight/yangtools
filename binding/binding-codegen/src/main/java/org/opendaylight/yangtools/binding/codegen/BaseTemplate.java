@@ -119,8 +119,14 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     abstract @NonNull BlockBuilder body();
 
     // Helper patterns
-    static final @NonNull String fieldName(final GeneratedProperty property) {
+    @NonNullByDefault
+    static final String fieldName(final GeneratedProperty property) {
         return "_" + property.getName();
+    }
+
+    @NonNullByDefault
+    static final String fieldName(final BuilderField field) {
+        return "_" + field.name();
     }
 
     /**
@@ -131,13 +137,13 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
      */
     // FIXME: return a Block when we can do efficient copies
     @NonNullByDefault
-    final BlockBuilder asGetterMethod(final GeneratedProperty field) {
+    final BlockBuilder asGetterMethod(final BuilderField field) {
         return newBlockBuilder()
-            .str("public ").str(importedReturnType(field)).sp().str(getterMethodName(field)).str("()").jBlock(bb -> {
+            .str("public ").str(importedReturnType(field)).sp().str(field.methodName()).str("()").jBlock(bb -> {
                 final var fieldName = fieldName(field);
                 bb.str("return ");
                 // any Java array type needs to be duplicated to prevent modification
-                if (field.getReturnType().isArray()) {
+                if (field.isBinary()) {
                     bb.str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
                 } else {
                     bb.str(fieldName).eS();

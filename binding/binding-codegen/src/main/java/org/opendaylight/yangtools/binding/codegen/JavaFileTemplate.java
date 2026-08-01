@@ -192,6 +192,11 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     }
 
     @NonNullByDefault
+    final String importedReturnType(final BuilderField field) {
+        return importedReturnType(field.method());
+    }
+
+    @NonNullByDefault
     final String importedReturnType(final GeneratedProperty property) {
         return importedName(property.getReturnType());
     }

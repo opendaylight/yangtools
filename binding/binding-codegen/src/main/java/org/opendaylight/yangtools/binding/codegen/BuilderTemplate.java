@@ -87,7 +87,7 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Set of class attributes (fields) which are derived from the getter methods names.
      */
-    final @NonNull Set<BuilderGeneratedProperty> properties;
+    final @NonNull Set<BuilderField> properties;
 
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
@@ -98,7 +98,7 @@ final class BuilderTemplate extends BaseTemplate {
 
     @NonNullByDefault
     private BuilderTemplate(final GeneratedClass.TopLevel javaType, final GeneratedClass.Nested implJavaType,
-            final DataContainerArchetype targetType, final Set<BuilderGeneratedProperty> properties) {
+            final DataContainerArchetype targetType, final Set<BuilderField> properties) {
         super(javaType);
         this.implJavaType = requireNonNull(implJavaType);
         this.targetType = requireNonNull(targetType);
@@ -380,7 +380,7 @@ final class BuilderTemplate extends BaseTemplate {
                     final var allProps = new ArrayList<>(properties);
                     final var keyProps = keyConstructorArgs(keyType);
                     for (var field : keyProps) {
-                        removeProperty(allProps, field.getName());
+                        removeField(allProps, field.getName());
                     }
 
                     bb.eol("this.key = base." + KEY_AWARE_KEY_NAME + "();");
@@ -928,9 +928,9 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Append the code to copy non-key-components, with four spaces of indentation.
      */
-    private static void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props) {
-        for (var field : props) {
-            bb.str("this.").str(fieldName(field)).str(" = base.").str(field.getGetterName()).eol("();");
+    private static void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderField> fields) {
+        for (var field : fields) {
+            bb.str("this.").str(fieldName(field)).str(" = base.").str(field.methodName()).eol("();");
         }
     }
 
@@ -948,10 +948,10 @@ final class BuilderTemplate extends BaseTemplate {
             .collect(Collectors.toList());
     }
 
-    static void removeProperty(final Collection<BuilderGeneratedProperty> props, final String name) {
-        final var it = props.iterator();
+    static void removeField(final Collection<BuilderField> fields, final String name) {
+        final var it = fields.iterator();
         while (it.hasNext()) {
-            if (name.equals(it.next().getName())) {
+            if (name.equals(it.next().name())) {
                 it.remove();
                 return;
             }

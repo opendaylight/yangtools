@@ -7,18 +7,16 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.VerifyException;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -31,10 +29,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  *
  * @param <T> TypeMember type
  */
-final class ByTypeMemberComparator<T extends GeneratedProperty> implements Comparator<T>, Serializable {
-    @java.io.Serial
-    private static final long serialVersionUID = 1L;
-
+final class ByTypeMemberComparator implements Comparator<BuilderField> {
     /**
      * Fixed-size comparison. These are all numeric types, boolean, empty, identityref.
      */
@@ -55,49 +50,34 @@ final class ByTypeMemberComparator<T extends GeneratedProperty> implements Compa
     /**
      * Singleton instance.
      */
-    private static final @NonNull ByTypeMemberComparator<?> INSTANCE = new ByTypeMemberComparator<>();
+    @VisibleForTesting
+    static final @NonNull ByTypeMemberComparator INSTANCE = new ByTypeMemberComparator();
 
     private ByTypeMemberComparator() {
         // Hidden on purpose
     }
 
-    /**
-     * Returns the one and only instance of this class.
-     *
-     * @return this comparator
-     */
-    @SuppressWarnings("unchecked")
-    static <T extends GeneratedProperty> ByTypeMemberComparator<T> getInstance() {
-        return (ByTypeMemberComparator<T>) INSTANCE;
-    }
-
-    static <T extends GeneratedProperty> Collection<T> sort(final Collection<T> input) {
+    static Collection<BuilderField> sort(final Collection<BuilderField> input) {
         if (input.size() < 2) {
             return input;
         }
 
-        final List<T> ret = new ArrayList<>(input);
-        ret.sort(getInstance());
+        final var ret = new ArrayList<>(input);
+        ret.sort(INSTANCE);
         return ret;
     }
 
     @Override
-    public int compare(final T member1, final T member2) {
-        final Type type1 = getConcreteType(member1.getReturnType());
-        final Type type2 = getConcreteType(member2.getReturnType());
+    public int compare(final BuilderField member1, final BuilderField member2) {
+        final Type type1 = getConcreteType(member1.method().getReturnType());
+        final Type type2 = getConcreteType(member2.method().getReturnType());
         if (!type1.name().equals(type2.name())) {
             final int cmp = rankOf(type1) - rankOf(type2);
             if (cmp != 0) {
                 return cmp;
             }
         }
-        return member1.getName().compareTo(member2.getName());
-    }
-
-    @java.io.Serial
-    @SuppressWarnings("static-method")
-    private Object readResolve() {
-        return INSTANCE;
+        return member1.name().compareTo(member2.name());
     }
 
     private static Type getConcreteType(final Type type) {

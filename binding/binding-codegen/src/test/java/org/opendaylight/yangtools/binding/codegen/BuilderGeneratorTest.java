@@ -228,7 +228,7 @@ public class BuilderGeneratorTest extends BaseCompilationTest {
             .build();
 
         final var sortedProperties = bt.properties.stream()
-                .sorted(ByTypeMemberComparator.getInstance())
+                .sorted(ByTypeMemberComparator.INSTANCE)
                 .map(BuilderGeneratedProperty::getName)
                 .toList();
 

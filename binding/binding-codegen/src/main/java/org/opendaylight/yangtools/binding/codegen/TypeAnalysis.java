@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import java.util.Comparator;
+import com.google.common.base.VerifyException;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
@@ -21,12 +20,11 @@ import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
-record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
-    private static final Comparator<MethodSignature> METHOD_COMPARATOR = Comparator.comparing(MethodSignature::getName);
+record TypeAnalysis(@NonNull List<BuilderField> fields) {
     private static final int GETTER_PREFIX_LENGTH = Naming.GETTER_PREFIX.length();
 
     TypeAnalysis {
-        requireNonNull(properties);
+        requireNonNull(fields);
     }
 
     /**
@@ -38,7 +36,7 @@ record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
         final var methods = new LinkedHashSet<MethodSignature>();
         methods.addAll(type.getMethodDefinitions());
         collectImplementedMethods(type, methods, type.getImplements());
-        return new TypeAnalysis(propertiesFromMethods(methods.stream().sorted(METHOD_COMPARATOR).toList()));
+        return new TypeAnalysis(methodsToFields(methods));
     }
 
     /**
@@ -49,19 +47,19 @@ record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
      * @param implementedIfcs list of implemented interfaces
      */
     private static void collectImplementedMethods(
-            final @NonNull DataContainerArchetype archetype, final @NonNull Set<MethodSignature> methods,
+            final @NonNull DataContainerArchetype archetype, final @NonNull LinkedHashSet<MethodSignature> methods,
             final @NonNull List<Type> implementedIfcs) {
         for (var implementedIfc : implementedIfcs) {
             // FIXME: narrow down?
             if (implementedIfc instanceof DataContainerArchetype ifc) {
-                for (var implMethod : ifc.getMethodDefinitions()) {
-                    if (JavaFileTemplate.hasOverrideAnnotation(implMethod)) {
-                        methods.add(implMethod);
+                for (var method : ifc.getMethodDefinitions()) {
+                    if (JavaFileTemplate.hasOverrideAnnotation(method)) {
+                        methods.add(method);
                     } else {
-                        final var implMethodName = implMethod.getName();
-                        if (Naming.isGetterMethodName(implMethodName)
-                            && JavaFileTemplate.getterByName(methods, implMethodName) == null) {
-                            methods.add(implMethod);
+                        final var methodName = method.getName();
+                        if (Naming.isGetterMethodName(methodName)
+                            && JavaFileTemplate.getterByName(methods, methodName) == null) {
+                            methods.add(method);
                         }
                     }
                 }
@@ -71,53 +69,28 @@ record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
         }
     }
 
-    /**
-     * Creates generated property instance from the getter <code>method</code> name and return type.
-     *
-     * @param method method signature from which is the method name and return type obtained
-     * @return generated property instance for the getter <code>method</code>
-     * @throws IllegalArgumentException <ul>
-     *                                    <li>if the {@code method} equals {@code null}</li>
-     *                                    <li>if the name of the {@code method} equals {@code null}</li>
-     *                                    <li>if the name of the {@code method} is empty</li>
-     *                                    <li>if the return type of the {@code method} equals {@code null}</li>
-     *                                  </ul>
-     */
-    private static BuilderGeneratedProperty propertyFromGetter(final MethodSignature method) {
-        checkArgument(method != null);
-        checkArgument(method.getReturnType() != null);
-        checkArgument(method.getName() != null);
-        checkArgument(!method.getName().isEmpty());
-        if (method.isDefault()) {
-            return null;
-        }
-        if (!Naming.isGetterMethodName(method.getName())) {
-            return null;
-        }
-
-        final var fieldName = Naming.toFirstLower(method.getName().substring(GETTER_PREFIX_LENGTH));
-        return new BuilderGeneratedProperty(fieldName, method);
-    }
-
-    /**
-     * Creates set of generated property instances from getter <code>methods</code>.
-     *
-     * @param methods set of method signature instances which should be transformed to list of properties
-     * @return set of generated property instances which represents the getter <code>methods</code>
-     */
     @NonNullByDefault
-    private static Set<BuilderGeneratedProperty> propertiesFromMethods(final List<MethodSignature> methods) {
-        if (methods.isEmpty()) {
-            return Set.of();
-        }
-
-        final var result = new LinkedHashSet<BuilderGeneratedProperty>();
+    private static List<BuilderField> methodsToFields(final LinkedHashSet<MethodSignature> methods) {
+        final var result = new HashMap<String, BuilderField>();
         for (var method : methods) {
-            final var createdField = propertyFromGetter(method);
-            if (createdField != null) {
-                result.add(createdField);
+            if (method.isDefault()) {
+                continue;
+            }
+
+            final var methodName = method.getName();
+            if (!Naming.isGetterMethodName(methodName)) {
+                continue;
+            }
+
+            final var fieldName = Naming.toFirstLower(methodName.substring(GETTER_PREFIX_LENGTH));
+            final var prev = result.putIfAbsent(fieldName, new BuilderField(fieldName, method));
+            if (prev != null) {
+                throw new VerifyException("Field " + fieldName + " defined by " + method + " and " + prev.method());
             }
         }
-        return result;
+        if (result.isEmpty()) {
+            return List.of();
+        }
+        return result.values().stream().sorted().toList();
     }
 }
