@@ -10,20 +10,18 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingStreamEventWriter;
 
 /**
  * A serializer which writes DataObject to supplied stream event writer.
  */
-public final class DataContainerSerializer {
-    private final @NonNull DataContainerSerializerRegistry registry;
-    private final @NonNull DataContainerStreamer<?> delegate;
-
-    DataContainerSerializer(final DataContainerSerializerRegistry registry, final DataContainerStreamer<?> delegate) {
-        this.registry = requireNonNull(registry);
-        this.delegate = requireNonNull(delegate);
+@NonNullByDefault
+record DataContainerSerializer(DataContainerSerializerRegistry registry, DataContainerStreamer<?> delegate) {
+    DataContainerSerializer {
+        requireNonNull(registry);
+        requireNonNull(delegate);
     }
 
     /**
