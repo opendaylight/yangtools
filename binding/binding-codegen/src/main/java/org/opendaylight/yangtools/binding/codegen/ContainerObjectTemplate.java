@@ -10,27 +10,28 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.ChildOf;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 
 /**
- * Template for a {@link ContainerArchetype}.
+ * Template for a {@link ChildOf} interface.
  */
 @NonNullByDefault
-final class ContainerTemplate extends ChildOfTemplate<ContainerArchetype> {
-    record Builder(ContainerArchetype type, DataRootArchetype root) implements Template.Builder {
+final class ContainerObjectTemplate extends ChildOfTemplate<ContainerObjectArchetype> {
+    record Builder(ContainerObjectArchetype type, DataRootArchetype root) implements Template.Builder {
         Builder {
             requireNonNull(type);
             requireNonNull(root);
         }
 
         @Override
-        public ContainerTemplate build() {
-            return new ContainerTemplate(type, root);
+        public ContainerObjectTemplate build() {
+            return new ContainerObjectTemplate(type, root);
         }
     }
 
-    private ContainerTemplate(final ContainerArchetype archetype, final DataRootArchetype root) {
+    private ContainerObjectTemplate(final ContainerObjectArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
     }
 

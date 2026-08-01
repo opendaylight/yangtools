@@ -21,7 +21,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
@@ -190,9 +190,9 @@ class Mdsal675Test {
         return assertArchetype(genTypesMap, className, ItemObjectArchetype.class);
     }
 
-    private static ContainerArchetype assertContainer(final Map<String, Archetype> genTypesMap,
+    private static ContainerObjectArchetype assertContainer(final Map<String, Archetype> genTypesMap,
             final String className) {
-        return assertArchetype(genTypesMap, className, ContainerArchetype.class);
+        return assertArchetype(genTypesMap, className, ContainerObjectArchetype.class);
     }
 
     private static GroupingArchetype assertGrouping(final Map<String, Archetype> genTypesMap, final String className) {

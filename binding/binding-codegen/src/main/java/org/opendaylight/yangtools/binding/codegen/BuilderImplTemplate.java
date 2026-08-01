@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
 import org.opendaylight.yangtools.binding.lib.AbstractDataContainer;
 import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
-import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 
@@ -172,7 +172,7 @@ final class BuilderImplTemplate extends BaseTemplate {
                 bb.cB();
 
                 // nonnullFoo() for structural containers
-                if (field.getReturnType() instanceof ContainerArchetype fieldType
+                if (field.getReturnType() instanceof ContainerObjectArchetype fieldType
                     && BuilderTemplate.isNonPresenceContainer(fieldType)) {
                     bb
                         .nl()

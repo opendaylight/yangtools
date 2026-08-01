@@ -36,7 +36,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
-import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
@@ -977,6 +977,6 @@ final class BuilderTemplate extends BaseTemplate {
      */
     @NonNullByDefault
     static boolean isNonPresenceContainer(final DataContainerArchetype type) {
-        return type instanceof ContainerArchetype container && container.statement().presenceStatement() == null;
+        return type instanceof ContainerObjectArchetype container && container.statement().presenceStatement() == null;
     }
 }

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -38,11 +38,11 @@ class GeneratedTypesLeafrefTest {
         KeyArchetype gtIfcKey = null;
         EntryObjectArchetype gtIfc = null;
         EntryObjectArchetype gtNetworkLink = null;
-        ContainerArchetype gtSource = null;
-        ContainerArchetype gtDest = null;
+        ContainerObjectArchetype gtSource = null;
+        ContainerObjectArchetype gtDest = null;
         EntryObjectArchetype gtTunnel = null;
         KeyArchetype gtTunnelKey = null;
-        ContainerArchetype gtTopology = null;
+        ContainerObjectArchetype gtTopology = null;
 
         for (var type : genTypes) {
             String name = type.simpleName();
@@ -57,15 +57,15 @@ class GeneratedTypesLeafrefTest {
                     case "NetworkLink" ->
                         gtNetworkLink = assertInstanceOf(EntryObjectArchetype.class, type);
                     case "SourceNode" ->
-                        gtSource = assertInstanceOf(ContainerArchetype.class, type);
+                        gtSource = assertInstanceOf(ContainerObjectArchetype.class, type);
                     case "DestinationNode" ->
-                        gtDest = assertInstanceOf(ContainerArchetype.class, type);
+                        gtDest = assertInstanceOf(ContainerObjectArchetype.class, type);
                     case "Tunnel" ->
                         gtTunnel = assertInstanceOf(EntryObjectArchetype.class, type);
                     case "TunnelKey" ->
                         gtTunnelKey = assertInstanceOf(KeyArchetype.class, type);
                     case "Topology" ->
-                        gtTopology = assertInstanceOf(ContainerArchetype.class, type);
+                        gtTopology = assertInstanceOf(ContainerObjectArchetype.class, type);
                     default -> {
                         // no-op
                     }

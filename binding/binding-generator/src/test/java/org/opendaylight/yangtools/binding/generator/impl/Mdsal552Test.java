@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -33,7 +33,7 @@ class Mdsal552Test {
         final var baz = types.stream()
             .filter(type -> BAZ.equals(type.name()))
             .findFirst()
-            .map(ContainerArchetype.class::cast)
+            .map(ContainerObjectArchetype.class::cast)
             .orElseThrow();
         final var bazGetRef = baz.getMethodDefinitions().stream()
             .filter(method -> method.getName().equals("getRef"))

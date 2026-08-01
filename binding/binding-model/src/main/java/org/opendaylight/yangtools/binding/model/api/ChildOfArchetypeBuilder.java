@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 abstract sealed class ChildOfArchetypeBuilder<
         B extends DataContainerArchetypeBuilder<B, S>,
         S extends EffectiveStatement<?, ?>>  extends DataContainerArchetypeBuilder<B, S>
-        permits ContainerArchetype.Builder, EntryObjectArchetype.Builder, ItemObjectArchetype.Builder {
+        permits ContainerObjectArchetype.Builder, EntryObjectArchetype.Builder, ItemObjectArchetype.Builder {
     final @NonNull JavaTypeName parentName;
 
     @NonNullByDefault

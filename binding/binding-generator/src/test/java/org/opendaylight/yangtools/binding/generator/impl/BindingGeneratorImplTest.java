@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.NotificationArchetype;
@@ -36,20 +36,20 @@ class BindingGeneratorImplTest {
                 "/binding-generator-impl-test/choice-test.yang"));
 
         DataRootArchetype choiceTestData = null;
-        ContainerArchetype myRootContainer = null;
+        ContainerObjectArchetype myRootContainer = null;
         ItemObjectArchetype myList = null;
-        ContainerArchetype myContainer = null;
+        ContainerObjectArchetype myContainer = null;
         ItemObjectArchetype myList2 = null;
-        ContainerArchetype myContainer2 = null;
+        ContainerObjectArchetype myContainer2 = null;
 
         for (var type : generateTypes) {
             switch (type.simpleName()) {
                 case "ChoiceTestData" -> choiceTestData = assertInstanceOf(DataRootArchetype.class, type);
-                case "Myrootcontainer" -> myRootContainer = assertInstanceOf(ContainerArchetype.class, type);
+                case "Myrootcontainer" -> myRootContainer = assertInstanceOf(ContainerObjectArchetype.class, type);
                 case "Mylist" -> myList = assertInstanceOf(ItemObjectArchetype.class, type);
                 case "Mylist2" -> myList2 = assertInstanceOf(ItemObjectArchetype.class, type);
-                case "Mycontainer" -> myContainer = assertInstanceOf(ContainerArchetype.class, type);
-                case "Mycontainer2" -> myContainer2 = assertInstanceOf(ContainerArchetype.class, type);
+                case "Mycontainer" -> myContainer = assertInstanceOf(ContainerObjectArchetype.class, type);
+                case "Mycontainer2" -> myContainer2 = assertInstanceOf(ContainerObjectArchetype.class, type);
                 default -> {
                     // ignore
                 }

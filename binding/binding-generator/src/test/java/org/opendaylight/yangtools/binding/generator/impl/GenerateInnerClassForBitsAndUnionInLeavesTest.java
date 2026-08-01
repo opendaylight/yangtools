@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -27,8 +27,8 @@ class GenerateInnerClassForBitsAndUnionInLeavesTest {
         assertEquals(4, genTypes.size());
 
         final var parentContainers = genTypes.stream()
-            .filter(ContainerArchetype.class::isInstance)
-            .map(ContainerArchetype.class::cast)
+            .filter(ContainerObjectArchetype.class::isInstance)
+            .map(ContainerObjectArchetype.class::cast)
             .filter(archetype -> archetype.simpleName().equals("ParentContainer"))
             .toList();
         assertEquals(1, parentContainers.size());

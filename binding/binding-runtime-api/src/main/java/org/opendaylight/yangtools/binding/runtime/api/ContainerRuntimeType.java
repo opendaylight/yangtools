@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
-import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 /**
@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
  */
 public non-sealed interface ContainerRuntimeType extends ContainerLikeRuntimeType {
     @Override
-    ContainerArchetype javaType();
+    ContainerObjectArchetype javaType();
 
     @Override
     ContainerEffectiveStatement statement();

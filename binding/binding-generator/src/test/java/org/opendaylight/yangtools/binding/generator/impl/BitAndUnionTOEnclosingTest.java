@@ -18,7 +18,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
@@ -28,14 +28,15 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class BitAndUnionTOEnclosingTest {
     private static List<Archetype> genTypes = null;
-    private static ContainerArchetype parentContainer = null;
+    private static ContainerObjectArchetype parentContainer = null;
 
     @BeforeAll
     static void loadTestResources() {
         genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource("/bit_and_union.yang"));
 
         for (var genType : genTypes) {
-            if (genType.simpleName().equals("ParentContainer") && genType instanceof ContainerArchetype archetype) {
+            if (genType.simpleName().equals("ParentContainer")
+                && genType instanceof ContainerObjectArchetype archetype) {
                 parentContainer = archetype;
             }
         }

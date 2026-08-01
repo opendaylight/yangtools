@@ -38,7 +38,7 @@ class MethodSignatureBuilderTest {
         final var signatureBuilderImpl3 = MethodSignature.builder("testMethod2");
         final var signatureBuilderImpl5 = signatureBuilderImpl;
         final var signatureBuilderImpl6 = MethodSignature.builder("testMethod");
-        final var returnType = ContainerArchetype.builder(
+        final var returnType = ContainerObjectArchetype.builder(
             JavaTypeName.create("org.opendaylight.yangtools.test", "Address"), statement,
             JavaTypeName.create("org.opendaylight.yangtools.test", "Parent"))
             .build();

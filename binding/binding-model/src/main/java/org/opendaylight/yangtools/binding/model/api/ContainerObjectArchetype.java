@@ -16,9 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
  *
  * @since 16.0.0
  */
-public sealed interface ContainerArchetype extends ChildOfArchetype permits ContainerArchetypeImpl {
+public sealed interface ContainerObjectArchetype extends ChildOfArchetype permits ContainerObjectArchetypeImpl {
     /**
-     * A builder of {@link ContainerArchetype}s.
+     * A builder of {@link ContainerObjectArchetype}s.
      */
     @NonNullByDefault
     final class Builder extends ChildOfArchetypeBuilder<Builder, ContainerEffectiveStatement> {
@@ -28,14 +28,14 @@ public sealed interface ContainerArchetype extends ChildOfArchetype permits Cont
         }
 
         @Override
-        public ContainerArchetype build() {
-            return new ContainerArchetypeImpl(typeName, statement, parentName, implementsTypes(), methodDefinitions(),
-                enclosedTypes());
+        public ContainerObjectArchetype build() {
+            return new ContainerObjectArchetypeImpl(typeName, statement, parentName, implementsTypes(),
+                methodDefinitions(), enclosedTypes());
         }
 
         @Override
-        Class<ContainerArchetype> archetypeClass() {
-            return ContainerArchetype.class;
+        Class<ContainerObjectArchetype> archetypeClass() {
+            return ContainerObjectArchetype.class;
         }
 
         @Override

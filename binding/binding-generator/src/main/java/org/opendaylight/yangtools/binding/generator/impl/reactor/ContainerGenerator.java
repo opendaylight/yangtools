@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultContainerRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
@@ -44,8 +44,8 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     }
 
     @Override
-    ContainerArchetype createTypeImpl() {
-        final var builder = ContainerArchetype.builder(typeName(), statement(), parentNameForChildOf());
+    ContainerObjectArchetype createTypeImpl() {
+        final var builder = ContainerObjectArchetype.builder(typeName(), statement(), parentNameForChildOf());
         addAugmentable(builder);
         addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
@@ -60,7 +60,7 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
             @Override
             ContainerRuntimeType build(final Archetype type, final ContainerEffectiveStatement statement,
                     final List<RuntimeType> children, final List<AugmentRuntimeType> augments) {
-                return new DefaultContainerRuntimeType((ContainerArchetype) type, statement, children, augments);
+                return new DefaultContainerRuntimeType((ContainerObjectArchetype) type, statement, children, augments);
             }
         };
     }

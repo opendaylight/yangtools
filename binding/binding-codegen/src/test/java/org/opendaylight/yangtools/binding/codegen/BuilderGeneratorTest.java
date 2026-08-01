@@ -23,7 +23,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 
 public class BuilderGeneratorTest extends BaseCompilationTest {
     private static Path SOURCES;
@@ -223,7 +223,7 @@ public class BuilderGeneratorTest extends BaseCompilationTest {
         final var bt = new BuilderTemplate.Builder(TYPES.stream()
             .filter(t -> t.simpleName().equals("Nodes"))
             .findFirst()
-            .map(ContainerArchetype.class::cast)
+            .map(ContainerObjectArchetype.class::cast)
             .orElseThrow())
             .build();
 

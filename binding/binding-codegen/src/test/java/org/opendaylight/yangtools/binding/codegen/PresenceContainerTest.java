@@ -16,7 +16,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
@@ -72,7 +72,7 @@ class PresenceContainerTest {
     void presenceContainerIsNonPresenceContainerTest() {
         final var scpContainer = assertInstanceOf(ContainerEffectiveStatement.class,
             MODULE.findDataTreeChild(DIRECTORY_QNAME, SCP_QNAME).orElseThrow());
-        assertFalse(BuilderTemplate.isNonPresenceContainer(ContainerArchetype.builder(
+        assertFalse(BuilderTemplate.isNonPresenceContainer(ContainerObjectArchetype.builder(
             JavaTypeName.create("foo", "foo"), scpContainer, JavaTypeName.create("foo", "parent")).build()));
     }
 
@@ -83,7 +83,7 @@ class PresenceContainerTest {
     void nonPresenceContainerIsNonPresenceContainerTest() {
         final var dataContainer = assertInstanceOf(ContainerEffectiveStatement.class,
             MODULE.findDataTreeChild(DIRECTORY_QNAME, DATA_QNAME).orElseThrow());
-        assertTrue(BuilderTemplate.isNonPresenceContainer(ContainerArchetype.builder(
+        assertTrue(BuilderTemplate.isNonPresenceContainer(ContainerObjectArchetype.builder(
             JavaTypeName.create("foo", "foo"), dataContainer, JavaTypeName.create("foo", "parent")).build()));
     }
 }

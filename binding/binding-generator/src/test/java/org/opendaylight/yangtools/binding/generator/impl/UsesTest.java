@@ -16,7 +16,7 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
@@ -137,7 +137,7 @@ class UsesTest {
 
         int containerTestCount = 0;
         int groupingContainerTestCounter = 0;
-        ContainerArchetype containerTest = null;
+        ContainerObjectArchetype containerTest = null;
         GroupingArchetype groupingContainerTest = null;
 
         for (var genType : genTypes) {
@@ -147,7 +147,7 @@ class UsesTest {
                     groupingContainerTestCounter++;
                 }
                 case "ContainerTest" -> {
-                    containerTest = assertInstanceOf(ContainerArchetype.class, genType);
+                    containerTest = assertInstanceOf(ContainerObjectArchetype.class, genType);
                     containerTestCount++;
                 }
                 default -> {
@@ -243,7 +243,7 @@ class UsesTest {
         int listGroupingListTestCounter = 0;
         ItemObjectArchetype listTest = null;
         GroupingArchetype groupingListTest = null;
-        ContainerArchetype containerGroupingListTest = null;
+        ContainerObjectArchetype containerGroupingListTest = null;
         ItemObjectArchetype listGroupingListTest = null;
 
         for (var genType : genTypes) {
@@ -257,7 +257,7 @@ class UsesTest {
                     listTestCounter++;
                 }
                 case "ContainerGroupingListTest" -> {
-                    containerGroupingListTest = assertInstanceOf(ContainerArchetype.class, genType);
+                    containerGroupingListTest = assertInstanceOf(ContainerObjectArchetype.class, genType);
                     containerGroupingListTestCounter++;
                 }
                 case "ListGroupingListTest" -> {
@@ -379,7 +379,7 @@ class UsesTest {
         RpcOutputArchetype rpcTestOutput = null;
         GroupingArchetype groupingRpcInputTest = null;
         GroupingArchetype groupingRpcOutputTest = null;
-        ContainerArchetype containerGroupingRpcInputTest = null;
+        ContainerObjectArchetype containerGroupingRpcInputTest = null;
 
         for (var genType : genTypes) {
             switch (genType.simpleName()) {
@@ -400,7 +400,7 @@ class UsesTest {
                     groupingRpcOutputTestCounter++;
                 }
                 case "ContainerGroupingRpcInputTest" -> {
-                    containerGroupingRpcInputTest = assertInstanceOf(ContainerArchetype.class, genType);
+                    containerGroupingRpcInputTest = assertInstanceOf(ContainerObjectArchetype.class, genType);
                     containerGroupingRpcInputTestCounter++;
                 }
                 default -> {
@@ -517,7 +517,7 @@ class UsesTest {
 
         NotificationArchetype notificationTest = null;
         GroupingArchetype groupingNotificationTest = null;
-        ContainerArchetype containerGroupingNotificationTest = null;
+        ContainerObjectArchetype containerGroupingNotificationTest = null;
         int notificationTestCounter = 0;
         int groupingNotificationTestCounter = 0;
         int containerGroupingNotificationTestCounter = 0;
@@ -533,7 +533,7 @@ class UsesTest {
                     groupingNotificationTestCounter++;
                 }
                 case "ContainerGroupingNotificationTest" -> {
-                    containerGroupingNotificationTest = assertInstanceOf(ContainerArchetype.class, type);
+                    containerGroupingNotificationTest = assertInstanceOf(ContainerObjectArchetype.class, type);
                     containerGroupingNotificationTestCounter++;
                 }
                 default -> {

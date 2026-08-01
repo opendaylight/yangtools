@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
  */
 @NonNullByDefault
 abstract sealed class ChildOfTemplate<T extends ChildOfArchetype> extends AugmentableTemplate<T>
-        permits ContainerTemplate, EntryObjectTemplate, ItemObjectTemplate {
+        permits ContainerObjectTemplate, EntryObjectTemplate, ItemObjectTemplate {
     ChildOfTemplate(final T archetype, final DataRootArchetype root) {
         super(archetype, root);
     }

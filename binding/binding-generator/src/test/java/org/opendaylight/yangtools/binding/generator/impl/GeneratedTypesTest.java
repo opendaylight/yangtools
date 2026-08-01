@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.ContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
@@ -37,13 +37,13 @@ class GeneratedTypesTest {
         assertEquals(3, genTypes.size());
 
         // FIXME: pick one of the accesses
-        var simpleContainer = assertInstanceOf(ContainerArchetype.class, genTypes.get(1));
-        var nestedContainer = assertInstanceOf(ContainerArchetype.class, genTypes.get(2));
+        var simpleContainer = assertInstanceOf(ContainerObjectArchetype.class, genTypes.get(1));
+        var nestedContainer = assertInstanceOf(ContainerObjectArchetype.class, genTypes.get(2));
         for (var t : genTypes) {
             if ("SimpleContainer".equals(t.simpleName())) {
-                simpleContainer = assertInstanceOf(ContainerArchetype.class, t);
+                simpleContainer = assertInstanceOf(ContainerObjectArchetype.class, t);
             } else if ("NestedContainer".equals(t.simpleName())) {
-                nestedContainer = assertInstanceOf(ContainerArchetype.class, t);
+                nestedContainer = assertInstanceOf(ContainerObjectArchetype.class, t);
             }
         }
         assertNotNull(simpleContainer);
@@ -120,13 +120,13 @@ class GeneratedTypesTest {
         assertEquals(3, genTypes.size());
 
         // FIXME: pick one of the accesses...
-        var simpleContainer = assertInstanceOf(ContainerArchetype.class, genTypes.get(1));
-        var nestedContainer = assertInstanceOf(ContainerArchetype.class, genTypes.get(2));
+        var simpleContainer = assertInstanceOf(ContainerObjectArchetype.class, genTypes.get(1));
+        var nestedContainer = assertInstanceOf(ContainerObjectArchetype.class, genTypes.get(2));
         for (var t : genTypes) {
             if ("SimpleContainer".equals(t.simpleName())) {
-                simpleContainer = assertInstanceOf(ContainerArchetype.class, t);
+                simpleContainer = assertInstanceOf(ContainerObjectArchetype.class, t);
             } else if ("NestedContainer".equals(t.simpleName())) {
-                nestedContainer = assertInstanceOf(ContainerArchetype.class, t);
+                nestedContainer = assertInstanceOf(ContainerObjectArchetype.class, t);
             }
         }
 
@@ -231,7 +231,7 @@ class GeneratedTypesTest {
                     assertEquals("Byte", properties.getFirst().getReturnType().simpleName());
                     assertTrue(properties.getFirst().isReadOnly());
                 }
-                case ContainerArchetype archetype -> {
+                case ContainerObjectArchetype archetype -> {
                     switch (archetype.simpleName()) {
                         case "ListParentContainer" ->
                             listParentContainerMethodsCount = archetype.getMethodDefinitions().size();
