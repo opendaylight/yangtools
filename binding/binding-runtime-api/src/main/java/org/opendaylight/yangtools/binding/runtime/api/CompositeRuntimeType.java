@@ -11,7 +11,6 @@ package org.opendaylight.yangtools.binding.runtime.api;
  * A {@link RuntimeType} which is also a {@link RuntimeTypeContainer}. This is a pure composition interface and does not
  * imply further contract.
  */
-// FIXME: rename to DataContainerRuntimeType
 public interface CompositeRuntimeType extends GeneratedRuntimeType, RuntimeTypeContainer {
     // Pure contract composition
 }
