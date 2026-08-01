@@ -40,7 +40,7 @@ final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype
     private static final ConcreteType AUGMENTATION = ConcreteType.ofClass(Augmentation.class);
 
     private AugmentationTemplate(final AugmentationArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root, Shape.AUGMENTATION);
+        super(archetype, root, DataContainerContract.JAVA, false);
     }
 
     @Override

@@ -40,7 +40,7 @@ final class NotificationBodyTemplate extends InterfaceTemplate<NotificationBodyA
     private static final ConcreteType NOTIFICATION_BODY = ConcreteType.ofClass(NotificationBody.class);
 
     private NotificationBodyTemplate(final NotificationBodyArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root, Shape.GROUPING);
+        super(archetype, root, DataContainerContract.NARROW, false);
     }
 
     @Override

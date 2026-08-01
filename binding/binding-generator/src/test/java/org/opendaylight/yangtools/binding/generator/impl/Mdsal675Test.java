@@ -40,7 +40,6 @@ class Mdsal675Test {
     private static final String PACKAGE2 = "org.opendaylight.yang.gen.v1.urn.test.yang.data.naming.norev.";
     private static final String MODULE_CLASS_NAME = PACKAGE + "YangDataDemoData";
     private static final String ROOT_CONTAINER_CLASS_NAME = PACKAGE + "RootContainer";
-    private static final Map<String, Type> INTERFACE_METHODS = Map.of("implementedInterface", Types.CLASS);
 
     @Test
     void yangDataGen() {
@@ -212,7 +211,6 @@ class Mdsal675Test {
 
     private static void assertYangDataGenType(final YangDataArchetype yangDataType, final Type contentType,
             final List<String> getterMethods) {
-        INTERFACE_METHODS.forEach((name, type) -> assertHasMethod(yangDataType, name, type));
         for (var methodName : getterMethods) {
             assertHasMethod(yangDataType, methodName, contentType);
         }
@@ -221,7 +219,6 @@ class Mdsal675Test {
     private static void assertYangDataGenType(final YangDataArchetype yangDataType, final GroupingArchetype groupType,
             final Type contentType, final List<String> getterMethods) {
         assertImplements(yangDataType, groupType);
-        INTERFACE_METHODS.forEach((name, type) -> assertHasMethod(yangDataType, name, type));
         for (var methodName : getterMethods) {
             assertHasMethod(groupType, methodName, contentType);
         }

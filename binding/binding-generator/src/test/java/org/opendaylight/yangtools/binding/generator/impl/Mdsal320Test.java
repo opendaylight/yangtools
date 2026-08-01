@@ -9,9 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -51,19 +49,14 @@ class Mdsal320Test {
         final var bar1 = assertInstanceOf(UnionTypeObjectArchetype.class, barTypes.getLast());
         assertEquals("Bar$1", bar1.simpleName());
 
-        final var it = foo.getMethodDefinitions().iterator();
-        assertTrue(it.hasNext());
-        final var getImplIface = it.next();
-        assertEquals("implementedInterface", getImplIface.getName());
-        assertTrue(getImplIface.isDefault());
-        assertTrue(it.hasNext());
+        final var fooMethods = foo.getMethodDefinitions();
+        assertEquals(2, fooMethods.size());
 
-        final var getBar = it.next();
+        final var getBar = fooMethods.getFirst();
         final var getBarType = assertInstanceOf(UnionTypeObjectArchetype.class, getBar.getReturnType());
         assertEquals(bar, getBarType);
-        final var requireBar = it.next();
+        final var requireBar = fooMethods.getLast();
         assertThat(requireBar.getName()).startsWith(Naming.REQUIRE_PREFIX);
-        assertFalse(it.hasNext());
 
         assertEquals(List.of("enumeration", "string", "bar$1"), bar.typePropertyNames());
         assertEquals(List.of(enum1, BaseYangTypes.STRING_TYPE, bar1), bar.typePropertyTypes());

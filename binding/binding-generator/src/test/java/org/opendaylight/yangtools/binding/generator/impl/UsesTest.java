@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.containsInterface;
 import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.containsMethods;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
@@ -120,8 +121,7 @@ class UsesTest {
             groupingCaseTest.packageName(), "GroupingCaseTest is in wrong package.");
 
         containsInterface("GroupingCaseTest", caseC);
-        // FIXME: split this into getter/default/static asserts
-        assertEquals(1, caseC.getMethodDefinitions().size());
+        assertEquals(List.of(), caseC.getMethodDefinitions());
 
         assertEquals(2, groupingCaseTest.getMethodDefinitions().size(),
             "Number of method in GroupingCaseTest is incorrect");
@@ -169,17 +169,14 @@ class UsesTest {
 
         containsInterface("GroupingContainerTest", containerTest);
 
-        assertEquals(4, groupingContainerTest.getMethodDefinitions().size(),
-            "Number of method in GroupingContainerTestis incorrect");
-        // FIXME: split this into getter/default/static asserts
-        assertEquals(3, containerTest.getMethodDefinitions().size());
-
+        assertEquals(4, groupingContainerTest.getMethodDefinitions().size());
         containsMethods(groupingContainerTest.getMethodDefinitions(),
             new NameTypePattern("getLeafGroupingContainerTest1", "String"),
             new NameTypePattern("requireLeafGroupingContainerTest1", "String"),
             new NameTypePattern("getLeafGroupingContainerTest2", "Uint8"),
             new NameTypePattern("requireLeafGroupingContainerTest2", "Uint8"));
 
+        assertEquals(2, containerTest.getMethodDefinitions().size());
         containsMethods(containerTest.getMethodDefinitions(),
             new NameTypePattern("getContainerLeafTest", "String"),
             new NameTypePattern("requireContainerLeafTest", "String"));
@@ -292,15 +289,7 @@ class UsesTest {
 
         containsInterface("GroupingListTest", listTest);
 
-        assertEquals(8, groupingListTest.getMethodDefinitions().size(),
-            "Number of method in GroupingListTest is incorrect");
-        // FIXME: split this into getter/default/static asserts
-        assertEquals(3, listTest.getMethodDefinitions().size());
-        // FIXME: split this into getter/default/static asserts
-        assertEquals(3, containerGroupingListTest.getMethodDefinitions().size());
-        // FIXME: split this into getter/default/static asserts
-        assertEquals(3, listGroupingListTest.getMethodDefinitions().size());
-
+        assertEquals(8, groupingListTest.getMethodDefinitions().size());
         containsMethods(groupingListTest.getMethodDefinitions(),
             new NameTypePattern("getContainerGroupingListTest", "ContainerGroupingListTest"),
             new NameTypePattern("getLeafGroupingListTest", "String"),
@@ -308,11 +297,17 @@ class UsesTest {
             new NameTypePattern("getLeaffllistGroupingListTest", "Set<String>"),
             new NameTypePattern("requireLeaffllistGroupingListTest", "Set<String>"),
             new NameTypePattern("getListGroupingListTest", "List<ListGroupingListTest>"));
+
+        assertEquals(2, listTest.getMethodDefinitions().size());
         containsMethods(listTest.getMethodDefinitions(), new NameTypePattern("getListLeafTest", "String"));
-        containsMethods(containerGroupingListTest.getMethodDefinitions(), new NameTypePattern(
-                "getLeafContainerGroupingListTest", "Uint8"));
-        containsMethods(listGroupingListTest.getMethodDefinitions(), new NameTypePattern("getLeafListGroupingListTest",
-                "Integer"));
+
+        assertEquals(2, containerGroupingListTest.getMethodDefinitions().size());
+        containsMethods(containerGroupingListTest.getMethodDefinitions(),
+            new NameTypePattern("getLeafContainerGroupingListTest", "Uint8"));
+
+        assertEquals(2, listGroupingListTest.getMethodDefinitions().size());
+        containsMethods(listGroupingListTest.getMethodDefinitions(),
+            new NameTypePattern("getLeafListGroupingListTest", "Integer"));
     }
 
     @Test
@@ -354,7 +349,7 @@ class UsesTest {
 
         containsInterface("GroupingModulTest", groupingUsesModulData);
 
-        assertEquals(1, groupingUsesModulData.getMethodDefinitions().size());
+        assertEquals(List.of(), groupingUsesModulData.getMethodDefinitions());
         assertEquals(4, groupingModulTest.getMethodDefinitions().size(),
             "Number of method in GroupingModulTest is incorrect");
 
@@ -439,16 +434,13 @@ class UsesTest {
         containsInterface("GroupingRpcInputTest", rpcTestInput);
         containsInterface("GroupingRpcOutputTest", rpcTestOutput);
 
-        // FIXME: split this into getter/default/static asserts
-        assertEquals(1, rpcTestInput.getMethodDefinitions().size());
-        // FIXME: split this into getter/default/static asserts
-        assertEquals(1, rpcTestOutput.getMethodDefinitions().size());
+        assertEquals(List.of(), rpcTestInput.getMethodDefinitions());
+        assertEquals(List.of(), rpcTestOutput.getMethodDefinitions());
         assertEquals(4, groupingRpcInputTest.getMethodDefinitions().size(),
             "Number of method in GroupingRpcInputTest is incorrect");
         assertEquals(2, groupingRpcOutputTest.getMethodDefinitions().size(),
             "Number of method in GroupingRpcOutputTest is incorrect");
-        // FIXME: split this into getter/default/static asserts
-        assertEquals(3, containerGroupingRpcInputTest.getMethodDefinitions().size());
+        assertEquals(2, containerGroupingRpcInputTest.getMethodDefinitions().size());
 
         containsMethods(groupingRpcInputTest.getMethodDefinitions(),
             new NameTypePattern("getContainerGroupingRpcInputTest", "ContainerGroupingRpcInputTest"),
@@ -498,10 +490,8 @@ class UsesTest {
 
         containsInterface("GroupingAugmentTest", containerAugment1);
 
-        // FIXME: split this into getter/default/static asserts
-        assertEquals(1, containerAugment1.getMethodDefinitions().size());
-        // FIXME: split this into getter/default/static asserts
-        assertEquals(1, containerAugment1.getMethodDefinitions().size());
+        assertEquals(List.of(), containerAugment1.getMethodDefinitions());
+        assertEquals(List.of(), containerAugment1.getMethodDefinitions());
         assertEquals(2, groupingAugmentTest.getMethodDefinitions().size(),
             "Number of method in GroupingCaseTest is incorrect");
 
@@ -563,19 +553,18 @@ class UsesTest {
 
         containsInterface("GroupingNotificationTest", notificationTest);
 
-        // FIXME: split this into getter/default/static asserts
-        assertEquals(3, notificationTest.getMethodDefinitions().size());
-        assertEquals(4, groupingNotificationTest.getMethodDefinitions().size(),
-            "Number of method in GroupingNotificationTest is incorrect");
-        // FIXME: split this into getter/default/static asserts
-        assertEquals(3, containerGroupingNotificationTest.getMethodDefinitions().size());
-
+        assertEquals(2, notificationTest.getMethodDefinitions().size());
         containsMethods(notificationTest.getMethodDefinitions(),
             new NameTypePattern("getLeafNotificationTest",  "String"));
+
+        assertEquals(4, groupingNotificationTest.getMethodDefinitions().size(),
+            "Number of method in GroupingNotificationTest is incorrect");
         containsMethods(groupingNotificationTest.getMethodDefinitions(),
             new NameTypePattern("getContainerGroupingNotificationTest", "ContainerGroupingNotificationTest"),
             new NameTypePattern("getLeaffllistGroupingNotificationTest", "Set<String>"),
             new NameTypePattern("requireLeaffllistGroupingNotificationTest", "Set<String>"));
+
+        assertEquals(2, containerGroupingNotificationTest.getMethodDefinitions().size());
         containsMethods(containerGroupingNotificationTest.getMethodDefinitions(),
             new NameTypePattern("getLeafContainerGroupingNotificationTest", "Uint32"),
             new NameTypePattern("requireLeafContainerGroupingNotificationTest", "Uint32"));

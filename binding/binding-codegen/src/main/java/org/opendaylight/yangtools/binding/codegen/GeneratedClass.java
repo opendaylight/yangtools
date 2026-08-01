@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.WildcardType;
 import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
@@ -304,11 +303,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
         sb.append('<');
         final var it = arguments.iterator();
         while (true) {
-            final var arg = it.next();
-            if (arg instanceof WildcardType) {
-                sb.append("? extends ");
-            }
-            sb.append(getReferenceString(arg));
+            sb.append(getReferenceString(it.next()));
             if (!it.hasNext()) {
                 return sb.append('>').toString();
             }

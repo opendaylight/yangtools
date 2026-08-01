@@ -95,7 +95,7 @@ class AugmentedTypeTest {
         assertEquals(JavaTypeName.create("""
             org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.network.links.network.\
             link.tunnels""", "TunnelKey"), gtTunnel.key().name());
-        assertThat(gtTunnel.getMethodDefinitions()).hasSize(5);
+        assertThat(gtTunnel.getMethodDefinitions()).hasSize(4);
 
         // 'TunnelKey'
         assertNotNull(gtTunnelKey, "TunnelKey is null");

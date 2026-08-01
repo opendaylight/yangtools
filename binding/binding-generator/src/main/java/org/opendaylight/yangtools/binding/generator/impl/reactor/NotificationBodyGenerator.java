@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationB
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
-import org.opendaylight.yangtools.binding.model.api.WildcardType;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationBodyRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -45,9 +44,7 @@ final class NotificationBodyGenerator
 
     @Override
     NotificationBodyArchetype createTypeImpl() {
-        final var typeName = typeName();
-        final var builder = NotificationBodyArchetype.builder(typeName, statement());
-        defineImplementedInterfaceMethod(builder, WildcardType.ofName(typeName));
+        final var builder = NotificationBodyArchetype.builder(typeName(), statement());
         addUsesInterfaces(builder);
         addGetterMethods(builder);
         return builder.build();

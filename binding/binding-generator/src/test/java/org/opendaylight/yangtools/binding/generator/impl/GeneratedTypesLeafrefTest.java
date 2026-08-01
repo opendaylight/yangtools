@@ -182,7 +182,7 @@ class GeneratedTypesLeafrefTest {
         assertEquals(JavaTypeName.create("""
             org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.network.links.network.link.\
             tunnels""", "TunnelKey"), gtTunnel.key().name());
-        assertThat(gtTunnel.getMethodDefinitions()).hasSize(3);
+        assertThat(gtTunnel.getMethodDefinitions()).hasSize(2);
 
         // TunnelKey
         final var gtTunnelKeyProps = gtTunnelKey.getProperties();

@@ -649,7 +649,6 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
      */
     @NonNullByDefault
     static final void addConcreteInterfaceMethods(final DataContainerArchetype.Builder builder) {
-        defaultImplementedInterace(builder);
         builder.addImplementsType(ParameterizedType.of(BindingTypes.JAVA_DATACONTAINER, builder.typeRef()));
     }
 }

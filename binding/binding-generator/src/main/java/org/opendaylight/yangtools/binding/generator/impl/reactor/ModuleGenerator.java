@@ -84,7 +84,6 @@ public final class ModuleGenerator extends DataContainerGenerator<ModuleEffectiv
     DataRootArchetype createTypeImpl() {
         final var builder = DataRootArchetype.builder(typeName(), statement());
         addUsesInterfaces(builder);
-        defaultImplementedInterace(builder);
         addGetterMethods(builder);
         return builder.build();
     }

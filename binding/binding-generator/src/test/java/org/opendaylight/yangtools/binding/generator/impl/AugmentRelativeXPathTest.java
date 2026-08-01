@@ -51,7 +51,7 @@ class AugmentRelativeXPathTest {
 
                 final var gtInterfaceMethods = gtInterface.getMethodDefinitions();
                 assertNotNull(gtInterfaceMethods, "Interface methods are null");
-                assertEquals(5, gtInterfaceMethods.size());
+                assertEquals(4, gtInterfaceMethods.size());
 
                 assertEquals(JavaTypeName.create(
                     "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
@@ -61,7 +61,7 @@ class AugmentRelativeXPathTest {
 
                 final var tunnelMethods = gtTunnel.getMethodDefinitions();
                 assertNotNull(tunnelMethods, "Tunnel methods are null");
-                assertEquals(3, tunnelMethods.size());
+                assertEquals(2, tunnelMethods.size());
 
                 assertEquals(JavaTypeName.create("""
                     org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.network.links.\

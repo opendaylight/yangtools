@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForNonnull;
 import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForRequire;
@@ -29,9 +29,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
-import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.EntryObject;
-import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
@@ -54,39 +52,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetype> extends ArchetypeTemplate<T>
         permits AugmentableTemplate, AugmentationTemplate, DataRootTemplate, GroupingTemplate, NotificationBodyTemplate,
                 YangDataTemplate {
-
-    enum Shape {
-        /**
-         * The shape of a {@link Grouping}: narrows implemented interface, no augmentations, no
-         * equals/hashCode/toString.
-         */
-        GROUPING(false, false, false),
-        /**
-         * The shape of an {@link Augmentation}: provides implemented interface, no augmentations, provides
-         * equals/hashCode/toString.
-         */
-        AUGMENTATION(true, false, true),
-        /**
-         * The shape of a {@link EntryObject}: provides everyting.
-         */
-        ENTRY_OBJECT(true, true, true),
-        /**
-         * The shape of a {@link DataRoot}: provides implemented interface, but nothing else.
-         */
-        @Deprecated
-        DATA_ROOT(true, false, false);
-
-        boolean concrete;
-        boolean augmentable;
-        boolean contract;
-
-        Shape(final boolean concrete, final boolean augmentable, final boolean contract) {
-            this.concrete = concrete;
-            this.augmentable = augmentable;
-            this.contract = contract;
-        }
-    }
-
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
 
@@ -97,18 +62,17 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         JavaTypeName.create(Augmentation.class),
         JavaTypeName.create(EntryObject.class));
 
-    // implies default implementedInterface, on false just narrowed
-    //    private final boolean concrete;
+    private final @NonNull DataContainerContract contract;
     private final boolean augmentable;
-    private final boolean contract;
 
     private @Nullable TypeAnalysis typeAnalysis;
 
     @NonNullByDefault
-    InterfaceTemplate(final T archetype, final DataRootArchetype root, final Shape shape) {
+    InterfaceTemplate(final T archetype, final DataRootArchetype root, final DataContainerContract contract,
+            final boolean augmentable) {
         super(GeneratedClass.of(archetype), archetype, root);
-        augmentable = shape.augmentable;
-        contract = shape.contract;
+        this.contract = requireNonNull(contract);
+        this.augmentable = augmentable;
     }
 
     @Nullable DataContainerArchetype builderTarget() {
@@ -192,7 +156,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
 
         return bb
             .blk(generateMethods())
-            .blk(generateJavaDataContainerMethods())
+            .frg(contract.implementationIn(this))
             .cB();
     }
 
@@ -235,19 +199,6 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
             case ContainerLikeCompat compat -> requireEffective(compat.delegate());
             default -> throw new VerifyException("Unsupported node " + node);
         };
-    }
-
-    final @NonNull BlockBuilder generateDefaultImplementedInterface() {
-        // Note: we cannot use importedName() or short name due to shadowing explained in MDSAL-365
-        // FIXME: use selfRef()
-        final var fqcn = archetype.canonicalName();
-
-        return newBlockBuilder()
-            .at().eol(importedName(OVERRIDE))
-            .str("default ").gen(importedName(CLASS), fqcn)
-                .str(" " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "()").oB()
-                .str("return ").str(fqcn).eol(".class;")
-                .cB();
     }
 
     @Nullable BlockBuilder generateMethods() {
@@ -346,13 +297,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         if (isRequireMethodName(methodName)) {
             return generateRequireMethod(method);
         }
-        return switch (methodName) {
-            case BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME -> generateDefaultImplementedInterface();
-            default ->
-                JavaFileTemplate.VOID.equals(method.getReturnType().name())
-                    ? generateNoopVoidInterfaceMethod(method)
-                    : null;
-        };
+        return VOID.equals(method.getReturnType().name()) ? generateNoopVoidInterfaceMethod(method) : null;
     }
 
     @NonNullByDefault
@@ -421,16 +366,6 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
             .txt(accessorJavadoc(method, ", or an empty instance if it is not present"))
             .blk(generateAnnotations(method))
             .str(importedNonNull(method.getReturnType())).sp().str(method.getName()).eol("();");
-    }
-
-    private @Nullable BlockBuilder generateJavaDataContainerMethods() {
-        return !contract ? null : newBlockBuilder()
-            .nl()
-            .blk(generateBindingHashCode())
-            .nl()
-            .blk(generateBindingEquals())
-            .nl()
-            .blk(generateBindingToString());
     }
 
     @VisibleForTesting
@@ -527,7 +462,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         }
     }
 
-    private @NonNull BlockBuilder generateBindingEquals() {
+    @NonNull BlockBuilder generateBindingEquals() {
         final var props = typeAnalysis().properties();
 
         return newBlockBuilder()

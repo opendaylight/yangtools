@@ -20,6 +20,6 @@ abstract sealed class AugmentableTemplate<T extends AugmentableArchetype> extend
         permits CaseObjectTemplate, ChildOfTemplate, InstanceNotificationTemplate, KeyedListNotificationTemplate,
                 NotificationTemplate, RpcInputTemplate, RpcOutputTemplate {
     AugmentableTemplate(final T archetype, final DataRootArchetype root) {
-        super(archetype, root, Shape.ENTRY_OBJECT);
+        super(archetype, root, DataContainerContract.JAVA, true);
     }
 }

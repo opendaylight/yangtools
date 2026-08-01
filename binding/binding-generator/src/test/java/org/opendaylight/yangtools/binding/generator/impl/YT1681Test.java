@@ -108,7 +108,7 @@ class YT1681Test {
             .map(ItemObjectArchetype.class::cast)
             .orElseThrow()
             .getMethodDefinitions();
-        assertEquals(11, neighborMethods.size());
+        assertEquals(10, neighborMethods.size());
 
         final var getNeighborId = neighborMethods.stream()
             .filter(method -> method.getName().equals("getNeighborId"))
