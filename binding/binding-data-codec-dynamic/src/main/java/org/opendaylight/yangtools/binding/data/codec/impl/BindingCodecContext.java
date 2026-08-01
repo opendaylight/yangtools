@@ -271,6 +271,8 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public ActionCodecContext load(final Class<? extends Action<?, ?, ?>> action) {
+                requireNonNull(action);
+
                 final Type input;
                 final Type output;
                 if (KeyedListAction.class.isAssignableFrom(action)) {
@@ -285,15 +287,18 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     throw new IllegalArgumentException(
                         "The specific action type does not exist for action " + action.getName());
                 }
-                return prepareActionContext(input, output, context.getActionDefinition(action));
+
+                final var runtimeType = context.getActionDefinition(action);
+                if (runtimeType == null) {
+                    throw new IllegalStateException("Schema for " + action + "  not found");
+                }
+
+                return prepareActionContext(input, output, runtimeType);
             }
 
             @SuppressWarnings({ "rawtypes", "unchecked" })
             private ActionCodecContext prepareActionContext(final Type input, final Type output,
-                    final @Nullable OperationRuntimeType schema) {
-                if (schema == null) {
-                    throw new IllegalStateException("Schema not found");
-                }
+                    final OperationRuntimeType schema) {
                 return new ActionCodecContext(
                     new ContainerLikeCodecContext(asClass(input, RpcInput.class), schema.input(),
                         BindingCodecContext.this),
@@ -329,12 +334,12 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             @Override
             public NotificationCodecContext<?> load(final Class<?> key) {
                 final var runtimeType = context.getTypes().bindingChild(JavaTypeName.create(key));
-                if (runtimeType instanceof NotificationRuntimeType notification) {
-                    return new NotificationCodecContext<>(key, notification, BindingCodecContext.this);
-                } if (runtimeType != null) {
-                    throw new IllegalArgumentException(key + " maps to unexpected " + runtimeType);
-                }
-                throw new IllegalArgumentException(key + " is not a known class");
+                return switch (runtimeType) {
+                    case null -> throw new IllegalArgumentException(key + " is not a known class");
+                    case NotificationRuntimeType notification ->
+                        new NotificationCodecContext<>(key, notification, BindingCodecContext.this);
+                    default -> throw new IllegalArgumentException(key + " maps to unexpected " + runtimeType);
+                };
             }
         });
     private final LoadingCache<Absolute, NotificationCodecContext<?>> notificationsByPath =
@@ -375,7 +380,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             public ContainerLikeCodecContext<?> load(final Absolute key) {
                 final var rpcName = key.firstNodeIdentifier();
 
-                final Class<? extends DataContainer> container = switch (key.lastNodeIdentifier().getLocalName()) {
+                final var container = switch (key.lastNodeIdentifier().getLocalName()) {
                     case "input" -> context.getRpcInput(rpcName);
                     case "output" -> context.getRpcOutput(rpcName);
                     default -> throw new IllegalArgumentException("Unhandled path " + key);
