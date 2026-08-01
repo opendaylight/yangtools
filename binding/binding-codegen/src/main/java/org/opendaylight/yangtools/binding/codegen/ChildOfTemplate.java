@@ -31,8 +31,7 @@ abstract sealed class ChildOfTemplate<T extends ChildOfArchetype> extends Augmen
     final Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
             Iterators.singletonIterator(BindingTypes.childOf(TypeRef.of(archetype.parentName()))),
-            super.extendsTypes(),
-            extendsAfterChildOf());
+            extendsAfterChildOf(), super.extendsTypes());
     }
 
     Iterator<? extends Type> extendsAfterChildOf() {

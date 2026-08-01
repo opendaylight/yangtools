@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ChildOf;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 /**
@@ -26,7 +25,6 @@ public sealed interface ContainerObjectArchetype extends ChildOfArchetype permit
         private Builder(final JavaTypeName typeName, final ContainerEffectiveStatement statement,
                 final JavaTypeName parentName) {
             super(typeName, statement, parentName);
-            addImplementsType(BindingTypes.augmentable(TypeRef.of(typeName)));
         }
 
         @Override

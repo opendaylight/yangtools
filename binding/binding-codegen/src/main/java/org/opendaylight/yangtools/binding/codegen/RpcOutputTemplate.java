@@ -49,7 +49,9 @@ final class RpcOutputTemplate extends AugmentableTemplate<RpcOutputArchetype> {
 
     @Override
     Iterator<? extends Type> extendsTypes() {
-        return Iterators.concat(Iterators.singletonIterator(RPC_OUTPUT), super.extendsTypes());
+        return Iterators.concat(
+            Iterators.forArray(RPC_OUTPUT, extendsAugmentable()),
+            super.extendsTypes());
     }
 
     @Override

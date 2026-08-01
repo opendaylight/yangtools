@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Notification;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
@@ -26,7 +25,6 @@ public sealed interface NotificationArchetype extends DataContainerArchetype.OfN
     final class Builder extends DataContainerArchetypeBuilder<Builder, NotificationEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement) {
             super(typeName, statement);
-            addImplementsType(BindingTypes.augmentable(TypeRef.of(typeName)));
         }
 
         @Override

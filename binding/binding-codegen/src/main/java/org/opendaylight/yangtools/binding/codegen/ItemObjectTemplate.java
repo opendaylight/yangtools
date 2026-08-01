@@ -9,10 +9,14 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.Iterators;
+import java.util.Iterator;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
  * Template for {@link DataObject} specializations generated for {@link list} statements without a {@code key}
@@ -34,6 +38,16 @@ final class ItemObjectTemplate extends ChildOfTemplate<ItemObjectArchetype> {
 
     private ItemObjectTemplate(final ItemObjectArchetype archetype, final DataRootArchetype root) {
         super(archetype, root);
+    }
+
+    @Override
+    @NonNull ItemObjectArchetype builderTarget() {
+        return archetype;
+    }
+
+    @Override
+    Iterator<? extends Type> extendsAfterChildOf() {
+        return Iterators.singletonIterator(extendsAugmentable());
     }
 
     @Override

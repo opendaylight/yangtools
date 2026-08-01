@@ -12,31 +12,18 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 
 class BindingTypesTest {
     @Test
     void staticBindingTypesTest() {
-        assertEquals(ConcreteType.ofClass(Augmentable.class), BindingTypes.AUGMENTABLE);
         assertEquals(ConcreteType.ofClass(Augmentation.class), BindingTypes.AUGMENTATION);
-    }
-
-    @Test
-    void testAugmentableNull() {
-        assertThrows(NullPointerException.class, () -> BindingTypes.augmentable(null));
     }
 
     @Test
     void testChildOfNull() {
         assertThrows(NullPointerException.class, () -> BindingTypes.childOf(null));
-    }
-
-    @Test
-    void testAugmentable() {
-        final var augmentableType = BindingTypes.augmentable(Types.objectType());
-        assertEquals("Augmentable", augmentableType.simpleName());
     }
 
     @Test
