@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 
 /**
@@ -29,6 +30,7 @@ public sealed interface CaseObjectArchetype extends AugmentableArchetype permits
                 final ChoiceInArchetype choice) {
             super(typeName, statement);
             this.choice = requireNonNull(choice);
+            addImplementsType(BindingTypes.augmentable(TypeRef.of(typeName)));
         }
 
         @Override

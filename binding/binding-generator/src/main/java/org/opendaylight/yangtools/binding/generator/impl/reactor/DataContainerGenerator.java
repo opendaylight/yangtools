@@ -468,11 +468,6 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
     }
 
     @NonNullByDefault
-    static final void addAugmentable(final DataContainerArchetype.Builder builder) {
-        builder.addImplementsType(BindingTypes.augmentable(builder.typeRef()));
-    }
-
-    @NonNullByDefault
     final void addGetterMethods(final DataContainerArchetype.Builder builder) {
         for (var child : this) {
             // Only process explicit generators here
