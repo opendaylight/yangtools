@@ -24,7 +24,6 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.lang.reflect.WildcardType;
 import java.nio.file.Path;
 import java.time.Instant;
@@ -53,7 +52,6 @@ import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.KeyedListAction;
 import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.OpaqueObject;
 import org.opendaylight.yangtools.binding.RpcInput;
@@ -88,7 +86,6 @@ import org.opendaylight.yangtools.binding.runtime.api.DataRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.InputRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
-import org.opendaylight.yangtools.binding.runtime.api.OperationRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.OutputRuntimeType;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -130,6 +127,13 @@ import org.slf4j.LoggerFactory;
 public final class BindingCodecContext extends AbstractBindingNormalizedNodeSerializer
         implements DynamicBindingDataCodec, CodecContextFactory, DataContainerSerializerRegistry, Immutable,
                    BindingDOMCodecServices {
+    private record CachedAction(ContainerLikeCodecContext<?> input, ContainerLikeCodecContext<?> output) {
+        CachedAction {
+            requireNonNull(input);
+            requireNonNull(output);
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(BindingCodecContext.class);
     private static final @NonNull NodeIdentifier FAKE_NODEID = new NodeIdentifier(QName.create("fake", "fake"));
     private static final BindingClassLoader.@NonNull Builder BCL_BUILDER;
@@ -267,65 +271,17 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             }
         });
 
-    private final LoadingCache<Class<? extends Action<?, ?, ?>>, ActionCodecContext> actionsByClass =
+    private final LoadingCache<Class<? extends Action<?, ?, ?>>, CachedAction> actionsByClass =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
-            public ActionCodecContext load(final Class<? extends Action<?, ?, ?>> action) {
-                requireNonNull(action);
-
-                final Type input;
-                final Type output;
-                if (KeyedListAction.class.isAssignableFrom(action)) {
-                    final var args = validateActionClass(4, action, KeyedListAction.class);
-                    input = args[2];
-                    output = args[3];
-                } else if (Action.class.isAssignableFrom(action)) {
-                    final var args = validateActionClass(3, action, Action.class);
-                    input = args[1];
-                    output = args[2];
-                } else {
-                    throw new IllegalArgumentException(
-                        "The specific action type does not exist for action " + action.getName());
-                }
-
-                final var runtimeType = context.getActionDefinition(action);
+            public CachedAction load(final Class<? extends Action<?, ?, ?>> action) throws Exception {
+                final var runtimeType = context.getActionDefinition(requireNonNull(action));
                 if (runtimeType == null) {
                     throw new IllegalStateException("Schema for " + action + "  not found");
                 }
-
-                return prepareActionContext(input, output, runtimeType);
-            }
-
-            @SuppressWarnings({ "rawtypes", "unchecked" })
-            private ActionCodecContext prepareActionContext(final Type input, final Type output,
-                    final OperationRuntimeType schema) {
-                return new ActionCodecContext(
-                    new ContainerLikeCodecContext(asClass(input, RpcInput.class), schema.input(),
-                        BindingCodecContext.this),
-                    new ContainerLikeCodecContext(asClass(output, RpcOutput.class), schema.output(),
-                        BindingCodecContext.this));
-            }
-
-            private static <T extends DataObject> Class<? extends T> asClass(final Type type, final Class<T> target) {
-                if (type instanceof Class<?> typeClazz) {
-                    return typeClazz.asSubclass(target);
-                }
-                throw new VerifyException("Type " + type + " is not a class");
-            }
-
-            private static Type[] validateActionClass(final int expectedArgsLength,
-                    final Class<? extends Action<?, ?, ?>> action, final Class<?> actionType) {
-                for (var type : action.getGenericInterfaces()) {
-                    if (type instanceof ParameterizedType ptype && actionType.equals(ptype.getRawType())) {
-                        final var args = ptype.getActualTypeArguments();
-                        if (args.length == expectedArgsLength) {
-                            return args;
-                        }
-                        throw new IllegalArgumentException(
-                            "Unexpected (" + args.length + ") Action generatic arguments");
-                    }
-                }
-                throw new IllegalStateException(action + " does not specialize " + actionType);
+                final var archetype = runtimeType.javaType();
+                return new CachedAction(rpcDataByClass.get(context.loadClass(archetype.input())),
+                    rpcDataByClass.get(context.loadClass(archetype.output())));
             }
         });
 
@@ -364,12 +320,12 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                     throw new IllegalArgumentException(key + " is not a known class");
                 }
                 if (RpcInput.class.isAssignableFrom(key) && runtimeType instanceof InputRuntimeType input) {
-                    // FIXME: accurate type
-                    return new ContainerLikeCodecContext(key, input, BindingCodecContext.this);
+                    return new ContainerLikeCodecContext<>(key.asSubclass(RpcInput.class), input,
+                        BindingCodecContext.this);
                 }
                 if (RpcOutput.class.isAssignableFrom(key) && runtimeType instanceof OutputRuntimeType output) {
-                    // FIXME: accurate type
-                    return new ContainerLikeCodecContext(key, output, BindingCodecContext.this);
+                    return new ContainerLikeCodecContext<>(key.asSubclass(RpcOutput.class), output,
+                        BindingCodecContext.this);
                 }
                 throw new IllegalArgumentException(key + " maps to unexpected " + runtimeType);
             }
@@ -701,15 +657,15 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         return getOrRethrow(notificationsByClass, notification);
     }
 
-    ContainerLikeCodecContext<?> getRpc(final Class<? extends DataContainer> rpcInputOrOutput) {
+    private ContainerLikeCodecContext<?> getRpc(final Class<? extends DataContainer> rpcInputOrOutput) {
         return getOrRethrow(rpcDataByClass, rpcInputOrOutput);
     }
 
-    ContainerLikeCodecContext<?> getRpcInputCodec(final Absolute containerPath) {
+    private ContainerLikeCodecContext<?> getRpcInputCodec(final Absolute containerPath) {
         return getOrRethrow(rpcDataByPath, containerPath);
     }
 
-    ActionCodecContext getActionCodec(final Class<? extends Action<?, ?, ?>> action) {
+    private CachedAction getActionCodec(final Class<? extends Action<?, ?, ?>> action) {
         return getOrRethrow(actionsByClass, action);
     }
 
@@ -734,6 +690,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         map.put(BindingSchemaMapping.getGetterMethodName(leaf), leaf);
     }
 
+    // FIXME: replace this bit with analysis DataContainerArchetype
     private ImmutableMap<Method, ValueNodeCodecContext> getLeafNodesUsingReflection(
             final Class<?> parentClass, final Map<String, DataSchemaNode> getterToLeafSchema) {
         final var leaves = new HashMap<Method, ValueNodeCodecContext>();
