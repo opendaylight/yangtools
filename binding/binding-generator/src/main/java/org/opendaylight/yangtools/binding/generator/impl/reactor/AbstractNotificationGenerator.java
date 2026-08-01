@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationR
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -57,7 +58,7 @@ abstract sealed class AbstractNotificationGenerator
         NotificationEffectiveStatement statement);
 
     @Override
-    final void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
+    final void addAsGetterMethod(final List<MethodSignature> list) {
         // Notifications are a distinct concept
     }
 
