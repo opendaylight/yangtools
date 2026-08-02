@@ -20,14 +20,15 @@ record ItemObjectArchetypeImpl(
         ListEffectiveStatement statement,
         JavaTypeName parentName,
         List<Type> implementsTypes,
-        List<MethodSignature> methodSignatures,
-        List<Archetype> enclosedTypes) implements ItemObjectArchetype {
+        List<TypeObjectArchetype<?>> typeObjects,
+        List<MethodSignature> methodSignatures) implements ItemObjectArchetype {
     ItemObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
+        requireNonNull(parentName);
         requireNonNull(implementsTypes);
+        requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-        requireNonNull(enclosedTypes);
     }
 
     @Override

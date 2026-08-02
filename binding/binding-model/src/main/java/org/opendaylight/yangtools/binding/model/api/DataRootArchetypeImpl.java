@@ -23,14 +23,14 @@ record DataRootArchetypeImpl(
         JavaTypeName name,
         ModuleEffectiveStatement statement,
         List<Type> getImplements,
-        List<MethodSignature> getMethodDefinitions,
-        List<Archetype> enclosedTypes) implements DataRootArchetype {
+        List<TypeObjectArchetype<?>> typeObjects,
+        List<MethodSignature> getMethodDefinitions) implements DataRootArchetype {
     DataRootArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(getImplements);
+        requireNonNull(typeObjects);
         requireNonNull(getMethodDefinitions);
-        requireNonNull(enclosedTypes);
     }
 
     @Override

@@ -20,15 +20,15 @@ record KeyedListNotificationArchetypeImpl(
         NotificationEffectiveStatement statement,
         JavaTypeName parentName,
         List<Type> implementsTypes,
-        List<MethodSignature> methodSignatures,
-        List<Archetype> enclosedTypes) implements KeyedListNotificationArchetype {
+        List<TypeObjectArchetype<?>> typeObjects,
+        List<MethodSignature> methodSignatures) implements KeyedListNotificationArchetype {
     KeyedListNotificationArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(parentName);
         requireNonNull(implementsTypes);
+        requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-        requireNonNull(enclosedTypes);
     }
 
     @Override

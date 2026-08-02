@@ -19,14 +19,14 @@ record RpcInputArchetypeImpl(
         JavaTypeName name,
         InputEffectiveStatement statement,
         List<Type> implementsTypes,
-        List<MethodSignature> methodSignatures,
-        List<Archetype> enclosedTypes) implements RpcInputArchetype {
+        List<TypeObjectArchetype<?>> typeObjects,
+        List<MethodSignature> methodSignatures) implements RpcInputArchetype {
     RpcInputArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(implementsTypes);
+        requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-        requireNonNull(enclosedTypes);
     }
 
     @Override
