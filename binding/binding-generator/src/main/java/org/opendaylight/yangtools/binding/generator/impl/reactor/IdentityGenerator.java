@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultIdentityRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.IdentityRuntimeType;
@@ -79,10 +78,5 @@ public final class IdentityGenerator
             final IdentityEffectiveStatement statement, final Type type) {
         // 'identity' statements are not part of schema tree and hence should never an internal reference
         throw new UnsupportedOperationException("Should never be called");
-    }
-
-    @Override
-    void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
-        // identities are a separate concept
     }
 }
