@@ -156,8 +156,8 @@ public abstract sealed class AugmentGenerator
         }
 
         final var builder = AugmentationArchetype.builder(typeName(), statement(), target);
-        addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
+        addUsesInterfaces(builder);
         addGetterMethods(builder);
         return builder.build();
     }

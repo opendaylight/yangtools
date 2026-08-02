@@ -46,8 +46,8 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     @Override
     ContainerObjectArchetype createTypeImpl() {
         final var builder = ContainerObjectArchetype.builder(typeName(), statement(), parentNameForChildOf());
-        addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
+        addUsesInterfaces(builder);
         addGetterMethods(builder);
         return builder.build();
     }

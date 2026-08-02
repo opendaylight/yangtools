@@ -43,8 +43,8 @@ final class OutputGenerator
     @Override
     RpcOutputArchetype createTypeImpl(final JavaTypeName typeName, final OutputEffectiveStatement statement) {
         final var builder = RpcOutputArchetype.builder(typeName, statement);
-        addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
+        addUsesInterfaces(builder);
         addGetterMethods(builder);
         return builder.build();
     }

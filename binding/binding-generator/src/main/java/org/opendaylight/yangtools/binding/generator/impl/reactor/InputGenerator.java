@@ -45,8 +45,8 @@ final class InputGenerator
     @Override
     RpcInputArchetype createTypeImpl(final JavaTypeName typeName, final InputEffectiveStatement statement) {
         final var builder = RpcInputArchetype.builder(typeName, statement);
-        addUsesInterfaces(builder);
         addConcreteInterfaceMethods(builder);
+        addUsesInterfaces(builder);
         addGetterMethods(builder);
         return builder.build();
     }
