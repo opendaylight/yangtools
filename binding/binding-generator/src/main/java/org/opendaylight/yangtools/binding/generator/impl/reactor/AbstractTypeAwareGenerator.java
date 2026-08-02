@@ -76,6 +76,6 @@ abstract class AbstractTypeAwareGenerator<
 
     @Override
     final void constructRequire(final DataContainerArchetype.Builder builder, final Type returnType) {
-        constructRequireImpl(builder, returnType);
+        constructRequire(builder, statement(), returnType);
     }
 }

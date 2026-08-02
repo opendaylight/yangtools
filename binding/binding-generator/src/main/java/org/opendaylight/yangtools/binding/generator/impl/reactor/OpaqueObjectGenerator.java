@@ -116,7 +116,7 @@ abstract class OpaqueObjectGenerator<
 
     @Override
     void constructRequire(final DataContainerArchetype.Builder builder, final Type returnType) {
-        constructRequireImpl(builder, returnType);
+        constructRequire(builder, statement(), returnType);
     }
 
     @Override

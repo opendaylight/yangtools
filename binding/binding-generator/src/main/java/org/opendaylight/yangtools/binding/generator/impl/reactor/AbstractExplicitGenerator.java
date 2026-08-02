@@ -350,12 +350,12 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
 
     @NonNullByDefault
     MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder, final Type returnType) {
-        return constructGetter(builder, returnType, Naming.getGetterMethodName(localName().getLocalName()));
+        return constructGetter(builder, statement, returnType, Naming.getGetterMethodName(localName().getLocalName()));
     }
 
     @NonNullByDefault
-    final MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder,
-            final Type returnType, final String methodName) {
+    static final MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder,
+            final EffectiveStatement<?, ?> statement, final Type returnType, final String methodName) {
         final var mb = builder.addMethod(methodName)
             .setReturnType(returnType);
         addDeprecatedAnnotation(mb, statement);
@@ -370,9 +370,10 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         // No-op in most cases
     }
 
-    @NonNullByDefault
-    final void constructRequireImpl(final DataContainerArchetype.Builder builder, final Type returnType) {
-        constructGetter(builder, returnType, Naming.getRequireMethodName(localName().getLocalName()))
+    static final void constructRequire(final DataContainerArchetype.@NonNull Builder builder,
+            final @NonNull EffectiveStatement<QName, ?> statement, final @NonNull Type returnType) {
+        constructGetter(builder, statement, returnType,
+            Naming.getRequireMethodName(statement.argument().getLocalName()))
             .setDefault(true)
             .setMechanics(ValueMechanics.NONNULL);
     }
