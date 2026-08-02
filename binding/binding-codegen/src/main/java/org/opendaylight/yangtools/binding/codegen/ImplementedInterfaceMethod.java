@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.JavaFileTemplate.CLASS;
-import static org.opendaylight.yangtools.binding.codegen.JavaFileTemplate.OVERRIDE;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.CLASS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;

@@ -8,6 +8,12 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.NSEE;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.VOID;
 import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForNonnull;
 import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForRequire;

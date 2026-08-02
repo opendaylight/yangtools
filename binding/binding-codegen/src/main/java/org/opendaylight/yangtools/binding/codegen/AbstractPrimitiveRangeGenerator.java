@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.JavaFileTemplate.CODEHELPERS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 
 import com.google.common.collect.Range;
 import java.util.ArrayList;

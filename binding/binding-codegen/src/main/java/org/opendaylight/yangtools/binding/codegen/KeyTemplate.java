@@ -8,6 +8,11 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.OBJECT;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.base.VerifyException;

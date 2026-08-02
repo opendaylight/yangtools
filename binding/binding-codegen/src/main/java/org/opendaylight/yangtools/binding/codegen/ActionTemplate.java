@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.LISTENABLE_FUTURE;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.RPC_RESULT;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;

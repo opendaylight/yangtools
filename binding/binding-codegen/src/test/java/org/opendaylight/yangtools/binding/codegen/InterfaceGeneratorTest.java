@@ -20,7 +20,6 @@ import org.assertj.core.api.AbstractStringAssert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 
 class InterfaceGeneratorTest extends BaseCompilationTest {
     private static Path SOURCES;
@@ -46,9 +45,6 @@ class InterfaceGeneratorTest extends BaseCompilationTest {
         assertNotNull(file, name + " not found");
         return assertThat(assertDoesNotThrow(() -> Files.readString(file)));
     }
-
-    private static final String TEST = "test";
-    private static final JavaTypeName TYPE_NAME = JavaTypeName.create(TEST, TEST);
 
     @Test
     void builderTemplateDeprecatedListenerMethodTest() {

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_SUFFIX;

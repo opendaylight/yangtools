@@ -8,6 +8,10 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.IAE;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.NPE;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EnumTypeObject;

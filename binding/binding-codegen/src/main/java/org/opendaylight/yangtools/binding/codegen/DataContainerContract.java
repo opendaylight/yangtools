@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.CLASS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -37,10 +39,9 @@ enum DataContainerContract {
         BlockFragment implementationIn(final InterfaceTemplate<?> template) {
             return bb -> bb
                 .nl()
-                .at().eol(template.importedName(InterfaceTemplate.OVERRIDE))
+                .at().eol(template.importedName(OVERRIDE))
                 // FIXME: use selfRef instead of canonical name
-                .str(template.importedName(InterfaceTemplate.CLASS)).str("<? extends ")
-                    .str(template.archetype.canonicalName())
+                .str(template.importedName(CLASS)).str("<? extends ").str(template.archetype.canonicalName())
                     .eol("> " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "();");
         }
     },

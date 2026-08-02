@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static org.opendaylight.yangtools.binding.codegen.JavaFileTemplate.CODEHELPERS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 
 import com.google.common.collect.Range;
 import org.eclipse.jdt.annotation.NonNull;

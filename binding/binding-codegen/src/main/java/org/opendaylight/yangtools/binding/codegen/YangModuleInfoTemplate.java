@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.GENERATED;
 import static org.opendaylight.yangtools.binding.contract.Naming.PACKAGE_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.getClassName;
 import static org.opendaylight.yangtools.binding.contract.Naming.getModelRootPackageName;
@@ -282,7 +283,7 @@ public final class YangModuleInfoTemplate {
                 + "} module. This class should not be used\n"
             +  " * directly, but rather through {@link ServiceLoader}.\n"
             +  " */\n"
-            +  '@' + JavaFileTemplate.GENERATED + "(\"mdsal-binding-generator\")\n"
+            +  '@' + GENERATED + "(\"mdsal-binding-generator\")\n"
             +  "public final class " + MODEL_BINDING_PROVIDER_CLASS_NAME + " implements YangModelBindingProvider {\n"
             +  """
                     /**

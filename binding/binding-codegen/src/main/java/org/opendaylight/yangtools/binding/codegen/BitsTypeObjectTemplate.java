@@ -8,6 +8,10 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.DEPRECATED;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.contract.Naming.getPropertyName;
 import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 

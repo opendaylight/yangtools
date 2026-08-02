@@ -8,24 +8,27 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.GENERATED;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.NONNULL;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.NULLABLE;
+import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
+import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX;
+import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX;
+import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
+import static org.opendaylight.yangtools.binding.contract.Naming.isNonnullMethodName;
+import static org.opendaylight.yangtools.binding.contract.Naming.isRequireMethodName;
+import static org.opendaylight.yangtools.binding.contract.Naming.toFirstLower;
 
 import com.google.common.base.CharMatcher;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.regex.Pattern;
-import javax.annotation.processing.Generated;
-import javax.management.ConstructorParameters;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.lib.CodeHelpers;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -39,99 +42,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * Base Java file template. Contains a non-null type and imports which the generated code refers to.
  */
 abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
-    /**
-     * {@code java.lang.Class} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName CLASS = JavaTypeName.create(Class.class);
-    /**
-     * {@code java.lang.Deprecated} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName DEPRECATED = JavaTypeName.create(Deprecated.class);
-    /**
-     * {@code java.lang.IllegalArgumentException} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName IAE = JavaTypeName.create(IllegalArgumentException.class);
-    /**
-     * {@code java.lang.NullPointerException} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName NPE = JavaTypeName.create(NullPointerException.class);
-    /**
-     * {@code java.lang.NoSuchElementException} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName NSEE = JavaTypeName.create(NoSuchElementException.class);
-    /**
-     * {@code java.lang.Object} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName OBJECT = JavaTypeName.create(Object.class);
-    /**
-     * {@code java.lang.Override} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName OVERRIDE = JavaTypeName.create(Override.class);
-    /**
-     * {@code java.lang.void} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName SUPPRESS_WARNINGS = JavaTypeName.create(SuppressWarnings.class);
-    /**
-     * {@code java.lang.SuppressWarnings} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName VOID = JavaTypeName.create(void.class);
-
-    /**
-     * {@code java.util.Arrays} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName JU_ARRAYS = JavaTypeName.create(Arrays.class);
-    /**
-     * {@code java.util.HashMap} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName JU_BASE64 = JavaTypeName.create(Base64.class);
-    /**
-     * {@code java.util.HashMap} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName JU_HASHMAP = JavaTypeName.create(HashMap.class);
-    /**
-     * {@code java.util.List} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName JU_LIST = JavaTypeName.create(List.class);
-    /**
-     * {@code java.util.Map} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName JU_MAP = JavaTypeName.create(Map.class);
-    /**
-     * {@code java.util.Objects} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName JU_OBJECTS = JavaTypeName.create(Objects.class);
-    /**
-     * {@code java.util.regex.Pattern} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName JUR_PATTERN = JavaTypeName.create(Pattern.class);
-
-    /**
-     * {@code javax.annotation.processing.Generated} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName GENERATED = JavaTypeName.create(Generated.class);
-
-    /**
-     * {@code javax.management.ConstructorParameters} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName CONSTRUCTOR_PARAMETERS = JavaTypeName.create(ConstructorParameters.class);
-
-    /**
-     * {@code org.eclipse.jdt.annotation.NonNull} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName NONNULL = JavaTypeName.create(NonNull.class);
-    /**
-     * {@code org.eclipse.jdt.annotation.NonNullByDefault} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName NONNULL_BY_DEFAULT = JavaTypeName.create(NonNullByDefault.class);
-    /**
-     * {@code org.eclipse.jdt.annotation.Nullable} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName NULLABLE = JavaTypeName.create(Nullable.class);
-
-    /**
-     * {@code org.opendaylight.yangtools.binding.lib.CodeHelpers} as a JavaTypeName.
-     */
-    static final @NonNull JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
 
     private static final CharMatcher AMP_MATCHER = CharMatcher.is('&');
     private static final Pattern TAIL_COMMENT_PATTERN = Pattern.compile("*/", Pattern.LITERAL);
@@ -266,7 +176,7 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
             final @NonNull String implMethodName) {
         for (var method : methods) {
             final var methodName = method.getName();
-            if (Naming.isGetterMethodName(methodName) && isSameProperty(method.getName(), implMethodName)) {
+            if (isGetterMethodName(methodName) && isSameProperty(method.getName(), implMethodName)) {
                 return method;
             }
         }
@@ -279,16 +189,16 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
 
     static final @NonNull String propertyNameFromGetter(final String getterName) {
         final String prefix;
-        if (Naming.isGetterMethodName(getterName)) {
-            prefix = Naming.GETTER_PREFIX;
-        } else if (Naming.isNonnullMethodName(getterName)) {
-            prefix = Naming.NONNULL_PREFIX;
-        } else if (Naming.isRequireMethodName(getterName)) {
-            prefix = Naming.REQUIRE_PREFIX;
+        if (isGetterMethodName(getterName)) {
+            prefix = GETTER_PREFIX;
+        } else if (isNonnullMethodName(getterName)) {
+            prefix = NONNULL_PREFIX;
+        } else if (isRequireMethodName(getterName)) {
+            prefix = REQUIRE_PREFIX;
         } else {
             throw new IllegalArgumentException(getterName + " is not a getter");
         }
-        return Naming.toFirstLower(getterName.substring(prefix.length()));
+        return toFirstLower(getterName.substring(prefix.length()));
     }
 
     /**

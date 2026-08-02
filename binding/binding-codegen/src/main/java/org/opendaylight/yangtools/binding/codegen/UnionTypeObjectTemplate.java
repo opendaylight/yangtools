@@ -8,6 +8,10 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_BASE64;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
