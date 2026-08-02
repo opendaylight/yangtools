@@ -15,24 +15,16 @@ import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresentation;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
-import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,8 +33,10 @@ import org.slf4j.LoggerFactory;
  * An explicit {@link Generator}, associated with a particular {@link EffectiveStatement}.
  */
 // FIXME: unify this with Generator
-public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, ?>, R extends RuntimeType>
-        extends Generator implements CopyableNode, StatementRepresentation<S> {
+public abstract sealed class AbstractExplicitGenerator<S extends EffectiveStatement<?, ?>, R extends RuntimeType>
+        extends Generator implements CopyableNode, StatementRepresentation<@NonNull S>
+        permits AbstractDependentGenerator, DataContainerGenerator, FeatureGenerator, KeyGenerator,
+                OpaqueObjectGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractExplicitGenerator.class);
 
     private final @NonNull S statement;
@@ -308,12 +302,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNull AbstractQName localName() {
-        // FIXME: this should be done in a nicer way
-        final var arg = statement.argument();
-        if (arg instanceof AbstractQName aqn) {
-            return aqn;
-        }
-        throw new VerifyException("Illegal argument " + arg);
+        return DataContainerMethod.localName(statement);
     }
 
     @Override
@@ -326,77 +315,6 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     @Override
     Member createMember(final CollisionDomain domain) {
         return domain.addPrimary(this, new CamelCaseNamingStrategy(namespace(), localName()));
-    }
-
-    @NonNullByDefault
-    void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
-        if (isAugmenting()) {
-            // Do not process augmented nodes: they will be taken care of in their home augmentation
-            return;
-        }
-        if (isAddedByUses()) {
-            // If this generator has been added by a uses node, it is already taken care of by the corresponding
-            // grouping. There is one exception to this rule: 'type leafref' can use a relative path to point
-            // outside of its home grouping. In this case we need to examine the instantiation until we succeed in
-            // resolving the reference.
-            addAsGetterMethodOverride(builder);
-            return;
-        }
-
-        final var returnType = methodReturnType();
-        constructGetter(builder, returnType);
-        constructRequire(builder, returnType);
-    }
-
-    @NonNullByDefault
-    MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder, final Type returnType) {
-        return constructGetter(builder, statement, returnType, Naming.getGetterMethodName(localName().getLocalName()));
-    }
-
-    @NonNullByDefault
-    static final MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder,
-            final EffectiveStatement<?, ?> statement, final Type returnType, final String methodName) {
-        final var mb = builder.addMethod(methodName)
-            .setReturnType(returnType);
-        addDeprecatedAnnotation(mb, statement);
-        statement.findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class)
-            .map(TypeMemberComment::referenceOf)
-            .ifPresent(mb::setComment);
-        return mb;
-    }
-
-    @NonNullByDefault
-    void constructRequire(final DataContainerArchetype.Builder builder, final Type returnType) {
-        // No-op in most cases
-    }
-
-    static final void constructRequire(final DataContainerArchetype.@NonNull Builder builder,
-            final @NonNull EffectiveStatement<QName, ?> statement, final @NonNull Type returnType) {
-        constructGetter(builder, statement, returnType,
-            Naming.getRequireMethodName(statement.argument().getLocalName()))
-            .setDefault(true)
-            .setMechanics(ValueMechanics.NONNULL);
-    }
-
-    @NonNullByDefault
-    void addAsGetterMethodOverride(final DataContainerArchetype.Builder builder) {
-        // No-op for most cases
-    }
-
-    @NonNullByDefault
-    Type methodReturnType() {
-        return getGeneratedType();
-    }
-
-    @NonNullByDefault
-    static final void addDeprecatedAnnotation(final MethodSignature.Builder builder,
-            final EffectiveStatement<?, ?> statement) {
-        if (statement instanceof DocumentedNode.WithStatus withStatus) {
-            final var deprecated = DeprecatedAnnotation.ofStatus(withStatus.getStatus());
-            if (deprecated != null) {
-                builder.addAnnotation(deprecated);
-            }
-        }
     }
 
     @Override

@@ -44,7 +44,7 @@ final class EntryObjectGenerator extends ListGenerator {
     }
 
     @Override
-    ParameterizedType methodReturnType() {
+    public ParameterizedType methodReturnType() {
         final var archetype = getGeneratedType();
         return switch (statement().effectiveOrdering()) {
             case SYSTEM -> Types.mapTypeFor(keyGenerator.getArchetype(), archetype);

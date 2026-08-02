@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import com.google.common.base.VerifyException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnydataRuntimeType;
@@ -29,9 +30,10 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Common generator for {@code anydata} and {@code anyxml}.
  */
-abstract class OpaqueObjectGenerator<
+abstract sealed class OpaqueObjectGenerator<
         S extends DataTreeEffectiveStatement<?> & DataSchemaCompat<QName, ?>,
-        R extends OpaqueRuntimeType> extends AbstractExplicitGenerator<S, R> {
+        R extends OpaqueRuntimeType> extends AbstractExplicitGenerator<S, R>
+        implements DataContainerMethod<@NonNull OpaqueObjectGenerator<?, ?>> {
     @NonNullByDefault
     static final class Anydata extends OpaqueObjectGenerator<AnydataEffectiveStatement, AnydataRuntimeType> {
         Anydata(final AnydataEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
@@ -114,9 +116,20 @@ abstract class OpaqueObjectGenerator<
     @NonNullByDefault
     abstract OpaqueObjectArchetype<S> createTypeImpl(JavaTypeName name, S statement);
 
+
     @Override
-    void constructRequire(final DataContainerArchetype.Builder builder, final Type returnType) {
-        constructRequire(builder, statement(), returnType);
+    public final OpaqueObjectArchetype<S> methodReturnType() {
+        return getArchetype();
+    }
+
+    @Override
+    public final OpaqueObjectGenerator<S, R> thisMethodGenerator() {
+        return this;
+    }
+
+    @Override
+    public final void constructRequire(final DataContainerArchetype.Builder builder, final Type returnType) {
+        DataContainerMethod.constructRequire(builder, statement(), returnType);
     }
 
     @Override
