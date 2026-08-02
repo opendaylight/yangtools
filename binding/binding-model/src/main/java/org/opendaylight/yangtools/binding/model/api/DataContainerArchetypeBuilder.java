@@ -7,12 +7,10 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -40,7 +38,7 @@ abstract sealed class DataContainerArchetypeBuilder<
     final @NonNull JavaTypeName typeName;
     final @NonNull S statement;
 
-    private List<MethodSignature.Builder> methodDefinitions = List.of();
+    private List<MethodSignature> methodDefinitions = List.of();
     private List<@NonNull Archetype> enclosedTypes = List.of();
 
     @NonNullByDefault
@@ -74,11 +72,9 @@ abstract sealed class DataContainerArchetypeBuilder<
     }
 
     @Override
-    public final MethodSignature.Builder addMethod(final String name) {
-        checkArgument(name != null, "Name of method cannot be null!");
-        final var builder = MethodSignature.builder(name);
-        methodDefinitions = LazyCollections.lazyAdd(methodDefinitions, builder);
-        return builder;
+    public final B addMethod(final MethodSignature method) {
+        methodDefinitions = LazyCollections.lazyAdd(methodDefinitions, requireNonNull(method));
+        return thisInstance();
     }
 
     @NonNullByDefault
@@ -86,15 +82,8 @@ abstract sealed class DataContainerArchetypeBuilder<
         final var size = methodDefinitions.size();
         return switch (size) {
             case 0 -> List.of();
-            case 1 -> Collections.singletonList(methodDefinitions.getFirst().build());
-            case 2 -> List.of(methodDefinitions.getFirst().build(), methodDefinitions.getLast().build());
-            default -> {
-                final var tmp = new ArrayList<MethodSignature>(size);
-                for (var builder : methodDefinitions) {
-                    tmp.add(builder.build());
-                }
-                yield List.copyOf(tmp);
-            }
+            case 1 -> Collections.singletonList(methodDefinitions.getFirst());
+            default -> List.copyOf(methodDefinitions);
         };
     }
 

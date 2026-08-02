@@ -45,6 +45,7 @@ public sealed interface DataContainerArchetype extends Archetype
          * {@link IllegalArgumentException}.
          *
          * @param genType the enclosed {@link Archetype}
+         * @return this instance
          */
         Builder addEnclosedType(Archetype genType);
 
@@ -54,10 +55,10 @@ public sealed interface DataContainerArchetype extends Archetype
          * Name of Method cannot be <code>null</code>, if it is <code>null</code> the method SHOULD throw
          * {@link IllegalArgumentException}.<br>
          *
-         * @param name Name of Method
-         * @return <code>new</code> instance of Method Signature Builder.
+         * @param method the {@link MethodSignature}
+         * @return this instance
          */
-        MethodSignature.Builder addMethod(String name);
+        Builder addMethod(MethodSignature method);
 
         /**
          * {@return a new immutable {@link DataContainerArchetype} instance}
