@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
@@ -32,8 +32,8 @@ final class ItemObjectGenerator extends ListGenerator {
     }
 
     @Override
-    Type methodReturnType() {
-        return Types.listTypeFor(super.methodReturnType());
+    public ParameterizedType methodReturnType() {
+        return Types.listTypeFor(getGeneratedType());
     }
 
     @Override
