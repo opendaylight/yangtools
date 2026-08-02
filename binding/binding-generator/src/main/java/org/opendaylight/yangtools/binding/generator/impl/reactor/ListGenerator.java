@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.model.api.ChildOfArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
@@ -28,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  */
 @NonNullByDefault
 abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEffectiveStatement, ListRuntimeType>
+        implements DataContainerMethod<ListGenerator>
         permits EntryObjectGenerator, ItemObjectGenerator {
     ListGenerator(final ListEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
@@ -44,21 +44,29 @@ abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEff
     }
 
     @Override
-    abstract ParameterizedType methodReturnType();
+    public final ListGenerator thisMethodGenerator() {
+        return this;
+    }
+
+    @Override
+    public abstract ParameterizedType methodReturnType();
 
     @Override
     abstract ChildOfArchetype.OfList createTypeImpl(JavaTypeName typeName, ListEffectiveStatement statement,
         List<GroupingArchetype> groupings);
 
     @Override
-    final MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder, final Type returnType) {
-        final var ret = super.constructGetter(builder, returnType).setMechanics(ValueMechanics.NULLIFY_EMPTY);
+    public final MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder,
+            final Type returnType) {
+        final var ret = DataContainerMethod.super.constructGetter(builder, returnType)
+            .setMechanics(ValueMechanics.NULLIFY_EMPTY);
 
+        final var statement = statement();
         final var mb = builder
-            .addMethod(Naming.getNonnullMethodName(localName().getLocalName()))
+            .addMethod(DataContainerMethod.nonnullMethodName(statement))
             .setReturnType(returnType)
             .setDefault(true);
-        addDeprecatedAnnotation(mb, statement());
+        DataContainerMethod.addDeprecatedAnnotation(mb, statement());
 
         return ret;
     }

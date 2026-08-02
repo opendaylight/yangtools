@@ -12,7 +12,6 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.OperationArchetype;
@@ -34,11 +33,6 @@ public abstract sealed class OperationGenerator<
     @Override
     final void pushToInference(final SchemaInferenceStack dataTree) {
         dataTree.enterSchemaTree(statement().argument());
-    }
-
-    @Override
-    final void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
-        // RPCs/Actions are a separate concept
     }
 
     @Override

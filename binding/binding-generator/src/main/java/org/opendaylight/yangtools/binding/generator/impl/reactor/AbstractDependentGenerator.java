@@ -14,8 +14,9 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 /**
  * A simple {@link Generator} which (potentially) has dependencies on other generators.
  */
-abstract class AbstractDependentGenerator<S extends EffectiveStatement<?, ?>, R extends RuntimeType>
-        extends AbstractExplicitGenerator<S, R> {
+abstract sealed class AbstractDependentGenerator<S extends EffectiveStatement<?, ?>, R extends RuntimeType>
+        extends AbstractExplicitGenerator<S, R>
+        permits AbstractTypeObjectGenerator, IdentityGenerator {
     @NonNullByDefault
     AbstractDependentGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);

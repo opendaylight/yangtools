@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultKeyRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.KeyRuntimeType;
@@ -80,10 +79,5 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
             final Type type) {
         // The only reference to this runtime type is from ListGenerator which is always referencing the external type
         throw new UnsupportedOperationException("Should never be called");
-    }
-
-    @Override
-    void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
-        // Keys are explicitly handled by their corresponding list
     }
 }

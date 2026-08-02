@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultContainerRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
@@ -30,7 +29,9 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to a {@code container} statement.
  */
-final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEffectiveStatement, ContainerRuntimeType> {
+final class ContainerGenerator
+        extends CompositeSchemaTreeGenerator<@NonNull ContainerEffectiveStatement, ContainerRuntimeType>
+        implements DataContainerMethod<@NonNull ContainerGenerator> {
     @NonNullByDefault
     ContainerGenerator(final ContainerEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
         super(statement, parent);
@@ -44,6 +45,32 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     @Override
     void pushToInference(final SchemaInferenceStack dataTree) {
         dataTree.enterDataTree(statement().argument());
+    }
+
+    @Override
+    public ContainerGenerator thisMethodGenerator() {
+        return this;
+    }
+
+    @Override
+    public Archetype methodReturnType() {
+        return getGeneratedType();
+    }
+
+    @Override
+    public MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder,
+            final Type returnType) {
+        final var ret = DataContainerMethod.super.constructGetter(builder, returnType)
+            .setMechanics(ValueMechanics.NORMAL);
+        final var statement = statement();
+        if (statement.presenceStatement() == null) {
+            final var mb = builder
+                .addMethod(DataContainerMethod.nonnullMethodName(statement))
+                .setReturnType(returnType)
+                .setDefault(false);
+            DataContainerMethod.addDeprecatedAnnotation(mb, statement);
+        }
+        return ret;
     }
 
     @Override
@@ -64,19 +91,5 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
                 return new DefaultContainerRuntimeType((ContainerObjectArchetype) type, statement, children, augments);
             }
         };
-    }
-
-    @Override
-    MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder, final Type returnType) {
-        final var ret = super.constructGetter(builder, returnType).setMechanics(ValueMechanics.NORMAL);
-        final var statement = statement();
-        if (statement.presenceStatement() == null) {
-            final var mb = builder
-                .addMethod(Naming.getNonnullMethodName(localName().getLocalName()))
-                .setReturnType(returnType)
-                .setDefault(false);
-            addDeprecatedAnnotation(mb, statement);
-        }
-        return ret;
     }
 }
