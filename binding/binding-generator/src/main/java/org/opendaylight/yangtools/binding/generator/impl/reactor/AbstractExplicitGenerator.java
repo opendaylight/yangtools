@@ -356,14 +356,13 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     @NonNullByDefault
     final MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder,
             final Type returnType, final String methodName) {
-        final var getMethod = builder.addMethod(methodName)
-            .setReturnType(returnType)
-            .addAnnotation(deprecatedAnnotation(statement));
-
+        final var mb = builder.addMethod(methodName)
+            .setReturnType(returnType);
+        addDeprecatedAnnotation(mb, statement);
         statement.findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class)
-            .map(TypeMemberComment::referenceOf).ifPresent(getMethod::setComment);
-
-        return getMethod;
+            .map(TypeMemberComment::referenceOf)
+            .ifPresent(mb::setComment);
+        return mb;
     }
 
     @NonNullByDefault
@@ -388,6 +387,17 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         return getGeneratedType();
     }
 
+    @NonNullByDefault
+    static final void addDeprecatedAnnotation(final MethodSignature.Builder builder,
+            final EffectiveStatement<?, ?> statement) {
+        if (statement instanceof DocumentedNode.WithStatus withStatus) {
+            final var deprecated = DeprecatedAnnotation.ofStatus(withStatus.getStatus());
+            if (deprecated != null) {
+                builder.addAnnotation(deprecated);
+            }
+        }
+    }
+
     @Override
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         helper.add("argument", statement.argument());
@@ -407,11 +417,5 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
             return ret;
         }
         throw new VerifyException("Unexpected type " + type);
-    }
-
-    static final @Nullable DeprecatedAnnotation deprecatedAnnotation(
-            final @NonNull EffectiveStatement<?, ?> statement) {
-        return statement instanceof DocumentedNode.WithStatus withStatus
-            ? DeprecatedAnnotation.ofStatus(withStatus.getStatus()) : null;
     }
 }

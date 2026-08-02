@@ -50,11 +50,11 @@ abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEff
     final MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder, final Type returnType) {
         final var ret = super.constructGetter(builder, returnType).setMechanics(ValueMechanics.NULLIFY_EMPTY);
 
-        builder
+        final var mb = builder
             .addMethod(Naming.getNonnullMethodName(localName().getLocalName()))
             .setReturnType(returnType)
-            .setDefault(true)
-            .addAnnotation(deprecatedAnnotation(statement()));
+            .setDefault(true);
+        addDeprecatedAnnotation(mb, statement());
 
         return ret;
     }

@@ -71,11 +71,11 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
         final var ret = super.constructGetter(builder, returnType).setMechanics(ValueMechanics.NORMAL);
         final var statement = statement();
         if (statement.presenceStatement() == null) {
-            builder
+            final var mb = builder
                 .addMethod(Naming.getNonnullMethodName(localName().getLocalName()))
                 .setReturnType(returnType)
-                .setDefault(false)
-                .addAnnotation(deprecatedAnnotation(statement));
+                .setDefault(false);
+            addDeprecatedAnnotation(mb, statement);
         }
         return ret;
     }

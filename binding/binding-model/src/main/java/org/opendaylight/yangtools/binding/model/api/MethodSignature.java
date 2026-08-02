@@ -168,13 +168,12 @@ public interface MethodSignature extends Immutable {
         /**
          * Add an {@link AttachedAnnotation.ToMethod} to this builder.
          *
-         * @param annotation the {@link AttachedAnnotation.ToMethod}, if {@code null} this method does nothing
+         * @param annotation the {@link AttachedAnnotation.ToMethod}
          * @return this instance
          */
-        public @NonNull Builder addAnnotation(final AttachedAnnotation.@Nullable ToMethod annotation) {
-            if (annotation != null) {
-                annotations = addAnnotation(annotations, annotation);
-            }
+        @NonNullByDefault
+        public Builder addAnnotation(final AttachedAnnotation.ToMethod annotation) {
+            annotations = addAnnotation(annotations, requireNonNull(annotation));
             return this;
         }
 

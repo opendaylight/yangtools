@@ -500,9 +500,9 @@ abstract class AbstractTypeObjectGenerator<
         // Note: this may we wrapped for leaf-list, hence we need to deal with that
         final var myType = methodReturnType();
         LOG.trace("Override of {} to {}", this, myType);
-        constructGetter(builder, myType)
-            .addAnnotation(OverrideAnnotation.INSTANCE)
-            .addAnnotation(deprecatedAnnotation(statement()));
+        final var mb = constructGetter(builder, myType)
+            .addAnnotation(OverrideAnnotation.INSTANCE);
+        addDeprecatedAnnotation(mb, statement());
     }
 
     @Override
