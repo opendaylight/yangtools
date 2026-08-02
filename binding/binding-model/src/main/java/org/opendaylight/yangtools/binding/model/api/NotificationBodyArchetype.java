@@ -17,40 +17,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  *
  * @since 16.0.0
  */
+// FIXME: extends DataContainerArchetype.Extendable
+@NonNullByDefault
 public sealed interface NotificationBodyArchetype extends DataContainerArchetype permits NotificationBodyArchetypeImpl {
-    /**
-     * A builder of {@link NotificationBodyArchetype}s.
-     */
-    @NonNullByDefault
-    final class Builder extends DataContainerArchetypeBuilder<Builder, NotificationEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
-                final List<GroupingArchetype> groupings) {
-            super(typeName, statement, groupings);
-        }
-
-        @Override
-        public NotificationBodyArchetype build() {
-            return new NotificationBodyArchetypeImpl(typeName, statement, implementsTypes, methodDefinitions(),
-                enclosedTypes());
-        }
-
-        @Override
-        Class<NotificationBodyArchetype> archetypeClass() {
-            return NotificationBodyArchetype.class;
-        }
-
-        @Override
-        Builder thisInstance() {
-            return this;
-        }
-    }
-
-    @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
-            final List<GroupingArchetype> groupings) {
-        return new Builder(typeName, statement, groupings);
-    }
-
     @Override
     NotificationEffectiveStatement statement();
+
+    static NotificationBodyArchetype of(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
+            final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
+            final List<MethodSignature> methods) {
+        return new NotificationBodyArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),
+            TypeMethods.copyList(typeObjects), TypeMethods.copyList(methods));
+    }
 }

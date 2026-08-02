@@ -19,14 +19,14 @@ record RpcOutputArchetypeImpl(
         JavaTypeName name,
         OutputEffectiveStatement statement,
         List<Type> implementsTypes,
-        List<MethodSignature> methodSignatures,
-        List<Archetype> enclosedTypes) implements RpcOutputArchetype {
+        List<TypeObjectArchetype<?>> typeObjects,
+        List<MethodSignature> methodSignatures) implements RpcOutputArchetype {
     RpcOutputArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(implementsTypes);
+        requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-        requireNonNull(enclosedTypes);
     }
 
     @Override
