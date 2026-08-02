@@ -11,11 +11,13 @@ import com.google.common.collect.Iterators;
 import java.util.Collections;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.model.api.ChildOfArchetype;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 
 /**
  * Base class for code generators based on {@link ChildOfArchetype}.
@@ -23,6 +25,8 @@ import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 @NonNullByDefault
 abstract sealed class ChildOfTemplate<T extends ChildOfArchetype> extends AugmentableTemplate<T>
         permits ContainerObjectTemplate, EntryObjectTemplate, ItemObjectTemplate {
+    private static final ConcreteType CHILD_OF = ConcreteType.ofClass(ChildOf.class);
+
     ChildOfTemplate(final T archetype, final DataRootArchetype root) {
         super(archetype, root);
     }
@@ -30,7 +34,7 @@ abstract sealed class ChildOfTemplate<T extends ChildOfArchetype> extends Augmen
     @Override
     final Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.singletonIterator(BindingTypes.childOf(TypeRef.of(archetype.parentName()))),
+            Iterators.singletonIterator(ParameterizedType.of(CHILD_OF, TypeRef.of(archetype.parentName()))),
             extendsAfterChildOf(), super.extendsTypes());
     }
 
