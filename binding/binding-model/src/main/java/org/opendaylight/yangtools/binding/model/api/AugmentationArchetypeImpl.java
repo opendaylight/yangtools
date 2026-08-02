@@ -20,15 +20,15 @@ record AugmentationArchetypeImpl(
         AugmentEffectiveStatement statement,
         AugmentableArchetype target,
         List<Type> implementsTypes,
-        List<MethodSignature> methodSignatures,
-        List<Archetype> enclosedTypes) implements AugmentationArchetype {
+        List<TypeObjectArchetype<?>> typeObjects,
+        List<MethodSignature> methodSignatures) implements AugmentationArchetype {
     AugmentationArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(target);
         requireNonNull(implementsTypes);
+        requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-        requireNonNull(enclosedTypes);
     }
 
     @Override

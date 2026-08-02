@@ -55,11 +55,8 @@ final class EntryObjectGenerator extends ListGenerator {
     @Override
     EntryObjectArchetype createTypeImpl(final JavaTypeName typeName, final ListEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings) {
-        final var keyType = keyGenerator.getArchetype();
-        final var builder = EntryObjectArchetype.builder(typeName, statement, parentNameForChildOf(), keyType,
-            groupings);
-        addGetterMethods(builder);
-        return builder.build();
+        return EntryObjectArchetype.of(typeName, statement, parentNameForChildOf(), keyGenerator.getArchetype(),
+            groupings, collectEnclosedTypes(), collectGetterMethods());
     }
 
     @Override

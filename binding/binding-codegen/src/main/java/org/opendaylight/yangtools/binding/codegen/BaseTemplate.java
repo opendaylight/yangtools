@@ -341,7 +341,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     }
 
     final @Nullable BlockBuilder generateInnerClasses(final @NonNull DataRootArchetype root,
-            final List<Archetype> innerTypes) {
+            final List<? extends Archetype> innerTypes) {
         final var innerClasses = new ArrayList<BlockBuilder>();
         for (var innerType : innerTypes) {
             if (innerType instanceof TypeObjectArchetype<?> gto) {

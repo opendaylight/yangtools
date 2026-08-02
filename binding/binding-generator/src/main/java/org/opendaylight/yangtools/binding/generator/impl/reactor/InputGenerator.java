@@ -47,9 +47,7 @@ final class InputGenerator
     @Override
     RpcInputArchetype createArchetype(final JavaTypeName typeName, final InputEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings) {
-        final var builder = RpcInputArchetype.builder(typeName, statement, groupings);
-        addGetterMethods(builder);
-        return builder.build();
+        return RpcInputArchetype.of(typeName, statement, groupings, collectEnclosedTypes(), collectGetterMethods());
     }
 
     @Override

@@ -29,9 +29,8 @@ final class KeyedListNotificationGenerator extends AbstractInstanceNotificationG
     KeyedListNotificationArchetype createTypeImpl(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement, final JavaTypeName parentName,
             final List<GroupingArchetype> groupings) {
-        final var builder = KeyedListNotificationArchetype.builder(typeName, statement, parentName, groupings);
-        addGetterMethods(builder);
-        return builder.build();
+        return KeyedListNotificationArchetype.of(typeName, statement, parentName, groupings, collectEnclosedTypes(),
+            collectGetterMethods());
     }
 
     @Override

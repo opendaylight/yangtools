@@ -45,9 +45,7 @@ final class OutputGenerator
     @Override
     RpcOutputArchetype createArchetype(final JavaTypeName typeName, final OutputEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings) {
-        final var builder = RpcOutputArchetype.builder(typeName, statement, groupings);
-        addGetterMethods(builder);
-        return builder.build();
+        return RpcOutputArchetype.of(typeName, statement, groupings, collectEnclosedTypes(), collectGetterMethods());
     }
 
     @Override

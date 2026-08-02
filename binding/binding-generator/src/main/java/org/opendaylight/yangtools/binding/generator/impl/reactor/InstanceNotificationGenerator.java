@@ -30,9 +30,8 @@ final class InstanceNotificationGenerator extends AbstractInstanceNotificationGe
     InstanceNotificationArchetype createTypeImpl(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement, final JavaTypeName parentName,
             final List<GroupingArchetype> groupings) {
-        final var builder = InstanceNotificationArchetype.builder(typeName, statement, parentName, groupings);
-        addGetterMethods(builder);
-        return builder.build();
+        return InstanceNotificationArchetype.of(typeName, statement, parentName, groupings, collectEnclosedTypes(),
+            collectGetterMethods());
     }
 
     @Override

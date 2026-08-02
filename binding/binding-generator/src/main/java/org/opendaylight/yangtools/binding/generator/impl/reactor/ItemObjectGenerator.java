@@ -39,9 +39,8 @@ final class ItemObjectGenerator extends ListGenerator {
     @Override
     ItemObjectArchetype createTypeImpl(final JavaTypeName typeName, final ListEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings) {
-        final var builder = ItemObjectArchetype.builder(typeName, statement, parentNameForChildOf(), groupings);
-        addGetterMethods(builder);
-        return builder.build();
+        return ItemObjectArchetype.of(typeName, statement, parentNameForChildOf(), groupings, collectEnclosedTypes(),
+            collectGetterMethods());
     }
 
     @Override

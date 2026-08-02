@@ -17,40 +17,15 @@ import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
  *
  * @since 16.0.0
  */
+@NonNullByDefault
 public sealed interface YangDataArchetype extends DataContainerArchetype permits YangDataArchetypeImpl {
-    /**
-     * A builder of {@link YangDataArchetype}s.
-     */
-    @NonNullByDefault
-    final class Builder extends DataContainerArchetypeBuilder<Builder, YangDataEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final YangDataEffectiveStatement statement,
-                final List<GroupingArchetype> groupings) {
-            super(typeName, statement, groupings);
-        }
-
-        @Override
-        public YangDataArchetype build() {
-            return new YangDataArchetypeImpl(typeName, statement, implementsTypes, methodDefinitions(),
-                enclosedTypes());
-        }
-
-        @Override
-        Class<YangDataArchetype> archetypeClass() {
-            return YangDataArchetype.class;
-        }
-
-        @Override
-        Builder thisInstance() {
-            return this;
-        }
-    }
-
-    @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final YangDataEffectiveStatement statement,
-            final List<GroupingArchetype> groupings) {
-        return new Builder(typeName, statement, groupings);
-    }
-
     @Override
     YangDataEffectiveStatement statement();
+
+    static YangDataArchetype of(final JavaTypeName typeName, final YangDataEffectiveStatement statement,
+            final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
+            final List<MethodSignature> methods) {
+        return new YangDataArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),
+            TypeMethods.copyList(typeObjects), TypeMethods.copyList(methods));
+    }
 }
