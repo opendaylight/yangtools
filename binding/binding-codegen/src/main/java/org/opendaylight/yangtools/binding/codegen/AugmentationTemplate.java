@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -53,5 +54,9 @@ final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype
         return Iterators.concat(
             Iterators.singletonIterator(ParameterizedType.of(AUGMENTATION, archetype.target())),
             super.extendsTypes());
+    }
+
+    static String augmentationOfIn(final DataContainerArchetype ofType, final GeneratedClass inClass) {
+        return inClass.getReferenceString(AUGMENTATION.name()) + "<" + inClass.getReferenceString(ofType.name()) + ">";
     }
 }

@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.AugmentationTemplate.augmentationOfIn;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
@@ -46,7 +47,6 @@ import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 
 /**
@@ -127,7 +127,7 @@ final class BuilderTemplate extends BaseTemplate {
 
         final var isAugmentable = targetType instanceof AugmentableArchetype;
         if (isAugmentable) {
-            final var augmentTypeRef = importedName(BindingTypes.augmentation(targetType));
+            final var augmentTypeRef = augmentationOfIn(targetType, javaType());
             final var mapTypeRef = importedName(JU_MAP);
 
             bb.str(mapTypeRef).str("<").str(importedName(CLASS)).str("<? extends ").str(augmentTypeRef).str(">, ")
@@ -810,7 +810,7 @@ final class BuilderTemplate extends BaseTemplate {
         }
         bb.newLine();
         if (targetType instanceof AugmentableArchetype) {
-            final var augmentTypeRef = importedName(BindingTypes.augmentation(targetType));
+            final var augmentTypeRef = augmentationOfIn(targetType, javaType());
             final var hashMapRef = importedName(JU_HASHMAP);
             bb
                 .txt("""
@@ -918,7 +918,7 @@ final class BuilderTemplate extends BaseTemplate {
             .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentType} is {@code null}")
             .eol(" */")
             .at().str(importedName(SUPPRESS_WARNINGS)).eol("({ \"unchecked\", \"checkstyle:methodTypeParameterName\"})")
-            .str("public <E$$ extends ").str(importedName(BindingTypes.augmentation(targetType)))
+            .str("public <E$$ extends ").str(augmentationOfIn(targetType, javaType()))
                 .str("> E$$ augmentation(").gen(importedName(CLASS), "E$$").str(" augmentationType)").oB()
                 .str("return (E$$) " + AUGMENTATION_FIELD + ".get(").str(importedName(JU_OBJECTS))
                     .eol(".requireNonNull(augmentationType));")
