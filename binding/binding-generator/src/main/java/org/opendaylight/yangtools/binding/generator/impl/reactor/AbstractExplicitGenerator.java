@@ -329,26 +329,6 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
-        if (isAugmenting()) {
-            // Do not process augmented nodes: they will be taken care of in their home augmentation
-            return;
-        }
-        if (isAddedByUses()) {
-            // If this generator has been added by a uses node, it is already taken care of by the corresponding
-            // grouping. There is one exception to this rule: 'type leafref' can use a relative path to point
-            // outside of its home grouping. In this case we need to examine the instantiation until we succeed in
-            // resolving the reference.
-            addAsGetterMethodOverride(builder);
-            return;
-        }
-
-        final var returnType = methodReturnType();
-        constructGetter(builder, returnType);
-        constructRequire(builder, returnType);
-    }
-
-    @NonNullByDefault
     MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder, final Type returnType) {
         return constructGetter(builder, returnType, Naming.getGetterMethodName(localName().getLocalName()));
     }
@@ -376,16 +356,6 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         constructGetter(builder, returnType, Naming.getRequireMethodName(localName().getLocalName()))
             .setDefault(true)
             .setMechanics(ValueMechanics.NONNULL);
-    }
-
-    @NonNullByDefault
-    void addAsGetterMethodOverride(final DataContainerArchetype.Builder builder) {
-        // No-op for most cases
-    }
-
-    @NonNullByDefault
-    Type methodReturnType() {
-        return getGeneratedType();
     }
 
     @Override

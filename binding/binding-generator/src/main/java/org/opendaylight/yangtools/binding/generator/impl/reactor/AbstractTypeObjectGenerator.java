@@ -196,8 +196,8 @@ import org.slf4j.LoggerFactory;
  */
 abstract class AbstractTypeObjectGenerator<
         S extends TypeEffectiveStatement.MandatoryIn<QName, ?> & TypeDefinitionCompat.WithQNameArgument<?>,
-        R extends RuntimeType> extends AbstractDependentGenerator<S, R> {
-
+        R extends RuntimeType> extends AbstractDependentGenerator<S, R>
+        implements DataContainerMethod<@NonNull AbstractTypeObjectGenerator<?, ?>> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTypeObjectGenerator.class);
 
     private final @NonNull TypeObjectSupport support;
@@ -440,7 +440,7 @@ abstract class AbstractTypeObjectGenerator<
             return refType.methodReturnType();
         }
 
-        final var prev = previous();
+        final var prev = (AbstractTypeObjectGenerator<?, ?>) previous();
         if (prev != null) {
             // We have been added through augment/uses, defer to the original definition
             return prev.methodReturnType();
@@ -485,7 +485,12 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     @Override
-    final void addAsGetterMethodOverride(final DataContainerArchetype.Builder builder) {
+    public final AbstractTypeObjectGenerator<?, ?> thisMethodGenerator() {
+        return this;
+    }
+
+    @Override
+    public final void addAsGetterMethodOverride(final DataContainerArchetype.Builder builder) {
         if (!(refType instanceof ResolvedLeafref)) {
             // We are not dealing with a leafref or have nothing to add
             return;

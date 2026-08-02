@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultYangDataRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
@@ -117,10 +116,5 @@ abstract sealed class YangDataGenerator
                 return new DefaultYangDataRuntimeType((YangDataArchetype) type, statement, children);
             }
         };
-    }
-
-    @Override
-    final void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
-        // is not a part of any structure
     }
 }
