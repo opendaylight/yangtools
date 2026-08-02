@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain
 import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresentation;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
-import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -30,7 +29,6 @@ import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
@@ -329,26 +327,6 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
-        if (isAugmenting()) {
-            // Do not process augmented nodes: they will be taken care of in their home augmentation
-            return;
-        }
-        if (isAddedByUses()) {
-            // If this generator has been added by a uses node, it is already taken care of by the corresponding
-            // grouping. There is one exception to this rule: 'type leafref' can use a relative path to point
-            // outside of its home grouping. In this case we need to examine the instantiation until we succeed in
-            // resolving the reference.
-            addAsGetterMethodOverride(builder);
-            return;
-        }
-
-        final var returnType = methodReturnType();
-        constructGetter(builder, returnType);
-        constructRequire(builder, returnType);
-    }
-
-    @NonNullByDefault
     MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder, final Type returnType) {
         return constructGetter(builder, returnType, Naming.getGetterMethodName(localName().getLocalName()));
     }
@@ -378,16 +356,6 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
             .setMechanics(ValueMechanics.NONNULL);
     }
 
-    @NonNullByDefault
-    void addAsGetterMethodOverride(final DataContainerArchetype.Builder builder) {
-        // No-op for most cases
-    }
-
-    @NonNullByDefault
-    Type methodReturnType() {
-        return getGeneratedType();
-    }
-
     @Override
     ToStringHelper addToStringAttributes(final ToStringHelper helper) {
         helper.add("argument", statement.argument());
@@ -407,11 +375,5 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
             return ret;
         }
         throw new VerifyException("Unexpected type " + type);
-    }
-
-    static final @Nullable DeprecatedAnnotation deprecatedAnnotation(
-            final @NonNull EffectiveStatement<?, ?> statement) {
-        return statement instanceof DocumentedNode.WithStatus withStatus
-            ? DeprecatedAnnotation.ofStatus(withStatus.getStatus()) : null;
     }
 }

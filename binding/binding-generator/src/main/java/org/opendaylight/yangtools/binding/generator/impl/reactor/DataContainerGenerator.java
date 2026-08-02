@@ -466,9 +466,8 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
     @NonNullByDefault
     final void addGetterMethods(final DataContainerArchetype.Builder builder) {
         for (var child : this) {
-            // Only process explicit generators here
-            if (child instanceof AbstractExplicitGenerator<?, ?> explicit) {
-                explicit.addAsGetterMethod(builder);
+            if (child instanceof DataContainerMethod<?> methodGenerator) {
+                methodGenerator.addAsGetterMethod(builder);
             }
 
             final var enclosedType = child.enclosedType();

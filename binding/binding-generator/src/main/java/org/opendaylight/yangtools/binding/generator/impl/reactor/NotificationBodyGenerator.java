@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationBodyRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
@@ -51,11 +50,6 @@ final class NotificationBodyGenerator
         final var builder = NotificationBodyArchetype.builder(typeName, statement, groupings);
         addGetterMethods(builder);
         return builder.build();
-    }
-
-    @Override
-    void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
-        // Notifications are a distinct concept
     }
 
     @Override
