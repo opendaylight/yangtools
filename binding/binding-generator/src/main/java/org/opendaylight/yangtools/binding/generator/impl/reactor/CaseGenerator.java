@@ -61,7 +61,6 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
         // must not request parent's type. That is not true for choice->case relationship and hence we do not need to
         // go through DefaultType here
         final var builder = CaseObjectArchetype.builder(typeName(), statement(), choice.getArchetype());
-        addConcreteInterfaceMethods(builder);
         addUsesInterfaces(builder);
         addGetterMethods(builder);
         return builder.build();

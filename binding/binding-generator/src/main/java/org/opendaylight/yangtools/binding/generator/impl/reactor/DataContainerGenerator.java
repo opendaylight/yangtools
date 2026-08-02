@@ -18,12 +18,9 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
@@ -634,16 +631,5 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
 
     private static boolean isAugmenting(final EffectiveStatement<?, ?> stmt) {
         return stmt instanceof CopyableNode copyable && copyable.isAugmenting();
-    }
-
-    /**
-     * Add common methods implemented in a generated type. This includes {@link DataContainer#implementedInterface()} as
-     * well has {@code bindingHashCode()}, {@code bindingEquals()} and {@code bindingToString()}.
-     *
-     * @param builder Target builder
-     */
-    @NonNullByDefault
-    static final void addConcreteInterfaceMethods(final DataContainerArchetype.Builder builder) {
-        builder.addImplementsType(ParameterizedType.of(BindingTypes.JAVA_DATACONTAINER, builder.typeRef()));
     }
 }

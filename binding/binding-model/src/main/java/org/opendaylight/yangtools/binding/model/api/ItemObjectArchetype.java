@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
@@ -26,6 +27,7 @@ public sealed interface ItemObjectArchetype extends ChildOfArchetype.OfList perm
         private Builder(final JavaTypeName typeName, final ListEffectiveStatement statement,
                 final JavaTypeName parentName) {
             super(typeName, statement, parentName);
+            addImplementsType(ParameterizedType.of(BindingTypes.JAVA_DATACONTAINER, TypeRef.of(typeName)));
         }
 
         @Override
