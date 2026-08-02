@@ -11,16 +11,12 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.cachedType;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ChildOf;
-import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 @NonNullByDefault
 public final class BindingTypes {
-
-    public static final ConcreteType JAVA_DATACONTAINER = cachedType(JavaDataContainer.class);
-
     private static final ConcreteType CHILD_OF = cachedType(ChildOf.class);
 
     private BindingTypes() {

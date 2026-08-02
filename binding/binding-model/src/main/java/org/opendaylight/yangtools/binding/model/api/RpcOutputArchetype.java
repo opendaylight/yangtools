@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.RpcOutput;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 
 /**
@@ -25,7 +24,6 @@ public sealed interface RpcOutputArchetype extends AugmentableArchetype permits 
     final class Builder extends DataContainerArchetypeBuilder<Builder, OutputEffectiveStatement> {
         private Builder(final JavaTypeName typeName, final OutputEffectiveStatement statement) {
             super(typeName, statement);
-            addImplementsType(ParameterizedType.of(BindingTypes.JAVA_DATACONTAINER, TypeRef.of(typeName)));
         }
 
         @Override

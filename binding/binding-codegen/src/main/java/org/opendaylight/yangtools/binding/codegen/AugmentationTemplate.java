@@ -52,7 +52,7 @@ final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype
     @Override
     Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.singletonIterator(ParameterizedType.of(AUGMENTATION, archetype.target())),
+            Iterators.forArray(ParameterizedType.of(AUGMENTATION, archetype.target()), extendsJavaDataContainer()),
             super.extendsTypes());
     }
 

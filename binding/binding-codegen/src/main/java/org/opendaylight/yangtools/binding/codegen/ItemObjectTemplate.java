@@ -47,7 +47,7 @@ final class ItemObjectTemplate extends ChildOfTemplate<ItemObjectArchetype> {
 
     @Override
     Iterator<? extends Type> extendsAfterChildOf() {
-        return Iterators.singletonIterator(extendsAugmentable());
+        return Iterators.forArray(extendsAugmentable(), extendsJavaDataContainer());
     }
 
     @Override

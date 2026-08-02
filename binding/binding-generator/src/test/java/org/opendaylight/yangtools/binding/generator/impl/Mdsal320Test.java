@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal320Test {
@@ -34,7 +33,7 @@ class Mdsal320Test {
             .map(ContainerObjectArchetype.class::cast)
             .orElseThrow();
 
-        assertThat(foo.getImplements()).anySatisfy(type -> type.name().equals(BindingTypes.JAVA_DATACONTAINER));
+        assertEquals(List.of(), foo.getImplements());
 
         final var fooTypes = foo.enclosedTypes();
         assertEquals(1, fooTypes.size());

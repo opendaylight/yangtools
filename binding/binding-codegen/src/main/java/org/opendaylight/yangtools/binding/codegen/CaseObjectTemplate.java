@@ -46,7 +46,8 @@ final class CaseObjectTemplate extends AugmentableTemplate<CaseObjectArchetype> 
     @Override
     Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.forArray(archetype.choice(), NotificationTemplate.DATA_OBJECT, extendsAugmentable()),
+            Iterators.forArray(archetype.choice(), NotificationTemplate.DATA_OBJECT, extendsAugmentable(),
+                extendsJavaDataContainer()),
             super.extendsTypes());
     }
 

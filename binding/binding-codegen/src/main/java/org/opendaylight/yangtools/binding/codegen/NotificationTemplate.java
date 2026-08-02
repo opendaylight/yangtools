@@ -54,7 +54,8 @@ final class NotificationTemplate extends AugmentableTemplate<NotificationArchety
     @Override
     Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.forArray(DATA_OBJECT, ParameterizedType.of(NOTIFICATION, archetype), extendsAugmentable()),
+            Iterators.forArray(DATA_OBJECT, ParameterizedType.of(NOTIFICATION, archetype), extendsAugmentable(),
+                extendsJavaDataContainer()),
             super.extendsTypes());
     }
 

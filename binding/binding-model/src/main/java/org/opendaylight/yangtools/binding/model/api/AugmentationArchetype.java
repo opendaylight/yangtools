@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentation;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 
 /**
@@ -31,7 +30,6 @@ public sealed interface AugmentationArchetype extends DataContainerArchetype per
                 final AugmentableArchetype target) {
             super(typeName, statement);
             this.target = requireNonNull(target);
-            addImplementsType(ParameterizedType.of(BindingTypes.JAVA_DATACONTAINER, TypeRef.of(typeName)));
         }
 
         @Override

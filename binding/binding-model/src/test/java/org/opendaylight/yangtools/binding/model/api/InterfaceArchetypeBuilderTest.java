@@ -68,7 +68,7 @@ class InterfaceArchetypeBuilderTest {
         var instance = generatedTypeBuilder.build();
         var implementTypes = instance.getImplements();
 
-        assertEquals(3, implementTypes.size());
+        assertEquals(2, implementTypes.size());
 
         assertTrue(implementTypes.contains(ConcreteType.ofClass(Serializable.class)));
         assertTrue(implementTypes.contains(ConcreteType.ofClass(Runnable.class)));

@@ -50,7 +50,7 @@ final class RpcInputTemplate extends AugmentableTemplate<RpcInputArchetype> {
     @Override
     Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.forArray(RPC_INPUT, extendsAugmentable()),
+            Iterators.forArray(RPC_INPUT, extendsAugmentable(), extendsJavaDataContainer()),
             super.extendsTypes());
     }
 

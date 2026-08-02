@@ -30,6 +30,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.EntryObject;
+import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
@@ -54,6 +56,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
                 YangDataTemplate {
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
+    private static final @NonNull ConcreteType JAVA_DATACONTAINER = ConcreteType.ofClass(JavaDataContainer.class);
 
     // FIXME: replace with static knowledge: for now we verify
     // "rpc" and "grouping" elements do not implement Augmentable
@@ -165,6 +168,11 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     @NonNullByDefault
     Iterator<? extends Type> extendsTypes() {
         return archetype.getImplements().iterator();
+    }
+
+    @NonNullByDefault
+    final Type extendsJavaDataContainer() {
+        return ParameterizedType.of(JAVA_DATACONTAINER, archetype);
     }
 
     BlockFragment constants() {
