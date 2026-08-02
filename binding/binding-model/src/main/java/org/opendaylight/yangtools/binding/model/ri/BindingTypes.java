@@ -9,9 +9,7 @@ package org.opendaylight.yangtools.binding.model.ri;
 
 import static org.opendaylight.yangtools.binding.model.ri.Types.cachedType;
 
-import com.google.common.annotations.VisibleForTesting;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -23,24 +21,10 @@ public final class BindingTypes {
 
     public static final ConcreteType JAVA_DATACONTAINER = cachedType(JavaDataContainer.class);
 
-    @VisibleForTesting
-    static final ConcreteType AUGMENTATION = cachedType(Augmentation.class);
-
     private static final ConcreteType CHILD_OF = cachedType(ChildOf.class);
 
     private BindingTypes() {
         //  Hidden on purpose
-    }
-
-    /**
-     * Specialize {@link Augmentation} for a particular type.
-     *
-     * @param type Type for which to specialize
-     * @return A parameterized type corresponding to {@code Augmentation<Type>}
-     * @throws NullPointerException if {@code type} is {@code null}
-     */
-    public static ParameterizedType augmentation(final Type type) {
-        return ParameterizedType.of(AUGMENTATION, type);
     }
 
     /**

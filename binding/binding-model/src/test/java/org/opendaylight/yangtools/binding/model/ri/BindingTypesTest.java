@@ -7,20 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.model.ri;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.Augmentation;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 
 class BindingTypesTest {
-    @Test
-    void staticBindingTypesTest() {
-        assertEquals(ConcreteType.ofClass(Augmentation.class), BindingTypes.AUGMENTATION);
-    }
-
     @Test
     void testChildOfNull() {
         assertThrows(NullPointerException.class, () -> BindingTypes.childOf(null));
@@ -29,16 +21,5 @@ class BindingTypesTest {
     @Test
     void testChildOf() {
         assertNotNull(BindingTypes.childOf(Types.objectType()));
-    }
-
-    @Test
-    void testAugmentationNull() {
-        assertThrows(NullPointerException.class, () -> BindingTypes.augmentation(null));
-    }
-
-    @Test
-    void testAugmentation() {
-        final var augmentationType = BindingTypes.augmentation(Types.objectType());
-        assertEquals("Augmentation", augmentationType.simpleName());
     }
 }

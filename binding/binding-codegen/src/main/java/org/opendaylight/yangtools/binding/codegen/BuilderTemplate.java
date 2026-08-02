@@ -33,9 +33,11 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
@@ -46,7 +48,6 @@ import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.BindingTypes;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 
 /**
@@ -83,6 +84,7 @@ final class BuilderTemplate extends BaseTemplate {
     static final @NonNull String AUGMENTATION_FIELD = "augmentation";
 
     private static final @NonNull JavaTypeName GROUPING = JavaTypeName.create(Grouping.class);
+    private static final @NonNull ConcreteType AUGMENTATION = ConcreteType.ofClass(Augmentation.class);
 
     /**
      * Set of class attributes (fields) which are derived from the getter methods names.
@@ -109,6 +111,10 @@ final class BuilderTemplate extends BaseTemplate {
         return typeName().simpleName();
     }
 
+    private @NonNull String importedAugmentation() {
+        return importedName(ParameterizedType.of(AUGMENTATION, targetType));
+    }
+
     @Override
     BlockBuilder body() {
         final var simpleName = simpleName();
@@ -127,7 +133,7 @@ final class BuilderTemplate extends BaseTemplate {
 
         final var isAugmentable = targetType instanceof AugmentableArchetype;
         if (isAugmentable) {
-            final var augmentTypeRef = importedName(BindingTypes.augmentation(targetType));
+            final var augmentTypeRef = importedAugmentation();
             final var mapTypeRef = importedName(JU_MAP);
 
             bb.str(mapTypeRef).str("<").str(importedName(CLASS)).str("<? extends ").str(augmentTypeRef).str(">, ")
@@ -810,7 +816,7 @@ final class BuilderTemplate extends BaseTemplate {
         }
         bb.newLine();
         if (targetType instanceof AugmentableArchetype) {
-            final var augmentTypeRef = importedName(BindingTypes.augmentation(targetType));
+            final var augmentTypeRef = importedAugmentation();
             final var hashMapRef = importedName(JU_HASHMAP);
             bb
                 .txt("""
@@ -918,7 +924,7 @@ final class BuilderTemplate extends BaseTemplate {
             .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentType} is {@code null}")
             .eol(" */")
             .at().str(importedName(SUPPRESS_WARNINGS)).eol("({ \"unchecked\", \"checkstyle:methodTypeParameterName\"})")
-            .str("public <E$$ extends ").str(importedName(BindingTypes.augmentation(targetType)))
+            .str("public <E$$ extends ").str(importedAugmentation())
                 .str("> E$$ augmentation(").gen(importedName(CLASS), "E$$").str(" augmentationType)").oB()
                 .str("return (E$$) " + AUGMENTATION_FIELD + ".get(").str(importedName(JU_OBJECTS))
                     .eol(".requireNonNull(augmentationType));")
