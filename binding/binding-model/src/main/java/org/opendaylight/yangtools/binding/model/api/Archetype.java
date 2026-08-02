@@ -30,8 +30,12 @@ public sealed interface Archetype extends Type
     /**
      * {@return the list of enclosed {@link Archetype}s}
      */
+    // FIXME: needs to be two separate contracts:
+    //        - List<TypeObjectArchetype> in DataContainerArchetype
+    //        - List<UnionTypeObject.Member> in UnionTypeObjectArchetype
+    //          - TypeObjectArchetype is Member for now, but will get split with YANGTOOLS-1611
     @NonNullByDefault
-    default List<Archetype> enclosedTypes() {
+    default List<? extends Archetype> enclosedTypes() {
         return List.of();
     }
 }

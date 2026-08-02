@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 
 /**
@@ -18,43 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
  *
  * @since 16.0.0
  */
+@NonNullByDefault
 public sealed interface CaseObjectArchetype extends AugmentableArchetype permits CaseObjectArchetypeImpl {
-    /**
-     * A builder of {@link CaseObjectArchetype}s.
-     */
-    @NonNullByDefault
-    final class Builder extends DataContainerArchetypeBuilder<Builder, CaseEffectiveStatement> {
-        private final ChoiceInArchetype choice;
-
-        private Builder(final JavaTypeName typeName, final CaseEffectiveStatement statement,
-                final ChoiceInArchetype choice, final List<GroupingArchetype> groupings) {
-            super(typeName, statement, groupings);
-            this.choice = requireNonNull(choice);
-        }
-
-        @Override
-        public CaseObjectArchetype build() {
-            return new CaseObjectArchetypeImpl(typeName, statement, choice, implementsTypes, methodDefinitions(),
-                enclosedTypes());
-        }
-
-        @Override
-        Class<CaseObjectArchetype> archetypeClass() {
-            return CaseObjectArchetype.class;
-        }
-
-        @Override
-        Builder thisInstance() {
-            return this;
-        }
-    }
-
-    @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final CaseEffectiveStatement statement,
-            final ChoiceInArchetype choice, final List<GroupingArchetype> groupings) {
-        return new Builder(typeName, statement, choice, groupings);
-    }
-
     @Override
     CaseEffectiveStatement statement();
 
@@ -62,4 +26,11 @@ public sealed interface CaseObjectArchetype extends AugmentableArchetype permits
      * {@return the {@link ChoiceInArchetype} in which this object is a branch}
      */
     ChoiceInArchetype choice();
+
+    static CaseObjectArchetype of(final JavaTypeName typeName, final AugmentEffectiveStatement statement,
+            final AugmentableArchetype target, final List<GroupingArchetype> groupings,
+            final List<TypeObjectArchetype<?>> typeObjects, final List<MethodSignature> methods) {
+        return new CaseObjectArchetypeImpl(typeName, statement, target, TypeMethods.copyList(groupings),
+            TypeMethods.copyList(methods), TypeMethods.copyList(typeObjects));
+    }
 }

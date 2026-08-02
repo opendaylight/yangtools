@@ -19,42 +19,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
  * @since 15.0.0
  */
 // FIXME: seal to allow only DataRootArchetypeImpl
-@Beta
+@NonNullByDefault
 public non-sealed interface DataRootArchetype extends DataContainerArchetype {
-    /**
-     * A builder of {@link DataRootArchetype} instances.
-     */
-    @Beta
-    @NonNullByDefault
-    final class Builder extends DataContainerArchetypeBuilder<Builder, ModuleEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final ModuleEffectiveStatement statement,
-                final List<GroupingArchetype> groupings) {
-            super(typeName, statement, groupings);
-        }
-
-        @Override
-        public DataRootArchetype build() {
-            return new DataRootArchetypeImpl(typeName, statement, implementsTypes, methodDefinitions(),
-                enclosedTypes());
-        }
-
-        @Override
-        Class<DataRootArchetype> archetypeClass() {
-            return DataRootArchetype.class;
-        }
-
-        @Override
-        Builder thisInstance() {
-            return this;
-        }
-    }
-
-    @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final ModuleEffectiveStatement statement,
-            final List<GroupingArchetype> groupings) {
-        return new Builder(typeName, statement, groupings);
-    }
-
     @Override
     ModuleEffectiveStatement statement();
+
+    static DataRootArchetype of(final JavaTypeName typeName, final ModuleEffectiveStatement statement,
+            final List<GroupingArchetype> groupings) {
+        return new DataRootArchetypeImpl(typeName, statement, implementsTypes, methodDefinitions(),
+            enclosedTypes())
+    }
 }

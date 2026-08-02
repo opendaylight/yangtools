@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EntryObject;
@@ -22,41 +20,14 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 @NonNullByDefault
 public sealed interface EntryObjectArchetype extends ChildOfArchetype.OfList permits EntryObjectArchetypeImpl {
     /**
-     * A builder of {@link EntryObjectArchetype}s.
-     */
-    final class Builder extends ChildOfArchetypeBuilder<Builder, ListEffectiveStatement> {
-        private final KeyArchetype key;
-
-        private Builder(final JavaTypeName typeName, final ListEffectiveStatement statement,
-                final JavaTypeName parentName, final KeyArchetype key, final List<GroupingArchetype> groupings) {
-            super(typeName, statement, groupings, parentName);
-            this.key = requireNonNull(key);
-        }
-
-        @Override
-        public EntryObjectArchetype build() {
-            return new EntryObjectArchetypeImpl(typeName, statement, parentName, key, implementsTypes,
-                methodDefinitions(), enclosedTypes());
-        }
-
-        @Override
-        Class<EntryObjectArchetype> archetypeClass() {
-            return EntryObjectArchetype.class;
-        }
-
-        @Override
-        Builder thisInstance() {
-            return this;
-        }
-    }
-
-    static Builder builder(final JavaTypeName typeName, final ListEffectiveStatement statement,
-            final JavaTypeName parentName, final KeyArchetype key, final List<GroupingArchetype> groupings) {
-        return new Builder(typeName, statement, parentName, key, groupings);
-    }
-
-    /**
      * {@return the {link KeyArchetype} associated with this archetype}
      */
+    // FIXME: keyName
     KeyArchetype key();
+
+    static EntryObjectArchetype of(final JavaTypeName typeName, final ListEffectiveStatement statement,
+            final JavaTypeName parentName, final KeyArchetype key, final List<GroupingArchetype> groupings) {
+        return new EntryObjectArchetypeImpl(typeName, statement, parentName, key, implementsTypes,
+            methodDefinitions(), enclosedTypes());
+    }
 }

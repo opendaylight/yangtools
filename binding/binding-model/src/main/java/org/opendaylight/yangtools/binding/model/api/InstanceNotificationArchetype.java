@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.InstanceNotification;
@@ -23,46 +21,19 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 public sealed interface InstanceNotificationArchetype extends DataContainerArchetype.OfNotification
         permits InstanceNotificationArchetypeFromGrouping, InstanceNotificationArchetypeImpl {
     /**
-     * A builder of {@link InstanceNotificationArchetype}s.
+     * {@return the {@link JavaTypeName} of the archetype in which this notification is defined}
      */
-    final class Builder extends DataContainerArchetypeBuilder<Builder, NotificationEffectiveStatement> {
-        private final JavaTypeName parentName;
+    JavaTypeName parentName();
 
-        private Builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
-                final JavaTypeName parentName, final List<? extends DataContainerArchetype> implementsTypes) {
-            super(typeName, statement, implementsTypes);
-            this.parentName = requireNonNull(parentName);
-        }
-
-        @Override
-        public InstanceNotificationArchetype build() {
-            return new InstanceNotificationArchetypeImpl(typeName, statement, parentName, implementsTypes,
-                methodDefinitions(), enclosedTypes());
-        }
-
-        @Override
-        Class<InstanceNotificationArchetype> archetypeClass() {
-            return InstanceNotificationArchetype.class;
-        }
-
-        @Override
-        Builder thisInstance() {
-            return this;
-        }
-    }
-
-    static Builder builder(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
-            final JavaTypeName parentName, final List<GroupingArchetype> groupings) {
-        return new Builder(typeName, statement, parentName, groupings);
+    static InstanceNotificationArchetype of(final JavaTypeName typeName,
+            final NotificationEffectiveStatement statement, final JavaTypeName parentName,
+            final List<GroupingArchetype> groupings) {
+        return new InstanceNotificationArchetypeImpl(typeName, statement, parentName, implementsTypes,
+            methodDefinitions(), enclosedTypes());
     }
 
     static InstanceNotificationArchetype of(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
             final JavaTypeName parentName, final NotificationBodyArchetype notificationBody) {
         return new InstanceNotificationArchetypeFromGrouping(typeName, statement, parentName, notificationBody);
     }
-
-    /**
-     * {@return the {@link JavaTypeName} of the archetype in which this notification is defined}
-     */
-    JavaTypeName parentName();
 }

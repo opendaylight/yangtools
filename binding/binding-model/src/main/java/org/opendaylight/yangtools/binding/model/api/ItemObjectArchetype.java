@@ -20,34 +20,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
  */
 @NonNullByDefault
 public sealed interface ItemObjectArchetype extends ChildOfArchetype.OfList permits ItemObjectArchetypeImpl {
-    /**
-     * A builder of {@link ItemObjectArchetype}s.
-     */
-    final class Builder extends ChildOfArchetypeBuilder<Builder, ListEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final ListEffectiveStatement statement,
-                final JavaTypeName parentName, final List<GroupingArchetype> groupings) {
-            super(typeName, statement, groupings, parentName);
-        }
 
-        @Override
-        public ItemObjectArchetype build() {
-            return new ItemObjectArchetypeImpl(typeName, statement, parentName, implementsTypes, methodDefinitions(),
-                enclosedTypes());
-        }
-
-        @Override
-        Class<ItemObjectArchetype> archetypeClass() {
-            return ItemObjectArchetype.class;
-        }
-
-        @Override
-        Builder thisInstance() {
-            return this;
-        }
-    }
-
-    static Builder builder(final JavaTypeName typeName, final ListEffectiveStatement statement,
+    static ItemObjectArchetype of(final JavaTypeName typeName, final ListEffectiveStatement statement,
             final JavaTypeName parentName, final List<GroupingArchetype> groupings) {
-        return new Builder(typeName, statement, parentName, groupings);
+        return new ItemObjectArchetypeImpl(typeName, statement, parentName, implementsTypes, methodDefinitions(),
+            enclosedTypes());
     }
 }

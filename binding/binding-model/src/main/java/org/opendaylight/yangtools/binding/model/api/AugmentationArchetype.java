@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentation;
@@ -19,43 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
  *
  * @since 16.0.0
  */
+@NonNullByDefault
 public sealed interface AugmentationArchetype extends DataContainerArchetype permits AugmentationArchetypeImpl {
-    /**
-     * A builder of {@link AugmentationArchetype}s.
-     */
-    @NonNullByDefault
-    final class Builder extends DataContainerArchetypeBuilder<Builder, AugmentEffectiveStatement> {
-        private final AugmentableArchetype target;
-
-        private Builder(final JavaTypeName typeName, final AugmentEffectiveStatement statement,
-                final AugmentableArchetype target, final List<GroupingArchetype> groupings) {
-            super(typeName, statement, groupings);
-            this.target = requireNonNull(target);
-        }
-
-        @Override
-        public AugmentationArchetype build() {
-            return new AugmentationArchetypeImpl(typeName, statement, target, implementsTypes, methodDefinitions(),
-                enclosedTypes());
-        }
-
-        @Override
-        Class<AugmentationArchetype> archetypeClass() {
-            return AugmentationArchetype.class;
-        }
-
-        @Override
-        Builder thisInstance() {
-            return this;
-        }
-    }
-
-    @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final AugmentEffectiveStatement statement,
-            final AugmentableArchetype target, final List<GroupingArchetype> groupings) {
-        return new Builder(typeName, statement, target, groupings);
-    }
-
     @Override
     AugmentEffectiveStatement statement();
 
@@ -63,4 +26,11 @@ public sealed interface AugmentationArchetype extends DataContainerArchetype per
      * {@return the augmentation target archetype}
      */
     AugmentableArchetype target();
+
+    static AugmentationArchetype of(final JavaTypeName typeName, final AugmentEffectiveStatement statement,
+            final AugmentableArchetype target, final List<GroupingArchetype> groupings,
+            final List<TypeObjectArchetype<?>> typeObjects, final List<MethodSignature> methods) {
+        return new AugmentationArchetypeImpl(typeName, statement, target, TypeMethods.copyList(groupings),
+            TypeMethods.copyList(methods), TypeMethods.copyList(typeObjects));
+    }
 }

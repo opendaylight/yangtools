@@ -17,40 +17,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
  *
  * @since 16.0.0
  */
+@NonNullByDefault
 public sealed interface ContainerObjectArchetype extends ChildOfArchetype permits ContainerObjectArchetypeImpl {
-    /**
-     * A builder of {@link ContainerObjectArchetype}s.
-     */
-    @NonNullByDefault
-    final class Builder extends ChildOfArchetypeBuilder<Builder, ContainerEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final ContainerEffectiveStatement statement,
-                final JavaTypeName parentName, final List<GroupingArchetype> groupings) {
-            super(typeName, statement, groupings, parentName);
-        }
-
-        @Override
-        public ContainerObjectArchetype build() {
-            return new ContainerObjectArchetypeImpl(typeName, statement, parentName, implementsTypes,
-                methodDefinitions(), enclosedTypes());
-        }
-
-        @Override
-        Class<ContainerObjectArchetype> archetypeClass() {
-            return ContainerObjectArchetype.class;
-        }
-
-        @Override
-        Builder thisInstance() {
-            return this;
-        }
-    }
-
-    @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final ContainerEffectiveStatement statement,
-            final JavaTypeName parentName, final List<GroupingArchetype> groupings) {
-        return new Builder(typeName, statement, parentName, groupings);
-    }
-
     @Override
     ContainerEffectiveStatement statement();
+
+
+    @Override
+    static ContainerObjectArchetype of(final JavaTypeName typeName, final ContainerEffectiveStatement statement,
+            final JavaTypeName parentName, final List<GroupingArchetype> groupings) {
+        return new ContainerObjectArchetypeImpl(typeName, statement, parentName, implementsTypes,
+            methodDefinitions(), enclosedTypes());
+    }
 }
