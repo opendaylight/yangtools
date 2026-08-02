@@ -59,7 +59,7 @@ public sealed interface DataContainerArchetype extends Archetype
          * @param genType Type to implement
          * @return <code>true</code> if the addition of type is successful.
          */
-        Builder addImplementsType(Type genType);
+        Builder addImplementsType(DataContainerArchetype genType);
 
         /**
          * Add new Method Signature definition for Generated Type Builder and returns Method Signature Builder

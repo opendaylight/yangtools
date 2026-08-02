@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyedListNotificationArchetype;
+import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
@@ -34,7 +34,8 @@ final class KeyedListNotificationGenerator extends AbstractInstanceNotificationG
 
     @Override
     KeyedListNotificationArchetype createTypeImpl(final JavaTypeName typeName,
-            final NotificationEffectiveStatement statement, final JavaTypeName parentName, final Archetype original) {
+            final NotificationEffectiveStatement statement, final JavaTypeName parentName,
+            final NotificationBodyArchetype original) {
         return KeyedListNotificationArchetype.builder(typeName, statement, parentName)
             .addImplementsType(original)
             .build();

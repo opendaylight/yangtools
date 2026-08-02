@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.Serializable;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -21,12 +20,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
+@Deprecated(forRemoval = true)
 @ExtendWith(MockitoExtension.class)
 class InterfaceArchetypeBuilderTest {
     @Mock
     private ContainerEffectiveStatement statement;
 
     @Test
+    @Deprecated(forRemoval = true)
     void addMethodTest() {
         var generatedTypeBuilder = ContainerObjectArchetype.builder(JavaTypeName.create("my.package", "MyName"),
             statement, JavaTypeName.create("my.package", "MyParent"));
@@ -49,33 +50,7 @@ class InterfaceArchetypeBuilderTest {
     }
 
     @Test
-    void addImplementsTypeIllegalArgumentTest() {
-        final var builder = ContainerObjectArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement,
-            JavaTypeName.create("my.package", "MyParent"));
-        assertThrows(NullPointerException.class, () -> builder.addImplementsType((Type) null));
-    }
-
-    @Test
-    void addImplementsTypeTest() {
-        var generatedTypeBuilder = ContainerObjectArchetype.builder(JavaTypeName.create("my.package", "MyName"),
-            statement, JavaTypeName.create("my.package", "MyParent"));
-
-        assertEquals(generatedTypeBuilder,
-                generatedTypeBuilder.addImplementsType(ConcreteType.ofClass(Serializable.class)));
-        assertEquals(generatedTypeBuilder,
-                generatedTypeBuilder.addImplementsType(ConcreteType.ofClass(Runnable.class)));
-
-        var instance = generatedTypeBuilder.build();
-        var implementTypes = instance.getImplements();
-
-        assertEquals(2, implementTypes.size());
-
-        assertTrue(implementTypes.contains(ConcreteType.ofClass(Serializable.class)));
-        assertTrue(implementTypes.contains(ConcreteType.ofClass(Runnable.class)));
-        assertFalse(implementTypes.contains(ConcreteType.ofClass(Throwable.class)));
-    }
-
-    @Test
+    @Deprecated(forRemoval = true)
     void addEnclosingTransferObjectIllegalArgumentTest2() {
         final var builder = ContainerObjectArchetype.builder(JavaTypeName.create("my.package", "MyName"), statement,
             JavaTypeName.create("my.package", "MyParent"));

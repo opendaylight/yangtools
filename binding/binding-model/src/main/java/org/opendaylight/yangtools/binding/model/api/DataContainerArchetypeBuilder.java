@@ -38,7 +38,7 @@ abstract sealed class DataContainerArchetypeBuilder<
     final @NonNull JavaTypeName typeName;
     final @NonNull S statement;
 
-    private List<Type> implementsTypes = List.of();
+    private List<DataContainerArchetype> implementsTypes = List.of();
     private List<MethodSignature.Builder> methodDefinitions = List.of();
     private List<Archetype> enclosedTypes = List.of();
 
@@ -72,7 +72,7 @@ abstract sealed class DataContainerArchetypeBuilder<
     }
 
     @Override
-    public final @NonNull B addImplementsType(final Type genType) {
+    public final @NonNull B addImplementsType(final DataContainerArchetype genType) {
         checkArgument(!implementsTypes.contains(requireNonNull(genType)),
             "This generated type already contains equal implements type.");
         implementsTypes = LazyCollections.lazyAdd(implementsTypes, genType);

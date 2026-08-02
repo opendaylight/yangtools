@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
@@ -31,7 +31,7 @@ abstract sealed class AbstractInstanceNotificationGenerator extends AbstractNoti
         final var parentName = getParent().typeName();
         final var orig = getOriginal();
         return equals(orig) ? createTypeImpl(typeName, statement, parentName)
-            : createTypeImpl(typeName, statement, parentName, orig.getGeneratedType());
+            : createTypeImpl(typeName, statement, parentName, (NotificationBodyArchetype) orig.getGeneratedType());
     }
 
     @NonNullByDefault
@@ -40,5 +40,5 @@ abstract sealed class AbstractInstanceNotificationGenerator extends AbstractNoti
 
     @NonNullByDefault
     abstract DataContainerArchetype.OfNotification createTypeImpl(JavaTypeName typeName,
-        NotificationEffectiveStatement statement, JavaTypeName parentName, Archetype original);
+        NotificationEffectiveStatement statement, JavaTypeName parentName, NotificationBodyArchetype original);
 }

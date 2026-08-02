@@ -68,6 +68,11 @@ final class GroupingGenerator extends DataContainerGenerator<GroupingEffectiveSt
     }
 
     @Override
+    GroupingArchetype getGeneratedType() {
+        return (GroupingArchetype) super.getGeneratedType();
+    }
+
+    @Override
     GroupingArchetype createTypeImpl() {
         final var builder = GroupingArchetype.builder(typeName(), statement());
         addUsesInterfaces(builder);
