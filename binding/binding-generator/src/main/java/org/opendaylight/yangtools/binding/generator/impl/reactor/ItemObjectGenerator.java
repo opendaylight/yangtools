@@ -32,7 +32,7 @@ final class ItemObjectGenerator extends ListGenerator {
     }
 
     @Override
-    ParameterizedType methodReturnType() {
+    public ParameterizedType methodReturnType() {
         return Types.listTypeFor(getGeneratedType());
     }
 

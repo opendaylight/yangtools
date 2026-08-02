@@ -53,11 +53,6 @@ abstract sealed class AbstractNotificationGenerator
         NotificationEffectiveStatement statement, List<GroupingArchetype> groupings);
 
     @Override
-    final void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
-        // Notifications are a distinct concept
-    }
-
-    @Override
     final CompositeRuntimeTypeBuilder<NotificationEffectiveStatement, NotificationRuntimeType> createBuilder(
             final NotificationEffectiveStatement statement) {
         return new CompositeRuntimeTypeBuilder<>(statement) {
