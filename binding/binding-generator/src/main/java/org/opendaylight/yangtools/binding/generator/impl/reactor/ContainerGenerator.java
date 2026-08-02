@@ -75,7 +75,7 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
                 .addMethod(Naming.getNonnullMethodName(localName().getLocalName()))
                 .setReturnType(returnType)
                 .setDefault(false);
-            addDeprecatedAnnotation(mb, statement);
+            DataContainerMethod.addDeprecatedAnnotation(mb, statement);
         }
         return ret;
     }
