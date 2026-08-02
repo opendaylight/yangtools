@@ -29,8 +29,6 @@ final class NotificationGenerator extends AbstractNotificationGenerator {
     @Override
     NotificationArchetype createTypeImpl(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement, final List<@NonNull GroupingArchetype> groupings) {
-        final var builder = NotificationArchetype.builder(typeName, statement, groupings);
-        addGetterMethods(builder);
-        return builder.build();
+        return NotificationArchetype.of(typeName, statement, groupings, collectTypeObjects(), collectMethods());
     }
 }

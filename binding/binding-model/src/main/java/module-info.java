@@ -14,7 +14,6 @@ module org.opendaylight.yangtools.binding.model {
     requires transitive org.opendaylight.yangtools.rfc8040.model.api;
     requires transitive org.opendaylight.yangtools.yang.model.api;
     requires com.google.common;
-    requires org.opendaylight.yangtools.util;
     requires org.opendaylight.yangtools.yang.common;
     requires org.opendaylight.yangtools.yang.model.ri;
     requires org.slf4j;

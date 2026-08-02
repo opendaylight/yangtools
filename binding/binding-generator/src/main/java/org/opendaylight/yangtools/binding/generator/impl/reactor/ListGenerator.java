@@ -12,13 +12,13 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.model.api.ChildOfArchetype;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -47,18 +47,24 @@ abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEff
     abstract ParameterizedType methodReturnType();
 
     @Override
+    final ChildOfArchetype.OfList createTypeImpl(final JavaTypeName typeName, final ListEffectiveStatement statement,
+            final List<GroupingArchetype> groupings) {
+        return createTypeImpl(typeName, statement, groupings, collectTypeObjects(), collectMethods());
+    }
+
     abstract ChildOfArchetype.OfList createTypeImpl(JavaTypeName typeName, ListEffectiveStatement statement,
-        List<GroupingArchetype> groupings);
+        List<GroupingArchetype> groupings, List<TypeObjectArchetype<?>> typeObjects, List<MethodSignature> methods);
+
 
     @Override
-    final MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder, final Type returnType) {
-        final var ret = super.constructGetter(builder, returnType).setMechanics(ValueMechanics.NULLIFY_EMPTY);
+    final MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list, final Type returnType) {
+        final var ret = super.constructGetter(list, returnType).setMechanics(ValueMechanics.NULLIFY_EMPTY);
 
-        final var mb = builder
-            .addMethod(Naming.getNonnullMethodName(localName().getLocalName()))
+        final var mb = MethodSignature.builder(Naming.getNonnullMethodName(localName().getLocalName()))
             .setReturnType(returnType)
             .setDefault(true);
         addDeprecatedAnnotation(mb, statement());
+        list.add(mb);
 
         return ret;
     }

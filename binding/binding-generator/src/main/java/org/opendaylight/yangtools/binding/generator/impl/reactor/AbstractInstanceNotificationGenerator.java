@@ -13,7 +13,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
+import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
@@ -34,8 +36,9 @@ abstract sealed class AbstractInstanceNotificationGenerator extends AbstractNoti
         final var parentName = getParent().typeName();
         final var orig = getOriginal();
         if (orig.equals(this)) {
-            return createTypeImpl(typeName, statement, parentName, groupings);
+            return createTypeImpl(typeName, statement, parentName, groupings, collectTypeObjects(), collectMethods());
         }
+
         final var origArchetype = orig.getGeneratedType();
         if (!(origArchetype instanceof NotificationBodyArchetype notificationBody)) {
             throw new VerifyException("Unexpected original " + origArchetype);
@@ -47,7 +50,8 @@ abstract sealed class AbstractInstanceNotificationGenerator extends AbstractNoti
     }
 
     abstract DataContainerArchetype.OfNotification createTypeImpl(JavaTypeName typeName,
-        NotificationEffectiveStatement statement, JavaTypeName parentName, List<GroupingArchetype> groupings);
+        NotificationEffectiveStatement statement, JavaTypeName parentName, List<GroupingArchetype> groupings,
+        List<TypeObjectArchetype<?>> typeObjects, List<MethodSignature> methods);
 
     abstract DataContainerArchetype.OfNotification createTypeImpl(JavaTypeName typeName,
         NotificationEffectiveStatement statement, JavaTypeName parentName, NotificationBodyArchetype notificationBody);

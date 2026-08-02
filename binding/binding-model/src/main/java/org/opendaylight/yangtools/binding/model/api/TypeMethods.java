@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import java.util.Collections;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -22,6 +23,21 @@ import org.eclipse.jdt.annotation.Nullable;
 final class TypeMethods {
     private TypeMethods() {
         // hidden on purpose
+    }
+
+    /**
+     * Return an immutable copy of specified list.
+     *
+     * @param list the list
+     * @return a squashed copy of the list
+     */
+    @NonNullByDefault
+    static <T> List<T> copyList(final List<? extends T> list) {
+        return switch (list.size()) {
+            case 0 -> List.of();
+            case 1 -> Collections.singletonList(requireNonNull(list.getFirst()));
+            default -> List.copyOf(list);
+        };
     }
 
     /**

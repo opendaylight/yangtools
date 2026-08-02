@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultContainerRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -49,9 +48,8 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     @Override
     ContainerObjectArchetype createTypeImpl(final JavaTypeName typeName, final ContainerEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings) {
-        final var builder = ContainerObjectArchetype.builder(typeName, statement, parentNameForChildOf(), groupings);
-        addGetterMethods(builder);
-        return builder.build();
+        return ContainerObjectArchetype.of(typeName, statement, parentNameForChildOf(), groupings, collectTypeObjects(),
+            collectMethods());
     }
 
     @Override
@@ -67,15 +65,15 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     }
 
     @Override
-    MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder, final Type returnType) {
-        final var ret = super.constructGetter(builder, returnType).setMechanics(ValueMechanics.NORMAL);
+    MethodSignature.Builder constructGetter(final List<MethodSignature.@NonNull Builder> list, final Type returnType) {
+        final var ret = super.constructGetter(list, returnType).setMechanics(ValueMechanics.NORMAL);
         final var statement = statement();
         if (statement.presenceStatement() == null) {
-            final var mb = builder
-                .addMethod(Naming.getNonnullMethodName(localName().getLocalName()))
+            final var mb = MethodSignature.builder(Naming.getNonnullMethodName(localName().getLocalName()))
                 .setReturnType(returnType)
                 .setDefault(false);
             addDeprecatedAnnotation(mb, statement);
+            list.add(mb);
         }
         return ret;
     }

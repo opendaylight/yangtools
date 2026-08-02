@@ -59,8 +59,9 @@ class PresenceContainerTest {
         final var parentName = JavaTypeName.create("foo", "parent");
         final var keyName = JavaTypeName.create("foo", "key");
         final var listName = JavaTypeName.create("foo", "list");
-        final var archetype = EntryObjectArchetype.builder(listName, userList, parentName,
-            new KeyArchetype(keyName, key, listName, List.of(ConcreteType.ofClass(String.class))), List.of()).build();
+        final var archetype = EntryObjectArchetype.of(listName, userList, parentName,
+            new KeyArchetype(keyName, key, listName, List.of(ConcreteType.ofClass(String.class))), List.of(), List.of(),
+            List.of());
 
         assertFalse(BuilderTemplate.isNonPresenceContainer(archetype));
     }
@@ -72,8 +73,9 @@ class PresenceContainerTest {
     void presenceContainerIsNonPresenceContainerTest() {
         final var scpContainer = assertInstanceOf(ContainerEffectiveStatement.class,
             MODULE.findDataTreeChild(DIRECTORY_QNAME, SCP_QNAME).orElseThrow());
-        assertFalse(BuilderTemplate.isNonPresenceContainer(ContainerObjectArchetype.builder(
-            JavaTypeName.create("foo", "foo"), scpContainer, JavaTypeName.create("foo", "parent"), List.of()).build()));
+        assertFalse(BuilderTemplate.isNonPresenceContainer(ContainerObjectArchetype.of(
+            JavaTypeName.create("foo", "foo"), scpContainer, JavaTypeName.create("foo", "parent"), List.of(), List.of(),
+            List.of())));
     }
 
     /**
@@ -83,8 +85,8 @@ class PresenceContainerTest {
     void nonPresenceContainerIsNonPresenceContainerTest() {
         final var dataContainer = assertInstanceOf(ContainerEffectiveStatement.class,
             MODULE.findDataTreeChild(DIRECTORY_QNAME, DATA_QNAME).orElseThrow());
-        assertTrue(BuilderTemplate.isNonPresenceContainer(ContainerObjectArchetype.builder(
-            JavaTypeName.create("foo", "foo"), dataContainer, JavaTypeName.create("foo", "parent"), List.of())
-            .build()));
+        assertTrue(BuilderTemplate.isNonPresenceContainer(ContainerObjectArchetype.of(
+            JavaTypeName.create("foo", "foo"), dataContainer, JavaTypeName.create("foo", "parent"), List.of(),
+            List.of(), List.of())));
     }
 }

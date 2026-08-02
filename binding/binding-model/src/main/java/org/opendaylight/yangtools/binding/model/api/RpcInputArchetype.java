@@ -17,40 +17,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
  *
  * @since 16.0.0
  */
+@NonNullByDefault
 public sealed interface RpcInputArchetype extends AugmentableArchetype permits RpcInputArchetypeImpl {
-    /**
-     * A builder of {@link RpcInputArchetype}s.
-     */
-    @NonNullByDefault
-    final class Builder extends DataContainerArchetypeBuilder<Builder, InputEffectiveStatement> {
-        private Builder(final JavaTypeName typeName, final InputEffectiveStatement statement,
-                final List<GroupingArchetype> groupings) {
-            super(typeName, statement, groupings);
-        }
-
-        @Override
-        public RpcInputArchetype build() {
-            return new RpcInputArchetypeImpl(typeName, statement, implementsTypes, methodDefinitions(),
-                enclosedTypes());
-        }
-
-        @Override
-        Class<RpcInputArchetype> archetypeClass() {
-            return RpcInputArchetype.class;
-        }
-
-        @Override
-        Builder thisInstance() {
-            return this;
-        }
-    }
-
-    @NonNullByDefault
-    static Builder builder(final JavaTypeName typeName, final InputEffectiveStatement statement,
-            final List<GroupingArchetype> groupings) {
-        return new Builder(typeName, statement, groupings);
-    }
-
     @Override
     InputEffectiveStatement statement();
+
+    static RpcInputArchetype of(final JavaTypeName typeName, final InputEffectiveStatement statement,
+            final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
+            final List<MethodSignature> methods) {
+        return new RpcInputArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),
+            TypeMethods.copyList(typeObjects), TypeMethods.copyList(methods));
+    }
 }

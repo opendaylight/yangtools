@@ -15,7 +15,9 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
@@ -38,10 +40,9 @@ final class ItemObjectGenerator extends ListGenerator {
 
     @Override
     ItemObjectArchetype createTypeImpl(final JavaTypeName typeName, final ListEffectiveStatement statement,
-            final List<@NonNull GroupingArchetype> groupings) {
-        final var builder = ItemObjectArchetype.builder(typeName, statement, parentNameForChildOf(), groupings);
-        addGetterMethods(builder);
-        return builder.build();
+            final List<@NonNull GroupingArchetype> groupings, final List<@NonNull TypeObjectArchetype<?>> typeObjects,
+            final List<@NonNull MethodSignature> methods) {
+        return ItemObjectArchetype.of(typeName, statement, parentNameForChildOf(), groupings, typeObjects, methods);
     }
 
     @Override

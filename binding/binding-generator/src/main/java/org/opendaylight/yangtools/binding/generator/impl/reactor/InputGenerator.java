@@ -16,7 +16,9 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultInputRuntimeT
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
+import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.InputRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -46,10 +48,9 @@ final class InputGenerator
 
     @Override
     RpcInputArchetype createArchetype(final JavaTypeName typeName, final InputEffectiveStatement statement,
-            final List<@NonNull GroupingArchetype> groupings) {
-        final var builder = RpcInputArchetype.builder(typeName, statement, groupings);
-        addGetterMethods(builder);
-        return builder.build();
+            final List<@NonNull GroupingArchetype> groupings, final List<@NonNull TypeObjectArchetype<?>> typeObjects,
+            final List<@NonNull MethodSignature> methods) {
+        return RpcInputArchetype.of(typeName, statement, groupings, typeObjects, methods);
     }
 
     @Override

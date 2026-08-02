@@ -16,7 +16,10 @@ import java.util.Set;
 /**
  * Utility methods for lazily instantiated collections. These are useful for situations when we start off with an empty
  * collection (where Collections.empty() * can be reused), but need to add more things.
+ *
+ * @deprecated These are trivial methods and not really useful. Brew your own if needed.
  */
+@Deprecated(since = "16.0.0", forRemoval = true)
 public final class LazyCollections {
     private LazyCollections() {
         // Hidden on purpose
@@ -30,18 +33,19 @@ public final class LazyCollections {
      * @param obj Object that needs to be added
      * @return new list
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static <E> List<E> lazyAdd(final List<E> list, final E obj) {
         final List<E> ret;
 
         switch (list.size()) {
-            case 0:
+            case 0 -> {
                 return Collections.singletonList(obj);
-            case 1:
+            }
+            case 1 -> {
                 ret = new ArrayList<>(2);
                 ret.addAll(list);
-                break;
-            default:
-                ret = list;
+            }
+            default -> ret = list;
         }
 
         ret.add(obj);
@@ -56,18 +60,19 @@ public final class LazyCollections {
      * @param obj Object that needs to be added
      * @return new set
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static <E> Set<E> lazyAdd(final Set<E> set, final E obj) {
         final Set<E> ret;
 
         switch (set.size()) {
-            case 0:
+            case 0 -> {
                 return Collections.singleton(obj);
-            case 1:
+            }
+            case 1 -> {
                 ret = new HashSet<>(4);
                 ret.addAll(set);
-                break;
-            default:
-                ret = set;
+            }
+            default -> ret = set;
         }
 
         ret.add(obj);

@@ -14,6 +14,8 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -65,9 +67,10 @@ abstract sealed class OperationContainerGenerator<
             //        output = context.addAliasType(origContext, orig.getOutput(), action.getOutput());
             throw new UnsupportedOperationException("Lookup in original");
         }
-        return createArchetype(typeName, statement, groupings);
+        return createArchetype(typeName, statement, groupings, collectTypeObjects(), collectMethods());
     }
 
     @NonNullByDefault
-    abstract @NonNull A createArchetype(JavaTypeName typeName, @NonNull S statement, List<GroupingArchetype> groupings);
+    abstract @NonNull A createArchetype(JavaTypeName typeName, @NonNull S statement, List<GroupingArchetype> groupings,
+        List<TypeObjectArchetype<?>> typeObjects, List<MethodSignature> methods);
 }

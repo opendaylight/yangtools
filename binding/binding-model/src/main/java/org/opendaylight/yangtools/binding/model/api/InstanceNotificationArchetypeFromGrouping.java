@@ -33,6 +33,11 @@ record InstanceNotificationArchetypeFromGrouping(
     }
 
     @Override
+    public List<TypeObjectArchetype<?>> typeObjects() {
+        return List.of();
+    }
+
+    @Override
     public List<MethodSignature> getMethodDefinitions() {
         return List.of();
     }

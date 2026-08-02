@@ -155,7 +155,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
 
         bb.oB();
 
-        final var innerClasses = generateInnerClasses(root, archetype.enclosedTypes());
+        final var innerClasses = generateInnerClasses(root, archetype.typeObjects());
         if (innerClasses != null) {
             bb.blk(innerClasses).newLine();
         }

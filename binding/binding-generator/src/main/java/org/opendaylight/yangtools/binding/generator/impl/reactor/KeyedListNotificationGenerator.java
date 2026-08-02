@@ -13,7 +13,9 @@ import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyedListNotificationArchetype;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
+import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
@@ -28,10 +30,9 @@ final class KeyedListNotificationGenerator extends AbstractInstanceNotificationG
     @Override
     KeyedListNotificationArchetype createTypeImpl(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement, final JavaTypeName parentName,
-            final List<GroupingArchetype> groupings) {
-        final var builder = KeyedListNotificationArchetype.builder(typeName, statement, parentName, groupings);
-        addGetterMethods(builder);
-        return builder.build();
+            final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
+            final List<MethodSignature> methods) {
+        return KeyedListNotificationArchetype.of(typeName, statement, parentName, groupings, typeObjects, methods);
     }
 
     @Override

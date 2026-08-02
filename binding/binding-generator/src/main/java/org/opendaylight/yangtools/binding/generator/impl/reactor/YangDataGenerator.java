@@ -16,9 +16,9 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultYangDataRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -102,9 +102,7 @@ abstract sealed class YangDataGenerator
     @Override
     final YangDataArchetype createTypeImpl(final JavaTypeName typeName, final YangDataEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings) {
-        final var builder = YangDataArchetype.builder(typeName, statement, groupings);
-        addGetterMethods(builder);
-        return builder.build();
+        return YangDataArchetype.of(typeName, statement, groupings, collectTypeObjects(), collectMethods());
     }
 
     @Override
@@ -120,7 +118,7 @@ abstract sealed class YangDataGenerator
     }
 
     @Override
-    final void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
+    final void addAsGetterMethod(final List<MethodSignature.Builder> list) {
         // is not a part of any structure
     }
 }
