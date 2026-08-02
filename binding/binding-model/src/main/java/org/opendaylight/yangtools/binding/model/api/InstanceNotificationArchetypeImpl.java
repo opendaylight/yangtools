@@ -20,14 +20,15 @@ record InstanceNotificationArchetypeImpl(
         NotificationEffectiveStatement statement,
         JavaTypeName parentName,
         List<Type> implementsTypes,
-        List<MethodSignature> methodSignatures,
-        List<Archetype> enclosedTypes) implements InstanceNotificationArchetype {
+        List<TypeObjectArchetype<?>> typeObjects,
+        List<MethodSignature> methodSignatures) implements InstanceNotificationArchetype {
     InstanceNotificationArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
+        requireNonNull(parentName);
         requireNonNull(implementsTypes);
+        requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-        requireNonNull(enclosedTypes);
     }
 
     @Override

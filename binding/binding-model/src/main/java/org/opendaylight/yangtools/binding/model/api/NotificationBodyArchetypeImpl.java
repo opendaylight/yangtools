@@ -19,14 +19,14 @@ record NotificationBodyArchetypeImpl(
         JavaTypeName name,
         NotificationEffectiveStatement statement,
         List<Type> implementsTypes,
-        List<MethodSignature> methodSignatures,
-        List<Archetype> enclosedTypes) implements NotificationBodyArchetype {
+        List<TypeObjectArchetype<?>> typeObjects,
+        List<MethodSignature> methodSignatures) implements NotificationBodyArchetype {
     NotificationBodyArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(implementsTypes);
+        requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-        requireNonNull(enclosedTypes);
     }
 
     @Override

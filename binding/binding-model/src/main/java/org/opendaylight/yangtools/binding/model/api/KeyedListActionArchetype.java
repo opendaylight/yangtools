@@ -20,6 +20,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 @NonNullByDefault
 public sealed interface KeyedListActionArchetype extends OperationArchetype.OfAction
         permits KeyedListActionArchetypeImpl {
+    @Override
+    @SuppressWarnings("rawtypes")
+    default Class<Action> contract() {
+        return Action.class;
+    }
+
     /**
      * {@return an KeyedListActionArchetype}
      * @param name the archetype's {@link JavaTypeName}}
@@ -31,11 +37,5 @@ public sealed interface KeyedListActionArchetype extends OperationArchetype.OfAc
     static KeyedListActionArchetype of(final JavaTypeName name, final ActionEffectiveStatement statement,
             final RpcInputArchetype input, final RpcOutputArchetype output, final JavaTypeName parentName) {
         return new KeyedListActionArchetypeImpl(name, statement, input, output, parentName);
-    }
-
-    @Override
-    @SuppressWarnings("rawtypes")
-    default Class<Action> contract() {
-        return Action.class;
     }
 }

@@ -20,14 +20,14 @@ record CaseObjectArchetypeImpl(
         CaseEffectiveStatement statement,
         ChoiceInArchetype choice,
         List<Type> implementsTypes,
-        List<MethodSignature> methodSignatures,
-        List<Archetype> enclosedTypes) implements CaseObjectArchetype {
+        List<TypeObjectArchetype<?>> typeObjects,
+        List<MethodSignature> methodSignatures) implements CaseObjectArchetype {
     CaseObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(implementsTypes);
+        requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-        requireNonNull(enclosedTypes);
         requireNonNull(choice);
     }
 
