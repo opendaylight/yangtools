@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAugmentRuntim
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -202,7 +202,7 @@ public abstract sealed class AugmentGenerator
     }
 
     @Override
-    final void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
+    final void addAsGetterMethod(final List<MethodSignature.Builder> list) {
         // Augments are never added as getters, as they are handled via Augmentable mechanics
     }
 

@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -19,7 +20,6 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresentation;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
@@ -329,7 +329,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
+    void addAsGetterMethod(final List<MethodSignature.Builder> list) {
         if (isAugmenting()) {
             // Do not process augmented nodes: they will be taken care of in their home augmentation
             return;
@@ -339,47 +339,48 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
             // grouping. There is one exception to this rule: 'type leafref' can use a relative path to point
             // outside of its home grouping. In this case we need to examine the instantiation until we succeed in
             // resolving the reference.
-            addAsGetterMethodOverride(builder);
+            addAsGetterMethodOverride(list);
             return;
         }
 
         final var returnType = methodReturnType();
-        constructGetter(builder, returnType);
-        constructRequire(builder, returnType);
+        constructGetter(list, returnType);
+        constructRequire(list, returnType);
     }
 
     @NonNullByDefault
-    MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder, final Type returnType) {
-        return constructGetter(builder, statement, returnType, Naming.getGetterMethodName(localName().getLocalName()));
+    MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list, final Type returnType) {
+        return constructGetter(list, statement, returnType, Naming.getGetterMethodName(localName().getLocalName()));
     }
 
     @NonNullByDefault
-    static final MethodSignature.Builder constructGetter(final DataContainerArchetype.Builder builder,
+    static final MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list,
             final EffectiveStatement<?, ?> statement, final Type returnType, final String methodName) {
-        final var mb = builder.addMethod(methodName)
-            .setReturnType(returnType);
+        final var mb = MethodSignature.builder(methodName).setReturnType(returnType);
         addDeprecatedAnnotation(mb, statement);
         statement.findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class)
             .map(TypeMemberComment::referenceOf)
             .ifPresent(mb::setComment);
+
+        list.add(mb);
         return mb;
     }
 
     @NonNullByDefault
-    void constructRequire(final DataContainerArchetype.Builder builder, final Type returnType) {
+    void constructRequire(final List<MethodSignature.Builder> list, final Type returnType) {
         // No-op in most cases
     }
 
-    static final void constructRequire(final DataContainerArchetype.@NonNull Builder builder,
+    static final void constructRequire(final @NonNull List<MethodSignature.@NonNull Builder> list,
             final @NonNull EffectiveStatement<QName, ?> statement, final @NonNull Type returnType) {
-        constructGetter(builder, statement, returnType,
+        constructGetter(list, statement, returnType,
             Naming.getRequireMethodName(statement.argument().getLocalName()))
             .setDefault(true)
             .setMechanics(ValueMechanics.NONNULL);
     }
 
     @NonNullByDefault
-    void addAsGetterMethodOverride(final DataContainerArchetype.Builder builder) {
+    void addAsGetterMethodOverride(final List<MethodSignature.Builder> list) {
         // No-op for most cases
     }
 

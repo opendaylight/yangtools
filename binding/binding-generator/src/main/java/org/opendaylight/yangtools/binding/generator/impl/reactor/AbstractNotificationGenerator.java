@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -53,7 +54,7 @@ abstract sealed class AbstractNotificationGenerator
         NotificationEffectiveStatement statement, List<GroupingArchetype> groupings);
 
     @Override
-    final void addAsGetterMethod(final DataContainerArchetype.Builder builder) {
+    final void addAsGetterMethod(final List<MethodSignature.Builder> list) {
         // Notifications are a distinct concept
     }
 

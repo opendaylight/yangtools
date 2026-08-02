@@ -51,6 +51,13 @@ public sealed interface RpcInputArchetype extends AugmentableArchetype permits R
         return new Builder(typeName, statement, groupings);
     }
 
+    @NonNullByDefault
+    static RpcInputArchetype of(final JavaTypeName typeName, final InputEffectiveStatement statement,
+            final List<GroupingArchetype> groupings, final List<MethodSignature> methods,
+            final List<Archetype> enclosedTypes) {
+        return new RpcInputArchetypeImpl(typeName, statement, groupings, methods, enclosedTypes);
+    }
+
     @Override
     InputEffectiveStatement statement();
 }

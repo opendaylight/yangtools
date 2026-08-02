@@ -19,9 +19,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
@@ -464,22 +464,34 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
     abstract Archetype createTypeImpl(JavaTypeName typeName, @NonNull S statement, List<GroupingArchetype> groupings);
 
     @NonNullByDefault
-    final void addGetterMethods(final DataContainerArchetype.Builder builder) {
+    final List<MethodSignature> collectGetterMethods() {
+        final var list = new ArrayList<MethodSignature.Builder>();
+
         for (var child : this) {
             // Only process explicit generators here
             if (child instanceof AbstractExplicitGenerator<?, ?> explicit) {
-                explicit.addAsGetterMethod(builder);
+                explicit.addAsGetterMethod(list);
             }
+        }
 
+        return list.isEmpty() ? List.of() : list.stream().map(MethodSignature.Builder::build).toList();
+    }
+
+    final List<TypeObjectArchetype<?>> collectEnclosedTypes() {
+        final var list = new ArrayList<TypeObjectArchetype<?>>();
+
+        for (var child : this) {
             final var enclosedType = child.enclosedType();
             switch (enclosedType) {
-                case TypeObjectArchetype<?> typeObject -> builder.addEnclosedType(typeObject);
+                case TypeObjectArchetype<?> typeObject -> list.add(typeObject);
                 case null -> {
                     // No-op
                 }
                 default -> throw new VerifyException("Unhandled enclosed type %s in %s".formatted(enclosedType, child));
             }
         }
+
+        return List.copyOf(list);
     }
 
     private @NonNull List<Generator> createChildren(final EffectiveStatement<?, ?> statement) {
