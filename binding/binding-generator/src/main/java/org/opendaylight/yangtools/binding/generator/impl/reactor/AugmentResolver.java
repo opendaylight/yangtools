@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayDeque;
-import java.util.Deque;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -21,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
  * This is essentially a stack of {@link DataContainerGenerator}s which should be examined.
  */
 final class AugmentResolver implements Mutable {
-    private final Deque<DataContainerGenerator<?, ?>> stack = new ArrayDeque<>();
+    private final ArrayDeque<DataContainerGenerator<?, ?>> stack = new ArrayDeque<>();
 
     void enter(final DataContainerGenerator<?, ?> generator) {
         stack.push(requireNonNull(generator));
