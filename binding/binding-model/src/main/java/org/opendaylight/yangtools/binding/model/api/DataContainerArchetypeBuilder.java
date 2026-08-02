@@ -56,11 +56,6 @@ abstract sealed class DataContainerArchetypeBuilder<
     }
 
     @Override
-    public final TypeRef typeRef() {
-        return TypeRef.of(typeName);
-    }
-
-    @Override
     public final @NonNull B addEnclosedType(final Archetype genType) {
         if (enclosedTypes.contains(requireNonNull(genType))) {
             throw new IllegalArgumentException("This generated type already contains equal enclosing transfer object.");

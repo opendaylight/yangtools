@@ -33,11 +33,6 @@ public sealed interface DataContainerArchetype extends Archetype
     @Beta
     sealed interface Builder extends Mutable permits DataContainerArchetypeBuilder {
         /**
-         * {@return a {@link TypeRef} to the type this builder produces}
-         */
-        TypeRef typeRef();
-
-        /**
          * Adds a new enclosed {@link Archetype} into definition of Generated Type.
          *
          * <br>There is no need of specifying of Package Name because enclosing Type is already defined inside Generated
