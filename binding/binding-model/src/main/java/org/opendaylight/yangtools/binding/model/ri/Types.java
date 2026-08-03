@@ -35,9 +35,7 @@ public final class Types {
             }
         });
 
-    public static final @NonNull ConcreteType BOOLEAN = cachedType(Boolean.class);
     public static final @NonNull ConcreteType OBJECT = cachedType(Object.class);
-    public static final @NonNull ConcreteType STRING = cachedType(String.class);
 
     private static final @NonNull ConcreteType LIST_TYPE = cachedType(List.class);
     private static final @NonNull ConcreteType MAP_TYPE = cachedType(Map.class);

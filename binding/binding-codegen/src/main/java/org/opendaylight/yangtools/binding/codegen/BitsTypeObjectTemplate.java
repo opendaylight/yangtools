@@ -13,7 +13,7 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.DEPRECATED;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.contract.Naming.getPropertyName;
-import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
