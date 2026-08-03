@@ -19,20 +19,15 @@ record ContainerObjectArchetypeImpl(
         JavaTypeName name,
         ContainerEffectiveStatement statement,
         JavaTypeName parentName,
-        List<Type> implementsTypes,
+        List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
         List<MethodSignature> methodSignatures) implements ContainerObjectArchetype {
     ContainerObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(implementsTypes);
+        requireNonNull(partials);
         requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-    }
-
-    @Override
-    public List<Type> getImplements() {
-        return implementsTypes;
     }
 
     @Override

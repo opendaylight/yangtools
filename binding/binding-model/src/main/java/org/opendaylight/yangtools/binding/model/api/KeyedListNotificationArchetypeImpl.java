@@ -19,21 +19,16 @@ record KeyedListNotificationArchetypeImpl(
         JavaTypeName name,
         NotificationEffectiveStatement statement,
         JavaTypeName parentName,
-        List<Type> implementsTypes,
+        List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
         List<MethodSignature> methodSignatures) implements KeyedListNotificationArchetype {
     KeyedListNotificationArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(parentName);
-        requireNonNull(implementsTypes);
+        requireNonNull(partials);
         requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-    }
-
-    @Override
-    public List<Type> getImplements() {
-        return implementsTypes;
     }
 
     @Override

@@ -22,13 +22,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 record DataRootArchetypeImpl(
         JavaTypeName name,
         ModuleEffectiveStatement statement,
-        List<Type> getImplements,
+        List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
         List<MethodSignature> getMethodDefinitions) implements DataRootArchetype {
     DataRootArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(getImplements);
+        requireNonNull(partials);
         requireNonNull(typeObjects);
         requireNonNull(getMethodDefinitions);
     }
