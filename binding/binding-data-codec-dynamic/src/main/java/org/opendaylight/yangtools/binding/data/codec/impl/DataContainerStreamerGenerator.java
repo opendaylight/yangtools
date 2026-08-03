@@ -334,13 +334,10 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
                 return method;
             }
         }
-        for (var type : archetype.getImplements()) {
-            // FIXME: narrow down?
-            if (type instanceof DataContainerArchetype dataContainer) {
-                final var found = lookupMethod(dataContainer, methodName);
-                if (found != null) {
-                    return found;
-                }
+        for (var partial : archetype.partials()) {
+            final var found = lookupMethod(partial, methodName);
+            if (found != null) {
+                return found;
             }
         }
         return null;

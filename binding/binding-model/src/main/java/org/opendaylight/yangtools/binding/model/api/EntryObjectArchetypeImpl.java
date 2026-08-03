@@ -20,20 +20,14 @@ record EntryObjectArchetypeImpl(
         ListEffectiveStatement statement,
         JavaTypeName parentName,
         KeyArchetype key,
-        List<Type> implementsTypes,
+        List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
         List<MethodSignature> methodSignatures) implements EntryObjectArchetype {
     EntryObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(implementsTypes);
         requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-    }
-
-    @Override
-    public List<Type> getImplements() {
-        return implementsTypes;
     }
 
     @Override

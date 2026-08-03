@@ -19,21 +19,16 @@ record CaseObjectArchetypeImpl(
         JavaTypeName name,
         CaseEffectiveStatement statement,
         ChoiceInArchetype choice,
-        List<Type> implementsTypes,
+        List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
         List<MethodSignature> methodSignatures) implements CaseObjectArchetype {
     CaseObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(implementsTypes);
+        requireNonNull(partials);
         requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
         requireNonNull(choice);
-    }
-
-    @Override
-    public List<Type> getImplements() {
-        return implementsTypes;
     }
 
     @Override

@@ -19,7 +19,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
-import org.opendaylight.yangtools.binding.model.api.Type;
 
 record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
     private static final Comparator<MethodSignature> METHOD_COMPARATOR = Comparator.comparing(MethodSignature::name);
@@ -37,7 +36,7 @@ record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
     static TypeAnalysis of(final DataContainerArchetype type) {
         final var methods = new LinkedHashSet<MethodSignature>();
         methods.addAll(type.getMethodDefinitions());
-        collectImplementedMethods(type, methods, type.getImplements());
+        collectImplementedMethods(type, methods, type.partials());
         return new TypeAnalysis(propertiesFromMethods(methods.stream().sorted(METHOD_COMPARATOR).toList()));
     }
 
@@ -46,28 +45,25 @@ record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
      * interfaces.
      *
      * @param methods set of method signatures
-     * @param implementedIfcs list of implemented interfaces
+     * @param partials list of implemented interfaces
      */
     private static void collectImplementedMethods(
             final @NonNull DataContainerArchetype archetype, final @NonNull Set<MethodSignature> methods,
-            final @NonNull List<Type> implementedIfcs) {
-        for (var implementedIfc : implementedIfcs) {
-            // FIXME: narrow down?
-            if (implementedIfc instanceof DataContainerArchetype ifc) {
-                for (var implMethod : ifc.getMethodDefinitions()) {
-                    if (JavaFileTemplate.hasOverrideAnnotation(implMethod)) {
+            final @NonNull List<DataContainerArchetype.Partial> partials) {
+        for (var partial : partials) {
+            for (var implMethod : partial.getMethodDefinitions()) {
+                if (JavaFileTemplate.hasOverrideAnnotation(implMethod)) {
+                    methods.add(implMethod);
+                } else {
+                    final var implMethodName = implMethod.name();
+                    if (Naming.isGetterMethodName(implMethodName)
+                        && JavaFileTemplate.getterByName(methods, implMethodName) == null) {
                         methods.add(implMethod);
-                    } else {
-                        final var implMethodName = implMethod.name();
-                        if (Naming.isGetterMethodName(implMethodName)
-                            && JavaFileTemplate.getterByName(methods, implMethodName) == null) {
-                            methods.add(implMethod);
-                        }
                     }
                 }
-
-                collectImplementedMethods(archetype, methods, ifc.getImplements());
             }
+
+            collectImplementedMethods(archetype, methods, partial.partials());
         }
     }
 

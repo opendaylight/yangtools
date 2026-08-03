@@ -203,7 +203,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
 
             boolean substitutional;
             // check if both have same interfaces
-            substitutional = candidate.javaType().getImplements().equals(localType.getImplements());
+            substitutional = candidate.javaType().partials().equals(localType.partials());
             // check if both have same children
             substitutional &= caseToChildrenStmts.get(candidate).equals(caseToChildrenStmts.get(local));
 
@@ -241,7 +241,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
             // loop invariants
             final var runtimeType = runtime.javaType();
             final var runtimeTarget = runtimeType.target();
-            final var runtimeIfaces = runtimeType.getImplements();
+            final var runtimeIfaces = runtimeType.partials();
             final var runtimeChildren = augToChildrenStmts.get(runtime);
 
             for (final var entry : augToChildrenStmts.entrySet()) {
@@ -258,7 +258,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
                 }
 
                 // check if both have same interfaces
-                final var substitIfaces = substitType.getImplements();
+                final var substitIfaces = substitType.partials();
                 if (!runtimeIfaces.equals(substitIfaces)) {
                     continue;
                 }
