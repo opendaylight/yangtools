@@ -21,7 +21,7 @@ class TypesTest {
 
     @Test
     void testMapTypeFor() {
-        final var mapType = Types.mapTypeFor(Types.objectType(), Types.objectType());
+        final var mapType = Types.mapTypeFor(Types.OBJECT, Types.OBJECT);
         assertEquals("Map", mapType.simpleName());
     }
 
@@ -32,7 +32,7 @@ class TypesTest {
 
     @Test
     void testSetTypeFor() {
-        final var setType = Types.setTypeFor(Types.objectType());
+        final var setType = Types.setTypeFor(Types.OBJECT);
         assertEquals("Set", setType.simpleName());
     }
 
@@ -43,7 +43,7 @@ class TypesTest {
 
     @Test
     void testListTypeFor() {
-        final var listType = Types.listTypeFor(Types.objectType());
+        final var listType = Types.listTypeFor(Types.OBJECT);
         assertEquals("List", listType.simpleName());
     }
 
