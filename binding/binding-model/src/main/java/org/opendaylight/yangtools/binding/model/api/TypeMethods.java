@@ -79,6 +79,62 @@ final class TypeMethods {
     }
 
     /**
+     * Implementation of {@link BitsTypeObjectArchetype#toString()}.
+     *
+     * @param self the archetype
+     * @return a String
+     */
+    @NonNullByDefault
+    static String toString(final BitsTypeObjectArchetype self) {
+        final var helper = MoreObjects.toStringHelper(BitsTypeObjectArchetype.class)
+            .add("name", self.name())
+            .add("type", self.typeDefinition());
+        final var superType = self.superType();
+        if (superType != null) {
+            helper.add("extends", superType.name());
+        }
+        return helper.toString();
+    }
+
+    /**
+     * Implementation of {@link ScalarTypeObjectArchetype#toString()}.
+     *
+     * @param self the archetype
+     * @return a String
+     */
+    @NonNullByDefault
+    static String toString(final ScalarTypeObjectArchetype self) {
+        final var helper = MoreObjects.toStringHelper(ScalarTypeObjectArchetype.class).omitNullValues()
+            .add("name", self.name())
+            .add("type", self.typeDefinition());
+        final var superType = self.superType();
+        if (superType != null) {
+            helper.add("extends", superType.name());
+        }
+        return helper.add("restrictions", self.restrictions()).toString();
+    }
+
+    /**
+     * Implementation of {@link UnionTypeObjectArchetype#toString()}.
+     *
+     * @param self the archetype
+     * @return a String
+     */
+    @NonNullByDefault
+    static String toString(final UnionTypeObjectArchetype self) {
+        final var helper = MoreObjects.toStringHelper(UnionTypeObjectArchetype.class)
+            .add("name", self.name());
+        final var superType = self.superType();
+        if (superType == null) {
+            helper.add("typeProperties", self.typeProperties());
+            addNonEmpty(helper, "enclosedTypes", self.enclosedTypes());
+        } else {
+            helper.add("extends", superType.name());
+        }
+        return helper.toString();
+    }
+
+    /**
      * Implementation of {@link MethodSignature#toString()}.
      *
      * @param archetypeClass the archetype class

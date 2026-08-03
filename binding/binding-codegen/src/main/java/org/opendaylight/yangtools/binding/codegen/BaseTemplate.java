@@ -190,7 +190,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         //        that sounds like it should be handled in those templates ... perhaps we should receive these from
         //        the caller as 'List<JavaTypeName> seeAlso'?
         if (stmt instanceof TypedefEffectiveStatement && type instanceof TypeObjectArchetype.OfClass<?> toArchetype) {
-            final var superType = toArchetype.getSuperType();
+            final var superType = toArchetype.superType();
             if (superType != null) {
                 sb
                     .append("\n\n")

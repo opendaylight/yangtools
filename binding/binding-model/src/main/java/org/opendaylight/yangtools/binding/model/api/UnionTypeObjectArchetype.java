@@ -7,11 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
-import com.google.common.collect.Streams;
 import java.util.List;
+import java.util.Map;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.UnionTypeObject;
@@ -25,50 +23,41 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
  *        union. The ordering of the returned list matches the ordering of the type statements.
  * @since 16.0.0
  */
-// FIXME: should be an interface + implementation
 @Beta
 @NonNullByDefault
-public record UnionTypeObjectArchetype(
-        JavaTypeName name,
-        TypeEffectiveStatement.MandatoryIn<?, ?> statement,
-        List<String> typePropertyNames,
-        List<Type> typePropertyTypes,
-        // FIXME: YANGTOOLS-1621: not really, these should be the tag types
-        List<TypeObjectArchetype<?>> enclosedTypes,
-        @Nullable UnionTypeObjectArchetype getSuperType) implements TypeObjectArchetype.OfClass<UnionTypeObject> {
-    public UnionTypeObjectArchetype {
-        requireNonNull(name);
-        requireNonNull(statement);
-        typePropertyNames = List.copyOf(typePropertyNames);
-        typePropertyTypes = List.copyOf(typePropertyTypes);
-        enclosedTypes = List.copyOf(enclosedTypes);
+public sealed interface UnionTypeObjectArchetype extends TypeObjectArchetype.OfClass<UnionTypeObject>
+        permits UnionTypeObjectArchetypeB, UnionTypeObjectArchetypeD {
+    @Override
+    @Nullable UnionTypeObjectArchetype superType();
 
+    @Override
+    @Deprecated(forRemoval = true)
+    default @Nullable TypeDefinition<?> baseType() {
+        return null;
+    }
+
+    // FIXME: YANGTOOLS-1621: not really, these should be the tag types, at which point we will remove typeProperties()
+    List<TypeObjectArchetype<?>> enclosedTypes();
+
+    List<String> typePropertyNames();
+
+    List<Type> typePropertyTypes();
+
+    List<Map.Entry<String, Type>> typeProperties();
+
+    static UnionTypeObjectArchetype of(final JavaTypeName name,
+            final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final List<String> typePropertyNames,
+            final List<Type> typePropertyTypes, final List<TypeObjectArchetype<?>> enclosedTypes) {
         final var uniqueNames = typePropertyNames.stream().distinct().count();
         if (uniqueNames != typePropertyTypes.size()) {
             throw new IllegalArgumentException(uniqueNames + " names does not match " + typePropertyTypes);
         }
+        return new UnionTypeObjectArchetypeB(name, statement, List.copyOf(typePropertyNames),
+            List.copyOf(typePropertyTypes), List.copyOf(enclosedTypes));
     }
 
-    // FIXME: remove this method
-    public List<GeneratedProperty> getProperties() {
-        return Streams.zip(typePropertyNames().stream().distinct(), typePropertyTypes().stream(),
-            (pn, pt) -> (GeneratedProperty) new GeneratedPropertyImpl(pn, pt, true))
-            .toList();
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public @Nullable TypeDefinition<?> getBaseType() {
-        return null;
-    }
-
-    @Override
-    public int hashCode() {
-        return TypeMethods.hashCode(this);
-    }
-
-    @Override
-    public boolean equals(final @Nullable Object obj) {
-        return TypeMethods.equals(this, obj);
+    static UnionTypeObjectArchetype of(final JavaTypeName name,
+            final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final UnionTypeObjectArchetype superType) {
+        return new UnionTypeObjectArchetypeD(name, statement, superType);
     }
 }

@@ -32,12 +32,13 @@ public sealed interface TypeObjectArchetype<T extends TypeObject> extends Archet
      * @param <T> {@link TypeObject} specialization
      * @since 16.0.0
      */
+    @Beta
     sealed interface OfClass<T extends TypeObject> extends TypeObjectArchetype<T>
             permits BitsTypeObjectArchetype, ScalarTypeObjectArchetype, UnionTypeObjectArchetype {
         /**
          * {@return the archetype describing the class this archetype's class extends, or {@code null}}
          */
-        @Nullable OfClass<T> getSuperType();
+        @Nullable OfClass<T> superType();
 
         // FIXME: why do we need this boolean?
         @Deprecated(since = "16.0.0", forRemoval = true)
@@ -48,7 +49,7 @@ public sealed interface TypeObjectArchetype<T extends TypeObject> extends Archet
         /**
          * {@return Base type of Java representation of YANG typedef if set, otherwise it returns {@code null}}
          */
-        @Nullable TypeDefinition<?> getBaseType();
+        @Nullable TypeDefinition<?> baseType();
     }
 
     // FIXME: this is not entirely accurate: we want to have:

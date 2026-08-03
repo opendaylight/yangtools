@@ -79,7 +79,7 @@ enum ScalarTypeKind {
     }
 
     private static @Nullable ScalarTypeKind recursiveOf(final ScalarTypeObjectArchetype archetype) {
-        final var superType = archetype.getSuperType();
+        final var superType = archetype.superType();
         if (superType != null) {
             final var superClass = recursiveOf(superType);
             return superClass == null ? null : ofSubclass(archetype, superClass.hasRestrictions);
