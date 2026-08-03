@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BaseNotification;
 import org.opendaylight.yangtools.binding.DataContainer;
@@ -56,8 +57,26 @@ public sealed interface DataContainerArchetype extends Archetype
     // FIXME: yes, these result in methods being generated, but they are somewhat subtle, as they also imply constants
     //        for builders, etc. Most notably, KeyArchetype is presenting a subset of these defined in its corresponding
     //        EntryObjectArchetype
+    // FIXME: rename to getters() and document the difference with below
     default List<MethodSignature> getMethodDefinitions() {
         return List.of();
+    }
+
+    // FIXME: document
+    default Stream<MethodSignature> allGetters() {
+        final var myMethods = getMethodDefinitions();
+        final var impls = getImplements();
+        if (myMethods.isEmpty()) {
+            return impls.isEmpty() ? Stream.empty() : streamImplMethods(impls);
+        }
+        final var myStream = myMethods.stream();
+        return impls.isEmpty() ? myStream : Stream.concat(myStream, streamImplMethods(impls));
+    }
+
+    private static Stream<MethodSignature> streamImplMethods(final List<Type> impls) {
+        return impls.stream()
+            .filter(DataContainerArchetype.class::isInstance)
+            .flatMap(impl -> ((DataContainerArchetype) impl).allGetters());
     }
 
     @Override
