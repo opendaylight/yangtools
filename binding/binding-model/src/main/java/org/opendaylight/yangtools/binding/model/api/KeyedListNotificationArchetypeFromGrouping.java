@@ -28,7 +28,7 @@ record KeyedListNotificationArchetypeFromGrouping(
     }
 
     @Override
-    public List<Type> getImplements() {
+    public List<Partial> partials() {
         return List.of(notificationBody);
     }
 
