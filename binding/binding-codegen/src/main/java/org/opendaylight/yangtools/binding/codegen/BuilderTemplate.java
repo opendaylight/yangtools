@@ -26,10 +26,10 @@ import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRAC
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
+import static org.opendaylight.yangtools.binding.model.ri.Types.OBJECT;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isListType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isMapType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isSetType;
-import static org.opendaylight.yangtools.binding.model.ri.Types.objectType;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
@@ -679,7 +679,7 @@ final class BuilderTemplate extends BaseTemplate {
         if (returnType instanceof ParameterizedType parameterized) {
             if (isListType(parameterized) || isSetType(parameterized)) {
                 final var arguments = parameterized.getActualTypeArguments();
-                return arguments.isEmpty() ? generateListSetter(field, objectType())
+                return arguments.isEmpty() ? generateListSetter(field, OBJECT)
                     : generateListSetter(field, arguments.getFirst());
             }
             if (isMapType(parameterized)) {

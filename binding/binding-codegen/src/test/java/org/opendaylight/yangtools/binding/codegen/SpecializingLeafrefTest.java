@@ -76,7 +76,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testGroupingWithUnresolvedLeafRefs() throws Exception {
-        verifyReturnType(GroupingArchetype.class, "FooGrp", GET_LEAF1_NAME, Types.objectType());
+        verifyReturnType(GroupingArchetype.class, "FooGrp", GET_LEAF1_NAME, Types.OBJECT);
         verifyReturnType(GroupingArchetype.class, "FooGrp", GET_LEAFLIST1_NAME, Types.setTypeWildcard());
 
         final String content = getFileContent("FooGrp");
@@ -134,7 +134,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testLeafrefWhichPointsBoolean() throws Exception {
-        verifyReturnType(GroupingArchetype.class, UNRESOLVED_GROUPING, GET_LEAF1_NAME, Types.objectType());
+        verifyReturnType(GroupingArchetype.class, UNRESOLVED_GROUPING, GET_LEAF1_NAME, Types.OBJECT);
         verifyReturnType(ContainerObjectArchetype.class, BOOLEAN_CONT, GET_LEAF1_NAME, Types.BOOLEAN);
 
         final String unresolvedGrouping = getFileContent(UNRESOLVED_GROUPING);

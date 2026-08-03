@@ -36,7 +36,7 @@ final class LeafListGenerator
         // If we are a leafref and the reference cannot be resolved, we need to generate a list wildcard, not
         // List<Object>, we will try to narrow the return type in subclasses.
         final Type type = super.methodReturnType();
-        final boolean isObject = Types.objectType().equals(type);
+        final boolean isObject = Types.OBJECT.equals(type);
 
         if (statement().effectiveOrdering() == Ordering.SYSTEM) {
             return isObject ? Types.setTypeWildcard() : Types.setTypeFor(type);

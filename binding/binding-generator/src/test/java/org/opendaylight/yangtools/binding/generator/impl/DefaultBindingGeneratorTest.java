@@ -207,7 +207,7 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void testUnresolvedLeafref() {
-        assertSame(Types.objectType(),
+        assertSame(Types.OBJECT,
             assertGeneratedMethod(JavaTypeName.create(TEST_TYPE_PROVIDER_B, "Grp"), GroupingArchetype.class,
                 "getUnresolvableLeafref").getReturnType());
     }
