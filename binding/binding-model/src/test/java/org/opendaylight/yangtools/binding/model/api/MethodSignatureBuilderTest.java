@@ -12,11 +12,11 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
@@ -27,40 +27,14 @@ class MethodSignatureBuilderTest {
 
     @Test
     void testSetAbstractMethod() {
-        final var signatureBuilderImpl = MethodSignature.builder("testMethod").setReturnType(BaseYangTypes.STRING_TYPE);
-        final var methodSignature = signatureBuilderImpl.build();
+        final var methodSignature =
+            MethodSignature.builder("testMethod", BaseYangTypes.STRING_TYPE, ValueMechanics.NORMAL).build();
         assertFalse(methodSignature.isDefault());
     }
 
     @Test
-    void testHashCodeEqualsToStringMethods() {
-        final var signatureBuilderImpl = MethodSignature.builder("testMethod");
-        final var signatureBuilderImpl2 = MethodSignature.builder("testMethod");
-        final var signatureBuilderImpl3 = MethodSignature.builder("testMethod2");
-        final var signatureBuilderImpl5 = signatureBuilderImpl;
-        final var signatureBuilderImpl6 = MethodSignature.builder("testMethod");
-        final var returnType = ContainerObjectArchetype.of(
-            JavaTypeName.create("org.opendaylight.yangtools.test", "Address"), statement,
-            JavaTypeName.create("org.opendaylight.yangtools.test", "Parent"), List.of(), List.of(), List.of());
-        signatureBuilderImpl6.setReturnType(returnType);
-
-        assertEquals(signatureBuilderImpl.hashCode(), signatureBuilderImpl2.hashCode());
-
-        assertTrue(signatureBuilderImpl.equals(signatureBuilderImpl2));
-        assertFalse(signatureBuilderImpl.equals(signatureBuilderImpl3));
-        assertTrue(signatureBuilderImpl.equals(signatureBuilderImpl5));
-        assertFalse(signatureBuilderImpl3.equals("test"));
-        assertFalse(signatureBuilderImpl3.equals(signatureBuilderImpl));
-        assertFalse(signatureBuilderImpl6.equals(signatureBuilderImpl));
-        assertFalse(signatureBuilderImpl.equals(signatureBuilderImpl6));
-
-        assertEquals("MethodSignatureBuilder{name=testMethod, annotations=[]}", signatureBuilderImpl.toString());
-    }
-
-    @Test
     void testMethodsForAbstractTypeMemberBuilder() {
-        final var builder = MethodSignature.builder("TestProperty")
-            .setReturnType(BaseYangTypes.STRING_TYPE)
+        final var builder = MethodSignature.builder("TestProperty", BaseYangTypes.STRING_TYPE, ValueMechanics.NORMAL)
             .setComment(TypeMemberComment.contractOf("test comment"));
 
         final var genProperty = builder.build();

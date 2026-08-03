@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -58,12 +59,23 @@ abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEff
 
     @Override
     final MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list, final Type returnType) {
-        final var ret = super.constructGetter(list, returnType).setMechanics(ValueMechanics.NULLIFY_EMPTY);
+        final var localName = localName().getLocalName();
+        final var statement = statement();
 
-        final var mb = MethodSignature.builder(Naming.getNonnullMethodName(localName().getLocalName()))
-            .setReturnType(returnType)
-            .setDefault(true);
-        addDeprecatedAnnotation(mb, statement());
+        // getFoo with nullify
+        final var ret = MethodSignature.builder(Naming.getGetterMethodName(localName), returnType,
+            ValueMechanics.NULLIFY_EMPTY);
+        addDeprecatedAnnotation(ret, statement);
+        final var description = statement.descriptionStatement();
+        if (description != null) {
+            ret.setComment(TypeMemberComment.referenceOf(description.argument()));
+        }
+        list.add(ret);
+
+        // nonnullFoo
+        final var mb = MethodSignature.builderOfDefault(Naming.getNonnullMethodName(localName), returnType,
+            ValueMechanics.NORMAL);
+        addDeprecatedAnnotation(mb, statement);
         list.add(mb);
 
         return ret;

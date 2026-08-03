@@ -66,12 +66,12 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
 
     @Override
     MethodSignature.Builder constructGetter(final List<MethodSignature.@NonNull Builder> list, final Type returnType) {
-        final var ret = super.constructGetter(list, returnType).setMechanics(ValueMechanics.NORMAL);
+        final var ret = super.constructGetter(list, returnType);
+
         final var statement = statement();
         if (statement.presenceStatement() == null) {
-            final var mb = MethodSignature.builder(Naming.getNonnullMethodName(localName().getLocalName()))
-                .setReturnType(returnType)
-                .setDefault(false);
+            final var mb = MethodSignature.builder(Naming.getNonnullMethodName(localName().getLocalName()),
+                returnType, ValueMechanics.NORMAL);
             addDeprecatedAnnotation(mb, statement);
             list.add(mb);
         }

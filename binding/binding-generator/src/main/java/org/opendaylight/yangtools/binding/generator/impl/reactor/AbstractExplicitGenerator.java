@@ -350,18 +350,12 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
 
     @NonNullByDefault
     MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list, final Type returnType) {
-        return constructGetter(list, statement, returnType, Naming.getGetterMethodName(localName().getLocalName()));
-    }
-
-    @NonNullByDefault
-    static final MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list,
-            final EffectiveStatement<?, ?> statement, final Type returnType, final String methodName) {
-        final var mb = MethodSignature.builder(methodName).setReturnType(returnType);
+        final var mb = MethodSignature.builder(Naming.getGetterMethodName(localName().getLocalName()), returnType,
+            ValueMechanics.NORMAL);
         addDeprecatedAnnotation(mb, statement);
         statement.findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class)
             .map(TypeMemberComment::referenceOf)
             .ifPresent(mb::setComment);
-
         list.add(mb);
         return mb;
     }
@@ -373,10 +367,13 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
 
     static final void constructRequire(final @NonNull List<MethodSignature.@NonNull Builder> list,
             final @NonNull EffectiveStatement<QName, ?> statement, final @NonNull Type returnType) {
-        constructGetter(list, statement, returnType,
-            Naming.getRequireMethodName(statement.argument().getLocalName()))
-            .setDefault(true)
-            .setMechanics(ValueMechanics.NONNULL);
+        final var mb = MethodSignature.builderOfDefault(
+            Naming.getRequireMethodName(statement.argument().getLocalName()), returnType, ValueMechanics.NONNULL);
+        addDeprecatedAnnotation(mb, statement);
+        statement.findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class)
+            .map(TypeMemberComment::referenceOf)
+            .ifPresent(mb::setComment);
+        list.add(mb);
     }
 
     @NonNullByDefault

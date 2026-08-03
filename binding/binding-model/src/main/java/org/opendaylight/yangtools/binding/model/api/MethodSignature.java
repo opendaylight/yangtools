@@ -11,11 +11,9 @@ package org.opendaylight.yangtools.binding.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -59,26 +57,30 @@ public interface MethodSignature extends Immutable {
     /**
      * {@return the returning {@link Type} of member}
      */
+    // FIXME: dedicated type
     @NonNull Type getReturnType();
 
     /**
-     * {@return the name of member}
+     * {@return the name of method}
      */
     @NonNull String getName();
 
     /**
      * {@return comment string associated with member}
      */
+    // FIXME: remove this
     @Nullable TypeMemberComment getComment();
 
     /**
      * {@return {@code true} if this method is a {@code default} method, or {@code false} if it is abstract}
      */
+    // FIXME: deprecate once we can express it in getReturnType
     boolean isDefault();
 
     /**
      * {@return the {@link ValueMechanics} associated with this method}
      */
+    // FIXME: express in getReturnType()
     @NonNullByDefault
     ValueMechanics getMechanics();
 
@@ -90,8 +92,14 @@ public interface MethodSignature extends Immutable {
 
     @Beta
     @NonNullByDefault
-    static Builder builder(final String name) {
-        return new Builder(name);
+    static Builder builder(final String name, final Type returnType, final ValueMechanics mechanics) {
+        return new Builder(name, returnType, mechanics, false);
+    }
+
+    @Beta
+    @NonNullByDefault
+    static Builder builderOfDefault(final String name, final Type returnType, final ValueMechanics mechanics) {
+        return new Builder(name, returnType, mechanics, true);
     }
 
     /**
@@ -112,16 +120,19 @@ public interface MethodSignature extends Immutable {
     @Beta
     final class Builder {
         private final @NonNull String name;
+        private final @NonNull Type returnType;
+        private final @NonNull ValueMechanics mechanics;
+        private final boolean isDefault;
 
         private @Nullable ArrayList<AttachedAnnotation.@NonNull ToMethod> annotations = null;
-        private ValueMechanics mechanics = ValueMechanics.NORMAL;
-        private boolean isDefault = false;
         private TypeMemberComment comment;
-        private Type returnType;
 
         @NonNullByDefault
-        Builder(final String name) {
+        Builder(final String name, final Type returnType, final ValueMechanics mechanics, final boolean isDefault) {
             this.name = requireNonNull(name);
+            this.returnType = requireNonNull(returnType);
+            this.mechanics = requireNonNull(mechanics);
+            this.isDefault = isDefault;
         }
 
         /**
@@ -132,36 +143,6 @@ public interface MethodSignature extends Immutable {
          */
         public @NonNull Builder setComment(final TypeMemberComment newComment) {
             comment = newComment;
-            return this;
-        }
-
-        /**
-         * Sets the flag indicating whether this is a {@code default interface} method.
-         *
-         * @param newIsDefault true if this signature is to represent a default method.
-         * @return this builder
-         */
-        @NonNullByDefault
-        public Builder setDefault(final boolean newIsDefault) {
-            isDefault = newIsDefault;
-            return this;
-        }
-
-        @NonNullByDefault
-        public Builder setMechanics(final ValueMechanics newMechanics) {
-            mechanics = requireNonNull(newMechanics);
-            return this;
-        }
-
-        /**
-         * Adds return Type into Builder definition for Generated Property. The return Type MUST NOT be {@code>null},
-         * otherwise the method SHOULD throw {@link IllegalArgumentException}
-         *
-         * @param newReaturnType Return Type of the member
-         */
-        @NonNullByDefault
-        public Builder setReturnType(final Type newReaturnType) {
-            returnType = requireNonNull(newReaturnType);
             return this;
         }
 
@@ -221,27 +202,6 @@ public interface MethodSignature extends Immutable {
         @NonNullByDefault
         public MethodSignature build() {
             return new MethodSignatureImpl(name, annotations(), comment, returnType, isDefault, mechanics);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(name, returnType);
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            return this == obj || obj instanceof Builder other && name.equals(other.name)
-                && Objects.equals(returnType, other.returnType);
-        }
-
-        @Override
-        public String toString() {
-            return MoreObjects.toStringHelper("MethodSignatureBuilder").omitNullValues()
-                .add("name", name)
-                .add("returnType", returnType)
-                .add("annotations", annotations())
-                .add("comment", comment)
-                .toString();
         }
     }
 }
