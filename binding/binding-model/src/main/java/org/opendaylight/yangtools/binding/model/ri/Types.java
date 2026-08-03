@@ -47,8 +47,6 @@ public final class Types {
     private static final @NonNull ConcreteType LIST_TYPE = cachedType(List.class);
     private static final @NonNull ConcreteType MAP_TYPE = cachedType(Map.class);
     private static final @NonNull ConcreteType SET_TYPE = cachedType(Set.class);
-    private static final @NonNull ParameterizedType LIST_TYPE_WILDCARD = ParameterizedType.of(LIST_TYPE);
-    private static final @NonNull ParameterizedType SET_TYPE_WILDCARD = ParameterizedType.of(SET_TYPE);
 
     /**
      * It is not desirable to create instance of this class.
@@ -135,15 +133,6 @@ public final class Types {
         return ParameterizedType.of(SET_TYPE, valueType);
     }
 
-    /**
-     * Returns an instance of {@link ParameterizedType} describing the typed {@link Set}&lt;?&gt;.
-     *
-     * @return Description of type instance of Set
-     */
-    public static @NonNull ParameterizedType setTypeWildcard() {
-        return SET_TYPE_WILDCARD;
-    }
-
     public static boolean isSetType(final ParameterizedType type) {
         return SET_TYPE.equals(type.getRawType());
     }
@@ -158,15 +147,6 @@ public final class Types {
     @NonNullByDefault
     public static ParameterizedType listTypeFor(final Type valueType) {
         return ParameterizedType.of(LIST_TYPE, valueType);
-    }
-
-    /**
-     * Returns an instance of {@link ParameterizedType} describing the typed {@link List}&lt;?&gt;.
-     *
-     * @return Description of type instance of List
-     */
-    public static @NonNull ParameterizedType listTypeWildcard() {
-        return LIST_TYPE_WILDCARD;
     }
 
     public static boolean isListType(final ParameterizedType type) {
