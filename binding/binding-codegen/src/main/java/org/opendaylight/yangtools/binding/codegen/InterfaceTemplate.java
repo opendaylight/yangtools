@@ -20,6 +20,8 @@ import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethod
 import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
 import static org.opendaylight.yangtools.binding.contract.Naming.isNonnullMethodName;
 import static org.opendaylight.yangtools.binding.contract.Naming.isRequireMethodName;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
@@ -367,7 +369,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
 
         final var bb = newBlockBuilder();
         for (var annotation : annotations) {
-            if (!Types.BOOLEAN.equals(method.getReturnType()) || !(annotation instanceof OverrideAnnotation)) {
+            if (!BOOLEAN_TYPE.equals(method.getReturnType()) || !(annotation instanceof OverrideAnnotation)) {
                 bb.blk(generateAnnotation(annotation));
             }
         }
@@ -519,7 +521,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     final BlockBuilder generateBindingToString() {
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
-            .str("default ").str(importedName(Types.STRING)).str(" javaTS()").jBlock(bb -> {
+            .str("default ").str(importedName(STRING_TYPE)).str(" javaTS()").jBlock(bb -> {
                 final var props = typeAnalysis().properties();
 
                 bb.str("return ").str(importedName(CODEHELPERS));

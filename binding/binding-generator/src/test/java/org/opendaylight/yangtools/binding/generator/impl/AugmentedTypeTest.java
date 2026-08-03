@@ -74,7 +74,7 @@ class AugmentedTypeTest {
             }
         }
         assertNotNull(getHigherLayerIfMethod, "getHigherLayerIf method is null");
-        assertEquals(Types.setTypeFor(Types.STRING), getHigherLayerIfMethod.getReturnType());
+        assertEquals(Types.setTypeFor(BaseYangTypes.STRING_TYPE), getHigherLayerIfMethod.getReturnType());
 
         // 'InterfaceKey'
         assertNotNull(gtInterfaceKey, "InterfaceKey is null");
@@ -88,7 +88,7 @@ class AugmentedTypeTest {
             }
         }
         assertNotNull(gtInterfaceId, "interfaceId is null");
-        assertEquals(Types.STRING, gtInterfaceId.getReturnType());
+        assertEquals(BaseYangTypes.STRING_TYPE, gtInterfaceId.getReturnType());
 
         // 'Tunnel'
         assertNotNull(gtTunnel, "Tunnel is null");
@@ -126,6 +126,6 @@ class AugmentedTypeTest {
         }
 
         assertNotNull(getIfcMethod, "getInterface method is null");
-        assertEquals(Types.STRING, getIfcMethod.getReturnType());
+        assertEquals(BaseYangTypes.STRING_TYPE, getIfcMethod.getReturnType());
     }
 }

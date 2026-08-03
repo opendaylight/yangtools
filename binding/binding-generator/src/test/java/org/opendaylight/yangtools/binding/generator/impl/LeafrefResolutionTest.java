@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
-import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class LeafrefResolutionTest {
@@ -54,12 +54,12 @@ class LeafrefResolutionTest {
             .filter(method -> method.getName().equals("getNeighborId"))
             .findFirst()
             .orElseThrow();
-        assertEquals(Types.STRING, getNeighborId.getReturnType());
+        assertEquals(BaseYangTypes.STRING_TYPE, getNeighborId.getReturnType());
 
         final var getNeighbor2Id = neighborMethods.stream()
             .filter(method -> method.getName().equals("getNeighbor2Id"))
             .findFirst()
             .orElseThrow();
-        assertEquals(Types.STRING, getNeighbor2Id.getReturnType());
+        assertEquals(BaseYangTypes.STRING_TYPE, getNeighbor2Id.getReturnType());
     }
 }

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -16,7 +17,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +97,7 @@ final class LengthGenerator {
             final LengthConstraint constraint, final GeneratedClass javaClass) {
         final var bb = javaClass.newBlockBuilder()
             .str("private static void ").str(lengthCheckerName(member)).str("(final ")
-                .str(javaClass.getReferenceString(Types.STRING)).str(" value)").oB();
+                .str(javaClass.getReferenceString(STRING_TYPE)).str(" value)").oB();
 
         final var expressions = createExpressions(constraint);
         if (!expressions.isEmpty()) {

@@ -17,7 +17,6 @@ import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_T
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.collect.Iterables;
 import java.util.List;
@@ -322,7 +321,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
                        * @return String representation of this union's value.
                        */
                       """)
-                .str("public ").str(importedName(STRING)).str(" stringValue()").oB();
+                .str("public ").str(importedName(STRING_TYPE)).str(" stringValue()").oB();
 
         for (var prop : finalProperties) {
             final var field = fieldName(prop);
@@ -341,7 +340,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
                 bb.str(field).eol(".toString();");
             } else if (BINARY_TYPE.equals(type)) {
                 // type binary
-                bb.str("new ").str(importedName(STRING)).str("(").str(field).eol(");");
+                bb.str("new ").str(importedName(STRING_TYPE)).str("(").str(field).eol(");");
             } else if (fqcn.startsWith("java.lang") || type instanceof EnumTypeObjectArchetype) {
                 // type int* or enumeration*
                 bb.str(field).eol(".toString();");

@@ -13,7 +13,7 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.DEPRECATED;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.contract.Naming.getPropertyName;
-import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
@@ -291,8 +290,8 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
 
     final void appendValidNamesConstant(final BlockBuilder bb, final Collection<? extends Bit> bits) {
         final var immutableSet = importedName(IMMUTABLE_SET);
-        bb.str("protected static final ").gen(immutableSet, importedName(STRING)).str(" " + VALID_NAMES_NAME + " = ")
-            .str(immutableSet).str(".of(");
+        bb.str("protected static final ").gen(immutableSet, importedName(STRING_TYPE))
+            .str(" " + VALID_NAMES_NAME + " = ").str(immutableSet).str(".of(");
 
         final var it = bits.iterator();
         while (true) {
@@ -361,7 +360,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
         bb
             .nl()
             .at().eol(override)
-            .str("public ").gen(importedName(IMMUTABLE_SET), importedName(Types.STRING)).str(" validNames()").oB()
+            .str("public ").gen(importedName(IMMUTABLE_SET), importedName(STRING_TYPE)).str(" validNames()").oB()
                 .eol("return " + VALID_NAMES_NAME + ";")
             .cB()
             .nl()

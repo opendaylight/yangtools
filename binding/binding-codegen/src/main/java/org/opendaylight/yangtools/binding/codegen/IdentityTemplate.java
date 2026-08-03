@@ -13,12 +13,12 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OBJECT;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FIELD_NAME;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BaseIdentity;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 
 /**
  * Template for a {@link BaseIdentity} interface generated for a {@code identity} statement.
@@ -77,7 +77,7 @@ final class IdentityTemplate extends ArchetypeTemplate<IdentityArchetype> {
                     .cB()
                     .nl()
                     .at().eol(override)
-                    .str("public ").str(importedName(Types.STRING)).str(" toString()").oB()
+                    .str("public ").str(importedName(STRING_TYPE)).str(" toString()").oB()
                         .str("return ").str(codeHelpers).str(".biTS(").str(typeName).eol(".class, QNAME);")
                     .cB()
                     .nl()

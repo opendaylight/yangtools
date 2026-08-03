@@ -35,7 +35,6 @@ import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT32_T
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT64_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT8_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
-import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
 
 import com.google.common.base.MoreObjects;
 import java.util.LinkedHashMap;
@@ -148,7 +147,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
                 .cB()
                 .nl()
                 .at().eol(override)
-                .str("public final ").str(importedName(STRING)).str(" toString()").oB()
+                .str("public final ").str(importedName(STRING_TYPE)).str(" toString()").oB()
                     .str("return ").str(codeHelpers).eol(".stoTS(getClass(), _value);")
                 .cB();
         }
