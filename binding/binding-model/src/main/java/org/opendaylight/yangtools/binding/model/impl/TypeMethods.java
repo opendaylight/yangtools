@@ -22,10 +22,13 @@ import org.opendaylight.yangtools.binding.model.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.OperationArchetype;
+import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
+import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 
 /**
  * Utility methods for {@link Type} implementations.
@@ -84,6 +87,62 @@ public final class TypeMethods {
         final var arguments = self.getActualTypeArguments();
         if (!arguments.isEmpty()) {
             helper.add("arguments", arguments);
+        }
+        return helper.toString();
+    }
+
+    /**
+     * Implementation of {@link BitsTypeObjectArchetype#toString()}.
+     *
+     * @param self the archetype
+     * @return a String
+     */
+    @NonNullByDefault
+    static String toString(final BitsTypeObjectArchetype self) {
+        final var helper = MoreObjects.toStringHelper(BitsTypeObjectArchetype.class)
+            .add("name", self.name())
+            .add("type", self.typeDefinition());
+        final var superType = self.superType();
+        if (superType != null) {
+            helper.add("extends", superType.name());
+        }
+        return helper.toString();
+    }
+
+    /**
+     * Implementation of {@link ScalarTypeObjectArchetype#toString()}.
+     *
+     * @param self the archetype
+     * @return a String
+     */
+    @NonNullByDefault
+    static String toString(final ScalarTypeObjectArchetype self) {
+        final var helper = MoreObjects.toStringHelper(ScalarTypeObjectArchetype.class).omitNullValues()
+            .add("name", self.name())
+            .add("type", self.typeDefinition());
+        final var superType = self.superType();
+        if (superType != null) {
+            helper.add("extends", superType.name());
+        }
+        return helper.add("restrictions", self.restrictions()).toString();
+    }
+
+    /**
+     * Implementation of {@link UnionTypeObjectArchetype#toString()}.
+     *
+     * @param self the archetype
+     * @return a String
+     */
+    @NonNullByDefault
+    static String toString(final UnionTypeObjectArchetype self) {
+        final var helper = MoreObjects.toStringHelper(UnionTypeObjectArchetype.class)
+            .add("name", self.name());
+        final var superType = self.superType();
+        if (superType == null) {
+            helper.add("tags", self.tags());
+            addNonEmpty(helper, "enclosedTypes", self.enclosedTypes());
+        } else {
+            helper.add("extends", superType.name());
         }
         return helper.toString();
     }

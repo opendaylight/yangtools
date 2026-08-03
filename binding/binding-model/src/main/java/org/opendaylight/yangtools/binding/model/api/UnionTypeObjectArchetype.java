@@ -17,74 +17,69 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.UnionTypeObject;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
+import org.opendaylight.yangtools.binding.model.impl.UnionTypeObjectArchetypeB;
+import org.opendaylight.yangtools.binding.model.impl.UnionTypeObjectArchetypeD;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 
 /**
  * An archetype for a {@link UnionTypeObject}.
  *
- * @param typePropertyNames list of property names corresponding to individual {@code type} statements within this
- *        union. The ordering of the returned list matches the ordering of the type statements.
  * @since 16.0.0
  */
-// FIXME: should be an interface + implementation
 @Beta
 @NonNullByDefault
-public record UnionTypeObjectArchetype(
-        TypeName name,
-        TypeEffectiveStatement.MandatoryIn<?, ?> statement,
-        List<String> typePropertyNames,
-        List<Type> typePropertyTypes,
-        // FIXME: YANGTOOLS-1621: not really, these should be the tag types
-        List<TypeObjectArchetype<?>> enclosedTypes,
-        @Nullable UnionTypeObjectArchetype getSuperType) implements TypeObjectArchetype.OfClass<UnionTypeObject> {
+public sealed interface UnionTypeObjectArchetype extends TypeObjectArchetype.OfClass<UnionTypeObject>
+        permits UnionTypeObjectArchetypeB, UnionTypeObjectArchetypeD {
     /**
      * A tag in a union.
      *
      * @since 16.0.0
      */
     @Beta
-    public record Tag(String name, Type type) {
+    record Tag(String name, Type type) {
         public Tag {
             requireNonNull(name);
             requireNonNull(type);
         }
     }
 
-    public UnionTypeObjectArchetype {
-        requireNonNull(name);
-        requireNonNull(statement);
-        typePropertyNames = List.copyOf(typePropertyNames);
-        typePropertyTypes = List.copyOf(typePropertyTypes);
-        enclosedTypes = List.copyOf(enclosedTypes);
+    @Override
+    @Nullable UnionTypeObjectArchetype superType();
 
-        final var uniqueNames = typePropertyNames.stream().distinct().count();
-        if (uniqueNames != typePropertyTypes.size()) {
-            throw new IllegalArgumentException(uniqueNames + " names does not match " + typePropertyTypes);
-        }
+    @Override
+    @Deprecated(forRemoval = true)
+    default @Nullable TypeDefinition<?> baseType() {
+        return null;
     }
+
+    // FIXME: YANGTOOLS-1621: not really, these should be the tag types, at which point we will remove typeProperties()
+    List<TypeObjectArchetype<?>> enclosedTypes();
+
+    List<String> typePropertyNames();
+
+    List<Type> typePropertyTypes();
 
     /**
      * {@return all possible tags in the {@link UnionTypeObject}}
      */
-    public List<Tag> tags() {
+    default List<Tag> tags() {
         return Streams.zip(typePropertyNames().stream().distinct(), typePropertyTypes().stream(), Tag::new).toList();
     }
 
-    @Override
-    @Deprecated(forRemoval = true)
-    public @Nullable TypeDefinition<?> getBaseType() {
-        return null;
+    static UnionTypeObjectArchetype of(final TypeName name, final TypeEffectiveStatement.MandatoryIn<?, ?> statement,
+            final List<String> typePropertyNames, final List<Type> typePropertyTypes,
+            final List<TypeObjectArchetype<?>> enclosedTypes) {
+        final var uniqueNames = typePropertyNames.stream().distinct().count();
+        if (uniqueNames != typePropertyTypes.size()) {
+            throw new IllegalArgumentException(uniqueNames + " names does not match " + typePropertyTypes);
+        }
+        return new UnionTypeObjectArchetypeB(name, statement, List.copyOf(typePropertyNames),
+            List.copyOf(typePropertyTypes), List.copyOf(enclosedTypes));
     }
 
-    @Override
-    public int hashCode() {
-        return TypeMethods.hashCode(this);
-    }
-
-    @Override
-    public boolean equals(final @Nullable Object obj) {
-        return TypeMethods.equals(this, obj);
+    static UnionTypeObjectArchetype of(final TypeName name, final TypeEffectiveStatement.MandatoryIn<?, ?> statement,
+            final UnionTypeObjectArchetype superType) {
+        return new UnionTypeObjectArchetypeD(name, statement, superType);
     }
 }

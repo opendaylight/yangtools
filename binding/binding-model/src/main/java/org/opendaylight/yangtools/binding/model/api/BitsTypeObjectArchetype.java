@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
+import org.opendaylight.yangtools.binding.model.impl.BitsTypeObjectArchetypeB;
+import org.opendaylight.yangtools.binding.model.impl.BitsTypeObjectArchetypeD;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
@@ -28,51 +26,30 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
  */
 @Beta
 @NonNullByDefault
-public record BitsTypeObjectArchetype(
-        TypeName name,
-        TypeEffectiveStatement.MandatoryIn<?, ?> statement,
-        BitsTypeDefinition typeDefinition,
-        @Nullable BitsTypeObjectArchetype superType) implements TypeObjectArchetype.OfClass<BitsTypeObject> {
-    public BitsTypeObjectArchetype {
-        requireNonNull(name);
-        requireNonNull(statement);
-        requireNonNull(typeDefinition);
+public sealed interface BitsTypeObjectArchetype extends TypeObjectArchetype.OfClass<BitsTypeObject>
+        permits BitsTypeObjectArchetypeB, BitsTypeObjectArchetypeD {
+    @Override
+    @Nullable BitsTypeObjectArchetype superType();
+
+    @Override
+    @Deprecated(forRemoval = true)
+    default @NonNull BitsTypeDefinition baseType() {
+        return typeDefinition();
     }
 
-    public BitsTypeObjectArchetype(final TypeName name, final TypeEffectiveStatement.MandatoryIn<?, ?> statement,
+    /**
+     * {@return the {@link BitsTypeDefinition} of this type}
+     */
+    BitsTypeDefinition typeDefinition();
+
+    static BitsTypeObjectArchetype of(final TypeName name, final TypeEffectiveStatement.MandatoryIn<?, ?> statement,
             final BitsTypeDefinition typeDefinition) {
-        this(name, statement, typeDefinition, null);
+        return new BitsTypeObjectArchetypeB(name, statement, typeDefinition);
     }
 
-    @Override
-    @Deprecated(forRemoval = true)
-    public @NonNull BitsTypeDefinition getBaseType() {
-        return typeDefinition;
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    public @Nullable BitsTypeObjectArchetype getSuperType() {
-        return superType;
-    }
-
-    @Override
-    public int hashCode() {
-        return TypeMethods.hashCode(this);
-    }
-
-    @Override
-    public boolean equals(final @Nullable Object obj) {
-        return TypeMethods.equals(this, obj);
-    }
-
-    @Override
-    public final String toString() {
-        final var helper = MoreObjects.toStringHelper(this).add("name", name).add("type", typeDefinition);
-        final var local = superType;
-        if (local != null) {
-            helper.add("extends", local.name);
-        }
-        return helper.toString();
+    static BitsTypeObjectArchetype of(final TypeName name, final TypeEffectiveStatement.MandatoryIn<?, ?> statement,
+            final BitsTypeDefinition typeDefinition, final @Nullable BitsTypeObjectArchetype superType) {
+        return superType == null ? of(name, statement, typeDefinition)
+            : new BitsTypeObjectArchetypeD(name, statement, typeDefinition, superType);
     }
 }
