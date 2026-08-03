@@ -232,7 +232,8 @@ class Mdsal675Test {
     }
 
     @NonNullByDefault
-    private static void assertImplements(final DataContainerArchetype genType, final Type implementedType) {
-        assertThat(genType.getImplements()).contains(implementedType);
+    private static void assertImplements(final DataContainerArchetype genType,
+            final DataContainerArchetype.Partial implementedType) {
+        assertThat(genType.partials()).contains(implementedType);
     }
 }

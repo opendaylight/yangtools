@@ -234,16 +234,13 @@ final class BuilderTemplate extends BaseTemplate {
     private @Nullable BlockBuilder generateConstructorsFromIfcs() {
         final var bb = newBlockBuilder().nl();
         boolean first = true;
-        for (var impl : targetType.getImplements()) {
-            // FIXME: narrow down?
-            if (impl instanceof DataContainerArchetype genType) {
-                if (first) {
-                    first = false;
-                } else {
-                    bb.newLine();
-                }
-                bb.blk(generateConstructorFromIfc(genType));
+        for (var partial : targetType.partials()) {
+            if (first) {
+                first = false;
+            } else {
+                bb.newLine();
             }
+            bb.blk(generateConstructorFromIfc(partial));
         }
         return bb;
     }
@@ -251,10 +248,10 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Generate constructor with argument of given type.
      */
-    private @NonNull BlockBuilder generateConstructorFromIfc(final @NonNull DataContainerArchetype genType) {
+    private @NonNull BlockBuilder generateConstructorFromIfc(final @NonNull DataContainerArchetype archetype) {
         final var bb = newBlockBuilder();
-        if (hasNonDefaultMethods(genType)) {
-            final var typeName = importedName(genType);
+        if (hasNonDefaultMethods(archetype)) {
+            final var typeName = importedName(archetype);
             bb
                 .eol("/**")
                 .str(" * Construct a new builder initialized from specified {@link ").str(typeName).eol("}.")
@@ -262,15 +259,12 @@ final class BuilderTemplate extends BaseTemplate {
                 .str(" * @param arg ").str(typeName).eol(" from which the builder should be initialized")
                 .eol(" */")
                 .str("public ").str(simpleName()).str("(").str(typeName).str(" arg)").oB()
-                    .blk(printConstructorPropertySetter(genType))
+                    .blk(printConstructorPropertySetter(archetype))
                 .cB()
                 .newLine();
         }
-        for (var implTypeImplement : genType.getImplements()) {
-            // FIXME: narrow down?
-            if (implTypeImplement instanceof DataContainerArchetype implType) {
-                bb.blk(generateConstructorFromIfc(implType));
-            }
+        for (var partial : archetype.partials()) {
+            bb.blk(generateConstructorFromIfc(partial));
         }
         return bb;
     }
@@ -288,13 +282,13 @@ final class BuilderTemplate extends BaseTemplate {
             }
         }
 
-        for (var impl : ifc.getImplements()) {
-            bb.blk(printConstructorPropertySetter(impl, getSpecifiedGetters(ifc)));
+        for (var partial : ifc.partials()) {
+            bb.blk(printConstructorPropertySetter(partial, getSpecifiedGetters(ifc)));
         }
         return bb;
     }
 
-    private @Nullable BlockBuilder printConstructorPropertySetter(final Type implementedIfc,
+    private @Nullable BlockBuilder printConstructorPropertySetter(final DataContainerArchetype.Partial implementedIfc,
             final Set<MethodSignature> alreadySetProperties) {
         // FIXME: narrow down?
         if (!(implementedIfc instanceof DataContainerArchetype ifc)) {
@@ -308,8 +302,8 @@ final class BuilderTemplate extends BaseTemplate {
             }
         }
 
-        for (var descendant : ifc.getImplements()) {
-            bb.blk(printConstructorPropertySetter(descendant,
+        for (var partial : ifc.partials()) {
+            bb.blk(printConstructorPropertySetter(partial,
                 Sets.union(alreadySetProperties, getSpecifiedGetters(ifc))));
         }
         return bb;
@@ -336,8 +330,8 @@ final class BuilderTemplate extends BaseTemplate {
             .blk(generateMethodFieldsFromComment(targetType))
             .str("public void fieldsFrom(final ").str(importedName(GROUPING)).str(" arg)").jBlock(bb -> {
                 bb.eol("boolean isValidArg = false;");
-                for (var impl : getAllIfcs(targetType)) {
-                    bb.blk(generateIfCheck(impl, done));
+                for (var partial : getAllIfcs(targetType)) {
+                    bb.blk(generateIfCheck(partial, done));
                 }
                 bb.str(importedName(CODEHELPERS)).str(".validValue(isValidArg, arg, ")
                     .jStr(getAllIfcs(targetType).stream().map(this::importedName).toList().toString()).eol(");");
@@ -502,19 +496,16 @@ final class BuilderTemplate extends BaseTemplate {
         return getter;
     }
 
-    private static @Nullable MethodSignature getterByName(final DataContainerArchetype implType,
-            final String getterName) {
+    private static @Nullable MethodSignature getterByName(final @NonNull DataContainerArchetype implType,
+            final @NonNull String getterName) {
         final var getter = getterByName(nonDefaultMethods(implType), getterName);
         if (getter != null) {
             return getter;
         }
-        for (var ifc : implType.getImplements()) {
-            // FIXME: narrow down?
-            if (ifc instanceof DataContainerArchetype genInterface) {
-                final var getterImpl = getterByName(genInterface, getterName);
-                if (getterImpl != null) {
-                    return getterImpl;
-                }
+        for (var partial : implType.partials()) {
+            final var getterImpl = getterByName(partial, getterName);
+            if (getterImpl != null) {
+                return getterImpl;
             }
         }
 
@@ -534,29 +525,22 @@ final class BuilderTemplate extends BaseTemplate {
 
     private static List<DataContainerArchetype> getBaseIfcs(final DataContainerArchetype type) {
         final var baseIfcs = new ArrayList<DataContainerArchetype>();
-        for (var ifc : type.getImplements()) {
-            // FIXME: narrow down?
-            if (ifc instanceof DataContainerArchetype genType && hasNonDefaultMethods(genType)) {
-                baseIfcs.add(genType);
+        for (var partial : type.partials()) {
+            if (hasNonDefaultMethods(partial)) {
+                baseIfcs.add(partial);
             }
         }
         return baseIfcs;
     }
 
     @NonNullByDefault
-    private Set<DataContainerArchetype> getAllIfcs(final Type type) {
-        // FIXME: narrow down?
-        if (!(type instanceof DataContainerArchetype ifc)) {
-            return Set.of();
-        }
-
-        final var baseIfcs = new HashSet<DataContainerArchetype>();
-        for (var impl : ifc.getImplements()) {
-            // FIXME: narrow down?
-            if (impl instanceof DataContainerArchetype genType && hasNonDefaultMethods(genType)) {
-                baseIfcs.add(genType);
+    private Set<DataContainerArchetype.Partial> getAllIfcs(final DataContainerArchetype archetype) {
+        final var baseIfcs = new HashSet<DataContainerArchetype.Partial>();
+        for (var partial : archetype.partials()) {
+            if (hasNonDefaultMethods(partial)) {
+                baseIfcs.add(partial);
             }
-            baseIfcs.addAll(getAllIfcs(impl));
+            baseIfcs.addAll(getAllIfcs(partial));
         }
         return baseIfcs;
     }

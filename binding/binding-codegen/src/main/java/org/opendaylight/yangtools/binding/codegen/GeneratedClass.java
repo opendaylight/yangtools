@@ -231,13 +231,10 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     }
 
     private static void collectAccessibleTypes(final HashSet<String> set, final Archetype type) {
-        // FIXME: narrow down?
-        if (type instanceof DataContainerArchetype iface) {
-            for (var impl : iface.getImplements()) {
-                if (impl instanceof Archetype archetype) {
-                    appendEnclosedTypes(set, archetype);
-                    collectAccessibleTypes(set, archetype);
-                }
+        if (type instanceof DataContainerArchetype dataContainer) {
+            for (var partial : dataContainer.partials()) {
+                appendEnclosedTypes(set, partial);
+                collectAccessibleTypes(set, partial);
             }
         }
     }

@@ -72,7 +72,7 @@ final class SupportTestUtil {
     }
 
     static void containsInterface(final String interfaceNameSearched, final DataContainerArchetype genType) {
-        for (var caseCImplement : genType.getImplements()) {
+        for (var caseCImplement : genType.partials()) {
             if (resolveFullNameOfReturnType(caseCImplement).equals(interfaceNameSearched)) {
                 return;
             }

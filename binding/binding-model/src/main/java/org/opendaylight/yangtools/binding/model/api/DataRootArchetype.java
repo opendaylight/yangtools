@@ -17,9 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
  *
  * @since 15.0.0
  */
-// FIXME: seal to allow only DataRootArchetypeImpl
 @NonNullByDefault
-public non-sealed interface DataRootArchetype extends DataContainerArchetype {
+public sealed interface DataRootArchetype extends DataContainerArchetype permits DataRootArchetypeImpl {
     @Override
     ModuleEffectiveStatement statement();
 

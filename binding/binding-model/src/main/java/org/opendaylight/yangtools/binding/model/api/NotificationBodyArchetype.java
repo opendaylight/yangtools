@@ -17,9 +17,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  *
  * @since 16.0.0
  */
-// FIXME: extends DataContainerArchetype.Extendable
 @NonNullByDefault
-public sealed interface NotificationBodyArchetype extends DataContainerArchetype permits NotificationBodyArchetypeImpl {
+public sealed interface NotificationBodyArchetype extends DataContainerArchetype.Partial
+        permits NotificationBodyArchetypeImpl {
     @Override
     NotificationEffectiveStatement statement();
 

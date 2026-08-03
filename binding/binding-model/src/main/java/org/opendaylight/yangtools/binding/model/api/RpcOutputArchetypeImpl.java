@@ -18,20 +18,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 record RpcOutputArchetypeImpl(
         JavaTypeName name,
         OutputEffectiveStatement statement,
-        List<Type> implementsTypes,
+        List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
         List<MethodSignature> methodSignatures) implements RpcOutputArchetype {
     RpcOutputArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(implementsTypes);
+        requireNonNull(partials);
         requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-    }
-
-    @Override
-    public List<Type> getImplements() {
-        return implementsTypes;
     }
 
     @Override

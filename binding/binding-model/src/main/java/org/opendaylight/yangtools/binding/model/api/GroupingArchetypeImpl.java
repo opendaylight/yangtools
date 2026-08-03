@@ -18,20 +18,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 record GroupingArchetypeImpl(
         JavaTypeName name,
         GroupingEffectiveStatement statement,
-        List<Type> implementsTypes,
+        List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
         List<MethodSignature> methodSignatures) implements GroupingArchetype {
     GroupingArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(implementsTypes);
+        requireNonNull(partials);
         requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-    }
-
-    @Override
-    public List<Type> getImplements() {
-        return implementsTypes;
     }
 
     @Override
