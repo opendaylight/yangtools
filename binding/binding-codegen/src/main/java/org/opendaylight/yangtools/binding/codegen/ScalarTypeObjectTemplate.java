@@ -33,11 +33,11 @@ import org.opendaylight.yangtools.binding.UnsafeSecret;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
-import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 
@@ -392,7 +392,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
 
     private static ScalarTypeObjectTemplate of(final GeneratedClass javaType, final ScalarTypeObjectArchetype archetype,
             final DataRootArchetype root) {
-        final var superType = archetype.getSuperType();
+        final var superType = archetype.superType();
         return superType == null ? new Base(javaType, archetype, root)
             : new Derived(javaType, archetype, root, superType);
     }
@@ -537,7 +537,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
         final var helper = new SerialVersionHelper(archetype.name())
             .setAbstract(false)
             .addInterface(SerialVersionHelper.SERIALIZABLE);
-        if (archetype.getSuperType() == null) {
+        if (archetype.superType() == null) {
             helper.addField(Naming.getPropertyName(TypeConstants.VALUE_PROP));
         }
         return helper.computeSerialVersion();

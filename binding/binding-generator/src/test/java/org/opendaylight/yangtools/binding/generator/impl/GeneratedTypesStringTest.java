@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GeneratedTypesStringTest {

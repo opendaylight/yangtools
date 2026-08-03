@@ -18,15 +18,15 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeObjectSupport.Union.Dependencies;
+import org.opendaylight.yangtools.binding.model.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -111,7 +111,7 @@ final class UnionTypeObjectArchetypeBuilder {
                     enclosedTypes.add(subEnumeration);
                     generatedType = subEnumeration;
                 } else if (BuiltInType.BITS.typeName().equals(subName)) {
-                    final var subBits = new BitsTypeObjectArchetype(
+                    final var subBits = BitsTypeObjectArchetype.of(
                         typeName.createEnclosed(Naming.getClassName(localName), "$"), definingStatement,
                         (BitsTypeDefinition) subType.typeDefinition());
                     enclosedTypes.add(subBits);
@@ -195,8 +195,8 @@ final class UnionTypeObjectArchetypeBuilder {
             }
         }
 
-        return new UnionTypeObjectArchetype(typeName, definingStatement, typeProperties,
-            List.copyOf(properties.keySet()), List.copyOf(enclosedTypes), null);
+        return UnionTypeObjectArchetype.of(typeName, definingStatement, typeProperties,
+            List.copyOf(properties.keySet()), List.copyOf(enclosedTypes));
     }
 
     // FIXME: this is legacy union/leafref property handling. The resulting value is *not* normalized for use as a

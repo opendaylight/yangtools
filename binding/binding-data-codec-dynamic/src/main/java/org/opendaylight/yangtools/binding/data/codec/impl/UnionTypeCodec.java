@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
 final class UnionTypeCodec implements ValueCodec<Object, Object> {
@@ -59,7 +59,7 @@ final class UnionTypeCodec implements ValueCodec<Object, Object> {
     private static List<String> extractPropertyNames(final UnionTypeObjectArchetype archetype) {
         var current = archetype;
         while (true) {
-            var next = current.getSuperType();
+            var next = current.superType();
             if (next == null) {
                 break;
             }
