@@ -11,11 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 
 class TypesTest {
     @Test
     void testPrimitiveType() {
-        final var primitiveType = Types.cachedType(String[].class);
+        final var primitiveType = ConcreteType.ofClass(String[].class);
         assertEquals("String[]", primitiveType.simpleName());
     }
 
