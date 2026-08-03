@@ -61,19 +61,22 @@ class GeneratedTypesTest {
         String getBarMethodReturnTypeName = "";
         String getNestedContainerReturnTypeName = "";
         for (var method : simpleContainer.getMethodDefinitions()) {
-            if (method.getName().equals("getFoo")) {
-                getFooMethodCounter++;
-                getFooMethodReturnTypeName = method.getReturnType().simpleName();
-            }
-
-            if (method.getName().equals("getBar")) {
-                getBarMethodCounter++;
-                getBarMethodReturnTypeName = method.getReturnType().simpleName();
-            }
-
-            if (method.getName().equals("getNestedContainer")) {
-                getNestedContainerCounter++;
-                getNestedContainerReturnTypeName = method.getReturnType().simpleName();
+            switch (method.name()) {
+                case "getFoo" -> {
+                    getFooMethodCounter++;
+                    getFooMethodReturnTypeName = method.returnType().simpleName();
+                }
+                case "getBar" -> {
+                    getBarMethodCounter++;
+                    getBarMethodReturnTypeName = method.returnType().simpleName();
+                }
+                case "getNestedContainer" -> {
+                    getNestedContainerCounter++;
+                    getNestedContainerReturnTypeName = method.returnType().simpleName();
+                }
+                default -> {
+                    // no-op
+                }
             }
         }
 
@@ -93,14 +96,18 @@ class GeneratedTypesTest {
         getBarMethodReturnTypeName = "";
 
         for (var method : nestedContainer.getMethodDefinitions()) {
-            if (method.getName().equals("getFoo")) {
-                getFooMethodCounter++;
-                getFooMethodReturnTypeName = method.getReturnType().simpleName();
-            }
-
-            if (method.getName().equals("getBar")) {
-                getBarMethodCounter++;
-                getBarMethodReturnTypeName = method.getReturnType().simpleName();
+            switch (method.name()) {
+                case "getFoo" -> {
+                    getFooMethodCounter++;
+                    getFooMethodReturnTypeName = method.returnType().simpleName();
+                }
+                case "getBar" -> {
+                    getBarMethodCounter++;
+                    getBarMethodReturnTypeName = method.returnType().simpleName();
+                }
+                default -> {
+                    // no-op
+                }
             }
         }
 
@@ -148,19 +155,22 @@ class GeneratedTypesTest {
             if (method.isDefault()) {
                 continue;
             }
-            if (method.getName().equals("getFoo")) {
-                getFooMethodCounter++;
-                getFooMethodReturnTypeName = method.getReturnType().simpleName();
-            }
-
-            if (method.getName().equals("getBar")) {
-                getBarMethodCounter++;
-                getBarMethodReturnTypeName = method.getReturnType().simpleName();
-            }
-
-            if (method.getName().equals("getNestedContainer")) {
-                getNestedContainerCounter++;
-                getNestedContainerReturnTypeName = method.getReturnType().simpleName();
+            switch (method.name()) {
+                case "getFoo" -> {
+                    getFooMethodCounter++;
+                    getFooMethodReturnTypeName = method.returnType().simpleName();
+                }
+                case "getBar" -> {
+                    getBarMethodCounter++;
+                    getBarMethodReturnTypeName = method.returnType().simpleName();
+                }
+                case "getNestedContainer" -> {
+                    getNestedContainerCounter++;
+                    getNestedContainerReturnTypeName = method.returnType().simpleName();
+                }
+                default -> {
+                    // no-op
+                }
             }
         }
 
@@ -180,14 +190,18 @@ class GeneratedTypesTest {
         getBarMethodReturnTypeName = "";
 
         for (var method : nestedContainer.getMethodDefinitions()) {
-            if (method.getName().equals("getFoo")) {
-                getFooMethodCounter++;
-                getFooMethodReturnTypeName = method.getReturnType().simpleName();
-            }
-
-            if (method.getName().equals("getBar")) {
-                getBarMethodCounter++;
-                getBarMethodReturnTypeName = method.getReturnType().simpleName();
+            switch (method.name()) {
+                case "getFoo" -> {
+                    getFooMethodCounter++;
+                    getFooMethodReturnTypeName = method.returnType().simpleName();
+                }
+                case "getBar" -> {
+                    getBarMethodCounter++;
+                    getBarMethodReturnTypeName = method.returnType().simpleName();
+                }
+                default -> {
+                    // no-op
+                }
             }
         }
 
@@ -250,10 +264,10 @@ class GeneratedTypesTest {
 
                         simpleListMethodsCount = archetype.getMethodDefinitions().size();
                         for (var method : archetype.getMethodDefinitions()) {
-                            switch (method.getName()) {
+                            switch (method.name()) {
                                 case "getListChildContainer":
                                     getListChildContainerMethodCount++;
-                                    getListChildContainerMethodReturnTypeName = method.getReturnType().simpleName();
+                                    getListChildContainerMethodReturnTypeName = method.returnType().simpleName();
                                     break;
                                 case "getFoo":
                                     getFooMethodCount++;

@@ -70,7 +70,7 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
 
         final var statement = statement();
         if (statement.presenceStatement() == null) {
-            final var mb = MethodSignature.builder(Naming.getNonnullMethodName(localName().getLocalName()),
+            final var mb = MethodSignature.builder(statement, Naming.getNonnullMethodName(localName().getLocalName()),
                 returnType, ValueMechanics.NORMAL);
             addDeprecatedAnnotation(mb, statement);
             list.add(mb);

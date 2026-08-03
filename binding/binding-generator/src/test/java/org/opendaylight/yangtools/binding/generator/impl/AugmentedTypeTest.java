@@ -68,13 +68,13 @@ class AugmentedTypeTest {
 
         MethodSignature getHigherLayerIfMethod = null;
         for (var method : gtInterface.getMethodDefinitions()) {
-            if (method.getName().equals("getHigherLayerIf")) {
+            if (method.name().equals("getHigherLayerIf")) {
                 getHigherLayerIfMethod = method;
                 break;
             }
         }
         assertNotNull(getHigherLayerIfMethod, "getHigherLayerIf method is null");
-        assertEquals(Types.setTypeFor(BaseYangTypes.STRING_TYPE), getHigherLayerIfMethod.getReturnType());
+        assertEquals(Types.setTypeFor(BaseYangTypes.STRING_TYPE), getHigherLayerIfMethod.returnType());
 
         // 'InterfaceKey'
         assertNotNull(gtInterfaceKey, "InterfaceKey is null");
@@ -119,13 +119,13 @@ class AugmentedTypeTest {
 
         MethodSignature getIfcMethod = null;
         for (var method : networkLink2Methods) {
-            if (method.getName().equals("getInterface")) {
+            if (method.name().equals("getInterface")) {
                 getIfcMethod = method;
                 break;
             }
         }
 
         assertNotNull(getIfcMethod, "getInterface method is null");
-        assertEquals(BaseYangTypes.STRING_TYPE, getIfcMethod.getReturnType());
+        assertEquals(BaseYangTypes.STRING_TYPE, getIfcMethod.returnType());
     }
 }

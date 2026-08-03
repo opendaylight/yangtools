@@ -36,9 +36,9 @@ class Mdsal552Test {
             .map(ContainerObjectArchetype.class::cast)
             .orElseThrow();
         final var bazGetRef = baz.getMethodDefinitions().stream()
-            .filter(method -> method.getName().equals("getRef"))
+            .filter(method -> method.name().equals("getRef"))
             .findFirst().orElseThrow();
-        assertEquals(ENUMERATION, bazGetRef.getReturnType().name());
+        assertEquals(ENUMERATION, bazGetRef.returnType().name());
 
         final var input = types.stream()
             .filter(type -> BAR_INPUT.equals(type.name()))
@@ -46,8 +46,8 @@ class Mdsal552Test {
             .map(RpcInputArchetype.class::cast)
             .orElseThrow();
         final var inputGetRef = input.getMethodDefinitions().stream()
-            .filter(method -> method.getName().equals("getRef"))
+            .filter(method -> method.name().equals("getRef"))
             .findFirst().orElseThrow();
-        assertEquals(ENUMERATION, inputGetRef.getReturnType().name());
+        assertEquals(ENUMERATION, inputGetRef.returnType().name());
     }
 }

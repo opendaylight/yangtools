@@ -63,8 +63,8 @@ class GenEnumResolvingTest {
         assertEquals(28, methods.size());
         EnumTypeObjectArchetype ianaIfType = null;
         for (var method : methods) {
-            if (method.getName().equals("getType")) {
-                if (method.getReturnType() instanceof EnumTypeObjectArchetype enumeration) {
+            if (method.name().equals("getType")) {
+                if (method.returnType() instanceof EnumTypeObjectArchetype enumeration) {
                     ianaIfType = enumeration;
                 }
             }
@@ -111,10 +111,14 @@ class GenEnumResolvingTest {
         // FIXME: split this into getter/default/static asserts
         assertEquals(8, methods.size());
         for (var method : methods) {
-            if (method.getName().equals("getLinkUpDownTrapEnable")) {
-                linkUpDownTrapEnable = assertInstanceOf(EnumTypeObjectArchetype.class, method.getReturnType());
-            } else if (method.getName().equals("getOperStatus")) {
-                operStatus = assertInstanceOf(EnumTypeObjectArchetype.class, method.getReturnType());
+            switch (method.name()) {
+                case "getLinkUpDownTrapEnable" ->
+                    linkUpDownTrapEnable = assertInstanceOf(EnumTypeObjectArchetype.class, method.returnType());
+                case "getOperStatus" ->
+                    operStatus = assertInstanceOf(EnumTypeObjectArchetype.class, method.returnType());
+                default -> {
+                    // no-op
+                }
             }
         }
 

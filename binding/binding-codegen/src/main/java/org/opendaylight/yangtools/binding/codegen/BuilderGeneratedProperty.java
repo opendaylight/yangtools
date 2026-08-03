@@ -33,15 +33,15 @@ final class BuilderGeneratedProperty implements GeneratedProperty {
 
     @Override
     public Type getReturnType() {
-        return getter.getReturnType();
+        return getter.returnType();
     }
 
     ValueMechanics getMechanics() {
-        return getter.getMechanics();
+        return getter.mechanics();
     }
 
     String getGetterName() {
-        return getter.getName();
+        return getter.name();
     }
 
     @Override

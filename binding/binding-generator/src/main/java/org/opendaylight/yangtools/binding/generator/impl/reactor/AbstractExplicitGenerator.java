@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -32,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -350,12 +348,9 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
 
     @NonNullByDefault
     MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list, final Type returnType) {
-        final var mb = MethodSignature.builder(Naming.getGetterMethodName(localName().getLocalName()), returnType,
-            ValueMechanics.NORMAL);
+        final var mb = MethodSignature.builder(statement, Naming.getGetterMethodName(localName().getLocalName()),
+            returnType, ValueMechanics.NORMAL);
         addDeprecatedAnnotation(mb, statement);
-        statement.findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class)
-            .map(TypeMemberComment::referenceOf)
-            .ifPresent(mb::setComment);
         list.add(mb);
         return mb;
     }
@@ -367,12 +362,9 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
 
     static final void constructRequire(final @NonNull List<MethodSignature.@NonNull Builder> list,
             final @NonNull EffectiveStatement<QName, ?> statement, final @NonNull Type returnType) {
-        final var mb = MethodSignature.builderOfDefault(
+        final var mb = MethodSignature.builderOfDefault(statement,
             Naming.getRequireMethodName(statement.argument().getLocalName()), returnType, ValueMechanics.NONNULL);
         addDeprecatedAnnotation(mb, statement);
-        statement.findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class)
-            .map(TypeMemberComment::referenceOf)
-            .ifPresent(mb::setComment);
         list.add(mb);
     }
 

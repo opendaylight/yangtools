@@ -37,7 +37,6 @@ class GeneratedTypesBitsTest {
         boolean byteTypeFound = false;
         int classPropertiesNumb = 0;
 
-        String nameReturnParamType = "";
         boolean getByteLeafMethodFound = false;
         boolean setByteLeafMethodFound = false;
 
@@ -61,12 +60,15 @@ class GeneratedTypesBitsTest {
                 if (methodSignaturesList != null) {
                     // loop through all methods
                     for (var methodSignature : methodSignaturesList) {
-                        if (methodSignature.getName().equals("getByteLeaf")) {
-                            getByteLeafMethodFound = true;
-
-                            nameReturnParamType = methodSignature.getReturnType().simpleName();
-                        } else if (methodSignature.getName().equals("setByteLeaf")) {
-                            setByteLeafMethodFound = true;
+                        switch (methodSignature.name()) {
+                            case "getByteLeaf" -> {
+                                getByteLeafMethodFound = true;
+                                assertEquals("ByteType", methodSignature.returnType().simpleName());
+                            }
+                            case "setByteLeaf" -> setByteLeafMethodFound = true;
+                            default -> {
+                                // no-op
+                            }
                         }
                     }
                 }
@@ -82,7 +84,6 @@ class GeneratedTypesBitsTest {
         assertNotNull(methodSignaturesList);
 
         assertTrue(getByteLeafMethodFound);
-        assertEquals("ByteType", nameReturnParamType);
 
         assertFalse(setByteLeafMethodFound);
     }

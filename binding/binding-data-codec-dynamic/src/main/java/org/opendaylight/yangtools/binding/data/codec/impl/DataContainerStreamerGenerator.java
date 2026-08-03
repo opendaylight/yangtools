@@ -288,7 +288,7 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
                 //        - we have generated an EntryObject, in which case we see Map<FooKey, Foo>
                 //        - we have an ItemObject, in which case we see List<Foo>
                 final var signature =  getMethod(getter.getName());
-                final var returnType = signature.getReturnType();
+                final var returnType = signature.returnType();
                 if (!(returnType instanceof ParameterizedType paramType)) {
                     throw new VerifyException("Unexpected method " + signature);
                 }
@@ -330,7 +330,7 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
     private static @Nullable MethodSignature lookupMethod(final DataContainerArchetype archetype,
             final String methodName) {
         for (var method : archetype.getMethodDefinitions()) {
-            if (methodName.equals(method.getName())) {
+            if (methodName.equals(method.name())) {
                 return method;
             }
         }

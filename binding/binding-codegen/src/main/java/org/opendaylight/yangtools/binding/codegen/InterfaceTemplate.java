@@ -54,6 +54,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 
 /**
  * Base class for code generators based on {@link DataContainerArchetype}.
@@ -230,9 +231,9 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
             final BlockBuilder blk;
             if (method.isDefault()) {
                 blk = generateDefaultMethod(method);
-            } else if (isGetterMethodName(method.getName())) {
+            } else if (isGetterMethodName(method.name())) {
                 blk = generateAccessorMethod(method);
-            } else if (isNonnullMethodName(method.getName())) {
+            } else if (isNonnullMethodName(method.name())) {
                 blk = generateNonnullAccessorMethod(method);
             } else {
                 blk = generateMethod(method);
@@ -249,16 +250,23 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
 
     private @NonNull BlockBuilder generateMethod(final MethodSignature method) {
         return newBlockBuilder()
-            .blk(generateJavadoc(method.getComment()))
+            .blk(generateJavadoc(method))
             .blk(generateAnnotations(method))
-            .str(importedReturnType(method)).sp().str(method.getName()).eol("();");
+            .str(importedReturnType(method)).sp().str(method.name()).eol("();");
     }
 
-    private static @Nullable BlockBuilder generateJavadoc(final @Nullable TypeMemberComment comment) {
-        if (comment == null) {
+    private static @Nullable BlockBuilder generateJavadoc(final MethodSignature method) {
+//        final var name = method.name();
+//        if (!isGetterMethodName(name) && !isRequireMethodName(name)) {
+//            return null;
+//        }
+        final var optDescription = method.statement()
+            .findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class);
+        if (optDescription.isEmpty()) {
             return null;
         }
 
+        final var comment = TypeMemberComment.referenceOf(optDescription.orElseThrow());
         // FIXME: use a BlockBuilder
         final var sb = new StringBuilder();
         final var contract = comment.contractDescription();
@@ -293,7 +301,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     }
 
     private @Nullable BlockBuilder generateAnnotations(final MethodSignature method) {
-        final var annotations = method.getAnnotations();
+        final var annotations = method.annotations();
         if (annotations.isEmpty()) {
             return null;
         }
@@ -306,20 +314,20 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     }
 
     private @Nullable BlockBuilder generateDefaultMethod(final MethodSignature method) {
-        final var methodName = method.getName();
+        final var methodName = method.name();
         if (isNonnullMethodName(methodName)) {
             return generateNonnullMethod(method);
         }
         if (isRequireMethodName(methodName)) {
             return generateRequireMethod(method);
         }
-        return VOID.equals(method.getReturnType().name()) ? generateNoopVoidInterfaceMethod(method) : null;
+        return VOID.equals(method.returnType().name()) ? generateNoopVoidInterfaceMethod(method) : null;
     }
 
     @NonNullByDefault
     private BlockBuilder generateNonnullMethod(final MethodSignature method) {
-        final var ret = method.getReturnType();
-        final var name = method.getName();
+        final var ret = method.returnType();
+        final var name = method.name();
 
         return newBlockBuilder()
             .txt(accessorJavadoc(method, ", or an empty list if it is not present"))
@@ -333,20 +341,20 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     @NonNullByDefault
     private BlockBuilder generateNoopVoidInterfaceMethod(final MethodSignature method) {
         return newBlockBuilder()
-            .blk(generateJavadoc(method.getComment()))
+            .blk(generateJavadoc(method))
             .blk(generateAnnotations(method))
-            .str("default ").str(importedName(VOID)).sp().str(method.getName()).str("()").oB()
+            .str("default ").str(importedName(VOID)).sp().str(method.name()).str("()").oB()
                 .eol("// No-op")
             .cB();
     }
 
     @NonNullByDefault
     private BlockBuilder generateRequireMethod(final MethodSignature method) {
-        final var name = method.getName();
+        final var name = method.name();
 
         return newBlockBuilder()
             .txt(accessorJavadoc(method, ", guaranteed to be non-null", NSEE))
-            .str("default ").str(importedNonNull(method.getReturnType())).sp().str(name).str("()").oB()
+            .str("default ").str(importedNonNull(method.returnType())).sp().str(name).str("()").oB()
                 .str("return ").str(importedName(CODEHELPERS)).str(".require(").str(getGetterMethodForRequire(name))
                     // FIXME: what exactly is this replace() doing?
                     .str("(), ").jStr(name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, "")).eol(");")
@@ -358,11 +366,11 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         return newBlockBuilder()
             .txt(accessorJavadoc(method, ", or {@code null} if it is not present"))
             .blk(generateAccessorAnnotations(method))
-            .str(nullableType(method.getReturnType())).sp().str(method.getName()).eol("();");
+            .str(nullableType(method.returnType())).sp().str(method.name()).eol("();");
     }
 
     private @Nullable BlockBuilder generateAccessorAnnotations(final MethodSignature method) {
-        final var annotations = method.getAnnotations();
+        final var annotations = method.annotations();
         if (annotations.isEmpty()) {
             return null;
         }
@@ -370,7 +378,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         final var bb = newBlockBuilder();
         for (var annotation : annotations) {
             // FIXME: what is this check doing?
-            if (!BaseYangTypes.BOOLEAN_TYPE.equals(method.getReturnType())
+            if (!BaseYangTypes.BOOLEAN_TYPE.equals(method.returnType())
                 || !(annotation instanceof OverrideAnnotation)) {
                 bb.blk(generateAnnotation(annotation));
             }
@@ -383,7 +391,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         return newBlockBuilder()
             .txt(accessorJavadoc(method, ", or an empty instance if it is not present"))
             .blk(generateAnnotations(method))
-            .str(importedNonNull(method.getReturnType())).sp().str(method.getName()).eol("();");
+            .str(importedNonNull(method.returnType())).sp().str(method.name()).eol("();");
     }
 
     @VisibleForTesting
@@ -563,12 +571,13 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     @NonNullByDefault
     private String accessorJavadoc(final MethodSignature method, final String orString,
             final @Nullable JavaTypeName exception) {
-        final var comment = method.getComment();
-        final var reference = comment == null ? null : comment.referenceDescription();
-        if (reference == null) {
+        final var optDescription = method.statement()
+            .findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class);
+        if (optDescription.isEmpty()) {
             return simpleAccessorJavadoc(method, orString, exception);
         }
 
+        final var reference = optDescription.orElseThrow();
         final var propName = propertyNameFromGetter(method);
         final var bb = newBlockBuilder()
             .str("Return ").str(propName).str(orString).eol(".")

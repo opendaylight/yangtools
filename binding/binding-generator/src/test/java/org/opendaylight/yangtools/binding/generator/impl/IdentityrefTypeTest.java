@@ -56,10 +56,10 @@ class IdentityrefTypeTest {
         assertEquals(2, methodSignatures.size());
 
         var methodSignature = methodSignatures.getFirst();
-        assertEquals("getLf", methodSignature.getName());
-        assertEquals("requireLf", methodSignatures.getLast().getName());
+        assertEquals("getLf", methodSignature.name());
+        assertEquals("requireLf", methodSignatures.getLast().name());
 
         assertEquals("org.opendaylight.yang.gen.v1.urn.identityref.module.rev131109.SomeIdentity",
-            methodSignature.getReturnType().canonicalName());
+            methodSignature.returnType().canonicalName());
     }
 }

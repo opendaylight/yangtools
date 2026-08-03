@@ -30,10 +30,10 @@ class Bug1862Test {
             .map(ContainerObjectArchetype.class::cast)
             .findFirst().orElseThrow()
             .getMethodDefinitions().stream()
-            .filter(method -> method.getName().equals("getBug1862RestrictedTypedef"))
+            .filter(method -> method.name().equals("getBug1862RestrictedTypedef"))
             .findFirst().orElseThrow();
 
-        final var returnType = assertInstanceOf(ScalarTypeObjectArchetype.class, fooGetter.getReturnType());
+        final var returnType = assertInstanceOf(ScalarTypeObjectArchetype.class, fooGetter.returnType());
         final var restrictions = returnType.restrictions();
         assertNotNull(restrictions);
         assertEquals(ImmutableRangeSet.of(Range.closed((byte) 1, (byte) 100)),
