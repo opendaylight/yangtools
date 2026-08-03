@@ -43,7 +43,7 @@ final class ChoiceInTemplate extends ArchetypeTemplate<ChoiceInArchetype> {
         final var stmt = archetype.statement();
         return newBodyBuilder(stmt)
             .str("public interface ").str(archetype.simpleName()).str(" extends ")
-                .gen(importedName(CHOICE_IN), importedName(archetype.choiceIn())).oB()
+                .gen(importedName(CHOICE_IN), importedName(archetype.parentName())).oB()
                 .frg(new QNameConstant.InInterface(this, stmt.argument()))
             .cB();
     }

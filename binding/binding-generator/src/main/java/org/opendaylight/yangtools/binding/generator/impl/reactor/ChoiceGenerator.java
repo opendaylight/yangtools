@@ -10,10 +10,12 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultChoiceRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
@@ -91,7 +93,13 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
         if (!groupings.isEmpty()) {
             throw new VerifyException("Illegal grouping in " + statement);
         }
-        return new ChoiceInArchetype(typeName, statement, getParent().typeName());
+        final var cases = new ArrayList<@NonNull CaseObjectArchetype>();
+        for (var child : this) {
+            if (child instanceof CaseGenerator childCase) {
+                cases.add((CaseObjectArchetype) childCase.getOriginal().getGeneratedType());
+            }
+        }
+        return ChoiceInArchetype.of(typeName, statement, getParent().typeName(), cases);
     }
 
     @Override

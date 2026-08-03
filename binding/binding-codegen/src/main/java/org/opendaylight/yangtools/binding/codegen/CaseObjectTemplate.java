@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 
 /**
  * Template for a (non-existing) {@code CaseObject}.
@@ -46,8 +47,8 @@ final class CaseObjectTemplate extends AugmentableTemplate<CaseObjectArchetype> 
     @Override
     Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.forArray(archetype.choice(), NotificationTemplate.DATA_OBJECT, extendsAugmentable(),
-                extendsJavaDataContainer()),
+            Iterators.forArray(TypeRef.of(archetype.parentName()), NotificationTemplate.DATA_OBJECT,
+                extendsAugmentable(), extendsJavaDataContainer()),
             super.extendsTypes());
     }
 

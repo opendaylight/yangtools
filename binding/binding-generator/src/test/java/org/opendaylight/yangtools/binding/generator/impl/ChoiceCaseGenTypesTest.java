@@ -41,17 +41,17 @@ class ChoiceCaseGenTypesTest {
         // case
         var globalLock = checkGeneratedCase(genTypes, "GlobalLock", locks + ".lock.type");
         SupportTestUtil.containsMethods(globalLock, new NameTypePattern("getGlobalLock", "GlobalLock"));
-        assertEquals("LockType", globalLock.choice().simpleName());
+        assertEquals("LockType", globalLock.parentName().simpleName());
 
         // case
         final var partialLock = checkGeneratedCase(genTypes, "PartialLock", locks + ".lock.type");
         containsMethods(partialLock, new NameTypePattern("getPartialLock", "Map<PartialLockKey,PartialLock>"));
-        assertEquals("LockType", partialLock.choice().simpleName());
+        assertEquals("LockType", partialLock.parentName().simpleName());
 
         // case
         final var fingerprint = checkGeneratedCase(genTypes, "Fingerprint", locks + ".lock.type");
         containsMethods(fingerprint, new NameTypePattern("getAlgorithmAndHash", "AlgorithmAndHash"));
-        assertEquals("LockType", fingerprint.choice().simpleName());
+        assertEquals("LockType", fingerprint.parentName().simpleName());
 
         // choice
         assertChoice(genTypes, "AlgorithmAndHash", locks + ".lock.type.fingerprint");
@@ -59,32 +59,32 @@ class ChoiceCaseGenTypesTest {
         // case
         final var md5 = checkGeneratedCase(genTypes, "Md5", locks + ".lock.type.fingerprint.algorithm.and.hash");
         containsMethods(md5, new NameTypePattern("getMd5", "TlsFingerprintType"));
-        assertEquals("AlgorithmAndHash", md5.choice().simpleName());
+        assertEquals("AlgorithmAndHash", md5.parentName().simpleName());
 
         // case
         final var sha1 = checkGeneratedCase(genTypes, "Sha1", locks + ".lock.type.fingerprint.algorithm.and.hash");
         containsMethods(sha1, new NameTypePattern("getSha1", "TlsFingerprintType"));
-        assertEquals("AlgorithmAndHash", sha1.choice().simpleName());
+        assertEquals("AlgorithmAndHash", sha1.parentName().simpleName());
 
         // case
         final var sha224 = checkGeneratedCase(genTypes, "Sha224", locks + ".lock.type.fingerprint.algorithm.and.hash");
         containsMethods(sha224, new NameTypePattern("getSha224", "TlsFingerprintType"));
-        assertEquals("AlgorithmAndHash", sha224.choice().simpleName());
+        assertEquals("AlgorithmAndHash", sha224.parentName().simpleName());
 
         // case
         final var sha256 = checkGeneratedCase(genTypes, "Sha256", locks + ".lock.type.fingerprint.algorithm.and.hash");
         containsMethods(sha256, new NameTypePattern("getSha256", "TlsFingerprintType"));
-        assertEquals("AlgorithmAndHash", sha256.choice().simpleName());
+        assertEquals("AlgorithmAndHash", sha256.parentName().simpleName());
 
         // case
         final var sha384 = checkGeneratedCase(genTypes, "Sha384", locks + ".lock.type.fingerprint.algorithm.and.hash");
         containsMethods(sha384, new NameTypePattern("getSha384", "TlsFingerprintType"));
-        assertEquals("AlgorithmAndHash", sha384.choice().simpleName());
+        assertEquals("AlgorithmAndHash", sha384.parentName().simpleName());
 
         // case
         final var sha512 = checkGeneratedCase(genTypes, "Sha512", locks + ".lock.type.fingerprint.algorithm.and.hash");
         containsMethods(sha512, new NameTypePattern("getSha512", "TlsFingerprintType"));
-        assertEquals("AlgorithmAndHash", sha512.choice().simpleName());
+        assertEquals("AlgorithmAndHash", sha512.parentName().simpleName());
 
         // test for file augment-monitoring
         // augment
@@ -95,19 +95,19 @@ class ChoiceCaseGenTypesTest {
         final var autonomousLock = checkGeneratedCase(genTypes, "AutonomousLock",
             augment + ".netconf.state.datastores.datastore.locks.lock.type");
         containsMethods(autonomousLock, new NameTypePattern("getAutonomousDef", "AutonomousDef"));
-        assertEquals("LockType", autonomousLock.choice().simpleName());
+        assertEquals("LockType", autonomousLock.parentName().simpleName());
 
         // case
         final var anonymousLock = checkGeneratedCase(genTypes, "AnonymousLock",
             augment + ".netconf.state.datastores.datastore.locks.lock.type");
         containsMethods(anonymousLock, new NameTypePattern("getLockTime", "Uint32"));
-        assertEquals("LockType", anonymousLock.choice().simpleName());
+        assertEquals("LockType", anonymousLock.parentName().simpleName());
 
         // choice
         var genType = checkGeneratedCase(genTypes, "LeafAugCase",
             augment + ".netconf.state.datastores.datastore.locks.lock.type");
         containsMethods(genType, new NameTypePattern("getLeafAugCase", "String"));
-        assertEquals("LockType", genType.choice().simpleName());
+        assertEquals("LockType", genType.parentName().simpleName());
 
         // augment
         // "/nm:netconf-state/nm:datastores/nm:datastore/nm:locks/nm:lock-type/nm:partial-lock"
@@ -125,13 +125,13 @@ class ChoiceCaseGenTypesTest {
         final var foo = checkGeneratedCase(genTypes, "Foo",
             augment + ".netconf.state.datastores.datastore.locks.lock.type.partial.lock.aug._case.by.choice");
         containsMethods(foo, new NameTypePattern("getFoo", "String"));
-        assertEquals("AugCaseByChoice", foo.choice().simpleName());
+        assertEquals("AugCaseByChoice", foo.parentName().simpleName());
 
         // case
         final var bar = checkGeneratedCase(genTypes, "Bar",
             augment + ".netconf.state.datastores.datastore.locks.lock.type.partial.lock.aug._case.by.choice");
         containsMethods(bar, new NameTypePattern("getBar", "Boolean"));
-        assertEquals("AugCaseByChoice", bar.choice().simpleName());
+        assertEquals("AugCaseByChoice", bar.parentName().simpleName());
 
         // augment "/nm:netconf-state/nm:datastores/nm:datastore" {
         final var datastore1 = checkGeneratedType(AugmentationArchetype.class, genTypes, "Datastore1", augment);
@@ -145,18 +145,18 @@ class ChoiceCaseGenTypesTest {
         genType = checkGeneratedCase(genTypes, "UnknownFiles",
             augment + ".netconf.state.datastores.datastore.storage.format");
         containsMethods(genType, new NameTypePattern("getFiles", "Map<FilesKey,Files>"));
-        assertEquals("StorageFormat", genType.choice().simpleName());
+        assertEquals("StorageFormat", genType.parentName().simpleName());
 
         // case
         genType = checkGeneratedCase(genTypes,
             "Xml", augment + ".netconf.state.datastores.datastore.storage.format");
         containsMethods(genType, new NameTypePattern("getXmlDef", "XmlDef"));
-        assertEquals("StorageFormat", genType.choice().simpleName());
+        assertEquals("StorageFormat", genType.parentName().simpleName());
 
         // case
         genType = checkGeneratedCase(genTypes, "Yang", augment + ".netconf.state.datastores.datastore.storage.format");
         containsMethods(genType, new NameTypePattern("getYangFileName", "String"));
-        assertEquals("StorageFormat", genType.choice().simpleName());
+        assertEquals("StorageFormat", genType.parentName().simpleName());
     }
 
     private static void assertChoice(final List<Archetype> genTypes, final String simpleName, final String pkgName) {

@@ -64,7 +64,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
         // Most generators have a parent->child dependency due to parent methods' return types and therefore children
         // must not request parent's type. That is not true for choice->case relationship and hence we do not need to
         // go through DefaultType here
-        return CaseObjectArchetype.of(typeName, statement, choice.getArchetype(), groupings, collectTypeObjects(),
+        return CaseObjectArchetype.of(typeName, statement, choice.typeName(), groupings, collectTypeObjects(),
             collectMethods());
     }
 

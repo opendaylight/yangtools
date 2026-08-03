@@ -108,6 +108,21 @@ final class TypeMethods {
     }
 
     /**
+     * Implementation of {@link ChoceInArchetype#toString()}.
+     *
+     * @param self the archetype
+     * @return a String
+     */
+    @NonNullByDefault
+    static  String toString(final ChoiceInArchetype self) {
+        final var helper = MoreObjects.toStringHelper(ChoiceInArchetype.class)
+            .add("name", self.name())
+            .add("parentName", self.parentName());
+        addNonEmpty(helper, "cases", self.cases());
+        return helper.toString();
+    }
+
+    /**
      * Implementation of {@link DataContainerArchetype#toString()}.
      *
      * @param <A> the {@link DataContainerArchetype} type
