@@ -18,20 +18,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 record NotificationBodyArchetypeImpl(
         JavaTypeName name,
         NotificationEffectiveStatement statement,
-        List<Type> implementsTypes,
+        List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
         List<MethodSignature> methodSignatures) implements NotificationBodyArchetype {
     NotificationBodyArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(implementsTypes);
+        requireNonNull(partials);
         requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-    }
-
-    @Override
-    public List<Type> getImplements() {
-        return implementsTypes;
     }
 
     @Override

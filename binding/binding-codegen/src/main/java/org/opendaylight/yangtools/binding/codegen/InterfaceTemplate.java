@@ -87,8 +87,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     }
 
     @Nullable DataContainerArchetype builderTarget() {
-        return archetype.getImplements().stream().map(Type::name).anyMatch(BUILDER_INTERFACES::contains) ? archetype
-            : null;
+        return archetype.partials().stream().map(Type::name).anyMatch(BUILDER_INTERFACES::contains) ? archetype : null;
     }
 
     private @NonNull TypeAnalysis typeAnalysis() {
@@ -175,7 +174,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     //        subclass (TypeFragment?) does the equivalent of JavaFileTemplate.importedName(Type)
     @NonNullByDefault
     Iterator<? extends Type> extendsTypes() {
-        return archetype.getImplements().iterator();
+        return archetype.partials().iterator();
     }
 
     @NonNullByDefault

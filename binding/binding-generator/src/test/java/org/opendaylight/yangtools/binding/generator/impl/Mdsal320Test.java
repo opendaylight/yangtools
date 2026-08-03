@@ -33,7 +33,7 @@ class Mdsal320Test {
             .map(ContainerObjectArchetype.class::cast)
             .orElseThrow();
 
-        assertEquals(List.of(), foo.getImplements());
+        assertEquals(List.of(), foo.partials());
 
         final var fooTypes = foo.typeObjects();
         assertEquals(1, fooTypes.size());

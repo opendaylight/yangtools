@@ -133,6 +133,13 @@ final class TypeMethods {
         return toStringHelper(archetypeClass, self).add("parentName", self.parentName()).toString();
     }
 
+    private static void addNonEmpty(final ToStringHelper helper, final @NonNull String name,
+            final @NonNull List<? extends Archetype> list) {
+        if (!list.isEmpty()) {
+            helper.add(name, list.stream().map(Type::name).toList());
+        }
+    }
+
     /**
      * Helper for implementations of {@link DataContainerArchetype#toString()}.
      *
@@ -145,9 +152,12 @@ final class TypeMethods {
     static <A extends DataContainerArchetype> ToStringHelper toStringHelper(final Class<A> archetypeClass,
             final A self) {
         final var helper = MoreObjects.toStringHelper(archetypeClass).add("name", self.name());
-        addNonEmpty(helper, "implements", self.getImplements());
+        addNonEmpty(helper, "partials", self.partials());
         addNonEmpty(helper, "typeObjects", self.typeObjects());
-        addNonEmpty(helper, "methods", self.getMethodDefinitions());
+        final var methods = self.getMethodDefinitions();
+        if (!methods.isEmpty()) {
+            helper.add("methods", methods);
+        }
         return helper;
     }
 
@@ -189,12 +199,5 @@ final class TypeMethods {
         return MoreObjects.toStringHelper(RestrictedType.class)
             .add("name", self.name())
             .add("restrictions", self.restrictions());
-    }
-
-    private static void addNonEmpty(final ToStringHelper helper, final @NonNull String name,
-            final @NonNull List<?> list) {
-        if (!list.isEmpty()) {
-            helper.add(name, list);
-        }
     }
 }

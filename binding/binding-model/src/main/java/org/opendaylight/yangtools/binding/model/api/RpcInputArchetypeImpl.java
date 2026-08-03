@@ -18,20 +18,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 record RpcInputArchetypeImpl(
         JavaTypeName name,
         InputEffectiveStatement statement,
-        List<Type> implementsTypes,
+        List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
         List<MethodSignature> methodSignatures) implements RpcInputArchetype {
     RpcInputArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(implementsTypes);
+        requireNonNull(partials);
         requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-    }
-
-    @Override
-    public List<Type> getImplements() {
-        return implementsTypes;
     }
 
     @Override

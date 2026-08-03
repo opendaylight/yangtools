@@ -19,21 +19,16 @@ record AugmentationArchetypeImpl(
         JavaTypeName name,
         AugmentEffectiveStatement statement,
         AugmentableArchetype target,
-        List<Type> implementsTypes,
+        List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
         List<MethodSignature> methodSignatures) implements AugmentationArchetype {
     AugmentationArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(target);
-        requireNonNull(implementsTypes);
+        requireNonNull(partials);
         requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-    }
-
-    @Override
-    public List<Type> getImplements() {
-        return implementsTypes;
     }
 
     @Override

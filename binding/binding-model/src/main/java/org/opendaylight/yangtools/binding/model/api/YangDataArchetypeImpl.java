@@ -18,20 +18,15 @@ import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 record YangDataArchetypeImpl(
         JavaTypeName name,
         YangDataEffectiveStatement statement,
-        List<Type> implementsTypes,
+        List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
         List<MethodSignature> methodSignatures) implements YangDataArchetype {
     YangDataArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(implementsTypes);
+        requireNonNull(partials);
         requireNonNull(typeObjects);
         requireNonNull(methodSignatures);
-    }
-
-    @Override
-    public List<Type> getImplements() {
-        return implementsTypes;
     }
 
     @Override

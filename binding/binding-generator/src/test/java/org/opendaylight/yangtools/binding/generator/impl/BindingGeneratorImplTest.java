@@ -10,14 +10,12 @@ package org.opendaylight.yangtools.binding.generator.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.NotificationArchetype;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class BindingGeneratorImplTest {
@@ -83,18 +81,6 @@ class BindingGeneratorImplTest {
         }
 
         assertNotNull(foo);
-
-        Type childOf = null;
-        for (var type : foo.getImplements()) {
-            switch (type.simpleName()) {
-                case "ChildOf" -> childOf = type;
-                default -> {
-                    // ignore
-                }
-            }
-        }
-
-        assertNull(childOf);
     }
 
     @Test

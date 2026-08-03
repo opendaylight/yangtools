@@ -17,9 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
  *
  * @since 16.0.0
  */
-// FIXME: extends DataContainerArchetype.Extendable
 @NonNullByDefault
-public sealed interface GroupingArchetype extends DataContainerArchetype permits GroupingArchetypeImpl {
+public sealed interface GroupingArchetype extends DataContainerArchetype.Partial permits GroupingArchetypeImpl {
     @Override
     GroupingEffectiveStatement statement();
 
