@@ -100,7 +100,7 @@ abstract sealed class TypeObjectSupport permits TypeObjectSupport.Base, TypeObje
         ScalarTypeObjectArchetype toArchetype(final AbstractTypeObjectGenerator<?, ?> gen) {
             final var stmt = gen.statement();
             final var def = stmt.typeDefinition();
-            return new ScalarTypeObjectArchetype(gen.typeName(), stmt, def, javaType, Restrictions.of(def), null);
+            return ScalarTypeObjectArchetype.of(gen.typeName(), stmt, def, javaType, Restrictions.of(def));
         }
     }
 

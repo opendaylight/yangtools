@@ -59,7 +59,7 @@ final class UnionTypeCodec implements ValueCodec<Object, Object> {
     private static List<String> extractPropertyNames(final UnionTypeObjectArchetype archetype) {
         var current = archetype;
         while (true) {
-            var next = current.getSuperType();
+            var next = current.superType();
             if (next == null) {
                 break;
             }

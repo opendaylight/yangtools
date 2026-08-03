@@ -111,7 +111,7 @@ final class UnionTypeObjectArchetypeBuilder {
                     enclosedTypes.add(subEnumeration);
                     generatedType = subEnumeration;
                 } else if (BuiltInType.BITS.typeName().equals(subName)) {
-                    final var subBits = new BitsTypeObjectArchetype(
+                    final var subBits = BitsTypeObjectArchetype.of(
                         typeName.createEnclosed(Naming.getClassName(localName), "$"), definingStatement,
                         (BitsTypeDefinition) subType.typeDefinition());
                     enclosedTypes.add(subBits);
@@ -195,8 +195,8 @@ final class UnionTypeObjectArchetypeBuilder {
             }
         }
 
-        return new UnionTypeObjectArchetype(typeName, definingStatement, typeProperties,
-            List.copyOf(properties.keySet()), List.copyOf(enclosedTypes), null);
+        return UnionTypeObjectArchetype.of(typeName, definingStatement, typeProperties,
+            List.copyOf(properties.keySet()), List.copyOf(enclosedTypes));
     }
 
     // FIXME: this is legacy union/leafref property handling. The resulting value is *not* normalized for use as a

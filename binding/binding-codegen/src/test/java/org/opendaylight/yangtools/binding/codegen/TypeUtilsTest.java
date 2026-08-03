@@ -36,8 +36,8 @@ class TypeUtilsTest {
         final var type = ConcreteType.ofClass(Object.class);
         assertSame(type, TypeUtils.getBaseYangType(type));
 
-        assertEquals(type, TypeUtils.getBaseYangType(new ScalarTypeObjectArchetype(
-            TypeName.ofClass(TypeUtilsTest.class), statement, typeDefinition, type, null, null)));
+        assertEquals(type, TypeUtils.getBaseYangType(ScalarTypeObjectArchetype.of(
+            TypeName.ofClass(TypeUtilsTest.class), statement, typeDefinition, type)));
     }
 
     @Test
