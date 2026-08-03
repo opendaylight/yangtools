@@ -12,13 +12,14 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.IAE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NPE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 
 /**
  * Template for {@link EnumTypeObject}s.
@@ -84,11 +85,12 @@ final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArche
         final var codeHelpers = importedName(CODEHELPERS);
         final var iae = importedName(IAE);
         final var nonnullSelf = importedNonNull(archetype);
-        final var nonnullString = importedNonNull(STRING_TYPE);
+        // FIXME: add a utility to work on JavaTypeName for this
+        final var nonnullString = importedNonNull(BaseYangTypes.STRING_TYPE);
         final var npe = importedName(NPE);
         final var nullableSelf = importedNullable(archetype);
         final var override = importedName(OVERRIDE);
-        final var string = importedName(STRING_TYPE);
+        final var string = importedName(STRING);
 
         bb
             .str("private final ").str(nonnullString).eol(" name;")

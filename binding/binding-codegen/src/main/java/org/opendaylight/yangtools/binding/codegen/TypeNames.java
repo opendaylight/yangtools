@@ -55,15 +55,19 @@ final class TypeNames {
      */
     static final JavaTypeName OBJECT = JavaTypeName.create(Object.class);
     /**
+     * {@code java.lang.String} as a JavaTypeName.
+     */
+    static final JavaTypeName STRING = JavaTypeName.create(String.class);
+    /**
      * {@code java.lang.Override} as a JavaTypeName.
      */
     static final JavaTypeName OVERRIDE = JavaTypeName.create(Override.class);
     /**
-     * {@code java.lang.void} as a JavaTypeName.
+     * {@code java.lang.SuppressWarnings} as a JavaTypeName.
      */
     static final JavaTypeName SUPPRESS_WARNINGS = JavaTypeName.create(SuppressWarnings.class);
     /**
-     * {@code java.lang.SuppressWarnings} as a JavaTypeName.
+     * {@code java.lang.void} as a JavaTypeName.
      */
     static final JavaTypeName VOID = JavaTypeName.create(void.class);
 
@@ -120,11 +124,18 @@ final class TypeNames {
     static final JavaTypeName NULLABLE = JavaTypeName.create(Nullable.class);
 
     /**
+     * {@code com.google.common.util.concurrent.ListenableFuture} as a JavaTypeName.
+     */
+    static final JavaTypeName LISTENABLE_FUTURE = JavaTypeName.create(ListenableFuture.class);
+
+    /**
      * {@code org.opendaylight.yangtools.binding.lib.CodeHelpers} as a JavaTypeName.
      */
     static final JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
 
-    static final JavaTypeName LISTENABLE_FUTURE = JavaTypeName.create(ListenableFuture.class);
+    /**
+     * {@code org.opendaylight.yangtools.yang.common.RpcResult} as a JavaTypeName.
+     */
     static final JavaTypeName RPC_RESULT = JavaTypeName.create(RpcResult.class);
 
     private TypeNames() {

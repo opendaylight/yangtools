@@ -12,8 +12,8 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.DEPRECATED;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 import static org.opendaylight.yangtools.binding.contract.Naming.getPropertyName;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
@@ -290,7 +290,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
 
     final void appendValidNamesConstant(final BlockBuilder bb, final Collection<? extends Bit> bits) {
         final var immutableSet = importedName(IMMUTABLE_SET);
-        bb.str("protected static final ").gen(immutableSet, importedName(STRING_TYPE))
+        bb.str("protected static final ").gen(immutableSet, importedName(STRING))
             .str(" " + VALID_NAMES_NAME + " = ").str(immutableSet).str(".of(");
 
         final var it = bits.iterator();
@@ -360,7 +360,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
         bb
             .nl()
             .at().eol(override)
-            .str("public ").gen(importedName(IMMUTABLE_SET), importedName(STRING_TYPE)).str(" validNames()").oB()
+            .str("public ").gen(importedName(IMMUTABLE_SET), importedName(STRING)).str(" validNames()").oB()
                 .eol("return " + VALID_NAMES_NAME + ";")
             .cB()
             .nl()

@@ -18,22 +18,10 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_LIST;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NONNULL_BY_DEFAULT;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OBJECT;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.CONST_STO_REGISTRAR;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.nameInModuleOf;
 import static org.opendaylight.yangtools.binding.contract.Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BINARY_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.EMPTY_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INSTANCE_IDENTIFIER;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT16_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT32_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT64_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.INT8_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT16_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT32_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT64_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT8_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 
 import com.google.common.base.MoreObjects;
@@ -50,6 +38,7 @@ import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 
 /**
@@ -147,7 +136,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
                 .cB()
                 .nl()
                 .at().eol(override)
-                .str("public final ").str(importedName(STRING_TYPE)).str(" toString()").oB()
+                .str("public final ").str(importedName(STRING)).str(" toString()").oB()
                     .str("return ").str(codeHelpers).eol(".stoTS(getClass(), _value);")
                 .cB();
         }
@@ -400,8 +389,9 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
      * All types that have a {@code valueOf(String)} static factory method suitable for directly implementing
      * {@code getDefaultValue(String}}.
      */
-    private static final Set<ConcreteType> VALUEOF_TYPES = Set.of(
-        BOOLEAN_TYPE, INT8_TYPE, INT16_TYPE, INT32_TYPE, INT64_TYPE, UINT8_TYPE, UINT16_TYPE, UINT32_TYPE, UINT64_TYPE);
+    private static final Set<ConcreteType> VALUEOF_TYPES = Set.of(BaseYangTypes.BOOLEAN_TYPE,
+        BaseYangTypes.INT8_TYPE, BaseYangTypes.INT16_TYPE, BaseYangTypes.INT32_TYPE, BaseYangTypes.INT64_TYPE,
+        BaseYangTypes.UINT8_TYPE, BaseYangTypes.UINT16_TYPE, BaseYangTypes.UINT32_TYPE, BaseYangTypes.UINT64_TYPE);
 
     // FIXME: integrate this enum into ScalarTypeObjectArchetype type class hierarchy
     private final ScalarTypeKind scalarType;
@@ -512,7 +502,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
         appendParentConstructor(bb, valueCheckers);
 
         // TODO: we cannot parser instance-identifier because we do not have information to encode namespaces etc.
-        if (!INSTANCE_IDENTIFIER.name().equals(valueType.name())) {
+        if (!BaseYangTypes.INSTANCE_IDENTIFIER.name().equals(valueType.name())) {
             bb
                 .nl()
                 .str("public static ").str(simpleName).str(" getDefaultInstance(final String defaultValue)").oB()
@@ -521,11 +511,11 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
                 bb.str(importedType).str(".valueOf(defaultValue)");
             } else if (valueType instanceof Decimal64Type decimal64) {
                 bb.str(importedType).str(".valueOf(defaultValue).scaleTo(").jInt(decimal64.fractionDigits()).str(")");
-            } else if (valueType.equals(STRING_TYPE)) {
+            } else if (valueType.equals(BaseYangTypes.STRING_TYPE)) {
                 bb.str("defaultValue");
-            } else if (valueType.equals(BINARY_TYPE)) {
+            } else if (valueType.equals(BaseYangTypes.BINARY_TYPE)) {
                 bb.str(importedName(JU_BASE64)).str(".getDecoder().decode(defaultValue)");
-            } else if (valueType.equals(EMPTY_TYPE)) {
+            } else if (valueType.equals(BaseYangTypes.EMPTY_TYPE)) {
                 bb.str(importedName(CODEHELPERS)).str(".emptyFor(defaultValue)");
             } else {
                 bb.str("new ").str(importedType).str("(defaultValue)");

@@ -13,7 +13,7 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OBJECT;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 
 import com.google.common.base.VerifyException;
 import java.util.List;
@@ -227,7 +227,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
 
         bb
             .at().eol(clazz.getReferenceString(OVERRIDE))
-            .str("public").str(declInfix).str(clazz.getReferenceString(STRING_TYPE)).str(" toString()").oB()
+            .str("public").str(declInfix).str(clazz.getReferenceString(STRING)).str(" toString()").oB()
                 .str("return ").str(clazz.getReferenceString(CODEHELPERS));
         switch (size) {
             case 1 -> appendTS1(bb, selfRef, props.iterator().next());

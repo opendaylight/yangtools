@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NSEE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.VOID;
 import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForNonnull;
@@ -20,8 +21,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethod
 import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
 import static org.opendaylight.yangtools.binding.contract.Naming.isNonnullMethodName;
 import static org.opendaylight.yangtools.binding.contract.Naming.isRequireMethodName;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.BOOLEAN_TYPE;
-import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
@@ -49,6 +48,7 @@ import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
+import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
@@ -369,7 +369,9 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
 
         final var bb = newBlockBuilder();
         for (var annotation : annotations) {
-            if (!BOOLEAN_TYPE.equals(method.getReturnType()) || !(annotation instanceof OverrideAnnotation)) {
+            // FIXME: what is this check doing?
+            if (!BaseYangTypes.BOOLEAN_TYPE.equals(method.getReturnType())
+                || !(annotation instanceof OverrideAnnotation)) {
                 bb.blk(generateAnnotation(annotation));
             }
         }
@@ -521,7 +523,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     final BlockBuilder generateBindingToString() {
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
-            .str("default ").str(importedName(STRING_TYPE)).str(" javaTS()").jBlock(bb -> {
+            .str("default ").str(importedName(STRING)).str(" javaTS()").jBlock(bb -> {
                 final var props = typeAnalysis().properties();
 
                 bb.str("return ").str(importedName(CODEHELPERS));
