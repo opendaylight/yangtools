@@ -38,7 +38,6 @@ public final class Types {
 
     public static final @NonNull ConcreteType BOOLEAN = cachedType(Boolean.class);
     public static final @NonNull ConcreteType STRING = cachedType(String.class);
-    public static final @NonNull ConcreteType VOID = cachedType(Void.class);
 
     @Beta
     public static final @NonNull ConcreteType OBJECT = cachedType(Object.class);
@@ -51,15 +50,6 @@ public final class Types {
 
     private Types() {
         // hidden on purpose
-    }
-
-    /**
-     * Returns an instance of {@link ConcreteType} which represents JAVA <code>java.lang.Void</code> type.
-     *
-     * @return <code>ConcreteType</code> instance which represents JAVA <code>java.lang.Void</code>
-     */
-    public static @NonNull ConcreteType voidType() {
-        return VOID;
     }
 
     /**

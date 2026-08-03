@@ -27,7 +27,7 @@ class MethodSignatureBuilderTest {
 
     @Test
     void testSetAbstractMethod() {
-        final var signatureBuilderImpl = MethodSignature.builder("testMethod").setReturnType(Types.VOID);
+        final var signatureBuilderImpl = MethodSignature.builder("testMethod").setReturnType(Types.STRING);
         final var methodSignature = signatureBuilderImpl.build();
         assertFalse(methodSignature.isDefault());
     }

@@ -8,19 +8,11 @@
 package org.opendaylight.yangtools.binding.model.ri;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 
 class TypesTest {
-    @Test
-    void testVoidType() {
-        final var voidType = Types.voidType();
-        assertEquals("Void", voidType.simpleName());
-        assertNotNull(voidType);
-    }
-
     @Test
     void testPrimitiveType() {
         final var primitiveType = Types.cachedType(String[].class);
