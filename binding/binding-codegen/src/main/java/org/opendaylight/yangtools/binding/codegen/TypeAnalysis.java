@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
-    private static final Comparator<MethodSignature> METHOD_COMPARATOR = Comparator.comparing(MethodSignature::getName);
+    private static final Comparator<MethodSignature> METHOD_COMPARATOR = Comparator.comparing(MethodSignature::name);
     private static final int GETTER_PREFIX_LENGTH = Naming.GETTER_PREFIX.length();
 
     TypeAnalysis {
@@ -58,7 +58,7 @@ record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
                     if (JavaFileTemplate.hasOverrideAnnotation(implMethod)) {
                         methods.add(implMethod);
                     } else {
-                        final var implMethodName = implMethod.getName();
+                        final var implMethodName = implMethod.name();
                         if (Naming.isGetterMethodName(implMethodName)
                             && JavaFileTemplate.getterByName(methods, implMethodName) == null) {
                             methods.add(implMethod);
@@ -85,17 +85,14 @@ record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
      */
     private static BuilderGeneratedProperty propertyFromGetter(final MethodSignature method) {
         checkArgument(method != null);
-        checkArgument(method.getReturnType() != null);
-        checkArgument(method.getName() != null);
-        checkArgument(!method.getName().isEmpty());
         if (method.isDefault()) {
             return null;
         }
-        if (!Naming.isGetterMethodName(method.getName())) {
+        if (!Naming.isGetterMethodName(method.name())) {
             return null;
         }
 
-        final var fieldName = Naming.toFirstLower(method.getName().substring(GETTER_PREFIX_LENGTH));
+        final var fieldName = Naming.toFirstLower(method.name().substring(GETTER_PREFIX_LENGTH));
         return new BuilderGeneratedProperty(fieldName, method);
     }
 

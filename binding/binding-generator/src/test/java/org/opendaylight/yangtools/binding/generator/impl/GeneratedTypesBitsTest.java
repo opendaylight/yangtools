@@ -61,11 +61,11 @@ class GeneratedTypesBitsTest {
                 if (methodSignaturesList != null) {
                     // loop through all methods
                     for (var methodSignature : methodSignaturesList) {
-                        if (methodSignature.getName().equals("getByteLeaf")) {
+                        if (methodSignature.name().equals("getByteLeaf")) {
                             getByteLeafMethodFound = true;
 
-                            nameReturnParamType = methodSignature.getReturnType().simpleName();
-                        } else if (methodSignature.getName().equals("setByteLeaf")) {
+                            nameReturnParamType = methodSignature.returnType().simpleName();
+                        } else if (methodSignature.name().equals("setByteLeaf")) {
                             setByteLeafMethodFound = true;
                         }
                     }

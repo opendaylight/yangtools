@@ -79,6 +79,35 @@ final class TypeMethods {
     }
 
     /**
+     * Implementation of {@link MethodSignature#toString()}.
+     *
+     * @param archetypeClass the archetype class
+     * @param self the archetype
+     * @return a String
+     */
+    @NonNullByDefault
+    static String toString(final MethodSignature self) {
+        final var helper = MoreObjects.toStringHelper(MethodSignature.class).omitNullValues()
+            .add("name", self.name())
+            .add("returnType", self.returnType());
+        if (self.isDefault()) {
+            helper.addValue("default");
+        }
+        switch (self.mechanics()) {
+            case NONNULL -> helper.addValue("nonnull");
+            case NULLIFY_EMPTY -> helper.addValue("nullify");
+            default -> {
+                // no-op
+            }
+        }
+        final var annotations = self.annotations();
+        if (!annotations.isEmpty()) {
+            helper.add("annotations", annotations);
+        }
+        return helper.toString();
+    }
+
+    /**
      * Implementation of {@link DataContainerArchetype#toString()}.
      *
      * @param <A> the {@link DataContainerArchetype} type

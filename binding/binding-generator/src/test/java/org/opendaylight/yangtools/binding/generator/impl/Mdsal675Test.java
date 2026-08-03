@@ -126,14 +126,15 @@ class Mdsal675Test {
         // ensure module class has only getter for root container
         final var moduleType = assertArchetype(genTypesMap, MODULE_CLASS_NAME, DataRootArchetype.class);
         assertNotNull(moduleType.getMethodDefinitions());
-        assertEquals(List.of("getRootContainer"),
-                moduleType.getMethodDefinitions().stream().map(MethodSignature::getName)
-                        .filter(methodName -> methodName.startsWith("get")).toList());
+        assertEquals(List.of("getRootContainer"), moduleType.getMethodDefinitions().stream()
+            .map(MethodSignature::name)
+            .filter(methodName -> methodName.startsWith("get"))
+            .toList());
 
         // ensure yang-data at non-top level is ignored (no getters in parent container)
         final var rootContainerType = assertContainer(genTypesMap, ROOT_CONTAINER_CLASS_NAME);
         assertNotNull(rootContainerType.getMethodDefinitions());
-        assertThat(rootContainerType.getMethodDefinitions()).noneMatch(method -> method.getName().startsWith("get"));
+        assertThat(rootContainerType.getMethodDefinitions()).noneMatch(method -> method.name().startsWith("get"));
     }
 
     @Test
@@ -227,7 +228,7 @@ class Mdsal675Test {
     private static void assertHasMethod(final DataContainerArchetype genType, final String methodName,
             final Type returnType) {
         assertThat(genType.getMethodDefinitions())
-            .anyMatch(method -> methodName.equals(method.getName()) && returnType.equals(method.getReturnType()));
+            .anyMatch(method -> methodName.equals(method.name()) && returnType.equals(method.returnType()));
     }
 
     @NonNullByDefault

@@ -283,7 +283,7 @@ final class BuilderTemplate extends BaseTemplate {
 
         final var bb = newBlockBuilder();
         for (var getter : nonDefaultMethods(ifc)) {
-            if (isGetterMethodName(getter.getName())) {
+            if (isGetterMethodName(getter.name())) {
                 bb.eol(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
             }
         }
@@ -303,7 +303,7 @@ final class BuilderTemplate extends BaseTemplate {
 
         final var bb = newBlockBuilder();
         for (var getter : nonDefaultMethods(ifc)) {
-            if (isGetterMethodName(getter.getName()) && getterByName(alreadySetProperties, getter.getName()) == null) {
+            if (isGetterMethodName(getter.name()) && getterByName(alreadySetProperties, getter.name()) == null) {
                 bb.eol(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
             }
         }
@@ -453,7 +453,7 @@ final class BuilderTemplate extends BaseTemplate {
 
         final var bb = newBlockBuilder();
         for (var getter : nonDefaultMethods(ifc)) {
-            if (isGetterMethodName(getter.getName()) && !hasOverrideAnnotation(getter)) {
+            if (isGetterMethodName(getter.name()) && !hasOverrideAnnotation(getter)) {
                 bb.eol(printPropertySetter(getter, "castArg", propertyNameFromGetter(getter)));
             }
         }
@@ -463,11 +463,11 @@ final class BuilderTemplate extends BaseTemplate {
     // FIXME: return BlockBuilder
     @NonNullByDefault
     private String printPropertySetter(final MethodSignature getter, final String receiver, final String propertyName) {
-        final var getterName =  getter.getName();
+        final var getterName =  getter.name();
 
         final var ownGetter = findGetter(getterName);
-        final var ownGetterType = ownGetter.getReturnType();
-        if (strictTypeEquals(getter.getReturnType(), ownGetterType)) {
+        final var ownGetterType = ownGetter.returnType();
+        if (strictTypeEquals(getter.returnType(), ownGetterType)) {
             return "this._" + propertyName + " = " + receiver + '.' + getterName + "();";
         }
         if (ownGetterType instanceof ParameterizedType parameterized) {

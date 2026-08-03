@@ -98,7 +98,7 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
 
     @NonNullByDefault
     final String importedReturnType(final MethodSignature method) {
-        return importedName(method.getReturnType());
+        return importedName(method.returnType());
     }
 
     @NonNullByDefault
@@ -175,8 +175,8 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     static final @Nullable MethodSignature getterByName(final @NonNull Collection<@NonNull MethodSignature> methods,
             final @NonNull String implMethodName) {
         for (var method : methods) {
-            final var methodName = method.getName();
-            if (isGetterMethodName(methodName) && isSameProperty(method.getName(), implMethodName)) {
+            final var methodName = method.name();
+            if (isGetterMethodName(methodName) && isSameProperty(method.name(), implMethodName)) {
                 return method;
             }
         }
@@ -184,7 +184,7 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     }
 
     static final @NonNull String propertyNameFromGetter(final MethodSignature getter) {
-        return propertyNameFromGetter(getter.getName());
+        return propertyNameFromGetter(getter.name());
     }
 
     static final @NonNull String propertyNameFromGetter(final String getterName) {
@@ -208,7 +208,7 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
      * @return True if there is an override annotation
      */
     static boolean hasOverrideAnnotation(final MethodSignature method) {
-        return method.getAnnotations().stream().anyMatch(OverrideAnnotation.class::isInstance);
+        return method.annotations().stream().anyMatch(OverrideAnnotation.class::isInstance);
     }
 
     static String encodeJavadocSymbols(final String description) {

@@ -52,10 +52,10 @@ class Mdsal320Test {
         assertEquals(2, fooMethods.size());
 
         final var getBar = fooMethods.getFirst();
-        final var getBarType = assertInstanceOf(UnionTypeObjectArchetype.class, getBar.getReturnType());
+        final var getBarType = assertInstanceOf(UnionTypeObjectArchetype.class, getBar.returnType());
         assertEquals(bar, getBarType);
         final var requireBar = fooMethods.getLast();
-        assertThat(requireBar.getName()).startsWith(Naming.REQUIRE_PREFIX);
+        assertThat(requireBar.name()).startsWith(Naming.REQUIRE_PREFIX);
 
         assertEquals(List.of("enumeration", "string", "bar$1"), bar.typePropertyNames());
         assertEquals(List.of(enum1, BaseYangTypes.STRING_TYPE, bar1), bar.typePropertyTypes());

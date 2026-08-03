@@ -51,15 +51,15 @@ class LeafrefResolutionTest {
         assertEquals(6, neighborMethods.size());
 
         final var getNeighborId = neighborMethods.stream()
-            .filter(method -> method.getName().equals("getNeighborId"))
+            .filter(method -> method.name().equals("getNeighborId"))
             .findFirst()
             .orElseThrow();
-        assertEquals(BaseYangTypes.STRING_TYPE, getNeighborId.getReturnType());
+        assertEquals(BaseYangTypes.STRING_TYPE, getNeighborId.returnType());
 
         final var getNeighbor2Id = neighborMethods.stream()
-            .filter(method -> method.getName().equals("getNeighbor2Id"))
+            .filter(method -> method.name().equals("getNeighbor2Id"))
             .findFirst()
             .orElseThrow();
-        assertEquals(BaseYangTypes.STRING_TYPE, getNeighbor2Id.getReturnType());
+        assertEquals(BaseYangTypes.STRING_TYPE, getNeighbor2Id.returnType());
     }
 }

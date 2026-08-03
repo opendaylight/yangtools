@@ -12,30 +12,35 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * The Method Signature interface contains simplified meta model for Java interface method definition. Each method MUST
  * be defined by name, return type, parameters Additionally method MAY contain associated annotations and a comment.
- *
- * <p>By contract if method does not contain any comments or annotation definitions the {@link #getComment()} SHOULD
- * rather return empty string and {@link #getAnnotations()} SHOULD rather return empty list than {@code null} values.
  */
-// FIXME: seal this class and add simple factory methods
-// FIXME: rename to InterfaceMethod or something, potentially nested in InterfaceArchetype
-// FIXME: these should carry an EffectiveStatement, because while they are not individual templates, they are emitted
-//        in response to a statement. Further thought needs to go into this, as UnionTypeObjectArchetype and
-//        KeyArchetype both have the notion of GeneratedProperty, which carries similar data.
-public interface MethodSignature extends Immutable {
+// FIXME: rename to InterfaceMethod or something, potentially nested in DataContainerArchetype
+@Beta
+public sealed interface MethodSignature extends Immutable permits MethodSignature0, MethodSignature1, MethodSignatureN {
     /**
      * Method return type mechanics. This is a bit of an escape hatch for various behaviors which are supported by
      * code generation.
      */
+    // FIXME: remove this enum and the notion of 'isDefault', as we have very crisp model derivable from returnType()
+    //        and statement():
+    //        - abstract + NORMAL are:
+    //          - getFoo
+    //          - nonnullFoo for structural containers -- where we provide a default implementation anyway
+    //        - abstract + NULLIFY_EMPTY:
+    //          - getFoo for list
+    //        - default + NORMAL are:
+    //          - nonNullFoo for list
+    //        - default + NONNULL are:
+    //          - requireFoo generated leaf/leaf-list/anydata/anyxml
     enum ValueMechanics {
         /**
          * Usual mechanics, nothing special is going on.
@@ -55,95 +60,132 @@ public interface MethodSignature extends Immutable {
     }
 
     /**
-     * {@return the returning {@link Type} of member}
+     * {@return the {@link EffectiveStatement} which led to this method}
      */
-    // FIXME: dedicated type
-    @NonNull Type getReturnType();
+    // FIXME: sharpen to SchemaTreeEffectiveStatement
+    // TODO: this is separate from returnType construct, but in some cases they overlap, like in:
+    //         container foo {
+    //           container bar;    <-- generates getBar() with ContainerObjectArchetype which has the same statement
+    //         }
+    @NonNull EffectiveStatement<?, ?> statement();
 
     /**
-     * {@return the name of method}
+     * {@return the method name}
      */
-    @NonNull String getName();
+    // TODO: Investigate the relationship with statement once we remove ValueMechanics, as then we can generate
+    //       nonNullFoo/requireFoo from getter name -- and getterName is always derived from
+    //       Naming.getGetterMethodName(QName).
+    //
+    //       That may be a bug in the implementation not handling conflicts like:
+    //         container foo {
+    //           leaf bar { type string; }
+    //           leaf Bar { type uint64; }
+    //         }
+    //
+    //       Our ability to address such problems is limited by groupings, as they essentially freeze their view on
+    //       naming and may be sitting in a different compilation unit, so providing backpressure from instantiations
+    //       is a challenge.
+    //
+    //       Anyway, our ability to deal with these kinds of problems is vastly improved with the introduction of
+    //       DataContainerArchetype and we should be doing our level best to make things work even in face of such
+    //       challenging models.
+    @NonNull String name();
 
     /**
-     * {@return comment string associated with member}
+     * {@return the method return type}
      */
-    // FIXME: remove this
-    @Nullable TypeMemberComment getComment();
-
-    /**
-     * {@return {@code true} if this method is a {@code default} method, or {@code false} if it is abstract}
-     */
-    // FIXME: deprecate once we can express it in getReturnType
-    boolean isDefault();
-
-    /**
-     * {@return the {@link ValueMechanics} associated with this method}
-     */
-    // FIXME: express in getReturnType()
-    @NonNullByDefault
-    ValueMechanics getMechanics();
+    // FIXME: dedicated 'ReturnType'
+    @NonNull Type returnType();
 
     /**
      * {@return List of annotation definitions attached to this method}
      */
     @NonNullByDefault
-    List<AttachedAnnotation.ToMethod> getAnnotations();
+    List<AttachedAnnotation.ToMethod> annotations();
 
-    @Beta
+    /**
+     * {@return the {@link ValueMechanics} associated with this method}
+     */
+    // FIXME: remove
     @NonNullByDefault
-    static Builder builder(final String name, final Type returnType, final ValueMechanics mechanics) {
-        return new Builder(name, returnType, mechanics, false);
+    ValueMechanics mechanics();
+
+    /**
+     * {@return {@code true} if this method is a {@code default} method, or {@code false} if it is abstract}
+     */
+    // FIXME: remove
+    boolean isDefault();
+
+    @NonNullByDefault
+    static MethodSignature of(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
+            final ValueMechanics mechanics) {
+        return new MethodSignature0(statement, checkName(name), returnType, mechanics, false);
+    }
+
+    @NonNullByDefault
+    static MethodSignature of(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
+            final ValueMechanics mechanics, final AttachedAnnotation.ToMethod annotation) {
+        return new MethodSignature1(statement, checkName(name), returnType, mechanics, false, annotation);
+    }
+
+    @NonNullByDefault
+    static MethodSignature ofDefault(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
+            final ValueMechanics mechanics) {
+        return new MethodSignature0(statement, checkName(name), returnType, mechanics, true);
+    }
+
+    @NonNullByDefault
+    static MethodSignature ofDefault(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
+            final ValueMechanics mechanics, final AttachedAnnotation.ToMethod annotation) {
+        return new MethodSignature1(statement, checkName(name), returnType, mechanics, true, annotation);
     }
 
     @Beta
     @NonNullByDefault
-    static Builder builderOfDefault(final String name, final Type returnType, final ValueMechanics mechanics) {
-        return new Builder(name, returnType, mechanics, true);
+    static Builder builder(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
+            final ValueMechanics mechanics) {
+        return new Builder(statement, checkName(name), returnType, mechanics, false);
+    }
+
+    @Beta
+    @NonNullByDefault
+    static Builder builderOfDefault(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
+            final ValueMechanics mechanics) {
+        return new Builder(statement, checkName(name), returnType, mechanics, true);
+    }
+
+    @NonNullByDefault
+    private static String checkName(final String name) {
+        if (name.isEmpty()) {
+            throw new IllegalArgumentException("empty name");
+        }
+        return name;
     }
 
     /**
-     * Method Signature Builder serves solely for building Method Signature and
-     * returning the <code>new</code> instance of Method Signature. <br>
-     * By definition of {@link MethodSignature} the Method in java MUST contain
-     * Name, Return Type and Access Modifier. By default the Access Modifier can be
-     * set to public. The Method Signature builder does not contain method for
-     * addName due to enforce reason that MethodSignatureBuilder SHOULD be
-     * instantiated only once with defined method name. <br>
-     * The methods as {@link #addAnnotation(AttachedAnnotation.ToMethod)} and
-     * {@link #setComment(TypeMemberComment)} can be used as optional because not all methods
-     * MUST contain annotation or comment definitions.
+     * A builder for {@link MethodSignature}s.
      *
      * @see MethodSignature
      * @since 16.0.0
      */
     @Beta
     final class Builder {
+        private final @NonNull EffectiveStatement<?, ?> statement;
         private final @NonNull String name;
         private final @NonNull Type returnType;
         private final @NonNull ValueMechanics mechanics;
         private final boolean isDefault;
 
         private @Nullable ArrayList<AttachedAnnotation.@NonNull ToMethod> annotations = null;
-        private TypeMemberComment comment;
 
         @NonNullByDefault
-        Builder(final String name, final Type returnType, final ValueMechanics mechanics, final boolean isDefault) {
+        Builder(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
+                final ValueMechanics mechanics, final boolean isDefault) {
+            this.statement = requireNonNull(statement);
             this.name = requireNonNull(name);
             this.returnType = requireNonNull(returnType);
             this.mechanics = requireNonNull(mechanics);
             this.isDefault = isDefault;
-        }
-
-        /**
-         * Adds String definition of comment into Method Signature definition. The comment String MUST NOT contain any
-         * comment specific chars (i.e. "/**" or "//") just plain String text description.
-         *
-         * @param newComment Structured comment
-         */
-        public @NonNull Builder setComment(final TypeMemberComment newComment) {
-            comment = newComment;
-            return this;
         }
 
         /**
@@ -182,15 +224,6 @@ public interface MethodSignature extends Immutable {
             return list;
         }
 
-        @NonNullByDefault
-        private List<AttachedAnnotation.ToMethod> annotations() {
-            final var local = annotations;
-            if (local == null) {
-                return List.of();
-            }
-            return local.size() == 1 ? Collections.singletonList(requireNonNull(local.getFirst())) : List.copyOf(local);
-        }
-
         /**
          * Returns <code>new</code> <i>immutable</i> instance of Method Signature. <br>
          * The <code>definingType</code> param cannot be <code>null</code>. Every method in Java MUST be declared and
@@ -201,7 +234,13 @@ public interface MethodSignature extends Immutable {
          */
         @NonNullByDefault
         public MethodSignature build() {
-            return new MethodSignatureImpl(name, annotations(), comment, returnType, isDefault, mechanics);
+            final var local = annotations;
+            if (local == null) {
+                return new MethodSignature0(statement, name, returnType, mechanics, isDefault);
+            }
+            return local.size() == 1
+                ? new MethodSignature1(statement, name, returnType, mechanics, isDefault, local.getFirst())
+                : new MethodSignatureN(statement, name, returnType, mechanics, isDefault, List.copyOf(local));
         }
     }
 }

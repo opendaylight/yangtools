@@ -39,9 +39,9 @@ final class SupportTestUtil {
             boolean nameMatchFound = false;
             String typeNameFound = "";
             for (var searchedSignIn : searchedSignsIn) {
-                if (searchedSignWhat.getName().equals(searchedSignIn.getName())) {
+                if (searchedSignWhat.getName().equals(searchedSignIn.name())) {
                     nameMatchFound = true;
-                    typeNameFound = resolveFullNameOfReturnType(searchedSignIn.getReturnType());
+                    typeNameFound = resolveFullNameOfReturnType(searchedSignIn.returnType());
                     if (searchedSignWhat.getType().equals(typeNameFound)) {
                         break;
                     }

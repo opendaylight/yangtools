@@ -87,12 +87,12 @@ class GeneratedTypesLeafrefTest {
         assertNotNull(gtTopoMethods);
         MethodSignature condLeafref = null;
         for (var method : gtTopoMethods) {
-            if (method.getName().equals("getCondLeafref")) {
+            if (method.name().equals("getCondLeafref")) {
                 condLeafref = method;
             }
         }
         assertNotNull(condLeafref);
-        Type condLeafRT = condLeafref.getReturnType();
+        Type condLeafRT = condLeafref.returnType();
         assertNotNull(condLeafRT);
         assertEquals("org.opendaylight.yang.gen.v1.urn.ietf.params.xml.ns.yang.ietf.inet.types.rev100924.Uri",
             condLeafRT.canonicalName());
@@ -119,7 +119,7 @@ class GeneratedTypesLeafrefTest {
         assertNotNull(gtIfcMethods);
         MethodSignature getHigherLayerIf = null;
         for (var method : gtIfcMethods) {
-            switch (method.getName()) {
+            switch (method.name()) {
                 case "getHigherLayerIf" -> getHigherLayerIf = method;
                 default -> {
                     // no-op
@@ -128,7 +128,7 @@ class GeneratedTypesLeafrefTest {
         }
 
         assertNotNull(getHigherLayerIf);
-        final var getHigherLayerIfType = getHigherLayerIf.getReturnType();
+        final var getHigherLayerIfType = getHigherLayerIf.returnType();
         assertNotNull(getHigherLayerIfType);
         assertNotSame("java.lang.Void", getHigherLayerIfType);
         assertEquals("Set", getHigherLayerIfType.simpleName());
@@ -138,12 +138,12 @@ class GeneratedTypesLeafrefTest {
         assertNotNull(gtNetworkLinkMethods);
         MethodSignature getIfc = null;
         for (var method : gtNetworkLinkMethods) {
-            if (method.getName().equals("getInterface")) {
+            if (method.name().equals("getInterface")) {
                 getIfc = method;
             }
         }
         assertNotNull(getIfc);
-        final var getIfcType = getIfc.getReturnType();
+        final var getIfcType = getIfc.returnType();
         assertNotNull(getIfcType);
         assertNotSame("java.lang.Void", getIfcType);
         assertEquals("String", getIfcType.simpleName());
@@ -153,12 +153,12 @@ class GeneratedTypesLeafrefTest {
         assertNotNull(gtSourceMethods);
         MethodSignature getIdSource = null;
         for (var method : gtSourceMethods) {
-            if (method.getName().equals("getId")) {
+            if (method.name().equals("getId")) {
                 getIdSource = method;
             }
         }
         assertNotNull(getIdSource);
-        final var getIdType = getIdSource.getReturnType();
+        final var getIdType = getIdSource.returnType();
         assertNotNull(getIdType);
         assertNotSame("java.lang.Void", getIdType);
         assertEquals("Uri", getIdType.simpleName());
@@ -168,12 +168,12 @@ class GeneratedTypesLeafrefTest {
         assertNotNull(gtDestMethods);
         MethodSignature getIdDest = null;
         for (var method : gtDestMethods) {
-            if (method.getName().equals("getId")) {
+            if (method.name().equals("getId")) {
                 getIdDest = method;
             }
         }
         assertNotNull(getIdDest);
-        final var getIdDestType = getIdDest.getReturnType();
+        final var getIdDestType = getIdDest.returnType();
         assertNotNull(getIdDestType);
         assertNotSame("java.lang.Void", getIdDestType);
         assertEquals("Uri", getIdDestType.simpleName());
