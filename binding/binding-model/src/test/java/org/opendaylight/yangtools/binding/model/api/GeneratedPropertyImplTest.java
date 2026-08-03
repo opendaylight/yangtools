@@ -10,18 +10,19 @@ package org.opendaylight.yangtools.binding.model.api;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 
 class GeneratedPropertyImplTest {
     @Test
     void generatedPropertyImplTest() {
-        var instance = new GeneratedPropertyImpl("myPropertyName", Types.BOOLEAN, false);
+        var instance = new GeneratedPropertyImpl("myPropertyName", BaseYangTypes.BOOLEAN_TYPE, false);
 
         assertFalse(instance.isReadOnly());
-        assertEquals(Types.BOOLEAN, instance.getReturnType());
+        assertSame(BaseYangTypes.BOOLEAN_TYPE, instance.getReturnType());
 
         assertEquals("""
             GeneratedPropertyImpl[name=myPropertyName, returnType=ConcreteType{name=java.lang.Boolean}, \
@@ -30,10 +31,10 @@ class GeneratedPropertyImplTest {
 
     @Test
     void generatedPropertyImplEqualsAndHashCodeTest() {
-        final var property = new GeneratedPropertyImpl("myPropertyName", Types.BOOLEAN, true);
-        final var property2 = new GeneratedPropertyImpl("myPropertyName", Types.BOOLEAN, true);
-        final var property3 = new GeneratedPropertyImpl("myPropertyName3", Types.BOOLEAN, true);
-        final var property4 = new GeneratedPropertyImpl("myPropertyName", Types.STRING, true);
+        final var property = new GeneratedPropertyImpl("myPropertyName", BaseYangTypes.BOOLEAN_TYPE, true);
+        final var property2 = new GeneratedPropertyImpl("myPropertyName", BaseYangTypes.BOOLEAN_TYPE, true);
+        final var property3 = new GeneratedPropertyImpl("myPropertyName3", BaseYangTypes.BOOLEAN_TYPE, true);
+        final var property4 = new GeneratedPropertyImpl("myPropertyName", BaseYangTypes.STRING_TYPE, true);
 
         assertFalse(property.equals(null));
         assertFalse(property.equals(new Object()));

@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,7 +27,7 @@ class MethodSignatureBuilderTest {
 
     @Test
     void testSetAbstractMethod() {
-        final var signatureBuilderImpl = MethodSignature.builder("testMethod").setReturnType(Types.STRING);
+        final var signatureBuilderImpl = MethodSignature.builder("testMethod").setReturnType(BaseYangTypes.STRING_TYPE);
         final var methodSignature = signatureBuilderImpl.build();
         assertFalse(methodSignature.isDefault());
     }
@@ -61,7 +61,7 @@ class MethodSignatureBuilderTest {
     @Test
     void testMethodsForAbstractTypeMemberBuilder() {
         final var builder = MethodSignature.builder("TestProperty")
-            .setReturnType(Types.STRING)
+            .setReturnType(BaseYangTypes.STRING_TYPE)
             .setComment(TypeMemberComment.contractOf("test comment"));
 
         final var genProperty = builder.build();

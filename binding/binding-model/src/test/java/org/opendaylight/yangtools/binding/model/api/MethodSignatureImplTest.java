@@ -16,7 +16,7 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
-import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 
 class MethodSignatureImplTest {
     private MethodSignatureImpl signature1;
@@ -31,10 +31,13 @@ class MethodSignatureImplTest {
         var name = "customMethod";
         final var comment = TypeMemberComment.contractOf("This is just a comment");
 
-        signature1 = new MethodSignatureImpl(name, List.of(), comment, Types.STRING, false, ValueMechanics.NORMAL);
-        signature2 = new MethodSignatureImpl(name, List.of(), comment, Types.STRING, false, ValueMechanics.NORMAL);
-        signature3 = new MethodSignatureImpl(name, List.of(), comment, Types.BOOLEAN, false, ValueMechanics.NORMAL);
-        signature4 = new MethodSignatureImpl("otherMethod", List.of(), comment, Types.BOOLEAN, false,
+        signature1 = new MethodSignatureImpl(name, List.of(), comment, BaseYangTypes.STRING_TYPE, false,
+            ValueMechanics.NORMAL);
+        signature2 = new MethodSignatureImpl(name, List.of(), comment, BaseYangTypes.STRING_TYPE, false,
+            ValueMechanics.NORMAL);
+        signature3 = new MethodSignatureImpl(name, List.of(), comment, BaseYangTypes.BOOLEAN_TYPE, false,
+            ValueMechanics.NORMAL);
+        signature4 = new MethodSignatureImpl("otherMethod", List.of(), comment, BaseYangTypes.BOOLEAN_TYPE, false,
             ValueMechanics.NORMAL);
 
         hash1 = signature1.hashCode();
@@ -62,6 +65,6 @@ class MethodSignatureImplTest {
         assertFalse(signature1.equals(null));
         assertFalse(signature1.equals(signature4));
         assertFalse(signature4.equals(signature1));
-        assertFalse(signature1.equals(Types.STRING));
+        assertFalse(signature1.equals(BaseYangTypes.STRING_TYPE));
     }
 }

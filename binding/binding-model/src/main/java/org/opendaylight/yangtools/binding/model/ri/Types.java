@@ -35,7 +35,6 @@ public final class Types {
             }
         });
 
-    public static final @NonNull ConcreteType BOOLEAN = cachedType(Boolean.class);
     public static final @NonNull ConcreteType OBJECT = cachedType(Object.class);
     public static final @NonNull ConcreteType STRING = cachedType(String.class);
 
