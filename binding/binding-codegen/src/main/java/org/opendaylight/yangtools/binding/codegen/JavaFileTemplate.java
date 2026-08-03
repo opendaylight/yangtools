@@ -208,7 +208,7 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
      * @return True if there is an override annotation
      */
     static boolean hasOverrideAnnotation(final MethodSignature method) {
-        return method.getAnnotations().stream().anyMatch(OverrideAnnotation.class::isInstance);
+        return method.annotations().stream().anyMatch(OverrideAnnotation.class::isInstance);
     }
 
     static String encodeJavadocSymbols(final String description) {

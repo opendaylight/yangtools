@@ -293,7 +293,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     }
 
     private @Nullable BlockBuilder generateAnnotations(final MethodSignature method) {
-        final var annotations = method.getAnnotations();
+        final var annotations = method.annotations();
         if (annotations.isEmpty()) {
             return null;
         }
@@ -362,7 +362,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     }
 
     private @Nullable BlockBuilder generateAccessorAnnotations(final MethodSignature method) {
-        final var annotations = method.getAnnotations();
+        final var annotations = method.annotations();
         if (annotations.isEmpty()) {
             return null;
         }
