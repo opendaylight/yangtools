@@ -71,7 +71,7 @@ abstract sealed class TypeReference {
 
         @Override
         Type methodReturnType() {
-            return Types.objectType();
+            return Types.OBJECT;
         }
     }
 

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.ri;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -37,10 +36,8 @@ public final class Types {
         });
 
     public static final @NonNull ConcreteType BOOLEAN = cachedType(Boolean.class);
-    public static final @NonNull ConcreteType STRING = cachedType(String.class);
-
-    @Beta
     public static final @NonNull ConcreteType OBJECT = cachedType(Object.class);
+    public static final @NonNull ConcreteType STRING = cachedType(String.class);
 
     private static final @NonNull ConcreteType LIST_TYPE = cachedType(List.class);
     private static final @NonNull ConcreteType MAP_TYPE = cachedType(Map.class);
@@ -50,17 +47,6 @@ public final class Types {
 
     private Types() {
         // hidden on purpose
-    }
-
-    /**
-     * Returns an instance of {@link ConcreteType} which represents {@link Object} type.
-     *
-     * @return <code>ConcreteType</code> instance which represents {@link Object}
-     * @deprecated use {@link #OBJECT}
-     */
-    @Deprecated(since = "15.1.0", forRemoval = true)
-    public static @NonNull ConcreteType objectType() {
-        return OBJECT;
     }
 
     /**
