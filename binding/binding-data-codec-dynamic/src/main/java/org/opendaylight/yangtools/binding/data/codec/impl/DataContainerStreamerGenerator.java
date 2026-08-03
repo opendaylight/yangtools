@@ -16,6 +16,7 @@ import com.google.common.base.VerifyException;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,7 +54,6 @@ import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingStreamEventWriter;
-import org.opendaylight.yangtools.binding.data.codec.spi.BindingSchemaMapping;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader.ClassGenerator;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader.GeneratorResult;
@@ -71,9 +71,6 @@ import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
-import org.opendaylight.yangtools.yang.model.api.meta.DataContainerCompat;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
@@ -159,7 +156,6 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
 
     private static final String INSTANCE_FIELD = "INSTANCE";
 
-    private final @NonNull DataContainerCompat<?, ?> statement;
     private final @NonNull DataContainerArchetype archetype;
     private final @NonNull CodecContextFactory registry;
     private final @NonNull StackManipulation startEvent;
@@ -185,11 +181,6 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
             case RpcOutputArchetype unused -> classUnknownSizeMethod(START_CONTAINER_NODE, type);
             default -> throw new UnsupportedOperationException("Unsupported type " + archetype);
         };
-        final var stmt = archetype.statement();
-        if (!(stmt instanceof DataContainerCompat<?, ?> compat)) {
-            throw new UnsupportedOperationException("Unsupported statement " + stmt);
-        }
-        statement = compat;
     }
 
     @NonNullByDefault
@@ -221,33 +212,20 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
 
         @SuppressWarnings("unchecked")
         final var builder = (Builder<T>) TEMPLATE.name(fqcn);
-        final var childStreams = new ArrayList<ChildStream>();
-
-        // FIXME: we are using DataSchemaNode for three things:
-        //        - the String in QName.getLocalName
-        //        - expected method return type and value type (for lists)
-        //        - whether or not to use ordered on unordered (for lists and leaf-lists)
-        //        all of that should be available from DataContainerArchetype
-        for (var schemaChild : statement.toDataNodeContainer().getChildNodes()) {
-            if (!schemaChild.isAugmenting()) {
-                final var getterName = BindingSchemaMapping.getGetterMethodName(schemaChild);
+        final var childStreams = archetype.allGetters()
+            .filter(method -> Naming.isGetterMethodName(method.name()))
+            // create methods alphs-sorted
+            .sorted(Comparator.comparing(MethodSignature::name))
+            .map(method -> {
                 final Method getter;
                 try {
-                    getter = type.getMethod(getterName);
+                    getter = type.getMethod(method.name());
                 } catch (NoSuchMethodException e) {
-                    throw new IllegalStateException("Failed to find getter " + getterName, e);
+                    throw new IllegalStateException("Failed to find getter for " + method, e);
                 }
-
-                if (schemaChild instanceof EffectiveStatementEquivalent<?> equiv) {
-                    final var childStream = createStream(loader, getter, equiv.asEffectiveStatement());
-                    if (childStream != null) {
-                        childStreams.add(childStream);
-                    }
-                } else {
-                    LOG.warn("Ignoring {} due to incompatible schema {}", getter, schemaChild);
-                }
-            }
-        }
+                return createStream(loader, getter, method);
+            })
+            .toList();
 
         final var dependencies = new ArrayList<Class<?>>();
         for (var childStream : childStreams) {
@@ -271,8 +249,8 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
     }
 
     private ChildStream createStream(final BindingClassLoader loader, final Method getter,
-            final EffectiveStatement<?, ?> schema) {
-        return switch (schema) {
+            final MethodSignature signature) {
+        return switch (signature.statement()) {
             case AnydataEffectiveStatement stmt -> qnameChildStream(STREAM_ANYDATA, getter, stmt.argument());
             case AnyxmlEffectiveStatement stmt -> qnameChildStream(STREAM_ANYXML, getter, stmt.argument());
             case ChoiceEffectiveStatement unused -> choiceChildStream(getter);
@@ -287,7 +265,6 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
                 // FIXME: Reflection over encoding of actual method return type. There are two possibilities here:
                 //        - we have generated an EntryObject, in which case we see Map<FooKey, Foo>
                 //        - we have an ItemObject, in which case we see List<Foo>
-                final var signature =  getMethod(getter.getName());
                 final var returnType = signature.returnType();
                 if (!(returnType instanceof ParameterizedType paramType)) {
                     throw new VerifyException("Unexpected method " + signature);
@@ -312,38 +289,8 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
 
                 yield listChildStream(getter, valueClass.asSubclass(DataObject.class), method);
             }
-            default -> {
-                LOG.debug("Ignoring {} due to unhandled schema {}", getter, schema);
-                yield null;
-            }
+            default -> throw new UnsupportedOperationException("Unsupported method " + signature);
         };
-    }
-
-    private @NonNull MethodSignature getMethod(final String methodName) {
-        final var method = lookupMethod(archetype, methodName);
-        if (method == null) {
-            throw new VerifyException("No method for " + methodName + " in " + archetype);
-        }
-        return method;
-    }
-
-    private static @Nullable MethodSignature lookupMethod(final DataContainerArchetype archetype,
-            final String methodName) {
-        for (var method : archetype.getMethodDefinitions()) {
-            if (methodName.equals(method.name())) {
-                return method;
-            }
-        }
-        for (var type : archetype.getImplements()) {
-            // FIXME: narrow down?
-            if (type instanceof DataContainerArchetype dataContainer) {
-                final var found = lookupMethod(dataContainer, methodName);
-                if (found != null) {
-                    return found;
-                }
-            }
-        }
-        return null;
     }
 
     // streamChoice(Foo.class, reg, stream, obj.getFoo())
