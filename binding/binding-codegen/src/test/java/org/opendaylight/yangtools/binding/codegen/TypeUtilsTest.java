@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -28,21 +29,23 @@ class TypeUtilsTest {
     private TypeEffectiveStatement.MandatoryIn<?, ?> statement;
     @Mock
     private TypeDefinition<?> typeDefinition;
-    @Mock
-    private UnionTypeObjectArchetype union;
 
     @Test
     void getBaseYangTypeTest() {
         final var type = BaseYangTypes.STRING_TYPE;
         assertSame(type, TypeUtils.getBaseYangType(type));
 
-        assertEquals(type, TypeUtils.getBaseYangType(new ScalarTypeObjectArchetype(
-            TypeName.ofClass(TypeUtilsTest.class), statement, typeDefinition, type, null, null)));
+        assertEquals(type, TypeUtils.getBaseYangType(ScalarTypeObjectArchetype.of(
+            TypeName.ofClass(TypeUtilsTest.class), statement, typeDefinition, type)));
     }
 
     @Test
     void getBaseYangTypeWithExceptionTest() {
+        final var union = UnionTypeObjectArchetype.of(TypeName.ofClass(TypeUtilsTest.class), statement, List.of(),
+            List.of(), List.of());
         final var ex = assertThrows(IllegalArgumentException.class, () -> TypeUtils.getBaseYangType(union));
-        assertEquals("Unsupported type union", ex.getMessage());
+        assertEquals("""
+            Unsupported type UnionTypeObjectArchetype{name=org.opendaylight.yangtools.binding.codegen.TypeUtilsTest, \
+            tags=[]}""", ex.getMessage());
     }
 }

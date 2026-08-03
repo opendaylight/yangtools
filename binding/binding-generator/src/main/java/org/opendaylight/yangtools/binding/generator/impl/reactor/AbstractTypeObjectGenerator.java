@@ -472,14 +472,11 @@ abstract class AbstractTypeObjectGenerator<
             // Base type is a GTO, we need to re-adjust it with new restrictions
             case ScalarTypeObjectArchetype scalar -> {
                 // FIXME: this is definitely not quite right: statement/typeDefinition should be different
-                yield new ScalarTypeObjectArchetype(scalar.name(), scalar.statement(), scalar.typeDefinition(),
-                    scalar.valueType(), restrictions, scalar.getSuperType());
+                yield ScalarTypeObjectArchetype.of(scalar.name(), scalar.statement(), scalar.typeDefinition(),
+                    scalar.valueType(), restrictions, scalar.superType());
             }
-            case UnionTypeObjectArchetype union -> {
-                // FIXME: this is definitely not quite right: statement/typeDefinition should be different
-                yield new UnionTypeObjectArchetype(union.name(), union.statement(), union.typePropertyNames(),
-                    union.typePropertyTypes(), List.of(), union.getSuperType());
-            }
+            // FIXME: this is definitely not quite right: statement/typeDefinition should be different
+            case UnionTypeObjectArchetype union -> UnionTypeObjectArchetype.of(union);
             default -> throw new VerifyException("Unhandled base type " + baseType);
         };
     }
@@ -516,7 +513,7 @@ abstract class AbstractTypeObjectGenerator<
         return switch (support) {
             case TypeObjectSupport.Bits bits -> {
                 final var stmt = statement();
-                yield new BitsTypeObjectArchetype(typeName(), stmt, (BitsTypeDefinition) stmt.typeDefinition());
+                yield BitsTypeObjectArchetype.of(typeName(), stmt, (BitsTypeDefinition) stmt.typeDefinition());
             }
             case TypeObjectSupport.Enumeration enumeration -> {
                 final var stmt = statement();
