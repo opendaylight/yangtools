@@ -12,28 +12,22 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 
 @NonNullByDefault
-record CaseObjectArchetypeImpl(
+record ChoiceInArchetype0(
         JavaTypeName name,
-        CaseEffectiveStatement statement,
-        JavaTypeName parentName,
-        List<Partial> partials,
-        List<TypeObjectArchetype<?>> typeObjects,
-        List<MethodSignature> methodSignatures) implements CaseObjectArchetype {
-    CaseObjectArchetypeImpl {
+        ChoiceEffectiveStatement statement,
+        JavaTypeName parentName) implements ChoiceInArchetype {
+    public ChoiceInArchetype0 {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(parentName);
-        requireNonNull(partials);
-        requireNonNull(typeObjects);
-        requireNonNull(methodSignatures);
     }
 
     @Override
-    public List<MethodSignature> getMethodDefinitions() {
-        return methodSignatures;
+    public List<CaseObjectArchetype> cases() {
+        return List.of();
     }
 
     @Override
@@ -48,6 +42,6 @@ record CaseObjectArchetypeImpl(
 
     @Override
     public String toString() {
-        return TypeMethods.toStringHelper(CaseObjectArchetype.class, this).add("parentName", parentName).toString();
+        return TypeMethods.toString(this);
     }
 }

@@ -7,39 +7,38 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import static java.util.Objects.requireNonNull;
-
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 
 /**
  * An {@link Archetype} for a {@link ChoiceIn} generated for an {@link ChoiceEffectiveStatement}.
  *
- * @param name this type's {@link JavaTypeName}}
- * @param statement the {@link IdentityEffectiveStatement}
  * @since 16.0.0
  */
 @NonNullByDefault
-public record ChoiceInArchetype(
-        JavaTypeName name,
-        ChoiceEffectiveStatement statement,
-        JavaTypeName choiceIn) implements Archetype {
-    public ChoiceInArchetype {
-        requireNonNull(name);
-        requireNonNull(statement);
-        requireNonNull(choiceIn);
-    }
-
+public sealed interface ChoiceInArchetype extends Archetype
+        permits ChoiceInArchetype0, ChoiceInArchetype1, ChoiceInArchetypeN {
     @Override
-    public int hashCode() {
-        return TypeMethods.hashCode(this);
-    }
+    ChoiceEffectiveStatement statement();
 
-    @Override
-    public boolean equals(final @Nullable Object obj) {
-        return TypeMethods.equals(this, obj);
+    /**
+     * {@return the parent name}
+     */
+    JavaTypeName parentName();
+
+    /**
+     * {@return possible {@link CaseObjectArchetype}s}
+     */
+    List<CaseObjectArchetype> cases();
+
+    static ChoiceInArchetype of(final JavaTypeName name, final ChoiceEffectiveStatement statement,
+            final JavaTypeName parentName, final List<CaseObjectArchetype> cases) {
+        return switch (cases.size()) {
+            case 0 -> new ChoiceInArchetype0(name, statement, parentName);
+            case 1 -> new ChoiceInArchetype1(name, statement, parentName, cases.getFirst());
+            default -> new ChoiceInArchetypeN(name, statement, parentName, List.copyOf(cases));
+        };
     }
 }
