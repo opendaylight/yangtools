@@ -50,23 +50,8 @@ public final class Types {
     private static final @NonNull ParameterizedType LIST_TYPE_WILDCARD = ParameterizedType.of(LIST_TYPE);
     private static final @NonNull ParameterizedType SET_TYPE_WILDCARD = ParameterizedType.of(SET_TYPE);
 
-    /**
-     * It is not desirable to create instance of this class.
-     */
     private Types() {
-    }
-
-    /**
-     * Returns an instance of {@link ParameterizedType} which represents JAVA <code>java.lang.Class</code> type
-     * specialized to specified type.
-     *
-     * @param type Type for which to specialize
-     * @return A parameterized type corresponding to {@code Class<Type>}
-     * @throws NullPointerException if {@code type} is null
-     */
-    @NonNullByDefault
-    public static ParameterizedType classType(final Type type) {
-        return ParameterizedType.of(CLASS, type);
+        // hidden on purpose
     }
 
     /**
