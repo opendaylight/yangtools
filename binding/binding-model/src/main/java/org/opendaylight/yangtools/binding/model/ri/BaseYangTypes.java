@@ -11,6 +11,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 
+// FIXME: YANGTOOLS-1911: rename to binding.model.api.ConcreteTypes and drop the _TYPE suffix
 @NonNullByDefault
 public final class BaseYangTypes {
     /**
@@ -94,6 +95,6 @@ public final class BaseYangTypes {
      * @return Description of the type
      */
     private static ConcreteType typeForBuiltIn(final BuiltInType<?> type) {
-        return Types.cachedType(type.javaClass());
+        return ConcreteType.ofClass(type.javaClass());
     }
 }
