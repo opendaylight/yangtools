@@ -111,7 +111,7 @@ final class UnionTypeObjectArchetypeBuilder {
                     enclosedTypes.add(subEnumeration);
                     generatedType = subEnumeration;
                 } else if (BuiltInType.BITS.typeName().equals(subName)) {
-                    final var subBits = new BitsTypeObjectArchetype(
+                    final var subBits = BitsTypeObjectArchetype.of(
                         typeName.createEnclosed(Naming.getClassName(localName), "$"), definingStatement,
                         (BitsTypeDefinition) subType.typeDefinition());
                     enclosedTypes.add(subBits);

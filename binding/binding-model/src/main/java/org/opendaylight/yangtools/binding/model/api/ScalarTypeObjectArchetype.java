@@ -7,11 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -23,46 +21,62 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
  * @since 16.0.0
  */
 @Beta
-public record ScalarTypeObjectArchetype(
-        @NonNull JavaTypeName name,
-        TypeEffectiveStatement.@NonNull MandatoryIn<?, ?> statement,
-        @NonNull TypeDefinition<?> typeDefinition,
-        @NonNull ConcreteType valueType,
-        @Nullable Restrictions restrictions,
-        @Nullable ScalarTypeObjectArchetype getSuperType) implements TypeObjectArchetype.OfClass<ScalarTypeObject<?>> {
-    public ScalarTypeObjectArchetype {
-        requireNonNull(name);
-        requireNonNull(statement);
-        requireNonNull(typeDefinition);
-        requireNonNull(valueType);
-        if (restrictions != null && restrictions.isEmpty()) {
-            restrictions = null;
-        }
-    }
+@NonNullByDefault
+public sealed interface ScalarTypeObjectArchetype extends TypeObjectArchetype.OfClass<ScalarTypeObject<?>>
+        permits ScalarTypeObjectArchetypeB, ScalarTypeObjectArchetypeBR, ScalarTypeObjectArchetypeD,
+                ScalarTypeObjectArchetypeDR {
+    @Override
+    @Nullable ScalarTypeObjectArchetype superType();
 
     @Override
     @Deprecated(forRemoval = true)
-    public @NonNull TypeDefinition<?> getBaseType() {
-        return typeDefinition;
+    default @NonNull TypeDefinition<?> baseType() {
+        return typeDefinition();
     }
 
-    @Override
-    public int hashCode() {
-        return TypeMethods.hashCode(this);
+    /**
+     * {@return the {@link TypeDefinition} of this type}
+     */
+    TypeDefinition<?> typeDefinition();
+
+    /**
+     * {@return the {@link ConcreteType} of the type returned by {@link ScalarTypeObject#getValue()}}
+     */
+    ConcreteType valueType();
+
+    /**
+     * {@return the {@link Restrictions} of this type}
+     */
+    @Nullable Restrictions restrictions();
+
+    static ScalarTypeObjectArchetype of(final JavaTypeName name,
+            final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final TypeDefinition<?> typeDefinition,
+            final ConcreteType valueType) {
+        return new ScalarTypeObjectArchetypeB(name, statement, typeDefinition, valueType);
     }
 
-    @Override
-    public boolean equals(final @Nullable Object obj) {
-        return TypeMethods.equals(this, obj);
+    static ScalarTypeObjectArchetype of(final JavaTypeName name,
+            final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final TypeDefinition<?> typeDefinition,
+            final ConcreteType valueType, final @Nullable Restrictions restrictions) {
+        return restrictions == null || restrictions.isEmpty() ? of(name, statement, typeDefinition, valueType)
+            : new ScalarTypeObjectArchetypeBR(name, statement, typeDefinition, valueType, restrictions);
     }
 
-    @Override
-    public final String toString() {
-        final var helper = MoreObjects.toStringHelper(this).add("name", name).add("type", typeDefinition);
-        final var local = getSuperType;
-        if (local != null) {
-            helper.add("extends", local.name);
+    static ScalarTypeObjectArchetype of(final JavaTypeName name,
+            final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final TypeDefinition<?> typeDefinition,
+            final ConcreteType valueType, final @Nullable ScalarTypeObjectArchetype superType) {
+        return superType == null ? of(name, statement, typeDefinition, valueType)
+            : new ScalarTypeObjectArchetypeD(name, statement, typeDefinition, valueType, superType);
+    }
+
+    static ScalarTypeObjectArchetype of(final JavaTypeName name,
+            final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final TypeDefinition<?> typeDefinition,
+            final ConcreteType valueType, final @Nullable Restrictions restrictions,
+            final @Nullable ScalarTypeObjectArchetype superType) {
+        if (restrictions == null || restrictions.isEmpty()) {
+            return of(name, statement, typeDefinition, valueType, superType);
         }
-        return helper.toString();
+        return superType == null ? of(name, statement, typeDefinition, valueType, restrictions)
+            : new ScalarTypeObjectArchetypeDR(name, statement, typeDefinition, valueType, restrictions, superType);
     }
 }
