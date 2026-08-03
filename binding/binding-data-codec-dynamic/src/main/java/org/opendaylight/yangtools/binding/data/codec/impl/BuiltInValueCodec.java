@@ -9,8 +9,10 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableMap;
-import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
@@ -22,7 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * strings, booleans, binary and empty.
  */
 final class BuiltInValueCodec extends SchemaUnawareCodec {
-    private static final ImmutableMap<Class<?>, BuiltInValueCodec> SINGLETONS = List.of(
+    private static final Map<Class<?>, BuiltInValueCodec> SINGLETONS = Stream.of(
         BuiltInType.INT8,
         BuiltInType.INT16,
         BuiltInType.INT32,
@@ -35,9 +37,9 @@ final class BuiltInValueCodec extends SchemaUnawareCodec {
         BuiltInType.STRING,
         BuiltInType.BOOLEAN,
         BuiltInType.BINARY,
-        BuiltInType.EMPTY).stream()
+        BuiltInType.EMPTY)
         .map(BuiltInValueCodec::new)
-        .collect(ImmutableMap.toImmutableMap(codec -> codec.type.javaClass(), x -> x));
+        .collect(Collectors.toUnmodifiableMap(codec -> codec.type.javaClass(), Function.identity()));
 
     private final @NonNull BuiltInType<?> type;
 
