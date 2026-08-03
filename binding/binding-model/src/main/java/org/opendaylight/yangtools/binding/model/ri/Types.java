@@ -15,7 +15,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -46,7 +45,6 @@ public final class Types {
 
     private static final @NonNull ConcreteType LIST_TYPE = cachedType(List.class);
     private static final @NonNull ConcreteType MAP_TYPE = cachedType(Map.class);
-    private static final @NonNull ConcreteType SET_TYPE = cachedType(Set.class);
 
     /**
      * It is not desirable to create instance of this class.
@@ -119,22 +117,6 @@ public final class Types {
 
     public static boolean isMapType(final ParameterizedType type) {
         return MAP_TYPE.equals(type.getRawType());
-    }
-
-    /**
-     * Returns an instance of {@link ParameterizedType} describing the typed {@link Set}&lt;V&gt; with concrete type
-     * of value.
-     *
-     * @param valueType Value Type
-     * @return Description of generic type instance of Set
-     */
-    @NonNullByDefault
-    public static ParameterizedType setTypeFor(final Type valueType) {
-        return ParameterizedType.of(SET_TYPE, valueType);
-    }
-
-    public static boolean isSetType(final ParameterizedType type) {
-        return SET_TYPE.equals(type.getRawType());
     }
 
     /**
