@@ -23,7 +23,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
  *
  * @param typePropertyNames list of property names corresponding to individual {@code type} statements within this
  *        union. The ordering of the returned list matches the ordering of the type statements.
+ * @since 16.0.0
  */
+// FIXME: should be an interface + implementation
 @Beta
 @NonNullByDefault
 public record UnionTypeObjectArchetype(
@@ -31,7 +33,8 @@ public record UnionTypeObjectArchetype(
         TypeEffectiveStatement.MandatoryIn<?, ?> statement,
         List<String> typePropertyNames,
         List<Type> typePropertyTypes,
-        List<Archetype> enclosedTypes,
+        // FIXME: YANGTOOLS-1621: not really, these should be the tag types
+        List<TypeObjectArchetype<?>> enclosedTypes,
         @Nullable UnionTypeObjectArchetype getSuperType) implements TypeObjectArchetype.OfClass<UnionTypeObject> {
     public UnionTypeObjectArchetype {
         requireNonNull(name);

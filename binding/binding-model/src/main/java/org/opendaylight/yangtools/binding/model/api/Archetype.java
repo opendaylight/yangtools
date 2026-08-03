@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
@@ -26,16 +24,4 @@ public sealed interface Archetype extends Type
      * @since 16.0.0
      */
     @NonNull EffectiveStatement<?, ?> statement();
-
-    /**
-     * {@return the list of enclosed {@link Archetype}s}
-     */
-    // FIXME: needs to be two separate contracts:
-    //        - List<TypeObjectArchetype> in DataContainerArchetype
-    //        - List<UnionTypeObject.Member> in UnionTypeObjectArchetype
-    //          - TypeObjectArchetype is Member for now, but will get split with YANGTOOLS-1611
-    @NonNullByDefault
-    default List<? extends Archetype> enclosedTypes() {
-        return List.of();
-    }
 }

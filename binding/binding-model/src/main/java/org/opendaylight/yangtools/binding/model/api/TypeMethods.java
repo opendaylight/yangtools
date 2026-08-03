@@ -117,7 +117,7 @@ final class TypeMethods {
             final A self) {
         final var helper = MoreObjects.toStringHelper(archetypeClass).add("name", self.name());
         addNonEmpty(helper, "implements", self.getImplements());
-        addNonEmpty(helper, "enclosedTypes", self.enclosedTypes());
+        addNonEmpty(helper, "typeObjects", self.typeObjects());
         addNonEmpty(helper, "methods", self.getMethodDefinitions());
         return helper;
     }

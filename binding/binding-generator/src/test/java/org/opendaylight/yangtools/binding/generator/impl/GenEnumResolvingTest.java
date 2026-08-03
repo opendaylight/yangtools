@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -36,7 +37,7 @@ class GenEnumResolvingTest {
 
         EnumTypeObjectArchetype linkUpDownTrapEnable = null;
         EnumTypeObjectArchetype operStatus = null;
-        final var enums = genInterface.enclosedTypes();
+        final var enums = genInterface.typeObjects();
         assertNotNull(enums, "Generated Type Interface cannot contain NULL reference to Enumeration types!");
         assertEquals(2, enums.size(), "Generated Type Interface MUST contain 2 Enumeration Types");
         for (var e : enums) {
@@ -136,7 +137,7 @@ class GenEnumResolvingTest {
         assertEquals(4, genTypes.size());
 
         // ------------------- container test-enums -----------------------
-        final var testEnums = genTypes.get(1).enclosedTypes();
+        final var testEnums = assertInstanceOf(ContainerObjectArchetype.class, genTypes.get(1)).typeObjects();
         assertEquals(4, testEnums.size());
         final var dollarContaining = assertInstanceOf(EnumTypeObjectArchetype.class, testEnums.get(0))
             .valueToConstant();
@@ -166,7 +167,7 @@ class GenEnumResolvingTest {
         assertEquals("$a$2A$a", icIt.next());
 
         // ------------------- container okay-identifier -----------------------
-        final var okayIdentifier = genTypes.get(2).enclosedTypes();
+        final var okayIdentifier = assertInstanceOf(ContainerObjectArchetype.class, genTypes.get(2)).typeObjects();
         assertEquals(2, okayIdentifier.size());
         final var underscores = assertInstanceOf(EnumTypeObjectArchetype.class, okayIdentifier.getFirst())
             .valueToConstant();
@@ -180,7 +181,7 @@ class GenEnumResolvingTest {
         assertEquals("ĽaľahoPapľuhu", wcccIt.next());
 
         // ------------------- container conflicting-names -----------------------
-        final var conflictingNames = genTypes.get(3).enclosedTypes();
+        final var conflictingNames = assertInstanceOf(ContainerObjectArchetype.class, genTypes.get(3)).typeObjects();
         assertEquals(4, conflictingNames.size());
         final var conflict1 = assertInstanceOf(EnumTypeObjectArchetype.class, conflictingNames.get(0))
             .valueToConstant();

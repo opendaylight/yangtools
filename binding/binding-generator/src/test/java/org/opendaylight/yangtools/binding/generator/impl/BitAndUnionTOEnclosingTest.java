@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -44,7 +43,7 @@ class BitAndUnionTOEnclosingTest {
 
     @Test
     void testNestedTypesInLeaf() {
-        final var enclosedTypes = parentContainer.enclosedTypes();
+        final var enclosedTypes = parentContainer.typeObjects();
         assertEquals(3, enclosedTypes.size());
 
         // nested types in leaf
@@ -139,13 +138,11 @@ class BitAndUnionTOEnclosingTest {
 
         BitsTypeObjectArchetype bitLeaf = null;
         UnionTypeObjectArchetype unionLeaf = null;
-        for (var genType : parentContainer.enclosedTypes()) {
-            if (genType instanceof TypeObjectArchetype<?> archetype) {
-                if (archetype.simpleName().equals("BitLeaf")) {
-                    bitLeaf = assertInstanceOf(BitsTypeObjectArchetype.class, archetype);
-                } else if (archetype.simpleName().equals("UnionLeaf")) {
-                    unionLeaf = assertInstanceOf(UnionTypeObjectArchetype.class, archetype);
-                }
+        for (var archetype : parentContainer.typeObjects()) {
+            if (archetype.simpleName().equals("BitLeaf")) {
+                bitLeaf = assertInstanceOf(BitsTypeObjectArchetype.class, archetype);
+            } else if (archetype.simpleName().equals("UnionLeaf")) {
+                unionLeaf = assertInstanceOf(UnionTypeObjectArchetype.class, archetype);
             }
         }
 

@@ -26,7 +26,7 @@ class Bug6135Test {
         for (var type : generateTypes) {
             if (type.simpleName().equals("TestLeafrefData")) {
                 genInterface = assertInstanceOf(DataRootArchetype.class, type);
-                final var enums = genInterface.enclosedTypes();
+                final var enums = genInterface.typeObjects();
                 assertEquals(2, enums.size());
                 break;
             }
