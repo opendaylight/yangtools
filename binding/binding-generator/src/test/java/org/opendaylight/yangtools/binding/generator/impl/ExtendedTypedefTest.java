@@ -48,7 +48,7 @@ class ExtendedTypedefTest {
 
         // typedef-from-import
         assertNotNull(typedefFromImport, "TypedefFromImport not found");
-        var extendTO = typedefFromImport.getSuperType();
+        var extendTO = typedefFromImport.superType();
         assertNotNull(extendTO);
         assertEquals("Ipv4Address", extendTO.simpleName());
 
@@ -57,29 +57,29 @@ class ExtendedTypedefTest {
         assertNotNull(extendedTypedefUnion, "ExtendedTypedefUnion not found");
         assertNotNull(unionTypedef, "UnionTypedef");
 
-        extendTO = simpleTypedef4.getSuperType();
+        extendTO = simpleTypedef4.superType();
         assertNotNull(extendTO, "SimpleTypedef4 should have extend.");
         assertEquals("SimpleTypedef3", extendTO.simpleName(), "Incorrect extension for SimpleTypedef4.");
 
-        extendTO = extendTO.getSuperType();
+        extendTO = extendTO.superType();
         assertNotNull(extendTO, "SimpleTypedef3 should have extend.");
         assertEquals("SimpleTypedef2", extendTO.simpleName(), "Incorrect extension for SimpleTypedef3.");
 
-        extendTO = extendTO.getSuperType();
+        extendTO = extendTO.superType();
         assertNotNull(extendTO, "SimpleTypedef2 should have extend.");
         assertEquals("SimpleTypedef1", extendTO.simpleName(), "SimpleTypedef2 should be extended with SimpleTypedef1.");
         assertEquals(BaseYangTypes.UINT8_TYPE, assertInstanceOf(ScalarTypeObjectArchetype.class, extendTO).valueType());
 
-        assertNull(extendTO.getSuperType(), "SimpleTypedef1 shouldn't have extend.");
+        assertNull(extendTO.superType(), "SimpleTypedef1 shouldn't have extend.");
 
         // extended-typedef-union
         assertNotNull(extendedTypedefUnion, "ExtendedTypedefUnion object not found");
         assertEquals(List.of(), extendedTypedefUnion.tags(), "ExtendedTypedefUnion shouldn't have any property");
 
-        final var extendUTO = extendedTypedefUnion.getSuperType();
+        final var extendUTO = extendedTypedefUnion.superType();
         assertNotNull(extendUTO);
         assertEquals("UnionTypedef", extendUTO.simpleName(), "Incorrect extension fo ExtendedTypedefUnion.");
-        assertNull(extendUTO.getSuperType(), "UnionTypedef shouldn't be extended");
+        assertNull(extendUTO.superType(), "UnionTypedef shouldn't be extended");
 
         assertEquals(List.of("simpleTypedef1", "simpleTypedef4", "byteType", "typedefEnumFruit"),
             extendUTO.typePropertyNames());
