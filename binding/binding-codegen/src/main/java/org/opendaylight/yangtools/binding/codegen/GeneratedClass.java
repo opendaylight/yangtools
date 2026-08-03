@@ -32,6 +32,8 @@ import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
@@ -206,11 +208,19 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
 
     private GeneratedClass(final Archetype genType) {
         name = genType.name();
-        nestedClasses = genType.enclosedTypes().stream()
-            .collect(Collectors.toUnmodifiableMap(Archetype::simpleName, type -> new Nested(this, type)));
+        nestedClasses = switch (genType) {
+            case DataContainerArchetype archetype -> indexTypeObjects(archetype.typeObjects());
+            case UnionTypeObjectArchetype archetype -> indexTypeObjects(archetype.enclosedTypes());
+            default -> Map.of();
+        };
         conflictingNames = Set.copyOf(genType instanceof EnumTypeObjectArchetype enumeration
             ? enumeration.valueToConstant().values()
             : collectAccessibleTypes(genType));
+    }
+
+    private Map<String, Nested> indexTypeObjects(final List<TypeObjectArchetype<?>> typeObjects) {
+        return typeObjects.stream()
+            .collect(Collectors.toUnmodifiableMap(Archetype::simpleName, type -> new Nested(this, type)));
     }
 
     private static HashSet<String> collectAccessibleTypes(final Archetype type) {
@@ -233,7 +243,13 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     }
 
     private static void appendEnclosedTypes(final HashSet<String> set, final Archetype type) {
-        for (var inner : type.enclosedTypes()) {
+        final var enclosedTypes = switch (type) {
+            case DataContainerArchetype archetype -> archetype.typeObjects();
+            case UnionTypeObjectArchetype archetype -> archetype.enclosedTypes();
+            default -> List.<TypeObjectArchetype<?>>of();
+        };
+
+        for (var inner : enclosedTypes) {
             set.add(inner.name().simpleName());
         }
     }

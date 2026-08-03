@@ -35,7 +35,7 @@ class Mdsal320Test {
 
         assertEquals(List.of(), foo.getImplements());
 
-        final var fooTypes = foo.enclosedTypes();
+        final var fooTypes = foo.typeObjects();
         assertEquals(1, fooTypes.size());
 
         final var bar = assertInstanceOf(UnionTypeObjectArchetype.class, fooTypes.getFirst());

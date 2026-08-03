@@ -39,7 +39,7 @@ class UnionTypeDefTest {
             .map(ContainerObjectArchetype.class::cast)
             .orElseThrow();
 
-        final var enclosedTypes = cont.enclosedTypes();
+        final var enclosedTypes = cont.typeObjects();
         assertEquals(1, enclosedTypes.size());
 
         final var refType = assertInstanceOf(UnionTypeObjectArchetype.class, enclosedTypes.getFirst());

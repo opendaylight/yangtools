@@ -34,7 +34,7 @@ class GenerateInnerClassForBitsAndUnionInLeavesTest {
         assertEquals(1, parentContainers.size());
 
         final var type = parentContainers.getFirst();
-        final var enclosedTypes = type.enclosedTypes();
+        final var enclosedTypes = type.typeObjects();
         assertEquals(2, enclosedTypes.size());
 
         final var bitLeaf = assertInstanceOf(BitsTypeObjectArchetype.class, enclosedTypes.getFirst());

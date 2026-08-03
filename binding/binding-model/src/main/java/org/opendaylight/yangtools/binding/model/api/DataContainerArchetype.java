@@ -35,19 +35,20 @@ public sealed interface DataContainerArchetype extends Archetype
         NotificationEffectiveStatement statement();
     }
 
-    @Override
-    @Deprecated(since = "16.0.0", forRemoval = true)
-    default List<TypeObjectArchetype<?>> enclosedTypes() {
-        return typeObjects();
-    }
-
     /**
      * {@return the list of interfaces the interface extends}
      */
     // FIXME: extendsTypes() returning a list of DataContainerArchetype.Extentendable
-    List<Type> getImplements();
+    default List<Type> getImplements() {
+        return List.of();
+    }
 
-    List<TypeObjectArchetype<?>> typeObjects();
+    /**
+     * {@return the {@link TypeObjectArchetype}s for inner classes}
+     */
+    default List<TypeObjectArchetype<?>> typeObjects() {
+        return List.of();
+    }
 
     /**
      * {@return the list of methods the interface defines}
@@ -55,7 +56,9 @@ public sealed interface DataContainerArchetype extends Archetype
     // FIXME: yes, these result in methods being generated, but they are somewhat subtle, as they also imply constants
     //        for builders, etc. Most notably, KeyArchetype is presenting a subset of these defined in its corresponding
     //        EntryObjectArchetype
-    List<MethodSignature> getMethodDefinitions();
+    default List<MethodSignature> getMethodDefinitions() {
+        return List.of();
+    }
 
     @Override
     String toString();
