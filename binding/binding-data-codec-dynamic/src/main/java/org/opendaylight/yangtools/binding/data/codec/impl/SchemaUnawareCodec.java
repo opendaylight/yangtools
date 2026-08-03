@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.reflect.BindingReflections;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 // FIXME: IllegalArgumentCodec is perhaps not appropriate here due to null behavior
 abstract class SchemaUnawareCodec extends AbstractValueCodec<Object, Object> {
     static @Nullable SchemaUnawareCodec of(final Class<?> typeClz, final TypeDefinition<?> def) {
-        return BindingReflections.isBindingClass(typeClz) ? getCachedSchemaUnawareCodec(typeClz, def) : null;
+        return typeClz.getName().startsWith(Naming.PACKAGE_PREFIX) ? getCachedSchemaUnawareCodec(typeClz, def) : null;
     }
 
     private static @NonNull SchemaUnawareCodec getCachedSchemaUnawareCodec(final Class<?> typeClz,
