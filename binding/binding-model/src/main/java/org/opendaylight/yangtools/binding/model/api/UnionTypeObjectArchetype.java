@@ -35,7 +35,7 @@ public record UnionTypeObjectArchetype(
         List<Type> typePropertyTypes,
         // FIXME: YANGTOOLS-1621: not really, these should be the tag types
         List<TypeObjectArchetype<?>> enclosedTypes,
-        @Nullable UnionTypeObjectArchetype getSuperType) implements TypeObjectArchetype.OfClass<UnionTypeObject> {
+        @Nullable UnionTypeObjectArchetype superType) implements TypeObjectArchetype.OfClass<UnionTypeObject> {
     public UnionTypeObjectArchetype {
         requireNonNull(name);
         requireNonNull(statement);
@@ -58,7 +58,7 @@ public record UnionTypeObjectArchetype(
 
     @Override
     @Deprecated(forRemoval = true)
-    public @Nullable TypeDefinition<?> getBaseType() {
+    public @Nullable TypeDefinition<?> baseType() {
         return null;
     }
 
