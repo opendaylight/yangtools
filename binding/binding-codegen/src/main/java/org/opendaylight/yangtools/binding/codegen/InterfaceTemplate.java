@@ -47,7 +47,6 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.TypeMemberComment;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
@@ -256,30 +255,17 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     }
 
     private static @Nullable BlockBuilder generateJavadoc(final MethodSignature method) {
-//        final var name = method.name();
-//        if (!isGetterMethodName(name) && !isRequireMethodName(name)) {
-//            return null;
-//        }
         final var optDescription = method.statement()
             .findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class);
         if (optDescription.isEmpty()) {
             return null;
         }
 
-        final var comment = TypeMemberComment.referenceOf(optDescription.orElseThrow());
         // FIXME: use a BlockBuilder
         final var sb = new StringBuilder();
-        final var contract = comment.contractDescription();
-        if (contract != null) {
-            sb.append(contract).append("\n\n");
-        }
-        final var reference = comment.referenceDescription();
+        final var reference = optDescription.orElseThrow();
         if (reference != null) {
             sb.append(formatReference(reference).toRawString());
-        }
-        final var signature = comment.typeSignature();
-        if (signature != null) {
-            sb.append(signature).append('\n');
         }
         if (sb.isEmpty()) {
             return null;
