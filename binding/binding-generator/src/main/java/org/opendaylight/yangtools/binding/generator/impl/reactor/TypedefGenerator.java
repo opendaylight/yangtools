@@ -14,13 +14,13 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultTypedefRuntimeType;
+import org.opendaylight.yangtools.binding.model.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
+import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
-import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.TypedefRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -83,14 +83,11 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
 
         return switch (baseType) {
             case BitsTypeObjectArchetype bits ->
-                new BitsTypeObjectArchetype(typeName, statement, (BitsTypeDefinition) typedef, bits);
-            case ScalarTypeObjectArchetype scalar -> {
-                yield new ScalarTypeObjectArchetype(typeName, statement, typedef, scalar.valueType(),
+                BitsTypeObjectArchetype.of(typeName, statement, (BitsTypeDefinition) typedef, bits);
+            case ScalarTypeObjectArchetype scalar ->
+                ScalarTypeObjectArchetype.of(typeName, statement, typedef, scalar.valueType(),
                     Restrictions.compute(statement, statement.typeStatement()), scalar);
-            }
-            case UnionTypeObjectArchetype union -> {
-                yield new UnionTypeObjectArchetype(typeName, statement, List.of(), List.of(), List.of(), union);
-            }
+            case UnionTypeObjectArchetype union -> UnionTypeObjectArchetype.of(typeName, statement, union);
         };
     }
 

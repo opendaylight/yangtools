@@ -15,11 +15,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.TypeObject;
+import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
-import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -100,7 +100,7 @@ abstract sealed class TypeObjectSupport permits TypeObjectSupport.Base, TypeObje
         ScalarTypeObjectArchetype toArchetype(final AbstractTypeObjectGenerator<?, ?> gen) {
             final var stmt = gen.statement();
             final var def = stmt.typeDefinition();
-            return new ScalarTypeObjectArchetype(gen.typeName(), stmt, def, javaType, Restrictions.of(def), null);
+            return ScalarTypeObjectArchetype.of(gen.typeName(), stmt, def, javaType, Restrictions.of(def));
         }
     }
 

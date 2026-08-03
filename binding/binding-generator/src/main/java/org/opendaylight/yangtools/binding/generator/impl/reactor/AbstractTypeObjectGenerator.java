@@ -21,16 +21,16 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.TypeObject;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeReference.ResolvedLeafref;
 import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.BitsTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.OverrideAnnotation;
+import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
-import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -472,14 +472,11 @@ abstract class AbstractTypeObjectGenerator<
             // Base type is a GTO, we need to re-adjust it with new restrictions
             case ScalarTypeObjectArchetype scalar -> {
                 // FIXME: this is definitely not quite right: statement/typeDefinition should be different
-                yield new ScalarTypeObjectArchetype(scalar.name(), scalar.statement(), scalar.typeDefinition(),
-                    scalar.valueType(), restrictions, scalar.getSuperType());
+                yield ScalarTypeObjectArchetype.of(scalar.name(), scalar.statement(), scalar.typeDefinition(),
+                    scalar.valueType(), restrictions, scalar.superType());
             }
-            case UnionTypeObjectArchetype union -> {
-                // FIXME: this is definitely not quite right: statement/typeDefinition should be different
-                yield new UnionTypeObjectArchetype(union.name(), union.statement(), union.typePropertyNames(),
-                    union.typePropertyTypes(), List.of(), union.getSuperType());
-            }
+            // FIXME: this is definitely not quite right: statement/typeDefinition should be different
+            case UnionTypeObjectArchetype union -> UnionTypeObjectArchetype.of(union);
             default -> throw new VerifyException("Unhandled base type " + baseType);
         };
     }
@@ -516,11 +513,11 @@ abstract class AbstractTypeObjectGenerator<
         return switch (support) {
             case TypeObjectSupport.Bits bits -> {
                 final var stmt = statement();
-                yield new BitsTypeObjectArchetype(typeName(), stmt, (BitsTypeDefinition) stmt.typeDefinition());
+                yield BitsTypeObjectArchetype.of(typeName(), stmt, (BitsTypeDefinition) stmt.typeDefinition());
             }
             case TypeObjectSupport.Enumeration enumeration -> {
                 final var stmt = statement();
-                yield new EnumTypeObjectArchetype(typeName(), stmt, (EnumTypeDefinition) stmt.typeDefinition());
+                yield EnumTypeObjectArchetype.of(typeName(), stmt, (EnumTypeDefinition) stmt.typeDefinition());
             }
             case TypeObjectSupport.Union union -> union.toArchetype(this, unionDependencies);
             case TypeObjectSupport.Scalar scalar -> scalar.toArchetype(this);

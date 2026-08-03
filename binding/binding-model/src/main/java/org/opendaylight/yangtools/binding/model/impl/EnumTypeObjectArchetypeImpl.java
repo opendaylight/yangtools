@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.api;
+package org.opendaylight.yangtools.binding.model.impl;
 
 import static java.util.Objects.requireNonNull;
 
@@ -16,26 +16,19 @@ import java.util.List;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
-/**
- * The {@link Archetype} for {@link EnumTypeObject} specializations.
- * @since 15.0.0
- */
 @NonNullByDefault
-public record EnumTypeObjectArchetype(
+public record EnumTypeObjectArchetypeImpl(
         TypeName name,
         TypeEffectiveStatement.MandatoryIn<?, ?> statement,
-        EnumTypeDefinition typeDefinition) implements TypeObjectArchetype<EnumTypeObject> {
-    public EnumTypeObjectArchetype {
+        EnumTypeDefinition typeDefinition) implements EnumTypeObjectArchetype {
+    public EnumTypeObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(typeDefinition);
@@ -45,6 +38,7 @@ public record EnumTypeObjectArchetype(
      * {@return the injective mapping from YANG {@code enum} assigned name to its assigned Java {@code enum} constant,
      * with iteration order matching {@code typeDefinition().getValues()}}
      */
+    @Override
     public ImmutableBiMap<EnumPair, String> valueToConstant() {
         return mapNames(typeDefinition.getValues());
     }
@@ -58,6 +52,8 @@ public record EnumTypeObjectArchetype(
      * @param assignedNames Collection of assigned names
      * @return A BiMap keyed by assigned name, with Java identifiers as values
      */
+    // FIXME: this mapping should be decided in the public factory method and we should have multiple implementations
+    //        that provide an efficient result
     private static ImmutableBiMap<EnumPair, String> mapNames(final List<EnumPair> values) {
         /*
          * Original mapping assumed strings encountered are identifiers, hence it used getClassName to map the names

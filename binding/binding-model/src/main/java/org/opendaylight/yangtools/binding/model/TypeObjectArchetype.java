@@ -12,10 +12,6 @@ import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.TypeObject;
-import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
@@ -36,12 +32,13 @@ public sealed interface TypeObjectArchetype<T extends TypeObject> extends Archet
      * @param <T> {@link TypeObject} specialization
      * @since 16.0.0
      */
+    @Beta
     sealed interface OfClass<T extends TypeObject> extends TypeObjectArchetype<T>
             permits BitsTypeObjectArchetype, ScalarTypeObjectArchetype, UnionTypeObjectArchetype {
         /**
          * {@return the archetype describing the class this archetype's class extends, or {@code null}}
          */
-        @Nullable OfClass<T> getSuperType();
+        @Nullable OfClass<T> superType();
 
         // FIXME: why do we need this boolean?
         @Deprecated(since = "16.0.0", forRemoval = true)
@@ -52,7 +49,7 @@ public sealed interface TypeObjectArchetype<T extends TypeObject> extends Archet
         /**
          * {@return Base type of Java representation of YANG typedef if set, otherwise it returns {@code null}}
          */
-        @Nullable TypeDefinition<?> getBaseType();
+        @Nullable TypeDefinition<?> baseType();
     }
 
     // FIXME: this is not entirely accurate: we want to have:

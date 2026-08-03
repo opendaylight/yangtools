@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -34,6 +35,6 @@ class EnumTypeObjectArchetypeTest {
                 .build())
             .build();
         assertEquals(Map.of(definition.getValues().getFirst(), "SomeName"),
-            new EnumTypeObjectArchetype(TypeName.of("foo", "bar"), statement, definition).valueToConstant());
+            EnumTypeObjectArchetype.of(TypeName.of("foo", "bar"), statement, definition).valueToConstant());
     }
 }

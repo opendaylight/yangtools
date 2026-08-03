@@ -11,7 +11,7 @@ import com.google.common.base.VerifyException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
-import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
 
 /**
  * The code generation shape of a {@link ScalarTypeObjectArchetype} for the purposes of generation of a
@@ -79,7 +79,7 @@ enum ScalarTypeKind {
     }
 
     private static @Nullable ScalarTypeKind recursiveOf(final ScalarTypeObjectArchetype archetype) {
-        final var superType = archetype.getSuperType();
+        final var superType = archetype.superType();
         if (superType != null) {
             final var superClass = recursiveOf(superType);
             return superClass == null ? null : ofSubclass(archetype, superClass.hasRestrictions);

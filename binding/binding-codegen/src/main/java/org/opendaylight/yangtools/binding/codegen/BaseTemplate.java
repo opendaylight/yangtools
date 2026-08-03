@@ -24,18 +24,18 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
+import org.opendaylight.yangtools.binding.model.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.NotificationBodyArchetype;
+import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
-import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -183,7 +183,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         //        that sounds like it should be handled in those templates ... perhaps we should receive these from
         //        the caller as 'List<TypeName> seeAlso'?
         if (stmt instanceof TypedefEffectiveStatement && type instanceof TypeObjectArchetype.OfClass<?> toArchetype) {
-            final var superType = toArchetype.getSuperType();
+            final var superType = toArchetype.superType();
             if (superType != null) {
                 sb
                     .append("\n\n")

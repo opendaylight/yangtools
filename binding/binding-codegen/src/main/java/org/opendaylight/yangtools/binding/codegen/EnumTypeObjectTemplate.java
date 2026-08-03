@@ -16,8 +16,8 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 
 /**

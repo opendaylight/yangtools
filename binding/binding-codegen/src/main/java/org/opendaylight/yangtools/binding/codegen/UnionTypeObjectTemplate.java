@@ -23,16 +23,16 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.UnionTypeObject;
+import org.opendaylight.yangtools.binding.model.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype.Tag;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
-import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype.Tag;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
@@ -86,14 +86,14 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
      */
     @NonNullByDefault
     private static List<Tag> propertiesOfAllParents(final UnionTypeObjectArchetype gto) {
-        final var superType = gto.getSuperType();
+        final var superType = gto.superType();
         return superType == null ? List.of() : streamAllProperties(superType).collect(Collectors.toUnmodifiableList());
     }
 
     @NonNullByDefault
     private static Stream<Tag> streamAllProperties(final UnionTypeObjectArchetype gto) {
         final var stream = gto.tags().stream();
-        final var superType = gto.getSuperType();
+        final var superType = gto.superType();
         return superType == null ? stream : Stream.concat(stream, streamAllProperties(superType));
     }
 
@@ -147,7 +147,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             .blk(constructors())
             .blk(propertyMethods());
 
-        if (archetype.getSuperType() == null) {
+        if (archetype.superType() == null) {
             // FIXME: YANGTOOLS-1621: here we want to specialize for the single tagged value we carry
             EQUALITY.append(bb, javaType(), properties);
         }
@@ -168,7 +168,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         }
         bb.str("class ").str(archetype.simpleName());
 
-        final var superType = archetype.getSuperType();
+        final var superType = archetype.superType();
         if (superType != null) {
             bb.str(" extends ").str(importedName(superType));
         } else {
@@ -428,7 +428,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
 
     @NonNullByDefault
     private BlockBuilder parentConstructor() {
-        final var importedSuper = importedName(archetype.getSuperType());
+        final var importedSuper = importedName(archetype.superType());
 
         return newBlockBuilder()
             .eol("/**")
