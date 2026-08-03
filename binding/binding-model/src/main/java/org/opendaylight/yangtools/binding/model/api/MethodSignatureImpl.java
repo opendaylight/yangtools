@@ -10,87 +10,49 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
 import java.util.List;
-import java.util.Objects;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
-// FIXME: hide this class and specialize it for optional bits
-public final class MethodSignatureImpl implements MethodSignature {
-    private final @NonNull String name;
-    private final @NonNull Type returnType;
-    private final @NonNull ValueMechanics mechanics;
-    @NonNullByDefault
-    private final List<AttachedAnnotation.ToMethod> annotations;
-    private final boolean isDefault;
-    private final @Nullable TypeMemberComment comment;
+@NonNullByDefault
+record MethodSignatureImpl(
+        EffectiveStatement<?, ?> statement,
+        String name,
+        Type returnType,
+        ValueMechanics mechanics,
+        boolean isDefault,
+        List<AttachedAnnotation.ToMethod> annotations,
+        @Nullable TypeMemberComment getComment) implements MethodSignature {
 
-    public MethodSignatureImpl(final @NonNull String name,
-            final @NonNull List<AttachedAnnotation.@NonNull ToMethod> annotations,
-            final @Nullable TypeMemberComment comment, final @NonNull Type returnType, final boolean isDefault,
-            final @NonNull ValueMechanics mechanics) {
-        this.name = requireNonNull(name);
-        this.returnType = requireNonNull(returnType);
-        this.comment = comment;
-        this.annotations = requireNonNull(annotations);
-        this.isDefault = isDefault;
-        this.mechanics = requireNonNull(mechanics);
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public TypeMemberComment getComment() {
-        return comment;
-    }
-
-    @Override
-    public Type getReturnType() {
-        return returnType;
-    }
-
-    @Override
-    public boolean isDefault() {
-        return isDefault;
-    }
-
-    @Override
-    public ValueMechanics getMechanics() {
-        return mechanics;
-    }
-
-    @Override
-    public List<AttachedAnnotation.ToMethod> getAnnotations() {
-        return annotations;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(getName());
-        result = prime * result + Objects.hashCode(getReturnType());
-        return result;
-    }
-
-    @Override
-    public boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof MethodSignatureImpl other
-            && Objects.equals(getName(), other.getName()) && Objects.equals(getReturnType(), other.getReturnType());
+    MethodSignatureImpl {
+        requireNonNull(statement);
+        requireNonNull(name);
+        requireNonNull(returnType);
+        requireNonNull(mechanics);
+        requireNonNull(annotations);
     }
 
     @Override
     public String toString() {
-        return new StringBuilder()
-            .append("MethodSignatureImpl [name=").append(getName())
-            .append(", comment=").append(getComment())
-            .append(", returnType=").append(getReturnType())
-            .append(", annotations=").append(getAnnotations())
-            .append(']')
-            .toString();
+        final var helper = MoreObjects.toStringHelper(MethodSignature.class).omitNullValues()
+            .add("name", name)
+            .add("returnType", returnType);
+        if (isDefault) {
+            helper.addValue("default");
+        }
+        switch (mechanics) {
+            case NONNULL -> helper.addValue("nonnull");
+            case NULLIFY_EMPTY -> helper.addValue("nullify");
+            default -> {
+                // no-op
+            }
+        }
+        if (!annotations.isEmpty()) {
+            helper.add("annotations", annotations);
+        }
+        // FIXME: add statement instead
+        return helper.add("comment", getComment).toString();
     }
 }

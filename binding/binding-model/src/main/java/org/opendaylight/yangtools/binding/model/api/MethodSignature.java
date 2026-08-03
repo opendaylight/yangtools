@@ -18,24 +18,35 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * The Method Signature interface contains simplified meta model for Java interface method definition. Each method MUST
  * be defined by name, return type, parameters Additionally method MAY contain associated annotations and a comment.
  *
  * <p>By contract if method does not contain any comments or annotation definitions the {@link #getComment()} SHOULD
- * rather return empty string and {@link #getAnnotations()} SHOULD rather return empty list than {@code null} values.
+ * rather return empty string and {@link #annotations()} SHOULD rather return empty list than {@code null} values.
  */
-// FIXME: seal this class and add simple factory methods
-// FIXME: rename to InterfaceMethod or something, potentially nested in InterfaceArchetype
+// FIXME: rename to InterfaceMethod or something, potentially nested in DataContainerArchetype
 // FIXME: these should carry an EffectiveStatement, because while they are not individual templates, they are emitted
 //        in response to a statement. Further thought needs to go into this, as UnionTypeObjectArchetype and
 //        KeyArchetype both have the notion of GeneratedProperty, which carries similar data.
-public interface MethodSignature extends Immutable {
+public sealed interface MethodSignature extends Immutable permits MethodSignatureImpl {
     /**
      * Method return type mechanics. This is a bit of an escape hatch for various behaviors which are supported by
      * code generation.
      */
+    // FIXME: remove this enum and the notion of 'isDefault', as we have very crisp model derivable from returnType()
+    //        and statement():
+    //        - abstract + NORMAL are:
+    //          - getFoo
+    //          - nonnullFoo for structural containers -- where we provide a default implementation anyway
+    //        - abstract + NULLIFY_EMPTY:
+    //          - getFoo for list
+    //        - default + NORMAL are:
+    //          - nonNullFoo for list
+    //        - default + NONNULL are:
+    //          - requireFoo generated leaf/leaf-list/anydata/anyxml
     enum ValueMechanics {
         /**
          * Usual mechanics, nothing special is going on.
@@ -55,40 +66,67 @@ public interface MethodSignature extends Immutable {
     }
 
     /**
-     * {@return the returning {@link Type} of member}
+     * {@return the {@link EffectiveStatement} which led to this method}
      */
-    // FIXME: dedicated type
-    @NonNull Type getReturnType();
+    // FIXME: sharpen to SchemaTreeEffectiveStatement
+    // TODO: this is separate from returnType construct, but in some cases they overlap, like in:
+    //         container foo {
+    //           container bar;    <-- generates getBar() with ContainerObjectArchetype which has the same statement
+    //         }
+    @NonNull EffectiveStatement<?, ?> statement();
 
     /**
-     * {@return the name of method}
+     * {@return the method name}
      */
-    @NonNull String getName();
+    // TODO: Investigate the relationship with statement once we remove ValueMechanics, as then we can generate
+    //       nonNullFoo/requireFoo from getter name -- and getterName is always derived from
+    //       Naming.getGetterMethodName(QName).
+    //
+    //       That may be a bug in the implementation not handling conflicts like:
+    //         container foo {
+    //           leaf bar { type string; }
+    //           leaf Bar { type uint64; }
+    //         }
+    //
+    //       Our ability to address such problems is limited by groupings, as they essentially freeze their view on
+    //       naming and may be sitting in a different compilation unit, so providing backpressure from instantiations
+    //       is a challenge.
+    //
+    //       Anyway, our ability to deal with these kinds of problems is vastly improved with the introduction of
+    //       DataContainerArchetype and we should be doing our level best to make things work even in face of such
+    //       challenging models.
+    @NonNull String name();
 
     /**
-     * {@return comment string associated with member}
+     * {@return the method return type}
      */
-    // FIXME: remove this
-    @Nullable TypeMemberComment getComment();
-
-    /**
-     * {@return {@code true} if this method is a {@code default} method, or {@code false} if it is abstract}
-     */
-    // FIXME: deprecate once we can express it in getReturnType
-    boolean isDefault();
-
-    /**
-     * {@return the {@link ValueMechanics} associated with this method}
-     */
-    // FIXME: express in getReturnType()
-    @NonNullByDefault
-    ValueMechanics getMechanics();
+    // FIXME: dedicated 'ReturnType'
+    @NonNull Type returnType();
 
     /**
      * {@return List of annotation definitions attached to this method}
      */
     @NonNullByDefault
-    List<AttachedAnnotation.ToMethod> getAnnotations();
+    List<AttachedAnnotation.ToMethod> annotations();
+
+    /**
+     * {@return the {@link ValueMechanics} associated with this method}
+     */
+    // FIXME: remove
+    @NonNullByDefault
+    ValueMechanics mechanics();
+
+    /**
+     * {@return {@code true} if this method is a {@code default} method, or {@code false} if it is abstract}
+     */
+    // FIXME: remove
+    boolean isDefault();
+
+    /**
+     * {@return comment string associated with member}
+     */
+    // FIXME: remove
+    @Nullable TypeMemberComment getComment();
 
     @Beta
     @NonNullByDefault
