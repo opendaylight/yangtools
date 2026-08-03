@@ -384,11 +384,6 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>binding-reflect</artifactId>
-                <version>16.0.0-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>binding-runtime-api</artifactId>
                 <version>16.0.0-SNAPSHOT</version>
             </dependency>
