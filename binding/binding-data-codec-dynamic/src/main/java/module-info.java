@@ -37,7 +37,6 @@ module org.opendaylight.yangtools.binding.data.codec.dynamic {
     requires net.bytebuddy;
     requires org.opendaylight.yangtools.binding.loader;
     requires org.opendaylight.yangtools.binding.model;
-    requires org.opendaylight.yangtools.binding.reflect;
     requires org.opendaylight.yangtools.binding.spec;
     requires org.opendaylight.yangtools.concepts;
     requires org.opendaylight.yangtools.util;

@@ -59,6 +59,7 @@ import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.contract.BuiltInType;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingAugmentationCodecTreeNode;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTree;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingCodecTreeNode;
@@ -78,7 +79,6 @@ import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices
 import org.opendaylight.yangtools.binding.data.codec.spi.BindingSchemaMapping;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.reflect.BindingReflections;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerLikeRuntimeType;
@@ -776,7 +776,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             final ValueCodec<Object, Object> casted = (ValueCodec) instanceIdentifierCodec;
             return casted;
         }
-        if (BindingReflections.isBindingClass(valueType)) {
+        if (valueType.getName().startsWith(Naming.PACKAGE_PREFIX)) {
             return getCodecForBindingClass(valueType, instantiatedType);
         }
         final var codec = BuiltInValueCodec.forValueType(valueType);
