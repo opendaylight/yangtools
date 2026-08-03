@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>odlparent</artifactId>
-        <version>14.3.6</version>
+        <version>14.3.7</version>
         <relativePath/>
     </parent>
 
@@ -502,7 +502,7 @@
                         <link>https://javadoc.io/doc/org.slf4j/slf4j-api/2.0.18/</link>
                         <link>https://guava.dev/releases/33.6.0-jre/api/docs/</link>
 
-                        <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/14.3.6/</link>
+                        <link>https://www.javadoc.io/doc/org.opendaylight.odlparent/odlparent-docs/14.3.7/</link>
                     </links>
                     <groups>
                         <group>
