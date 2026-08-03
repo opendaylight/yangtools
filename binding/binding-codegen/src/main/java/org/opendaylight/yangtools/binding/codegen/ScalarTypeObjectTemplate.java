@@ -35,7 +35,7 @@ import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT32_T
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT64_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.UINT8_TYPE;
 import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
-import static org.opendaylight.yangtools.binding.model.ri.Types.STRING;
+import static org.opendaylight.yangtools.binding.model.ri.BaseYangTypes.STRING_TYPE;
 
 import com.google.common.base.MoreObjects;
 import java.util.LinkedHashMap;
