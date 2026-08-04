@@ -260,7 +260,7 @@ class GeneratedTypesTest {
                     if (archetype.simpleName().equals("SimpleList")) {
                         assertEquals(JavaTypeName.create(
                             "org.opendaylight.yang.gen.v1.urn.simple.container.demo.rev130227.list.parent.container",
-                            "SimpleListKey"), archetype.key().name());
+                            "SimpleListKey"), archetype.keyName());
 
                         simpleListMethodsCount = archetype.getMethodDefinitions().size();
                         for (var method : archetype.getMethodDefinitions()) {

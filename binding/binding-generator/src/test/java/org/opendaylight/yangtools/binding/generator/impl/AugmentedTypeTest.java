@@ -64,7 +64,7 @@ class AugmentedTypeTest {
         assertNotNull(gtInterface, "gtInterface is null");
         assertEquals(JavaTypeName.create(
             "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
-            "InterfaceKey"), gtInterface.key().name());
+            "InterfaceKey"), gtInterface.keyName());
 
         MethodSignature getHigherLayerIfMethod = null;
         for (var method : gtInterface.getMethodDefinitions()) {
@@ -94,7 +94,7 @@ class AugmentedTypeTest {
         assertNotNull(gtTunnel, "Tunnel is null");
         assertEquals(JavaTypeName.create("""
             org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.network.links.network.\
-            link.tunnels""", "TunnelKey"), gtTunnel.key().name());
+            link.tunnels""", "TunnelKey"), gtTunnel.keyName());
         assertThat(gtTunnel.getMethodDefinitions()).hasSize(4);
 
         // 'TunnelKey'

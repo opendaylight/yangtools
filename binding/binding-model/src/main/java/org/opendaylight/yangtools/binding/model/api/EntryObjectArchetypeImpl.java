@@ -19,7 +19,7 @@ record EntryObjectArchetypeImpl(
         JavaTypeName name,
         ListEffectiveStatement statement,
         JavaTypeName parentName,
-        KeyArchetype key,
+        JavaTypeName keyName,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
         List<MethodSignature> methodSignatures) implements EntryObjectArchetype {

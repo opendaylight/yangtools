@@ -57,7 +57,8 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
     @Override
     KeyArchetype createTypeImpl() {
         final var statement = statement();
-        return new KeyArchetype(typeName(), statement, listGen.typeName(), statement().argument().stream()
+        return new KeyArchetype(typeName(), statement, listGen.getGeneratedType(), statement().argument().stream()
+            // TODO: move this verification to KeyArchetype itself
             .map(qname -> {
                 final var gen = listGen.findSchemaTreeGenerator(qname);
                 if (!(gen instanceof LeafGenerator leafGen)) {

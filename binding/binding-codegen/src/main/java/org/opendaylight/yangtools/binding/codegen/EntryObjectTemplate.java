@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 
 /**
  * Template for {@link EntryObject} specializations.
@@ -50,7 +51,8 @@ final class EntryObjectTemplate extends ChildOfTemplate<EntryObjectArchetype> {
 
     @Override
     Iterator<? extends Type> extendsAfterChildOf() {
-        return Iterators.singletonIterator(ParameterizedType.of(ENTRY_OBJECT, archetype, archetype.key()));
+        return Iterators.singletonIterator(
+            ParameterizedType.of(ENTRY_OBJECT, archetype, TypeRef.of(archetype.keyName())));
     }
 
     @Override
