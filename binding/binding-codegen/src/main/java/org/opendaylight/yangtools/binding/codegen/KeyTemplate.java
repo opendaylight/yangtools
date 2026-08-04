@@ -15,15 +15,17 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 
 import com.google.common.base.VerifyException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
@@ -40,7 +42,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     @Override
     BlockBuilder body() {
         final var typeName = archetype.simpleName();
-        final var entryObject = importedName(archetype.entryObject());
+        final var entryObject = importedName(archetype.entryObjectName());
 
         return newBlockBuilder()
             // FIXME: take advantage of javadocBlock() to add a module reference and a snippet
@@ -64,29 +66,31 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
 
         // Fields
         // FIXME: generate checker methods for each property
-        final var props = archetype.getProperties();
-        for (var prop : props) {
-            bb.str("private final ").str(importedNonNull(prop.getReturnType())).sp().str(fieldName(prop)).eS();
+        final var props = archetype.methods().entrySet().stream()
+            .map(entry -> Map.entry(Naming.getPropertyName(entry.getKey()), entry.getValue()))
+            .toList();
+        for (var entry : props) {
+            bb.str("private final ").str(importedNonNull(entry.getValue().returnType())).str(" _").str(entry.getKey())
+                .eS();
         }
 
         // All values constructor
-        final var sortedProps = props.stream().sorted(PROP_COMPARATOR).toList();
+        final var sortedProps = props.stream().sorted(Comparator.comparing(Map.Entry::getKey)).toList();
         bb
             .nl()
             .eol("/**")
             .eol(" * Constructs an instance.")
             .eol(" *");
         for (var prop : sortedProps) {
-            bb.str(" * @param ").str(fieldName(prop)).str(" the entity ").eol(prop.getName());
+            bb.str(" * @param _").str(prop.getKey()).str(" the entity ").eol(prop.getKey());
         }
         bb
             .eol(" */")
             .str("public ").str(archetype.simpleName()).str("(").str(asNonNullArgumentsDeclaration(sortedProps))
                 .str(")").oB();
         for (var prop : sortedProps) {
-            final var fieldName = fieldName(prop);
-            bb.str("this.").str(fieldName).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(")
-                .str(fieldName).str(", ").jStr(prop.getName()).str(")").frg(cloneOrNull(prop)).eS();
+            bb.str("this._").str(prop.getKey()).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(_")
+                .str(prop.getKey()).str(", _").jStr(prop.getKey()).str(")").frg(cloneOrNull(prop.getValue())).eS();
             // FIXME: generate checker method invocation
         }
         bb.cB();
@@ -94,23 +98,22 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
         final var it = props.iterator();
         do {
             final var field = it.next();
-            final var fieldName = field.getName();
-            final var returnType = field.getReturnType();
+            final var fieldName = field.getKey();
+            final var returnType = field.getValue().returnType();
 
             bb
                 .nl()
                 // FIXME: emit a {@return .. } javadoc
                 .eol("/**")
-                .str(" * Return ").str(fieldName).eol(", guaranteed to be non-null.")
+                .str(" * Return _").str(fieldName).eol(", guaranteed to be non-null.")
                 .eol(" *")
                 .str(" * @return {@code ").str(importedName(returnType)).str("} ").str(fieldName)
                 .eol(", guaranteed to be non-null.")
                 .eol(" */")
                 // TODO: addComment(propBuilder, leaf) or as we should be able to look up the EbtryObjectArchetype and
                 //       get the leaf from there: and then we do not need to store the types at all
-                .str("public ").str(importedNonNull(returnType)).sp().str(getterMethodName(field)).str("()")
-                .oB()
-                .str("return ").str(fieldName(field)).frg(cloneOrNull(field)).eS()
+                .str("public ").str(importedNonNull(returnType)).sp().str(field.getValue().name()).str("()").oB()
+                    .str("return _").str(fieldName).frg(cloneOrNull(field.getValue())).eS()
                 .cB();
         } while (it.hasNext());
 
@@ -124,7 +127,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
      * @param parameters group of generated property instances which are transformed to the method parameters
      * @return string with the list of the method parameters with their types in JAVA format
      */
-    private String asNonNullArgumentsDeclaration(final List<GeneratedProperty> parameters) {
+    private String asNonNullArgumentsDeclaration(final List<Map.Entry<String, MethodSignature>> parameters) {
         final var it = parameters.iterator();
         if (!it.hasNext()) {
             return "";
@@ -133,7 +136,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
         final var sb = new StringBuilder();
         while (true) {
             final var parameter = it.next();
-            sb.append(importedNonNull(parameter.getReturnType())).append(' ').append(fieldName(parameter));
+            sb.append(importedNonNull(parameter.getValue().returnType())).append(" _").append(parameter.getKey());
             if (!it.hasNext()) {
                 return sb.toString();
             }
@@ -144,7 +147,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     // FIXME: YANGTOOLS-1621: hide this method and then inline itno classBody(): there is a number of invariants we can
     //                        propagate: asFinal == false, clazz == this.javaType(), hence importedName(), etc.
     static void appendEquality(final BlockBuilder bb, final GeneratedClass clazz,
-            final List<GeneratedProperty> props, final boolean asFinal) {
+            final List<Map.Entry<String, MethodSignature>> props, final boolean asFinal) {
         final int size = props.size();
         if (size == 0) {
             throw new VerifyException("empty properties in " + clazz.name());
@@ -157,7 +160,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     }
 
     private static void appendHashCode(final BlockBuilder bb, final GeneratedClass clazz,
-            final List<GeneratedProperty> props, final int size, final String declInfix) {
+            final List<Map.Entry<String, MethodSignature>> props, final int size, final String declInfix) {
         bb
             .at().eol(clazz.getReferenceString(OVERRIDE))
             .str("public").str(declInfix).str("int hashCode()").oB();
@@ -166,8 +169,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
             case 1 -> {
                 bb.str("return ");
                 final var prop = props.getFirst();
-                bb.str(clazz.getReferenceString(CODEHELPERS)).str(".wrapperHashCode(");
-                bb.str(fieldName(prop)).eol(");");
+                bb.str(clazz.getReferenceString(CODEHELPERS)).str(".wrapperHashCode(_").str(prop.getKey()).eol(");");
             }
             default -> {
                 bb
@@ -175,8 +177,9 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
                     .eol("int result = 1;");
                 for (var property : props) {
                     bb
-                        .str("result = prime * result + ").str(importedUtilClass(clazz, property.getReturnType()))
-                            .str(".hashCode(") .str(fieldName(property)).eol(");");
+                        .str("result = prime * result + ")
+                            .str(importedUtilClass(clazz, property.getValue().returnType())).str(".hashCode(_")
+                            .str(property.getKey()).eol(");");
                 }
                 bb.eol("return result;");
             }
@@ -186,7 +189,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     }
 
     private static void appendEquals(final BlockBuilder bb, final GeneratedClass clazz,
-            final List<GeneratedProperty> props, final String declInfix) {
+            final List<Map.Entry<String, MethodSignature>> props, final String declInfix) {
         // FIXME: use selfRef()
         final var selfRef = clazz.name().simpleName();
 
@@ -196,11 +199,10 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
                 .str("return this == obj || obj instanceof ").str(selfRef).str(" other");
 
         for (var prop : props) {
-            final var fieldName = fieldName(prop);
             bb
                 .nl()
-                .str("    && ").str(importedUtilClass(clazz, prop.getReturnType())).str(".equals(")
-                    .str(fieldName).str(", other.").str(fieldName).str(")");
+                .str("    && ").str(importedUtilClass(clazz, prop.getValue().returnType())).str(".equals(_")
+                    .str(prop.getKey()).str(", other._").str(prop.getKey()).str(")");
         }
         bb
             .eS()
@@ -208,7 +210,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     }
 
     private static void appendToString(final BlockBuilder bb, final GeneratedClass clazz,
-            final List<GeneratedProperty> props, final int size, final String declInfix) {
+            final List<Map.Entry<String, MethodSignature>> props, final int size, final String declInfix) {
         // FIXME: use selfRef
         final var selfRef = clazz.getReferenceString(clazz.name());
 
@@ -223,7 +225,8 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
         bb.cB();
     }
 
-    private static void appendTS1(final BlockBuilder bb, final String selfRef, final GeneratedProperty prop) {
+    private static void appendTS1(final BlockBuilder bb, final String selfRef,
+            final Map.Entry<String, MethodSignature> prop) {
         final var name = prop.getName();
         if (name.equals("value")) {
             // Special case equivalent to ScalarTypeObject.toString()
@@ -234,10 +237,11 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
         bb.str(fieldName(prop)).eol(");");
     }
 
-    private static void appendTSN(final BlockBuilder bb, final String selfRef, final List<GeneratedProperty> props) {
+    private static void appendTSN(final BlockBuilder bb, final String selfRef,
+            final List<Map.Entry<String, MethodSignature>> props) {
         bb.str(".jcTSB(").str(selfRef).eol(".class)");
         for (var prop : props) {
-            bb.ind(".prop(").jStr(prop.getName()).str(", ").str(fieldName(prop)).eol(")");
+            bb.ind(".prop(").jStr(prop.getKey()).str(", _").str(prop.getKey()).eol(")");
         }
         bb.ind(".build();").newLine();
     }
