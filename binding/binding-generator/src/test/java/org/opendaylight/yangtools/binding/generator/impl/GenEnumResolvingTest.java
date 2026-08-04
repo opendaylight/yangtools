@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.generator.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
@@ -59,8 +60,7 @@ class GenEnumResolvingTest {
 
         assertNotNull(methods, "Generated Interface cannot contain NULL reference for Method Signature Definitions!");
 
-        // FIXME: split this into getter/default/static asserts
-        assertEquals(28, methods.size());
+        assertEquals(14, methods.size());
         EnumTypeObjectArchetype ianaIfType = null;
         for (var method : methods) {
             if (method.name().equals("getType")) {
@@ -108,16 +108,18 @@ class GenEnumResolvingTest {
         final var methods = genInterface.getMethodDefinitions();
         assertNotNull(methods, "Generated Type Interface cannot contain NULL reference to Enumeration types!");
 
-        // FIXME: split this into getter/default/static asserts
-        assertEquals(8, methods.size());
+        assertEquals(4, methods.size());
         for (var method : methods) {
             switch (method.name()) {
                 case "getLinkUpDownTrapEnable" ->
                     linkUpDownTrapEnable = assertInstanceOf(EnumTypeObjectArchetype.class, method.returnType());
                 case "getOperStatus" ->
                     operStatus = assertInstanceOf(EnumTypeObjectArchetype.class, method.returnType());
-                default -> {
+                case "getHigherLayerIf", "getInterfaceId" -> {
                     // no-op
+                }
+                default -> {
+                    fail("Unexpected method " + method);
                 }
             }
         }

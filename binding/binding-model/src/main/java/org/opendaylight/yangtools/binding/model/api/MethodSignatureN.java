@@ -20,7 +20,6 @@ record MethodSignatureN(
         String name,
         Type returnType,
         ValueMechanics mechanics,
-        boolean isDefault,
         List<AttachedAnnotation.ToMethod> annotations) implements MethodSignature {
 
     MethodSignatureN {
