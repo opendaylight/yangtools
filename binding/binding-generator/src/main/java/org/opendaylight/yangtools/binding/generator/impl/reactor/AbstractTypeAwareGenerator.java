@@ -75,9 +75,4 @@ abstract class AbstractTypeAwareGenerator<
         }
         return ret;
     }
-
-    @Override
-    final void constructRequire(final List<MethodSignature.@NonNull Builder> list, final Type returnType) {
-        constructRequire(list, statement(), returnType);
-    }
 }
