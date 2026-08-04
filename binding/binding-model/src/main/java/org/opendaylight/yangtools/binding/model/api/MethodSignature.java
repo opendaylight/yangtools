@@ -51,12 +51,6 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
          * to null.
          */
         NULLIFY_EMPTY,
-        /**
-         * Mechanics signaling that the method cannot legally return null. This is primarily useful for getters, where
-         * the declaration should end up having {@link NonNull} annotation attached to return type. For setters this
-         * indicates the setter should never accept a null value.
-         */
-        NONNULL,
     }
 
     /**
@@ -110,48 +104,23 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
     @NonNullByDefault
     ValueMechanics mechanics();
 
-    /**
-     * {@return {@code true} if this method is a {@code default} method, or {@code false} if it is abstract}
-     */
-    // FIXME: remove
-    boolean isDefault();
-
     @NonNullByDefault
     static MethodSignature of(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
             final ValueMechanics mechanics) {
-        return new MethodSignature0(statement, checkName(name), returnType, mechanics, false);
+        return new MethodSignature0(statement, checkName(name), returnType, mechanics);
     }
 
     @NonNullByDefault
     static MethodSignature of(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
             final ValueMechanics mechanics, final AttachedAnnotation.ToMethod annotation) {
-        return new MethodSignature1(statement, checkName(name), returnType, mechanics, false, annotation);
-    }
-
-    @NonNullByDefault
-    static MethodSignature ofDefault(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
-            final ValueMechanics mechanics) {
-        return new MethodSignature0(statement, checkName(name), returnType, mechanics, true);
-    }
-
-    @NonNullByDefault
-    static MethodSignature ofDefault(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
-            final ValueMechanics mechanics, final AttachedAnnotation.ToMethod annotation) {
-        return new MethodSignature1(statement, checkName(name), returnType, mechanics, true, annotation);
+        return new MethodSignature1(statement, checkName(name), returnType, mechanics, annotation);
     }
 
     @Beta
     @NonNullByDefault
     static Builder builder(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
             final ValueMechanics mechanics) {
-        return new Builder(statement, checkName(name), returnType, mechanics, false);
-    }
-
-    @Beta
-    @NonNullByDefault
-    static Builder builderOfDefault(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
-            final ValueMechanics mechanics) {
-        return new Builder(statement, checkName(name), returnType, mechanics, true);
+        return new Builder(statement, checkName(name), returnType, mechanics);
     }
 
     @NonNullByDefault
@@ -174,18 +143,16 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
         private final @NonNull String name;
         private final @NonNull Type returnType;
         private final @NonNull ValueMechanics mechanics;
-        private final boolean isDefault;
 
         private @Nullable ArrayList<AttachedAnnotation.@NonNull ToMethod> annotations = null;
 
         @NonNullByDefault
         Builder(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
-                final ValueMechanics mechanics, final boolean isDefault) {
+                final ValueMechanics mechanics) {
             this.statement = requireNonNull(statement);
             this.name = requireNonNull(name);
             this.returnType = requireNonNull(returnType);
             this.mechanics = requireNonNull(mechanics);
-            this.isDefault = isDefault;
         }
 
         /**
@@ -236,11 +203,11 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
         public MethodSignature build() {
             final var local = annotations;
             if (local == null) {
-                return new MethodSignature0(statement, name, returnType, mechanics, isDefault);
+                return new MethodSignature0(statement, name, returnType, mechanics);
             }
             return local.size() == 1
-                ? new MethodSignature1(statement, name, returnType, mechanics, isDefault, local.getFirst())
-                : new MethodSignatureN(statement, name, returnType, mechanics, isDefault, List.copyOf(local));
+                ? new MethodSignature1(statement, name, returnType, mechanics, local.getFirst())
+                : new MethodSignatureN(statement, name, returnType, mechanics, List.copyOf(local));
         }
     }
 }
