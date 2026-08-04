@@ -19,8 +19,7 @@ record MethodSignature0(
         EffectiveStatement<?, ?> statement,
         String name,
         Type returnType,
-        ValueMechanics mechanics,
-        boolean isDefault) implements MethodSignature {
+        ValueMechanics mechanics) implements MethodSignature {
 
     MethodSignature0 {
         requireNonNull(statement);
