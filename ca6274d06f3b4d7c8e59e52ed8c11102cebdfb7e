@@ -22,6 +22,30 @@
       },
       "revId": "ca6274d06f3b4d7c8e59e52ed8c11102cebdfb7e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "1bdbe927_7d899ba0",
+        "filename": "codec/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/SchemaLookupCache.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-08-04T08:22:28Z",
+      "side": 1,
+      "message": "This applies to nodes from another model context - e.g. when rebaseTo() passes this cache to a factory for MountPoint\u0027s context. We don\u0027t need to keep those entries in the cache for the remaining lifetime. weakKeys() helps with that.",
+      "parentUuid": "2945eeb9_c6908dcd",
+      "range": {
+        "startLine": 25,
+        "startChar": 16,
+        "endLine": 25,
+        "endChar": 27
+      },
+      "revId": "ca6274d06f3b4d7c8e59e52ed8c11102cebdfb7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
