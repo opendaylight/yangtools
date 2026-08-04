@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.binding.codegen;
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
@@ -21,6 +23,9 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
 @NonNullByDefault
 final class CaseObjectTemplate extends AugmentableTemplate<CaseObjectArchetype>
         implements BuilderTemplate.TargetTemplate {
+
+    static final ConcreteType DATA_OBJECT = ConcreteType.ofClass(DataObject.class);
+
     CaseObjectTemplate(final DataRootArchetype root, final CaseObjectArchetype archetype) {
         super(root, archetype);
     }
@@ -33,7 +38,7 @@ final class CaseObjectTemplate extends AugmentableTemplate<CaseObjectArchetype>
     @Override
     Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.forArray(TypeRef.of(archetype.parentName()), NotificationTemplate.DATA_OBJECT,
+            Iterators.forArray(TypeRef.of(archetype.parentName()), DATA_OBJECT,
                 extendsAugmentable(), extendsJavaDataContainer()),
             super.extendsTypes());
     }

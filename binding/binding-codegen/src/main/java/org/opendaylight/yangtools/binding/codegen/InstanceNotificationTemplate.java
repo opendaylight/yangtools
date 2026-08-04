@@ -38,7 +38,7 @@ final class InstanceNotificationTemplate extends AugmentableTemplate<InstanceNot
     @Override
     Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.forArray(NotificationTemplate.DATA_OBJECT,
+            Iterators.singletonIterator(
                 ParameterizedType.of(INSTANCE_NOTIFICATION, archetype, TypeRef.of(archetype.parentName()))),
             super.extendsTypes());
     }

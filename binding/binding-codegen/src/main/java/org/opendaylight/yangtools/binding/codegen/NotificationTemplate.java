@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.codegen;
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.Notification;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -24,9 +23,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 @NonNullByDefault
 final class NotificationTemplate extends AugmentableTemplate<NotificationArchetype>
         implements BuilderTemplate.TargetTemplate {
-
-    static final ConcreteType DATA_OBJECT = ConcreteType.ofClass(DataObject.class);
-
     private static final ConcreteType NOTIFICATION = ConcreteType.ofClass(Notification.class);
 
     NotificationTemplate(final DataRootArchetype root, final NotificationArchetype archetype) {
@@ -41,8 +37,7 @@ final class NotificationTemplate extends AugmentableTemplate<NotificationArchety
     @Override
     Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.forArray(DATA_OBJECT, ParameterizedType.of(NOTIFICATION, archetype), extendsAugmentable(),
-                extendsJavaDataContainer()),
+            Iterators.singletonIterator(ParameterizedType.of(NOTIFICATION, archetype)),
             super.extendsTypes());
     }
 

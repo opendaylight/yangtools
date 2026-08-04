@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.binding;
 
+import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
+
 /**
  * Marker interface for YANG-defined global notifications. This interface should never be implemented directly. A
  * concrete Notification and its implementations may choose to also extend/implement the {@link EventInstantAware}
  * interface. In case they do, {@link EventInstantAware#eventInstant()} returns the time when this notification was
  * generated.
  */
-public non-sealed interface Notification<T extends Notification<T> & DataObject> extends BaseNotification {
+public non-sealed interface Notification<T extends Notification<T>>
+        // FIXME: YANGTOOLS-1921: extends ParentObject<T>
+        extends BaseNotification, DataObject, Augmentable<T>, JavaDataContainer<T> {
     @Override
     Class<T> implementedInterface();
 }

@@ -44,7 +44,7 @@ final class KeyedListNotificationTemplate extends AugmentableTemplate<KeyedListN
     @Override
     Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.forArray(NotificationTemplate.DATA_OBJECT,
+            Iterators.singletonIterator(
                 ParameterizedType.of(KEYED_LIST_NOTIFICATION, archetype, TypeRef.of(archetype.parentName()),
                     TypeRef.of(keyName))),
             super.extendsTypes());

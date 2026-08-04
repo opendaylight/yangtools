@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
  * @param <D> Parent data tree instance type
  */
 public non-sealed interface InstanceNotification<N extends InstanceNotification<N, D>, D extends DataObject>
-        extends BaseNotification, Augmentable<N>, JavaDataContainer<N> {
+        // FIXME: YANGTOOLS-1921: extends ParentObject<T>
+        extends BaseNotification, DataObject, Augmentable<N>, JavaDataContainer<N> {
     @Override
     @NonNull Class<N> implementedInterface();
 }
