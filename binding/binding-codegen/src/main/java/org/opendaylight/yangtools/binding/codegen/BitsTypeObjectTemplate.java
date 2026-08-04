@@ -36,18 +36,6 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
  */
 @NonNullByDefault
 abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeObjectArchetype> {
-    record Builder(BitsTypeObjectArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public BitsTypeObjectTemplate build() {
-            return BitsTypeObjectTemplate.of(GeneratedClass.of(type), type, root);
-        }
-    }
-
     private static final class Base extends BitsTypeObjectTemplate {
         private static final JavaTypeName BITS_TYPE_OBJECT = JavaTypeName.create(BitsTypeObject.class);
 
@@ -246,6 +234,10 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
         final var superType = archetype.superType();
         return superType == null ? new Base(javaType, archetype, root)
             : new Derived(javaType, archetype, root, superType);
+    }
+
+    static BitsTypeObjectTemplate of(final DataRootArchetype root, final BitsTypeObjectArchetype archetype) {
+        return BitsTypeObjectTemplate.of(GeneratedClass.of(archetype), archetype, root);
     }
 
     static BlockBuilder generateInner(final GeneratedClass.Nested javaType, final BitsTypeObjectArchetype archetype,

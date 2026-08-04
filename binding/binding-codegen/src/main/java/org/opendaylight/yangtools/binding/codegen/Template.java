@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
  * A template for something that can be turned in to the contents of a file.
@@ -43,15 +42,5 @@ abstract sealed class Template permits JavaFileTemplate {
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
-    }
-
-    /**
-     * A stateful builder of a {@link Template}.
-     */
-    interface Builder extends Mutable {
-        /**
-         * {@return the resulting template}
-         */
-        Template build();
     }
 }

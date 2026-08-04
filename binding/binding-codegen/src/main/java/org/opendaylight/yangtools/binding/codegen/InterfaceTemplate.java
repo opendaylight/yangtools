@@ -28,15 +28,11 @@ import com.google.common.base.VerifyException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.Augmentable;
-import org.opendaylight.yangtools.binding.Augmentation;
-import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
@@ -66,28 +62,17 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
     private static final @NonNull ConcreteType JAVA_DATACONTAINER = ConcreteType.ofClass(JavaDataContainer.class);
 
-    // FIXME: replace with static knowledge: for now we verify
-    // "rpc" and "grouping" elements do not implement Augmentable
-    private static final Set<JavaTypeName> BUILDER_INTERFACES = Set.of(
-        JavaTypeName.create(Augmentable.class),
-        JavaTypeName.create(Augmentation.class),
-        JavaTypeName.create(EntryObject.class));
-
     private final @NonNull DataContainerContract contract;
     private final boolean augmentable;
 
     private @Nullable TypeAnalysis typeAnalysis;
 
     @NonNullByDefault
-    InterfaceTemplate(final T archetype, final DataRootArchetype root, final DataContainerContract contract,
+    InterfaceTemplate(final DataRootArchetype root, final T archetype, final DataContainerContract contract,
             final boolean augmentable) {
-        super(GeneratedClass.of(archetype), archetype, root);
+        super(root, archetype);
         this.contract = requireNonNull(contract);
         this.augmentable = augmentable;
-    }
-
-    @Nullable DataContainerArchetype builderTarget() {
-        return archetype.partials().stream().map(Type::name).anyMatch(BUILDER_INTERFACES::contains) ? archetype : null;
     }
 
     private @NonNull TypeAnalysis typeAnalysis() {

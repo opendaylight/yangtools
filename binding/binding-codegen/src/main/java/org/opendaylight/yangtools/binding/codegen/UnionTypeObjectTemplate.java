@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_BASE64;
@@ -40,18 +39,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
  * A template for {@link UnionTypeObject} specializations.
  */
 final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionTypeObjectArchetype> {
-    @NonNullByDefault
-    record Builder(UnionTypeObjectArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-        }
-
-        @Override
-        public UnionTypeObjectTemplate build() {
-            return new UnionTypeObjectTemplate(type, root);
-        }
-    }
-
     private static final @NonNull JavaTypeName UNION_TYPE_OBJECT = JavaTypeName.create(UnionTypeObject.class);
 
     private final @NonNull List<GeneratedProperty> allProperties;
@@ -96,8 +83,8 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
     }
 
     @NonNullByDefault
-    private UnionTypeObjectTemplate(final UnionTypeObjectArchetype archetype, final DataRootArchetype root) {
-        this(GeneratedClass.of(archetype), archetype, root);
+    static UnionTypeObjectTemplate of(final DataRootArchetype root, final UnionTypeObjectArchetype archetype) {
+        return new UnionTypeObjectTemplate(GeneratedClass.of(archetype), archetype, root);
     }
 
     @NonNullByDefault
@@ -105,6 +92,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
             final DataRootArchetype root) {
         return new UnionTypeObjectTemplate(javaType, archetype, root).generateBody(true);
     }
+
 
     @Override
     BlockBuilder body() {

@@ -7,11 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
@@ -25,27 +22,16 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * Template for {@link Augmentation} specializations.
  */
 @NonNullByDefault
-final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype> {
-    record Builder(AugmentationArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public AugmentationTemplate build() {
-            return new AugmentationTemplate(type, root);
-        }
-    }
-
+final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype>
+        implements BuilderTemplate.TargetTemplate {
     private static final ConcreteType AUGMENTATION = ConcreteType.ofClass(Augmentation.class);
 
-    private AugmentationTemplate(final AugmentationArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root, DataContainerContract.JAVA, false);
+    AugmentationTemplate(final DataRootArchetype root, final AugmentationArchetype archetype) {
+        super(root, archetype, DataContainerContract.JAVA, false);
     }
 
     @Override
-    @NonNull AugmentationArchetype builderTarget() {
+    public AugmentationArchetype builderTarget() {
         return archetype;
     }
 

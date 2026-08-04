@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NONNULL;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.YANGDATANAMEOF_METHOD_NAME;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
@@ -15,7 +14,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.NAME_STATIC_FIE
 
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -30,28 +28,16 @@ import org.opendaylight.yangtools.yang.common.YangDataName;
  * Template for {@link YangData} specializations.
  */
 @NonNullByDefault
-final class YangDataTemplate extends InterfaceTemplate<YangDataArchetype> {
-    record Builder(YangDataArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public YangDataTemplate build() {
-            return new YangDataTemplate(type, root);
-        }
-    }
-
+final class YangDataTemplate extends InterfaceTemplate<YangDataArchetype> implements BuilderTemplate.TargetTemplate {
     private static final JavaTypeName YANG_DATA_NAME = JavaTypeName.create(YangDataName.class);
     private static final ConcreteType YANG_DATA = ConcreteType.ofClass(YangData.class);
 
-    private YangDataTemplate(final YangDataArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root, DataContainerContract.JAVA, false);
+    YangDataTemplate(final DataRootArchetype root, final YangDataArchetype archetype) {
+        super(root, archetype, DataContainerContract.JAVA, false);
     }
 
     @Override
-    @NonNull YangDataArchetype builderTarget() {
+    public YangDataArchetype builderTarget() {
         return archetype;
     }
 

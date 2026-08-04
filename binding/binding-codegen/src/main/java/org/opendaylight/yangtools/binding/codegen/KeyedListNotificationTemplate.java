@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -26,35 +25,20 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
  * Template for a {@link KeyedListNotificationArchetype}.
  */
 @NonNullByDefault
-final class KeyedListNotificationTemplate extends AugmentableTemplate<KeyedListNotificationArchetype> {
-    record Builder(
-            KeyedListNotificationArchetype type,
-            DataRootArchetype root,
-            JavaTypeName keyName) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-            requireNonNull(root);
-        }
-
-        @Override
-        public KeyedListNotificationTemplate build() {
-            return new KeyedListNotificationTemplate(type, root, keyName);
-        }
-    }
-
+final class KeyedListNotificationTemplate extends AugmentableTemplate<KeyedListNotificationArchetype>
+        implements BuilderTemplate.TargetTemplate {
     private static final ConcreteType KEYED_LIST_NOTIFICATION = ConcreteType.ofClass(KeyedListNotification.class);
 
     private final JavaTypeName keyName;
 
-    private KeyedListNotificationTemplate(final KeyedListNotificationArchetype archetype,
-            final DataRootArchetype root, final JavaTypeName keyName) {
-        super(archetype, root);
+    KeyedListNotificationTemplate(final DataRootArchetype root, final KeyedListNotificationArchetype archetype,
+            final JavaTypeName keyName) {
+        super(root, archetype);
         this.keyName = requireNonNull(keyName);
     }
 
     @Override
-    @NonNull KeyedListNotificationArchetype builderTarget() {
+    public KeyedListNotificationArchetype builderTarget() {
         return archetype;
     }
 

@@ -40,6 +40,10 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
         this.root = requireNonNull(root);
     }
 
+    ArchetypeTemplate(final DataRootArchetype root, final T archetype) {
+        this(GeneratedClass.of(archetype), archetype, root);
+    }
+
     /**
      * {@return a new BlockBuilder initialized with javadoc block derived from the specified {@link DocumentedNode}
      * followed by an optional {@code Deprecated} annotation, followed by a {@code Generated} annotation}

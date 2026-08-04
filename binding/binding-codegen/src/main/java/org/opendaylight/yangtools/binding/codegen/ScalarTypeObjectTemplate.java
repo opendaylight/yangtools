@@ -46,18 +46,6 @@ import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
  */
 @NonNullByDefault
 abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarTypeObjectArchetype> {
-    record Builder(ScalarTypeObjectArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public ScalarTypeObjectTemplate build() {
-            return ScalarTypeObjectTemplate.of(GeneratedClass.of(type), type, root);
-        }
-    }
-
     private static final class Base extends ScalarTypeObjectTemplate {
         private static final JavaTypeName SCALAR_TYPE_OBJECT = JavaTypeName.create(ScalarTypeObject.class);
 
@@ -407,6 +395,10 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
         final var superType = archetype.getSuperType();
         return superType == null ? new Base(javaType, archetype, root)
             : new Derived(javaType, archetype, root, superType);
+    }
+
+    static ScalarTypeObjectTemplate of(final DataRootArchetype root, final ScalarTypeObjectArchetype archetype) {
+        return ScalarTypeObjectTemplate.of(GeneratedClass.of(archetype), archetype, root);
     }
 
     static BlockBuilder generateInner(final GeneratedClass.Nested javaType,

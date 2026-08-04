@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.opendaylight.yangtools.binding.codegen.FileSearchUtil.getFiles;
 
@@ -24,6 +25,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 
 public class BuilderGeneratorTest extends BaseCompilationTest {
     private static Path SOURCES;
@@ -220,13 +223,19 @@ public class BuilderGeneratorTest extends BaseCompilationTest {
 
     @Test
     void builderTemplateGenerateToEqualsComparingOrderTest() {
-        final var bt = new BuilderTemplate.Builder(TYPES.stream()
-            .filter(t -> t.simpleName().equals("Nodes"))
+        final var rootName =
+            JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.opendaylight.test.types.rev200513", "TestTypesData");
+        final var root = assertInstanceOf(DataRootArchetype.class, TYPES.stream()
+            .filter(type -> rootName.equals(type.name()))
             .findFirst()
-            .map(ContainerObjectArchetype.class::cast)
-            .orElseThrow())
-            .build();
+            .orElseThrow());
+        final var nodesName = rootName.createSibling("Nodes");
+        final var nodes = assertInstanceOf(ContainerObjectArchetype.class, TYPES.stream()
+            .filter(type -> nodesName.equals(type.name()))
+            .findFirst()
+            .orElseThrow());
 
+        final var bt = BuilderTemplate.of(new ContainerObjectTemplate(root, nodes));
         final var sortedProperties = bt.properties.stream()
                 .sorted(ByTypeMemberComparator.getInstance())
                 .map(BuilderGeneratedProperty::getName)

@@ -27,8 +27,8 @@ abstract sealed class ChildOfTemplate<T extends ChildOfArchetype> extends Augmen
         permits ContainerObjectTemplate, EntryObjectTemplate, ItemObjectTemplate {
     private static final ConcreteType CHILD_OF = ConcreteType.ofClass(ChildOf.class);
 
-    ChildOfTemplate(final T archetype, final DataRootArchetype root) {
-        super(archetype, root);
+    ChildOfTemplate(final DataRootArchetype root, final T archetype) {
+        super(root, archetype);
     }
 
     @Override

@@ -182,7 +182,7 @@ class KeyGeneratorTest {
     @NonNullByDefault
     private static void assertKeyClass(final String expected, final DataRootArchetype root, final KeyArchetype key) {
         final var sb = new StringBuilder();
-        new KeyTemplate.Builder(key, root).build().generateTo(sb);
+        new KeyTemplate(root, key).generateTo(sb);
         assertEquals(expected, sb.toString());
     }
 }

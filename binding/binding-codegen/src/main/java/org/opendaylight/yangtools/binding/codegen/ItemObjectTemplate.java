@@ -7,11 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -23,25 +20,13 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * statement.
  */
 @NonNullByDefault
-final class ItemObjectTemplate extends ChildOfTemplate<ItemObjectArchetype> {
-    record Builder(ItemObjectArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public ItemObjectTemplate build() {
-            return new ItemObjectTemplate(type, root);
-        }
-    }
-
-    private ItemObjectTemplate(final ItemObjectArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root);
+final class ItemObjectTemplate extends ChildOfTemplate<ItemObjectArchetype> implements BuilderTemplate.TargetTemplate {
+    ItemObjectTemplate(final DataRootArchetype root, final ItemObjectArchetype archetype) {
+        super(root, archetype);
     }
 
     @Override
-    @NonNull ItemObjectArchetype builderTarget() {
+    public ItemObjectArchetype builderTarget() {
         return archetype;
     }
 

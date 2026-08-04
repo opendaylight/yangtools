@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CLASS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NONNULL_BY_DEFAULT;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
@@ -26,23 +25,11 @@ import org.opendaylight.yangtools.yang.common.QName;
  */
 @NonNullByDefault
 final class FeatureTemplate extends ArchetypeTemplate<FeatureArchetype> {
-    record Builder(FeatureArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public FeatureTemplate build() {
-            return new FeatureTemplate(type, root);
-        }
-    }
-
     private static final JavaTypeName QNAME = JavaTypeName.create(QName.class);
     private static final JavaTypeName YANG_FEATURE = JavaTypeName.create(YangFeature.class);
 
-    private FeatureTemplate(final FeatureArchetype archetype, final DataRootArchetype root) {
-        super(GeneratedClass.of(archetype), archetype, root);
+    FeatureTemplate(final DataRootArchetype root, final FeatureArchetype type) {
+        super(root, type);
     }
 
     @Override
