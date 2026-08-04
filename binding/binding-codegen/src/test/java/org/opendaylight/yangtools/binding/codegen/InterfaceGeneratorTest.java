@@ -91,6 +91,7 @@ class InterfaceGeneratorTest extends BaseCompilationTest {
                 @Deprecated
                 @NonNull Services nonnullServices();
 
+
                 @Override
                 default Class<org.opendaylight.yang.gen.v1.urn.yang.foo.rev140328.FooData> implementedInterface() {
                     return org.opendaylight.yang.gen.v1.urn.yang.foo.rev140328.FooData.class;
