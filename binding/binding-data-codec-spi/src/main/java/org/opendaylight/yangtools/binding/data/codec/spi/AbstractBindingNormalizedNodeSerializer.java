@@ -19,28 +19,28 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 @Beta
 public abstract class AbstractBindingNormalizedNodeSerializer implements BindingNormalizedNodeSerializer {
     @Override
-    public final BindingLazyContainerNode<RpcInput> toLazyNormalizedNodeActionInput(
-            final Class<? extends Action<?, ?, ?>> action, final NodeIdentifier identifier, final RpcInput input) {
+    public final BindingLazyContainerNode<RpcInput<?>> toLazyNormalizedNodeActionInput(
+            final Class<? extends Action<?, ?, ?>> action, final NodeIdentifier identifier, final RpcInput<?> input) {
         return new LazyActionInputContainerNode(identifier, input, this, action);
     }
 
     @Override
-    public final BindingLazyContainerNode<RpcInput> toLazyNormalizedNodeActionInput(
-            final Class<? extends Action<?, ?, ?>> action, final RpcInput input) {
+    public final BindingLazyContainerNode<RpcInput<?>> toLazyNormalizedNodeActionInput(
+            final Class<? extends Action<?, ?, ?>> action, final RpcInput<?> input) {
         return toLazyNormalizedNodeActionInput(action, actionInputName(action), input);
     }
 
     protected abstract @NonNull NodeIdentifier actionInputName(@NonNull Class<? extends Action<?, ?, ?>> action);
 
     @Override
-    public final BindingLazyContainerNode<RpcOutput> toLazyNormalizedNodeActionOutput(
-            final Class<? extends Action<?, ?, ?>> action, final NodeIdentifier identifier, final RpcOutput output) {
+    public final BindingLazyContainerNode<RpcOutput<?>> toLazyNormalizedNodeActionOutput(
+            final Class<? extends Action<?, ?, ?>> action, final NodeIdentifier identifier, final RpcOutput<?> output) {
         return new LazyActionOutputContainerNode(identifier, output, this, action);
     }
 
     @Override
-    public final BindingLazyContainerNode<RpcOutput> toLazyNormalizedNodeActionOutput(
-            final Class<? extends Action<?, ?, ?>> action, final RpcOutput output) {
+    public final BindingLazyContainerNode<RpcOutput<?>> toLazyNormalizedNodeActionOutput(
+            final Class<? extends Action<?, ?, ?>> action, final RpcOutput<?> output) {
         return toLazyNormalizedNodeActionOutput(action, actionOutputName(action), output);
     }
 

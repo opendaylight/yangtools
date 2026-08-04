@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
  * Interface extended by all interfaces generated for a YANG {@code action} instantiated in keyed lists.
  */
 public interface KeyedListAction<K extends Key<T>, T extends EntryObject<T, K>,
-        I extends RpcInput, O extends RpcOutput> extends Action<WithKey<T, K>, I, O> {
+        I extends RpcInput<I>, O extends RpcOutput<O>> extends Action<WithKey<T, K>, I, O> {
     @Override
     @CheckReturnValue
     ListenableFuture<RpcResult<O>> invoke(WithKey<T, K> path, I input);

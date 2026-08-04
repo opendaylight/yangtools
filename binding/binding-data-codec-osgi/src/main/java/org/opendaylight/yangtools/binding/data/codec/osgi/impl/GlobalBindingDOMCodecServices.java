@@ -100,14 +100,14 @@ public final class GlobalBindingDOMCodecServices extends ForwardingBindingDOMCod
     }
 
     @Override
-    public BindingLazyContainerNode<RpcInput> toLazyNormalizedNodeActionInput(
-            final Class<? extends Action<?, ?, ?>> action, final NodeIdentifier identifier, final RpcInput input) {
+    public BindingLazyContainerNode<RpcInput<?>> toLazyNormalizedNodeActionInput(
+            final Class<? extends Action<?, ?, ?>> action, final NodeIdentifier identifier, final RpcInput<?> input) {
         return new LazyActionInputContainerNode(identifier, input, this, action);
     }
 
     @Override
-    public BindingLazyContainerNode<RpcOutput> toLazyNormalizedNodeActionOutput(
-            final Class<? extends Action<?, ?, ?>> action, final NodeIdentifier identifier, final RpcOutput output) {
+    public BindingLazyContainerNode<RpcOutput<?>> toLazyNormalizedNodeActionOutput(
+            final Class<? extends Action<?, ?, ?>> action, final NodeIdentifier identifier, final RpcOutput<?> output) {
         return new LazyActionOutputContainerNode(identifier, output, this, action);
     }
 

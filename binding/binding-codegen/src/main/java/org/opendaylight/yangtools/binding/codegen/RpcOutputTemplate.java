@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
@@ -36,7 +37,7 @@ final class RpcOutputTemplate extends AugmentableTemplate<RpcOutputArchetype>
     @Override
     Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.forArray(RPC_OUTPUT, extendsAugmentable(), extendsJavaDataContainer()),
+            Iterators.singletonIterator(ParameterizedType.of(RPC_OUTPUT, archetype)),
             super.extendsTypes());
     }
 

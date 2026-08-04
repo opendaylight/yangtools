@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
 /**
  * Interface extended by all interfaces generated for a YANG {@code rpc}.
  */
-public non-sealed interface Rpc<I extends RpcInput, O extends RpcOutput> extends Operation<Rpc<I, O>> {
+public non-sealed interface Rpc<I extends RpcInput<I>, O extends RpcOutput<O>> extends Operation<Rpc<I, O>> {
     /**
      * Invoke the RPC.
      *

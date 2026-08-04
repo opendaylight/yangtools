@@ -79,12 +79,12 @@ public abstract class ForwardingBindingRuntimeContext extends ForwardingObject i
     }
 
     @Override
-    public Class<? extends RpcInput> getRpcInput(final QName rpcName) {
+    public Class<? extends RpcInput<?>> getRpcInput(final QName rpcName) {
         return delegate().getRpcInput(rpcName);
     }
 
     @Override
-    public Class<? extends RpcOutput> getRpcOutput(final QName rpcName) {
+    public Class<? extends RpcOutput<?>> getRpcOutput(final QName rpcName) {
         return delegate().getRpcOutput(rpcName);
     }
 

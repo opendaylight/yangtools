@@ -1011,13 +1011,13 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public <T extends RpcInput> T fromNormalizedNodeActionInput(final Class<? extends Action<?, ?, ?>> action,
+    public <T extends RpcInput<T>> T fromNormalizedNodeActionInput(final Class<? extends Action<?, ?, ?>> action,
             final ContainerNode input) {
         return (T) requireNonNull(getActionCodec(action).input().deserialize(requireNonNull(input)));
     }
 
     @Override
-    public <T extends RpcOutput> T fromNormalizedNodeActionOutput(final Class<? extends Action<?, ?, ?>> action,
+    public <T extends RpcOutput<T>> T fromNormalizedNodeActionOutput(final Class<? extends Action<?, ?, ?>> action,
             final ContainerNode output) {
         return (T) requireNonNull(getActionCodec(action).output().deserialize(requireNonNull(output)));
     }
@@ -1047,13 +1047,13 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     public ContainerNode toNormalizedNodeActionInput(final Class<? extends Action<?, ?, ?>> action,
-            final RpcInput input) {
+            final RpcInput<?> input) {
         return serializeDataContainer(input,(ctx, iface, domWriter) -> ctx.newActionInputWriter(action, domWriter));
     }
 
     @Override
     public ContainerNode toNormalizedNodeActionOutput(final Class<? extends Action<?, ?, ?>> action,
-            final RpcOutput output) {
+            final RpcOutput<?> output) {
         return serializeDataContainer(output, (ctx, iface, domWriter) -> ctx.newActionOutputWriter(action, domWriter));
     }
 
