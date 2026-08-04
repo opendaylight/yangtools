@@ -16,6 +16,7 @@ import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRAC
 
 import com.google.common.collect.Iterables;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
@@ -138,7 +139,8 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
 
         if (archetype.getSuperType() == null) {
             // FIXME: YANGTOOLS-1621: here we want to specialize for the single tagged value we carry
-            KeyTemplate.appendEquality(bb, javaType(), properties, true);
+            KeyTemplate.appendEquality(bb, javaType(),
+                properties.stream().map(prop -> Map.entry(prop.getName(), prop.getReturnType())).toList(), true);
         }
 
         return bb.cB().nl();

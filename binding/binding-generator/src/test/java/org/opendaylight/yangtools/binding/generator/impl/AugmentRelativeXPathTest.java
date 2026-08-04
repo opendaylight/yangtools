@@ -38,14 +38,15 @@ class AugmentRelativeXPathTest {
             if (type.simpleName().equals("InterfaceKey")) {
                 gtInterfaceKey = assertInstanceOf(KeyArchetype.class, type);
 
-                final var properties = gtInterfaceKey.getProperties();
-                assertNotNull(properties, "InterfaceKey properties are null");
-                assertEquals(1, properties.size());
+                final var methods = gtInterfaceKey.methods();
+                assertNotNull(methods, "InterfaceKey properties are null");
+                assertEquals(1, methods.size());
 
-                final var property = properties.getFirst();
-                assertEquals("interfaceId", property.getName());
-                assertNotNull(property.getReturnType(), "interfaceId return type is null");
-                assertEquals(JavaTypeName.create(String.class), property.getReturnType().name());
+                final var property = methods.entrySet().iterator().next();
+                assertEquals("interface-id", property.getKey());
+                final var returnType = property.getValue().returnType();
+                assertNotNull(returnType, "interfaceId return type is null");
+                assertEquals(JavaTypeName.create(String.class), returnType.name());
             } else if (type.simpleName().equals("Interface")) {
                 gtInterface = assertInstanceOf(EntryObjectArchetype.class, type);
 
@@ -69,16 +70,17 @@ class AugmentRelativeXPathTest {
             } else if (type.simpleName().equals("TunnelKey")) {
                 gtTunnelKey = assertInstanceOf(KeyArchetype.class, type);
 
-                final var properties = gtTunnelKey.getProperties();
-                assertNotNull(properties, "TunnelKey properties are null");
-                assertEquals(1, properties.size());
+                final var methods = gtTunnelKey.methods();
+                assertNotNull(methods, "TunnelKey properties are null");
+                assertEquals(1, methods.size());
 
-                final var property = properties.getFirst();
-                assertEquals("tunnelId", property.getName());
-                assertNotNull(property.getReturnType(), "tunnelId return type is null");
+                final var property = methods.entrySet().iterator().next();
+                assertEquals("tunnel-id", property.getKey());
+                final var returnType = property.getValue().returnType();
+                assertNotNull(returnType, "tunnelId return type is null");
                 assertEquals(
                     JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208", "Uri"),
-                    property.getReturnType().name());
+                    returnType.name());
             }
         }
 

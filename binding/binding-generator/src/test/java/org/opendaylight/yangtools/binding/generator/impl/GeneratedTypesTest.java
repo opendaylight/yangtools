@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.binding.generator.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
@@ -237,13 +237,14 @@ class GeneratedTypesTest {
         for (var genType : genTypes) {
             switch (genType) {
                 case KeyArchetype key -> {
-                    final var properties = key.getProperties();
+                    final var methods = key.methods();
 
                     assertEquals(0, listKeyClassCount++, "Unexpected key");
-                    assertEquals(1, properties.size());
-                    assertEquals("listKey", properties.getFirst().getName());
-                    assertEquals("Byte", properties.getFirst().getReturnType().simpleName());
-                    assertTrue(properties.getFirst().isReadOnly());
+                    assertEquals(1, methods.size());
+
+                    final var first = methods.entrySet().iterator().next();
+                    assertEquals("list-key", first.getKey());
+                    assertEquals("Byte", first.getValue().returnType().simpleName());
                 }
                 case ContainerObjectArchetype archetype -> {
                     switch (archetype.simpleName()) {
@@ -333,14 +334,11 @@ class GeneratedTypesTest {
                 genTypesCount++;
             } else if (key.simpleName().equals("CompositeKeyListKey")) {
                 compositeKeyListKeyCount++;
-                for (var prop : key.getProperties()) {
-                    if (prop.getName().equals("key1") || prop.getName().equals("key2")) {
-                        compositeKeyListKeyPropertyCount++;
-                    }
-                }
+                assertEquals(Set.of("key1", "key2"), key.methods().keySet());
+                compositeKeyListKeyPropertyCount += 2;
                 genTOsCount++;
             } else if (key.simpleName().equals("InnerListKey")) {
-                innerListKeyPropertyCount =  key.getProperties().size();
+                innerListKeyPropertyCount = key.methods().size();
                 genTOsCount++;
             }
         }

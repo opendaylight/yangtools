@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -78,17 +77,11 @@ class AugmentedTypeTest {
 
         // 'InterfaceKey'
         assertNotNull(gtInterfaceKey, "InterfaceKey is null");
-        final var properties = gtInterfaceKey.getProperties();
-        assertNotNull(properties, "properties is null");
-        GeneratedProperty gtInterfaceId = null;
-        for (var property : properties) {
-            if (property.getName().equals("interfaceId")) {
-                gtInterfaceId = property;
-                break;
-            }
-        }
+        final var methods = gtInterfaceKey.methods();
+        assertNotNull(methods, "properties is null");
+        MethodSignature gtInterfaceId = methods.get("interface-id");
         assertNotNull(gtInterfaceId, "interfaceId is null");
-        assertEquals(BaseYangTypes.STRING_TYPE, gtInterfaceId.getReturnType());
+        assertEquals(BaseYangTypes.STRING_TYPE, gtInterfaceId.returnType());
 
         // 'Tunnel'
         assertNotNull(gtTunnel, "Tunnel is null");
@@ -99,17 +92,13 @@ class AugmentedTypeTest {
 
         // 'TunnelKey'
         assertNotNull(gtTunnelKey, "TunnelKey is null");
-        final var tunnelKeyProperties = gtTunnelKey.getProperties();
+        final var tunnelKeyProperties = gtTunnelKey.methods();
         assertNotNull(tunnelKeyProperties, "TunnelKey properties are null");
 
-        GeneratedProperty gtTunnelId = null;
-        for (var property : tunnelKeyProperties) {
-            if (property.getName().equals("tunnelId")) {
-                gtTunnelId = property;
-            }
-        }
+        final var gtTunnelId = tunnelKeyProperties.get("tunnel-id");
         assertNotNull(gtTunnelId, "tunnelId is null");
-        assertEquals(BaseYangTypes.INT32_TYPE, gtTunnelId.getReturnType());
+        assertEquals("getTunnelId", gtTunnelId.name());
+        assertEquals(BaseYangTypes.INT32_TYPE, gtTunnelId.returnType());
 
         // 'NetworkLink2'
         assertNotNull(gtNetworkLink2, "NetworkLink2 is null");

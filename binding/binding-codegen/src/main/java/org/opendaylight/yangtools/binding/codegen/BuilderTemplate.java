@@ -39,6 +39,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
@@ -51,7 +52,6 @@ import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -388,12 +388,12 @@ final class BuilderTemplate extends BaseTemplate {
                     final var allProps = new ArrayList<>(properties);
                     final var keyProps = keyConstructorArgs(keyType);
                     for (var field : keyProps) {
-                        removeProperty(allProps, field.getName());
+                        removeProperty(allProps, field.getKey());
                     }
 
                     bb.eol("this.key = base." + KEY_AWARE_KEY_NAME + "();");
                     for (var field : keyProps) {
-                        bb.str("this.").str(fieldName(field)).str(" = base.").str(getterMethodName(field)).eol("();");
+                        bb.str("this._").str(field.getKey()).str(" = base.").str(field.getValue().name()).eol("();");
                     }
 
                     appendCopyNonKeys(bb, allProps);
@@ -940,9 +940,10 @@ final class BuilderTemplate extends BaseTemplate {
      * @return properties participating in the construction of a key type, in constructor order
      */
     @NonNullByDefault
-    static List<GeneratedProperty> keyConstructorArgs(final KeyArchetype keyType) {
-        return keyType.getProperties().stream()
-            .sorted(Comparator.comparing(GeneratedProperty::getName))
+    static List<Map.Entry<String, MethodSignature>> keyConstructorArgs(final KeyArchetype keyType) {
+        return keyType.methods().entrySet().stream()
+            .map(entry -> Map.entry(Naming.getPropertyName(entry.getKey()), entry.getValue()))
+            .sorted(Comparator.comparing(Map.Entry::getKey))
             .collect(Collectors.toList());
     }
 
