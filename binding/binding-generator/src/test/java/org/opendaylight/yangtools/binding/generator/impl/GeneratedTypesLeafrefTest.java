@@ -114,7 +114,7 @@ class GeneratedTypesLeafrefTest {
         // Interface
         assertEquals(JavaTypeName.create(
             "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces", "InterfaceKey"),
-            gtIfc.key().name());
+            gtIfc.keyName());
         final var gtIfcMethods = gtIfc.getMethodDefinitions();
         assertNotNull(gtIfcMethods);
         MethodSignature getHigherLayerIf = null;
@@ -181,7 +181,7 @@ class GeneratedTypesLeafrefTest {
         // Tunnel
         assertEquals(JavaTypeName.create("""
             org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.network.links.network.link.\
-            tunnels""", "TunnelKey"), gtTunnel.key().name());
+            tunnels""", "TunnelKey"), gtTunnel.keyName());
         assertThat(gtTunnel.getMethodDefinitions()).hasSize(2);
 
         // TunnelKey

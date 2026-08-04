@@ -22,13 +22,12 @@ public sealed interface EntryObjectArchetype extends ChildOfArchetype.OfList per
     /**
      * {@return the {link KeyArchetype} associated with this archetype}
      */
-    // FIXME: keyName
-    KeyArchetype key();
+    JavaTypeName keyName();
 
     static EntryObjectArchetype of(final JavaTypeName typeName, final ListEffectiveStatement statement,
-            final JavaTypeName parentName, final KeyArchetype key, final List<GroupingArchetype> groupings,
+            final JavaTypeName parentName, final JavaTypeName keyName, final List<GroupingArchetype> groupings,
             final List<TypeObjectArchetype<?>> typeObjects, final List<MethodSignature> methods) {
-        return new EntryObjectArchetypeImpl(typeName, statement, parentName, key, TypeMethods.copyList(groupings),
+        return new EntryObjectArchetypeImpl(typeName, statement, parentName, keyName, TypeMethods.copyList(groupings),
             TypeMethods.copyList(typeObjects), TypeMethods.copyList(methods));
     }
 }

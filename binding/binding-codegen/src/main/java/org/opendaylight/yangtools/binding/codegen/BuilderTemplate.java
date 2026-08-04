@@ -91,17 +91,20 @@ final class BuilderTemplate extends BaseTemplate {
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
     //        implementations of its methods
+    private final TargetTemplate targetTemplate;
     final @NonNull DataContainerArchetype targetType;
 
     private final GeneratedClass.@NonNull Nested implJavaType;
 
     @NonNullByDefault
     private BuilderTemplate(final GeneratedClass.TopLevel javaType, final GeneratedClass.Nested implJavaType,
-            final DataContainerArchetype targetType, final Set<BuilderGeneratedProperty> properties) {
+            final TargetTemplate targetTemplate) {
         super(javaType);
         this.implJavaType = requireNonNull(implJavaType);
-        this.targetType = requireNonNull(targetType);
-        this.properties = requireNonNull(properties);
+        this.targetTemplate = requireNonNull(targetTemplate);
+        targetType = targetTemplate.builderTarget();
+        // FIXME: a nicer way of doing this
+        properties = ((InterfaceTemplate<?>) targetTemplate).typeAnalysis().properties();
     }
 
     @NonNullByDefault
@@ -112,14 +115,13 @@ final class BuilderTemplate extends BaseTemplate {
         final var builderName = targetName.createSibling(simpleName + Naming.BUILDER_SUFFIX);
         final var implName = simpleName + "Impl";
         final var javaType = GeneratedClass.of(builderName, implName, type);
-        final var analysis = TypeAnalysis.of(type);
 
         // FIXME: there are three cases here:
         //        - non-augmentable
         //        - augmentable
         //        - entry object (implies augmentable)
         //        we should have three separate classes instead of @Nullable fields for the latter two cases
-        return new BuilderTemplate(javaType, javaType.getNestedClass(implName), type, analysis.properties());
+        return new BuilderTemplate(javaType, javaType.getNestedClass(implName), target);
     }
 
     private @NonNull String simpleName() {
@@ -200,7 +202,7 @@ final class BuilderTemplate extends BaseTemplate {
      */
     // FIXME: this methods and all its callers are just begging for specialization
     @Nullable KeyArchetype keyType() {
-        return targetType instanceof EntryObjectArchetype archetype ? archetype.key() : null;
+        return targetTemplate instanceof EntryObjectTemplate archetype ? archetype.key : null;
     }
 
     private @Nullable BlockBuilder builderFields() {

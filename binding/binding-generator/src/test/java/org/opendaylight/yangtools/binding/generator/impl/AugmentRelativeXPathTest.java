@@ -55,7 +55,7 @@ class AugmentRelativeXPathTest {
 
                 assertEquals(JavaTypeName.create(
                     "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
-                    "InterfaceKey"), gtInterface.key().name());
+                    "InterfaceKey"), gtInterface.keyName());
             } else if (type.simpleName().equals("Tunnel")) {
                 gtTunnel = assertInstanceOf(EntryObjectArchetype.class, type);
 
@@ -65,7 +65,7 @@ class AugmentRelativeXPathTest {
 
                 assertEquals(JavaTypeName.create("""
                     org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.network.links.\
-                    network.link.tunnels""", "TunnelKey"), gtTunnel.key().name());
+                    network.link.tunnels""", "TunnelKey"), gtTunnel.keyName());
             } else if (type.simpleName().equals("TunnelKey")) {
                 gtTunnelKey = assertInstanceOf(KeyArchetype.class, type);
 
