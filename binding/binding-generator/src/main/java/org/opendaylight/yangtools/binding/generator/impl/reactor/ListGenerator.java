@@ -67,12 +67,6 @@ abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEff
         addDeprecatedAnnotation(ret, statement);
         list.add(ret);
 
-        // nonnullFoo
-        final var mb = MethodSignature.builderOfDefault(statement, Naming.getNonnullMethodName(localName), returnType,
-            ValueMechanics.NORMAL);
-        addDeprecatedAnnotation(mb, statement);
-        list.add(mb);
-
         return ret;
     }
 }

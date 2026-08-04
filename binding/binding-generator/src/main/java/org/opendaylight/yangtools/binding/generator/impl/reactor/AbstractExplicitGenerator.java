@@ -343,7 +343,6 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
 
         final var returnType = methodReturnType();
         constructGetter(list, returnType);
-        constructRequire(list, returnType);
     }
 
     @NonNullByDefault
@@ -353,19 +352,6 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         addDeprecatedAnnotation(mb, statement);
         list.add(mb);
         return mb;
-    }
-
-    @NonNullByDefault
-    void constructRequire(final List<MethodSignature.Builder> list, final Type returnType) {
-        // No-op in most cases
-    }
-
-    static final void constructRequire(final @NonNull List<MethodSignature.@NonNull Builder> list,
-            final @NonNull EffectiveStatement<QName, ?> statement, final @NonNull Type returnType) {
-        final var mb = MethodSignature.builderOfDefault(statement,
-            Naming.getRequireMethodName(statement.argument().getLocalName()), returnType, ValueMechanics.NONNULL);
-        addDeprecatedAnnotation(mb, statement);
-        list.add(mb);
     }
 
     @NonNullByDefault

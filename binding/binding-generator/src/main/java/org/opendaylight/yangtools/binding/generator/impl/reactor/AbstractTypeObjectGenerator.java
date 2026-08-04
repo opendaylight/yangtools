@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
-import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -500,8 +499,7 @@ abstract class AbstractTypeObjectGenerator<
         // Note: this may we wrapped for leaf-list, hence we need to deal with that
         final var myType = methodReturnType();
         LOG.trace("Override of {} to {}", this, myType);
-        final var mb = constructGetter(list, myType)
-            .addAnnotation(OverrideAnnotation.INSTANCE);
+        final var mb = constructGetter(list, myType);
         addDeprecatedAnnotation(mb, statement());
     }
 

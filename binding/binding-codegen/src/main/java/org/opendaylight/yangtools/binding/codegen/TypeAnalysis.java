@@ -81,9 +81,6 @@ record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
      */
     private static BuilderGeneratedProperty propertyFromGetter(final MethodSignature method) {
         checkArgument(method != null);
-        if (method.isDefault()) {
-            return null;
-        }
         if (!Naming.isGetterMethodName(method.name())) {
             return null;
         }
