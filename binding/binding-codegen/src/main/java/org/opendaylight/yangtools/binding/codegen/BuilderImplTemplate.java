@@ -202,6 +202,7 @@ final class BuilderImplTemplate extends BaseTemplate {
         for (var field : props) {
             bb.str("this.").str(fieldName(field)).str(" = ");
 
+            // FIXME: check the statement: NULLIFY_EMPTY == it is a list or a non-presence container
             if (field.getMechanics() == ValueMechanics.NULLIFY_EMPTY) {
                 bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(field.getGetterName()).eol("());");
             } else {

@@ -57,32 +57,32 @@ class Mdsal675Test {
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithContainer"),
             assertContainer(genTypesMap, PACKAGE + "yang.data.with.container.ContainerFromYangData"),
-            List.of("getContainerFromYangData", "nonnullContainerFromYangData"));
+            "getContainerFromYangData");
         // yang-data > list
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithList"),
             Types.listTypeFor(assertGenType(genTypesMap, PACKAGE + "yang.data.with.list.ListFromYangData")),
-            List.of("getListFromYangData", "nonnullListFromYangData"));
+            "getListFromYangData");
         // yang-data > leaf
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithLeaf"),
             BaseYangTypes.STRING_TYPE,
-            List.of("getLeafFromYangData", "requireLeafFromYangData"));
+            "getLeafFromYangData");
         // yang-data > leaf-list
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithLeafList"),
             Types.setTypeFor(BaseYangTypes.STRING_TYPE),
-            List.of("getLeafListFromYangData", "requireLeafListFromYangData"));
+            "getLeafListFromYangData");
         // yang-data > anydata
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithAnydata"),
             assertAnydata(genTypesMap, PACKAGE + "yang.data.with.anydata.AnydataFromYangData"),
-            List.of("getAnydataFromYangData", "requireAnydataFromYangData"));
+            "getAnydataFromYangData");
         // yang-data > anyxml
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithAnyxml"),
             assertAnyxml(genTypesMap, PACKAGE + "yang.data.with.anyxml.AnyxmlFromYangData"),
-            List.of("getAnyxmlFromYangData", "requireAnyxmlFromYangData"));
+            "getAnyxmlFromYangData");
 
         // ensure generated yang-data classes extending inner group so group content is reachable
 
@@ -91,37 +91,37 @@ class Mdsal675Test {
             assertYangData(genTypesMap, PACKAGE + "YangDataWithContainerFromGroup"),
             assertGrouping(genTypesMap, PACKAGE + "GrpForContainer"),
             assertContainer(genTypesMap, PACKAGE + "grp._for.container.ContainerFromGroup"),
-            List.of("getContainerFromGroup", "nonnullContainerFromGroup"));
+            "getContainerFromGroup");
         // yang-data > uses > group > list
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithListFromGroup"),
             assertGrouping(genTypesMap, PACKAGE + "GrpForList"),
             Types.listTypeFor(assertGenType(genTypesMap, PACKAGE + "grp._for.list.ListFromGroup")),
-            List.of("getListFromGroup", "nonnullListFromGroup"));
+            "getListFromGroup");
         // yang-data > uses > group > leaf
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithLeafFromGroup"),
             assertGrouping(genTypesMap, PACKAGE + "GrpForLeaf"),
             BaseYangTypes.UINT32_TYPE,
-            List.of("getLeafFromGroup", "requireLeafFromGroup"));
+            "getLeafFromGroup");
         // yang-data > uses > group > leaf-list
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithLeafListFromGroup"),
             assertGrouping(genTypesMap, PACKAGE + "GrpForLeafList"),
             Types.setTypeFor(BaseYangTypes.UINT32_TYPE),
-            List.of("getLeafListFromGroup", "requireLeafListFromGroup"));
+            "getLeafListFromGroup");
         // yang-data > uses > group > anydata
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithAnydataFromGroup"),
             assertGrouping(genTypesMap, PACKAGE + "GrpForAnydata"),
             assertAnydata(genTypesMap, PACKAGE + "grp._for.anydata.AnydataFromGroup"),
-            List.of("getAnydataFromGroup", "requireAnydataFromGroup"));
+            "getAnydataFromGroup");
         // yang-data > uses > group > anyxml
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithAnyxmlFromGroup"),
             assertGrouping(genTypesMap, PACKAGE + "GrpForAnyxml"),
             assertAnyxml(genTypesMap, PACKAGE + "grp._for.anyxml.AnyxmlFromGroup"),
-            List.of("getAnyxmlFromGroup", "requireAnyxmlFromGroup"));
+            "getAnyxmlFromGroup");
 
         // ensure module class has only getter for root container
         final var moduleType = assertArchetype(genTypesMap, MODULE_CLASS_NAME, DataRootArchetype.class);
@@ -211,14 +211,14 @@ class Mdsal675Test {
     }
 
     private static void assertYangDataGenType(final YangDataArchetype yangDataType, final Type contentType,
-            final List<String> getterMethods) {
+            final String... getterMethods) {
         for (var methodName : getterMethods) {
             assertHasMethod(yangDataType, methodName, contentType);
         }
     }
 
     private static void assertYangDataGenType(final YangDataArchetype yangDataType, final GroupingArchetype groupType,
-            final Type contentType, final List<String> getterMethods) {
+            final Type contentType, final String... getterMethods) {
         assertImplements(yangDataType, groupType);
         for (var methodName : getterMethods) {
             assertHasMethod(groupType, methodName, contentType);

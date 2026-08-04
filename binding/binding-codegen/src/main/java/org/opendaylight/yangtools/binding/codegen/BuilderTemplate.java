@@ -31,7 +31,6 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.isListType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isMapType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isSetType;
 
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.util.ArrayList;
@@ -966,12 +965,12 @@ final class BuilderTemplate extends BaseTemplate {
 
     @NonNullByDefault
     static boolean hasNonDefaultMethods(final DataContainerArchetype type) {
-        return type.getMethodDefinitions().stream().anyMatch(def -> !def.isDefault());
+        return !type.getMethodDefinitions().isEmpty();
     }
 
     @NonNullByDefault
     static Collection<MethodSignature> nonDefaultMethods(final DataContainerArchetype type) {
-        return Collections2.filter(type.getMethodDefinitions(), def -> !def.isDefault());
+        return type.getMethodDefinitions();
     }
 
     /**

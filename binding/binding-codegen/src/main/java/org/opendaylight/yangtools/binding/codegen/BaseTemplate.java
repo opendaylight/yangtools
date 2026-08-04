@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
-import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.RoutingContextAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
@@ -221,9 +220,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             }
             case RoutingContextAnnotation routingContext -> {
                 bb.str("(value = ").str(importedName(routingContext.value())).str(".class)");
-            }
-            case OverrideAnnotation unused -> {
-                // no-op
             }
         }
         return bb.nl();

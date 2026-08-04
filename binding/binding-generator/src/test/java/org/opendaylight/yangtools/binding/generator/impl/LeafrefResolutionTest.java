@@ -48,8 +48,9 @@ class LeafrefResolutionTest {
             .map(ItemObjectArchetype.class::cast)
             .orElseThrow()
             .getMethodDefinitions();
-        assertEquals(6, neighborMethods.size());
+        assertEquals(3, neighborMethods.size());
 
+        // FIXME: assert the third method
         final var getNeighborId = neighborMethods.stream()
             .filter(method -> method.name().equals("getNeighborId"))
             .findFirst()
