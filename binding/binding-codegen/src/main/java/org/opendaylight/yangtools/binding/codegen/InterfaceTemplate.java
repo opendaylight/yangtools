@@ -14,13 +14,9 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NSEE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.VOID;
+import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX;
-import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForNonnull;
-import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForRequire;
 import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
-import static org.opendaylight.yangtools.binding.contract.Naming.isNonnullMethodName;
-import static org.opendaylight.yangtools.binding.contract.Naming.isRequireMethodName;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
@@ -49,7 +45,13 @@ import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
  * Base class for code generators based on {@link DataContainerArchetype}.
@@ -212,16 +214,42 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         while (true) {
             final var method = it.next();
             final BlockBuilder blk;
-            if (method.isDefault()) {
-                blk = generateDefaultMethod(method);
-            } else if (isGetterMethodName(method.name())) {
-                blk = generateAccessorMethod(method);
-            } else if (isNonnullMethodName(method.name())) {
-                blk = generateNonnullAccessorMethod(method);
-            } else {
-                blk = generateMethod(method);
+
+            // FIXME: refactor this:
+            // - generate getter while looking at the statement and:
+            //   - if it is a list or a non-presence container
+            //     - generate the getFoo as NULLIFY_EMPTY
+            //     - generate a nonnullFoo returning empty for non-existent
+            //   - if it is a leaf or leaf-list:
+            //     - generate a requireFoo
+            final var methodName = method.name();
+
+            // ignore methods
+            if (!isGetterMethodName(methodName)) {
+                if (it.hasNext()) {
+                    continue;
+                }
+                break;
             }
-            bb.blk(blk);
+
+            // getFoo()
+            bb.blk(generateAccessorMethod(method));
+            switch (method.statement()) {
+                case ContainerEffectiveStatement stmt when stmt.presenceStatement() == null ->
+                    // an abstract nonnullFoo()
+                    bb.nl().blk(generateNonnullAccessorMethod(method));
+                case ListEffectiveStatement stmt ->
+                    // a default nonnullFoo()
+                    bb.nl().blk(generateNonnullMethod(method));
+                // a default requireFoo
+                case AnydataStatement stmt -> bb.nl().blk(generateRequireMethod(method));
+                case AnyxmlStatement stmt -> bb.nl().blk(generateRequireMethod(method));
+                case LeafEffectiveStatement stmt -> bb.nl().blk(generateRequireMethod(method));
+                case LeafListEffectiveStatement stmt -> bb.nl().blk(generateRequireMethod(method));
+                default -> {
+                    // nothing else
+                }
+            }
 
             if (!it.hasNext()) {
                 break;
@@ -231,34 +259,34 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         return bb;
     }
 
-    private @NonNull BlockBuilder generateMethod(final MethodSignature method) {
-        return newBlockBuilder()
-            .blk(generateJavadoc(method))
-            .blk(generateAnnotations(method))
-            .str(importedReturnType(method)).sp().str(method.name()).eol("();");
-    }
-
-    private static @Nullable BlockBuilder generateJavadoc(final MethodSignature method) {
-        final var optDescription = method.statement()
-            .findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class);
-        if (optDescription.isEmpty()) {
-            return null;
-        }
-
-        // FIXME: use a BlockBuilder
-        final var sb = new StringBuilder();
-        final var reference = optDescription.orElseThrow();
-        if (reference != null) {
-            sb.append(formatReference(reference).toRawString());
-        }
-        if (sb.isEmpty()) {
-            return null;
-        }
-
-        final var bb = Block.builder();
-        appendAsJavadoc(bb, sb.toString());
-        return bb;
-    }
+//    private @NonNull BlockBuilder generateMethod(final MethodSignature method) {
+//        return newBlockBuilder()
+//            .blk(generateJavadoc(method))
+//            .blk(generateAnnotations(method))
+//            .str(importedReturnType(method)).sp().str(method.name()).eol("();");
+//    }
+//
+//    private static @Nullable BlockBuilder generateJavadoc(final MethodSignature method) {
+//        final var optDescription = method.statement()
+//            .findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class);
+//        if (optDescription.isEmpty()) {
+//            return null;
+//        }
+//
+//        // FIXME: use a BlockBuilder
+//        final var sb = new StringBuilder();
+//        final var reference = optDescription.orElseThrow();
+//        if (reference != null) {
+//            sb.append(formatReference(reference).toRawString());
+//        }
+//        if (sb.isEmpty()) {
+//            return null;
+//        }
+//
+//        final var bb = Block.builder();
+//        appendAsJavadoc(bb, sb.toString());
+//        return bb;
+//    }
 
     private @Nullable BlockBuilder generateAnnotations() {
         if (archetype.statement() instanceof DocumentedNode.WithStatus withStatus) {
@@ -283,51 +311,32 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         return bb;
     }
 
-    private @Nullable BlockBuilder generateDefaultMethod(final MethodSignature method) {
-        final var methodName = method.name();
-        if (isNonnullMethodName(methodName)) {
-            return generateNonnullMethod(method);
-        }
-        if (isRequireMethodName(methodName)) {
-            return generateRequireMethod(method);
-        }
-        return VOID.equals(method.returnType().name()) ? generateNoopVoidInterfaceMethod(method) : null;
-    }
-
     @NonNullByDefault
     private BlockBuilder generateNonnullMethod(final MethodSignature method) {
-        final var ret = method.returnType();
-        final var name = method.name();
+        final var getterName = method.name();
+        final var stem = getterName.substring(3);
 
         return newBlockBuilder()
             .txt(accessorJavadoc(method, ", or an empty list if it is not present"))
             .blk(generateAnnotations(method))
-            .str("default ").str(importedNonNull(ret)).sp().str(name).str("()").oB()
-                .str("return ").str(importedName(CODEHELPERS)).str(".nonnull(").str(getGetterMethodForNonnull(name))
-                    .eol("());")
-            .cB();
-    }
-
-    @NonNullByDefault
-    private BlockBuilder generateNoopVoidInterfaceMethod(final MethodSignature method) {
-        return newBlockBuilder()
-            .blk(generateJavadoc(method))
-            .blk(generateAnnotations(method))
-            .str("default ").str(importedName(VOID)).sp().str(method.name()).str("()").oB()
-                .eol("// No-op")
+            .str("default ").str(importedNonNull(method.returnType())).str(" " + NONNULL_PREFIX).str(stem).str("()")
+                .oB()
+                .str("return ").str(importedName(CODEHELPERS)).str(".nonnull(").str(getterName).eol("());")
             .cB();
     }
 
     @NonNullByDefault
     private BlockBuilder generateRequireMethod(final MethodSignature method) {
-        final var name = method.name();
+        final var getterName = method.name();
+        final var stem = getterName.substring(3);
 
         return newBlockBuilder()
             .txt(accessorJavadoc(method, ", guaranteed to be non-null", NSEE))
-            .str("default ").str(importedNonNull(method.returnType())).sp().str(name).str("()").oB()
-                .str("return ").str(importedName(CODEHELPERS)).str(".require(").str(getGetterMethodForRequire(name))
-                    // FIXME: what exactly is this replace() doing?
-                    .str("(), ").jStr(name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, "")).eol(");")
+            .str("default ").str(importedNonNull(method.returnType())).str(" " + REQUIRE_PREFIX).str(stem).str("()")
+                .oB()
+                .str("return ").str(importedName(CODEHELPERS)).str(".require(").str(getterName)
+                    // FIXME: property name!
+                    .str("(), ").jStr(stem.toLowerCase(Locale.ROOT)).eol(");")
             .cB();
     }
 
@@ -361,7 +370,8 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         return newBlockBuilder()
             .txt(accessorJavadoc(method, ", or an empty instance if it is not present"))
             .blk(generateAnnotations(method))
-            .str(importedNonNull(method.returnType())).sp().str(method.name()).eol("();");
+            .str(importedNonNull(method.returnType())).str(" " + NONNULL_PREFIX).str(method.name().substring(3))
+                .eol("();");
     }
 
     @VisibleForTesting
