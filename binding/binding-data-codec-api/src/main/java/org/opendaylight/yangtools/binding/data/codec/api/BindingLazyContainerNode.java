@@ -17,9 +17,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
  * A {@link ContainerNode} backed by a binding {@link DataObject}, with lazy instantiation of the ContainerNode view.
  *
  * @param <T> Binding DataObject type
- * @author Robert Varga
  */
 @Beta
+// FIXME: T extends ParentNode
 public interface BindingLazyContainerNode<T extends DataObject> extends ContainerNode, Delegator<ContainerNode> {
     /**
      * Returns the underlying DataObject.

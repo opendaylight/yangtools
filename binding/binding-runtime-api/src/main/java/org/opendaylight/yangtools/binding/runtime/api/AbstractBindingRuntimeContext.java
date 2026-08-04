@@ -118,12 +118,12 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
     }
 
     @Override
-    public final Class<? extends RpcInput> getRpcInput(final QName rpcName) {
+    public final Class<? extends RpcInput<?>> getRpcInput(final QName rpcName) {
         return loadUnchecked(RpcInput.class, getRpc(rpcName).javaType().input());
     }
 
     @Override
-    public final Class<? extends RpcOutput> getRpcOutput(final QName rpcName) {
+    public final Class<? extends RpcOutput<?>> getRpcOutput(final QName rpcName) {
         return loadUnchecked(RpcOutput.class, getRpc(rpcName).javaType().output());
     }
 

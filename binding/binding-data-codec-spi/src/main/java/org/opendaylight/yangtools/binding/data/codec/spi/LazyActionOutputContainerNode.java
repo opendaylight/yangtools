@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 
 @Beta
 @NonNullByDefault
-public final class LazyActionOutputContainerNode extends AbstractLazyActionContainerNode<RpcOutput> {
-    public LazyActionOutputContainerNode(final NodeIdentifier identifier, final RpcOutput bindingData,
+public final class LazyActionOutputContainerNode extends AbstractLazyActionContainerNode<RpcOutput<?>> {
+    public LazyActionOutputContainerNode(final NodeIdentifier identifier, final RpcOutput<?> bindingData,
             final BindingNormalizedNodeSerializer codec, final Class<? extends Action<?, ?, ?>> action) {
         super(identifier, bindingData, codec, action);
     }

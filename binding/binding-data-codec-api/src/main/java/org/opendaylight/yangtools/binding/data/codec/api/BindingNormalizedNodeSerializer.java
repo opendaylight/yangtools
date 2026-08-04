@@ -177,7 +177,7 @@ public interface BindingNormalizedNodeSerializer {
      * @throws NullPointerException if any of the arguments is null
      */
     @Beta
-    <T extends RpcInput> @NonNull T fromNormalizedNodeActionInput(
+    <T extends RpcInput<T>> @NonNull T fromNormalizedNodeActionInput(
             @NonNull Class<? extends Action<?, ?, ?>> action, @NonNull ContainerNode input);
 
     /**
@@ -189,7 +189,7 @@ public interface BindingNormalizedNodeSerializer {
      * @throws NullPointerException if any of the arguments is null
      */
     @Beta
-    <T extends RpcOutput> @NonNull T fromNormalizedNodeActionOutput(
+    <T extends RpcOutput<T>> @NonNull T fromNormalizedNodeActionOutput(
             @NonNull Class<? extends Action<?, ?, ?>> action, @NonNull ContainerNode output);
 
     /**
@@ -226,9 +226,9 @@ public interface BindingNormalizedNodeSerializer {
      * @throws NullPointerException if any of the arguments is null
      */
     @Beta
-    @NonNull BindingLazyContainerNode<RpcInput> toLazyNormalizedNodeActionInput(
+    @NonNull BindingLazyContainerNode<RpcInput<?>> toLazyNormalizedNodeActionInput(
             @NonNull Class<? extends Action<?, ?, ?>> action, @NonNull NodeIdentifier identifier,
-                    @NonNull RpcInput input);
+                    @NonNull RpcInput<?> input);
 
     /**
      * Lazily translates supplied Binding action input into NormalizedNode data.
@@ -239,8 +239,8 @@ public interface BindingNormalizedNodeSerializer {
      * @throws NullPointerException if any of the arguments is null
      */
     @Beta
-    @NonNull BindingLazyContainerNode<RpcInput> toLazyNormalizedNodeActionInput(
-        @NonNull Class<? extends Action<?, ?, ?>> action, @NonNull RpcInput input);
+    @NonNull BindingLazyContainerNode<RpcInput<?>> toLazyNormalizedNodeActionInput(
+        @NonNull Class<? extends Action<?, ?, ?>> action, @NonNull RpcInput<?> input);
 
     /**
      * Translates supplied Binding action input into NormalizedNode data.
@@ -252,7 +252,7 @@ public interface BindingNormalizedNodeSerializer {
      */
     @Beta
     @NonNull ContainerNode toNormalizedNodeActionInput(@NonNull Class<? extends Action<?, ?, ?>> action,
-        @NonNull RpcInput input);
+        @NonNull RpcInput<?> input);
 
     /**
      * Lazily translates supplied Binding action output into NormalizedNode data.
@@ -262,9 +262,9 @@ public interface BindingNormalizedNodeSerializer {
      * @return NormalizedNode representation of action output
      */
     @Beta
-    @NonNull BindingLazyContainerNode<RpcOutput> toLazyNormalizedNodeActionOutput(
+    @NonNull BindingLazyContainerNode<RpcOutput<?>> toLazyNormalizedNodeActionOutput(
             @NonNull Class<? extends Action<?, ?, ?>> action, @NonNull NodeIdentifier identifier,
-                    @NonNull RpcOutput output);
+                    @NonNull RpcOutput<?> output);
 
     /**
      * Lazily translates supplied Binding action output into NormalizedNode data.
@@ -274,8 +274,8 @@ public interface BindingNormalizedNodeSerializer {
      * @return NormalizedNode representation of action output
      */
     @Beta
-    @NonNull BindingLazyContainerNode<RpcOutput> toLazyNormalizedNodeActionOutput(
-            @NonNull Class<? extends Action<?, ?, ?>> action, @NonNull RpcOutput output);
+    @NonNull BindingLazyContainerNode<RpcOutput<?>> toLazyNormalizedNodeActionOutput(
+            @NonNull Class<? extends Action<?, ?, ?>> action, @NonNull RpcOutput<?> output);
 
     /**
      * Translates supplied Binding action output into NormalizedNode data.
@@ -285,5 +285,5 @@ public interface BindingNormalizedNodeSerializer {
      */
     @Beta
     @NonNull ContainerNode toNormalizedNodeActionOutput(@NonNull Class<? extends Action<?, ?, ?>> action,
-        @NonNull RpcOutput output);
+        @NonNull RpcOutput<?> output);
 }

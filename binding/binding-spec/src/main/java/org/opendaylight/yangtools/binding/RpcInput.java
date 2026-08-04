@@ -7,12 +7,16 @@
  */
 package org.opendaylight.yangtools.binding;
 
+import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
+
 /**
  * Marker interface for all interfaces generated for {@code input} statement within an {@code action} or an {@code rpc}
  * statement.
+ *
+ * @param <T> concrete {@link RpcOutput} type
  */
-// FIXME: this should not really be a DataObject, but a separate DataContainer and a BindingObject
-public interface RpcInput extends DataObject {
+// FIXME: YANGTOOLS-1921: extends ParentObject<T>
+public interface RpcInput<T extends RpcInput<T>> extends Augmentable<T>, JavaDataContainer<T>, DataObject {
     @Override
-    Class<? extends RpcInput> implementedInterface();
+    Class<T> implementedInterface();
 }

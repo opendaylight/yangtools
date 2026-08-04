@@ -98,9 +98,9 @@ public interface BindingRuntimeContext extends Immutable {
      */
     @NonNull RuntimeType getTypeWithSchema(@NonNull Class<?> type);
 
-    @NonNull Class<? extends RpcInput> getRpcInput(@NonNull QName rpcName);
+    @NonNull Class<? extends RpcInput<?>> getRpcInput(@NonNull QName rpcName);
 
-    @NonNull Class<? extends RpcOutput> getRpcOutput(@NonNull QName rpcName);
+    @NonNull Class<? extends RpcOutput<?>> getRpcOutput(@NonNull QName rpcName);
 
     // FIXME: 9.0.0: this needs to accept an EffectiveStatementInference
     @NonNull Class<?> getClassForSchema(@NonNull Absolute schema);
