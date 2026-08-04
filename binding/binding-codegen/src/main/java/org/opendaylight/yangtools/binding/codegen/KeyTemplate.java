@@ -15,7 +15,9 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 
 import com.google.common.base.VerifyException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Key;
@@ -24,6 +26,7 @@ import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
@@ -64,20 +67,22 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
 
         // Fields
         // FIXME: generate checker methods for each property
-        final var props = archetype.getProperties();
-        for (var prop : props) {
-            bb.str("private final ").str(importedNonNull(prop.getReturnType())).sp().str(fieldName(prop)).eS();
+        final var props = archetype.methods().entrySet().stream()
+            .map(entry -> Map.entry(Naming.getPropertyName(entry.getKey()), entry.getValue()))
+            .toList();
+        for (var entry : props) {
+            bb.str("private final ").str(importedNonNull(entry.getValue().returnType())).str(" _").str(entry.getKey()).eS();
         }
 
         // All values constructor
-        final var sortedProps = props.stream().sorted(PROP_COMPARATOR).toList();
+        final var sortedProps = props.stream().sorted(Comparator.comparing(Map.Entry::getKey)).toList();
         bb
             .nl()
             .eol("/**")
             .eol(" * Constructs an instance.")
             .eol(" *");
         for (var prop : sortedProps) {
-            bb.str(" * @param ").str(fieldName(prop)).str(" the entity ").eol(prop.getName());
+            bb.str(" * @param _").str(prop.getKey()).str(" the entity ").eol(prop.getKey());
         }
         bb
             .eol(" */")
@@ -124,7 +129,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
      * @param parameters group of generated property instances which are transformed to the method parameters
      * @return string with the list of the method parameters with their types in JAVA format
      */
-    private String asNonNullArgumentsDeclaration(final List<GeneratedProperty> parameters) {
+    private String asNonNullArgumentsDeclaration(final List<Map.Entry<String, MethodSignature>> parameters) {
         final var it = parameters.iterator();
         if (!it.hasNext()) {
             return "";
@@ -133,7 +138,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
         final var sb = new StringBuilder();
         while (true) {
             final var parameter = it.next();
-            sb.append(importedNonNull(parameter.getReturnType())).append(' ').append(fieldName(parameter));
+            sb.append(importedNonNull(parameter.getValue().returnType())).append(" _").append(parameter.getKey());
             if (!it.hasNext()) {
                 return sb.toString();
             }
