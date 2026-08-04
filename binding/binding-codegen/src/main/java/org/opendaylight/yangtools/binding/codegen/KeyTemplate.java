@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
@@ -32,22 +31,10 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  */
 @NonNullByDefault
 final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
-    record Builder(KeyArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public KeyTemplate build() {
-            return new KeyTemplate(type, root);
-        }
-    }
-
     private static final JavaTypeName KEY = JavaTypeName.create(Key.class);
 
-    private KeyTemplate(final KeyArchetype archetype, final DataRootArchetype root) {
-        super(GeneratedClass.of(archetype), archetype, root);
+    KeyTemplate(final DataRootArchetype root, final KeyArchetype archetype) {
+        super(root, archetype);
     }
 
     @Override

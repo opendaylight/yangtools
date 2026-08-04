@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.LISTENABLE_FUTURE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.RPC_RESULT;
@@ -24,22 +23,14 @@ import org.opendaylight.yangtools.binding.model.api.RpcArchetype;
  */
 @NonNullByDefault
 final class RpcTemplate extends ArchetypeTemplate<RpcArchetype> {
-    record Builder(RpcArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public RpcTemplate build() {
-            return new RpcTemplate(type, root);
-        }
-    }
-
     private static final JavaTypeName RPC = JavaTypeName.create(Rpc.class);
 
     private RpcTemplate(final RpcArchetype archetype, final DataRootArchetype root) {
         super(GeneratedClass.of(archetype), archetype, root);
+    }
+
+    static RpcTemplate of(final DataRootArchetype root, final RpcArchetype type) {
+        return new RpcTemplate(type, root);
     }
 
     @Override

@@ -220,12 +220,11 @@ public class BuilderGeneratorTest extends BaseCompilationTest {
 
     @Test
     void builderTemplateGenerateToEqualsComparingOrderTest() {
-        final var bt = new BuilderTemplate.Builder(TYPES.stream()
+        final var bt = BuilderTemplate.of(new ContainerObjectTemplate(null, TYPES.stream()
             .filter(t -> t.simpleName().equals("Nodes"))
             .findFirst()
             .map(ContainerObjectArchetype.class::cast)
-            .orElseThrow())
-            .build();
+            .orElseThrow()));
 
         final var sortedProperties = bt.properties.stream()
                 .sorted(ByTypeMemberComparator.getInstance())

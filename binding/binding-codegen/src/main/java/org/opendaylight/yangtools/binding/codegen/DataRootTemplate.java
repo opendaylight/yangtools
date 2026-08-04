@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
+import static com.google.common.base.Verify.verify;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NONNULL_BY_DEFAULT;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.CONST_UNSAFE_ACCESS;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.INSTANCE_FIELD_NAME;
@@ -16,7 +16,6 @@ import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -30,17 +29,6 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  */
 @NonNullByDefault
 final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> {
-    record Builder(DataRootArchetype type) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-        }
-
-        @Override
-        public DataRootTemplate build() {
-            return new DataRootTemplate(type);
-        }
-    }
-
     private static final JavaTypeName ROOT_META = JavaTypeName.create(RootMeta.class);
     private static final ConcreteType DATA_ROOT = ConcreteType.ofClass(DataRoot.class);
 
@@ -49,9 +37,9 @@ final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> {
         super(archetype, archetype, DataContainerContract.BINDING, false);
     }
 
-    @Override
-    @Nullable DataRootArchetype builderTarget() {
-        return null;
+    static DataRootTemplate of(final DataRootArchetype root, final DataRootArchetype archetype) {
+        verify(root.equals(archetype));
+        return new DataRootTemplate(archetype);
     }
 
     @Override

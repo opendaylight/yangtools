@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
-
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
@@ -20,22 +18,10 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
  */
 @NonNullByDefault
 final class ChoiceInTemplate extends ArchetypeTemplate<ChoiceInArchetype> {
-    record Builder(ChoiceInArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public ChoiceInTemplate build() {
-            return new ChoiceInTemplate(type, root);
-        }
-    }
-
     private static final JavaTypeName CHOICE_IN = JavaTypeName.create(ChoiceIn.class);
 
-    private ChoiceInTemplate(final ChoiceInArchetype archetype, final DataRootArchetype root) {
-        super(GeneratedClass.of(archetype), archetype, root);
+    ChoiceInTemplate(final DataRootArchetype root, final ChoiceInArchetype archetype) {
+        super(root, archetype);
     }
 
     @Override

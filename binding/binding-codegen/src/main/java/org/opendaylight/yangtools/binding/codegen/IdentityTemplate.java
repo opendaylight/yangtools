@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CLASS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OBJECT;
@@ -25,20 +24,12 @@ import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
  */
 @NonNullByDefault
 final class IdentityTemplate extends ArchetypeTemplate<IdentityArchetype> {
-    record Builder(IdentityArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public IdentityTemplate build() {
-            return new IdentityTemplate(type, root);
-        }
-    }
-
     private IdentityTemplate(final IdentityArchetype archetype, final DataRootArchetype root) {
         super(GeneratedClass.of(archetype), archetype, root);
+    }
+
+    static IdentityTemplate of(final DataRootArchetype root, final IdentityArchetype type) {
+        return new IdentityTemplate(type, root);
     }
 
     @Override
