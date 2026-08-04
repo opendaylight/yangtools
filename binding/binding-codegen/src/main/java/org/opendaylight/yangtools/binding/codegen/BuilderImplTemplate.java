@@ -109,12 +109,12 @@ final class BuilderImplTemplate extends BaseTemplate {
             final var allProps = new ArrayList<>(properties);
             final var keyProps = BuilderTemplate.keyConstructorArgs(keyType);
             for (var field : keyProps) {
-                BuilderTemplate.removeProperty(allProps, field.getName());
+                BuilderTemplate.removeProperty(allProps, field.getKey());
             }
 
             bb.eol("final var key = key();");
             for (var field : keyProps) {
-                bb.str("this.").str(fieldName(field)).str(" = key.").str(getterMethodName(field)).eol("();");
+                bb.str("this._").str(field.getKey()).str(" = key.").str(field.getValue().name()).eol("();");
             }
 
             appendCopyNonKeys(bb, allProps);
@@ -140,7 +140,7 @@ final class BuilderImplTemplate extends BaseTemplate {
             final var it = BuilderTemplate.keyConstructorArgs(keyType).iterator();
             while (true) {
                 final var keyProp = it.next();
-                bb.str("base.").str(getterMethodName(keyProp)).str("()");
+                bb.str("base.").str(keyProp.getValue().name()).str("()");
                 if (!it.hasNext()) {
                     break;
                 }

@@ -161,10 +161,10 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
 
     /**
      * {@return the {@link BlockFragment} used to clone the property, or {@code null}}
-     * @param property the property
+     * @param type the type
      */
-    static final @Nullable BlockFragment cloneOrNull(final @NonNull GeneratedProperty property) {
-        return isArrayProperty(property) ? bb -> bb.str(".clone()") : null;
+    static final @Nullable BlockFragment cloneOrNull(final @NonNull Type type) {
+        return type.isArray() ? bb -> bb.str(".clone()") : null;
     }
 
     @NonNullByDefault

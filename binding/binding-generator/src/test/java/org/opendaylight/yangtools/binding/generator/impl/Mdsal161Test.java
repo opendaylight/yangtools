@@ -38,6 +38,6 @@ class Mdsal161Test {
     private static void assertKeyStructure(final Collection<Archetype> types, final String className) {
         final var optType = types.stream().filter(type -> type.canonicalName().equals(className)).findFirst();
         final var archetype = assertInstanceOf(KeyArchetype.class, optType.orElseThrow());
-        assertEquals(2, archetype.getProperties().size());
+        assertEquals(2, archetype.methods().size());
     }
 }

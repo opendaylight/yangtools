@@ -17,7 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -98,16 +97,11 @@ class GeneratedTypesLeafrefTest {
             condLeafRT.canonicalName());
 
         // InterfaceId
-        final var gtIfcKeyProps = gtIfcKey.getProperties();
+        final var gtIfcKeyProps = gtIfcKey.methods();
         assertNotNull(gtIfcKeyProps);
-        GeneratedProperty ifcIdProp = null;
-        for (var property : gtIfcKeyProps) {
-            if (property.getName().equals("interfaceId")) {
-                ifcIdProp = property;
-            }
-        }
+        var ifcIdProp = gtIfcKeyProps.get("interface-id");
         assertNotNull(ifcIdProp);
-        Type ifcIdPropType = ifcIdProp.getReturnType();
+        Type ifcIdPropType = ifcIdProp.returnType();
         assertNotNull(ifcIdPropType);
         assertEquals("java.lang.String", ifcIdPropType.canonicalName());
 
@@ -185,16 +179,11 @@ class GeneratedTypesLeafrefTest {
         assertThat(gtTunnel.getMethodDefinitions()).hasSize(2);
 
         // TunnelKey
-        final var gtTunnelKeyProps = gtTunnelKey.getProperties();
+        final var gtTunnelKeyProps = gtTunnelKey.methods();
         assertNotNull(gtTunnelKeyProps);
-        GeneratedProperty tunnelId = null;
-        for (var property : gtTunnelKeyProps) {
-            if (property.getName().equals("tunnelId")) {
-                tunnelId = property;
-            }
-        }
+        var tunnelId = gtTunnelKeyProps.get("tunnel-id");
         assertNotNull(tunnelId);
-        final var tunnelIdType = tunnelId.getReturnType();
+        final var tunnelIdType = tunnelId.returnType();
         assertNotNull(tunnelIdType);
         assertNotSame("java.lang.Void", tunnelIdType);
         assertEquals("Uri", tunnelIdType.simpleName());
