@@ -52,7 +52,7 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
 
     @Override
     FeatureArchetype createTypeImpl() {
-        return new FeatureArchetype(typeName(), statement());
+        return FeatureArchetype.of(typeName(), statement());
     }
 
     @Override

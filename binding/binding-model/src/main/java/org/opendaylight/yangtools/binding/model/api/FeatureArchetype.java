@@ -7,34 +7,21 @@
  */
 package org.opendaylight.yangtools.binding.model.api;
 
-import static java.util.Objects.requireNonNull;
-
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 
 /**
  * An {@link Archetype} for a {@link YangFeature} generated for a {@link FeatureEffectiveStatement}.
  *
- * @param name this type's {@link JavaTypeName}}
- * @param statement the {@link FeatureEffectiveStatement}
  * @since 16.0.0
  */
 @NonNullByDefault
-public record FeatureArchetype(JavaTypeName name, FeatureEffectiveStatement statement) implements Archetype {
-    public FeatureArchetype {
-        requireNonNull(name);
-        requireNonNull(statement);
-    }
-
+public sealed interface FeatureArchetype extends Archetype permits FeatureArchetypeImpl {
     @Override
-    public int hashCode() {
-        return TypeMethods.hashCode(this);
-    }
+    FeatureEffectiveStatement statement();
 
-    @Override
-    public boolean equals(final @Nullable Object obj) {
-        return TypeMethods.equals(this, obj);
+    static FeatureArchetype of(final JavaTypeName name, final FeatureEffectiveStatement statement) {
+        return new FeatureArchetypeImpl(name, statement);
     }
 }
