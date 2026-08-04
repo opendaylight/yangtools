@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -16,6 +14,7 @@ import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyedListNotificationArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -32,9 +31,9 @@ final class KeyedListNotificationTemplate extends AugmentableTemplate<KeyedListN
     private final JavaTypeName keyName;
 
     KeyedListNotificationTemplate(final DataRootArchetype root, final KeyedListNotificationArchetype archetype,
-            final JavaTypeName keyName) {
+            final KeyArchetype key) {
         super(root, archetype);
-        this.keyName = requireNonNull(keyName);
+        keyName = key.name();
     }
 
     @Override

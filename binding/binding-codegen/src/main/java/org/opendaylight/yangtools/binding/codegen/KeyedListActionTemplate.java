@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.LISTENABLE_FUTURE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.RPC_RESULT;
@@ -17,6 +16,7 @@ import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.KeyedListAction;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyedListActionArchetype;
 
 /**
@@ -30,9 +30,9 @@ final class KeyedListActionTemplate extends ArchetypeTemplate<KeyedListActionArc
     private final JavaTypeName keyName;
 
     KeyedListActionTemplate(final DataRootArchetype root, final KeyedListActionArchetype archetype,
-            final JavaTypeName keyName) {
+            final KeyArchetype key) {
         super(GeneratedClass.of(archetype), archetype, root);
-        this.keyName = requireNonNull(keyName);
+        keyName = key.name();
     }
 
     @Override

@@ -72,9 +72,9 @@ final class BindingJavaFileGenerator {
     private void generateFiles(final List<Archetype> types) {
         // First pass: catch all
         //   - DataRootArchetypes, as they provide ModuleEffectiveStatement for other templates to use
-        //   - EntryObjectArchetypes, as they provide KeyArchetype binding
+        //   - KeyArchetype, as they provide KeyArchetype binding
         final var modules = new HashMap<String, @Nullable DataRootArchetype>();
-        final var entryToKey = new HashMap<JavaTypeName, JavaTypeName>();
+        final var entryToKey = new HashMap<JavaTypeName, KeyArchetype>();
         for (var type : types) {
             switch (type) {
                 case DataRootArchetype archetype -> {
@@ -85,13 +85,12 @@ final class BindingJavaFileGenerator {
                             "Duplicate package " + rootPackage + " between " + archetype + " and " + prev);
                     }
                 }
-                case EntryObjectArchetype archetype -> {
-                    final var entryName = archetype.name();
-                    final var keyName = archetype.key().name();
-                    final var prev = entryToKey.putIfAbsent(entryName, keyName);
+                case KeyArchetype archetype -> {
+                    final var entryName = archetype.entryObject().name();
+                    final var prev = entryToKey.putIfAbsent(entryName, archetype);
                     if (prev != null) {
                         throw new VerifyException(
-                            "Conflicing EntryObjectArchetype" + entryName + " keys " + keyName + " and " + prev);
+                            "Conflicing KeyArchetype" + entryName + " keys " + entryName + " and " + prev);
                     }
                 }
                 default -> {
@@ -116,7 +115,8 @@ final class BindingJavaFileGenerator {
                 case ChoiceInArchetype archetype -> new ChoiceInTemplate(root, archetype);
                 case ContainerObjectArchetype archetype -> new ContainerObjectTemplate(root, archetype);
                 case DataRootArchetype archetype -> DataRootTemplate.of(root, archetype);
-                case EntryObjectArchetype archetype -> new EntryObjectTemplate(root, archetype);
+                case EntryObjectArchetype archetype ->
+                    new EntryObjectTemplate(root, archetype, entryToKey.get(archetype.name()));
                 case EnumTypeObjectArchetype archetype -> EnumTypeObjectTemplate.of(root, archetype);
                 case FeatureArchetype archetype -> new FeatureTemplate(root, archetype);
                 case GroupingArchetype archetype -> new GroupingTemplate(root, archetype);

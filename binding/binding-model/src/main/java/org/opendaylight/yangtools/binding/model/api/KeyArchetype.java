@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 public record KeyArchetype(
         JavaTypeName name,
         KeyEffectiveStatement statement,
-        JavaTypeName entryObject,
+        EntryObjectArchetype entryObject,
         List<Type> fields) implements Archetype {
     public KeyArchetype {
         requireNonNull(name);

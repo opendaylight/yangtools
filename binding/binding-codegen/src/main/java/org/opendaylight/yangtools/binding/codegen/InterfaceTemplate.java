@@ -75,7 +75,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         this.augmentable = augmentable;
     }
 
-    private @NonNull TypeAnalysis typeAnalysis() {
+    final @NonNull TypeAnalysis typeAnalysis() {
         final var existing = typeAnalysis;
         return existing != null ? existing : loadTypeAnalysis();
     }

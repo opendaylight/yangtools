@@ -15,11 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -59,8 +57,7 @@ class PresenceContainerTest {
         final var parentName = JavaTypeName.create("foo", "parent");
         final var keyName = JavaTypeName.create("foo", "key");
         final var listName = JavaTypeName.create("foo", "list");
-        final var archetype = EntryObjectArchetype.of(listName, userList, parentName,
-            new KeyArchetype(keyName, key, listName, List.of(ConcreteType.ofClass(String.class))), List.of(), List.of(),
+        final var archetype = EntryObjectArchetype.of(listName, userList, parentName, keyName, List.of(), List.of(),
             List.of());
 
         assertFalse(BuilderTemplate.isNonPresenceContainer(archetype));
