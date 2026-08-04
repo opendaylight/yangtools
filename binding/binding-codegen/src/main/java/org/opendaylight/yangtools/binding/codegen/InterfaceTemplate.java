@@ -53,7 +53,11 @@ import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
  * Base class for code generators based on {@link DataContainerArchetype}.
@@ -227,6 +231,53 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         while (true) {
             final var method = it.next();
             final BlockBuilder blk;
+
+            // FIXME: refactor this:
+            // - generate getter while looking at the statement and:
+            //   - if it is a list or a non-presence container
+            //     - generate the getFoo as NULLIFY_EMPTY
+            //     - generate a nonnullFoo returning empty for non-existent
+            //   - if it is a leaf or leaf-list:
+            //     - generate a requireFoo
+            final var methodName = method.name();
+
+            // ignore methods
+            if (!isGetterMethodName(methodName)) {
+                if (it.hasNext()) {
+                    continue;
+                }
+                break;
+            }
+
+            switch (method.statement()) {
+                case ContainerEffectiveStatement stmt -> {
+                    if (stmt.presenceStatement() == null) {
+                        //     - generate the getFoo as NULLIFY_EMPTY
+                        //     - generate a nonnullFoo returning empty for non-existent
+                    } else {
+                        // FIXME: regular getter
+                    }
+                }
+                case ListEffectiveStatement stmt -> {
+                    //     - generate the getFoo as NULLIFY_EMPTY
+                    //     - generate a nonnullFoo returning empty for non-existen
+
+                }
+                case LeafEffectiveStatement stmt -> {
+                    // FIXME: regular getter
+                    // FIXME: require
+
+                }
+                case LeafListEffectiveStatement stmt -> {
+                    // FIXME: regular getter
+                    // FIXME: require
+                }
+                default -> {
+                    // FIXME: regular getter
+                }
+            }
+
+
             if (method.isDefault()) {
                 blk = generateDefaultMethod(method);
             } else if (isGetterMethodName(method.name())) {
