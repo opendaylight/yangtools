@@ -8,22 +8,9 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.NSEE;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.VOID;
-import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX;
-import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForNonnull;
-import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForRequire;
-import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
-import static org.opendaylight.yangtools.binding.contract.Naming.isNonnullMethodName;
-import static org.opendaylight.yangtools.binding.contract.Naming.isRequireMethodName;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.VerifyException;
 import java.util.Iterator;
-import java.util.Locale;
-import java.util.StringTokenizer;
-import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -32,18 +19,12 @@ import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
-import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 
 /**
  * Base class for code generators based on {@link DataContainerArchetype}.
@@ -52,8 +33,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatem
 abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetype> extends ArchetypeTemplate<T>
         permits AugmentableTemplate, AugmentationTemplate, DataRootTemplate, GroupingTemplate, NotificationBodyTemplate,
                 YangDataTemplate {
-    private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
-    private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
     private static final @NonNull ConcreteType JAVA_DATACONTAINER = ConcreteType.ofClass(JavaDataContainer.class);
 
     // TODO: this should be lazily instantiated  and refcounted as it can be quite large and assuming one-time
@@ -136,8 +115,12 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
             bb.frg(constants).newLine();
         }
 
+        final var methods = archetype.getMethodDefinitions();
+        if (!methods.isEmpty()) {
+            bb.frg(new DataContainerGetterMethods(this));
+        }
+
         return bb
-            .blk(generateMethods())
             .frg(contract.implementationIn(this))
             .cB();
     }
@@ -188,65 +171,6 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         };
     }
 
-    @Nullable BlockBuilder generateMethods() {
-        final var methods = archetype.getMethodDefinitions();
-        if (methods.isEmpty()) {
-            return null;
-        }
-
-        final var bb = newBlockBuilder();
-        final var it = methods.iterator();
-        while (true) {
-            final var method = it.next();
-            final BlockBuilder blk;
-            if (method.isDefault()) {
-                blk = generateDefaultMethod(method);
-            } else if (isGetterMethodName(method.name())) {
-                blk = generateAccessorMethod(method);
-            } else if (isNonnullMethodName(method.name())) {
-                blk = generateNonnullAccessorMethod(method);
-            } else {
-                blk = generateMethod(method);
-            }
-            bb.blk(blk);
-
-            if (!it.hasNext()) {
-                break;
-            }
-            bb.newLine();
-        }
-        return bb;
-    }
-
-    private @NonNull BlockBuilder generateMethod(final MethodSignature method) {
-        return newBlockBuilder()
-            .blk(generateJavadoc(method))
-            .blk(generateAnnotations(method))
-            .str(importedReturnType(method)).sp().str(method.name()).eol("();");
-    }
-
-    private static @Nullable BlockBuilder generateJavadoc(final MethodSignature method) {
-        final var optDescription = method.statement()
-            .findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class);
-        if (optDescription.isEmpty()) {
-            return null;
-        }
-
-        // FIXME: use a BlockBuilder
-        final var sb = new StringBuilder();
-        final var reference = optDescription.orElseThrow();
-        if (reference != null) {
-            sb.append(formatReference(reference).toRawString());
-        }
-        if (sb.isEmpty()) {
-            return null;
-        }
-
-        final var bb = Block.builder();
-        appendAsJavadoc(bb, sb.toString());
-        return bb;
-    }
-
     private @Nullable BlockBuilder generateAnnotations() {
         if (archetype.statement() instanceof DocumentedNode.WithStatus withStatus) {
             final var annotation = DeprecatedAnnotation.ofStatus(withStatus.getStatus());
@@ -255,214 +179,5 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
             }
         }
         return null;
-    }
-
-    private @Nullable BlockBuilder generateAnnotations(final MethodSignature method) {
-        final var annotations = method.annotations();
-        if (annotations.isEmpty()) {
-            return null;
-        }
-
-        final var bb = newBlockBuilder();
-        for (var annotation : annotations) {
-            bb.blk(generateAnnotation(annotation));
-        }
-        return bb;
-    }
-
-    private @Nullable BlockBuilder generateDefaultMethod(final MethodSignature method) {
-        final var methodName = method.name();
-        if (isNonnullMethodName(methodName)) {
-            return generateNonnullMethod(method);
-        }
-        if (isRequireMethodName(methodName)) {
-            return generateRequireMethod(method);
-        }
-        return VOID.equals(method.returnType().name()) ? generateNoopVoidInterfaceMethod(method) : null;
-    }
-
-    @NonNullByDefault
-    private BlockBuilder generateNonnullMethod(final MethodSignature method) {
-        final var ret = method.returnType();
-        final var name = method.name();
-
-        return newBlockBuilder()
-            .txt(accessorJavadoc(method, ", or an empty list if it is not present"))
-            .blk(generateAnnotations(method))
-            .str("default ").str(importedNonNull(ret)).sp().str(name).str("()").oB()
-                .str("return ").str(importedName(CODEHELPERS)).str(".nonnull(").str(getGetterMethodForNonnull(name))
-                    .eol("());")
-            .cB();
-    }
-
-    @NonNullByDefault
-    private BlockBuilder generateNoopVoidInterfaceMethod(final MethodSignature method) {
-        return newBlockBuilder()
-            .blk(generateJavadoc(method))
-            .blk(generateAnnotations(method))
-            .str("default ").str(importedName(VOID)).sp().str(method.name()).str("()").oB()
-                .eol("// No-op")
-            .cB();
-    }
-
-    @NonNullByDefault
-    private BlockBuilder generateRequireMethod(final MethodSignature method) {
-        final var name = method.name();
-
-        return newBlockBuilder()
-            .txt(accessorJavadoc(method, ", guaranteed to be non-null", NSEE))
-            .str("default ").str(importedNonNull(method.returnType())).sp().str(name).str("()").oB()
-                .str("return ").str(importedName(CODEHELPERS)).str(".require(").str(getGetterMethodForRequire(name))
-                    // FIXME: what exactly is this replace() doing?
-                    .str("(), ").jStr(name.toLowerCase(Locale.ROOT).replace(REQUIRE_PREFIX, "")).eol(");")
-            .cB();
-    }
-
-    @NonNullByDefault
-    private BlockBuilder generateAccessorMethod(final MethodSignature method) {
-        return newBlockBuilder()
-            .txt(accessorJavadoc(method, ", or {@code null} if it is not present"))
-            .blk(generateAccessorAnnotations(method))
-            .str(nullableType(method.returnType())).sp().str(method.name()).eol("();");
-    }
-
-    private @Nullable BlockBuilder generateAccessorAnnotations(final MethodSignature method) {
-        final var annotations = method.annotations();
-        if (annotations.isEmpty()) {
-            return null;
-        }
-
-        final var bb = newBlockBuilder();
-        for (var annotation : annotations) {
-            // FIXME: what is this check doing?
-            if (!BaseYangTypes.BOOLEAN_TYPE.equals(method.returnType())
-                || !(annotation instanceof OverrideAnnotation)) {
-                bb.blk(generateAnnotation(annotation));
-            }
-        }
-        return bb;
-    }
-
-    @NonNullByDefault
-    private BlockBuilder generateNonnullAccessorMethod(final MethodSignature method) {
-        return newBlockBuilder()
-            .txt(accessorJavadoc(method, ", or an empty instance if it is not present"))
-            .blk(generateAnnotations(method))
-            .str(importedNonNull(method.returnType())).sp().str(method.name()).eol("();");
-    }
-
-    // FIXME: return a Block
-    @NonNullByDefault
-    private String accessorJavadoc(final MethodSignature method, final String orString) {
-        return accessorJavadoc(method, orString, null);
-    }
-
-    // FIXME: return a Block
-    @NonNullByDefault
-    private String accessorJavadoc(final MethodSignature method, final String orString,
-            final @Nullable JavaTypeName exception) {
-        final var optDescription = method.statement()
-            .findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class);
-        if (optDescription.isEmpty()) {
-            return simpleAccessorJavadoc(method, orString, exception);
-        }
-
-        final var reference = optDescription.orElseThrow();
-        final var propName = propertyNameFromGetter(method);
-        final var bb = newBlockBuilder()
-            .str("Return ").str(propName).str(orString).eol(".")
-            .blk(formatReference(reference))
-            .nl()
-            .str("@return {@code ").str(importedReturnType(method)).str("} ").str(propName).str(orString).eol(".");
-        if (exception != null) {
-            bb.str("@throws ").str(importedName(exception)).str(" if ").str(propName).eol(" is not present");
-        }
-        return bb.toJavadocBlock();
-    }
-
-    // FIXME: return a Block
-    @NonNullByDefault
-    private String simpleAccessorJavadoc(final MethodSignature method, final String orString,
-            final @Nullable JavaTypeName exception) {
-        final var propName = propertyNameFromGetter(method);
-
-        final var bb = newBlockBuilder()
-            .str("{@return {@code ").str(importedReturnType(method)).str("} ").str(propName).str(orString).eol("}");
-        if (exception != null) {
-            bb.str("@throws ").str(importedName(exception)).str(" if ").str(propName).eol(" is not present");
-        }
-        return bb.toJavadocBlock();
-    }
-
-    @NonNullByDefault
-    private String nullableType(final Type type) {
-        if (isObject(type) && type instanceof ParameterizedType param
-            && (Types.isMapType(param) || Types.isListType(param) || Types.isSetType(param))) {
-            return importedNullable(type);
-        }
-        return importedName(type);
-    }
-
-    // The return type has a package, so it's not a primitive type
-    private static boolean isObject(final Type type) {
-        return !type.packageName().isEmpty();
-    }
-
-    @NonNullByDefault
-    private static BlockBuilder formatReference(final String reference) {
-        final var bb = Block.builder()
-            .txt("""
-                <pre>
-                    <code>
-                """);
-
-        // FIXME: use a {@code} block which will render some of this encoding superfluous, but it requires paying
-        //        attention to '}' pairing in input
-        var formattedText = DocUtils.encodeAngleBrackets(reference);
-        formattedText = WS_MATCHER.replaceFrom(JavaFileTemplate.encodeJavadocSymbols(formattedText), ' ');
-        formattedText = SPACES_PATTERN.matcher(formattedText).replaceAll(" ");
-
-        // FIXME: add state keeping so that we can append direcly to BlockBuilder
-        var sb = new StringBuilder();
-        var isFirstElementOnNewLineEmptyChar = false;
-
-        // FIXME: use indexOf(' ') instead of StringTokenizer
-        final var tokenizer = new StringTokenizer(formattedText, " ", true);
-        while (tokenizer.hasMoreTokens()) {
-            final var nextElement = tokenizer.nextToken();
-            final var lbLength = sb.length();
-
-            if (lbLength != 0 && lbLength + nextElement.length() > 80) {
-                final var limit = lbLength - 1;
-                if (sb.charAt(limit) == ' ') {
-                    sb.setLength(limit);
-                }
-                // FIXME: use append(CharSequence, int, int) instead
-                if (!sb.isEmpty() && sb.charAt(0) == ' ') {
-                    sb.deleteCharAt(0);
-                }
-                bb.str("        ").eol(sb.toString());
-                sb.setLength(0);
-
-                if (" ".equals(nextElement)) {
-                    isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
-                }
-            }
-            if (isFirstElementOnNewLineEmptyChar) {
-                isFirstElementOnNewLineEmptyChar = !isFirstElementOnNewLineEmptyChar;
-            } else {
-                sb.append(nextElement);
-            }
-        }
-        if (!sb.isEmpty()) {
-            bb.str("        ").eol(sb.toString());
-        }
-
-        return bb
-            .txt("""
-                    </code>
-                </pre>
-
-                """);
     }
 }
