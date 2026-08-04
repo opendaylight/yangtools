@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.IAE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NPE;
@@ -26,23 +25,15 @@ import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
  */
 @NonNullByDefault
 final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArchetype> {
-    record Builder(EnumTypeObjectArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public EnumTypeObjectTemplate build() {
-            return new EnumTypeObjectTemplate(GeneratedClass.of(type), type, root);
-        }
-    }
-
     private static final JavaTypeName ENUM_TYPE_OBJECT = JavaTypeName.create(EnumTypeObject.class);
 
     private EnumTypeObjectTemplate(final GeneratedClass javaType, final EnumTypeObjectArchetype archetype,
             final DataRootArchetype root) {
         super(javaType, archetype, root);
+    }
+
+    static EnumTypeObjectTemplate of(final DataRootArchetype root, final EnumTypeObjectArchetype archetype) {
+        return new EnumTypeObjectTemplate(GeneratedClass.of(archetype), archetype, root);
     }
 
     static BlockBuilder generateInner(final GeneratedClass javaType, final EnumTypeObjectArchetype archetype,

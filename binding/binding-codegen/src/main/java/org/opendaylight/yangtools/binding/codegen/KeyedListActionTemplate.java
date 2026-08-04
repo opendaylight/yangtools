@@ -24,28 +24,12 @@ import org.opendaylight.yangtools.binding.model.api.KeyedListActionArchetype;
  */
 @NonNullByDefault
 final class KeyedListActionTemplate extends ArchetypeTemplate<KeyedListActionArchetype> {
-    record Builder(
-            KeyedListActionArchetype type,
-            DataRootArchetype root,
-            JavaTypeName keyName) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-            requireNonNull(keyName);
-        }
-
-        @Override
-        public KeyedListActionTemplate build() {
-            return new KeyedListActionTemplate(type, root, keyName);
-        }
-    }
-
     private static final JavaTypeName KEYED_LIST_ACTION = JavaTypeName.create(KeyedListAction.class);
     private static final JavaTypeName WITH_KEY = JavaTypeName.create(DataObjectIdentifier.WithKey.class);
 
     private final JavaTypeName keyName;
 
-    private KeyedListActionTemplate(final KeyedListActionArchetype archetype, final DataRootArchetype root,
+    KeyedListActionTemplate(final DataRootArchetype root, final KeyedListActionArchetype archetype,
             final JavaTypeName keyName) {
         super(GeneratedClass.of(archetype), archetype, root);
         this.keyName = requireNonNull(keyName);

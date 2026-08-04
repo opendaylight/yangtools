@@ -63,28 +63,17 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
  * Template for generating JAVA builder classes.
  */
 final class BuilderTemplate extends BaseTemplate {
+    /**
+     * A template for the target built by a {@link BuilderTemplate}.
+     */
     @NonNullByDefault
-    record Builder(DataContainerArchetype type) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-        }
-
-        @Override
-        public BuilderTemplate build() {
-            final var targetName = type.name();
-            final var simpleName = targetName.simpleName();
-            final var builderName = targetName.createSibling(simpleName + Naming.BUILDER_SUFFIX);
-            final var implName = simpleName + "Impl";
-            final var javaType = GeneratedClass.of(builderName, implName, type);
-            final var analysis = TypeAnalysis.of(type);
-
-            // FIXME: there are three cases here:
-            //        - non-augmentable
-            //        - augmentable
-            //        - entry object (implies augmentable)
-            //        we should have three separate classes instead of @Nullable fields for the latter two cases
-            return new BuilderTemplate(javaType, javaType.getNestedClass(implName), type, analysis.properties());
-        }
+    sealed interface TargetTemplate permits AugmentationTemplate, CaseObjectTemplate, ContainerObjectTemplate,
+            EntryObjectTemplate, InstanceNotificationTemplate, ItemObjectTemplate, KeyedListNotificationTemplate,
+            NotificationTemplate, RpcInputTemplate, RpcOutputTemplate, YangDataTemplate {
+        /**
+         * {@return the archetype of the interface builder targets}
+         */
+        DataContainerArchetype builderTarget();
     }
 
     /**
@@ -113,6 +102,24 @@ final class BuilderTemplate extends BaseTemplate {
         this.implJavaType = requireNonNull(implJavaType);
         this.targetType = requireNonNull(targetType);
         this.properties = requireNonNull(properties);
+    }
+
+    @NonNullByDefault
+    static BuilderTemplate of(final TargetTemplate target) {
+        final var type = target.builderTarget();
+        final var targetName = type.name();
+        final var simpleName = targetName.simpleName();
+        final var builderName = targetName.createSibling(simpleName + Naming.BUILDER_SUFFIX);
+        final var implName = simpleName + "Impl";
+        final var javaType = GeneratedClass.of(builderName, implName, type);
+        final var analysis = TypeAnalysis.of(type);
+
+        // FIXME: there are three cases here:
+        //        - non-augmentable
+        //        - augmentable
+        //        - entry object (implies augmentable)
+        //        we should have three separate classes instead of @Nullable fields for the latter two cases
+        return new BuilderTemplate(javaType, javaType.getNestedClass(implName), type, analysis.properties());
     }
 
     private @NonNull String simpleName() {

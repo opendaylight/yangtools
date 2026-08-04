@@ -25,8 +25,8 @@ abstract sealed class AugmentableTemplate<T extends AugmentableArchetype> extend
                 NotificationTemplate, RpcInputTemplate, RpcOutputTemplate {
     static final ConcreteType AUGMENTABLE = ConcreteType.ofClass(Augmentable.class);
 
-    AugmentableTemplate(final T archetype, final DataRootArchetype root) {
-        super(archetype, root, DataContainerContract.JAVA, true);
+    AugmentableTemplate(final DataRootArchetype root, final T archetype) {
+        super(root, archetype, DataContainerContract.JAVA, true);
     }
 
     final Type extendsAugmentable() {

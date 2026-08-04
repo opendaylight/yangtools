@@ -7,11 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -25,28 +22,16 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
  * Template for a {@link InstanceNotificationArchetype}.
  */
 @NonNullByDefault
-final class InstanceNotificationTemplate extends AugmentableTemplate<InstanceNotificationArchetype> {
-    record Builder(InstanceNotificationArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public InstanceNotificationTemplate build() {
-            return new InstanceNotificationTemplate(type, root);
-        }
-    }
-
+final class InstanceNotificationTemplate extends AugmentableTemplate<InstanceNotificationArchetype>
+        implements BuilderTemplate.TargetTemplate {
     private static final ConcreteType INSTANCE_NOTIFICATION = ConcreteType.ofClass(InstanceNotification.class);
 
-    private InstanceNotificationTemplate(final InstanceNotificationArchetype archetype,
-            final DataRootArchetype root) {
-        super(archetype, root);
+    InstanceNotificationTemplate(final DataRootArchetype root, final InstanceNotificationArchetype archetype) {
+        super(root, archetype);
     }
 
     @Override
-    @NonNull InstanceNotificationArchetype builderTarget() {
+    public InstanceNotificationArchetype builderTarget() {
         return archetype;
     }
 

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
-
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.OpaqueObject;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -20,22 +18,10 @@ import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
  */
 @NonNullByDefault
 final class OpaqueObjectTemplate extends ArchetypeTemplate<OpaqueObjectArchetype<?>> {
-    record Builder(OpaqueObjectArchetype<?> type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public OpaqueObjectTemplate build() {
-            return new OpaqueObjectTemplate(type, root);
-        }
-    }
-
     private static final JavaTypeName OPAQUE_OBJECT = JavaTypeName.create(OpaqueObject.class);
 
-    private OpaqueObjectTemplate(final OpaqueObjectArchetype<?> archetype, final DataRootArchetype root) {
-        super(GeneratedClass.of(archetype), archetype, root);
+    OpaqueObjectTemplate(final DataRootArchetype root, final OpaqueObjectArchetype<?> archetype) {
+        super(root, archetype);
     }
 
     @Override

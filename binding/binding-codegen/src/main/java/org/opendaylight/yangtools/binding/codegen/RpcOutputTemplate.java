@@ -7,11 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -23,27 +20,16 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * Template for {@link RpcOutput} specializations.
  */
 @NonNullByDefault
-final class RpcOutputTemplate extends AugmentableTemplate<RpcOutputArchetype> {
-    record Builder(RpcOutputArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public RpcOutputTemplate build() {
-            return new RpcOutputTemplate(type, root);
-        }
-    }
-
+final class RpcOutputTemplate extends AugmentableTemplate<RpcOutputArchetype>
+        implements BuilderTemplate.TargetTemplate {
     private static final ConcreteType RPC_OUTPUT = ConcreteType.ofClass(RpcOutput.class);
 
-    private RpcOutputTemplate(final RpcOutputArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root);
+    RpcOutputTemplate(final DataRootArchetype root, final RpcOutputArchetype archetype) {
+        super(root, archetype);
     }
 
     @Override
-    @NonNull RpcOutputArchetype builderTarget() {
+    public RpcOutputArchetype builderTarget() {
         return archetype;
     }
 

@@ -11,8 +11,8 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.HashBasedTable;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.ActionArchetype;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
@@ -74,17 +73,16 @@ final class BindingJavaFileGenerator {
         // First pass: catch all
         //   - DataRootArchetypes, as they provide ModuleEffectiveStatement for other templates to use
         //   - EntryObjectArchetypes, as they provide KeyArchetype binding
-        final var modules = new HashMap<String, DataRootTemplate.Builder>();
+        final var modules = new HashMap<String, @Nullable DataRootArchetype>();
         final var entryToKey = new HashMap<JavaTypeName, JavaTypeName>();
         for (var type : types) {
             switch (type) {
                 case DataRootArchetype archetype -> {
-                    final var builder = new DataRootTemplate.Builder(archetype);
                     final var rootPackage = archetype.name().packageName();
-                    final var prev = modules.putIfAbsent(rootPackage, builder);
+                    final var prev = modules.putIfAbsent(rootPackage, archetype);
                     if (prev != null) {
                         throw new VerifyException(
-                            "Duplicate package " + rootPackage + " between " + archetype + " and " + prev.type());
+                            "Duplicate package " + rootPackage + " between " + archetype + " and " + prev);
                     }
                 }
                 case EntryObjectArchetype archetype -> {
@@ -105,86 +103,47 @@ final class BindingJavaFileGenerator {
         // second pass: process all other types
         for (var type : types) {
             final var rootPackage = Naming.getModelRootPackageName(type.packageName());
-            final var rootBuilder = modules.get(rootPackage);
-            if (rootBuilder == null) {
-                throw new VerifyException("No DataRootTemplate for " + rootPackage);
+            final var root = modules.get(rootPackage);
+            if (root == null) {
+                throw new VerifyException("No DataRootArchetype for " + rootPackage);
             }
 
-            final var root = rootBuilder.type();
-            switch (type) {
-                case DataRootArchetype archetype -> {
-                    // processed separately
-                }
-
-                // TypeObject specializations
-                case BitsTypeObjectArchetype btao -> generateFile(new BitsTypeObjectTemplate.Builder(btao, root));
-                case EnumTypeObjectArchetype etao -> generateFile(new EnumTypeObjectTemplate.Builder(etao, root));
-                case ScalarTypeObjectArchetype stao -> generateFile(new ScalarTypeObjectTemplate.Builder(stao, root));
-                case UnionTypeObjectArchetype utao -> generateFile(new UnionTypeObjectTemplate.Builder(utao, root));
-
-                // everything else
-                case ActionArchetype archetype -> generateFile(new ActionTemplate.Builder(archetype, root));
-                case AugmentationArchetype archetype ->
-                    generateBoth(AugmentationTemplate.Builder::new, archetype, root);
-                case CaseObjectArchetype archetype -> generateBoth(CaseObjectTemplate.Builder::new, archetype, root);
-                case ChoiceInArchetype archetype -> generateFile(new ChoiceInTemplate.Builder(archetype, root));
-                case ContainerObjectArchetype archetype ->
-                    generateBoth(ContainerObjectTemplate.Builder::new, archetype, root);
-                case EntryObjectArchetype archetype -> generateBoth(EntryObjectTemplate.Builder::new, archetype, root);
-                case FeatureArchetype archetype -> generateFile(new FeatureTemplate.Builder(archetype, root));
-                case GroupingArchetype archetype -> generateFile(new GroupingTemplate.Builder(archetype, root));
-                case IdentityArchetype archetype -> generateFile(new IdentityTemplate.Builder(archetype, root));
-                case InstanceNotificationArchetype archetype ->
-                    generateBoth(InstanceNotificationTemplate.Builder::new, archetype, root);
-                case ItemObjectArchetype archetype -> generateBoth(ItemObjectTemplate.Builder::new, archetype, root);
-                case KeyArchetype archetype -> generateFile(new KeyTemplate.Builder(archetype, root));
+            final var template = switch (type) {
+                case ActionArchetype archetype -> new ActionTemplate(root, archetype);
+                case AugmentationArchetype archetype -> new AugmentationTemplate(root, archetype);
+                case BitsTypeObjectArchetype archetype -> BitsTypeObjectTemplate.of(root, archetype);
+                case CaseObjectArchetype archetype -> new CaseObjectTemplate(root, archetype);
+                case ChoiceInArchetype archetype -> new ChoiceInTemplate(root, archetype);
+                case ContainerObjectArchetype archetype -> new ContainerObjectTemplate(root, archetype);
+                case DataRootArchetype archetype -> DataRootTemplate.of(root, archetype);
+                case EntryObjectArchetype archetype -> new EntryObjectTemplate(root, archetype);
+                case EnumTypeObjectArchetype archetype -> EnumTypeObjectTemplate.of(root, archetype);
+                case FeatureArchetype archetype -> new FeatureTemplate(root, archetype);
+                case GroupingArchetype archetype -> new GroupingTemplate(root, archetype);
+                case IdentityArchetype archetype -> new IdentityTemplate(root, archetype);
+                case InstanceNotificationArchetype archetype -> new InstanceNotificationTemplate(root, archetype);
+                case ItemObjectArchetype archetype -> new ItemObjectTemplate(root, archetype);
+                case KeyArchetype archetype -> new KeyTemplate(root, archetype);
                 case KeyedListActionArchetype archetype ->
-                    generateFile(new KeyedListActionTemplate.Builder(archetype, root,
-                        entryToKey.get(archetype.parentName())));
+                    new KeyedListActionTemplate(root, archetype, entryToKey.get(archetype.parentName()));
                 case KeyedListNotificationArchetype archetype ->
-                    generateBoth(new KeyedListNotificationTemplate.Builder(archetype, root,
-                        entryToKey.get(archetype.parentName())).build(), root);
-                case NotificationArchetype archetype ->
-                    generateBoth(NotificationTemplate.Builder::new, archetype, root);
-                case NotificationBodyArchetype archetype ->
-                    generateFile(new NotificationBodyTemplate.Builder(archetype, root));
-                case OpaqueObjectArchetype<?> archetype ->
-                    generateFile(new OpaqueObjectTemplate.Builder(archetype, root));
-                case RpcArchetype archetype -> generateFile(new RpcTemplate.Builder(archetype, root));
-                case RpcInputArchetype archetype -> generateBoth(RpcInputTemplate.Builder::new, archetype, root);
-                case RpcOutputArchetype archetype -> generateBoth(RpcOutputTemplate.Builder::new, archetype, root);
-                case YangDataArchetype archetype -> generateBoth(YangDataTemplate.Builder::new, archetype, root);
+                    new KeyedListNotificationTemplate(root, archetype, entryToKey.get(archetype.parentName()));
+                case NotificationArchetype archetype -> new NotificationTemplate(root, archetype);
+                case NotificationBodyArchetype archetype -> new NotificationBodyTemplate(root, archetype);
+                case OpaqueObjectArchetype<?> archetype -> new OpaqueObjectTemplate(root, archetype);
+                case RpcArchetype archetype -> new RpcTemplate(root, archetype);
+                case RpcInputArchetype archetype -> new RpcInputTemplate(root, archetype);
+                case RpcOutputArchetype archetype -> new RpcOutputTemplate(root, archetype);
+                case ScalarTypeObjectArchetype archetype -> ScalarTypeObjectTemplate.of(root, archetype);
+                case UnionTypeObjectArchetype archetype -> UnionTypeObjectTemplate.of(root, archetype);
+                case YangDataArchetype archetype -> new YangDataTemplate(root, archetype);
+            };
+
+            generateFile(template);
+            if (template instanceof BuilderTemplate.TargetTemplate target) {
+                generateFile(BuilderTemplate.of(target));
             }
         }
-
-        // third pass: process DataRootTemplates last
-        for (var module : modules.values()) {
-            generateFile(module);
-        }
-    }
-
-    private <A extends DataContainerArchetype> void generateBoth(
-            final BiFunction<A, DataRootArchetype, Template.Builder> builderConstructor,
-            final A archetype, final DataRootArchetype root) {
-        final var template = builderConstructor.apply(archetype, root).build();
-        if (!(template instanceof InterfaceTemplate ifaceTemplate)) {
-            throw new VerifyException("Unexpected template " + template);
-        }
-        generateBoth(ifaceTemplate, root);
-    }
-
-    private <A extends DataContainerArchetype> void generateBoth(final InterfaceTemplate<?> template,
-            final DataRootArchetype root) {
-        final var builderTarget = template.builderTarget();
-        if (builderTarget == null) {
-            throw new VerifyException("Unneeded builder for " + template);
-        }
-        generateFile(new BuilderTemplate.Builder(builderTarget));
-        generateFile(template);
-    }
-
-    private void generateFile(final Template.Builder builder) {
-        generateFile(builder.build());
     }
 
     private void generateFile(final Template template) {

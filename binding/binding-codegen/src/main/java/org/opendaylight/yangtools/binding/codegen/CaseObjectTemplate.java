@@ -7,11 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -22,25 +19,14 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
  * Template for a (non-existing) {@code CaseObject}.
  */
 @NonNullByDefault
-final class CaseObjectTemplate extends AugmentableTemplate<CaseObjectArchetype> {
-    record Builder(CaseObjectArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public CaseObjectTemplate build() {
-            return new CaseObjectTemplate(type, root);
-        }
-    }
-
-    private CaseObjectTemplate(final CaseObjectArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root);
+final class CaseObjectTemplate extends AugmentableTemplate<CaseObjectArchetype>
+        implements BuilderTemplate.TargetTemplate {
+    CaseObjectTemplate(final DataRootArchetype root, final CaseObjectArchetype archetype) {
+        super(root, archetype);
     }
 
     @Override
-    @NonNull CaseObjectArchetype builderTarget() {
+    public CaseObjectArchetype builderTarget() {
         return archetype;
     }
 

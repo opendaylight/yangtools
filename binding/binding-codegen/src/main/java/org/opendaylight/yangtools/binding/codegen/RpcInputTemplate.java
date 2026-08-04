@@ -7,11 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -23,27 +20,15 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * Template for {@link RpcInput} specializations.
  */
 @NonNullByDefault
-final class RpcInputTemplate extends AugmentableTemplate<RpcInputArchetype> {
-    record Builder(RpcInputArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public RpcInputTemplate build() {
-            return new RpcInputTemplate(type, root);
-        }
-    }
-
+final class RpcInputTemplate extends AugmentableTemplate<RpcInputArchetype> implements BuilderTemplate.TargetTemplate {
     private static final ConcreteType RPC_INPUT = ConcreteType.ofClass(RpcInput.class);
 
-    private RpcInputTemplate(final RpcInputArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root);
+    RpcInputTemplate(final DataRootArchetype root, final RpcInputArchetype archetype) {
+        super(root, archetype);
     }
 
     @Override
-    @NonNull RpcInputArchetype builderTarget() {
+    public RpcInputArchetype builderTarget() {
         return archetype;
     }
 

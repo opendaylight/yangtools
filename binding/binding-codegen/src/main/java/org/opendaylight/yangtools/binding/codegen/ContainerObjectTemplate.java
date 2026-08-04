@@ -7,11 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
@@ -22,25 +19,14 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * Template for a {@link ChildOf} interface.
  */
 @NonNullByDefault
-final class ContainerObjectTemplate extends ChildOfTemplate<ContainerObjectArchetype> {
-    record Builder(ContainerObjectArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public ContainerObjectTemplate build() {
-            return new ContainerObjectTemplate(type, root);
-        }
-    }
-
-    private ContainerObjectTemplate(final ContainerObjectArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root);
+final class ContainerObjectTemplate extends ChildOfTemplate<ContainerObjectArchetype>
+        implements BuilderTemplate.TargetTemplate {
+    ContainerObjectTemplate(final DataRootArchetype root, final ContainerObjectArchetype archetype) {
+        super(root, archetype);
     }
 
     @Override
-    @NonNull ContainerObjectArchetype builderTarget() {
+    public ContainerObjectArchetype builderTarget() {
         return archetype;
     }
 

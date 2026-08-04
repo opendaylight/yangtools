@@ -7,12 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -24,27 +21,10 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  */
 @NonNullByDefault
 final class GroupingTemplate extends InterfaceTemplate<GroupingArchetype> {
-    record Builder(GroupingArchetype type, DataRootArchetype root) implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public GroupingTemplate build() {
-            return new GroupingTemplate(type, root);
-        }
-    }
-
     private static final ConcreteType GROUPING = ConcreteType.ofClass(Grouping.class);
 
-    private GroupingTemplate(final GroupingArchetype archetype, final DataRootArchetype root) {
-        super(archetype, root, DataContainerContract.NONE, false);
-    }
-
-    @Override
-    @Nullable GroupingArchetype builderTarget() {
-        return null;
+    GroupingTemplate(final DataRootArchetype root, final GroupingArchetype archetype) {
+        super(root, archetype, DataContainerContract.NONE, false);
     }
 
     @Override

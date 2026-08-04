@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.LISTENABLE_FUTURE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.RPC_RESULT;
@@ -24,24 +23,11 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
  */
 @NonNullByDefault
 final class ActionTemplate extends ArchetypeTemplate<ActionArchetype> {
-    record Builder(ActionArchetype type, DataRootArchetype root)
-            implements Template.Builder {
-        Builder {
-            requireNonNull(type);
-            requireNonNull(root);
-        }
-
-        @Override
-        public ActionTemplate build() {
-            return new ActionTemplate(type, root);
-        }
-    }
-
     private static final JavaTypeName ACTION = JavaTypeName.create(Action.class);
     private static final JavaTypeName DATA_OBJECT_IDENTIFIER = JavaTypeName.create(DataObjectIdentifier.class);
 
-    private ActionTemplate(final ActionArchetype archetype, final DataRootArchetype root) {
-        super(GeneratedClass.of(archetype), archetype, root);
+    ActionTemplate(final DataRootArchetype root, final ActionArchetype archetype) {
+        super(root, archetype);
     }
 
     @Override
