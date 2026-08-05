@@ -69,11 +69,7 @@ enum DataContainerContract {
                 .nl()
                 .frg(new ImplementedInterfaceMethod.Canonical(template))
                 .nl()
-                .blk(template.generateBindingHashCode())
-                .nl()
-                .blk(template.generateBindingEquals())
-                .nl()
-                .blk(template.generateBindingToString());
+                .frg(new JavaDataContainerMethods(template.javaType(), template.getters, template.augmentable));
         }
     };
 
