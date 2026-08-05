@@ -110,7 +110,8 @@ final class BuilderTemplate extends BaseTemplate {
         this.implJavaType = requireNonNull(implJavaType);
         this.targetTemplate = requireNonNull(targetTemplate);
         targetType = targetTemplate.builderTarget();
-        properties = targetTemplate.self().typeAnalysis().properties();
+        // FIXME: use targetTemplate.self().getters instead
+        properties = TypeAnalysis.of(targetType).properties();
     }
 
     @NonNullByDefault
