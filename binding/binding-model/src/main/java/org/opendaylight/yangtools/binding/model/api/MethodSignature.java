@@ -19,6 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 /**
  * The Method Signature interface contains simplified meta model for Java interface method definition. Each method MUST
@@ -30,21 +31,17 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
     /**
      * {@return the {@link EffectiveStatement} which led to this method}
      */
-    // FIXME: sharpen to SchemaTreeEffectiveStatement
     // TODO: this is separate from returnType construct, but in some cases they overlap, like in:
     //         container foo {
     //           container bar;    <-- generates getBar() with ContainerObjectArchetype which has the same statement
     //         }
-    @NonNull EffectiveStatement<?, ?> statement();
+    @NonNull SchemaTreeEffectiveStatement<?> statement();
 
     /**
      * {@return the method name}
      */
-    // TODO: Investigate the relationship with statement once we remove ValueMechanics, as then we can generate
-    //       nonNullFoo/requireFoo from getter name -- and getterName is always derived from
-    //       Naming.getGetterMethodName(QName).
-    //
-    //       That may be a bug in the implementation not handling conflicts like:
+    // TODO: Naming.getGetterMethodName(QName) is now always used, but probably should not, as we cannot handle weird
+    //       conflicts like:
     //         container foo {
     //           leaf bar { type string; }
     //           leaf Bar { type uint64; }
@@ -57,7 +54,9 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
     //       Anyway, our ability to deal with these kinds of problems is vastly improved with the introduction of
     //       DataContainerArchetype and we should be doing our level best to make things work even in face of such
     //       challenging models.
-    @NonNull String name();
+    default @NonNull String name() {
+        return Naming.getGetterMethodName(statement().argument());
+    }
 
     /**
      * {@return the method return type}
@@ -71,30 +70,21 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
     @NonNullByDefault
     List<AttachedAnnotation.ToMethod> annotations();
 
-    // FIXME: require QName-based statement
     @NonNullByDefault
-    static MethodSignature of(final EffectiveStatement<?, ?> statement, final String name, final Type returnType) {
-        return new MethodSignature0(statement, checkName(name), returnType);
+    static MethodSignature of(final SchemaTreeEffectiveStatement<?> statement, final Type returnType) {
+        return new MethodSignature0(statement, returnType);
     }
 
     @NonNullByDefault
-    static MethodSignature of(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
+    static MethodSignature of(final SchemaTreeEffectiveStatement<?> statement, final Type returnType,
             final AttachedAnnotation.ToMethod annotation) {
-        return new MethodSignature1(statement, checkName(name), returnType, annotation);
+        return new MethodSignature1(statement, returnType, annotation);
     }
 
     @Beta
     @NonNullByDefault
-    static Builder builder(final EffectiveStatement<?, ?> statement, final String name, final Type returnType) {
-        return new Builder(statement, checkName(name), returnType);
-    }
-
-    @NonNullByDefault
-    private static String checkName(final String name) {
-        if (!Naming.isGetterMethodName(name)) {
-            throw new IllegalArgumentException("invalid getter name '" + name + "'");
-        }
-        return name;
+    static Builder builder(final SchemaTreeEffectiveStatement<?> statement, final Type returnType) {
+        return new Builder(statement, returnType);
     }
 
     /**
@@ -105,16 +95,14 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
      */
     @Beta
     final class Builder {
-        private final @NonNull EffectiveStatement<?, ?> statement;
-        private final @NonNull String name;
+        private final @NonNull SchemaTreeEffectiveStatement<?> statement;
         private final @NonNull Type returnType;
 
         private @Nullable ArrayList<AttachedAnnotation.@NonNull ToMethod> annotations = null;
 
         @NonNullByDefault
-        Builder(final EffectiveStatement<?, ?> statement, final String name, final Type returnType) {
+        Builder(final SchemaTreeEffectiveStatement<?> statement, final Type returnType) {
             this.statement = requireNonNull(statement);
-            this.name = requireNonNull(name);
             this.returnType = requireNonNull(returnType);
         }
 
@@ -166,10 +154,10 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
         public MethodSignature build() {
             final var local = annotations;
             if (local == null) {
-                return new MethodSignature0(statement, name, returnType);
+                return new MethodSignature0(statement, returnType);
             }
-            return local.size() == 1 ? new MethodSignature1(statement, name, returnType, local.getFirst())
-                : new MethodSignatureN(statement, name, returnType, List.copyOf(local));
+            return local.size() == 1 ? new MethodSignature1(statement, returnType, local.getFirst())
+                : new MethodSignatureN(statement, returnType, List.copyOf(local));
         }
     }
 }
