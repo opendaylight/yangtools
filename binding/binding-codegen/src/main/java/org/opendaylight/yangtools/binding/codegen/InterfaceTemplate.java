@@ -62,10 +62,10 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
     private static final @NonNull ConcreteType JAVA_DATACONTAINER = ConcreteType.ofClass(JavaDataContainer.class);
 
+    final @NonNull DataContainerGetters getters;
+
     private final @NonNull DataContainerContract contract;
     private final boolean augmentable;
-
-    private @Nullable TypeAnalysis typeAnalysis;
 
     @NonNullByDefault
     InterfaceTemplate(final DataRootArchetype root, final T archetype, final DataContainerContract contract,
@@ -73,17 +73,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         super(root, archetype);
         this.contract = requireNonNull(contract);
         this.augmentable = augmentable;
-    }
-
-    final @NonNull TypeAnalysis typeAnalysis() {
-        final var existing = typeAnalysis;
-        return existing != null ? existing : loadTypeAnalysis();
-    }
-
-    private @NonNull TypeAnalysis loadTypeAnalysis() {
-        final var analysis = TypeAnalysis.of(archetype);
-        typeAnalysis = analysis;
-        return analysis;
+        getters = DataContainerGetters.of(archetype);
     }
 
     @Override
