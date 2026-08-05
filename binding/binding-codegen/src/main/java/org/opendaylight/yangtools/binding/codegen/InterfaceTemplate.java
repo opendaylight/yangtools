@@ -62,10 +62,13 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
     private static final @NonNull ConcreteType JAVA_DATACONTAINER = ConcreteType.ofClass(JavaDataContainer.class);
 
+    // TODO: this should be lazily instantiated  and refcounted as it can be quite large and assuming one-time
+    //       file generation, we can free this. builders acess this as well and there is no guarantee of order of
+    //       rendering ... so this needs further analysis.
+    final @NonNull DataContainerGetters getters;
+
     private final @NonNull DataContainerContract contract;
     private final boolean augmentable;
-
-    private @Nullable TypeAnalysis typeAnalysis;
 
     @NonNullByDefault
     InterfaceTemplate(final DataRootArchetype root, final T archetype, final DataContainerContract contract,
@@ -73,17 +76,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         super(root, archetype);
         this.contract = requireNonNull(contract);
         this.augmentable = augmentable;
-    }
-
-    final @NonNull TypeAnalysis typeAnalysis() {
-        final var existing = typeAnalysis;
-        return existing != null ? existing : loadTypeAnalysis();
-    }
-
-    private @NonNull TypeAnalysis loadTypeAnalysis() {
-        final var analysis = TypeAnalysis.of(archetype);
-        typeAnalysis = analysis;
-        return analysis;
+        getters = DataContainerGetters.of(archetype);
     }
 
     @Override
@@ -502,24 +495,28 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         return newBlockBuilder()
             .at().eol(importedName(OVERRIDE))
             .str("default ").str(importedName(STRING)).str(" javaTS()").jBlock(bb -> {
-                final var props = typeAnalysis().properties();
-
                 bb.str("return ").str(importedName(CODEHELPERS));
-                switch (props.size()) {
-                    case 0 -> firstToStringArg(bb.str(".jcTS0(")).eol(");");
-                    case 1 -> {
-                        final var prop = props.iterator().next();
-                        firstToStringArg(bb.str(".jcTS1(")).str(", ").jStr(prop.getName()).str(", ")
-                            .str(prop.getGetterName()).eol("());");
-                    }
-                    default -> {
-                        firstToStringArg(bb.str(".jcTSB(")).eol(")");
-                        for (var prop : props) {
-                            bb.ind(".prop(").jStr(prop.getName()).str(", ").str(prop.getGetterName()).eol("())");
-                        }
-                        bb.ind().eol(".build();");
-                    }
+
+                final var it = getters.allMethods().iterator();
+                if (!it.hasNext()) {
+                    // no methods
+                    firstToStringArg(bb.str(".jcTS0(")).eol(");");
+                    return;
                 }
+
+                final var first = it.next();
+                if (!it.hasNext()) {
+                    // one method
+                    firstToStringArg(bb.str(".jcTS1(")).str(", ").jStr(first.propName()).str(", ").str(first.name())
+                        .eol("());");
+                }
+
+                // more methods
+                appendToStringProp(firstToStringArg(bb.str(".jcTSB(")).eol(")"), first);
+                do {
+                    appendToStringProp(bb, it.next());
+                } while (it.hasNext());
+                bb.ind().eol(".build();");
             }).nl();
     }
 
@@ -529,6 +526,11 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         }
         // FIXME: use selfRef()
         return bb.str(archetype.canonicalName()).str(".class");
+    }
+
+    @NonNullByDefault
+    private static BlockBuilder appendToStringProp(final BlockBuilder bb, final GetterShape getter) {
+        return bb.ind(".prop(").jStr(getter.propName()).str(", ").str(getter.name()).eol("())");
     }
 
     // FIXME: return a Block
