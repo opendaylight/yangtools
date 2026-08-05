@@ -58,18 +58,12 @@ abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEff
 
     @Override
     final MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list, final Type returnType) {
-        final var localName = localName().getLocalName();
-        final var statement = statement();
-
-        // getFoo with nullify
-        final var ret = MethodSignature.builder(statement, Naming.getGetterMethodName(localName), returnType,
-            ValueMechanics.NULLIFY_EMPTY);
-        addDeprecatedAnnotation(ret, statement);
-        list.add(ret);
+        final var ret = super.constructGetter(list, returnType);
 
         // nonnullFoo
-        final var mb = MethodSignature.builderOfDefault(statement, Naming.getNonnullMethodName(localName), returnType,
-            ValueMechanics.NORMAL);
+        final var statement = statement();
+        final var mb = MethodSignature.builderOfDefault(statement,
+            Naming.getNonnullMethodName(localName().getLocalName()), returnType, ValueMechanics.NORMAL);
         addDeprecatedAnnotation(mb, statement);
         list.add(mb);
 

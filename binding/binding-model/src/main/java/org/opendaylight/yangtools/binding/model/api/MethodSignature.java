@@ -47,11 +47,6 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
          */
         NORMAL,
         /**
-         * Mechanics signaling that the method should not be returning empty collections, but rather squash tham
-         * to null.
-         */
-        NULLIFY_EMPTY,
-        /**
          * Mechanics signaling that the method cannot legally return null. This is primarily useful for getters, where
          * the declaration should end up having {@link NonNull} annotation attached to return type. For setters this
          * indicates the setter should never accept a null value.

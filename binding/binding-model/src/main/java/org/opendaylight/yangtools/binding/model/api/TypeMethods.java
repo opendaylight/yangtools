@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 
 /**
  * Utility methods for {@link Type} implementations.
@@ -93,12 +94,8 @@ final class TypeMethods {
         if (self.isDefault()) {
             helper.addValue("default");
         }
-        switch (self.mechanics()) {
-            case NONNULL -> helper.addValue("nonnull");
-            case NULLIFY_EMPTY -> helper.addValue("nullify");
-            default -> {
-                // no-op
-            }
+        if (self.mechanics() == ValueMechanics.NONNULL) {
+            helper.addValue("nonnull");
         }
         final var annotations = self.annotations();
         if (!annotations.isEmpty()) {
