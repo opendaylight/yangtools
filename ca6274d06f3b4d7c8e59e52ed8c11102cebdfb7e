@@ -70,6 +70,30 @@
       },
       "revId": "ca6274d06f3b4d7c8e59e52ed8c11102cebdfb7e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "284be448_b6248aca",
+        "filename": "codec/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/SchemaLookupCache.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-08-05T04:53:04Z",
+      "side": 1,
+      "message": "Would you prefer we eject all the cached entries if they remain unused for some time? (No matter the model context they come from)",
+      "parentUuid": "dc337ad5_f16e11ea",
+      "range": {
+        "startLine": 25,
+        "startChar": 16,
+        "endLine": 25,
+        "endChar": 27
+      },
+      "revId": "ca6274d06f3b4d7c8e59e52ed8c11102cebdfb7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
