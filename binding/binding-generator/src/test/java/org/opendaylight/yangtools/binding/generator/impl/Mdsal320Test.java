@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
@@ -49,13 +47,11 @@ class Mdsal320Test {
         assertEquals("Bar$1", bar1.simpleName());
 
         final var fooMethods = foo.getMethodDefinitions();
-        assertEquals(2, fooMethods.size());
+        assertEquals(1, fooMethods.size());
 
         final var getBar = fooMethods.getFirst();
         final var getBarType = assertInstanceOf(UnionTypeObjectArchetype.class, getBar.returnType());
         assertEquals(bar, getBarType);
-        final var requireBar = fooMethods.getLast();
-        assertThat(requireBar.name()).startsWith(Naming.REQUIRE_PREFIX);
 
         assertEquals(List.of("enumeration", "string", "bar$1"), bar.typePropertyNames());
         assertEquals(List.of(enum1, BaseYangTypes.STRING_TYPE, bar1), bar.typePropertyTypes());

@@ -10,16 +10,12 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultContainerRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -62,19 +58,5 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
                 return new DefaultContainerRuntimeType((ContainerObjectArchetype) type, statement, children, augments);
             }
         };
-    }
-
-    @Override
-    MethodSignature.Builder constructGetter(final List<MethodSignature.@NonNull Builder> list, final Type returnType) {
-        final var ret = super.constructGetter(list, returnType);
-
-        final var statement = statement();
-        if (statement.presenceStatement() == null) {
-            final var mb = MethodSignature.builder(statement, Naming.getNonnullMethodName(localName().getLocalName()),
-                returnType, ValueMechanics.NORMAL);
-            addDeprecatedAnnotation(mb, statement);
-            list.add(mb);
-        }
-        return ret;
     }
 }
