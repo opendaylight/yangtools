@@ -9,11 +9,7 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NSEE;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.VOID;
 import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.getGetterMethodForNonnull;
@@ -22,11 +18,9 @@ import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodN
 import static org.opendaylight.yangtools.binding.contract.Naming.isNonnullMethodName;
 import static org.opendaylight.yangtools.binding.contract.Naming.isRequireMethodName;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.VerifyException;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
@@ -66,9 +60,9 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     //       file generation, we can free this. builders acess this as well and there is no guarantee of order of
     //       rendering ... so this needs further analysis.
     final @NonNull DataContainerGetters getters;
+    final boolean augmentable;
 
     private final @NonNull DataContainerContract contract;
-    private final boolean augmentable;
 
     @NonNullByDefault
     InterfaceTemplate(final DataRootArchetype root, final T archetype, final DataContainerContract contract,
@@ -355,180 +349,6 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
             .txt(accessorJavadoc(method, ", or an empty instance if it is not present"))
             .blk(generateAnnotations(method))
             .str(importedNonNull(method.returnType())).sp().str(method.name()).eol("();");
-    }
-
-    @VisibleForTesting
-    final @NonNull BlockBuilder generateBindingHashCode() {
-        return newBlockBuilder()
-            .at().eol(importedName(OVERRIDE))
-            .str("default int javaHC()").jBlock(bb -> {
-                final var methods = getters.allMethods().sorted().toList();
-                switch (methods.size()) {
-                    case 0 -> {
-                        if (augmentable) {
-                            bb.str("return ").str(importedName(CODEHELPERS)).eol(".jcHC0(this);");
-                        } else {
-                            bb.eol("return 1;");
-                        }
-                    }
-                    case 1 -> {
-                        final var getter = methods.getFirst();
-                        bb.str("return ").str(importedName(CODEHELPERS)).str(".jcHC1(");
-                        if (augmentable) {
-                            bb.str("this, ");
-                        }
-                        bb.str(getter.name()).eol("());");
-                    }
-                    // TODO: consider specializing for N=2 (single line) for the cost of 8 new methods in CodeHelpers
-                    default -> appendBindingHashCode(bb, methods);
-                }
-            }).nl();
-    }
-
-    @NonNullByDefault
-    private void appendBindingHashCode(final BlockBuilder bb, final List<GetterShape> methods) {
-        // determine the composition of getters: 'type binary' fields map to byte[] and therefore have to be hashed
-        // via Arrays.hashCode(), not Objects.hashCode()
-        final int size = methods.size();
-        final boolean[] isBinary = new boolean[size];
-        int cnt = 0;
-        int binaryCount = 0;
-        for (var method : methods) {
-            final var tmp = method.isBinary();
-            if (tmp) {
-                binaryCount++;
-            }
-            isBinary[cnt++] = tmp;
-        }
-
-        // either all are byte[] or none are: we can use CodeHelpers.jcHCN()
-        final boolean useN = binaryCount == 0 || binaryCount == size;
-
-        bb.str("return ").str(importedName(CODEHELPERS)).str(useN ? ".jcHCN(" : ".jcHC(");
-        if (augmentable) {
-            bb.eol("this,");
-        } else {
-            bb.newLine();
-        }
-
-        final var it = methods.iterator();
-        if (useN) {
-            appendBindingHashCodeArgs(bb, it);
-        } else {
-            appendBindingHashCodeArgs(bb, it, isBinary);
-        }
-        bb.eol(");");
-    }
-
-    // all getters are the same: just pass them down to CodeHelpers
-    @NonNullByDefault
-    private static void appendBindingHashCodeArgs(final BlockBuilder bb, final Iterator<GetterShape> it) {
-        while (true) {
-            final var getter = it.next();
-            bb.ind(getter.name()).str("()");
-            if (!it.hasNext()) {
-                break;
-            }
-            bb.eol(",");
-        }
-    }
-
-    // we have at least one Object and one byte[] getter: compute their hashCode() ourselves
-    @NonNullByDefault
-    private void appendBindingHashCodeArgs(final BlockBuilder bb, final Iterator<GetterShape> it,
-            final boolean[] isBinary) {
-        final var arrays = importedName(JU_ARRAYS);
-        final var objects = importedName(JU_OBJECTS);
-
-        int cnt = 0;
-        while (true) {
-            final var getter = it.next();
-            bb.ind(isBinary[cnt++] ? arrays : objects).str(".hashCode(").str(getter.name()).str("())");
-            if (!it.hasNext()) {
-                break;
-            }
-            bb.eol(",");
-        }
-    }
-
-    @NonNullByDefault
-    BlockBuilder generateBindingEquals() {
-        return newBlockBuilder()
-            .at().eol(importedName(OVERRIDE))
-            // FIXME: selfref instead of canonicalName
-            .str("default boolean javaEQ(").str(archetype.canonicalName()).str(" obj)").jBlock(bb -> {
-                final var it = getters.allMethods().sorted(ByTypeMemberComparator.INSTANCE).iterator();
-                if (!it.hasNext()) {
-                    // single method
-                    if (!augmentable) {
-                        bb.str(importedName(JU_OBJECTS)).eol(".requireNonNull(obj);");
-                        bb.eol("return true;");
-                    } else {
-                        bb.eol("return augmentations().equals(obj.augmentations());");
-                    }
-                    return;
-                }
-
-                appendEqualsProp(bb.str("return "), it.next());
-                while (it.hasNext()) {
-                    appendEqualsProp(bb.nl().ind("&& "), it.next());
-                }
-                if (augmentable) {
-                    bb.nl().ind("&& augmentations().equals(obj.augmentations())");
-                }
-                bb.eS();
-            }).nl();
-    }
-
-    @NonNullByDefault
-    private void appendEqualsProp(final BlockBuilder bb, final GetterShape getter) {
-        final var name = getter.name();
-        bb
-            .str(importedUtilClass(getter.type())).str(".equals(").str(name).str("(), obj.").str(name).str("())");
-    }
-
-    @VisibleForTesting
-    final BlockBuilder generateBindingToString() {
-        return newBlockBuilder()
-            .at().eol(importedName(OVERRIDE))
-            .str("default ").str(importedName(STRING)).str(" javaTS()").jBlock(bb -> {
-                bb.str("return ").str(importedName(CODEHELPERS));
-
-                final var it = getters.allMethods().sorted().iterator();
-                if (!it.hasNext()) {
-                    // no methods
-                    firstToStringArg(bb.str(".jcTS0(")).eol(");");
-                    return;
-                }
-
-                final var first = it.next();
-                if (!it.hasNext()) {
-                    // one method
-                    firstToStringArg(bb.str(".jcTS1(")).str(", ").jStr(first.propName()).str(", ").str(first.name())
-                        .eol("());");
-                    return;
-                }
-
-                // more methods
-                appendToStringProp(firstToStringArg(bb.str(".jcTSB(")).eol(")"), first);
-                do {
-                    appendToStringProp(bb, it.next());
-                } while (it.hasNext());
-                bb.ind().eol(".build();");
-            }).nl();
-    }
-
-    private BlockBuilder firstToStringArg(final BlockBuilder bb) {
-        if (augmentable) {
-            return bb.str("this");
-        }
-        // FIXME: use selfRef()
-        return bb.str(archetype.canonicalName()).str(".class");
-    }
-
-    @NonNullByDefault
-    private static void appendToStringProp(final BlockBuilder bb, final GetterShape getter) {
-        bb.ind(".prop(").jStr(getter.propName()).str(", ").str(getter.name()).eol("())");
     }
 
     // FIXME: return a Block
