@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -40,14 +39,11 @@ record DataContainerGetters(List<GetterShape> methods, List<GetterShape> partial
             collectPartialMethods(partials, partial);
         }
 
-        // FIXME: pre-size to methods once we do not filter
-        final var nameToSpec = new LinkedHashMap<String, GetterShape>();
-        for (var method : archetype.getMethodDefinitions()) {
-            // FIXME: do not filter
+        final var methods = archetype.getMethodDefinitions();
+        final var nameToSpec = LinkedHashMap.<String, GetterShape>newLinkedHashMap(methods.size());
+        for (var method : methods) {
             final var name = method.name();
-            if (isGetterMethodName(name)) {
-                verify(nameToSpec.put(name, new GetterShape(method, partials.containsKey(name))) == null);
-            }
+            verify(nameToSpec.put(name, new GetterShape(method, partials.containsKey(name))) == null);
         }
         return new DataContainerGetters(List.copyOf(nameToSpec.values()), partials.values().stream()
             .filter(method -> !nameToSpec.containsKey(method.name()))
@@ -58,11 +54,7 @@ record DataContainerGetters(List<GetterShape> methods, List<GetterShape> partial
     private static void collectPartialMethods(final HashMap<String, MethodSignature> partials,
             final DataContainerArchetype.Partial archetype) {
         for (var method : archetype.getMethodDefinitions()) {
-            // FIXME: do not filter
-            final var name = method.name();
-            if (isGetterMethodName(name)) {
-                partials.putIfAbsent(name, method);
-            }
+            partials.putIfAbsent(method.name(), method);
         }
         for (var partial : archetype.partials()) {
             collectPartialMethods(partials, partial);

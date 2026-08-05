@@ -31,7 +31,6 @@ import static org.opendaylight.yangtools.binding.model.ri.Types.isListType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isMapType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isSetType;
 
-import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.util.ArrayList;
@@ -266,7 +265,7 @@ final class BuilderTemplate extends BaseTemplate {
      */
     private @NonNull BlockBuilder generateConstructorFromIfc(final @NonNull DataContainerArchetype archetype) {
         final var bb = newBlockBuilder();
-        if (hasNonDefaultMethods(archetype)) {
+        if (!archetype.getMethodDefinitions().isEmpty()) {
             final var typeName = importedName(archetype);
             bb
                 .eol("/**")
@@ -292,7 +291,7 @@ final class BuilderTemplate extends BaseTemplate {
         }
 
         final var bb = newBlockBuilder();
-        for (var getter : nonDefaultMethods(ifc)) {
+        for (var getter : ifc.getMethodDefinitions()) {
             if (isGetterMethodName(getter.name())) {
                 bb.eol(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
             }
@@ -307,7 +306,7 @@ final class BuilderTemplate extends BaseTemplate {
     private @Nullable BlockBuilder printConstructorPropertySetter(final DataContainerArchetype.Partial implementedIfc,
             final Set<MethodSignature> alreadySetProperties) {
         final var bb = newBlockBuilder();
-        for (var getter : nonDefaultMethods(implementedIfc)) {
+        for (var getter : implementedIfc.getMethodDefinitions()) {
             if (isGetterMethodName(getter.name()) && getterByName(alreadySetProperties, getter.name()) == null) {
                 bb.eol(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
             }
@@ -438,12 +437,12 @@ final class BuilderTemplate extends BaseTemplate {
     @NonNullByDefault
     private boolean hasImplementsFromUses(final DataContainerArchetype type) {
         // FIXME: narrow down?
-        return getAllIfcs(type).stream().anyMatch(BuilderTemplate::hasNonDefaultMethods);
+        return getAllIfcs(type).stream().anyMatch(ifc -> !ifc.getMethodDefinitions().isEmpty());
     }
 
     private @Nullable BlockBuilder generateIfCheck(final @NonNull DataContainerArchetype archetype,
             final List<DataContainerArchetype> done) {
-        return !hasNonDefaultMethods(archetype) ? null : newBlockBuilder()
+        return archetype.getMethodDefinitions().isEmpty() ? null : newBlockBuilder()
             .str("if (arg instanceof ").str(importedName(archetype)).str(" castArg)").oB()
                 .blk(printPropertySetter(archetype))
                 .eol("isValidArg = true;")
@@ -457,7 +456,7 @@ final class BuilderTemplate extends BaseTemplate {
         }
 
         final var bb = newBlockBuilder();
-        for (var getter : nonDefaultMethods(ifc)) {
+        for (var getter : ifc.getMethodDefinitions()) {
             if (isGetterMethodName(getter.name()) && !hasOverrideAnnotation(getter)) {
                 bb.eol(printPropertySetter(getter, "castArg", propertyNameFromGetter(getter)));
             }
@@ -509,7 +508,7 @@ final class BuilderTemplate extends BaseTemplate {
 
     private static @Nullable MethodSignature getterByName(final @NonNull DataContainerArchetype implType,
             final @NonNull String getterName) {
-        final var getter = getterByName(nonDefaultMethods(implType), getterName);
+        final var getter = getterByName(implType.getMethodDefinitions(), getterName);
         if (getter != null) {
             return getter;
         }
@@ -537,7 +536,7 @@ final class BuilderTemplate extends BaseTemplate {
     private static List<DataContainerArchetype> getBaseIfcs(final DataContainerArchetype type) {
         final var baseIfcs = new ArrayList<DataContainerArchetype>();
         for (var partial : type.partials()) {
-            if (hasNonDefaultMethods(partial)) {
+            if (!partial.getMethodDefinitions().isEmpty()) {
                 baseIfcs.add(partial);
             }
         }
@@ -548,7 +547,7 @@ final class BuilderTemplate extends BaseTemplate {
     private Set<DataContainerArchetype.Partial> getAllIfcs(final DataContainerArchetype archetype) {
         final var baseIfcs = new HashSet<DataContainerArchetype.Partial>();
         for (var partial : archetype.partials()) {
-            if (hasNonDefaultMethods(partial)) {
+            if (!partial.getMethodDefinitions().isEmpty()) {
                 baseIfcs.add(partial);
             }
             baseIfcs.addAll(getAllIfcs(partial));
@@ -962,16 +961,6 @@ final class BuilderTemplate extends BaseTemplate {
                 return;
             }
         }
-    }
-
-    @NonNullByDefault
-    static boolean hasNonDefaultMethods(final DataContainerArchetype type) {
-        return type.getMethodDefinitions().stream().anyMatch(def -> !def.isDefault());
-    }
-
-    @NonNullByDefault
-    static Collection<MethodSignature> nonDefaultMethods(final DataContainerArchetype type) {
-        return Collections2.filter(type.getMethodDefinitions(), def -> !def.isDefault());
     }
 
     /**

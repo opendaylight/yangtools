@@ -13,7 +13,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 @NonNullByDefault
@@ -34,10 +33,6 @@ final class BuilderGeneratedProperty implements GeneratedProperty {
     @Override
     public Type getReturnType() {
         return getter.returnType();
-    }
-
-    ValueMechanics getMechanics() {
-        return getter.mechanics();
     }
 
     String getGetterName() {

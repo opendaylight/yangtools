@@ -9,15 +9,12 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.model.api.ChildOfArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -54,19 +51,4 @@ abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEff
 
     abstract ChildOfArchetype.OfList createTypeImpl(JavaTypeName typeName, ListEffectiveStatement statement,
         List<GroupingArchetype> groupings, List<TypeObjectArchetype<?>> typeObjects, List<MethodSignature> methods);
-
-
-    @Override
-    final MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list, final Type returnType) {
-        final var ret = super.constructGetter(list, returnType);
-
-        // nonnullFoo
-        final var statement = statement();
-        final var mb = MethodSignature.builderOfDefault(statement,
-            Naming.getNonnullMethodName(localName().getLocalName()), returnType, ValueMechanics.NORMAL);
-        addDeprecatedAnnotation(mb, statement);
-        list.add(mb);
-
-        return ret;
-    }
 }
