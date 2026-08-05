@@ -19,15 +19,12 @@ record MethodSignature1(
         EffectiveStatement<?, ?> statement,
         String name,
         Type returnType,
-        ValueMechanics mechanics,
-        boolean isDefault,
         AttachedAnnotation.ToMethod annotation) implements MethodSignature {
 
     MethodSignature1 {
         requireNonNull(statement);
         requireNonNull(name);
         requireNonNull(returnType);
-        requireNonNull(mechanics);
         requireNonNull(annotation);
     }
 

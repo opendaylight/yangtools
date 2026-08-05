@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresent
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
@@ -343,29 +342,15 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
 
         final var returnType = methodReturnType();
         constructGetter(list, returnType);
-        constructRequire(list, returnType);
     }
 
     @NonNullByDefault
     MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list, final Type returnType) {
         final var mb = MethodSignature.builder(statement, Naming.getGetterMethodName(localName().getLocalName()),
-            returnType, ValueMechanics.NORMAL);
+            returnType);
         addDeprecatedAnnotation(mb, statement);
         list.add(mb);
         return mb;
-    }
-
-    @NonNullByDefault
-    void constructRequire(final List<MethodSignature.Builder> list, final Type returnType) {
-        // No-op in most cases
-    }
-
-    static final void constructRequire(final @NonNull List<MethodSignature.@NonNull Builder> list,
-            final @NonNull EffectiveStatement<QName, ?> statement, final @NonNull Type returnType) {
-        final var mb = MethodSignature.builderOfDefault(statement,
-            Naming.getRequireMethodName(statement.argument().getLocalName()), returnType, ValueMechanics.NONNULL);
-        addDeprecatedAnnotation(mb, statement);
-        list.add(mb);
     }
 
     @NonNullByDefault

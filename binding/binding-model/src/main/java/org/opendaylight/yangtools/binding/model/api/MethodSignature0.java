@@ -18,15 +18,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 record MethodSignature0(
         EffectiveStatement<?, ?> statement,
         String name,
-        Type returnType,
-        ValueMechanics mechanics,
-        boolean isDefault) implements MethodSignature {
-
+        Type returnType) implements MethodSignature {
     MethodSignature0 {
         requireNonNull(statement);
         requireNonNull(name);
         requireNonNull(returnType);
-        requireNonNull(mechanics);
     }
 
     @Override
