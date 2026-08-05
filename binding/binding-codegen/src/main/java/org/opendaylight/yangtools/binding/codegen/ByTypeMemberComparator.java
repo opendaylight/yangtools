@@ -9,16 +9,12 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import com.google.common.base.VerifyException;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -31,7 +27,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  *
  * @param <T> TypeMember type
  */
-final class ByTypeMemberComparator<T extends GeneratedProperty> implements Comparator<T>, Serializable {
+final class ByTypeMemberComparator implements Comparator<GetterShape>, Serializable {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
@@ -55,49 +51,23 @@ final class ByTypeMemberComparator<T extends GeneratedProperty> implements Compa
     /**
      * Singleton instance.
      */
-    private static final @NonNull ByTypeMemberComparator<?> INSTANCE = new ByTypeMemberComparator<>();
+    static final @NonNull ByTypeMemberComparator INSTANCE = new ByTypeMemberComparator();
 
     private ByTypeMemberComparator() {
         // Hidden on purpose
     }
 
-    /**
-     * Returns the one and only instance of this class.
-     *
-     * @return this comparator
-     */
-    @SuppressWarnings("unchecked")
-    static <T extends GeneratedProperty> ByTypeMemberComparator<T> getInstance() {
-        return (ByTypeMemberComparator<T>) INSTANCE;
-    }
-
-    static <T extends GeneratedProperty> Collection<T> sort(final Collection<T> input) {
-        if (input.size() < 2) {
-            return input;
-        }
-
-        final List<T> ret = new ArrayList<>(input);
-        ret.sort(getInstance());
-        return ret;
-    }
-
     @Override
-    public int compare(final T member1, final T member2) {
-        final Type type1 = getConcreteType(member1.getReturnType());
-        final Type type2 = getConcreteType(member2.getReturnType());
+    public int compare(final GetterShape member1, final GetterShape member2) {
+        final var type1 = getConcreteType(member1.type());
+        final var type2 = getConcreteType(member2.type());
         if (!type1.name().equals(type2.name())) {
             final int cmp = rankOf(type1) - rankOf(type2);
             if (cmp != 0) {
                 return cmp;
             }
         }
-        return member1.getName().compareTo(member2.getName());
-    }
-
-    @java.io.Serial
-    @SuppressWarnings("static-method")
-    private Object readResolve() {
-        return INSTANCE;
+        return member1.name().compareTo(member2.name());
     }
 
     private static Type getConcreteType(final Type type) {
@@ -120,21 +90,21 @@ final class ByTypeMemberComparator<T extends GeneratedProperty> implements Compa
                 yield switch (typeName.packageName()) {
                     case "" -> switch (typeName.simpleName()) {
                         case "byte[]" -> RANK_VARIABLE_ARRAY;
-                        default -> unhandled(typeName);
+                        default -> throw unhandled(typeName);
                     };
                     case "java.lang" -> switch (typeName.simpleName()) {
                         case "Boolean", "Byte", "Short", "Integer", "Long" -> RANK_FIXED_SIZE;
                         case "Object" -> RANK_COMPOSITE;
                         case "String" -> RANK_VARIABLE_ARRAY;
-                        default -> unhandled(typeName);
+                        default -> throw unhandled(typeName);
                     };
                     case "org.opendaylight.yangtools.binding" -> switch (typeName.simpleName()) {
                         case "BindingInstanceIdentifier" -> RANK_INSTANCE_IDENTIFIER;
-                        default -> unhandled(typeName);
+                        default -> throw unhandled(typeName);
                     };
                     case "org.opendaylight.yangtools.yang.common" -> switch (typeName.simpleName()) {
                         case "Empty", "Uint8", "Uint16", "Uint32", "Uint64" -> RANK_FIXED_SIZE;
-                        default -> unhandled(typeName);
+                        default -> throw unhandled(typeName);
                     };
                     default -> RANK_COMPOSITE;
                 };
@@ -143,7 +113,13 @@ final class ByTypeMemberComparator<T extends GeneratedProperty> implements Compa
     }
 
     @NonNullByDefault
-    private static int unhandled(final JavaTypeName typeName) {
-        throw new VerifyException("Unhandled " + typeName);
+    private static VerifyException unhandled(final JavaTypeName typeName) {
+        return new VerifyException("Unhandled " + typeName);
+    }
+
+    @java.io.Serial
+    @SuppressWarnings("static-method")
+    private Object readResolve() {
+        return INSTANCE;
     }
 }
