@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 
 @NonNullByDefault
 final class BuilderGeneratedProperty implements GeneratedProperty {
-    private final MethodSignature getter;
+    final MethodSignature getter;
     private final String name;
 
     BuilderGeneratedProperty(final String name, final MethodSignature getter) {

@@ -25,7 +25,8 @@ import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature.ValueMechanics;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
  * A template for the inner implementation class supported by a {@link BuilderTemplate}.
@@ -201,11 +202,14 @@ final class BuilderImplTemplate extends BaseTemplate {
     private void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props) {
         for (var field : props) {
             bb.str("this.").str(fieldName(field)).str(" = ");
-
-            if (field.getMechanics() == ValueMechanics.NULLIFY_EMPTY) {
-                bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(field.getGetterName()).eol("());");
-            } else {
-                bb.str("base.").str(field.getGetterName()).eol("();");
+            switch (field.getter.statement()) {
+                case ContainerEffectiveStatement stmt when stmt.presenceStatement() == null ->
+                    bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(field.getGetterName()).eol("());");
+                case ListEffectiveStatement stmt ->
+                    bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(field.getGetterName()).eol("());");
+                default -> {
+                    bb.str("base.").str(field.getGetterName()).eol("();");
+                }
             }
         }
     }
