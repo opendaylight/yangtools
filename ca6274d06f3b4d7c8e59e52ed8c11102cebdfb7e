@@ -46,6 +46,30 @@
       },
       "revId": "ca6274d06f3b4d7c8e59e52ed8c11102cebdfb7e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "dc337ad5_f16e11ea",
+        "filename": "codec/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/SchemaLookupCache.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 25,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-08-05T02:19:04Z",
+      "side": 1,
+      "message": "doesn\u0027t that indicate a lifecycle problem?",
+      "parentUuid": "1bdbe927_7d899ba0",
+      "range": {
+        "startLine": 25,
+        "startChar": 16,
+        "endLine": 25,
+        "endChar": 27
+      },
+      "revId": "ca6274d06f3b4d7c8e59e52ed8c11102cebdfb7e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
