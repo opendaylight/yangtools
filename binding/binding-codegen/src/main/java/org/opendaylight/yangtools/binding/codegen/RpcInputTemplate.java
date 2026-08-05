@@ -29,8 +29,8 @@ final class RpcInputTemplate extends AugmentableTemplate<RpcInputArchetype> impl
     }
 
     @Override
-    public RpcInputArchetype builderTarget() {
-        return archetype;
+    public RpcInputTemplate self() {
+        return this;
     }
 
     @Override

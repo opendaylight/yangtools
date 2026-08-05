@@ -71,9 +71,16 @@ final class BuilderTemplate extends BaseTemplate {
             EntryObjectTemplate, InstanceNotificationTemplate, ItemObjectTemplate, KeyedListNotificationTemplate,
             NotificationTemplate, RpcInputTemplate, RpcOutputTemplate, YangDataTemplate {
         /**
+         * {@return {@code this} object}
+         */
+        InterfaceTemplate<?> self();
+
+        /**
          * {@return the archetype of the interface builder targets}
          */
-        DataContainerArchetype builderTarget();
+        default DataContainerArchetype builderTarget() {
+            return self().archetype;
+        }
     }
 
     /**
@@ -103,8 +110,7 @@ final class BuilderTemplate extends BaseTemplate {
         this.implJavaType = requireNonNull(implJavaType);
         this.targetTemplate = requireNonNull(targetTemplate);
         targetType = targetTemplate.builderTarget();
-        // FIXME: a nicer way of doing this
-        properties = ((InterfaceTemplate<?>) targetTemplate).typeAnalysis().properties();
+        properties = targetTemplate.self().typeAnalysis().properties();
     }
 
     @NonNullByDefault

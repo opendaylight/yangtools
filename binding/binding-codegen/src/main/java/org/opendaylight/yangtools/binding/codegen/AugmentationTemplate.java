@@ -31,8 +31,8 @@ final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype
     }
 
     @Override
-    public AugmentationArchetype builderTarget() {
-        return archetype;
+    public AugmentationTemplate self() {
+        return this;
     }
 
     @Override

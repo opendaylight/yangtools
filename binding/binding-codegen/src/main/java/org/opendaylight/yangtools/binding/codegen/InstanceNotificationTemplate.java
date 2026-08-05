@@ -31,8 +31,8 @@ final class InstanceNotificationTemplate extends AugmentableTemplate<InstanceNot
     }
 
     @Override
-    public InstanceNotificationArchetype builderTarget() {
-        return archetype;
+    public InstanceNotificationTemplate self() {
+        return this;
     }
 
     @Override

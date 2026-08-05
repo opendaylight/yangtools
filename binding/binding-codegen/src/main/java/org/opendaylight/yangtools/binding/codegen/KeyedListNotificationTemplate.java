@@ -37,8 +37,8 @@ final class KeyedListNotificationTemplate extends AugmentableTemplate<KeyedListN
     }
 
     @Override
-    public KeyedListNotificationArchetype builderTarget() {
-        return archetype;
+    public KeyedListNotificationTemplate self() {
+        return this;
     }
 
     @Override

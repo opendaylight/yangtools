@@ -31,8 +31,8 @@ final class CaseObjectTemplate extends AugmentableTemplate<CaseObjectArchetype>
     }
 
     @Override
-    public CaseObjectArchetype builderTarget() {
-        return archetype;
+    public CaseObjectTemplate self() {
+        return this;
     }
 
     @Override

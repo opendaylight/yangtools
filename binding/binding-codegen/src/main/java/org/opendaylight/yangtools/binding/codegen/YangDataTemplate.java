@@ -37,8 +37,8 @@ final class YangDataTemplate extends InterfaceTemplate<YangDataArchetype> implem
     }
 
     @Override
-    public YangDataArchetype builderTarget() {
-        return archetype;
+    public YangDataTemplate self() {
+        return this;
     }
 
     @Override

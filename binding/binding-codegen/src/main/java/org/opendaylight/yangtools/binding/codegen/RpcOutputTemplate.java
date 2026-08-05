@@ -30,8 +30,8 @@ final class RpcOutputTemplate extends AugmentableTemplate<RpcOutputArchetype>
     }
 
     @Override
-    public RpcOutputArchetype builderTarget() {
-        return archetype;
+    public RpcOutputTemplate self() {
+        return this;
     }
 
     @Override

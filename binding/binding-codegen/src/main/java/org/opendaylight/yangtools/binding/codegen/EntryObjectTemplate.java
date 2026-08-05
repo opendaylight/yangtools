@@ -37,8 +37,8 @@ final class EntryObjectTemplate extends ChildOfTemplate<EntryObjectArchetype>
     }
 
     @Override
-    public EntryObjectArchetype builderTarget() {
-        return archetype;
+    public EntryObjectTemplate self() {
+        return this;
     }
 
     @Override

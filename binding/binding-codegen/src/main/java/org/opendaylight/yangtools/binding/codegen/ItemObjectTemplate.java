@@ -26,8 +26,8 @@ final class ItemObjectTemplate extends ChildOfTemplate<ItemObjectArchetype> impl
     }
 
     @Override
-    public ItemObjectArchetype builderTarget() {
-        return archetype;
+    public ItemObjectTemplate self() {
+        return this;
     }
 
     @Override

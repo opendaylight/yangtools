@@ -26,8 +26,8 @@ final class ContainerObjectTemplate extends ChildOfTemplate<ContainerObjectArche
     }
 
     @Override
-    public ContainerObjectArchetype builderTarget() {
-        return archetype;
+    public ContainerObjectTemplate self() {
+        return this;
     }
 
     @Override

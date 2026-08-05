@@ -30,8 +30,8 @@ final class NotificationTemplate extends AugmentableTemplate<NotificationArchety
     }
 
     @Override
-    public NotificationArchetype builderTarget() {
-        return archetype;
+    public NotificationTemplate self() {
+        return this;
     }
 
     @Override
