@@ -25,7 +25,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 
 public class BuilderGeneratorTest extends BaseCompilationTest {
@@ -223,22 +222,16 @@ public class BuilderGeneratorTest extends BaseCompilationTest {
 
     @Test
     void builderTemplateGenerateToEqualsComparingOrderTest() {
-        final var rootName =
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.opendaylight.test.types.rev200513", "TestTypesData");
-        final var root = assertInstanceOf(DataRootArchetype.class, TYPES.stream()
-            .filter(type -> rootName.equals(type.name()))
-            .findFirst()
-            .orElseThrow());
-        final var nodesName = rootName.createSibling("Nodes");
+        final var nodesName =
+            JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.opendaylight.test.types.rev200513", "Nodes");
         final var nodes = assertInstanceOf(ContainerObjectArchetype.class, TYPES.stream()
             .filter(type -> nodesName.equals(type.name()))
             .findFirst()
             .orElseThrow());
 
-        final var bt = BuilderTemplate.of(new ContainerObjectTemplate(root, nodes));
-        final var sortedProperties = bt.properties.stream()
-                .sorted(ByTypeMemberComparator.getInstance())
-                .map(BuilderGeneratedProperty::getName)
+        final var sortedProperties = DataContainerGetters.of(nodes).allMethods()
+                .sorted(ByTypeMemberComparator.INSTANCE)
+                .map(GetterShape::propName)
                 .toList();
 
         assertEquals(List.of(
