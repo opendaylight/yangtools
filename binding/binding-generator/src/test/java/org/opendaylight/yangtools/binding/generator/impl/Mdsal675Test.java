@@ -228,7 +228,7 @@ class Mdsal675Test {
     private static void assertHasMethod(final DataContainerArchetype genType, final String methodName,
             final Type returnType) {
         assertThat(genType.getMethodDefinitions())
-            .anyMatch(method -> methodName.equals(method.name()) && returnType.equals(method.returnType()));
+            .anyMatch(method -> methodName.equals(method.name()) && returnType.equals(method.javaReturnType()));
     }
 
     @NonNullByDefault

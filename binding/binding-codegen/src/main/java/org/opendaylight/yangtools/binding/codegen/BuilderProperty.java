@@ -22,7 +22,7 @@ record BuilderProperty(String name, GetterMethod getter) {
     }
 
     Type type() {
-        return getter.returnType();
+        return getter.javaReturnType();
     }
 
     String fieldName() {

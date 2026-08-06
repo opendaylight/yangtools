@@ -42,6 +42,11 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     }
 
     @Override
+    ContainerObjectArchetype methodReturnType() {
+        return (ContainerObjectArchetype) super.getGeneratedType();
+    }
+
+    @Override
     ContainerObjectArchetype createTypeImpl(final JavaTypeName typeName, final ContainerEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings) {
         return ContainerObjectArchetype.of(typeName, statement, parentNameForChildOf(), groupings, collectTypeObjects(),

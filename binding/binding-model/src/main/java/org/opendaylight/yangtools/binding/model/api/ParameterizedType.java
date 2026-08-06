@@ -18,9 +18,11 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * to be used to store information of Java  Generic Type. The array of {@link #getActualTypeArguments()} holds
  * information of all generic parameters defined for Parameterized Type.
  */
+@Deprecated(since = "16.0.0", forRemoval = true)
 @NonNullByDefault
 public sealed interface ParameterizedType extends Type
         permits ParameterizedType0, ParameterizedType1, ParameterizedType2, ParameterizedTypeN {
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @Override
     default JavaTypeName name() {
         return getRawType().name();
@@ -32,12 +34,14 @@ public sealed interface ParameterizedType extends Type
      * and the K is java.lang.Integer and V is defined as GeneratedType the array will contain two Types to store
      * the information of generic parameters.)
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     // FIXME: rename to typeArguments()
     List<Type> getActualTypeArguments();
 
     /**
      * {@return the Raw Type definition of Parameterized Type}}
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     // FIXME: rename to rawType()
     Type getRawType();
 
@@ -45,6 +49,7 @@ public sealed interface ParameterizedType extends Type
      * {@return a new instance parameterized as {@code <?>}}
      * @param rawType the {@link Type} that is being parameterized
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     static ParameterizedType of(final Type rawType) {
         return new ParameterizedType0(rawType);
     }
@@ -54,6 +59,7 @@ public sealed interface ParameterizedType extends Type
      * @param rawType the {@link Type} that is being parameterized
      * @param arg the single argument
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     static ParameterizedType of(final Type rawType, final Type arg) {
         return new ParameterizedType1(rawType, arg);
     }
@@ -64,6 +70,7 @@ public sealed interface ParameterizedType extends Type
      * @param firstArg the first argument
      * @param secondArg the second argument
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     static ParameterizedType of(final Type rawType, final Type firstArg, final Type secondArg) {
         return new ParameterizedType2(rawType, firstArg, secondArg);
     }
@@ -75,6 +82,7 @@ public sealed interface ParameterizedType extends Type
      * @param secondArg the second argument
      * @param others other arguments
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     static ParameterizedType of(final Type rawType, final Type firstArg, final Type secondArg, final Type... others) {
         return of(rawType, Stream.concat(Stream.of(firstArg, secondArg), Arrays.stream(others))
             .map(Objects::requireNonNull)
@@ -86,6 +94,7 @@ public sealed interface ParameterizedType extends Type
      * @param rawType the {@link Type} that is being parameterized
      * @param args the arguments
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     static ParameterizedType of(final Type rawType, final List<Type> args) {
         return switch (args.size()) {
             case 0 -> of(rawType);

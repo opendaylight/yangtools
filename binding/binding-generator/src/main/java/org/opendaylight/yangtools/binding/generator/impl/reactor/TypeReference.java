@@ -12,33 +12,35 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.ReturnType;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
 abstract sealed class TypeReference {
     private static final class Identityref extends TypeReference {
         private final List<IdentityGenerator> referencedGenerators;
 
-        private Type returnType;
+        private ReturnType returnType;
 
         Identityref(final List<IdentityGenerator> referencedGenerators) {
             this.referencedGenerators = requireNonNull(referencedGenerators);
         }
 
         @Override
-        Type methodReturnType() {
-            if (returnType == null) {
+        ReturnType methodReturnType() {
+            var local = returnType;
+            if (local == null) {
                 // FIXME: This deals only with RFC6020 semantics. In order to deal with full RFC7950 semantics, we need
                 //        to analyze all the types and come up with the lowest-common denominator and use that as the
                 //        return type. We also need to encode restrictions, so that builder generator ends up checking
                 //        identities being passed -- because the identities may be completely unrelated, in which case
                 //        we cannot generate type-safe code.
-                returnType = referencedGenerators.stream()
+                returnType = local = referencedGenerators.stream()
                     .map(IdentityGenerator::getGeneratedType)
                     .findFirst()
                     .orElseThrow();
             }
-            return returnType;
+            return local;
         }
     }
 
@@ -57,7 +59,7 @@ abstract sealed class TypeReference {
         }
 
         @Override
-        Type methodReturnType() {
+        ReturnType methodReturnType() {
             return referencedGenerator.methodReturnElementType();
         }
     }
@@ -70,7 +72,7 @@ abstract sealed class TypeReference {
         }
 
         @Override
-        Type methodReturnType() {
+        ConcreteType methodReturnType() {
             return Types.OBJECT;
         }
     }
@@ -83,7 +85,7 @@ abstract sealed class TypeReference {
         }
 
         @Override
-        Type methodReturnType() {
+        ReturnType methodReturnType() {
             throw new UnsupportedOperationException("Cannot ascertain type", cause);
         }
     }
@@ -100,5 +102,5 @@ abstract sealed class TypeReference {
         return new Identityref(referencedGenerators);
     }
 
-    abstract @NonNull Type methodReturnType();
+    abstract @NonNull ReturnType methodReturnType();
 }

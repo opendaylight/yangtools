@@ -82,6 +82,11 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
         // No-op
     }
 
+    @Override
+    ChoiceInArchetype methodReturnType() {
+        return getArchetype();
+    }
+
     @NonNullByDefault
     ChoiceInArchetype getArchetype() {
         return (ChoiceInArchetype) getGeneratedType();

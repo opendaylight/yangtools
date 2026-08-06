@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.common.Decimal64;
  * specialization.
  */
 @NonNullByDefault
-public sealed interface ConcreteType extends Type permits Decimal64Type, ConcreteTypeImpl, RestrictedType {
+public sealed interface ConcreteType extends ReturnType permits Decimal64Type, ConcreteTypeImpl, RestrictedType {
     /**
      * {@return this type's equivalent with specified {@link Restrictions}}
      * @param newRestrictions the restrictions to apply

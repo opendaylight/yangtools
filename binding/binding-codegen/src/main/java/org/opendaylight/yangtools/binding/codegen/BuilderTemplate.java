@@ -450,8 +450,9 @@ final class BuilderTemplate extends BaseTemplate {
         final var getterName =  getter.name();
 
         final var ownGetter = findGetter(getterName);
-        final var ownGetterType = ownGetter.returnType();
-        if (strictTypeEquals(getter.returnType(), ownGetterType)) {
+        // FIXME: use statement/returnType directly
+        final var ownGetterType = ownGetter.javaReturnType();
+        if (strictTypeEquals(getter.javaReturnType(), ownGetterType)) {
             return "this._" + propertyName + " = " + receiver + '.' + getterName + "();";
         }
         if (ownGetterType instanceof ParameterizedType parameterized) {

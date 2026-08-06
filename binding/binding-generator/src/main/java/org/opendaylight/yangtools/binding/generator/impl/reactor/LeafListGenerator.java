@@ -11,9 +11,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultLeafListRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.binding.runtime.api.LeafListRuntimeType;
-import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 
 /**
@@ -29,19 +27,6 @@ final class LeafListGenerator
     @Override
     StatementNamespace namespace() {
         return StatementNamespace.LEAF_LIST;
-    }
-
-    @Override
-    Type methodReturnType() {
-        // If we are a leafref and the reference cannot be resolved, we need to generate a list wildcard, not
-        // List<Object>, we will try to narrow the return type in subclasses.
-        final Type type = super.methodReturnType();
-        final boolean isObject = Types.OBJECT.equals(type);
-
-        if (statement().effectiveOrdering() == Ordering.SYSTEM) {
-            return isObject ? Types.setTypeWildcard() : Types.setTypeFor(type);
-        }
-        return isObject ? Types.listTypeWildcard() : Types.listTypeFor(type);
     }
 
     @Override

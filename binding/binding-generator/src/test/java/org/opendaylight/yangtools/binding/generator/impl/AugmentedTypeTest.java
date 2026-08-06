@@ -73,7 +73,8 @@ class AugmentedTypeTest {
             }
         }
         assertNotNull(getHigherLayerIfMethod, "getHigherLayerIf method is null");
-        assertEquals(Types.setTypeFor(BaseYangTypes.STRING_TYPE), getHigherLayerIfMethod.returnType());
+        assertEquals(Types.setTypeFor(BaseYangTypes.STRING_TYPE), getHigherLayerIfMethod.javaReturnType());
+        assertEquals(BaseYangTypes.STRING_TYPE, getHigherLayerIfMethod.returnType());
 
         // 'InterfaceKey'
         assertNotNull(gtInterfaceKey, "InterfaceKey is null");

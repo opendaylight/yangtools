@@ -86,7 +86,7 @@ public class DefaultBindingGeneratorTest {
         assertEquals(TEST_TYPE_PROVIDER + ".Foo.ResolveDirectUseOfEnum", bEnumType.canonicalName());
 
         final var enumsType = assertInstanceOf(ParameterizedType.class,
-            assertGeneratedMethod(bDataMethods, "getEnums").returnType());
+            assertGeneratedMethod(bDataMethods, "getEnums").javaReturnType());
 
         assertEquals(ConcreteType.ofClass(Set.class), enumsType.getRawType());
         final var enumsTypeArgs = enumsType.getActualTypeArguments();

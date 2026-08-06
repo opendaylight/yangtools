@@ -53,7 +53,7 @@ final class DataContainerGetterMethods implements BlockFragment {
     }
 
     private String importedType(final GetterMethod method) {
-        return template.importedName(method.returnType());
+        return template.importedName(method.javaReturnType());
     }
 
     private String importedNonNull(final Type type) {
@@ -76,7 +76,7 @@ final class DataContainerGetterMethods implements BlockFragment {
                 .txt(accessorJavadoc(method, ", or {@code null} if it is not present"))
                 .frg(generateAccessorAnnotations(method))
 //                .frg(override)
-                .str(nullableType(method.returnType())).sp().str(method.name()).eol("();");
+                .str(nullableType(method.javaReturnType())).sp().str(method.name()).eol("();");
 
             switch (method.statement()) {
                 case ContainerEffectiveStatement stmt when stmt.presenceStatement() == null ->
@@ -86,7 +86,7 @@ final class DataContainerGetterMethods implements BlockFragment {
                         .txt(accessorJavadoc(method, ", or an empty instance if it is not present"))
                         .frg(generateAnnotations(method))
 //                        .frg(override)
-                        .str(importedNonNull(method.returnType())).str(" " + NONNULL_PREFIX).str(method.name()
+                        .str(importedNonNull(method.javaReturnType())).str(" " + NONNULL_PREFIX).str(method.name()
                             .substring(3)).eol("();");
                 case ListEffectiveStatement stmt -> {
                     // a default nonnullFoo()
@@ -98,9 +98,8 @@ final class DataContainerGetterMethods implements BlockFragment {
                         .txt(accessorJavadoc(method, ", or an empty list if it is not present"))
                         .frg(generateAnnotations(method))
 //                        .frg(override)
-                        .str("default ").str(importedNonNull(method.returnType())).str(" " + NONNULL_PREFIX).str(stem)
-                            .str("()")
-                            .oB()
+                        .str("default ").str(importedNonNull(method.javaReturnType())).str(" " + NONNULL_PREFIX)
+                            .str(stem).str("()").oB()
                             .str("return ").str(importedName(CODEHELPERS)).str(".nonnull(").str(getterName).eol("());")
                         .cB();
                 }
@@ -136,7 +135,7 @@ final class DataContainerGetterMethods implements BlockFragment {
             .nl()
             .txt(accessorJavadoc(method, ", guaranteed to be non-null", NSEE))
             .frg(override)
-            .str("default ").str(importedNonNull(method.returnType())).str(" " + REQUIRE_PREFIX).str(stem).str("()")
+            .str("default ").str(importedNonNull(method.javaReturnType())).str(" " + REQUIRE_PREFIX).str(stem).str("()")
                 .oB()
                 .str("return ").str(importedName(CODEHELPERS)).str(".require(").str(getterName)
                     // FIXME: property name!

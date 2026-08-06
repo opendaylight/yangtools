@@ -41,7 +41,7 @@ final class SupportTestUtil {
             for (var searchedSignIn : searchedSignsIn) {
                 if (searchedSignWhat.getName().equals(searchedSignIn.name())) {
                     nameMatchFound = true;
-                    typeNameFound = resolveFullNameOfReturnType(searchedSignIn.returnType());
+                    typeNameFound = resolveFullNameOfReturnType(searchedSignIn.javaReturnType());
                     if (searchedSignWhat.getType().equals(typeNameFound)) {
                         break;
                     }
