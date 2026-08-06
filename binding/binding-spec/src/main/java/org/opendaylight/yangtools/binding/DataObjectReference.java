@@ -97,8 +97,8 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
          * @return this builder
          * @throws NullPointerException if {@code container} is null
          */
-        <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>> @NonNull Builder<N> child(
-                Class<C> caze, @NonNull Class<N> container);
+        <C extends CaseObject<? super T, ?, C>, N extends ChildOf<? super C>> @NonNull Builder<N> child(Class<C> caze,
+            @NonNull Class<N> container);
 
         /**
          * Append the specified listItem as a child of the data object this build currently references. This method
