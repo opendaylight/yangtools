@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.Key;
@@ -73,10 +74,11 @@ abstract sealed class CommonDataObjectCodecPrototype<R extends CompositeRuntimeT
     }
 
     final <T extends CodecDataObject<T>> GenClass<T> generateEntryObject(final DataContainerAnalysis<R> analysis,
-            final ListRuntimeType.WithKey runtimeType, final Class<? extends Key<?>> keyClass) {
+            final ListRuntimeType.WithKey runtimeType, final Class<? extends DataContainer> parentClass,
+            final Class<? extends Key<?>> keyClass) {
         return new GenClass<>(
             CodecEntryObjectGenerator.<T>generate(contextFactory().getLoader(), javaClass(),
-                analysis.leafContexts, analysis.daoProperties, keyClass),
+                analysis.leafContexts, analysis.daoProperties, parentClass, keyClass),
             runtimeType.augments());
     }
 }

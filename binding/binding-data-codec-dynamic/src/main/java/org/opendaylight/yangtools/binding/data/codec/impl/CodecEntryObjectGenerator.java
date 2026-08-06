@@ -17,6 +17,7 @@ import net.bytebuddy.description.type.TypeDescription.ForLoadedType;
 import net.bytebuddy.description.type.TypeDescription.Generic;
 import net.bytebuddy.dynamic.DynamicType;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
 import org.slf4j.Logger;
@@ -26,25 +27,30 @@ final class CodecEntryObjectGenerator<T extends CodecDataObject<?>> extends Code
     private static final Logger LOG = LoggerFactory.getLogger(CodecEntryObjectGenerator.class);
     private static final TypeDescription BB_CEO = ForLoadedType.of(CodecEntryObject.class);
 
+
+    private final @NonNull Class<? extends DataContainer> parentClass;
     private final @NonNull Class<? extends Key<?>> keyClass;
 
-    private CodecEntryObjectGenerator(final Class<? extends Key<?>> keyClass,
-            final @NonNull GetterGenerator getterGenerator) {
+    private CodecEntryObjectGenerator(final Class<? extends DataContainer> parentClass,
+            final Class<? extends Key<?>> keyClass, final @NonNull GetterGenerator getterGenerator) {
         super(getterGenerator);
         this.keyClass = requireNonNull(keyClass);
+        this.parentClass = requireNonNull(parentClass);
     }
 
     static <T extends CodecDataObject<T>> @NonNull Class<T> generate(final BindingClassLoader loader,
             final Class<?> bindingInterface, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
-            final Map<Class<?>, PropertyInfo> daoProperties, final Class<? extends Key<?>> key) {
+            final Map<Class<?>, PropertyInfo> daoProperties, final Class<? extends DataContainer> parentClass,
+            final Class<? extends Key<?>> key) {
         return CodecPackage.CODEC.generateClass(loader, bindingInterface,
-            new CodecEntryObjectGenerator<>(key, new ReusableGetterGenerator(simpleProperties, daoProperties)));
+            new CodecEntryObjectGenerator<>(parentClass, key,
+                new ReusableGetterGenerator(simpleProperties, daoProperties)));
     }
 
     @Override
     DynamicType.Builder<?> newBuilder(final TypeDescription.Generic bindingDef) {
-        LOG.trace("Generating for key {}", keyClass);
-        final var keyType = ForLoadedType.of(keyClass);
-        return BB.subclass(Generic.Builder.parameterizedType(BB_CEO, bindingDef, keyType).build());
+        LOG.trace("Generating for parent {} key {}", parentClass, keyClass);
+        return BB.subclass(Generic.Builder.parameterizedType(BB_CEO, ForLoadedType.of(parentClass), bindingDef,
+            ForLoadedType.of(keyClass)).build());
     }
 }

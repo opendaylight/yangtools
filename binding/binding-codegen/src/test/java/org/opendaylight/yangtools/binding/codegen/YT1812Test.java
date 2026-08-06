@@ -167,7 +167,6 @@ public class YT1812Test extends BaseCompilationTest {
             import javax.annotation.processing.Generated;
             import org.eclipse.jdt.annotation.NonNull;
             import org.opendaylight.yang.svc.v1.foo.norev.YangModuleInfoImpl;
-            import org.opendaylight.yangtools.binding.ChildOf;
             import org.opendaylight.yangtools.binding.EntryObject;
             import org.opendaylight.yangtools.binding.lib.CodeHelpers;
             import org.opendaylight.yangtools.yang.common.QName;
@@ -189,9 +188,7 @@ public class YT1812Test extends BaseCompilationTest {
              * @see CurrentKey
              */
             @Generated("mdsal-binding-generator")
-            public interface Current
-                extends ChildOf<FooData>,
-                        EntryObject<Current, CurrentKey> {
+            public interface Current extends EntryObject<FooData, Current, CurrentKey> {
                 /**
                  * The YANG identifier of the {@code list} statement represented by this interface.
                  */
@@ -480,8 +477,8 @@ public class YT1812Test extends BaseCompilationTest {
                     return new CurrentImpl(this);
                 }
 
-                private static final class CurrentImpl extends AbstractEntryObject<Current, CurrentKey> implements \
-            Current {
+                private static final class CurrentImpl extends AbstractEntryObject<FooData, Current, CurrentKey> \
+            implements Current {
                     private final String _foo;
 
                     CurrentImpl(final CurrentBuilder base) {
@@ -518,7 +515,6 @@ public class YT1812Test extends BaseCompilationTest {
             import javax.annotation.processing.Generated;
             import org.eclipse.jdt.annotation.NonNull;
             import org.opendaylight.yang.svc.v1.foo.norev.YangModuleInfoImpl;
-            import org.opendaylight.yangtools.binding.ChildOf;
             import org.opendaylight.yangtools.binding.EntryObject;
             import org.opendaylight.yangtools.binding.lib.CodeHelpers;
             import org.opendaylight.yangtools.yang.common.QName;
@@ -542,9 +538,7 @@ public class YT1812Test extends BaseCompilationTest {
              */
             @java.lang.Deprecated
             @Generated("mdsal-binding-generator")
-            public interface Deprecated
-                extends ChildOf<FooData>,
-                        EntryObject<Deprecated, DeprecatedKey> {
+            public interface Deprecated extends EntryObject<FooData, Deprecated, DeprecatedKey> {
                 /**
                  * The YANG identifier of the {@code list} statement represented by this interface.
                  */
@@ -836,8 +830,8 @@ public class YT1812Test extends BaseCompilationTest {
                 }
 
                 @java.lang.Deprecated
-                private static final class DeprecatedImpl extends AbstractEntryObject<Deprecated, DeprecatedKey> \
-            implements Deprecated {
+                private static final class DeprecatedImpl extends AbstractEntryObject<FooData, Deprecated, \
+            DeprecatedKey> implements Deprecated {
                     private final String _foo;
 
                     DeprecatedImpl(final DeprecatedBuilder base) {
@@ -875,7 +869,6 @@ public class YT1812Test extends BaseCompilationTest {
             import javax.annotation.processing.Generated;
             import org.eclipse.jdt.annotation.NonNull;
             import org.opendaylight.yang.svc.v1.foo.norev.YangModuleInfoImpl;
-            import org.opendaylight.yangtools.binding.ChildOf;
             import org.opendaylight.yangtools.binding.EntryObject;
             import org.opendaylight.yangtools.binding.lib.CodeHelpers;
             import org.opendaylight.yangtools.yang.common.QName;
@@ -899,9 +892,7 @@ public class YT1812Test extends BaseCompilationTest {
              */
             @Deprecated(forRemoval = true)
             @Generated("mdsal-binding-generator")
-            public interface Obsolete
-                extends ChildOf<FooData>,
-                        EntryObject<Obsolete, ObsoleteKey> {
+            public interface Obsolete extends EntryObject<FooData, Obsolete, ObsoleteKey> {
                 /**
                  * The YANG identifier of the {@code list} statement represented by this interface.
                  */
@@ -1194,8 +1185,8 @@ public class YT1812Test extends BaseCompilationTest {
                 }
 
                 @Deprecated(forRemoval = true)
-                private static final class ObsoleteImpl extends AbstractEntryObject<Obsolete, ObsoleteKey> implements \
-            Obsolete {
+                private static final class ObsoleteImpl extends AbstractEntryObject<FooData, Obsolete, ObsoleteKey> \
+            implements Obsolete {
                     private final String _foo;
 
                     ObsoleteImpl(final ObsoleteBuilder base) {

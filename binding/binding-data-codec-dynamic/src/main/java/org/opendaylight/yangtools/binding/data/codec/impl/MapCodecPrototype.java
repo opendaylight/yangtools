@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
@@ -37,16 +38,22 @@ final class MapCodecPrototype extends ListCodecPrototype<ListRuntimeType.WithKey
         final var archetype = runtimeType.javaType();
         final var runtimeContext = contextFactory().runtimeContext();
 
+        final Class<? extends DataContainer> parentClass;
+        try {
+            parentClass = runtimeContext.loadClass(archetype.parentName());
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Failed to load parent class for " + javaClass(), e);
+        }
+
         final Class<? extends Key<?>> keyClass;
         try {
             keyClass = runtimeContext.loadClass(archetype.keyName());
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException("Failed to load key class for " + javaClass(), e);
         }
-//        final var parentClass = runtimeContext.loadClass(archetype.parentName());
 
 
-        return generateEntryObject(analysis, runtimeType(), keyClass);
+        return generateEntryObject(analysis, runtimeType(), parentClass, keyClass);
     }
 
 }

@@ -28,7 +28,7 @@ public record PropertyIdentifier<C extends DataObject, V>(
     }
 
     @Override
-    public <E extends EntryObject<E, K>, K extends Key<E>> K firstKeyOf(final Class<@NonNull E> listItem) {
+    public <E extends EntryObject<?, E, K>, K extends Key<E>> K firstKeyOf(final Class<@NonNull E> listItem) {
         return container.firstKeyOf(listItem);
     }
 }

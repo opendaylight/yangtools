@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyStep;
 
-public final class DataObjectIdentifierBuilderWithKey<T extends EntryObject<T, K>, K extends Key<T>>
+public final class DataObjectIdentifierBuilderWithKey<T extends EntryObject<?, T, K>, K extends Key<T>>
         extends AbstractDataObjectIdentifierBuilder<T> implements WithKey<T, K> {
     DataObjectIdentifierBuilderWithKey(final DataObjectIdentifierBuilder<?> prev) {
         super(prev);
@@ -47,7 +47,7 @@ public final class DataObjectIdentifierBuilderWithKey<T extends EntryObject<T, K
 
     @Override
     @SuppressWarnings("unchecked")
-    <X extends EntryObject<X, Y>, Y extends Key<X>> DataObjectIdentifierBuilderWithKey<X, Y> append(
+    <X extends EntryObject<?, X, Y>, Y extends Key<X>> DataObjectIdentifierBuilderWithKey<X, Y> append(
             final KeyStep<Y, X> step) {
         appendItem(step);
         return (DataObjectIdentifierBuilderWithKey<X, Y>) this;

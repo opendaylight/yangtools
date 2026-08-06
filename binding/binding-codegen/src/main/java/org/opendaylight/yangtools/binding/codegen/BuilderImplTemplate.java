@@ -67,7 +67,8 @@ final class BuilderImplTemplate extends BaseTemplate {
             .frg(DeprecatedAnnotation.of(javaType(), targetType.statement()))
             .str("private static final class ").str(simpleName).str(" extends ");
         if (props instanceof BuilderTemplate.WithKey with) {
-            bb.gen(importedName(ABSTRACT_ENTRY_OBJECT), implIface, importedName(with.key()));
+            bb.gen(importedName(ABSTRACT_ENTRY_OBJECT), importedName(with.parentName()), implIface,
+                importedName(with.key()));
         } else if (targetType instanceof AugmentableArchetype) {
             bb.gen(importedName(ABSTRACT_AUGMENTABLE), implIface);
         } else {

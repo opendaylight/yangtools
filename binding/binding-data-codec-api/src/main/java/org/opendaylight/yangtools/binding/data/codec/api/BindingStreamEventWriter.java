@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.binding.Key;
  *       is YANG list which did not specify key.
  *   </li>
  *   <li>{@code Map} - Map start event is emitted using {@link #startMapNode(Class, int)} and is ended using
- *       {@link #endNode()}. Each map entry start is emitted using {@link #startMapEntryNode(Identifier, int)} with Map
+ *       {@link #endNode()}. Each map entry start is emitted using {@link #startMapEntryNode(Key, int)} with Map
  *       of keys and finished using {@link #endNode()}.
  *   </li>
  *   <li>{@code UnkeyedList} - Unkeyed list represent list without keys, unkeyed list start is emitted using
@@ -248,7 +248,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      * Emits start of unordered map node event.
      *
      * <p>End of map node event is emitted by invoking {@link #endNode()}. Valid subevent is only
-     * {@link #startMapEntryNode(Identifier, int)}. All other methods will throw {@link IllegalArgumentException}.
+     * {@link #startMapEntryNode(Key, int)}. All other methods will throw {@link IllegalArgumentException}.
      *
      * @param mapEntryType
      *            Class of list item, which has defined key.
@@ -265,13 +265,13 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startMapNode(Class<? extends EntryObject<?, ?>> mapEntryType, int childSizeHint) throws IOException;
+    void startMapNode(Class<? extends EntryObject<?, ?, ?>> mapEntryType, int childSizeHint) throws IOException;
 
     /**
      * Emits start of ordered map node event.
      *
      * <p>End of map node event is emitted by invoking {@link #endNode()}. Valid subevent is only
-     * {@link #startMapEntryNode(Identifier, int)}. All other methods will throw {@link IllegalArgumentException}.
+     * {@link #startMapEntryNode(Key, int)}. All other methods will throw {@link IllegalArgumentException}.
      *
      * @param mapEntryType
      *            Class of list item, which has defined key.
@@ -288,7 +288,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startOrderedMapNode(Class<? extends EntryObject<?, ?>> mapEntryType, int childSizeHint) throws IOException;
+    void startOrderedMapNode(Class<? extends EntryObject<?, ?, ?>> mapEntryType, int childSizeHint) throws IOException;
 
     /**
      * Emits start of map entry.

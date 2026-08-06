@@ -56,14 +56,13 @@ public abstract sealed class AbstractDataObjectIdentifierBuilder<T extends DataO
     }
 
     @Override
-    public final <N extends EntryObject<N, K> & ChildOf<? super T>, K extends Key<N>> Builder.WithKey<N, K> child(
+    public final <N extends EntryObject<? super T, N, K>, K extends Key<N>> Builder.WithKey<N, K> child(
             final Class<N> listItem, final K listKey) {
         return append(new KeyStep<>(listItem, listKey));
     }
 
     @Override
-    public final <C extends CaseObject<? super T, ?, C>, K extends Key<N>,
-            N extends EntryObject<N, K> & ChildOf<? super C>>
+    public final <C extends CaseObject<? super T, ?, C>, K extends Key<N>, N extends EntryObject<? super C, N, K>>
             Builder.WithKey<N, K> child(final Class<C> caze, final Class<N> listItem, final K listKey) {
         return append(new KeyStep<>(listItem, requireNonNull(caze), listKey));
     }
@@ -77,5 +76,5 @@ public abstract sealed class AbstractDataObjectIdentifierBuilder<T extends DataO
     abstract <X extends DataObject> Builder<X> append(DataObjectStep<X> step);
 
     @Override
-    abstract <X extends EntryObject<X, Y>, Y extends Key<X>> Builder.WithKey<X, Y> append(KeyStep<Y, X> step);
+    abstract <X extends EntryObject<?, X, Y>, Y extends Key<X>> Builder.WithKey<X, Y> append(KeyStep<Y, X> step);
 }

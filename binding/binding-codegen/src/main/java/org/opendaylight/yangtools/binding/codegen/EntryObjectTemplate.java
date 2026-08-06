@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.EntryObjectArchetype;
@@ -28,7 +27,6 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
 @NonNullByDefault
 final class EntryObjectTemplate extends InterfaceTemplate<EntryObjectArchetype>
         implements ArchetypeTemplate.WithBuilder {
-    private static final ConcreteType CHILD_OF = ConcreteType.ofClass(ChildOf.class);
     private static final ConcreteType ENTRY_OBJECT = ConcreteType.ofClass(EntryObject.class);
 
     final KeyArchetype key;
@@ -46,9 +44,8 @@ final class EntryObjectTemplate extends InterfaceTemplate<EntryObjectArchetype>
     @Override
     Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.forArray(
-                ParameterizedType.of(CHILD_OF, TypeRef.of(archetype.parentName())),
-                ParameterizedType.of(ENTRY_OBJECT, archetype, key)),
+            Iterators.singletonIterator(
+                ParameterizedType.of(ENTRY_OBJECT, TypeRef.of(archetype.parentName()), archetype, key)),
             super.extendsTypes());
     }
 
