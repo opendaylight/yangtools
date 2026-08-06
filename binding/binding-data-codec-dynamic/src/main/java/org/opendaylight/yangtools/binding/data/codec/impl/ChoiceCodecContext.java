@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.CaseObject;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.DataObject;
@@ -116,9 +117,8 @@ final class ChoiceCodecContext<T extends ChoiceIn<?>>
         final var context = factory.runtimeContext();
         final var localCases = new HashSet<JavaTypeName>();
         for (var caseType : choiceType.validCaseChildren()) {
-            @SuppressWarnings("unchecked")
-            final var caseClass = (Class<? extends DataObject>) loadCase(context, caseType);
-            final var caseProto = new CaseCodecPrototype(caseClass, caseType, factory);
+            final var caseClass = loadCase(context, caseType);
+            final var caseProto = new CaseCodecPrototype<>(caseClass, caseType, factory);
 
             localCases.add(caseType.getIdentifier());
             byClassBuilder.put(caseClass, caseProto);
@@ -171,7 +171,7 @@ final class ChoiceCodecContext<T extends ChoiceIn<?>>
                 if (!localCases.contains(substitution.getIdentifier())) {
                     final var substitutionClass = loadCase(context, substitution);
                     bySubstitutionBuilder.put(substitutionClass,
-                        new CaseCodecPrototype(substitutionClass, substitution, factory));
+                        new CaseCodecPrototype<>(substitutionClass, substitution, factory));
                 }
             }
         }
@@ -180,7 +180,8 @@ final class ChoiceCodecContext<T extends ChoiceIn<?>>
         byClass = ImmutableMap.copyOf(byClassBuilder);
     }
 
-    private static Class<?> loadCase(final BindingRuntimeContext context, final CaseRuntimeType caseType) {
+    private static Class<CaseObject<?, ?, ?>> loadCase(final BindingRuntimeContext context,
+            final CaseRuntimeType caseType) {
         final var className = caseType.getIdentifier();
         try {
             return context.loadClass(className);

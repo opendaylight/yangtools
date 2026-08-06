@@ -8,15 +8,14 @@
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.ChoiceIn;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.CaseObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-final class CaseCodecContext<C extends ChoiceIn<?> & DataObject> extends DataObjectCodecContext<C, CaseRuntimeType> {
+final class CaseCodecContext<C extends CaseObject<?, ?, ?>> extends DataObjectCodecContext<C, CaseRuntimeType> {
     CaseCodecContext(final CaseCodecPrototype<C> prototype) {
         super(prototype, prototype.javaClass());
     }
