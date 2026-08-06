@@ -14,7 +14,6 @@ import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.AugmentationTemplate.augmentationOfIn;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CLASS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.DEPRECATED;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.IAE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_HASHMAP;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_MAP;
@@ -120,7 +119,7 @@ final class BuilderTemplate extends BaseTemplate {
 
         final var bb = newBlockBuilder()
             .blk(wrapToDocumentation(createDescription().toRawString()))
-            .blk(generateDeprecatedAnnotation())
+            .frg(generateDeprecatedAnnotation())
             .eol(generatedAnnotation())
             .str("public class ").str(simpleName).oB()
             // FIXME: remove this newline
@@ -215,13 +214,13 @@ final class BuilderTemplate extends BaseTemplate {
             ? DeprecatedAnnotation.ofStatus(withStatus.getStatus()) : null;
     }
 
-    private @Nullable BlockBuilder generateDeprecatedAnnotation() {
-        final var annotation = deprecatedAnnotation();
-        if (annotation != null) {
-            final var bb = newBlockBuilder().at();
-            return annotation.forRemoval()
-                ? bb.str(importedName(DEPRECATED)).eol("(forRemoval = true)")
-                : bb.str(importedName(SUPPRESS_WARNINGS)).eol("(\"deprecation\")");
+    private @Nullable BlockFragment generateDeprecatedAnnotation() {
+        if (targetType.statement() instanceof DocumentedNode.WithStatus withStatus) {
+            return switch (withStatus.getStatus()) {
+                case CURRENT -> null;
+                case DEPRECATED -> bb -> bb.at().str(importedName(SUPPRESS_WARNINGS)).eol("(\"deprecation\")");
+                case OBSOLETE -> new org.opendaylight.yangtools.binding.codegen.DeprecatedAnnotation(javaType(), true);
+            };
         }
         return null;
     }

@@ -8,34 +8,33 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.DEPRECATED;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * A {@link BlockFragment} emmitting a {@code @Deprecated} annotation.
  */
-record DeprecatedAnnotation(@NonNull String deprecated, boolean forRemoval) implements BlockFragment {
+@NonNullByDefault
+record DeprecatedAnnotation(String deprecated, boolean forRemoval) implements BlockFragment {
+    private static final JavaTypeName DEPRECATED = JavaTypeName.create(Deprecated.class);
+
     DeprecatedAnnotation {
         requireNonNull(deprecated);
     }
 
-    @NonNullByDefault
     DeprecatedAnnotation(final GeneratedClass javaType, final boolean forRemoval) {
         this(javaType.getReferenceString(DEPRECATED), forRemoval);
     }
 
-    static @Nullable DeprecatedAnnotation of(final @NonNull GeneratedClass javaType,
-            final @NonNull EffectiveStatement<?, ?> statement) {
+    static @Nullable DeprecatedAnnotation of(final GeneratedClass javaType, final EffectiveStatement<?, ?> statement) {
         return statement instanceof WithStatus withStatus ? of(javaType, withStatus) : null;
     }
 
-    static @Nullable DeprecatedAnnotation of(final @NonNull GeneratedClass javaType,
-            final @NonNull WithStatus withStatus) {
+    static @Nullable DeprecatedAnnotation of(final GeneratedClass javaType, final WithStatus withStatus) {
         return switch (withStatus.getStatus()) {
             case CURRENT -> null;
             case DEPRECATED -> new DeprecatedAnnotation(javaType, false);
