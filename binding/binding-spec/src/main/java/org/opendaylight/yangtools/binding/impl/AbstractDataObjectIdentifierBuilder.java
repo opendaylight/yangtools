@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.impl;
 import static java.util.Objects.requireNonNull;
 
 import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.CaseObject;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataObject;
@@ -50,7 +51,7 @@ public abstract sealed class AbstractDataObjectIdentifierBuilder<T extends DataO
     }
 
     @Override
-    public final <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>> Builder<N> child(
+    public final <C extends CaseObject<? super T, ?, C>, N extends ChildOf<? super C>> Builder<N> child(
             final Class<C> caze, final Class<N> container) {
         return append(DataObjectStep.of(caze, container));
     }

@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.CaseObject;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataObject;
@@ -73,8 +74,8 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
     }
 
     @Override
-    public <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>> Builder<N> child(
-            final Class<C> caze, final Class<N> container) {
+    public <C extends CaseObject<? super T, ?, C>, N extends ChildOf<? super C>> Builder<N> child(final Class<C> caze,
+            final Class<N> container) {
         return append(DataObjectStep.of(caze, container));
     }
 

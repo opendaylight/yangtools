@@ -59,8 +59,8 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
         <N extends ChildOf<? super T>> Builder<N> child(Class<N> container);
 
         @Override
-        <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>> Builder<N> child(
-            Class<C> caze, Class<N> container);
+        <C extends CaseObject<? super T, ?, C>, N extends ChildOf<? super C>> Builder<N> child(Class<C> caze,
+            Class<N> container);
 
         @Override
         <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>, N extends EntryObject<N, K> & ChildOf<? super C>>
