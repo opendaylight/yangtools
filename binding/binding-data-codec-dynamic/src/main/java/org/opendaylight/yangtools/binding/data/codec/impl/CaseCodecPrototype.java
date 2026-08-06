@@ -7,12 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import org.opendaylight.yangtools.binding.ChoiceIn;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.CaseObject;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
-final class CaseCodecPrototype<C extends ChoiceIn<?> & DataObject> extends DataObjectCodecPrototype<CaseRuntimeType> {
+final class CaseCodecPrototype<C extends CaseObject<?, ?, ?>> extends DataObjectCodecPrototype<CaseRuntimeType> {
     CaseCodecPrototype(final Class<C> cls, final CaseRuntimeType type, final CodecContextFactory factory) {
         super(cls, NodeIdentifier.create(type.statement().argument()), type, factory);
     }
