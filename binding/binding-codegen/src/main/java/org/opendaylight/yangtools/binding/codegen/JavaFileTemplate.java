@@ -144,11 +144,6 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
         return type.isArray() ? bb -> bb.str(".clone()") : null;
     }
 
-    @NonNullByDefault
-    static final boolean isArrayProperty(final BuilderProperty property) {
-        return property.type().isArray();
-    }
-
     static final @NonNull String propertyNameFromGetter(final MethodSignature getter) {
         return propertyNameFromGetter(getter.name());
     }
