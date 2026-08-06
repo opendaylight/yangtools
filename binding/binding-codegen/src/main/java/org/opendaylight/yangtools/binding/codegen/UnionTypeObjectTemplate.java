@@ -15,6 +15,7 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 
 import com.google.common.collect.Iterables;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,12 +28,12 @@ import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype.Tag;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
@@ -41,25 +42,22 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
  */
 final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionTypeObjectArchetype> {
     private static final @NonNull JavaTypeName UNION_TYPE_OBJECT = JavaTypeName.create(UnionTypeObject.class);
+    private static final Comparator<Tag> TAG_COMPARATOR = Comparator.comparing(Tag::name);
 
-    private final @NonNull List<GeneratedProperty> allProperties;
-    private final @NonNull List<GeneratedProperty> finalProperties;
-    private final @NonNull List<GeneratedProperty> parentProperties;
-    private final @NonNull List<GeneratedProperty> properties;
+    private final @NonNull List<Tag> allProperties;
+    private final @NonNull List<Tag> finalProperties;
+    private final @NonNull List<Tag> parentProperties;
+    private final @NonNull List<Tag> properties;
 
     @NonNullByDefault
     private UnionTypeObjectTemplate(final GeneratedClass javaType, final UnionTypeObjectArchetype archetype,
             final DataRootArchetype root) {
         super(javaType, archetype, root);
-        properties = archetype.getProperties();
-        finalProperties = properties.stream()
-            .filter(GeneratedProperty::isReadOnly)
-            .collect(Collectors.toUnmodifiableList());
+        properties = archetype.tags();
+        finalProperties = properties.stream().toList();
         parentProperties = propertiesOfAllParents(archetype);
 
-        allProperties = Stream.concat(properties.stream(), parentProperties.stream())
-            .sorted(PROP_COMPARATOR)
-            .collect(Collectors.toUnmodifiableList());
+        allProperties = Stream.concat(properties.stream(), parentProperties.stream()).sorted(TAG_COMPARATOR).toList();
     }
 
     /**
@@ -71,14 +69,14 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
      *         extension exists the method is recursive called.
      */
     @NonNullByDefault
-    private static List<GeneratedProperty> propertiesOfAllParents(final UnionTypeObjectArchetype gto) {
+    private static List<Tag> propertiesOfAllParents(final UnionTypeObjectArchetype gto) {
         final var superType = gto.getSuperType();
         return superType == null ? List.of() : streamAllProperties(superType).collect(Collectors.toUnmodifiableList());
     }
 
     @NonNullByDefault
-    private static Stream<GeneratedProperty> streamAllProperties(final UnionTypeObjectArchetype gto) {
-        final var stream = gto.getProperties().stream().filter(GeneratedProperty::isReadOnly);
+    private static Stream<Tag> streamAllProperties(final UnionTypeObjectArchetype gto) {
+        final var stream = gto.tags().stream();
         final var superType = gto.getSuperType();
         return superType == null ? stream : Stream.concat(stream, streamAllProperties(superType));
     }
@@ -125,11 +123,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         // fields
         if (!properties.isEmpty()) {
             for (var field : properties) {
-                bb.str("private ");
-                if (field.isReadOnly()) {
-                    bb.str("final ");
-                }
-                bb.str(importedReturnType(field)).sp().str(fieldName(field)).eS();
+                bb.str("private final ").str(importedName(field.type())).str(" _").str(field.name()).eS();
             }
         }
 
@@ -140,7 +134,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         if (archetype.getSuperType() == null) {
             // FIXME: YANGTOOLS-1621: here we want to specialize for the single tagged value we carry
             KeyTemplate.appendEquality(bb, javaType(),
-                properties.stream().map(prop -> Map.entry(prop.getName(), prop.getReturnType())).toList(), true);
+                properties.stream().map(prop -> Map.entry(prop.name(), prop.type())).toList(), true);
         }
 
         return bb.cB().nl();
@@ -196,13 +190,13 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         final var it = finalProperties.iterator();
         while (true) {
             final var property = it.next();
-            final var actualType = property.getReturnType();
+            final var actualType = property.type();
             final var propertyAndTopParentProperties = Iterables.concat(parentProperties, List.of(property));
             final var propFieldName = fieldName(property);
 
             final var setterRestrictions = restrictionsForSetter(actualType);
             if (setterRestrictions != null) {
-                bb.blk(generateCheckers(property, setterRestrictions, actualType)).newLine();
+                bb.blk(generateCheckers(property.name(), setterRestrictions, actualType)).newLine();
             }
 
             bb
@@ -238,12 +232,12 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
 
     /**
      * {@return string with the list of the parameter names of the {@code parameters}, separated by {@code ", "}}
-     * @param parameters non-empty group of generated property instances which are transformed to the sequence
+     * @param tags non-empty group of generated property instances which are transformed to the sequence
      *                   of parameter names, must not be empty
      */
-    private static @NonNull String asArguments(final @NonNull List<GeneratedProperty> parameters) {
+    private static @NonNull String asArguments(final @NonNull List<Tag> tags) {
         final var sb = new StringBuilder();
-        final var it = parameters.iterator();
+        final var it = tags.iterator();
         while (true) {
             sb.append(fieldName(it.next()));
             if (!it.hasNext()) {
@@ -256,19 +250,19 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
     /**
      * Template method which generates method parameters with their types from {@code parameters}.
      *
-     * @param parameters group of generated property instances which are transformed to the method parameters
+     * @param tags group of generated property instances which are transformed to the method parameters
      * @return string with the list of the method parameters with their types in Java format
      */
-    private @NonNull String asArgumentsDeclaration(final @NonNull Iterable<GeneratedProperty> parameters) {
-        final var it = parameters.iterator();
+    private @NonNull String asArgumentsDeclaration(final @NonNull Iterable<Tag> tags) {
+        final var it = tags.iterator();
         if (!it.hasNext()) {
             return "";
         }
 
         final var sb = new StringBuilder();
         while (true) {
-            final var parameter = it.next();
-            sb.append(importedReturnType(parameter)).append(' ').append(fieldName(parameter));
+            final var tag = it.next();
+            sb.append(importedName(tag.type())).append(" _").append(tag.name());
             if (!it.hasNext()) {
                 return sb.toString();
             }
@@ -287,7 +281,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         while (true) {
             final var prop = it.next();
             final var fieldName = fieldName(prop);
-            final var propType = importedReturnType(prop);
+            final var propType = importedName(prop.type());
             bb
                 .str("public ").str(simpleName).str("(").str(propType).sp().str(fieldName).str(")").oB()
                     .str("super(").str(fieldName).eol(");")
@@ -313,7 +307,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
 
         for (var prop : finalProperties) {
             final var field = fieldName(prop);
-            final var type = prop.getReturnType();
+            final var type = prop.type();
             final var fqcn = type.canonicalName();
 
             bb
@@ -392,7 +386,8 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
 
                     // TODO: figure out a better flow
                     bb.str("this.").str(fieldName).str(" = ");
-                    if (isArrayProperty(prop)) {
+                    // FIXME: check for BaseYangTypes.BINARY instead
+                    if (prop.type().isArray()) {
                         bb.str(importedName(CODEHELPERS)).str(".copyArray(source.").str(fieldName).str(")");
                     } else {
                         bb.str("source.").str(fieldName);
@@ -410,7 +405,8 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         final var bb = newBlockBuilder();
         final var it = properties.iterator();
         do {
-            bb.nl().blk(asGetterMethod(it.next()));
+            final var tag = it.next();
+            bb.nl().blk(asGetterMethod(tag.name(), tag.type()));
         } while (it.hasNext());
         return bb;
     }
@@ -439,5 +435,9 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         archetype.typePropertyNames().stream().distinct().forEach(svb::addField);
 
         return svb.computeSerialVersion();
+    }
+
+    private static String fieldName(final Tag tag) {
+        return fieldName(tag.name());
     }
 }

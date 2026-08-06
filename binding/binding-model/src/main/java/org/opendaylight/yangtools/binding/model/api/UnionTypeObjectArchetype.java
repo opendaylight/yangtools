@@ -36,6 +36,19 @@ public record UnionTypeObjectArchetype(
         // FIXME: YANGTOOLS-1621: not really, these should be the tag types
         List<TypeObjectArchetype<?>> enclosedTypes,
         @Nullable UnionTypeObjectArchetype getSuperType) implements TypeObjectArchetype.OfClass<UnionTypeObject> {
+    /**
+     * A tag in a union.
+     *
+     * @since 16.0.0
+     */
+    @Beta
+    public record Tag(String name, Type type) {
+        public Tag {
+            requireNonNull(name);
+            requireNonNull(type);
+        }
+    }
+
     public UnionTypeObjectArchetype {
         requireNonNull(name);
         requireNonNull(statement);
@@ -49,11 +62,11 @@ public record UnionTypeObjectArchetype(
         }
     }
 
-    // FIXME: remove this method
-    public List<GeneratedProperty> getProperties() {
-        return Streams.zip(typePropertyNames().stream().distinct(), typePropertyTypes().stream(),
-            (pn, pt) -> (GeneratedProperty) new GeneratedPropertyImpl(pn, pt, true))
-            .toList();
+    /**
+     * {@return all possible tags in the {@link UnionTypeObject}}
+     */
+    public List<Tag> tags() {
+        return Streams.zip(typePropertyNames().stream().distinct(), typePropertyTypes().stream(), Tag::new).toList();
     }
 
     @Override

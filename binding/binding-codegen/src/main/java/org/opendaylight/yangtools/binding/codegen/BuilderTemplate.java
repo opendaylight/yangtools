@@ -658,7 +658,7 @@ final class BuilderTemplate extends BaseTemplate {
                 bb
                     .at().eol(importedName(OVERRIDE));
             }
-            bb.blk(asGetterMethod(field));
+            bb.blk(asGetterMethod(field.getName(), field.getReturnType()));
 
             if (!it.hasNext()) {
                 return bb;
@@ -688,11 +688,11 @@ final class BuilderTemplate extends BaseTemplate {
         final BlockBuilder argumentCheck;
         final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {
-            bb.blk(generateCheckers(field, restrictions, actualType));
+            bb.blk(generateCheckers(field.getName(), restrictions, actualType));
             argumentCheck = newBlockBuilder()
                 .str("if (values != null)").oB()
                     .str("for (").str(importedName(actualType)).str(" value : values)").oB()
-                        .blk(checkFieldValue(targetType, field, restrictions, actualType, "value"))
+                        .blk(checkFieldValue(targetType, field.getName(), restrictions, actualType, "value"))
                     .cB()
                 .cB();
         } else {
@@ -722,7 +722,7 @@ final class BuilderTemplate extends BaseTemplate {
         final var bb = newBlockBuilder();
         final var restrictions = JavaFileTemplate.restrictionsForSetter(actualType);
         if (restrictions != null) {
-            bb.blk(generateCheckers(field, restrictions, actualType));
+            bb.blk(generateCheckers(field.getName(), restrictions, actualType));
         }
 
         bb
@@ -744,7 +744,7 @@ final class BuilderTemplate extends BaseTemplate {
             bb
                 .eol("if (values != null)").oB()
                     .str("for (").str(importedName(actualType)).str(" value : values.values())").oB()
-                        .blk(checkFieldValue(targetType, field, restrictions, actualType, "value"))
+                        .blk(checkFieldValue(targetType, field.getName(), restrictions, actualType, "value"))
                     .cB()
                 .cB();
         }
@@ -759,7 +759,7 @@ final class BuilderTemplate extends BaseTemplate {
         final var bb = newBlockBuilder();
         final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {
-            bb.nl().blk(generateCheckers(field, restrictions, actualType));
+            bb.nl().blk(generateCheckers(field.getName(), restrictions, actualType));
         }
         bb
             .nl()
@@ -776,7 +776,7 @@ final class BuilderTemplate extends BaseTemplate {
         if (restrictions != null) {
             bb
                 .str("if (value != null)").oB()
-                    .blk(checkFieldValue(targetType, field, restrictions, actualType, "value"))
+                    .blk(checkFieldValue(targetType, field.getName(), restrictions, actualType, "value"))
                 .cB();
         }
         return bb

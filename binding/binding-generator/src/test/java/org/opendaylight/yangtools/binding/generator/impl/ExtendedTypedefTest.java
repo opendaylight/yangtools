@@ -74,8 +74,7 @@ class ExtendedTypedefTest {
 
         // extended-typedef-union
         assertNotNull(extendedTypedefUnion, "ExtendedTypedefUnion object not found");
-        assertEquals(List.of(), extendedTypedefUnion.getProperties(),
-            "ExtendedTypedefUnion shouldn't have any property");
+        assertEquals(List.of(), extendedTypedefUnion.tags(), "ExtendedTypedefUnion shouldn't have any property");
 
         final var extendUTO = extendedTypedefUnion.getSuperType();
         assertNotNull(extendUTO);

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
@@ -17,7 +18,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
 import com.google.common.base.VerifyException;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.GeneratedProperty;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
@@ -58,8 +57,6 @@ import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter;
 
 abstract sealed class BaseTemplate extends JavaFileTemplate
         permits ArchetypeTemplate, BuilderImplTemplate, BuilderTemplate {
-    static final Comparator<GeneratedProperty> PROP_COMPARATOR = Comparator.comparing(GeneratedProperty::getName);
-
     /**
      * Name or prefix (multiple patterns in builder class as composed with '_' and upper case of the field name)
      * of the class constant which contains list of <code>Pattern</code> instances. The type of this constant is
@@ -120,8 +117,12 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     abstract @NonNull BlockBuilder body();
 
     // Helper patterns
-    static final @NonNull String fieldName(final GeneratedProperty property) {
-        return "_" + property.getName();
+    static final @NonNull String fieldName(final String name) {
+        return "_" + requireNonNull(name);
+    }
+
+    static final String fieldName(final BuilderGeneratedProperty prop) {
+        return fieldName(prop.getName());
     }
 
     /**
@@ -132,19 +133,21 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
      */
     // FIXME: return a Block when we can do efficient copies
     @NonNullByDefault
-    final BlockBuilder asGetterMethod(final GeneratedProperty field) {
+    final BlockBuilder asGetterMethod(final String name, final Type type) {
         return newBlockBuilder()
-            .str("public ").str(importedReturnType(field)).sp().str(getterMethodName(field)).str("()").jBlock(bb -> {
-                final var fieldName = fieldName(field);
+            .str("public ").str(importedName(type)).sp().str(getterMethodName(name)).str("()").jBlock(bb -> {
+                final var fieldName = fieldName(name);
                 bb.str("return ");
                 // any Java array type needs to be duplicated to prevent modification
-                if (field.getReturnType().isArray()) {
+                if (type.isArray()) {
                     bb.str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
                 } else {
                     bb.str(fieldName).eS();
                 }
             }).nl();
     }
+
+
 
     @NonNullByDefault
     final void appendSnippet(final StringBuilder sb, final Archetype type, final ModuleEffectiveStatement module,
@@ -230,18 +233,17 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     }
 
     @NonNullByDefault
-    final BlockBuilder generateCheckers(final GeneratedProperty field, final Restrictions restrictions,
-            final Type actualType) {
+    final BlockBuilder generateCheckers(final String name, final Restrictions restrictions, final Type actualType) {
         verify(!restrictions.isEmpty());
 
         final var bb = newBlockBuilder();
         restrictions.getRangeConstraint().ifPresent(range ->
             bb.blk(AbstractRangeGenerator.forType(actualType).generateRangeChecker(
-                    toFirstUpper(field.getName()), range, javaType())));
+                    toFirstUpper(name), range, javaType())));
         // FIXME: this call looks unlike the range checker call: it should be refactored to acquire a generator,
         //        so that we can suppress checker when not needed -- just like ranges do above
         restrictions.getLengthConstraint().ifPresent(length ->
-            bb.blk(LengthGenerator.generateLengthChecker(fieldName(field), actualType, length, javaType()))
+            bb.blk(LengthGenerator.generateLengthChecker(fieldName(name), actualType, length, javaType()))
         );
         return bb;
     }
@@ -308,7 +310,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
 
     // FIXME: return a Block
     @NonNullByDefault
-    final BlockBuilder checkFieldValue(final DataContainerArchetype type, final GeneratedProperty property,
+    final BlockBuilder checkFieldValue(final DataContainerArchetype type, final String name,
             final Restrictions restrictions, final Type actualType, final String value) {
         verify(!restrictions.isEmpty());
 
@@ -317,10 +319,10 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         final var bb = newBlockBuilder();
         if (restrictions.getRangeConstraint().isPresent()) {
             AbstractRangeGenerator.forType(actualType)
-                .appendCheckerCall(bb, toFirstUpper(property.getName()), valueRef);
+                .appendCheckerCall(bb, toFirstUpper(name), valueRef);
         }
 
-        final var fieldName = fieldName(property);
+        final var fieldName = fieldName(name);
         if (restrictions.getLengthConstraint().isPresent()) {
             LengthGenerator.appendCheckerCall(bb, fieldName, valueRef);
         }

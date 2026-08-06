@@ -5,16 +5,17 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.api;
+package org.opendaylight.yangtools.binding.codegen;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
  * Generated Property is essentially a named field with its type.
  */
 @Deprecated(since = "16.0.0", forRemoval = true)
 @NonNullByDefault
-public interface GeneratedProperty {
+interface GeneratedProperty {
     /**
      * {@return the name of this property}
      */
