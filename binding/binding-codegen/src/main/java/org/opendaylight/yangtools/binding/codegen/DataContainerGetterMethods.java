@@ -21,9 +21,12 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.RoutingContextAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
@@ -74,7 +77,7 @@ final class DataContainerGetterMethods implements BlockFragment {
             // getFoo()
             bb
                 .txt(accessorJavadoc(method, ", or {@code null} if it is not present"))
-                .frg(generateAccessorAnnotations(method))
+                .frg(generateAnnotations(method))
 //                .frg(override)
                 .str(nullableType(method.returnType())).sp().str(method.name()).eol("();");
 
@@ -254,62 +257,29 @@ final class DataContainerGetterMethods implements BlockFragment {
         return !type.packageName().isEmpty();
     }
 
-    private BlockFragment generateAccessorAnnotations(final MethodSignature method) {
+    private @Nullable BlockFragment generateAnnotations(final MethodSignature method) {
         final var annotations = method.annotations();
         if (annotations.isEmpty()) {
-            return bb -> {
-                // no-op
-            };
+            return null;
         }
 
         return bb -> {
             for (var annotation : annotations) {
-                bb.blk(template.generateAnnotation(annotation));
-            }
-        };
-    }
-
-
-//  private @NonNull BlockBuilder generateMethod(final MethodSignature method) {
-//      return newBlockBuilder()
-//          .blk(generateJavadoc(method))
-//          .blk(generateAnnotations(method))
-//          .str(importedReturnType(method)).sp().str(method.name()).eol("();");
-//  }
-//
-//  private static @Nullable BlockBuilder generateJavadoc(final MethodSignature method) {
-//      final var optDescription = method.statement()
-//          .findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class);
-//      if (optDescription.isEmpty()) {
-//          return null;
-//      }
-//
-//      // FIXME: use a BlockBuilder
-//      final var sb = new StringBuilder();
-//      final var reference = optDescription.orElseThrow();
-//      if (reference != null) {
-//          sb.append(formatReference(reference).toRawString());
-//      }
-//      if (sb.isEmpty()) {
-//          return null;
-//      }
-//
-//      final var bb = Block.builder();
-//      appendAsJavadoc(bb, sb.toString());
-//      return bb;
-//  }
-
-    private BlockFragment generateAnnotations(final MethodSignature method) {
-        final var annotations = method.annotations();
-        if (annotations.isEmpty()) {
-            return bb -> {
-                // no-op
-            };
-        }
-
-        return bb -> {
-            for (var annotation : annotations) {
-                bb.blk(template.generateAnnotation(annotation));
+                bb.at().str(importedName(annotation.type()));
+                switch (annotation) {
+                    case DeprecatedAnnotation deprecated -> {
+                        if (deprecated.forRemoval()) {
+                            bb.str("(forRemoval = true)");
+                        }
+                    }
+                    case RoutingContextAnnotation routingContext -> {
+                        bb.str("(value = ").str(template.importedName(routingContext.value())).str(".class)");
+                    }
+                    case OverrideAnnotation unused -> {
+                        // no-op
+                    }
+                }
+                bb.newLine();
             }
         };
     }

@@ -23,19 +23,15 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
-import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
-import org.opendaylight.yangtools.binding.model.api.RoutingContextAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
@@ -204,26 +200,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             sb.append(DocUtils.replaceAllIllegalChars(DocUtils.encodeAngleBrackets(encodeJavadocSymbols(str))));
         }
         return sb;
-    }
-
-    @NonNullByDefault
-    final BlockBuilder generateAnnotation(final AttachedAnnotation.ToMethod annotation) {
-        final var bb = newBlockBuilder()
-            .at().str(importedName(annotation.type()));
-        switch (annotation) {
-            case DeprecatedAnnotation deprecated -> {
-                if (deprecated.forRemoval()) {
-                    bb.str("(forRemoval = true)");
-                }
-            }
-            case RoutingContextAnnotation routingContext -> {
-                bb.str("(value = ").str(importedName(routingContext.value())).str(".class)");
-            }
-            case OverrideAnnotation unused -> {
-                // no-op
-            }
-        }
-        return bb.nl();
     }
 
     @NonNullByDefault
