@@ -33,7 +33,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.ChildOf;
+import org.opendaylight.yangtools.binding.ContainerObject;
 import org.opendaylight.yangtools.binding.annotations.RoutingContext;
 import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 import org.opendaylight.yangtools.yang.common.Decimal64;
@@ -651,8 +651,9 @@ class CompilationTest extends BaseCompilationTest {
 
         // Test generated 'container output-action'
         assertTrue(outputActionClass.isInterface());
-        CompilationTestUtils.assertImplementsParameterizedIfc(outputActionClass, ChildOf.class.toString(),
-            actionClass.getCanonicalName());
+        CompilationTestUtils.assertImplementsParameterizedIfc(outputActionClass, ContainerObject.class.toString(),
+            actionClass.getCanonicalName(),
+            "org.opendaylight.yang.gen.v1.urn.test.foo.rev140717.action.action.output.action._case.OutputAction");
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }

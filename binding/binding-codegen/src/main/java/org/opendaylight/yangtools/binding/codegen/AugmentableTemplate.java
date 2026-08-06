@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 // TODO: split this class up into reusable components, i.e. use composition instead of inheritance
 @NonNullByDefault
 abstract sealed class AugmentableTemplate<T extends AugmentableArchetype> extends InterfaceTemplate<T>
-        permits CaseObjectTemplate, ChildOfTemplate, InstanceNotificationTemplate, KeyedListNotificationTemplate,
-                NotificationTemplate, RpcInputTemplate, RpcOutputTemplate {
+        permits CaseObjectTemplate, ChildOfTemplate, ContainerObjectTemplate, InstanceNotificationTemplate,
+                KeyedListNotificationTemplate, NotificationTemplate, RpcInputTemplate, RpcOutputTemplate {
     static final ConcreteType AUGMENTABLE = ConcreteType.ofClass(Augmentable.class);
 
     AugmentableTemplate(final DataRootArchetype root, final T archetype) {

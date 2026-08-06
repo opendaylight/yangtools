@@ -21,7 +21,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -290,7 +289,7 @@ public final class CompilationTestUtils {
      * @param genericTypeName name of generic type
      */
     static void assertImplementsParameterizedIfc(final Class<?> clazz, final String ifcName,
-            final String genericTypeName) {
+            final String... genericTypeNames) {
         ParameterizedType ifcType = null;
         for (var ifc : clazz.getGenericInterfaces()) {
             if (ifc instanceof ParameterizedType pt && ifcName.equals(pt.getRawType().toString())) {
@@ -299,13 +298,13 @@ public final class CompilationTestUtils {
         }
         assertNotNull(ifcType);
 
-        Type[] typeArg = ifcType.getActualTypeArguments();
-        assertEquals(1, typeArg.length);
-        Type typeArgument = typeArg[0];
-        assertInstanceOf(Class.class, typeArgument);
-        Class<?> argClass = (Class<?>) typeArgument;
-        assertEquals(genericTypeName, argClass.getName());
-        assertTrue(argClass.isInterface());
+        var typeArg = ifcType.getActualTypeArguments();
+        assertEquals(genericTypeNames.length, typeArg.length);
+        for (int i = 0; i < genericTypeNames.length; ++i) {
+            var argClass = assertInstanceOf(Class.class, typeArg[i]);
+            assertEquals(genericTypeNames[i], argClass.getName());
+            assertTrue(argClass.isInterface());
+        }
     }
 
     /**

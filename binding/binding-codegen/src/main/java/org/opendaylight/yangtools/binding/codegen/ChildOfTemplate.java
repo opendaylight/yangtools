@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
  */
 @NonNullByDefault
 abstract sealed class ChildOfTemplate<T extends ChildOfArchetype> extends AugmentableTemplate<T>
-        permits ContainerObjectTemplate, EntryObjectTemplate, ItemObjectTemplate {
+        permits EntryObjectTemplate, ItemObjectTemplate {
     private static final ConcreteType CHILD_OF = ConcreteType.ofClass(ChildOf.class);
 
     ChildOfTemplate(final DataRootArchetype root, final T archetype) {

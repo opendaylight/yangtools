@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.ChildOf;
+import org.opendaylight.yangtools.binding.ContainerObject;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 /**
- * The {@link DataContainerArchetype} for {@link ChildOf} specializations generated for {@code container} statements.
+ * The {@link DataContainerArchetype} for a {@link ContainerObject}.
  *
  * @since 16.0.0
  */
