@@ -259,15 +259,19 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
                 }
                 if (context.getSchemaDefinition(choiceClass) instanceof ChoiceRuntimeType choiceType) {
                     // FIXME: accurate type!
-                    return new ChoiceCodecContext(choiceClass, choiceType, BindingCodecContext.this);
+                    return new ChoiceCodecContext<>(choiceClass, choiceType, BindingCodecContext.this);
                 }
                 throw new IllegalArgumentException(caseType + " does not refer to a choice");
             }
 
-            private static Class<?> findCaseChoice(final Class<? extends DataObject> caseClass) {
+            // FIXME: talk to BindingRuntimeType's view of the corresponding archetype instead of reflection
+            private static @Nullable Class<ChoiceIn<?>> findCaseChoice(
+                    final Class<? extends DataObject> caseClass) {
                 for (var type : caseClass.getGenericInterfaces()) {
                     if (type instanceof Class<?> typeClass && ChoiceIn.class.isAssignableFrom(typeClass)) {
-                        return typeClass.asSubclass(ChoiceIn.class);
+                        @SuppressWarnings("unchecked")
+                        final var ret = (Class<ChoiceIn<?>>) typeClass.asSubclass(ChoiceIn.class);
+                        return ret;
                     }
                 }
                 return null;

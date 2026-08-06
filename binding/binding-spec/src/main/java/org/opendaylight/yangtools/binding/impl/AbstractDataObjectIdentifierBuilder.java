@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.binding.impl;
 import static java.util.Objects.requireNonNull;
 
 import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.CaseObject;
 import org.opendaylight.yangtools.binding.ChildOf;
-import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier.Builder;
@@ -50,7 +50,7 @@ public abstract sealed class AbstractDataObjectIdentifierBuilder<T extends DataO
     }
 
     @Override
-    public final <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>> Builder<N> child(
+    public final <C extends CaseObject<? super T, ?, C>, N extends ChildOf<? super C>> Builder<N> child(
             final Class<C> caze, final Class<N> container) {
         return append(DataObjectStep.of(caze, container));
     }
@@ -62,7 +62,7 @@ public abstract sealed class AbstractDataObjectIdentifierBuilder<T extends DataO
     }
 
     @Override
-    public final <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>,
+    public final <C extends CaseObject<? super T, ?, C>, K extends Key<N>,
             N extends EntryObject<N, K> & ChildOf<? super C>>
             Builder.WithKey<N, K> child(final Class<C> caze, final Class<N> listItem, final K listKey) {
         return append(new KeyStep<>(listItem, requireNonNull(caze), listKey));
