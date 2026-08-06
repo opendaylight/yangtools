@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.Nullable;
  *
  * @param <T> EntryObject type
  */
-public record KeylessStep<T extends EntryObject<?, ?>>(
+public record KeylessStep<T extends EntryObject<?, ?, ?>>(
         @NonNull Class<T> type,
         @Nullable Class<? extends DataObject> caseType) implements InexactDataObjectStep<T> {
     public KeylessStep {

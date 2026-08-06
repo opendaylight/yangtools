@@ -19,12 +19,13 @@ import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
  *     The logic here is that {@code EntryObject} is an entry on a {@code Map<Key, EntryObject>}, whereas {@code list}
  *     statements are mapped to {@code List<ItemObject>}.
  *
+ * @param <P> Parent {@link DataContainer} type
  * @param <T> {@link EntryObject} type
  * @param <K> {@link Key} type
  * @see ItemObject
  */
-public non-sealed interface EntryObject<T extends EntryObject<T, K>, K extends Key<T>>
-        extends Augmentable<T>, DataObject, KeyAware<K>, JavaDataContainer<T> {
+public non-sealed interface EntryObject<P extends DataContainer, T extends EntryObject<P, T, K>, K extends Key<T>>
+        extends Augmentable<T>, ChildOf<P>, JavaDataContainer<T>, KeyAware<K> {
     @Override
     Class<T> implementedInterface();
 

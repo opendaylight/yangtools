@@ -41,7 +41,7 @@ class LazyBindingMapTest extends AbstractBindingCodecTest {
     @Mock
     private DataObject mockDataObject;
     @Mock
-    private EntryObject<?, ?> mockEntryObject;
+    private EntryObject<?, ?, ?> mockEntryObject;
 
     @BeforeAll
     static void prepareTop() {

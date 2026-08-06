@@ -12,17 +12,19 @@ import static java.util.Objects.requireNonNull;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
 
 /**
  * Abstract base class for implementations of {@link EntryObject}.
  *
+ * @param <P> Parent {@link DataContainer} type
  * @param <T> {@link EntryObject} type
  * @param <K> {@link Key} type
  */
-public abstract class AbstractEntryObject<T extends EntryObject<T, K> & JavaDataContainer<T>, K extends Key<T>>
-        extends AbstractAugmentable<T> implements EntryObject<T, K> {
+public abstract class AbstractEntryObject<P extends DataContainer, T extends EntryObject<P, T, K>, K extends Key<T>>
+        extends AbstractAugmentable<T> implements EntryObject<P, T, K> {
     private final @NonNull K key;
 
     protected AbstractEntryObject(final Map<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations,

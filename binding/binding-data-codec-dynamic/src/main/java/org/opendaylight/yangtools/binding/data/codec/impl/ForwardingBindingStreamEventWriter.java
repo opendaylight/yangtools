@@ -58,13 +58,13 @@ abstract class ForwardingBindingStreamEventWriter implements AnydataBindingStrea
     }
 
     @Override
-    public void startMapNode(final Class<? extends EntryObject<?, ?>> mapEntryType, final int childSizeHint)
+    public void startMapNode(final Class<? extends EntryObject<?, ?, ?>> mapEntryType, final int childSizeHint)
             throws IOException {
         delegate().startMapNode(mapEntryType, childSizeHint);
     }
 
     @Override
-    public void startOrderedMapNode(final Class<? extends EntryObject<?, ?>> mapEntryType, final int childSizeHint)
+    public void startOrderedMapNode(final Class<? extends EntryObject<?, ?, ?>> mapEntryType, final int childSizeHint)
             throws IOException {
         delegate().startOrderedMapNode(mapEntryType, childSizeHint);
     }

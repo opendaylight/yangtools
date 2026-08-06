@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
  * @param <K> key type
  * @param <V> value type
  */
-final class LazyBindingMapLookupState<K extends Key<V>, V extends EntryObject<V, K>>
+final class LazyBindingMapLookupState<K extends Key<V>, V extends EntryObject<?, V, K>>
         extends LazyBindingMap.State<K, V> {
     private static final VarHandle VALUES;
 
@@ -53,7 +53,6 @@ final class LazyBindingMapLookupState<K extends Key<V>, V extends EntryObject<V,
     private final LazyBindingMap<K, V> map;
 
     // Used via the varhandle above
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile Values<K, V> values;
 
@@ -125,8 +124,8 @@ final class LazyBindingMapLookupState<K extends Key<V>, V extends EntryObject<V,
         return (witness = VALUES.compareAndExchangeRelease(this, null, ret)) == null ? ret : (Values<K, V>) witness;
     }
 
-    private static final class EntrySet<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractSet<Entry<K, V>>
-            implements Immutable {
+    private static final class EntrySet<K extends Key<V>, V extends EntryObject<?, V, K>>
+            extends AbstractSet<Entry<K, V>> implements Immutable {
         private final Values<K, V> values;
 
         EntrySet(final Values<K, V> values) {
@@ -159,7 +158,7 @@ final class LazyBindingMapLookupState<K extends Key<V>, V extends EntryObject<V,
         }
     }
 
-    private static final class KeySet<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractSet<K>
+    private static final class KeySet<K extends Key<V>, V extends EntryObject<?, V, K>> extends AbstractSet<K>
             implements Immutable {
         private final Values<K, V> values;
 
@@ -191,7 +190,7 @@ final class LazyBindingMapLookupState<K extends Key<V>, V extends EntryObject<V,
         }
     }
 
-    private static final class Values<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractSet<V>
+    private static final class Values<K extends Key<V>, V extends EntryObject<?, V, K>> extends AbstractSet<V>
             implements Immutable {
         private final LazyBindingMapLookupState<K, V> state;
 
@@ -258,7 +257,8 @@ final class LazyBindingMapLookupState<K extends Key<V>, V extends EntryObject<V,
         }
     }
 
-    private static final class ValuesIter<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractIterator<V> {
+    private static final class ValuesIter<K extends Key<V>, V extends EntryObject<?, V, K>>
+            extends AbstractIterator<V> {
         private final Values<K, V> values;
         private final Object[] objects;
         private int nextOffset;
@@ -279,7 +279,7 @@ final class LazyBindingMapLookupState<K extends Key<V>, V extends EntryObject<V,
 
         private @NonNull V objectAt(final int offset) {
             final Object obj = OBJ_AA.getAcquire(objects, offset);
-            return obj instanceof MapEntryNode ? loadObjectAt(offset, (MapEntryNode) obj) : (V) obj;
+            return obj instanceof MapEntryNode m ? loadObjectAt(offset, m) : (V) obj;
         }
 
         private @NonNull V loadObjectAt(final int offset, final MapEntryNode obj) {

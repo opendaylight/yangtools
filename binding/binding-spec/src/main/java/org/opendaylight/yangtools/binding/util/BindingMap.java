@@ -76,7 +76,7 @@ public final class BindingMap {
      * @return a {@code Map} containing the specified value
      * @throws NullPointerException if the value is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> of(final V v1) {
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> of(final V v1) {
         return Map.of(v1.key(), v1);
     }
 
@@ -92,7 +92,7 @@ public final class BindingMap {
      * @throws IllegalArgumentException if the values contain duplicate keys
      * @throws NullPointerException if any value is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> of(final V v1, final V v2) {
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> of(final V v1, final V v2) {
         return Map.of(v1.key(), v1, v2.key(), v2);
     }
 
@@ -109,7 +109,7 @@ public final class BindingMap {
      * @throws IllegalArgumentException if the values contain duplicate keys
      * @throws NullPointerException if any value is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
             final V v3) {
         return Map.of(v1.key(), v1, v2.key(), v2, v3.key(), v3);
     }
@@ -128,7 +128,7 @@ public final class BindingMap {
      * @throws IllegalArgumentException if the values contain duplicate keys
      * @throws NullPointerException if any value is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
             final V v3, final V v4) {
         return Map.of(v1.key(), v1, v2.key(), v2, v3.key(), v3, v4.key(), v4);
     }
@@ -148,7 +148,7 @@ public final class BindingMap {
      * @throws IllegalArgumentException if the values contain duplicate keys
      * @throws NullPointerException if any value is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
             final V v3, final V v4, final V v5) {
         return Map.of(v1.key(), v1, v2.key(), v2, v3.key(), v3, v4.key(), v4, v5.key(), v5);
     }
@@ -169,7 +169,7 @@ public final class BindingMap {
      * @throws IllegalArgumentException if the values contain duplicate keys
      * @throws NullPointerException if any value is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
             final V v3, final V v4, final V v5, final V v6) {
         return Map.of(v1.key(), v1, v2.key(), v2, v3.key(), v3, v4.key(), v4, v5.key(), v5, v6.key(), v6);
     }
@@ -191,7 +191,7 @@ public final class BindingMap {
      * @throws IllegalArgumentException if the values contain duplicate keys
      * @throws NullPointerException if any value is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
             final V v3, final V v4, final V v5, final V v6, final V v7) {
         return Map.of(v1.key(), v1, v2.key(), v2, v3.key(), v3, v4.key(), v4, v5.key(), v5, v6.key(), v6, v7.key(), v7);
     }
@@ -214,7 +214,7 @@ public final class BindingMap {
      * @throws IllegalArgumentException if the values contain duplicate keys
      * @throws NullPointerException if any value is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
             final V v3, final V v4, final V v5, final V v6, final V v7, final V v8) {
         return Map.of(v1.key(), v1, v2.key(), v2, v3.key(), v3, v4.key(), v4, v5.key(), v5, v6.key(), v6, v7.key(), v7,
             v8.key(), v8);
@@ -239,7 +239,7 @@ public final class BindingMap {
      * @throws IllegalArgumentException if the values contain duplicate keys
      * @throws NullPointerException if any value is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
             final V v3, final V v4, final V v5, final V v6, final V v7, final V v8, final V v9) {
         return Map.of(v1.key(), v1, v2.key(), v2, v3.key(), v3, v4.key(), v4, v5.key(), v5, v6.key(), v6, v7.key(), v7,
             v8.key(), v8, v9.key(), v9);
@@ -265,7 +265,7 @@ public final class BindingMap {
      * @throws IllegalArgumentException if the values contain duplicate keys
      * @throws NullPointerException if any value is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> of(final V v1, final V v2,
             final V v3, final V v4, final V v5, final V v6, final V v7, final V v8, final V v9, final V v10) {
         return Map.of(v1.key(), v1, v2.key(), v2, v3.key(), v3, v4.key(), v4, v5.key(), v5, v6.key(), v6, v7.key(), v7,
             v8.key(), v8, v9.key(), v9, v10.key(), v10);
@@ -283,7 +283,7 @@ public final class BindingMap {
      * @throws NullPointerException if any value is {@code null}, or if the {@code values} array is {@code null}
      */
     @SafeVarargs
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> of(final V... values) {
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> of(final V... values) {
         return of(Arrays.asList(values));
     }
 
@@ -298,7 +298,7 @@ public final class BindingMap {
      * @throws IllegalArgumentException if there are any duplicate keys in the provided values
      * @throws NullPointerException if any value is {@code null}, or if the {@code values} array is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> of(
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> of(
             final Collection<V> values) {
         return values.stream().collect(toMap());
     }
@@ -311,7 +311,7 @@ public final class BindingMap {
      * @param <V> the {@code Map}'s value type
      * @return A collector that accumulates the input elements into an unmodifiable map.
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>>
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>>
             @NonNull Collector<V, ?, ? extends Map<K, V>> toMap() {
         return Collectors.toUnmodifiableMap(EntryObject::key, v -> v);
     }
@@ -324,7 +324,7 @@ public final class BindingMap {
      * @param <V> the {@code Map}'s value type
      * @return A {@link Builder} instance.
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Builder<K, V> builder() {
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Builder<K, V> builder() {
         return builder(Builder.DEFAULT_INITIAL_CAPACITY);
     }
 
@@ -337,7 +337,7 @@ public final class BindingMap {
      * @param expectedSize Expected number of values in the resulting map
      * @return A {@link Builder} instance.
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Builder<K, V> builder(
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Builder<K, V> builder(
             final int expectedSize) {
         return new UnorderedBuilder<>(expectedSize);
     }
@@ -353,7 +353,7 @@ public final class BindingMap {
      * @throws IllegalArgumentException if the values contain duplicate keys
      * @throws NullPointerException if any value is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> ordered(final V v1,
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> ordered(final V v1,
             final V v2) {
         return ImmutableMap.of(v1.key(), v1, v2.key(), v2);
     }
@@ -370,7 +370,7 @@ public final class BindingMap {
      * @throws IllegalArgumentException if the values contain duplicate keys
      * @throws NullPointerException if any value is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> ordered(final V v1,
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> ordered(final V v1,
             final V v2, final V v3) {
         return ImmutableMap.of(v1.key(), v1, v2.key(), v2, v3.key(), v3);
     }
@@ -388,7 +388,7 @@ public final class BindingMap {
      * @throws IllegalArgumentException if the values contain duplicate keys
      * @throws NullPointerException if any value is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> ordered(final V v1,
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> ordered(final V v1,
             final V v2, final V v3, final V v4) {
         return ImmutableMap.of(v1.key(), v1, v2.key(), v2, v3.key(), v3, v4.key(), v4);
     }
@@ -407,7 +407,7 @@ public final class BindingMap {
      * @throws IllegalArgumentException if the values contain duplicate keys
      * @throws NullPointerException if any value is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> ordered(final V v1,
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> ordered(final V v1,
             final V v2, final V v3, final V v4, final V v5) {
         return ImmutableMap.of(v1.key(), v1, v2.key(), v2, v3.key(), v3, v4.key(), v4, v5.key(), v5);
     }
@@ -424,7 +424,7 @@ public final class BindingMap {
      * @throws NullPointerException if any value is {@code null}, or if the {@code values} array is {@code null}
      */
     @SafeVarargs
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> ordered(final V... values) {
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> ordered(final V... values) {
         return ordered(Arrays.asList(values));
     }
 
@@ -439,7 +439,7 @@ public final class BindingMap {
      * @throws IllegalArgumentException if there are any duplicate keys in the provided values
      * @throws NullPointerException if any value is {@code null}, or if the {@code values} array is {@code null}
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> ordered(
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> ordered(
             final Collection<V> values) {
         return values.stream().collect(toOrderedMap());
     }
@@ -452,7 +452,7 @@ public final class BindingMap {
      * @param <V> the {@code Map}'s value type
      * @return A collector that accumulates the input elements into an unmodifiable map.
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>>
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>>
             @NonNull Collector<V, ?, ? extends Map<K, V>> toOrderedMap() {
         return ImmutableMap.<V, K, V>toImmutableMap(EntryObject::key, v -> v);
     }
@@ -465,7 +465,7 @@ public final class BindingMap {
      * @param <V> the {@code Map}'s value type
      * @return A {@link Builder} instance.
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Builder<K, V> orderedBuilder() {
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Builder<K, V> orderedBuilder() {
         return orderedBuilder(Builder.DEFAULT_INITIAL_CAPACITY);
     }
 
@@ -478,7 +478,7 @@ public final class BindingMap {
      * @param expectedSize Expected number of values in the resulting map
      * @return A {@link Builder} instance.
      */
-    public static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Builder<K, V> orderedBuilder(
+    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Builder<K, V> orderedBuilder(
             final int expectedSize) {
         return new OrderedBuilder<>(expectedSize);
     }
@@ -489,7 +489,7 @@ public final class BindingMap {
      * @param <K> the {@code Map}'s key type
      * @param <V> the {@code Map}'s value type
      */
-    public abstract static class Builder<K extends Key<V>, V extends EntryObject<V, K>> {
+    public abstract static class Builder<K extends Key<V>, V extends EntryObject<?, V, K>> {
         static final int DEFAULT_INITIAL_CAPACITY = 4;
 
         Builder() {
@@ -556,7 +556,7 @@ public final class BindingMap {
         abstract void addEntries(Collection<Entry<K, V>> entries);
     }
 
-    private static final class OrderedBuilder<K extends Key<V>, V extends EntryObject<V, K>>
+    private static final class OrderedBuilder<K extends Key<V>, V extends EntryObject<?, V, K>>
             extends Builder<K, V> {
         private final ImmutableMap.Builder<K, V> delegate;
 
@@ -580,7 +580,7 @@ public final class BindingMap {
         }
     }
 
-    private static final class UnorderedBuilder<K extends Key<V>, V extends EntryObject<V, K>>
+    private static final class UnorderedBuilder<K extends Key<V>, V extends EntryObject<?, V, K>>
             extends Builder<K, V> {
         private final ArrayList<Entry<K, V>> buffer;
 

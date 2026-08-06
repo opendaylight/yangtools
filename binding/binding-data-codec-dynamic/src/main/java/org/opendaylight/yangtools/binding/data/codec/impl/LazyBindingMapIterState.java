@@ -36,7 +36,8 @@ import org.slf4j.LoggerFactory;
  * @param <K> key type
  * @param <V> value type
  */
-final class LazyBindingMapIterState<K extends Key<V>, V extends EntryObject<V, K>> extends LazyBindingMap.State<K, V> {
+final class LazyBindingMapIterState<K extends Key<V>, V extends EntryObject<?, V, K>>
+        extends LazyBindingMap.State<K, V> {
     private static final Logger LOG = LoggerFactory.getLogger(LazyBindingMapIterState.class);
     private static final VarHandle ENTRY_SET;
     private static final VarHandle KEY_SET;
@@ -57,15 +58,12 @@ final class LazyBindingMapIterState<K extends Key<V>, V extends EntryObject<V, K
     private final @NonNull Values<K, V> values;
 
     // Secondary views derived from values, used via varhandles above
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile KeySet<K, V> keySet;
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile EntrySet<K, V> entrySet;
 
     // Lookup map, instantiated on demand, used via varhandle above
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "URF_UNREAD_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile ImmutableMap<K, V> lookupMap;
 
@@ -134,8 +132,8 @@ final class LazyBindingMapIterState<K extends Key<V>, V extends EntryObject<V, K
         return (witness = KEY_SET.compareAndExchangeRelease(this, null, ret)) == null ? ret : (KeySet<K, V>) witness;
     }
 
-    private static final class EntrySet<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractSet<Entry<K, V>>
-            implements Immutable {
+    private static final class EntrySet<K extends Key<V>, V extends EntryObject<?, V, K>>
+            extends AbstractSet<Entry<K, V>> implements Immutable {
         private final Values<K, V> values;
 
         EntrySet(final Values<K, V> values) {
@@ -161,7 +159,7 @@ final class LazyBindingMapIterState<K extends Key<V>, V extends EntryObject<V, K
         }
     }
 
-    private static final class KeySet<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractSet<K>
+    private static final class KeySet<K extends Key<V>, V extends EntryObject<?, V, K>> extends AbstractSet<K>
             implements Immutable {
         private final Values<K, V> values;
 
@@ -191,7 +189,7 @@ final class LazyBindingMapIterState<K extends Key<V>, V extends EntryObject<V, K
      * the array to hold all values upfront and populate it with MapEntry nodes. That allows us to perform lock-free
      * access, as we just end up CASing MapEntryNodes with their Binding replacements.
      */
-    private static final class Values<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractSet<V>
+    private static final class Values<K extends Key<V>, V extends EntryObject<?, V, K>> extends AbstractSet<V>
             implements Immutable {
         private final LazyBindingMap<K, V> map;
         private final Object[] objects;
@@ -226,7 +224,7 @@ final class LazyBindingMapIterState<K extends Key<V>, V extends EntryObject<V, K
 
         @NonNull V objectAt(final int offset) {
             final Object obj = OBJ_AA.getAcquire(objects, offset);
-            return obj instanceof MapEntryNode ? loadObjectAt(offset, (MapEntryNode) obj) : (V) obj;
+            return obj instanceof MapEntryNode m ? loadObjectAt(offset, m) : (V) obj;
         }
 
         private @NonNull V loadObjectAt(final int offset, final MapEntryNode obj) {
