@@ -17,7 +17,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRAC
 import com.google.common.collect.Iterables;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
@@ -43,6 +42,23 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionTypeObjectArchetype> {
     private static final @NonNull JavaTypeName UNION_TYPE_OBJECT = JavaTypeName.create(UnionTypeObject.class);
     private static final Comparator<Tag> TAG_COMPARATOR = Comparator.comparing(Tag::name);
+    private static final ObjectEquality<Tag> EQUALITY = new ObjectEquality<>(true) {
+        @Override
+        String fieldName(final Tag obj) {
+            return BaseTemplate.fieldName(obj.name());
+        }
+
+        @Override
+        String propName(final Tag obj) {
+            return obj.name();
+        }
+
+        @Override
+        boolean isBinaryType(final Tag obj) {
+            // FIXME: check for BaseYangTypes.BINARY_TYPE
+            return obj.type().isArray();
+        }
+    };
 
     private final @NonNull List<Tag> allProperties;
     private final @NonNull List<Tag> finalProperties;
@@ -133,8 +149,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
 
         if (archetype.getSuperType() == null) {
             // FIXME: YANGTOOLS-1621: here we want to specialize for the single tagged value we carry
-            KeyTemplate.appendEquality(bb, javaType(),
-                properties.stream().map(prop -> Map.entry(prop.name(), prop.type())).toList(), true);
+            EQUALITY.append(bb, javaType(), properties);
         }
 
         return bb.cB().nl();

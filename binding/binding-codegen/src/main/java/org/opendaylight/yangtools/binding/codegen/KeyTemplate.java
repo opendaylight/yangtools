@@ -8,13 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.OBJECT;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 
-import com.google.common.base.VerifyException;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +27,24 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 @NonNullByDefault
 final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     private static final JavaTypeName KEY = JavaTypeName.create(Key.class);
+    // FIXME: MethodSignature
+    private static final ObjectEquality<Map.Entry<String, Type>> EQUALITY = new ObjectEquality<>(false) {
+        @Override
+        String fieldName(final Map.Entry<String, Type> obj) {
+            return BaseTemplate.fieldName(obj.getKey());
+        }
+
+        @Override
+        String propName(final Map.Entry<String, Type> obj) {
+            return obj.getKey();
+        }
+
+        @Override
+        boolean isBinaryType(final Map.Entry<String, Type> obj) {
+            // FIXME: check for BaseYangTypes.BINARY_TYPE
+            return obj.getValue().isArray();
+        }
+    };
 
     KeyTemplate(final DataRootArchetype root, final KeyArchetype archetype) {
         super(root, archetype);
@@ -115,7 +127,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
                 .cB();
         } while (it.hasNext());
 
-        appendEquality(bb, javaType(), props, false);
+        EQUALITY.append(bb, javaType(), props);
     }
 
     /**
@@ -140,111 +152,6 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
             }
             sb.append(", ");
         }
-    }
-
-    // FIXME: YANGTOOLS-1621: hide this method and then inline itno classBody(): there is a number of invariants we can
-    //                        propagate: asFinal == false, clazz == this.javaType(), hence importedName(), etc.
-    static void appendEquality(final BlockBuilder bb, final GeneratedClass clazz,
-            final List<Map.Entry<String, Type>> props, final boolean asFinal) {
-        final int size = props.size();
-        if (size == 0) {
-            throw new VerifyException("empty properties in " + clazz.name());
-        }
-        final var declInfix = asFinal ? " final " : " ";
-
-        appendHashCode(bb.nl(), clazz, props, size, declInfix);
-        appendEquals(bb.nl(), clazz, props, declInfix);
-        appendToString(bb.nl(), clazz, props, size, declInfix);
-    }
-
-    private static void appendHashCode(final BlockBuilder bb, final GeneratedClass clazz,
-            final List<Map.Entry<String, Type>> props, final int size, final String declInfix) {
-        bb
-            .at().eol(clazz.getReferenceString(OVERRIDE))
-            .str("public").str(declInfix).str("int hashCode()").oB();
-
-        switch (size) {
-            case 1 -> {
-                bb.str("return ");
-                final var prop = props.getFirst();
-                bb.str(clazz.getReferenceString(CODEHELPERS)).str(".wrapperHashCode(_").str(prop.getKey()).eol(");");
-            }
-            default -> {
-                bb
-                    .eol("final int prime = 31;")
-                    .eol("int result = 1;");
-                for (var property : props) {
-                    bb
-                        .str("result = prime * result + ")
-                            .str(importedUtilClass(clazz, property.getValue())).str(".hashCode(_")
-                            .str(property.getKey()).eol(");");
-                }
-                bb.eol("return result;");
-            }
-        }
-
-        bb.cB();
-    }
-
-    private static void appendEquals(final BlockBuilder bb, final GeneratedClass clazz,
-            final List<Map.Entry<String, Type>> props, final String declInfix) {
-        // FIXME: use selfRef()
-        final var selfRef = clazz.name().simpleName();
-
-        bb
-            .at().eol(clazz.getReferenceString(OVERRIDE))
-            .str("public").str(declInfix).str("boolean equals(").str(clazz.getReferenceString(OBJECT)).str(" obj)").oB()
-                .str("return this == obj || obj instanceof ").str(selfRef).str(" other");
-
-        for (var prop : props) {
-            bb
-                .nl()
-                .str("    && ").str(importedUtilClass(clazz, prop.getValue())).str(".equals(_").str(prop.getKey())
-                    .str(", other._").str(prop.getKey()).str(")");
-        }
-        bb
-            .eS()
-            .cB();
-    }
-
-    private static void appendToString(final BlockBuilder bb, final GeneratedClass clazz,
-            final List<Map.Entry<String, Type>> props, final int size, final String declInfix) {
-        // FIXME: use selfRef
-        final var selfRef = clazz.getReferenceString(clazz.name());
-
-        bb
-            .at().eol(clazz.getReferenceString(OVERRIDE))
-            .str("public").str(declInfix).str(clazz.getReferenceString(STRING)).str(" toString()").oB()
-                .str("return ").str(clazz.getReferenceString(CODEHELPERS));
-        switch (size) {
-            case 1 -> appendTS1(bb, selfRef, props.iterator().next());
-            default -> appendTSN(bb, selfRef, props);
-        }
-        bb.cB();
-    }
-
-    private static void appendTS1(final BlockBuilder bb, final String selfRef, final Map.Entry<String, Type> prop) {
-        final var name = prop.getKey();
-        if (name.equals("value")) {
-            // Special case equivalent to ScalarTypeObject.toString()
-            bb.str(".stoTS(").str(selfRef).str(".class, ");
-        } else {
-            bb.str(".jcTS1(").str(selfRef).str(".class, ").jStr(name).str(", ");
-        }
-        bb.str("_").str(name).eol(");");
-    }
-
-    private static void appendTSN(final BlockBuilder bb, final String selfRef,
-            final List<Map.Entry<String, Type>> props) {
-        bb.str(".jcTSB(").str(selfRef).eol(".class)");
-        for (var prop : props) {
-            bb.ind(".prop(").jStr(prop.getKey()).str(", _").str(prop.getKey()).eol(")");
-        }
-        bb.ind(".build();").newLine();
-    }
-
-    private static String importedUtilClass(final GeneratedClass clazz, final Type type) {
-        return clazz.getReferenceString(type.isArray() ? JU_ARRAYS : JU_OBJECTS);
     }
 
     private static long serialVersionUID(final KeyArchetype archetype) {
