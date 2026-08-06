@@ -68,14 +68,8 @@ final class BuilderImplTemplate extends BaseTemplate {
         final var simpleName = typeName().simpleName();
         final var builderName = importedName(builder.typeName());
 
-        final var bb = newBlockBuilder();
-
-        final var annotation = builder.deprecatedAnnotation();
-        if (annotation != null) {
-            bb.blk(generateAnnotation(annotation));
-        }
-
-        bb
+        final var bb = newBlockBuilder()
+            .frg(DeprecatedAnnotation.of(javaType(), targetType.statement()))
             .str("private static final class ").str(simpleName).str(" extends ");
         if (keyType != null) {
             bb.gen(importedName(ABSTRACT_ENTRY_OBJECT), implIface, importedName(keyType));

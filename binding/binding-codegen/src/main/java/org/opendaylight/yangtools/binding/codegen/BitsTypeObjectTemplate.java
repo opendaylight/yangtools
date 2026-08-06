@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.DEPRECATED;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
@@ -203,13 +202,13 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
 
             if (override != null) {
                 // override getters for invalid bits
-                final var deprecated = importedName(DEPRECATED);
+                final var deprecated = new DeprecatedAnnotation(javaType(), true);
                 for (var propName : superProps.keySet()) {
                     if (!props.containsKey(propName)) {
                         bb
                             .nl()
                             .at().eol(override)
-                            .at().str(deprecated).eol("(forRemoval = true)")
+                            .frg(deprecated)
                             .str("public final boolean ").str(getterMethodName(propName)).str("()").oB()
                                 .eol("return false;")
                             .cB();
