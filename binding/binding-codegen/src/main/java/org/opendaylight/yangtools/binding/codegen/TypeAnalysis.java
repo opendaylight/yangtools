@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 
-record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
+record TypeAnalysis(@NonNull Set<BuilderProperty> properties) {
     private static final Comparator<MethodSignature> METHOD_COMPARATOR = Comparator.comparing(MethodSignature::name);
     private static final int GETTER_PREFIX_LENGTH = Naming.GETTER_PREFIX.length();
 
@@ -57,7 +57,7 @@ record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
                 } else {
                     final var implMethodName = implMethod.name();
                     if (Naming.isGetterMethodName(implMethodName)
-                        && JavaFileTemplate.getterByName(methods, implMethodName) == null) {
+                        && BuilderTemplate.getterByName(methods, implMethodName) == null) {
                         methods.add(implMethod);
                     }
                 }
@@ -79,10 +79,10 @@ record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
      *                                    <li>if the return type of the {@code method} equals {@code null}</li>
      *                                  </ul>
      */
-    private static BuilderGeneratedProperty propertyFromGetter(final MethodSignature method) {
+    private static BuilderProperty propertyFromGetter(final MethodSignature method) {
         checkArgument(method != null);
         final var fieldName = Naming.toFirstLower(method.name().substring(GETTER_PREFIX_LENGTH));
-        return new BuilderGeneratedProperty(fieldName, method);
+        return new BuilderProperty(fieldName, method);
     }
 
     /**
@@ -92,12 +92,12 @@ record TypeAnalysis(@NonNull Set<BuilderGeneratedProperty> properties) {
      * @return set of generated property instances which represents the getter <code>methods</code>
      */
     @NonNullByDefault
-    private static Set<BuilderGeneratedProperty> propertiesFromMethods(final List<MethodSignature> methods) {
+    private static Set<BuilderProperty> propertiesFromMethods(final List<MethodSignature> methods) {
         if (methods.isEmpty()) {
             return Set.of();
         }
 
-        final var result = new LinkedHashSet<BuilderGeneratedProperty>();
+        final var result = new LinkedHashSet<BuilderProperty>();
         for (var method : methods) {
             final var createdField = propertyFromGetter(method);
             if (createdField != null) {

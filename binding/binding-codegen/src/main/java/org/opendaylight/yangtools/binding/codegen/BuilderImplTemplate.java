@@ -89,7 +89,7 @@ final class BuilderImplTemplate extends BaseTemplate {
         // generate instance fields
         if (!properties.isEmpty()) {
             for (var prop : properties) {
-                bb.str("private final ").str(importedReturnType(prop)).sp().str(fieldName(prop)).eS();
+                bb.str("private final ").str(importedName(prop.type())).sp().str(prop.fieldName()).eS();
             }
         }
 
@@ -158,15 +158,16 @@ final class BuilderImplTemplate extends BaseTemplate {
 
             final var it = properties.iterator();
             while (true) {
-                final var field = it.next();
+                final var prop = it.next();
 
                 // getFoo()
                 bb
                     .at().eol(importedName(OVERRIDE))
-                    .str("public ").str(importedReturnType(field)).sp().str(getterMethodName(field)).str("()").oB()
+                    .str("public ").str(importedName(prop.type())).sp().str(prop.getterName()).str("()").oB()
                         .str("return ");
-                final var fieldName = fieldName(field);
-                if (field.getReturnType().isArray()) {
+                final var fieldName = prop.fieldName();
+                // FIXME: check for BaseYangTypes.BINARY_TYPE
+                if (prop.type().isArray()) {
                     bb.str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
                 } else {
                     bb.str(fieldName).eS();
@@ -174,14 +175,14 @@ final class BuilderImplTemplate extends BaseTemplate {
                 bb.cB();
 
                 // nonnullFoo() for structural containers
-                if (field.getReturnType() instanceof ContainerObjectArchetype fieldType
+                if (prop.type() instanceof ContainerObjectArchetype fieldType
                     && BuilderTemplate.isNonPresenceContainer(fieldType)) {
                     bb
                         .nl()
                         .at().eol(override)
                         .str("public ").str(importedName(fieldType)).str(" " + NONNULL_PREFIX)
-                            .str(toFirstUpper(field.getName())).str("()").oB()
-                            .str("var tmp = ").str(getterMethodName(field)).eol("();")
+                            .str(toFirstUpper(prop.name())).str("()").oB()
+                            .str("var tmp = ").str(prop.getterName()).eol("();")
                             .str("return tmp != null ? tmp : ")
                                 // FIXME: better reference to FooBuilder.empty()
                                 .str(fieldType.canonicalName()).eol(BUILDER_SUFFIX + ".empty();")
@@ -198,13 +199,13 @@ final class BuilderImplTemplate extends BaseTemplate {
         return bb.cB();
     }
 
-    private void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props) {
-        for (var field : props) {
-            bb.str("this.").str(fieldName(field)).str(" = ");
-            if (field.getter.statement() instanceof ListEffectiveStatement) {
-                bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(field.getGetterName()).eol("());");
+    private void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderProperty> props) {
+        for (var prop : props) {
+            bb.str("this.").str(prop.fieldName()).str(" = ");
+            if (prop.getter().statement() instanceof ListEffectiveStatement) {
+                bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(prop.getterName()).eol("());");
             } else {
-                bb.str("base.").str(field.getGetterName()).eol("();");
+                bb.str("base.").str(prop.getterName()).eol("();");
             }
         }
     }

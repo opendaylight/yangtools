@@ -40,7 +40,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -92,7 +91,7 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Set of class attributes (fields) which are derived from the getter methods names.
      */
-    final @NonNull Set<BuilderGeneratedProperty> properties;
+    final @NonNull Set<BuilderProperty> properties;
 
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
@@ -225,7 +224,7 @@ final class BuilderTemplate extends BaseTemplate {
     private BlockBuilder propertyFields() {
         final var bb = newBlockBuilder();
         for (var prop : properties) {
-            bb.str("private ").str(importedReturnType(prop)).sp().str(fieldName(prop)).eS();
+            bb.str("private ").str(importedName(prop.type())).sp().str(prop.fieldName()).eS();
         }
         return bb;
     }
@@ -522,6 +521,21 @@ final class BuilderTemplate extends BaseTemplate {
         return null;
     }
 
+    static @Nullable MethodSignature getterByName(final @NonNull Collection<@NonNull MethodSignature> methods,
+        final @NonNull String implMethodName) {
+        for (var method : methods) {
+            final var methodName = method.name();
+            if (isGetterMethodName(methodName) && isSameProperty(method.name(), implMethodName)) {
+                return method;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isSameProperty(final String getterName1, final String getterName2) {
+        return propertyNameFromGetter(getterName1).equals(propertyNameFromGetter(getterName2));
+    }
+
     private static boolean strictTypeEquals(final Type type1, final Type type2) {
         if (!type1.equals(type2)) {
             return false;
@@ -650,7 +664,7 @@ final class BuilderTemplate extends BaseTemplate {
                 bb
                     .eol("/**")
                     .str(" * Return current value associated with the property corresponding to {@link ")
-                        .str(importedName(targetType)).str("#").str(field.getGetterName()).eol("()}.")
+                        .str(importedName(targetType)).str("#").str(field.getterName()).eol("()}.")
                     .eol(" *")
                     .eol(" * @return current value")
                     .eol(" */");
@@ -658,7 +672,7 @@ final class BuilderTemplate extends BaseTemplate {
                 bb
                     .at().eol(importedName(OVERRIDE));
             }
-            bb.blk(asGetterMethod(field.getName(), field.getReturnType()));
+            bb.blk(asGetterMethod(field.name(), field.type()));
 
             if (!it.hasNext()) {
                 return bb;
@@ -668,8 +682,8 @@ final class BuilderTemplate extends BaseTemplate {
         }
     }
 
-    private @NonNull BlockBuilder generateSetter(final BuilderGeneratedProperty field) {
-        final var returnType = field.getReturnType();
+    private @NonNull BlockBuilder generateSetter(final BuilderProperty field) {
+        final var returnType = field.type();
         if (returnType instanceof ParameterizedType parameterized) {
             if (isListType(parameterized) || isSetType(parameterized)) {
                 final var arguments = parameterized.getActualTypeArguments();
@@ -683,16 +697,16 @@ final class BuilderTemplate extends BaseTemplate {
         return generateSimpleSetter(field, returnType);
     }
 
-    private @NonNull BlockBuilder generateListSetter(final BuilderGeneratedProperty field, final Type actualType) {
+    private @NonNull BlockBuilder generateListSetter(final BuilderProperty prop, final Type actualType) {
         final var bb = newBlockBuilder();
         final BlockBuilder argumentCheck;
         final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {
-            bb.blk(generateCheckers(field.getName(), restrictions, actualType));
+            bb.blk(generateCheckers(prop.name(), restrictions, actualType));
             argumentCheck = newBlockBuilder()
                 .str("if (values != null)").oB()
                     .str("for (").str(importedName(actualType)).str(" value : values)").oB()
-                        .blk(checkFieldValue(targetType, field.getName(), restrictions, actualType, "value"))
+                        .blk(checkFieldValue(targetType, prop.name(), restrictions, actualType, "value"))
                     .cB()
                 .cB();
         } else {
@@ -703,33 +717,33 @@ final class BuilderTemplate extends BaseTemplate {
             .nl()
             .eol("/**")
             .str(" * Set the property corresponding to {@link ").str(importedName(targetType)).str("#")
-                .str(field.getGetterName()).eol("()} to the specified")
+                .str(prop.getterName()).eol("()} to the specified")
             .eol(" * value.")
             .eol(" *")
             .eol(" * @param values desired value")
             .eol(" * @return this builder")
             .eol(" */")
-            .str("public ").str(simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
-                .str(importedReturnType(field)).str(" values)").oB()
+            .str("public ").str(simpleName()).str(" set").str(toFirstUpper(prop.name())).str("(final ")
+                .str(importedName(prop.type())).str(" values)").oB()
                 .blk(argumentCheck)
-                .str("this.").str(fieldName(field)).eol(" = values;")
+                .str("this.").str(prop.fieldName()).eol(" = values;")
                 .eol("return this;")
             .cB()
             .nl();
     }
 
-    private @NonNull BlockBuilder generateMapSetter(final BuilderGeneratedProperty field, final Type actualType) {
+    private @NonNull BlockBuilder generateMapSetter(final BuilderProperty prop, final Type actualType) {
         final var bb = newBlockBuilder();
         final var restrictions = JavaFileTemplate.restrictionsForSetter(actualType);
         if (restrictions != null) {
-            bb.blk(generateCheckers(field.getName(), restrictions, actualType));
+            bb.blk(generateCheckers(prop.name(), restrictions, actualType));
         }
 
         bb
             .nl()
             .eol("/**")
             .str(" * Set the property corresponding to {@link ").str(importedName(targetType)).str("#")
-                .str(field.getGetterName()).eol("()} to the specified")
+                .str(prop.getterName()).eol("()} to the specified")
             .txt("""
                  * value.
                  *
@@ -737,50 +751,51 @@ final class BuilderTemplate extends BaseTemplate {
                  * @return this builder
                  */
                 """)
-            .str("public ").str(simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
-                .str(importedReturnType(field)).str(" values)").oB();
+            .str("public ").str(simpleName()).str(" set").str(toFirstUpper(prop.name())).str("(final ")
+                .str(importedName(prop.type())).str(" values)").oB();
 
         if (restrictions != null) {
             bb
                 .eol("if (values != null)").oB()
                     .str("for (").str(importedName(actualType)).str(" value : values.values())").oB()
-                        .blk(checkFieldValue(targetType, field.getName(), restrictions, actualType, "value"))
+                        .blk(checkFieldValue(targetType, prop.name(), restrictions, actualType, "value"))
                     .cB()
                 .cB();
         }
 
         return bb
-            .str("this.").str(fieldName(field)).eol(" = values;")
+            .str("this.").str(prop.fieldName()).eol(" = values;")
             .eol("return this;")
             .cB();
     }
 
-    private @NonNull BlockBuilder generateSimpleSetter(final BuilderGeneratedProperty field, final Type actualType) {
+    @NonNullByDefault
+    private BlockBuilder generateSimpleSetter(final BuilderProperty prop, final Type actualType) {
         final var bb = newBlockBuilder();
         final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {
-            bb.nl().blk(generateCheckers(field.getName(), restrictions, actualType));
+            bb.nl().blk(generateCheckers(prop.name(), restrictions, actualType));
         }
         bb
             .nl()
             .eol("/**")
             .str(" * Set the property corresponding to {@link ").str(importedName(targetType)).str("#")
-                .str(field.getGetterName()).eol("()} to the specified")
+                .str(prop.getterName()).eol("()} to the specified")
             .eol(" * value.")
             .eol(" *")
             .eol(" * @param value desired value")
             .eol(" * @return this builder")
             .eol(" */")
-            .str("public ").str(simpleName()).str(" set").str(toFirstUpper(field.getName())).str("(final ")
-                .str(importedReturnType(field)).str(" value)").oB();
+            .str("public ").str(simpleName()).str(" set").str(toFirstUpper(prop.name())).str("(final ")
+                .str(importedName(prop.type())).str(" value)").oB();
         if (restrictions != null) {
             bb
                 .str("if (value != null)").oB()
-                    .blk(checkFieldValue(targetType, field.getName(), restrictions, actualType, "value"))
+                    .blk(checkFieldValue(targetType, prop.name(), restrictions, actualType, "value"))
                 .cB();
         }
         return bb
-            .str("this.").str(fieldName(field)).eol(" = value;")
+            .str("this.").str(prop.fieldName()).eol(" = value;")
             .eol("return this;")
             .cB();
     }
@@ -932,9 +947,9 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Append the code to copy non-key-components, with four spaces of indentation.
      */
-    private static void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderGeneratedProperty> props) {
-        for (var field : props) {
-            bb.str("this.").str(fieldName(field)).str(" = base.").str(field.getGetterName()).eol("();");
+    private static void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderProperty> props) {
+        for (var prop : props) {
+            bb.str("this.").str(prop.fieldName()).str(" = base.").str(prop.getterName()).eol("();");
         }
     }
 
@@ -950,13 +965,13 @@ final class BuilderTemplate extends BaseTemplate {
         return keyType.methods().entrySet().stream()
             .map(entry -> Map.entry(Naming.getPropertyName(entry.getKey()), entry.getValue()))
             .sorted(Comparator.comparing(Map.Entry::getKey))
-            .collect(Collectors.toList());
+            .toList();
     }
 
-    static void removeProperty(final Collection<BuilderGeneratedProperty> props, final String name) {
+    static void removeProperty(final Collection<BuilderProperty> props, final String name) {
         final var it = props.iterator();
         while (it.hasNext()) {
-            if (name.equals(it.next().getName())) {
+            if (name.equals(it.next().name())) {
                 it.remove();
                 return;
             }
