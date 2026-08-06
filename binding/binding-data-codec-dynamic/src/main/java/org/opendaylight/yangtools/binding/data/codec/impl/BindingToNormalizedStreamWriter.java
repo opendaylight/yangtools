@@ -191,13 +191,13 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
     }
 
     @Override
-    public void startMapNode(final Class<? extends EntryObject<?, ?>> mapEntryType, final int childSizeHint)
+    public void startMapNode(final Class<? extends EntryObject<?, ?, ?>> mapEntryType, final int childSizeHint)
             throws IOException {
         delegate.startMapNode(enter(mapEntryType, NodeIdentifier.class), childSizeHint);
     }
 
     @Override
-    public void startOrderedMapNode(final Class<? extends EntryObject<?, ?>> mapEntryType, final int childSizeHint)
+    public void startOrderedMapNode(final Class<? extends EntryObject<?, ?, ?>> mapEntryType, final int childSizeHint)
             throws IOException {
         delegate.startOrderedMapNode(enter(mapEntryType, NodeIdentifier.class), childSizeHint);
     }

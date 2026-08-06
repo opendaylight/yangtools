@@ -69,9 +69,7 @@ class InterfaceGeneratorTest extends BaseCompilationTest {
              */
             @Deprecated(forRemoval = true)
             @Generated("mdsal-binding-generator")
-            public interface Service
-                extends ChildOf<Services>,
-                        EntryObject<Service, ServiceKey> {
+            public interface Service extends EntryObject<Services, Service, ServiceKey> {
             """);
     }
 

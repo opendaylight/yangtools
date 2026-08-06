@@ -60,7 +60,7 @@ final class BuilderImplTemplate extends BaseTemplate {
     BlockBuilder body() {
         // cache things from builder
         final var targetType = builder.targetType;
-        final var keyType = builder.keyType();
+        final var entryTemplate = builder.entryTemplate();
         final var properties = builder.properties;
 
         final var implIface = importedName(targetType);
@@ -77,8 +77,9 @@ final class BuilderImplTemplate extends BaseTemplate {
 
         bb
             .str("private static final class ").str(simpleName).str(" extends ");
-        if (keyType != null) {
-            bb.gen(importedName(ABSTRACT_ENTRY_OBJECT), implIface, importedName(keyType));
+        if (entryTemplate != null) {
+            bb.gen(importedName(ABSTRACT_ENTRY_OBJECT), importedName(entryTemplate.archetype.parentName()), implIface,
+                importedName(entryTemplate.key));
         } else if (targetType instanceof AugmentableArchetype) {
             bb.gen(importedName(ABSTRACT_AUGMENTABLE), implIface);
         } else {
@@ -99,15 +100,15 @@ final class BuilderImplTemplate extends BaseTemplate {
 
         if (targetType instanceof AugmentableArchetype) {
             bb.str("super(base." + BuilderTemplate.AUGMENTATION_FIELD);
-            if (keyType != null) {
+            if (entryTemplate != null) {
                 bb.str(", extractKey(base)");
             }
             bb.eol(");");
         }
 
-        if (keyType != null) {
+        if (entryTemplate != null) {
             final var allProps = new ArrayList<>(properties);
-            final var keyProps = BuilderTemplate.keyConstructorArgs(keyType);
+            final var keyProps = BuilderTemplate.keyConstructorArgs(entryTemplate.key);
             for (var field : keyProps) {
                 BuilderTemplate.removeProperty(allProps, field.getKey());
             }
@@ -124,10 +125,11 @@ final class BuilderImplTemplate extends BaseTemplate {
 
         bb.cB();
 
-        if (keyType != null) {
+        if (entryTemplate != null) {
             // TODO: this is generating a utility static method for use in the (only) constructor. We should be inlining
             //       this code into the constructor once JEP-482 Flexible Constructor Bodies available. We should
             //       construct the key into a 'key' local variable, so that generateCopyKeys() below can reference it
+            final var keyType = entryTemplate.key;
             bb
                 .nl()
                 .str("private static ").str(importedNonNull(keyType)).str(" extractKey(").str(builderName).str(" base)")

@@ -42,7 +42,7 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
          * @param <T> type of {@link EntryObject} held in the last step.
          * @param <K> {@link Key} type
          */
-        non-sealed interface WithKey<T extends EntryObject<T, K>, K extends Key<T>>
+        non-sealed interface WithKey<T extends EntryObject<?, T, K>, K extends Key<T>>
                 extends Builder<T>, DataObjectReference.Builder.WithKey<T, K>
                 /* permits DataObjectReferenceBuilderWithKey, KeyedBuilder */ {
             @Override
@@ -63,11 +63,11 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
             Class<C> caze, Class<N> container);
 
         @Override
-        <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>, N extends EntryObject<N, K> & ChildOf<? super C>>
+        <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>, N extends EntryObject<? super C, N, K>>
             WithKey<N, K> child(Class<C> caze, Class<N> listItem, K listKey);
 
         @Override
-        <N extends EntryObject<N, K> & ChildOf<? super T>, K extends Key<N>> WithKey<N, K> child(
+        <N extends EntryObject<? super T, N, K>, K extends Key<N>> WithKey<N, K> child(
             Class<@NonNull N> listItem, K listKey);
 
         @Override
@@ -88,7 +88,7 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
      * @param <K> Key type
      * @param <T> EntryObject type
      */
-    sealed interface WithKey<T extends EntryObject<T, K>, K extends Key<T>>
+    sealed interface WithKey<T extends EntryObject<?, T, K>, K extends Key<T>>
             extends DataObjectIdentifier<T>, DataObjectReference.WithKey<T, K>
             permits DataObjectIdentifierWithKey {
         @Override
@@ -133,13 +133,13 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
         return new DataObjectIdentifierBuilder<>(DataObjectStep.of(caze, container));
     }
 
-    static <N extends EntryObject<N, K> & ChildOf<? extends DataRoot<?>>, K extends Key<N>>
+    static <N extends EntryObject<? extends DataRoot<?>, N, K>, K extends Key<N>>
             Builder.@NonNull WithKey<N, K> builder(final Class<N> listItem, final K listKey) {
         return new DataObjectIdentifierBuilderWithKey<>(new KeyStep<>(listItem, listKey));
     }
 
     static <C extends ChoiceIn<? extends DataRoot<?>> & DataObject,
-            N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
+            N extends EntryObject<? super C, N, K>, K extends Key<N>>
             Builder.@NonNull WithKey<N, K> builder(final @NonNull Class<C> caze, final @NonNull Class<N> listItem,
                     final @NonNull K listKey) {
         return new DataObjectIdentifierBuilderWithKey<>(new KeyStep<>(listItem, requireNonNull(caze), listKey));
@@ -158,7 +158,7 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
         return new DataObjectIdentifierBuilder<>(DataObjectStep.of(caze, container));
     }
 
-    static <R extends DataRoot<R>, N extends EntryObject<N, K> & ChildOf<? super R>, K extends Key<N>>
+    static <R extends DataRoot<R>, N extends EntryObject<? super R, N, K>, K extends Key<N>>
             Builder.@NonNull WithKey<N, K> builderOfInherited(final @NonNull Class<R> root,
                 final @NonNull Class<N> listItem, final @NonNull K listKey) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
@@ -166,7 +166,7 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
     }
 
     static <R extends DataRoot<R>, C extends ChoiceIn<? super R> & DataObject,
-            N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
+            N extends EntryObject<? super C, N, K>, K extends Key<N>>
             Builder.@NonNull WithKey<N, K> builderOfInherited(final Class<R> root,
                 final Class<C> caze, final Class<N> listItem, final K listKey) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly

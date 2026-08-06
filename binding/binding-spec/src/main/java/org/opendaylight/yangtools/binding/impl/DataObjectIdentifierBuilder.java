@@ -51,7 +51,7 @@ public final class DataObjectIdentifierBuilder<T extends DataObject> extends Abs
     }
 
     @Override
-    <X extends EntryObject<X, Y>, Y extends Key<X>> DataObjectIdentifierBuilderWithKey<X, Y> append(
+    <X extends EntryObject<?, X, Y>, Y extends Key<X>> DataObjectIdentifierBuilderWithKey<X, Y> append(
             final KeyStep<Y, X> step) {
         return new DataObjectIdentifierBuilderWithKey<X, Y>(this).append(step);
     }

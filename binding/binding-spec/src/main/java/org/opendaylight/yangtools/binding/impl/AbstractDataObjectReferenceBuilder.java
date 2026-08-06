@@ -79,14 +79,14 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
     }
 
     @Override
-    public <N extends EntryObject<N, K> & ChildOf<? super T>, K extends Key<N>> WithKey<N, K> child(
+    public <N extends EntryObject<? super T, N, K>, K extends Key<N>> WithKey<N, K> child(
             final Class<N> listItem, final K listKey) {
         return append(new KeyStep<>(listItem, listKey));
     }
 
     @Override
     public <C extends ChoiceIn<? super T> & DataObject, K extends Key<N>,
-            N extends EntryObject<N, K> & ChildOf<? super C>>
+            N extends EntryObject<? super C, N, K>>
             WithKey<N, K> child(final Class<C> caze, final Class<N> listItem, final K listKey) {
         return append(new KeyStep<>(listItem, requireNonNull(caze), listKey));
     }
@@ -96,7 +96,8 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
 
     abstract <X extends DataObject> @NonNull Builder<X> append(@NonNull DataObjectStep<X> step);
 
-    abstract <X extends EntryObject<X, Y>, Y extends Key<X>> @NonNull WithKey<X, Y> append(@NonNull KeyStep<Y, X> step);
+    abstract <X extends EntryObject<?, X, Y>, Y extends Key<X>> @NonNull WithKey<X, Y> append(
+        @NonNull KeyStep<Y, X> step);
 
     final boolean wildcard() {
         return wildcard;

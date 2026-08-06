@@ -188,7 +188,11 @@ final class BuilderTemplate extends BaseTemplate {
      */
     // FIXME: this methods and all its callers are just begging for specialization
     @Nullable KeyArchetype keyType() {
-        return targetTemplate instanceof EntryObjectTemplate archetype ? archetype.key : null;
+        return targetTemplate instanceof EntryObjectTemplate template ? template.key : null;
+    }
+
+    @Nullable EntryObjectTemplate entryTemplate() {
+        return targetTemplate instanceof EntryObjectTemplate template ? template : null;
     }
 
     private @Nullable BlockBuilder builderFields() {

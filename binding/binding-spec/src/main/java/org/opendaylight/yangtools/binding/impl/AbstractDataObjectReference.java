@@ -65,7 +65,7 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
     }
 
     @Override
-    public final <N extends EntryObject<N, K>, K extends Key<N>> @Nullable K firstKeyOf(
+    public final <N extends EntryObject<?, N, K>, K extends Key<N>> @Nullable K firstKeyOf(
             final Class<@NonNull N> listItem) {
         // Guard against nulls and type smuggling
         final var item = listItem.asSubclass(EntryObject.class);

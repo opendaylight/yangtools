@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * @param <K> Key type
  * @param <T> EntryObject type
  */
-public record KeyStep<K extends Key<T>, T extends EntryObject<T, K>>(
+public record KeyStep<K extends Key<T>, T extends EntryObject<?, T, K>>(
         @NonNull Class<T> type,
         @Nullable Class<? extends DataObject> caseType,
         @NonNull K key) implements ExactDataObjectStep<T>, KeyAware<K> {

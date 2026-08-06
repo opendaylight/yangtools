@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @param <K> key type
  * @param <V> value type
  */
-final class LazyBindingMap<K extends Key<V>, V extends EntryObject<V, K>> extends AbstractMap<K, V>
+final class LazyBindingMap<K extends Key<V>, V extends EntryObject<?, V, K>> extends AbstractMap<K, V>
         implements Immutable {
     private static final Logger LOG = LoggerFactory.getLogger(LazyBindingMap.class);
     private static final String LAZY_CUTOFF_PROPERTY =
@@ -72,7 +72,6 @@ final class LazyBindingMap<K extends Key<V>, V extends EntryObject<V, K>> extend
     private final @NonNull MapNode mapNode;
 
     // Used via VarHandle above
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile State<K, V> state;
 
@@ -81,7 +80,7 @@ final class LazyBindingMap<K extends Key<V>, V extends EntryObject<V, K>> extend
         this.mapNode = requireNonNull(mapNode);
     }
 
-    static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> of(final Unordered<K, V> codec,
+    static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> of(final Unordered<K, V> codec,
             final MapNode mapNode, final int size) {
         if (size == 1) {
             // Do not bother with lazy instantiation in case of a singleton
@@ -91,7 +90,7 @@ final class LazyBindingMap<K extends Key<V>, V extends EntryObject<V, K>> extend
         return size > LAZY_CUTOFF ? new LazyBindingMap<>(codec, mapNode) : eagerMap(codec, mapNode, size);
     }
 
-    private static <K extends Key<V>, V extends EntryObject<V, K>> @NonNull Map<K, V> eagerMap(
+    private static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> eagerMap(
             final Unordered<K, V> codec, final MapNode mapNode, final int size) {
         final Builder<K, V> builder = ImmutableMap.builderWithExpectedSize(size);
         for (MapEntryNode node : mapNode.body()) {
@@ -205,7 +204,8 @@ final class LazyBindingMap<K extends Key<V>, V extends EntryObject<V, K>> extend
         return new UnsupportedOperationException("Modification is not supported");
     }
 
-    abstract static class State<K extends Key<V>, V extends EntryObject<V, K>> {
+    abstract static class State<K extends Key<V>, V extends EntryObject<?, V, K>> {
+
         abstract boolean containsKey(@NonNull Object key);
 
         abstract V get(@NonNull Object key);
