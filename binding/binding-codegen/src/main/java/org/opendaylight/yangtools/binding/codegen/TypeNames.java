@@ -35,10 +35,6 @@ final class TypeNames {
      */
     static final JavaTypeName CLASS = JavaTypeName.create(Class.class);
     /**
-     * {@code java.lang.Deprecated} as a JavaTypeName.
-     */
-    static final JavaTypeName DEPRECATED = JavaTypeName.create(Deprecated.class);
-    /**
      * {@code java.lang.IllegalArgumentException} as a JavaTypeName.
      */
     static final JavaTypeName IAE = JavaTypeName.create(IllegalArgumentException.class);
