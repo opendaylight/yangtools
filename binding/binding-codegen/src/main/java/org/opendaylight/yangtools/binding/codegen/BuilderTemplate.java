@@ -9,7 +9,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.AugmentationTemplate.augmentationOfIn;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CLASS;
@@ -34,11 +33,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -48,7 +46,6 @@ import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
-import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -61,6 +58,32 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
  */
 final class BuilderTemplate extends BaseTemplate {
 
+    @NonNullByDefault
+    sealed interface Props {
+
+        List<GetterShape> allGetters();
+    }
+
+    @NonNullByDefault
+    record WithKey(
+            List<GetterShape> allGetters,
+            List<GetterShape> keyGetters,
+            List<GetterShape> implGetters,
+            KeyArchetype key) implements Props {
+        WithKey {
+            requireNonNull(allGetters);
+            requireNonNull(implGetters);
+            requireNonNull(keyGetters);
+        }
+    }
+
+    @NonNullByDefault
+    record WithoutKey(List<GetterShape> allGetters) implements Props {
+        WithoutKey {
+            requireNonNull(allGetters);
+        }
+    }
+
     /**
      * The name of the field holding augmentations.
      */
@@ -68,27 +91,31 @@ final class BuilderTemplate extends BaseTemplate {
 
     private static final @NonNull JavaTypeName GROUPING = JavaTypeName.create(Grouping.class);
 
-    /**
-     * Set of class attributes (fields) which are derived from the getter methods names.
-     */
-    final @NonNull Set<BuilderProperty> properties;
-
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
     //        implementations of its methods
-    private final @NonNull InterfaceTemplate<?> targetTemplate;
-    final @NonNull DataContainerArchetype targetType;
-
     private final GeneratedClass.@NonNull Nested implJavaType;
+
+    final @NonNull DataContainerArchetype targetType;
+    final @NonNull Props props;
 
     @NonNullByDefault
     private BuilderTemplate(final GeneratedClass.TopLevel javaType, final GeneratedClass.Nested implJavaType,
             final InterfaceTemplate<?> targetTemplate) {
         super(javaType);
         this.implJavaType = requireNonNull(implJavaType);
-        this.targetTemplate = requireNonNull(targetTemplate);
         targetType = targetTemplate.archetype;
-        properties = TypeAnalysis.of(targetType).properties();
+
+        final var allMethods = targetTemplate.getters.allMethods().sorted().toList();
+        if (targetTemplate instanceof EntryObjectTemplate entryTarget) {
+            final var key = entryTarget.key;
+            final var keyMethods = key.methods().values().stream()
+                .collect(Collectors.toMap(MethodSignature::name, method -> new GetterShape(method, false)));
+            props = new WithKey(allMethods, keyMethods.values().stream().sorted().toList(),
+                allMethods.stream().filter(getter -> !keyMethods.containsKey(getter.name())).toList(), key);
+        } else {
+            props = new WithoutKey(allMethods);
+        }
     }
 
     // FIXME: there are three cases here:
@@ -124,7 +151,7 @@ final class BuilderTemplate extends BaseTemplate {
             .str("public class ").str(simpleName).oB()
             // FIXME: remove this newline
             .nl()
-            .blk(builderFields())
+            .frg(builderFields())
 //            .nl()
 //            .blk(constantsDeclarations())
             .nl();
@@ -182,31 +209,15 @@ final class BuilderTemplate extends BaseTemplate {
             .cB();
     }
 
-    /**
-     * {@return a {@link KeyArchetype} if target is an {@link EntryObjectArchetype}, {@code null} otherwise}
-     */
-    // FIXME: this methods and all its callers are just begging for specialization
-    @Nullable KeyArchetype keyType() {
-        return targetTemplate instanceof EntryObjectTemplate archetype ? archetype.key : null;
-    }
-
-    private @Nullable BlockBuilder builderFields() {
-        final var key = keyType();
-        if (key != null) {
-            verify(!properties.isEmpty(), "empty properties with key %s", key);
-            return propertyFields()
-                .str("private ").str(importedName(key)).eol(" key;");
-        }
-        return properties == null || properties.isEmpty() ? null : propertyFields();
-    }
-
-    @NonNullByDefault
-    private BlockBuilder propertyFields() {
-        final var bb = newBlockBuilder();
-        for (var prop : properties) {
-            bb.str("private ").str(importedName(prop.type())).sp().str(prop.fieldName()).eS();
-        }
-        return bb;
+    private @NonNull BlockFragment builderFields() {
+        return bb -> {
+            for (var getter : props.allGetters()) {
+                bb.str("private ").str(importedName(getter.type())).sp().str(getter.fieldName()).eS();
+            }
+            if (props instanceof WithKey with) {
+                bb.str("private ").str(importedName(with.key)).eol(" key;");
+            }
+        };
     }
 
     @Nullable DeprecatedAnnotation deprecatedAnnotation() {
@@ -368,22 +379,15 @@ final class BuilderTemplate extends BaseTemplate {
                         .cB();
                 }
 
-                final var keyType = keyType();
-                if (keyType != null) {
-                    final var allProps = new ArrayList<>(properties);
-                    final var keyProps = keyConstructorArgs(keyType);
-                    for (var field : keyProps) {
-                        removeProperty(allProps, field.getKey());
+                switch (props) {
+                    case WithKey with -> {
+                        bb.eol("this.key = base." + KEY_AWARE_KEY_NAME + "();");
+                        for (var method : with.keyGetters) {
+                            bb.str("this.").str(method.fieldName()).str(" = base.").str(method.name()).eol("();");
+                        }
+                        appendCopyNonKeys(bb, with.implGetters);
                     }
-
-                    bb.eol("this.key = base." + KEY_AWARE_KEY_NAME + "();");
-                    for (var field : keyProps) {
-                        bb.str("this._").str(field.getKey()).str(" = base.").str(field.getValue().name()).eol("();");
-                    }
-
-                    appendCopyNonKeys(bb, allProps);
-                } else {
-                    appendCopyNonKeys(bb, properties);
+                    case WithoutKey without -> appendCopyNonKeys(bb, without.allGetters);
                 }
             }).nl();
     }
@@ -446,7 +450,7 @@ final class BuilderTemplate extends BaseTemplate {
     // FIXME: return BlockBuilder
     @NonNullByDefault
     private String printPropertySetter(final MethodSignature getter, final String receiver, final String propertyName) {
-        final var getterName =  getter.name();
+        final var getterName = getter.name();
 
         final var ownGetter = findGetter(getterName);
         final var ownGetterType = ownGetter.returnType();
@@ -612,8 +616,7 @@ final class BuilderTemplate extends BaseTemplate {
     private @NonNull BlockBuilder generateGetters(final boolean addOverride) {
         final var bb = newBlockBuilder();
 
-        final var keyType = keyType();
-        if (keyType != null) {
+        if (props instanceof WithKey withKey) {
             if (!addOverride) {
                 bb
                     .eol("/**")
@@ -627,24 +630,24 @@ final class BuilderTemplate extends BaseTemplate {
                     .at().eol(importedName(OVERRIDE));
             }
             bb
-                .str("public ").str(importedName(keyType)).str(' ' + KEY_AWARE_KEY_NAME + "()").oB()
+                .str("public ").str(importedName(withKey.key)).str(' ' + KEY_AWARE_KEY_NAME + "()").oB()
                     .eol("return key;")
                 .cB()
                 .newLine();
         }
 
-        if (properties.isEmpty()) {
+        final var it = props.allGetters().iterator();
+        if (!it.hasNext()) {
             return bb;
         }
 
-        final var it = properties.iterator();
         while (true) {
             final var field = it.next();
             if (!addOverride) {
                 bb
                     .eol("/**")
                     .str(" * Return current value associated with the property corresponding to {@link ")
-                        .str(importedName(targetType)).str("#").str(field.getterName()).eol("()}.")
+                        .str(importedName(targetType)).str("#").str(field.name()).eol("()}.")
                     .eol(" *")
                     .eol(" * @return current value")
                     .eol(" */");
@@ -652,7 +655,7 @@ final class BuilderTemplate extends BaseTemplate {
                 bb
                     .at().eol(importedName(OVERRIDE));
             }
-            bb.blk(asGetterMethod(field.name(), field.type()));
+            bb.blk(asGetterMethod(field.propName(), field.type()));
 
             if (!it.hasNext()) {
                 return bb;
@@ -662,7 +665,7 @@ final class BuilderTemplate extends BaseTemplate {
         }
     }
 
-    private @NonNull BlockBuilder generateSetter(final BuilderProperty field) {
+    private @NonNull BlockBuilder generateSetter(final GetterShape field) {
         final var returnType = field.type();
         if (returnType instanceof ParameterizedType parameterized) {
             if (isListType(parameterized) || isSetType(parameterized)) {
@@ -677,16 +680,16 @@ final class BuilderTemplate extends BaseTemplate {
         return generateSimpleSetter(field, returnType);
     }
 
-    private @NonNull BlockBuilder generateListSetter(final BuilderProperty prop, final Type actualType) {
+    private @NonNull BlockBuilder generateListSetter(final GetterShape getter, final Type actualType) {
         final var bb = newBlockBuilder();
         final BlockBuilder argumentCheck;
         final var restrictions = restrictionsForSetter(actualType);
         if (restrictions != null) {
-            bb.blk(generateCheckers(prop.name(), restrictions, actualType));
+            bb.blk(generateCheckers(getter.propName(), restrictions, actualType));
             argumentCheck = newBlockBuilder()
                 .str("if (values != null)").oB()
                     .str("for (").str(importedName(actualType)).str(" value : values)").oB()
-                        .blk(checkFieldValue(targetType, prop.name(), restrictions, actualType, "value"))
+                        .blk(checkFieldValue(targetType, getter.propName(), restrictions, actualType, "value"))
                     .cB()
                 .cB();
         } else {
@@ -697,33 +700,34 @@ final class BuilderTemplate extends BaseTemplate {
             .nl()
             .eol("/**")
             .str(" * Set the property corresponding to {@link ").str(importedName(targetType)).str("#")
-                .str(prop.getterName()).eol("()} to the specified")
+                .str(getter.name()).eol("()} to the specified")
             .eol(" * value.")
             .eol(" *")
             .eol(" * @param values desired value")
             .eol(" * @return this builder")
             .eol(" */")
-            .str("public ").str(simpleName()).str(" set").str(toFirstUpper(prop.name())).str("(final ")
-                .str(importedName(prop.type())).str(" values)").oB()
+            .str("public ").str(simpleName()).str(" set").str(toFirstUpper(getter.propName())).str("(final ")
+                .str(importedName(getter.type())).str(" values)").oB()
                 .blk(argumentCheck)
-                .str("this.").str(prop.fieldName()).eol(" = values;")
+                .str("this.").str(getter.fieldName()).eol(" = values;")
                 .eol("return this;")
             .cB()
             .nl();
     }
 
-    private @NonNull BlockBuilder generateMapSetter(final BuilderProperty prop, final Type actualType) {
+    private @NonNull BlockBuilder generateMapSetter(final GetterShape method, final Type actualType) {
+        final var propName = method.propName();
         final var bb = newBlockBuilder();
         final var restrictions = JavaFileTemplate.restrictionsForSetter(actualType);
         if (restrictions != null) {
-            bb.blk(generateCheckers(prop.name(), restrictions, actualType));
+            bb.blk(generateCheckers(propName, restrictions, actualType));
         }
 
         bb
             .nl()
             .eol("/**")
             .str(" * Set the property corresponding to {@link ").str(importedName(targetType)).str("#")
-                .str(prop.getterName()).eol("()} to the specified")
+                .str(method.name()).eol("()} to the specified")
             .txt("""
                  * value.
                  *
@@ -731,51 +735,52 @@ final class BuilderTemplate extends BaseTemplate {
                  * @return this builder
                  */
                 """)
-            .str("public ").str(simpleName()).str(" set").str(toFirstUpper(prop.name())).str("(final ")
-                .str(importedName(prop.type())).str(" values)").oB();
+            .str("public ").str(simpleName()).str(" set").str(toFirstUpper(propName)).str("(final ")
+                .str(importedName(method.type())).str(" values)").oB();
 
         if (restrictions != null) {
             bb
                 .eol("if (values != null)").oB()
                     .str("for (").str(importedName(actualType)).str(" value : values.values())").oB()
-                        .blk(checkFieldValue(targetType, prop.name(), restrictions, actualType, "value"))
+                        .blk(checkFieldValue(targetType, propName, restrictions, actualType, "value"))
                     .cB()
                 .cB();
         }
 
         return bb
-            .str("this.").str(prop.fieldName()).eol(" = values;")
+            .str("this.").str(method.fieldName()).eol(" = values;")
             .eol("return this;")
             .cB();
     }
 
     @NonNullByDefault
-    private BlockBuilder generateSimpleSetter(final BuilderProperty prop, final Type actualType) {
+    private BlockBuilder generateSimpleSetter(final GetterShape method, final Type actualType) {
         final var bb = newBlockBuilder();
         final var restrictions = restrictionsForSetter(actualType);
+        final var propName = method.propName();
         if (restrictions != null) {
-            bb.nl().blk(generateCheckers(prop.name(), restrictions, actualType));
+            bb.nl().blk(generateCheckers(propName, restrictions, actualType));
         }
         bb
             .nl()
             .eol("/**")
             .str(" * Set the property corresponding to {@link ").str(importedName(targetType)).str("#")
-                .str(prop.getterName()).eol("()} to the specified")
+                .str(method.name()).eol("()} to the specified")
             .eol(" * value.")
             .eol(" *")
             .eol(" * @param value desired value")
             .eol(" * @return this builder")
             .eol(" */")
-            .str("public ").str(simpleName()).str(" set").str(toFirstUpper(prop.name())).str("(final ")
-                .str(importedName(prop.type())).str(" value)").oB();
+            .str("public ").str(simpleName()).str(" set").str(toFirstUpper(propName)).str("(final ")
+                .str(importedName(method.type())).str(" value)").oB();
         if (restrictions != null) {
             bb
                 .str("if (value != null)").oB()
-                    .blk(checkFieldValue(targetType, prop.name(), restrictions, actualType, "value"))
+                    .blk(checkFieldValue(targetType, propName, restrictions, actualType, "value"))
                 .cB();
         }
         return bb
-            .str("this.").str(prop.fieldName()).eol(" = value;")
+            .str("this.").str(method.fieldName()).eol(" = value;")
             .eol("return this;")
             .cB();
     }
@@ -785,8 +790,7 @@ final class BuilderTemplate extends BaseTemplate {
      */
     private @NonNull BlockBuilder generateSetters() {
         final var bb = newBlockBuilder();
-        final var keyType = keyType();
-        if (keyType != null) {
+        if (props instanceof WithKey withKey) {
             bb
                 .eol("/**")
                 .str(" * Set the key value corresponding to {@link ").str(importedName(targetType)).str("#")
@@ -798,13 +802,13 @@ final class BuilderTemplate extends BaseTemplate {
                        * @return this builder
                        */
                       """)
-                .str("public ").str(simpleName()).str(" withKey(final ").str(importedName(keyType))
-                    .str(" key)").oB()
+                .str("public ").str(simpleName()).str(" withKey(final ").str(importedName(withKey.key)).str(" key)")
+                    .oB()
                     .eol("this.key = key;")
                     .eol("return this;")
                 .cB();
         }
-        for (var property : properties) {
+        for (var property : props.allGetters()) {
             bb.blk(generateSetter(property));
         }
         bb.newLine();
@@ -927,34 +931,9 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Append the code to copy non-key-components, with four spaces of indentation.
      */
-    private static void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderProperty> props) {
-        for (var prop : props) {
-            bb.str("this.").str(prop.fieldName()).str(" = base.").str(prop.getterName()).eol("();");
-        }
-    }
-
-    /**
-     * Return properties participating in the construction of a key type. Returned list is guaranteed to be ordered to
-     * match order the type constructor expects.
-     *
-     * @param keyType key type
-     * @return properties participating in the construction of a key type, in constructor order
-     */
-    @NonNullByDefault
-    static List<Map.Entry<String, MethodSignature>> keyConstructorArgs(final KeyArchetype keyType) {
-        return keyType.methods().entrySet().stream()
-            .map(entry -> Map.entry(Naming.getPropertyName(entry.getKey()), entry.getValue()))
-            .sorted(Comparator.comparing(Map.Entry::getKey))
-            .toList();
-    }
-
-    static void removeProperty(final Collection<BuilderProperty> props, final String name) {
-        final var it = props.iterator();
-        while (it.hasNext()) {
-            if (name.equals(it.next().name())) {
-                it.remove();
-                return;
-            }
+    private static void appendCopyNonKeys(final BlockBuilder bb, final List<GetterShape> methods) {
+        for (var method : methods) {
+            bb.str("this.").str(method.fieldName()).str(" = base.").str(method.name()).eol("();");
         }
     }
 

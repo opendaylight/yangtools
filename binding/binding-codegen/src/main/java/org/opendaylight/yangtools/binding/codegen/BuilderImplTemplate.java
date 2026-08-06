@@ -13,10 +13,8 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX;
-import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
@@ -60,8 +58,7 @@ final class BuilderImplTemplate extends BaseTemplate {
     BlockBuilder body() {
         // cache things from builder
         final var targetType = builder.targetType;
-        final var keyType = builder.keyType();
-        final var properties = builder.properties;
+        final var props = builder.props;
 
         final var implIface = importedName(targetType);
         final var override = importedName(OVERRIDE);
@@ -71,8 +68,8 @@ final class BuilderImplTemplate extends BaseTemplate {
         final var bb = newBlockBuilder()
             .frg(DeprecatedAnnotation.of(javaType(), targetType.statement()))
             .str("private static final class ").str(simpleName).str(" extends ");
-        if (keyType != null) {
-            bb.gen(importedName(ABSTRACT_ENTRY_OBJECT), implIface, importedName(keyType));
+        if (props instanceof BuilderTemplate.WithKey with) {
+            bb.gen(importedName(ABSTRACT_ENTRY_OBJECT), implIface, importedName(with.key()));
         } else if (targetType instanceof AugmentableArchetype) {
             bb.gen(importedName(ABSTRACT_AUGMENTABLE), implIface);
         } else {
@@ -81,10 +78,8 @@ final class BuilderImplTemplate extends BaseTemplate {
         bb.str(" implements ").str(implIface).oB();
 
         // generate instance fields
-        if (!properties.isEmpty()) {
-            for (var prop : properties) {
-                bb.str("private final ").str(importedName(prop.type())).sp().str(prop.fieldName()).eS();
-            }
+        for (var getter : props.allGetters()) {
+            bb.str("private final ").str(importedName(getter.type())).sp().str(getter.fieldName()).eS();
         }
 
         bb
@@ -93,75 +88,69 @@ final class BuilderImplTemplate extends BaseTemplate {
 
         if (targetType instanceof AugmentableArchetype) {
             bb.str("super(base." + BuilderTemplate.AUGMENTATION_FIELD);
-            if (keyType != null) {
+            if (props instanceof BuilderTemplate.WithKey) {
                 bb.str(", extractKey(base)");
             }
             bb.eol(");");
         }
 
-        if (keyType != null) {
-            final var allProps = new ArrayList<>(properties);
-            final var keyProps = BuilderTemplate.keyConstructorArgs(keyType);
-            for (var field : keyProps) {
-                BuilderTemplate.removeProperty(allProps, field.getKey());
-            }
-
-            bb.eol("final var key = key();");
-            for (var field : keyProps) {
-                bb.str("this._").str(field.getKey()).str(" = key.").str(field.getValue().name()).eol("();");
-            }
-
-            appendCopyNonKeys(bb, allProps);
-        } else {
-            appendCopyNonKeys(bb, properties);
-        }
-
-        bb.cB();
-
-        if (keyType != null) {
-            // TODO: this is generating a utility static method for use in the (only) constructor. We should be inlining
-            //       this code into the constructor once JEP-482 Flexible Constructor Bodies available. We should
-            //       construct the key into a 'key' local variable, so that generateCopyKeys() below can reference it
-            bb
-                .nl()
-                .str("private static ").str(importedNonNull(keyType)).str(" extractKey(").str(builderName).str(" base)")
-                    .oB()
-                    .str("final var key = base." + KEY_AWARE_KEY_NAME).eol("();")
-                    .eol("return key != null ? key")
-                    .str("    : new ").str(importedName(keyType)).str("(");
-
-            // Note: keys have at least one component
-            final var it = BuilderTemplate.keyConstructorArgs(keyType).iterator();
-            while (true) {
-                final var keyProp = it.next();
-                bb.str("base.").str(keyProp.getValue().name()).str("()");
-                if (!it.hasNext()) {
-                    break;
+        switch (props) {
+            case BuilderTemplate.WithKey with -> {
+                bb.eol("final var key = key();");
+                for (var getter : with.keyGetters()) {
+                    bb.str("this.").str(getter.fieldName()).str(" = key.").str(getter.name()).eol("();");
                 }
-                bb.str(", ");
-            }
+                appendCopyNonKeys(bb, with.implGetters());
+                // TODO: this is generating a utility static method for use in the (only) constructor. We should be
+                //       inlining this code into the constructor once JEP-482 Flexible Constructor Bodies available. We
+                //       should construct the key into a 'key' local variable, so that generateCopyKeys() below can
+                //       reference it
+                bb
+                    .cB()
+                    .nl()
+                    .str("private static ").str(importedNonNull(with.key())).str(" extractKey(").str(builderName)
+                        .str(" base)").oB()
+                        .str("final var key = base." + KEY_AWARE_KEY_NAME).eol("();")
+                        .eol("return key != null ? key")
+                        .str("    : new ").str(importedName(with.key())).str("(");
 
-            bb
-                .eol(");")
-                .cB();
+                // Note: keys have at least one component
+                final var it = with.keyGetters().iterator();
+                while (true) {
+                    final var getter = it.next();
+                    bb.str("base.").str(getter.name()).str("()");
+                    if (!it.hasNext()) {
+                        break;
+                    }
+                    bb.str(", ");
+                }
+
+                bb
+                    .eol(");")
+                    .cB();
+            }
+            case BuilderTemplate.WithoutKey without -> {
+                appendCopyNonKeys(bb, without.allGetters());
+                bb.cB();
+            }
         }
 
         // generate getters
-        if (!properties.isEmpty()) {
+        final var getters = props.allGetters();
+        if (!getters.isEmpty()) {
             bb.newLine();
 
-            final var it = properties.iterator();
+            final var it = getters.iterator();
             while (true) {
-                final var prop = it.next();
+                final var getter = it.next();
 
                 // getFoo()
                 bb
                     .at().eol(importedName(OVERRIDE))
-                    .str("public ").str(importedName(prop.type())).sp().str(prop.getterName()).str("()").oB()
+                    .str("public ").str(importedName(getter.type())).sp().str(getter.name()).str("()").oB()
                         .str("return ");
-                final var fieldName = prop.fieldName();
-                // FIXME: check for BaseYangTypes.BINARY_TYPE
-                if (prop.type().isArray()) {
+                final var fieldName = getter.fieldName();
+                if (getter.isBinary()) {
                     bb.str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
                 } else {
                     bb.str(fieldName).eS();
@@ -169,14 +158,14 @@ final class BuilderImplTemplate extends BaseTemplate {
                 bb.cB();
 
                 // nonnullFoo() for structural containers
-                if (prop.type() instanceof ContainerObjectArchetype fieldType
+                if (getter.type() instanceof ContainerObjectArchetype fieldType
                     && BuilderTemplate.isNonPresenceContainer(fieldType)) {
                     bb
                         .nl()
                         .at().eol(override)
-                        .str("public ").str(importedName(fieldType)).str(" " + NONNULL_PREFIX)
-                            .str(toFirstUpper(prop.name())).str("()").oB()
-                            .str("var tmp = ").str(prop.getterName()).eol("();")
+                        .str("public ").str(importedName(fieldType)).str(" " + NONNULL_PREFIX).str(getter.suffix())
+                            .str("()").oB()
+                            .str("var tmp = ").str(getter.name()).eol("();")
                             .str("return tmp != null ? tmp : ")
                                 // FIXME: better reference to FooBuilder.empty()
                                 .str(fieldType.canonicalName()).eol(BUILDER_SUFFIX + ".empty();")
@@ -193,13 +182,13 @@ final class BuilderImplTemplate extends BaseTemplate {
         return bb.cB();
     }
 
-    private void appendCopyNonKeys(final BlockBuilder bb, final Collection<BuilderProperty> props) {
-        for (var prop : props) {
-            bb.str("this.").str(prop.fieldName()).str(" = ");
-            if (prop.getter().statement() instanceof ListEffectiveStatement) {
-                bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(prop.getterName()).eol("());");
+    private void appendCopyNonKeys(final BlockBuilder bb, final List<GetterShape> getters) {
+        for (var getter : getters) {
+            bb.str("this.").str(getter.fieldName()).str(" = ");
+            if (getter.method().statement() instanceof ListEffectiveStatement) {
+                bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(getter.name()).eol("());");
             } else {
-                bb.str("base.").str(prop.getterName()).eol("();");
+                bb.str("base.").str(getter.name()).eol("();");
             }
         }
     }
