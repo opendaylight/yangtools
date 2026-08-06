@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement
  * @since 16.0.0
  */
 public sealed interface OpaqueObjectArchetype<S extends DataTreeEffectiveStatement<?> & DataSchemaCompat<QName, ?>>
-        extends Archetype {
+        extends Archetype, ReturnType {
     /**
      * An {@link OpaqueObjectArchetype} for an {@link AnydataEffectiveStatement}.
      *

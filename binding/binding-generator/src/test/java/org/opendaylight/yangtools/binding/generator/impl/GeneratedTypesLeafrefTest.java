@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GeneratedTypesLeafrefTest {
@@ -122,9 +123,10 @@ class GeneratedTypesLeafrefTest {
         }
 
         assertNotNull(getHigherLayerIf);
-        final var getHigherLayerIfType = getHigherLayerIf.returnType();
+        final var getHigherLayerIfType = getHigherLayerIf.javaReturnType();
         assertNotNull(getHigherLayerIfType);
         assertNotSame("java.lang.Void", getHigherLayerIfType);
+        assertEquals(BaseYangTypes.STRING_TYPE, getHigherLayerIf.returnType());
         assertEquals("Set", getHigherLayerIfType.simpleName());
 
         // NetworkLink

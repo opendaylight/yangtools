@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.binding.model.api.ReturnType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
@@ -130,7 +131,7 @@ final class UnionTypeObjectArchetypeBuilder {
                 } else {
                     final var subDef = subType.typeDefinition();
 
-                    Type baseType = SIMPLE_TYPES.get(subName);
+                    ReturnType baseType = SIMPLE_TYPES.get(subName);
                     if (baseType == null) {
                         if (!BuiltInType.DECIMAL64.typeName().equals(subName)) {
                             // This has to be a reference to a typedef, let's lookup it up and pick up its type

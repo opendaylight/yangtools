@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
@@ -18,8 +19,11 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 
 /**
  * Prototype for a getter method carried in a {@link DataContainer}.
@@ -61,8 +65,44 @@ public sealed interface GetterMethod extends Immutable permits GetterMethod0, Ge
     /**
      * {@return the method return type}
      */
-    // FIXME: dedicated 'ReturnType'
-    @NonNull Type returnType();
+    @NonNull ReturnType returnType();
+
+    default @NonNull Type javaReturnType() {
+        return switch (returnType()) {
+            // simple types: check whether the use is in leaf or leaf-list
+            case ConcreteType type -> leafOrLeafList(statement(), type);
+            case IdentityArchetype type -> leafOrLeafList(statement(), type);
+            case TypeObjectArchetype<?> type -> leafOrLeafList(statement(), type);
+
+            // non-values
+            case ChoiceInArchetype type -> type;
+            case ContainerObjectArchetype type -> type;
+            case EntryObjectArchetype type -> switch (type.statement().effectiveOrdering()) {
+                case SYSTEM -> Types.mapTypeFor(TypeRef.of(type.keyName()), type);
+                case USER -> Types.listTypeFor(type);
+            };
+            case ItemObjectArchetype type -> Types.listTypeFor(type);
+            case OpaqueObjectArchetype<?> type -> type;
+
+        };
+    }
+
+    @NonNullByDefault
+    private static Type leafOrLeafList(final EffectiveStatement<?, ?> statement, final Type type) {
+        return switch (statement) {
+            case LeafEffectiveStatement stmt -> type;
+            case LeafListEffectiveStatement stmt -> {
+                // If we are a leafref and the reference cannot be resolved, we need to generate a list wildcard, not
+                // List<Object>, we will try to narrow the return type in subclasses.
+                final boolean isObject = Types.OBJECT.equals(type);
+                yield switch (stmt.effectiveOrdering()) {
+                    case SYSTEM -> isObject ? Types.setTypeWildcard() : Types.setTypeFor(type);
+                    case USER -> isObject ? Types.listTypeWildcard() : Types.listTypeFor(type);
+                };
+            }
+            default -> throw new VerifyException("Unexpected shape of " + type + " with " + statement);
+        };
+    }
 
     /**
      * {@return List of annotation definitions attached to this method}
@@ -72,19 +112,19 @@ public sealed interface GetterMethod extends Immutable permits GetterMethod0, Ge
 
     // FIXME: require QName-based statement
     @NonNullByDefault
-    static GetterMethod of(final EffectiveStatement<?, ?> statement, final String name, final Type returnType) {
+    static GetterMethod of(final EffectiveStatement<?, ?> statement, final String name, final ReturnType returnType) {
         return new GetterMethod0(statement, checkName(name), returnType);
     }
 
     @NonNullByDefault
-    static GetterMethod of(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
+    static GetterMethod of(final EffectiveStatement<?, ?> statement, final String name, final ReturnType returnType,
             final AttachedAnnotation.ToMethod annotation) {
         return new GetterMethod1(statement, checkName(name), returnType, annotation);
     }
 
     @Beta
     @NonNullByDefault
-    static Builder builder(final EffectiveStatement<?, ?> statement, final String name, final Type returnType) {
+    static Builder builder(final EffectiveStatement<?, ?> statement, final String name, final ReturnType returnType) {
         return new Builder(statement, checkName(name), returnType);
     }
 
@@ -106,12 +146,12 @@ public sealed interface GetterMethod extends Immutable permits GetterMethod0, Ge
     final class Builder {
         private final @NonNull EffectiveStatement<?, ?> statement;
         private final @NonNull String name;
-        private final @NonNull Type returnType;
+        private final @NonNull ReturnType returnType;
 
         private @Nullable ArrayList<AttachedAnnotation.@NonNull ToMethod> annotations = null;
 
         @NonNullByDefault
-        Builder(final EffectiveStatement<?, ?> statement, final String name, final Type returnType) {
+        Builder(final EffectiveStatement<?, ?> statement, final String name, final ReturnType returnType) {
             this.statement = requireNonNull(statement);
             this.name = requireNonNull(name);
             this.returnType = requireNonNull(returnType);

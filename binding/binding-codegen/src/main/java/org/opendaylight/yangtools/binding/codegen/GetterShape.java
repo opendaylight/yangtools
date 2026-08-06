@@ -31,7 +31,7 @@ record GetterShape(GetterMethod method, boolean hasOverride) implements Comparab
     }
 
     Type type() {
-        return method.returnType();
+        return method.javaReturnType();
     }
 
     boolean isBinary() {

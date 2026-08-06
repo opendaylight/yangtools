@@ -98,8 +98,13 @@ abstract class OpaqueObjectGenerator<
     }
 
     @Override
-    void pushToInference(final SchemaInferenceStack dataTree) {
+    final void pushToInference(final SchemaInferenceStack dataTree) {
         dataTree.enterDataTree(statement().argument());
+    }
+
+    @Override
+    final OpaqueObjectArchetype<S> methodReturnType() {
+        return getArchetype();
     }
 
     @NonNullByDefault

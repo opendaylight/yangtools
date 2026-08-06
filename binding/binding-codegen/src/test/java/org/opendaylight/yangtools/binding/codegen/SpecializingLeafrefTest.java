@@ -291,7 +291,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
     private static Type returnTypeByMethodName(final DataContainerArchetype type, final String name) {
         for (var m : type.getMethodDefinitions()) {
             if (m.name().equals(name)) {
-                return m.returnType();
+                return m.javaReturnType();
             }
         }
         return null;

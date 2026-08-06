@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface ChoiceInArchetype extends Archetype
+public sealed interface ChoiceInArchetype extends Archetype, ReturnType
         permits ChoiceInArchetype0, ChoiceInArchetype1, ChoiceInArchetypeN {
     @Override
     ChoiceEffectiveStatement statement();
