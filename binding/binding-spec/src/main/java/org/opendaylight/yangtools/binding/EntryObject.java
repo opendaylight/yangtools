@@ -25,5 +25,8 @@ import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 public non-sealed interface EntryObject<T extends EntryObject<T, K>, K extends Key<T>>
         extends Augmentable<T>, DataObject, KeyAware<K>, JavaDataContainer<T> {
     @Override
+    Class<T> implementedInterface();
+
+    @Override
     K key();
 }
