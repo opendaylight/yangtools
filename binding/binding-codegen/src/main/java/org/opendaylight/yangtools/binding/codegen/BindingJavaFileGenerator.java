@@ -75,8 +75,16 @@ final class BindingJavaFileGenerator {
         //   - KeyArchetype, as they provide KeyArchetype binding
         final var modules = new HashMap<String, @Nullable DataRootArchetype>();
         final var entryToKey = new HashMap<JavaTypeName, KeyArchetype>();
+        final var choiceByName = new HashMap<JavaTypeName, ChoiceInArchetype>();
         for (var type : types) {
             switch (type) {
+                case ChoiceInArchetype archetype -> {
+                    final var name = archetype.name();
+                    final var prev = choiceByName.putIfAbsent(name, archetype);
+                    if (prev != null) {
+                        throw new VerifyException("Conflicing ChoiceIn " + archetype + " and " + prev);
+                    }
+                }
                 case DataRootArchetype archetype -> {
                     final var rootPackage = archetype.name().packageName();
                     final var prev = modules.putIfAbsent(rootPackage, archetype);
@@ -90,7 +98,7 @@ final class BindingJavaFileGenerator {
                     final var prev = entryToKey.putIfAbsent(entryName, archetype);
                     if (prev != null) {
                         throw new VerifyException(
-                            "Conflicing KeyArchetype" + entryName + " keys " + entryName + " and " + prev);
+                            "Conflicing KeyArchetype " + entryName + " keys " + entryName + " and " + prev);
                     }
                 }
                 default -> {
@@ -111,7 +119,8 @@ final class BindingJavaFileGenerator {
                 case ActionArchetype archetype -> new ActionTemplate(root, archetype);
                 case AugmentationArchetype archetype -> new AugmentationTemplate(root, archetype);
                 case BitsTypeObjectArchetype archetype -> BitsTypeObjectTemplate.of(root, archetype);
-                case CaseObjectArchetype archetype -> new CaseObjectTemplate(root, archetype);
+                case CaseObjectArchetype archetype ->
+                    new CaseObjectTemplate(root, archetype, choiceByName.get(archetype.parentName()));
                 case ChoiceInArchetype archetype -> new ChoiceInTemplate(root, archetype);
                 case ContainerObjectArchetype archetype -> new ContainerObjectTemplate(root, archetype);
                 case DataRootArchetype archetype -> DataRootTemplate.of(root, archetype);
