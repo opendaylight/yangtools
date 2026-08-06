@@ -11,9 +11,9 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.model.api.ChildOfArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
@@ -50,5 +50,5 @@ abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEff
     }
 
     abstract ChildOfArchetype.OfList createTypeImpl(JavaTypeName typeName, ListEffectiveStatement statement,
-        List<GroupingArchetype> groupings, List<TypeObjectArchetype<?>> typeObjects, List<MethodSignature> methods);
+        List<GroupingArchetype> groupings, List<TypeObjectArchetype<?>> typeObjects, List<GetterMethod> methods);
 }

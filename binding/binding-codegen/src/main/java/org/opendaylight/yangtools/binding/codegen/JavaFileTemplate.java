@@ -28,8 +28,8 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
@@ -149,7 +149,7 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
         return property.type().isArray();
     }
 
-    static final @NonNull String propertyNameFromGetter(final MethodSignature getter) {
+    static final @NonNull String propertyNameFromGetter(final GetterMethod getter) {
         return propertyNameFromGetter(getter.name());
     }
 
@@ -173,7 +173,7 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
      * @param method Method to examine
      * @return True if there is an override annotation
      */
-    static boolean hasOverrideAnnotation(final MethodSignature method) {
+    static boolean hasOverrideAnnotation(final GetterMethod method) {
         return method.annotations().stream().anyMatch(OverrideAnnotation.class::isInstance);
     }
 

@@ -79,15 +79,15 @@ final class TypeMethods {
     }
 
     /**
-     * Implementation of {@link MethodSignature#toString()}.
+     * Implementation of {@link GetterMethod#toString()}.
      *
      * @param archetypeClass the archetype class
      * @param self the archetype
      * @return a String
      */
     @NonNullByDefault
-    static String toString(final MethodSignature self) {
-        final var helper = MoreObjects.toStringHelper(MethodSignature.class).omitNullValues()
+    static String toString(final GetterMethod self) {
+        final var helper = MoreObjects.toStringHelper(GetterMethod.class).omitNullValues()
             .add("name", self.name())
             .add("returnType", self.returnType());
         final var annotations = self.annotations();

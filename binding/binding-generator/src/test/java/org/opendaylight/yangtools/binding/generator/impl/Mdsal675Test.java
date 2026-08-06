@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype.Anydata;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype.Anyxml;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -127,7 +127,7 @@ class Mdsal675Test {
         final var moduleType = assertArchetype(genTypesMap, MODULE_CLASS_NAME, DataRootArchetype.class);
         assertNotNull(moduleType.getMethodDefinitions());
         assertEquals(List.of("getRootContainer"), moduleType.getMethodDefinitions().stream()
-            .map(MethodSignature::name)
+            .map(GetterMethod::name)
             .filter(methodName -> methodName.startsWith("get"))
             .toList());
 

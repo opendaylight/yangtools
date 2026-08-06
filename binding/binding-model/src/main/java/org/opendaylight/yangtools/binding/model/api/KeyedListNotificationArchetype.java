@@ -28,7 +28,7 @@ public sealed interface KeyedListNotificationArchetype extends DataContainerArch
     static KeyedListNotificationArchetype of(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement, final JavaTypeName parentName,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
-            final List<MethodSignature> methods) {
+            final List<GetterMethod> methods) {
         return new KeyedListNotificationArchetypeImpl(typeName, statement, parentName, TypeMethods.copyList(groupings),
             TypeMethods.copyList(typeObjects), TypeMethods.copyList(methods));
     }

@@ -19,9 +19,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
@@ -464,8 +464,8 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
     abstract Archetype createTypeImpl(JavaTypeName typeName, @NonNull S statement, List<GroupingArchetype> groupings);
 
     @NonNullByDefault
-    final List<MethodSignature> collectMethods() {
-        final var list = new ArrayList<MethodSignature.Builder>();
+    final List<GetterMethod> collectMethods() {
+        final var list = new ArrayList<GetterMethod.Builder>();
 
         for (var child : this) {
             // Only process explicit generators here
@@ -474,7 +474,7 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
             }
         }
 
-        return list.isEmpty() ? List.of() : list.stream().map(MethodSignature.Builder::build).toList();
+        return list.isEmpty() ? List.of() : list.stream().map(GetterMethod.Builder::build).toList();
     }
 
     @NonNullByDefault

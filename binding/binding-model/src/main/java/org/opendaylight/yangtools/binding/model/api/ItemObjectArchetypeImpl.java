@@ -21,7 +21,7 @@ record ItemObjectArchetypeImpl(
         JavaTypeName parentName,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<MethodSignature> methodSignatures) implements ItemObjectArchetype {
+        List<GetterMethod> methodSignatures) implements ItemObjectArchetype {
     ItemObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
@@ -32,7 +32,7 @@ record ItemObjectArchetypeImpl(
     }
 
     @Override
-    public List<MethodSignature> getMethodDefinitions() {
+    public List<GetterMethod> getMethodDefinitions() {
         return methodSignatures;
     }
 

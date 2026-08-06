@@ -12,14 +12,14 @@ import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstLower;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
- * The code generation shape of a {@link MethodSignature}.
+ * The code generation shape of a {@link GetterMethod}.
  */
 @NonNullByDefault
-record GetterShape(MethodSignature method, boolean hasOverride) implements Comparable<GetterShape> {
+record GetterShape(GetterMethod method, boolean hasOverride) implements Comparable<GetterShape> {
     private static final int GETTER_PREFIX_LENGTH = GETTER_PREFIX.length();
 
     GetterShape {

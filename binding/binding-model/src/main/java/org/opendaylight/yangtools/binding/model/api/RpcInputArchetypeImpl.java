@@ -20,7 +20,7 @@ record RpcInputArchetypeImpl(
         InputEffectiveStatement statement,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<MethodSignature> methodSignatures) implements RpcInputArchetype {
+        List<GetterMethod> methodSignatures) implements RpcInputArchetype {
     RpcInputArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
@@ -30,7 +30,7 @@ record RpcInputArchetypeImpl(
     }
 
     @Override
-    public List<MethodSignature> getMethodDefinitions() {
+    public List<GetterMethod> getMethodDefinitions() {
         return methodSignatures;
     }
 

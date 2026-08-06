@@ -28,9 +28,9 @@ import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
@@ -315,13 +315,13 @@ public class DefaultBindingGeneratorTest {
                 .returnType());
     }
 
-    private static <A extends DataContainerArchetype> MethodSignature assertGeneratedMethod(final JavaTypeName typeName,
+    private static <A extends DataContainerArchetype> GetterMethod assertGeneratedMethod(final JavaTypeName typeName,
             final Class<A> archetypeClass, final String methodName) {
         return assertGeneratedMethod(
             assertInstanceOf(archetypeClass, assertGeneratedType(typeName)).getMethodDefinitions(), methodName);
     }
 
-    private static MethodSignature assertGeneratedMethod(final List<MethodSignature> methods, final String name) {
+    private static GetterMethod assertGeneratedMethod(final List<GetterMethod> methods, final String name) {
         return methods.stream().filter(method -> name.equals(method.name()))
             .findFirst()
             .orElseThrow(() -> new AssertionError("Method " + name + " not present"));

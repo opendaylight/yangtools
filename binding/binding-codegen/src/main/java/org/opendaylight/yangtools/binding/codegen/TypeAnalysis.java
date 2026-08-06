@@ -18,10 +18,10 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 
 record TypeAnalysis(@NonNull Set<BuilderProperty> properties) {
-    private static final Comparator<MethodSignature> METHOD_COMPARATOR = Comparator.comparing(MethodSignature::name);
+    private static final Comparator<GetterMethod> METHOD_COMPARATOR = Comparator.comparing(GetterMethod::name);
     private static final int GETTER_PREFIX_LENGTH = Naming.GETTER_PREFIX.length();
 
     TypeAnalysis {
@@ -34,7 +34,7 @@ record TypeAnalysis(@NonNull Set<BuilderProperty> properties) {
      */
     @NonNullByDefault
     static TypeAnalysis of(final DataContainerArchetype type) {
-        final var methods = new LinkedHashSet<MethodSignature>();
+        final var methods = new LinkedHashSet<GetterMethod>();
         methods.addAll(type.getMethodDefinitions());
         collectImplementedMethods(type, methods, type.partials());
         return new TypeAnalysis(propertiesFromMethods(methods.stream().sorted(METHOD_COMPARATOR).toList()));
@@ -48,7 +48,7 @@ record TypeAnalysis(@NonNull Set<BuilderProperty> properties) {
      * @param partials list of implemented interfaces
      */
     private static void collectImplementedMethods(
-            final @NonNull DataContainerArchetype archetype, final @NonNull Set<MethodSignature> methods,
+            final @NonNull DataContainerArchetype archetype, final @NonNull Set<GetterMethod> methods,
             final @NonNull List<DataContainerArchetype.Partial> partials) {
         for (var partial : partials) {
             for (var implMethod : partial.getMethodDefinitions()) {
@@ -79,7 +79,7 @@ record TypeAnalysis(@NonNull Set<BuilderProperty> properties) {
      *                                    <li>if the return type of the {@code method} equals {@code null}</li>
      *                                  </ul>
      */
-    private static BuilderProperty propertyFromGetter(final MethodSignature method) {
+    private static BuilderProperty propertyFromGetter(final GetterMethod method) {
         checkArgument(method != null);
         final var fieldName = Naming.toFirstLower(method.name().substring(GETTER_PREFIX_LENGTH));
         return new BuilderProperty(fieldName, method);
@@ -92,7 +92,7 @@ record TypeAnalysis(@NonNull Set<BuilderProperty> properties) {
      * @return set of generated property instances which represents the getter <code>methods</code>
      */
     @NonNullByDefault
-    private static Set<BuilderProperty> propertiesFromMethods(final List<MethodSignature> methods) {
+    private static Set<BuilderProperty> propertiesFromMethods(final List<GetterMethod> methods) {
         if (methods.isEmpty()) {
             return Set.of();
         }

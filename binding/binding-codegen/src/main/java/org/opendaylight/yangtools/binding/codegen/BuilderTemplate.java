@@ -50,9 +50,9 @@ import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
@@ -284,7 +284,7 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     private @Nullable BlockBuilder printConstructorPropertySetter(final DataContainerArchetype.Partial implementedIfc,
-            final Set<MethodSignature> alreadySetProperties) {
+            final Set<GetterMethod> alreadySetProperties) {
         final var bb = newBlockBuilder();
         for (var getter : implementedIfc.getMethodDefinitions()) {
             if (isGetterMethodName(getter.name()) && getterByName(alreadySetProperties, getter.name()) == null) {
@@ -299,7 +299,7 @@ final class BuilderTemplate extends BaseTemplate {
         return bb;
     }
 
-    private static Set<MethodSignature> getSpecifiedGetters(final DataContainerArchetype type) {
+    private static Set<GetterMethod> getSpecifiedGetters(final DataContainerArchetype type) {
         return type.getMethodDefinitions().stream()
             .filter(JavaFileTemplate::hasOverrideAnnotation)
             .collect(ImmutableSet.toImmutableSet());
@@ -446,7 +446,7 @@ final class BuilderTemplate extends BaseTemplate {
 
     // FIXME: return BlockBuilder
     @NonNullByDefault
-    private String printPropertySetter(final MethodSignature getter, final String receiver, final String propertyName) {
+    private String printPropertySetter(final GetterMethod getter, final String receiver, final String propertyName) {
         final var getterName =  getter.name();
 
         final var ownGetter = findGetter(getterName);
@@ -476,7 +476,7 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     @NonNullByDefault
-    private MethodSignature findGetter(final String getterName) {
+    private GetterMethod findGetter(final String getterName) {
         final var getter = getterByName(targetType, getterName);
         if (getter == null) {
             throw new IllegalStateException(
@@ -486,7 +486,7 @@ final class BuilderTemplate extends BaseTemplate {
         return getter;
     }
 
-    private static @Nullable MethodSignature getterByName(final @NonNull DataContainerArchetype implType,
+    private static @Nullable GetterMethod getterByName(final @NonNull DataContainerArchetype implType,
             final @NonNull String getterName) {
         final var getter = getterByName(implType.getMethodDefinitions(), getterName);
         if (getter != null) {
@@ -502,7 +502,7 @@ final class BuilderTemplate extends BaseTemplate {
         return null;
     }
 
-    static @Nullable MethodSignature getterByName(final @NonNull Collection<@NonNull MethodSignature> methods,
+    static @Nullable GetterMethod getterByName(final @NonNull Collection<@NonNull GetterMethod> methods,
         final @NonNull String implMethodName) {
         for (var method : methods) {
             final var methodName = method.name();
@@ -942,7 +942,7 @@ final class BuilderTemplate extends BaseTemplate {
      * @return properties participating in the construction of a key type, in constructor order
      */
     @NonNullByDefault
-    static List<Map.Entry<String, MethodSignature>> keyConstructorArgs(final KeyArchetype keyType) {
+    static List<Map.Entry<String, GetterMethod>> keyConstructorArgs(final KeyArchetype keyType) {
         return keyType.methods().entrySet().stream()
             .map(entry -> Map.entry(Naming.getPropertyName(entry.getKey()), entry.getValue()))
             .sorted(Comparator.comparing(Map.Entry::getKey))

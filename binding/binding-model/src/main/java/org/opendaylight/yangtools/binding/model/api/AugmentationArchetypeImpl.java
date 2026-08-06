@@ -21,7 +21,7 @@ record AugmentationArchetypeImpl(
         AugmentableArchetype target,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<MethodSignature> methodSignatures) implements AugmentationArchetype {
+        List<GetterMethod> methodSignatures) implements AugmentationArchetype {
     AugmentationArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
@@ -32,7 +32,7 @@ record AugmentationArchetypeImpl(
     }
 
     @Override
-    public List<MethodSignature> getMethodDefinitions() {
+    public List<GetterMethod> getMethodDefinitions() {
         return methodSignatures;
     }
 

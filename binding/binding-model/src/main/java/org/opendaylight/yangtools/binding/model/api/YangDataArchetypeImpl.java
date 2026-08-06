@@ -20,7 +20,7 @@ record YangDataArchetypeImpl(
         YangDataEffectiveStatement statement,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<MethodSignature> methodSignatures) implements YangDataArchetype {
+        List<GetterMethod> methodSignatures) implements YangDataArchetype {
     YangDataArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
@@ -30,7 +30,7 @@ record YangDataArchetypeImpl(
     }
 
     @Override
-    public List<MethodSignature> getMethodDefinitions() {
+    public List<GetterMethod> getMethodDefinitions() {
         return methodSignatures;
     }
 

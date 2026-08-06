@@ -15,19 +15,17 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 @NonNullByDefault
-record MethodSignature0(
+record GetterMethodN(
         EffectiveStatement<?, ?> statement,
         String name,
-        Type returnType) implements MethodSignature {
-    MethodSignature0 {
+        Type returnType,
+        List<AttachedAnnotation.ToMethod> annotations) implements GetterMethod {
+
+    GetterMethodN {
         requireNonNull(statement);
         requireNonNull(name);
         requireNonNull(returnType);
-    }
-
-    @Override
-    public List<AttachedAnnotation.ToMethod> annotations() {
-        return List.of();
+        requireNonNull(annotations);
     }
 
     @Override

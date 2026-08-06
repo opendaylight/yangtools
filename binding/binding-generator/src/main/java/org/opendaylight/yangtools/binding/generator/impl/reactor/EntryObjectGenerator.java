@@ -15,9 +15,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultMapRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -62,7 +62,7 @@ final class EntryObjectGenerator extends ListGenerator {
     @Override
     EntryObjectArchetype createTypeImpl(final JavaTypeName typeName, final ListEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings, final List<@NonNull TypeObjectArchetype<?>> typeObjects,
-            final List<@NonNull MethodSignature> methods) {
+            final List<@NonNull GetterMethod> methods) {
         return EntryObjectArchetype.of(typeName, statement, parentNameForChildOf(), keyGenerator.typeName(), groupings,
             typeObjects, methods);
     }

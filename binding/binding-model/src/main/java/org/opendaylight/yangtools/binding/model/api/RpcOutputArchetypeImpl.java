@@ -20,7 +20,7 @@ record RpcOutputArchetypeImpl(
         OutputEffectiveStatement statement,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<MethodSignature> methodSignatures) implements RpcOutputArchetype {
+        List<GetterMethod> methodSignatures) implements RpcOutputArchetype {
     RpcOutputArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
@@ -30,7 +30,7 @@ record RpcOutputArchetypeImpl(
     }
 
     @Override
-    public List<MethodSignature> getMethodDefinitions() {
+    public List<GetterMethod> getMethodDefinitions() {
         return methodSignatures;
     }
 

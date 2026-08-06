@@ -24,7 +24,7 @@ public sealed interface YangDataArchetype extends DataContainerArchetype permits
 
     static YangDataArchetype of(final JavaTypeName typeName, final YangDataEffectiveStatement statement,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
-            final List<MethodSignature> methods) {
+            final List<GetterMethod> methods) {
         return new YangDataArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),
             TypeMethods.copyList(typeObjects), TypeMethods.copyList(methods));
     }

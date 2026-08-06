@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain
 import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresentation;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
@@ -326,7 +326,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    void addAsGetterMethod(final List<MethodSignature.Builder> list) {
+    void addAsGetterMethod(final List<GetterMethod.Builder> list) {
         if (isAugmenting()) {
             // Do not process augmented nodes: they will be taken care of in their home augmentation
             return;
@@ -345,8 +345,8 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list, final Type returnType) {
-        final var mb = MethodSignature.builder(statement, Naming.getGetterMethodName(localName().getLocalName()),
+    GetterMethod.Builder constructGetter(final List<GetterMethod.Builder> list, final Type returnType) {
+        final var mb = GetterMethod.builder(statement, Naming.getGetterMethodName(localName().getLocalName()),
             returnType);
         addDeprecatedAnnotation(mb, statement);
         list.add(mb);
@@ -354,7 +354,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    void addAsGetterMethodOverride(final List<MethodSignature.Builder> list) {
+    void addAsGetterMethodOverride(final List<GetterMethod.Builder> list) {
         // No-op for most cases
     }
 
@@ -364,7 +364,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    static final void addDeprecatedAnnotation(final MethodSignature.Builder builder,
+    static final void addDeprecatedAnnotation(final GetterMethod.Builder builder,
             final EffectiveStatement<?, ?> statement) {
         if (statement instanceof DocumentedNode.WithStatus withStatus) {
             final var deprecated = DeprecatedAnnotation.ofStatus(withStatus.getStatus());

@@ -28,7 +28,7 @@ public sealed interface InstanceNotificationArchetype extends DataContainerArche
     static InstanceNotificationArchetype of(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement, final JavaTypeName parentName,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
-            final List<MethodSignature> methods) {
+            final List<GetterMethod> methods) {
         return new InstanceNotificationArchetypeImpl(typeName, statement, parentName, TypeMethods.copyList(groupings),
             TypeMethods.copyList(typeObjects), TypeMethods.copyList(methods));
     }

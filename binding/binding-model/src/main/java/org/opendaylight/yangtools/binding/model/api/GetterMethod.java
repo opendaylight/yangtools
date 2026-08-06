@@ -16,17 +16,16 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
- * The Method Signature interface contains simplified meta model for Java interface method definition. Each method MUST
- * be defined by name, return type, parameters Additionally method MAY contain associated annotations and a comment.
+ * Prototype for a getter method carried in a {@link DataContainer}.
  */
-// FIXME: rename to InterfaceMethod or something, potentially nested in DataContainerArchetype
 @Beta
-public sealed interface MethodSignature extends Immutable permits MethodSignature0, MethodSignature1, MethodSignatureN {
+public sealed interface GetterMethod extends Immutable permits GetterMethod0, GetterMethod1, GetterMethodN {
     /**
      * {@return the {@link EffectiveStatement} which led to this method}
      */
@@ -73,14 +72,14 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
 
     // FIXME: require QName-based statement
     @NonNullByDefault
-    static MethodSignature of(final EffectiveStatement<?, ?> statement, final String name, final Type returnType) {
-        return new MethodSignature0(statement, checkName(name), returnType);
+    static GetterMethod of(final EffectiveStatement<?, ?> statement, final String name, final Type returnType) {
+        return new GetterMethod0(statement, checkName(name), returnType);
     }
 
     @NonNullByDefault
-    static MethodSignature of(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
+    static GetterMethod of(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
             final AttachedAnnotation.ToMethod annotation) {
-        return new MethodSignature1(statement, checkName(name), returnType, annotation);
+        return new GetterMethod1(statement, checkName(name), returnType, annotation);
     }
 
     @Beta
@@ -98,9 +97,9 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
     }
 
     /**
-     * A builder for {@link MethodSignature}s.
+     * A builder for {@link GetterMethod}s.
      *
-     * @see MethodSignature
+     * @see GetterMethod
      * @since 16.0.0
      */
     @Beta
@@ -163,13 +162,13 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
          * @return <code>new</code> <i>immutable</i> instance of Method Signature.
          */
         @NonNullByDefault
-        public MethodSignature build() {
+        public GetterMethod build() {
             final var local = annotations;
             if (local == null) {
-                return new MethodSignature0(statement, name, returnType);
+                return new GetterMethod0(statement, name, returnType);
             }
-            return local.size() == 1 ? new MethodSignature1(statement, name, returnType, local.getFirst())
-                : new MethodSignatureN(statement, name, returnType, List.copyOf(local));
+            return local.size() == 1 ? new GetterMethod1(statement, name, returnType, local.getFirst())
+                : new GetterMethodN(statement, name, returnType, List.copyOf(local));
         }
     }
 }

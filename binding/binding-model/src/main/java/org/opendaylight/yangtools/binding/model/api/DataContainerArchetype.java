@@ -68,7 +68,7 @@ public sealed interface DataContainerArchetype extends Archetype
     // FIXME: yes, these result in methods being generated, but they are somewhat subtle, as they also imply constants
     //        for builders, etc. Most notably, KeyArchetype is presenting a subset of these defined in its corresponding
     //        EntryObjectArchetype
-    default List<MethodSignature> getMethodDefinitions() {
+    default List<GetterMethod> getMethodDefinitions() {
         return List.of();
     }
 

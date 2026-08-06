@@ -21,7 +21,7 @@ record KeyedListNotificationArchetypeImpl(
         JavaTypeName parentName,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<MethodSignature> methodSignatures) implements KeyedListNotificationArchetype {
+        List<GetterMethod> methodSignatures) implements KeyedListNotificationArchetype {
     KeyedListNotificationArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
@@ -32,7 +32,7 @@ record KeyedListNotificationArchetypeImpl(
     }
 
     @Override
-    public List<MethodSignature> getMethodDefinitions() {
+    public List<GetterMethod> getMethodDefinitions() {
         return methodSignatures;
     }
 

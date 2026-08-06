@@ -11,11 +11,11 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 @NonNullByDefault
-record BuilderProperty(String name, MethodSignature getter) {
+record BuilderProperty(String name, GetterMethod getter) {
     BuilderProperty {
         requireNonNull(name);
         requireNonNull(getter);

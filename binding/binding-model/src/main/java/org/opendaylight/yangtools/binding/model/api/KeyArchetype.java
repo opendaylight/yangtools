@@ -27,7 +27,7 @@ public sealed interface KeyArchetype extends Archetype permits KeyArchetypeImpl 
 
     JavaTypeName entryObjectName();
 
-    Map<String, MethodSignature> methods();
+    Map<String, GetterMethod> methods();
 
     static KeyArchetype of(final JavaTypeName name, final KeyEffectiveStatement statement,
             final EntryObjectArchetype entryObject) {

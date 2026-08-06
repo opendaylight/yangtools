@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 
 /**
  * A {@link BlockFragment} emitting getter methods for a {@link DataContainerArchetype}.
@@ -34,7 +34,7 @@ record DataContainerGetters(List<GetterShape> methods, List<GetterShape> partial
 
     static DataContainerGetters of(final DataContainerArchetype archetype) {
         // traverse the DataContainerArchetype's partials and collect their methods
-        final var partials = new HashMap<String, MethodSignature>();
+        final var partials = new HashMap<String, GetterMethod>();
         for (var partial : archetype.partials()) {
             collectPartialMethods(partials, partial);
         }
@@ -51,7 +51,7 @@ record DataContainerGetters(List<GetterShape> methods, List<GetterShape> partial
             .toList());
     }
 
-    private static void collectPartialMethods(final HashMap<String, MethodSignature> partials,
+    private static void collectPartialMethods(final HashMap<String, GetterMethod> partials,
             final DataContainerArchetype.Partial archetype) {
         for (var method : archetype.getMethodDefinitions()) {
             partials.putIfAbsent(method.name(), method);

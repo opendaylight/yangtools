@@ -26,7 +26,7 @@ public sealed interface EntryObjectArchetype extends ChildOfArchetype.OfList per
 
     static EntryObjectArchetype of(final JavaTypeName typeName, final ListEffectiveStatement statement,
             final JavaTypeName parentName, final JavaTypeName keyName, final List<GroupingArchetype> groupings,
-            final List<TypeObjectArchetype<?>> typeObjects, final List<MethodSignature> methods) {
+            final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> methods) {
         return new EntryObjectArchetypeImpl(typeName, statement, parentName, keyName, TypeMethods.copyList(groupings),
             TypeMethods.copyList(typeObjects), TypeMethods.copyList(methods));
     }

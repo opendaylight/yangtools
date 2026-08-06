@@ -21,8 +21,8 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -52,7 +52,7 @@ final class DataContainerGetterMethods implements BlockFragment {
         return template.importedName(type);
     }
 
-    private String importedType(final MethodSignature method) {
+    private String importedType(final GetterMethod method) {
         return template.importedName(method.returnType());
     }
 
@@ -145,12 +145,12 @@ final class DataContainerGetterMethods implements BlockFragment {
     }
 
     // FIXME: return a Block
-    private String accessorJavadoc(final MethodSignature method, final String orString) {
+    private String accessorJavadoc(final GetterMethod method, final String orString) {
         return accessorJavadoc(method, orString, null);
     }
 
     // FIXME: return a Block
-    private String accessorJavadoc(final MethodSignature method, final String orString,
+    private String accessorJavadoc(final GetterMethod method, final String orString,
             final @Nullable JavaTypeName exception) {
         final var optDescription = method.statement()
             .findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class);
@@ -172,7 +172,7 @@ final class DataContainerGetterMethods implements BlockFragment {
     }
 
     // FIXME: return a Block
-    private String simpleAccessorJavadoc(final MethodSignature method, final String orString,
+    private String simpleAccessorJavadoc(final GetterMethod method, final String orString,
             final @Nullable JavaTypeName exception) {
         final var propName = propertyNameFromGetter(method);
 
@@ -254,7 +254,7 @@ final class DataContainerGetterMethods implements BlockFragment {
         return !type.packageName().isEmpty();
     }
 
-    private BlockFragment generateAccessorAnnotations(final MethodSignature method) {
+    private BlockFragment generateAccessorAnnotations(final GetterMethod method) {
         final var annotations = method.annotations();
         if (annotations.isEmpty()) {
             return bb -> {
@@ -299,7 +299,7 @@ final class DataContainerGetterMethods implements BlockFragment {
 //      return bb;
 //  }
 
-    private BlockFragment generateAnnotations(final MethodSignature method) {
+    private BlockFragment generateAnnotations(final GetterMethod method) {
         final var annotations = method.annotations();
         if (annotations.isEmpty()) {
             return bb -> {

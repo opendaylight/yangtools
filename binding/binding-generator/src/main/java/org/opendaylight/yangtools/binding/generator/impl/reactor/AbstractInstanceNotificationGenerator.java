@@ -11,9 +11,9 @@ import com.google.common.base.VerifyException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
@@ -51,7 +51,7 @@ abstract sealed class AbstractInstanceNotificationGenerator extends AbstractNoti
 
     abstract DataContainerArchetype.OfNotification createTypeImpl(JavaTypeName typeName,
         NotificationEffectiveStatement statement, JavaTypeName parentName, List<GroupingArchetype> groupings,
-        List<TypeObjectArchetype<?>> typeObjects, List<MethodSignature> methods);
+        List<TypeObjectArchetype<?>> typeObjects, List<GetterMethod> methods);
 
     abstract DataContainerArchetype.OfNotification createTypeImpl(JavaTypeName typeName,
         NotificationEffectiveStatement statement, JavaTypeName parentName, NotificationBodyArchetype notificationBody);

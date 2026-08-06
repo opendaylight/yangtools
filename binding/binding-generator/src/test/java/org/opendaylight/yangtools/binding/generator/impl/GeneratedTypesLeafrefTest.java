@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -84,7 +84,7 @@ class GeneratedTypesLeafrefTest {
         // Topology
         final var gtTopoMethods = gtTopology.getMethodDefinitions();
         assertNotNull(gtTopoMethods);
-        MethodSignature condLeafref = null;
+        GetterMethod condLeafref = null;
         for (var method : gtTopoMethods) {
             if (method.name().equals("getCondLeafref")) {
                 condLeafref = method;
@@ -111,7 +111,7 @@ class GeneratedTypesLeafrefTest {
             gtIfc.keyName());
         final var gtIfcMethods = gtIfc.getMethodDefinitions();
         assertNotNull(gtIfcMethods);
-        MethodSignature getHigherLayerIf = null;
+        GetterMethod getHigherLayerIf = null;
         for (var method : gtIfcMethods) {
             switch (method.name()) {
                 case "getHigherLayerIf" -> getHigherLayerIf = method;
@@ -130,7 +130,7 @@ class GeneratedTypesLeafrefTest {
         // NetworkLink
         final var gtNetworkLinkMethods = gtNetworkLink.getMethodDefinitions();
         assertNotNull(gtNetworkLinkMethods);
-        MethodSignature getIfc = null;
+        GetterMethod getIfc = null;
         for (var method : gtNetworkLinkMethods) {
             if (method.name().equals("getInterface")) {
                 getIfc = method;
@@ -145,7 +145,7 @@ class GeneratedTypesLeafrefTest {
         // SourceNode
         final var gtSourceMethods = gtSource.getMethodDefinitions();
         assertNotNull(gtSourceMethods);
-        MethodSignature getIdSource = null;
+        GetterMethod getIdSource = null;
         for (var method : gtSourceMethods) {
             if (method.name().equals("getId")) {
                 getIdSource = method;
@@ -160,7 +160,7 @@ class GeneratedTypesLeafrefTest {
         // DestinationNode
         final var gtDestMethods = gtDest.getMethodDefinitions();
         assertNotNull(gtDestMethods);
-        MethodSignature getIdDest = null;
+        GetterMethod getIdDest = null;
         for (var method : gtDestMethods) {
             if (method.name().equals("getId")) {
                 getIdDest = method;

@@ -24,7 +24,7 @@ record DataRootArchetypeImpl(
         ModuleEffectiveStatement statement,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<MethodSignature> getMethodDefinitions) implements DataRootArchetype {
+        List<GetterMethod> getMethodDefinitions) implements DataRootArchetype {
     DataRootArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);

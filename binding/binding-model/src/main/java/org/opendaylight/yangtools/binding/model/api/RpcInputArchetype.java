@@ -24,7 +24,7 @@ public sealed interface RpcInputArchetype extends AugmentableArchetype permits R
 
     static RpcInputArchetype of(final JavaTypeName typeName, final InputEffectiveStatement statement,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
-            final List<MethodSignature> methods) {
+            final List<GetterMethod> methods) {
         return new RpcInputArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),
             TypeMethods.copyList(typeObjects), TypeMethods.copyList(methods));
     }

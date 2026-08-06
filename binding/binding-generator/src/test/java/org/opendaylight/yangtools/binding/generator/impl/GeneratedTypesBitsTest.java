@@ -18,7 +18,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -30,7 +30,7 @@ class GeneratedTypesBitsTest {
             "/simple-bits-demo.yang"));
         assertNotNull(genTypes);
 
-        List<MethodSignature> methodSignaturesList = null;
+        List<GetterMethod> methodSignaturesList = null;
 
         boolean leafParentFound = false;
 

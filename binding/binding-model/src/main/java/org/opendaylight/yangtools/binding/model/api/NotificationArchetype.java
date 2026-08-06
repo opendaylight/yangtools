@@ -23,7 +23,7 @@ public sealed interface NotificationArchetype extends DataContainerArchetype.OfN
 
     static NotificationArchetype of(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
-            final List<MethodSignature> methods) {
+            final List<GetterMethod> methods) {
         return new NotificationArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),
             TypeMethods.copyList(typeObjects), TypeMethods.copyList(methods));
     }

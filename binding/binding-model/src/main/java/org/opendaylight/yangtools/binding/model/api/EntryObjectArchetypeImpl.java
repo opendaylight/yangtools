@@ -22,7 +22,7 @@ record EntryObjectArchetypeImpl(
         JavaTypeName keyName,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<MethodSignature> methodSignatures) implements EntryObjectArchetype {
+        List<GetterMethod> methodSignatures) implements EntryObjectArchetype {
     EntryObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
@@ -31,7 +31,7 @@ record EntryObjectArchetypeImpl(
     }
 
     @Override
-    public List<MethodSignature> getMethodDefinitions() {
+    public List<GetterMethod> getMethodDefinitions() {
         return methodSignatures;
     }
 
