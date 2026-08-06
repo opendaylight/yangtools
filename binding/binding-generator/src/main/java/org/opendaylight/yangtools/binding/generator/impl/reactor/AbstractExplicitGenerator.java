@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresent
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.GetterMethod;
+import org.opendaylight.yangtools.binding.model.api.ReturnType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
@@ -345,7 +346,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    GetterMethod.Builder constructGetter(final List<GetterMethod.Builder> list, final Type returnType) {
+    GetterMethod.Builder constructGetter(final List<GetterMethod.Builder> list, final ReturnType returnType) {
         final var mb = GetterMethod.builder(statement, Naming.getGetterMethodName(localName().getLocalName()),
             returnType);
         addDeprecatedAnnotation(mb, statement);
@@ -359,8 +360,8 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    Type methodReturnType() {
-        return getGeneratedType();
+    ReturnType methodReturnType() {
+        throw new VerifyException("should never reach here");
     }
 
     @NonNullByDefault

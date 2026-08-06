@@ -51,9 +51,14 @@ public final class IdentityGenerator
             .collect(Collectors.toUnmodifiableList());
     }
 
-    @NonNullByDefault
-    IdentityArchetype getArchetype() {
-        return (IdentityArchetype) getGeneratedType();
+    @Override
+    IdentityArchetype methodReturnType() {
+        return getGeneratedType();
+    }
+
+    @Override
+    IdentityArchetype getGeneratedType() {
+        return (IdentityArchetype) super.getGeneratedType();
     }
 
     @Override
@@ -62,7 +67,7 @@ public final class IdentityGenerator
         final var statement = statement();
         return baseIdentities.isEmpty() ? new IdentityArchetype.Base(typeName, statement)
             : new IdentityArchetype.Derived(typeName,statement, baseIdentities.stream()
-                .map(baseIdentity -> baseIdentity.getArchetype().name())
+                .map(baseIdentity -> baseIdentity.getGeneratedType().name())
                 .collect(Collectors.toUnmodifiableList()));
     }
 

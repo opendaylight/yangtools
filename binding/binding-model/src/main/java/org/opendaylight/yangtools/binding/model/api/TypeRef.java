@@ -14,12 +14,14 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  *
  * @since 15.0.0
  */
+@Deprecated(since = "16.0.0", forRemoval = true)
 @NonNullByDefault
 public sealed interface TypeRef extends Type permits TypeRefImpl {
     /**
      * {@return a {@link TypeRef} with specified name}
      * @param name the type name
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     static TypeRef of(final JavaTypeName name) {
         return new TypeRefImpl(name);
     }

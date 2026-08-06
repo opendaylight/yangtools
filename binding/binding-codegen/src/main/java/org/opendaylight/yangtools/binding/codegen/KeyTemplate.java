@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.ReturnType;
 
 /**
  * A template for {@link Key} specializations.
@@ -28,19 +28,19 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     private static final JavaTypeName KEY = JavaTypeName.create(Key.class);
     // FIXME: ReturnType
-    private static final ObjectEquality<Map.Entry<String, Type>> EQUALITY = new ObjectEquality<>(false) {
+    private static final ObjectEquality<Map.Entry<String, ReturnType>> EQUALITY = new ObjectEquality<>(false) {
         @Override
-        String fieldName(final Map.Entry<String, Type> obj) {
+        String fieldName(final Map.Entry<String, ReturnType> obj) {
             return BaseTemplate.fieldName(obj.getKey());
         }
 
         @Override
-        String propName(final Map.Entry<String, Type> obj) {
+        String propName(final Map.Entry<String, ReturnType> obj) {
             return obj.getKey();
         }
 
         @Override
-        boolean isBinaryType(final Map.Entry<String, Type> obj) {
+        boolean isBinaryType(final Map.Entry<String, ReturnType> obj) {
             // FIXME: check for BaseYangTypes.BINARY_TYPE
             return obj.getValue().isArray();
         }
@@ -137,7 +137,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
      * @param parameters group of generated property instances which are transformed to the method parameters
      * @return string with the list of the method parameters with their types in JAVA format
      */
-    private String asNonNullArgumentsDeclaration(final List<Map.Entry<String, Type>> parameters) {
+    private String asNonNullArgumentsDeclaration(final List<Map.Entry<String, ReturnType>> parameters) {
         final var it = parameters.iterator();
         if (!it.hasNext()) {
             return "";

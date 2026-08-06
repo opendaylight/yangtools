@@ -18,7 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface EntryObjectArchetype extends ChildOfArchetype.OfList permits EntryObjectArchetypeImpl {
+public sealed interface EntryObjectArchetype extends ChildOfArchetype.OfList, ReturnType
+        permits EntryObjectArchetypeImpl {
     /**
      * {@return the {link KeyArchetype} associated with this archetype}
      */

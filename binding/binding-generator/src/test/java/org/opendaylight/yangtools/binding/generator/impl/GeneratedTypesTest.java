@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GeneratedTypesTest {
@@ -151,15 +152,18 @@ class GeneratedTypesTest {
             switch (method.name()) {
                 case "getFoo" -> {
                     getFooMethodCounter++;
-                    getFooMethodReturnTypeName = method.returnType().simpleName();
+                    assertEquals(BaseYangTypes.INT32_TYPE, method.returnType());
+                    getFooMethodReturnTypeName = method.javaReturnType().simpleName();
                 }
                 case "getBar" -> {
                     getBarMethodCounter++;
-                    getBarMethodReturnTypeName = method.returnType().simpleName();
+                    assertEquals(BaseYangTypes.STRING_TYPE, method.returnType());
+                    getBarMethodReturnTypeName = method.javaReturnType().simpleName();
                 }
                 case "getNestedContainer" -> {
                     getNestedContainerCounter++;
-                    getNestedContainerReturnTypeName = method.returnType().simpleName();
+                    assertInstanceOf(ContainerObjectArchetype.class, method.returnType());
+                    getNestedContainerReturnTypeName = method.javaReturnType().simpleName();
                 }
                 default -> {
                     // no-op
@@ -186,11 +190,13 @@ class GeneratedTypesTest {
             switch (method.name()) {
                 case "getFoo" -> {
                     getFooMethodCounter++;
-                    getFooMethodReturnTypeName = method.returnType().simpleName();
+                    assertEquals(BaseYangTypes.UINT8_TYPE, method.returnType());
+                    getFooMethodReturnTypeName = method.javaReturnType().simpleName();
                 }
                 case "getBar" -> {
                     getBarMethodCounter++;
-                    getBarMethodReturnTypeName = method.returnType().simpleName();
+                    assertEquals(BaseYangTypes.STRING_TYPE, method.returnType());
+                    getBarMethodReturnTypeName = method.javaReturnType().simpleName();
                 }
                 default -> {
                     // no-op

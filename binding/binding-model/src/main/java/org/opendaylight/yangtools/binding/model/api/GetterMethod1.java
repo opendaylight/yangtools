@@ -18,9 +18,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 record GetterMethod1(
         EffectiveStatement<?, ?> statement,
         String name,
-        Type returnType,
+        ReturnType returnType,
         AttachedAnnotation.ToMethod annotation) implements GetterMethod {
-
     GetterMethod1 {
         requireNonNull(statement);
         requireNonNull(name);
