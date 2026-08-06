@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.CaseObject;
 import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 
@@ -23,10 +27,14 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
 @NonNullByDefault
 final class CaseObjectTemplate extends AugmentableTemplate<CaseObjectArchetype>
         implements ArchetypeTemplate.WithBuilder {
-    private static final ConcreteType DATA_OBJECT = ConcreteType.ofClass(DataObject.class);
+    private static final ConcreteType CASE_OBJECT = ConcreteType.ofClass(CaseObject.class);
 
-    CaseObjectTemplate(final DataRootArchetype root, final CaseObjectArchetype archetype) {
+    private final ChoiceInArchetype choiceIn;
+
+    CaseObjectTemplate(final DataRootArchetype root, final CaseObjectArchetype archetype,
+            final ChoiceInArchetype choiceIn) {
         super(root, archetype);
+        this.choiceIn = requireNonNull(choiceIn);
     }
 
     @Override
@@ -37,8 +45,9 @@ final class CaseObjectTemplate extends AugmentableTemplate<CaseObjectArchetype>
     @Override
     Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.forArray(TypeRef.of(archetype.parentName()), DATA_OBJECT,
-                extendsAugmentable(), extendsJavaDataContainer()),
+            Iterators.forArray(
+                ParameterizedType.of(CASE_OBJECT, TypeRef.of(choiceIn.parentName()), choiceIn, archetype),
+                choiceIn),
             super.extendsTypes());
     }
 
