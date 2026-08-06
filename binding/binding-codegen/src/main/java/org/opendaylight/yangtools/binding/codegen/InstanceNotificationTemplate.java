@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
  */
 @NonNullByDefault
 final class InstanceNotificationTemplate extends AugmentableTemplate<InstanceNotificationArchetype>
-        implements BuilderTemplate.TargetTemplate {
+        implements ArchetypeTemplate.WithBuilder {
     private static final ConcreteType INSTANCE_NOTIFICATION = ConcreteType.ofClass(InstanceNotification.class);
 
     InstanceNotificationTemplate(final DataRootArchetype root, final InstanceNotificationArchetype archetype) {
@@ -31,8 +31,8 @@ final class InstanceNotificationTemplate extends AugmentableTemplate<InstanceNot
     }
 
     @Override
-    public InstanceNotificationTemplate self() {
-        return this;
+    public BuilderTemplate newBuilderTemplate() {
+        return BuilderTemplate.of(this);
     }
 
     @Override

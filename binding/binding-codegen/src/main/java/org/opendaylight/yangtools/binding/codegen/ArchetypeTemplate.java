@@ -28,6 +28,18 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
         permits ActionTemplate, BitsTypeObjectTemplate, ChoiceInTemplate, EnumTypeObjectTemplate, FeatureTemplate,
                 IdentityTemplate, InterfaceTemplate, KeyTemplate, KeyedListActionTemplate, OpaqueObjectTemplate,
                 RpcTemplate, ScalarTypeObjectTemplate, UnionTypeObjectTemplate {
+    /**
+     * An {@link ArchetypeTemplate} which comes with a {@link BuilderTemplate}.
+     */
+    sealed interface WithBuilder permits AugmentationTemplate, CaseObjectTemplate, ContainerObjectTemplate,
+            EntryObjectTemplate, InstanceNotificationTemplate, ItemObjectTemplate, KeyedListNotificationTemplate,
+            NotificationTemplate, RpcInputTemplate, RpcOutputTemplate, YangDataTemplate {
+        /**
+         * {@return a new BuilderTemplate}
+         */
+        BuilderTemplate newBuilderTemplate();
+    }
+
     private static final String GENERATED_ANNOTATION =
         "@javax.annotation.processing.Generated(\"mdsal-binding-generator\")";
 

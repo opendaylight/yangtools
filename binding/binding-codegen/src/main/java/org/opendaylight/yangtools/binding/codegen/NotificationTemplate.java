@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  */
 @NonNullByDefault
 final class NotificationTemplate extends AugmentableTemplate<NotificationArchetype>
-        implements BuilderTemplate.TargetTemplate {
+        implements ArchetypeTemplate.WithBuilder {
     private static final ConcreteType NOTIFICATION = ConcreteType.ofClass(Notification.class);
 
     NotificationTemplate(final DataRootArchetype root, final NotificationArchetype archetype) {
@@ -30,8 +30,8 @@ final class NotificationTemplate extends AugmentableTemplate<NotificationArchety
     }
 
     @Override
-    public NotificationTemplate self() {
-        return this;
+    public BuilderTemplate newBuilderTemplate() {
+        return BuilderTemplate.of(this);
     }
 
     @Override

@@ -20,14 +20,14 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * statement.
  */
 @NonNullByDefault
-final class ItemObjectTemplate extends ChildOfTemplate<ItemObjectArchetype> implements BuilderTemplate.TargetTemplate {
+final class ItemObjectTemplate extends ChildOfTemplate<ItemObjectArchetype> implements ArchetypeTemplate.WithBuilder {
     ItemObjectTemplate(final DataRootArchetype root, final ItemObjectArchetype archetype) {
         super(root, archetype);
     }
 
     @Override
-    public ItemObjectTemplate self() {
-        return this;
+    public BuilderTemplate newBuilderTemplate() {
+        return BuilderTemplate.of(this);
     }
 
     @Override

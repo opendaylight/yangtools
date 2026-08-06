@@ -61,25 +61,6 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
  * Template for generating JAVA builder classes.
  */
 final class BuilderTemplate extends BaseTemplate {
-    /**
-     * A template for the target built by a {@link BuilderTemplate}.
-     */
-    @NonNullByDefault
-    sealed interface TargetTemplate permits AugmentationTemplate, CaseObjectTemplate, ContainerObjectTemplate,
-            EntryObjectTemplate, InstanceNotificationTemplate, ItemObjectTemplate, KeyedListNotificationTemplate,
-            NotificationTemplate, RpcInputTemplate, RpcOutputTemplate, YangDataTemplate {
-        /**
-         * {@return {@code this} object}
-         */
-        InterfaceTemplate<?> self();
-
-        /**
-         * {@return the archetype of the interface builder targets}
-         */
-        default DataContainerArchetype builderTarget() {
-            return self().archetype;
-        }
-    }
 
     /**
      * The name of the field holding augmentations.
@@ -96,37 +77,37 @@ final class BuilderTemplate extends BaseTemplate {
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
     //        implementations of its methods
-    private final TargetTemplate targetTemplate;
+    private final @NonNull InterfaceTemplate<?> targetTemplate;
     final @NonNull DataContainerArchetype targetType;
 
     private final GeneratedClass.@NonNull Nested implJavaType;
 
     @NonNullByDefault
     private BuilderTemplate(final GeneratedClass.TopLevel javaType, final GeneratedClass.Nested implJavaType,
-            final TargetTemplate targetTemplate) {
+            final InterfaceTemplate<?> targetTemplate) {
         super(javaType);
         this.implJavaType = requireNonNull(implJavaType);
         this.targetTemplate = requireNonNull(targetTemplate);
-        targetType = targetTemplate.builderTarget();
-        // FIXME: use targetTemplate.self().getters instead
+        targetType = targetTemplate.archetype;
         properties = TypeAnalysis.of(targetType).properties();
     }
 
+    // FIXME: there are three cases here:
+    //        - non-augmentable
+    //        - augmentable
+    //        - entry object (implies augmentable)
+    //        we should have three separate classes instead of @Nullable fields for the latter two cases and a separate
+    //        static method
     @NonNullByDefault
-    static BuilderTemplate of(final TargetTemplate target) {
-        final var type = target.builderTarget();
+    static BuilderTemplate of(final InterfaceTemplate<?> targetTemplate) {
+        final var type = targetTemplate.archetype;
         final var targetName = type.name();
         final var simpleName = targetName.simpleName();
         final var builderName = targetName.createSibling(simpleName + Naming.BUILDER_SUFFIX);
         final var implName = simpleName + "Impl";
         final var javaType = GeneratedClass.of(builderName, implName, type);
 
-        // FIXME: there are three cases here:
-        //        - non-augmentable
-        //        - augmentable
-        //        - entry object (implies augmentable)
-        //        we should have three separate classes instead of @Nullable fields for the latter two cases
-        return new BuilderTemplate(javaType, javaType.getNestedClass(implName), target);
+        return new BuilderTemplate(javaType, javaType.getNestedClass(implName), targetTemplate);
     }
 
     private @NonNull String simpleName() {

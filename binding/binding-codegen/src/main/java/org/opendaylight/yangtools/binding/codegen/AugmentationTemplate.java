@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  */
 @NonNullByDefault
 final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype>
-        implements BuilderTemplate.TargetTemplate {
+        implements ArchetypeTemplate.WithBuilder {
     private static final ConcreteType AUGMENTATION = ConcreteType.ofClass(Augmentation.class);
 
     AugmentationTemplate(final DataRootArchetype root, final AugmentationArchetype archetype) {
@@ -31,8 +31,8 @@ final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype
     }
 
     @Override
-    public AugmentationTemplate self() {
-        return this;
+    public BuilderTemplate newBuilderTemplate() {
+        return BuilderTemplate.of(this);
     }
 
     @Override

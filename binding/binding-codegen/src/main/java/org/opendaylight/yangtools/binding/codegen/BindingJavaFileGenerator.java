@@ -140,8 +140,8 @@ final class BindingJavaFileGenerator {
             };
 
             generateFile(template);
-            if (template instanceof BuilderTemplate.TargetTemplate target) {
-                generateFile(BuilderTemplate.of(target));
+            if (template instanceof ArchetypeTemplate.WithBuilder withBuilder) {
+                generateFile(withBuilder.newBuilderTemplate());
             }
         }
     }

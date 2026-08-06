@@ -22,17 +22,16 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
  */
 @NonNullByDefault
 final class CaseObjectTemplate extends AugmentableTemplate<CaseObjectArchetype>
-        implements BuilderTemplate.TargetTemplate {
-
-    static final ConcreteType DATA_OBJECT = ConcreteType.ofClass(DataObject.class);
+        implements ArchetypeTemplate.WithBuilder {
+    private static final ConcreteType DATA_OBJECT = ConcreteType.ofClass(DataObject.class);
 
     CaseObjectTemplate(final DataRootArchetype root, final CaseObjectArchetype archetype) {
         super(root, archetype);
     }
 
     @Override
-    public CaseObjectTemplate self() {
-        return this;
+    public BuilderTemplate newBuilderTemplate() {
+        return BuilderTemplate.of(this);
     }
 
     @Override

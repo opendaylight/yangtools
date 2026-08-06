@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
  */
 @NonNullByDefault
 final class KeyedListNotificationTemplate extends AugmentableTemplate<KeyedListNotificationArchetype>
-        implements BuilderTemplate.TargetTemplate {
+        implements ArchetypeTemplate.WithBuilder {
     private static final ConcreteType KEYED_LIST_NOTIFICATION = ConcreteType.ofClass(KeyedListNotification.class);
 
     private final JavaTypeName keyName;
@@ -37,8 +37,8 @@ final class KeyedListNotificationTemplate extends AugmentableTemplate<KeyedListN
     }
 
     @Override
-    public KeyedListNotificationTemplate self() {
-        return this;
+    public BuilderTemplate newBuilderTemplate() {
+        return BuilderTemplate.of(this);
     }
 
     @Override

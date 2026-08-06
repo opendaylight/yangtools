@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.common.YangDataName;
  * Template for {@link YangData} specializations.
  */
 @NonNullByDefault
-final class YangDataTemplate extends InterfaceTemplate<YangDataArchetype> implements BuilderTemplate.TargetTemplate {
+final class YangDataTemplate extends InterfaceTemplate<YangDataArchetype> implements ArchetypeTemplate.WithBuilder {
     private static final JavaTypeName YANG_DATA_NAME = JavaTypeName.create(YangDataName.class);
     private static final ConcreteType YANG_DATA = ConcreteType.ofClass(YangData.class);
 
@@ -37,8 +37,8 @@ final class YangDataTemplate extends InterfaceTemplate<YangDataArchetype> implem
     }
 
     @Override
-    public YangDataTemplate self() {
-        return this;
+    public BuilderTemplate newBuilderTemplate() {
+        return BuilderTemplate.of(this);
     }
 
     @Override

@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * Template for {@link RpcInput} specializations.
  */
 @NonNullByDefault
-final class RpcInputTemplate extends AugmentableTemplate<RpcInputArchetype> implements BuilderTemplate.TargetTemplate {
+final class RpcInputTemplate extends AugmentableTemplate<RpcInputArchetype> implements ArchetypeTemplate.WithBuilder {
     private static final ConcreteType RPC_INPUT = ConcreteType.ofClass(RpcInput.class);
 
     RpcInputTemplate(final DataRootArchetype root, final RpcInputArchetype archetype) {
@@ -29,8 +29,8 @@ final class RpcInputTemplate extends AugmentableTemplate<RpcInputArchetype> impl
     }
 
     @Override
-    public RpcInputTemplate self() {
-        return this;
+    public BuilderTemplate newBuilderTemplate() {
+        return BuilderTemplate.of(this);
     }
 
     @Override
