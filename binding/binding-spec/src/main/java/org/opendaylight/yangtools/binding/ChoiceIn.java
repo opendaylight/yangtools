@@ -27,11 +27,15 @@ package org.opendaylight.yangtools.binding;
  * }</pre>
  * we can safely make the inference of {@code GroupingChild -> childOf -> Case -> choiceIn -> Parent}.
  *
+ * <p>It does not {@link DataContainer}, yet it specifies any eventual concrete class has to be a {@link DataContainer}.
+ * This is unlike the design of other base classes, but it works in conjunction with {@link CaseObject}, which is the
+ * actual instantiation.
+ *
  * @param <P> Parent container
  * @param <T> {@link ChoiceIn} type
+ * @see CaseObject
  */
-// FIXME: capture own contract so that CaseObject cannot extend multiple choices in a parent
-public non-sealed interface ChoiceIn<P, T extends ChoiceIn<P, T>> extends DataContainer {
-    @Override
-    Class<? extends T> implementedInterface();
+public non-sealed interface ChoiceIn<P extends DataContainer, T extends ChoiceIn<P, T>>
+    extends BindingContract<DataContainer> {
+    // nothing more
 }

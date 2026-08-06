@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.CaseObject;
 import org.opendaylight.yangtools.binding.ChildOf;
+import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
 import org.opendaylight.yangtools.binding.DataObjectReference.Builder;
@@ -73,8 +74,8 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
     }
 
     @Override
-    public <C extends CaseObject<? super T, ?, C>, N extends ChildOf<? super C>> Builder<N> child(final Class<C> caze,
-            final Class<N> container) {
+    public <I extends ChoiceIn<? super T, I>, C extends CaseObject<? super T, I, C> & ChoiceIn<? super T, I>,
+            N extends ChildOf<? super C>> Builder<N> child(final Class<C> caze, final Class<N> container) {
         return append(DataObjectStep.of(caze, container));
     }
 
@@ -85,8 +86,9 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
     }
 
     @Override
-    public <C extends CaseObject<? super T, ?, C>, K extends Key<N>, N extends EntryObject<N, K> & ChildOf<? super C>>
-            WithKey<N, K> child(final Class<C> caze, final Class<N> listItem, final K listKey) {
+    public <I extends ChoiceIn<? super T, I>, C extends CaseObject<? super T, I, C> & ChoiceIn<? super T, I>,
+            K extends Key<N>, N extends EntryObject<N, K> & ChildOf<? super C>> WithKey<N, K> child(final Class<C> caze,
+                final Class<N> listItem, final K listKey) {
         return append(new KeyStep<>(listItem, requireNonNull(caze), listKey));
     }
 

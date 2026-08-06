@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.binding.lib.ImplementedInterface;
  * @param <T> Type of the captured contract
  */
 public sealed interface BindingContract<T extends BindingContract<T>> extends ImplementedInterface<T>
-        permits BaseIdentity, DataContainer, OpaqueObject, Operation, YangFeature {
+        permits BaseIdentity, ChoiceIn, DataContainer, OpaqueObject, Operation, YangFeature {
     @Override
     Class<? extends T> implementedInterface();
 }

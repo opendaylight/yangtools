@@ -90,6 +90,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
          * should be used when you want to build an reference by appending a container node to the identifier and the
          * {@code container} is defined in a {@code grouping} used in a {@code case} statement.
          *
+         * @param <I> Choice type
          * @param <C> Case type
          * @param <N> Container type
          * @param caze Choice case class
@@ -97,8 +98,8 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
          * @return this builder
          * @throws NullPointerException if {@code container} is null
          */
-        <C extends CaseObject<? super T, ?, C>, N extends ChildOf<? super C>> @NonNull Builder<N> child(Class<C> caze,
-            @NonNull Class<N> container);
+        <I extends ChoiceIn<? super T, I>, C extends CaseObject<? super T, I, C> & ChoiceIn<? super T, I>,
+            N extends ChildOf<? super C>> @NonNull Builder<N> child(Class<C> caze, @NonNull Class<N> container);
 
         /**
          * Append the specified listItem as a child of the data object this build currently references. This method
@@ -119,6 +120,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
          * method should be used when you want to build a reference by appending a specific list element to the
          * identifier and the {@code list} is defined in a {@code grouping} used in a {@code case} statement.
          *
+         * @param <I> Choice type
          * @param <C> Case type
          * @param <N> List type
          * @param <K> Key type
@@ -128,8 +130,9 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
          * @return this builder
          * @throws NullPointerException if any argument is null
          */
-        <C extends CaseObject<? super T, ?, C>, K extends Key<N>, N extends EntryObject<N, K> & ChildOf<? super C>>
-            @NonNull WithKey<N, K> child(@NonNull Class<C> caze, @NonNull Class<N> listItem, @NonNull K listKey);
+        <I extends ChoiceIn<? super T, I>, C extends CaseObject<? super T, I, C> & ChoiceIn<? super T, I>,
+            K extends Key<N>, N extends EntryObject<N, K> & ChildOf<? super C>> @NonNull WithKey<N, K> child(
+                @NonNull Class<C> caze, @NonNull Class<N> listItem, @NonNull K listKey);
 
         /**
          * Build the data object reference.
@@ -166,8 +169,11 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
         return new DataObjectReferenceBuilder<>(DataObjectStep.of(container));
     }
 
-    static <C extends CaseObject<? extends DataRoot<?>, ?, C>, T extends ChildOf<? super C>>
-            @NonNull Builder<T> builder(final @NonNull Class<C> caze, final @NonNull Class<T> container) {
+    static <R extends DataRoot<R>,
+            I extends ChoiceIn<? super R, I>,
+            C extends CaseObject<? super R, I, C> & ChoiceIn<? super R, I>,
+            T extends ChildOf<? super C>> @NonNull Builder<T> builder(final @NonNull Class<C> caze,
+                final @NonNull Class<T> container) {
         return new DataObjectReferenceBuilder<>(DataObjectStep.of(caze, container));
     }
 
@@ -176,7 +182,9 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
         return new DataObjectReferenceBuilderWithKey<>(new KeyStep<>(listItem, listKey));
     }
 
-    static <C extends CaseObject<? extends DataRoot<?>, ?, C>,
+    static <R extends DataRoot<?>,
+            I extends ChoiceIn<? super R, I>,
+            C extends CaseObject<? super R, I, C> & ChoiceIn<? super R, I>,
             N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
             Builder.@NonNull WithKey<N, K> builder(final @NonNull Class<C> caze, final @NonNull Class<N> listItem,
                 final @NonNull K listKey) {
@@ -189,8 +197,10 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
         return new DataObjectReferenceBuilder<>(DataObjectStep.of(container));
     }
 
-    static <R extends DataRoot<R>, C extends CaseObject<? super R, ?, C>, T extends ChildOf<? super C>>
-            @NonNull Builder<T> builderOfInherited(final Class<R> root,
+    static <R extends DataRoot<R>,
+            I extends ChoiceIn<? super R, I>,
+            C extends CaseObject<? super R, ?, C> & ChoiceIn<? super R, I>,
+            T extends ChildOf<? super C>> @NonNull Builder<T> builderOfInherited(final Class<R> root,
                 final Class<C> caze, final Class<T> container) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
         return new DataObjectReferenceBuilder<>(DataObjectStep.of(caze, container));
@@ -203,10 +213,12 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
         return new DataObjectReferenceBuilderWithKey<>(new KeyStep<>(listItem, listKey));
     }
 
-    static <R extends DataRoot<R>, C extends CaseObject<? super R, ?, C>,
+    static <R extends DataRoot<R>,
+            I extends ChoiceIn<? super R, I>,
+            C extends CaseObject<? super R, ?, C> & ChoiceIn<? super R, I>,
             N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
-                Builder.@NonNull WithKey<N, K> builderOfInherited(final Class<R> root,
-                    final Class<C> caze, final Class<N> listItem, final K listKey) {
+                Builder.@NonNull WithKey<N, K> builderOfInherited(final Class<R> root, final Class<C> caze,
+                    final Class<N> listItem, final K listKey) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
         return new DataObjectReferenceBuilderWithKey<>(new KeyStep<>(listItem, requireNonNull(caze), listKey));
     }

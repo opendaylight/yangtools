@@ -59,12 +59,13 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
         <N extends ChildOf<? super T>> Builder<N> child(Class<N> container);
 
         @Override
-        <C extends CaseObject<? super T, ?, C>, N extends ChildOf<? super C>> Builder<N> child(Class<C> caze,
-            Class<N> container);
+        <I extends ChoiceIn<? super T, I>, C extends CaseObject<? super T, I, C> & ChoiceIn<? super T, I>,
+            N extends ChildOf<? super C>> Builder<N> child(Class<C> caze, Class<N> container);
 
         @Override
-        <C extends CaseObject<? super T, ?, C>, K extends Key<N>, N extends EntryObject<N, K> & ChildOf<? super C>>
-            WithKey<N, K> child(Class<C> caze, Class<N> listItem, K listKey);
+        <I extends ChoiceIn<? super T, I>, C extends CaseObject<? super T, I, C> & ChoiceIn<? super T, I>,
+            K extends Key<N>, N extends EntryObject<N, K> & ChildOf<? super C>> WithKey<N, K> child(Class<C> caze,
+                Class<N> listItem, K listKey);
 
         @Override
         <N extends EntryObject<N, K> & ChildOf<? super T>, K extends Key<N>> WithKey<N, K> child(
@@ -128,8 +129,11 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
         return new DataObjectIdentifierBuilder<>(DataObjectStep.of(container));
     }
 
-    static <C extends CaseObject<? extends DataRoot<?>, ?, C>, T extends ChildOf<? super C>>
-            @NonNull Builder<T> builder(final @NonNull Class<C> caze, final @NonNull Class<T> container) {
+    static <R extends DataRoot<R>,
+            I extends ChoiceIn<? super R, I>,
+            C extends CaseObject<? super R, I, C> & ChoiceIn<? super R, I>,
+            T extends ChildOf<? super C>> @NonNull Builder<T> builder(final @NonNull Class<C> caze,
+                final @NonNull Class<T> container) {
         return new DataObjectIdentifierBuilder<>(DataObjectStep.of(caze, container));
     }
 
@@ -138,10 +142,12 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
         return new DataObjectIdentifierBuilderWithKey<>(new KeyStep<>(listItem, listKey));
     }
 
-    static <C extends CaseObject<? extends DataRoot<?>, ?, C>,
-            N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
-            Builder.@NonNull WithKey<N, K> builder(final @NonNull Class<C> caze, final @NonNull Class<N> listItem,
-                    final @NonNull K listKey) {
+    static <R extends DataRoot<R>,
+            I extends ChoiceIn<? super R, I>,
+            C extends CaseObject<? super R, I, C> & ChoiceIn<? super R, I>,
+            N extends EntryObject<N, K> & ChildOf<? super C>,
+            K extends Key<N>> Builder.@NonNull WithKey<N, K> builder(final @NonNull Class<C> caze,
+                final @NonNull Class<N> listItem, final @NonNull K listKey) {
         return new DataObjectIdentifierBuilderWithKey<>(new KeyStep<>(listItem, requireNonNull(caze), listKey));
     }
 
@@ -151,8 +157,10 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
         return new DataObjectIdentifierBuilder<>(DataObjectStep.of(container));
     }
 
-    static <R extends DataRoot<R>, C extends CaseObject<? super R, ?, C>, T extends ChildOf<? super C>>
-            @NonNull Builder<T> builderOfInherited(final Class<R> root,
+    static <R extends DataRoot<R>,
+            I extends ChoiceIn<? super R, I>,
+            C extends CaseObject<? super R, I, C> & ChoiceIn<? super R, I>,
+            T extends ChildOf<? super C>> @NonNull Builder<T> builderOfInherited(final Class<R> root,
                 final Class<C> caze, final Class<T> container) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
         return new DataObjectIdentifierBuilder<>(DataObjectStep.of(caze, container));
@@ -165,10 +173,12 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
         return new DataObjectIdentifierBuilderWithKey<>(new KeyStep<>(listItem, listKey));
     }
 
-    static <R extends DataRoot<R>, C extends CaseObject<? super R, ?, C>,
+    static <R extends DataRoot<R>,
+            I extends ChoiceIn<? super R, I>,
+            C extends CaseObject<? super R, I, C> & ChoiceIn<? super R, I>,
             N extends EntryObject<N, K> & ChildOf<? super C>, K extends Key<N>>
-            Builder.@NonNull WithKey<N, K> builderOfInherited(final Class<R> root,
-                final Class<C> caze, final Class<N> listItem, final K listKey) {
+            Builder.@NonNull WithKey<N, K> builderOfInherited(final Class<R> root, final Class<C> caze,
+                final Class<N> listItem, final K listKey) {
         // FIXME: we are losing root identity, hence namespaces may not work correctly
         return new DataObjectIdentifierBuilderWithKey<>(new KeyStep<>(listItem, requireNonNull(caze), listKey));
     }

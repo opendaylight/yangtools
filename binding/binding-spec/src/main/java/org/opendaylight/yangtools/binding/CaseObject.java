@@ -10,14 +10,19 @@ package org.opendaylight.yangtools.binding;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 
 /**
- * A concrete {@code case} in a {@code choice}.
+ * A concrete {@code case} in a {@code choice}. Interfaces generated to this specification are required to implement
+ * a generated {@link ChoiceIn} class.
  *
  * @param <P> Parent container
  * @param <C> a {@link ChoiceIn} in that parent
  * @param <T> concrete
+ * @see ChoiceIn
  */
-public interface CaseObject<P, C extends ChoiceIn<P>, T extends CaseObject<P, C, T>>
-        extends Augmentable<T>, ChoiceIn<P>, DataObject, JavaDataContainer<T> {
+public interface CaseObject<
+        P extends DataContainer,
+        C extends ChoiceIn<P, C>,
+        T extends CaseObject<P, C, T> & ChoiceIn<P, C>>
+        extends Augmentable<T>, DataObject, JavaDataContainer<T> {
     @Override
     Class<T> implementedInterface();
 }

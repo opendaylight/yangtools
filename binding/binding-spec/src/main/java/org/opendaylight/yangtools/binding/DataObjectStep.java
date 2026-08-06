@@ -36,7 +36,7 @@ public sealed interface DataObjectStep<T extends DataObject> extends Comparable<
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    static <T extends DataObject, C extends CaseObject<?, ?, C>> @NonNull DataObjectStep<T> of(
+    static <T extends DataObject, C extends CaseObject<?, ?, C> & ChoiceIn<?, ?>> @NonNull DataObjectStep<T> of(
             final @Nullable Class<C> caze, final @NonNull Class<T> type) {
         return KeyAware.class.isAssignableFrom(type) ? new KeylessStep(type, caze) : new NodeStep<>(type, caze);
     }

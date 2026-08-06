@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.binding.data.codec.api;
 
 import org.opendaylight.yangtools.binding.ChoiceIn;
+import org.opendaylight.yangtools.binding.DataContainer;
 
 /**
  * A {@link BindingDataContainerCodecTreeNode} corresponding to a base {@link ChoiceIn}.
  *
  * @param <C> ChoiceIn type
  */
-public interface BindingChoiceCodecTreeNode<C extends ChoiceIn<?>> extends BindingDataContainerCodecTreeNode<C> {
+public interface BindingChoiceCodecTreeNode<P extends DataContainer, C extends ChoiceIn<P, C>>
+    extends BindingDataContainerCodecTreeNode<P> {
     // Just a marker
 }
