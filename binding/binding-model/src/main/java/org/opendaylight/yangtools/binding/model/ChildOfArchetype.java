@@ -27,6 +27,10 @@ public sealed interface ChildOfArchetype extends AugmentableArchetype
         ListEffectiveStatement statement();
     }
 
+    @Override
+    @SuppressWarnings("rawtypes")
+    Class<? extends ChildOf> contract();
+
     /**
      * {@return the parent type name}
      */

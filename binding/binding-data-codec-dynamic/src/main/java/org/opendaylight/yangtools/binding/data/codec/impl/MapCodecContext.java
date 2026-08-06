@@ -23,15 +23,15 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 
-abstract sealed class MapCodecContext<I extends Key<D>, D extends EntryObject<D, I>>
+abstract sealed class MapCodecContext<I extends Key<D>, D extends EntryObject<?, D, I>>
         extends ListCodecContext<D, ListRuntimeType.WithKey> {
-    private static final class Ordered<I extends Key<D>, D extends EntryObject<D, I>> extends MapCodecContext<I, D> {
+    private static final class Ordered<I extends Key<D>, D extends EntryObject<?, D, I>> extends MapCodecContext<I, D> {
         Ordered(final MapCodecPrototype prototype, final IdentifiableItemCodec codec) {
             super(prototype, codec);
         }
     }
 
-    static final class Unordered<I extends Key<D>, D extends EntryObject<D, I>> extends MapCodecContext<I, D> {
+    static final class Unordered<I extends Key<D>, D extends EntryObject<?, D, I>> extends MapCodecContext<I, D> {
         private Unordered(final MapCodecPrototype prototype, final IdentifiableItemCodec codec) {
             super(prototype, codec);
         }

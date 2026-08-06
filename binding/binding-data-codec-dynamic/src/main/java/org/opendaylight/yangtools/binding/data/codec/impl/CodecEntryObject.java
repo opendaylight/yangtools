@@ -13,9 +13,9 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 
@@ -24,12 +24,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
  * part of API surface and is an implementation detail. The only reason for it being public is that it needs to be
  * accessible by code generated at runtime.
  *
- * @param <T> EntryObject type
- * @param <K> Key type
+ * @param <P> Parent {@link DataContainer} type
+ * @param <T> {@link EntryObject} type
+ * @param <K> {@link Key} type
  * @since 16.0.0
  */
-public abstract class CodecEntryObject<T extends EntryObject<T, K> & JavaDataContainer<T>, K extends Key<T>>
-        extends AugmentableCodecDataObject<T> implements EntryObject<T, K> {
+public abstract class CodecEntryObject<P extends DataContainer, T extends EntryObject<P, T, K>, K extends Key<T>>
+        extends AugmentableCodecDataObject<T> implements EntryObject<P, T, K> {
     private static final VarHandle KEY;
 
     static {

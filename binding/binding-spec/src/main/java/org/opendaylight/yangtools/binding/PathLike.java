@@ -29,7 +29,7 @@ public sealed interface PathLike permits BindingInstanceIdentifier, DataObjectRe
      * @return the {@link Key} associated with the component, or {code null} if the component type is not present
      * @throws NullPointerException if {@code listItem} is {@code null}
      */
-    <E extends EntryObject<E, K>, K extends Key<E>> @Nullable K firstKeyOf(@NonNull Class<@NonNull E> listItem);
+    <E extends EntryObject<?, E, K>, K extends Key<E>> @Nullable K firstKeyOf(@NonNull Class<@NonNull E> listItem);
 
     /**
      * Returns an {@link Optional} containing the {@link Key} associated with the first component of specified type in
@@ -41,7 +41,7 @@ public sealed interface PathLike permits BindingInstanceIdentifier, DataObjectRe
      * @return an optional {@link Key}
      * @throws NullPointerException if {@code listItem} is {@code null}
      */
-    default <E extends EntryObject<E, K>, K extends Key<E>> Optional<K> findFirstKeyOf(
+    default <E extends EntryObject<?, E, K>, K extends Key<E>> Optional<K> findFirstKeyOf(
             final @NonNull Class<@NonNull E> listItem) {
         return Optional.ofNullable(firstKeyOf(listItem));
     }
@@ -57,7 +57,7 @@ public sealed interface PathLike permits BindingInstanceIdentifier, DataObjectRe
      * @throws NullPointerException if {@code listItem} is {@code null}
      * @throws NoSuchElementException if the component type is not present
      */
-    default <E extends EntryObject<E, K>, K extends Key<E>> @NonNull K getFirstKeyOf(
+    default <E extends EntryObject<?, E, K>, K extends Key<E>> @NonNull K getFirstKeyOf(
             final @NonNull Class<@NonNull E> listItem) {
         final var key = firstKeyOf(listItem);
         if (key != null) {

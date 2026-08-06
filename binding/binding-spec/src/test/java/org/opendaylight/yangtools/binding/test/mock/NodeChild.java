@@ -7,11 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.test.mock;
 
-import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.EntryObject;
 
-public interface NodeChild extends
-    EntryObject<NodeChild, NodeChildKey>,
-    ChildOf<Node> {
+public interface NodeChild extends EntryObject<Node, NodeChild, NodeChildKey> {
 
 }

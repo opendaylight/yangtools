@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.binding.ExactDataObjectStep;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyStep;
 
-public final class DataObjectIdentifierWithKey<T extends EntryObject<T, K>, K extends Key<T>>
+public final class DataObjectIdentifierWithKey<T extends EntryObject<?, T, K>, K extends Key<T>>
         extends DataObjectIdentifierImpl<T> implements WithKey<T, K> {
     @java.io.Serial
     private static final long serialVersionUID = 1L;

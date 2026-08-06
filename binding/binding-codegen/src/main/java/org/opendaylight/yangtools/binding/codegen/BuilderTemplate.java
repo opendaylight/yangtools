@@ -73,11 +73,14 @@ final class BuilderTemplate extends BaseTemplate {
             List<GetterShape> allGetters,
             List<GetterShape> keyGetters,
             List<GetterShape> implGetters,
+            TypeName parentName,
             KeyArchetype key) implements Props {
         WithKey {
             requireNonNull(allGetters);
             requireNonNull(implGetters);
             requireNonNull(keyGetters);
+            requireNonNull(parentName);
+            requireNonNull(key);
         }
     }
 
@@ -118,7 +121,8 @@ final class BuilderTemplate extends BaseTemplate {
                 .collect(Collectors.toMap(Map.Entry::getKey,
                     entry -> new GetterShape(entry.getKey(), entry.getValue(), false)));
             props = new WithKey(allMethods, keyMethods.values().stream().sorted().toList(),
-                allMethods.stream().filter(getter -> !keyMethods.containsKey(getter.suffix())).toList(), key);
+                allMethods.stream().filter(getter -> !keyMethods.containsKey(getter.suffix())).toList(),
+                entryTarget.archetype.parentName(), key);
         } else {
             props = new WithoutKey(allMethods);
         }

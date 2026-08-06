@@ -41,7 +41,7 @@ public final class DataObjectReferenceBuilder<T extends DataObject> extends Abst
     }
 
     @Override
-    <X extends EntryObject<X, Y>, Y extends Key<X>> DataObjectReferenceBuilderWithKey<X, Y> append(
+    <X extends EntryObject<?, X, Y>, Y extends Key<X>> DataObjectReferenceBuilderWithKey<X, Y> append(
             final KeyStep<Y, X> step) {
         return new DataObjectReferenceBuilderWithKey<X, Y>(this).append(step);
     }

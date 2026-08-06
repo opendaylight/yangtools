@@ -19,7 +19,7 @@ package org.opendaylight.yangtools.binding;
  */
 public interface KeyedListNotification<
         N extends KeyedListNotification<N, E, K>,
-        E extends EntryObject<E, K>,
+        E extends EntryObject<?, E, K>,
         K extends Key<E>> extends InstanceNotification<N, E> {
     // nothing else
 }
