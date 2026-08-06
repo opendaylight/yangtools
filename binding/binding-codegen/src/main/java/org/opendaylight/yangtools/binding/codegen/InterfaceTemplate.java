@@ -13,12 +13,10 @@ import com.google.common.base.VerifyException;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
@@ -56,7 +54,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     final BlockBuilder body() {
         final var bb = newBlockBuilder()
             .blk(wrapToDocumentation(formatDataForJavaDoc()))
-            .blk(generateAnnotations())
+            .frg(DeprecatedAnnotation.of(javaType(), archetype.statement()))
             .eol(generatedAnnotation())
             .str("public interface ").str(archetype.simpleName());
 
@@ -169,15 +167,5 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
             case ContainerLikeCompat compat -> requireEffective(compat.delegate());
             default -> throw new VerifyException("Unsupported node " + node);
         };
-    }
-
-    private @Nullable BlockBuilder generateAnnotations() {
-        if (archetype.statement() instanceof DocumentedNode.WithStatus withStatus) {
-            final var annotation = DeprecatedAnnotation.ofStatus(withStatus.getStatus());
-            if (annotation != null) {
-                return generateAnnotation(annotation);
-            }
-        }
-        return null;
     }
 }

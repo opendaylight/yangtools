@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.DEPRECATED;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
@@ -88,7 +86,7 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
             final boolean generatedAnnotation) {
         final var bb = newBlockBuilder()
             .blk(javadocBlock(root.statement(), stmt, node))
-            .blk(deprecatedAnnotation(node));
+            .frg(DeprecatedAnnotation.of(javaType(), node));
         return generatedAnnotation ? bb.eol(GENERATED_ANNOTATION) : bb;
     }
 
@@ -109,13 +107,5 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
         final var bb = Block.builder();
         appendAsJavadoc(bb, str.stripTrailing() + '\n');
         return bb;
-    }
-
-    private @Nullable BlockBuilder deprecatedAnnotation(final DocumentedNode.@NonNull WithStatus node) {
-        return switch (node.getStatus()) {
-            case CURRENT -> null;
-            case DEPRECATED -> newBlockBuilder().at().eol(importedName(DEPRECATED));
-            case OBSOLETE -> newBlockBuilder().at().str(importedName(DEPRECATED)).eol("(forRemoval = true)");
-        };
     }
 }
