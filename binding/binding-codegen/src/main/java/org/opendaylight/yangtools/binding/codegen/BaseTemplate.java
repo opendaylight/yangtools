@@ -121,10 +121,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         return "_" + requireNonNull(name);
     }
 
-    static final String fieldName(final BuilderGeneratedProperty prop) {
-        return fieldName(prop.getName());
-    }
-
     /**
      * Template method which generates the getter method for {@code field}.
      *
@@ -146,8 +142,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
                 }
             }).nl();
     }
-
-
 
     @NonNullByDefault
     final void appendSnippet(final StringBuilder sb, final Archetype type, final ModuleEffectiveStatement module,
@@ -251,10 +245,6 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     // FIXME: remove this concatenation
     static final @NonNull String getterMethodName(final @NonNull String propName) {
         return GETTER_PREFIX + toFirstUpper(propName);
-    }
-
-    static final @NonNull String getterMethodName(final GeneratedProperty field) {
-        return getterMethodName(field.getName());
     }
 
     static final @Nullable BlockBuilder wrapToDocumentation(final @NonNull String text) {

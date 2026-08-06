@@ -23,7 +23,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.toFirstLower;
 
 import com.google.common.base.CharMatcher;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
@@ -96,16 +95,6 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     }
 
     @NonNullByDefault
-    final String importedReturnType(final MethodSignature method) {
-        return importedName(method.returnType());
-    }
-
-    @NonNullByDefault
-    final String importedReturnType(final GeneratedProperty property) {
-        return importedName(property.getReturnType());
-    }
-
-    @NonNullByDefault
     final String fullyQualifiedNonNull(final Type intype) {
         return fullyQualifiedName(intype, importedName(NONNULL));
     }
@@ -113,17 +102,6 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     @NonNullByDefault
     final String fullyQualifiedName(final Type intype, final String annotation) {
         return javaType.getFullyQualifiedReference(intype, annotation);
-    }
-
-    /**
-     * Return imported name of java.util class, whose hashCode/equals methods we want to invoke on the property. Returns
-     * {@link Arrays} if the property is an array, {@link Objects} otherwise.
-     *
-     * @param property Generated property
-     * @return Imported class name
-     */
-    final String importedUtilClass(final GeneratedProperty property) {
-        return importedUtilClass(property.getReturnType());
     }
 
     /**
@@ -167,19 +145,8 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     }
 
     @NonNullByDefault
-    static final boolean isArrayProperty(final GeneratedProperty property) {
-        return property.getReturnType().isArray();
-    }
-
-    static final @Nullable MethodSignature getterByName(final @NonNull Collection<@NonNull MethodSignature> methods,
-            final @NonNull String implMethodName) {
-        for (var method : methods) {
-            final var methodName = method.name();
-            if (isGetterMethodName(methodName) && isSameProperty(method.name(), implMethodName)) {
-                return method;
-            }
-        }
-        return null;
+    static final boolean isArrayProperty(final BuilderProperty property) {
+        return property.type().isArray();
     }
 
     static final @NonNull String propertyNameFromGetter(final MethodSignature getter) {
@@ -234,8 +201,4 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
 //            }
 //        }
 //    }
-
-    private static boolean isSameProperty(final String getterName1, final String getterName2) {
-        return propertyNameFromGetter(getterName1).equals(propertyNameFromGetter(getterName2));
-    }
 }

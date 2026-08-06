@@ -15,26 +15,21 @@ import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 @NonNullByDefault
-final class BuilderGeneratedProperty implements GeneratedProperty {
-    final MethodSignature getter;
-    private final String name;
-
-    BuilderGeneratedProperty(final String name, final MethodSignature getter) {
-        this.name = requireNonNull(name);
-        this.getter = requireNonNull(getter);
+record BuilderProperty(String name, MethodSignature getter) {
+    BuilderProperty {
+        requireNonNull(name);
+        requireNonNull(getter);
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public Type getReturnType() {
+    Type type() {
         return getter.returnType();
     }
 
-    String getGetterName() {
+    String fieldName() {
+        return BaseTemplate.fieldName(name);
+    }
+
+    String getterName() {
         return getter.name();
     }
 
@@ -45,16 +40,7 @@ final class BuilderGeneratedProperty implements GeneratedProperty {
 
     @Override
     public boolean equals(final @Nullable Object obj) {
-        return obj == this || obj instanceof BuilderGeneratedProperty other
+        return obj == this || obj instanceof BuilderProperty other
             && name.equals(other.name) && getter.equals(other.getter);
-    }
-
-    @Override
-    public boolean isReadOnly() {
-        throw uoe();
-    }
-
-    private static UnsupportedOperationException uoe() {
-        return new UnsupportedOperationException("Method not supported");
     }
 }
