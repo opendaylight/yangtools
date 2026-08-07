@@ -1,0 +1,26 @@
+module mixed-ctx-foo {
+  namespace "urn:opendaylight:yangtools:mixed-ctx-foo";
+  prefix mcf;
+
+  revision 2024-01-01;
+
+  identity base-id;
+
+  identity my-identity {
+    base base-id;
+  }
+
+  container top {
+    leaf id-ref {
+      type identityref {
+        base base-id;
+      }
+    }
+
+    leaf iid {
+      type instance-identifier {
+        require-instance false;
+      }
+    }
+  }
+}
