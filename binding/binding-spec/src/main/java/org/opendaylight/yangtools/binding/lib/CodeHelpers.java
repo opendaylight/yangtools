@@ -1008,7 +1008,7 @@ public final class CodeHelpers {
      * @since 16.0.0
      */
     @NonNullByDefault
-    public static <T extends Augmentable<T> & DataContainer> String jcTS0(final T augmentable) {
+    public static String jcTS0(final Augmentable<?> augmentable) {
         final var clazz = augmentable.implementedInterface();
         final var augmentations = augmentable.augmentations();
         return augmentations.isEmpty() ? jcTS0(clazz) : jcTSB(clazz, augmentations).build();
@@ -1047,8 +1047,7 @@ public final class CodeHelpers {
      * @since 16.0.0
      */
     @NonNullByDefault
-    public static <T extends Augmentable<T> & DataContainer> String jcTS1(final T augmentable, final String name,
-            final @Nullable Object value) {
+    public static String jcTS1(final Augmentable<?> augmentable, final String name, final @Nullable Object value) {
         return value == null ? jcTS0(augmentable) : jcTSB(augmentable).addProp(name, value).build();
     }
 
@@ -1061,8 +1060,7 @@ public final class CodeHelpers {
      * @since 16.0.0
      */
     @NonNullByDefault
-    public static <T extends Augmentable<T> & DataContainer> String jcTS1(final T augmentable,  final String name,
-            final byte @Nullable [] value) {
+    public static String jcTS1(final Augmentable<?> augmentable,  final String name, final byte @Nullable [] value) {
         return value == null ? jcTS0(augmentable) : jcTSB(augmentable).addProp(name, value).build();
     }
 
@@ -1083,15 +1081,14 @@ public final class CodeHelpers {
      * @since 16.0.0
      */
     @NonNullByDefault
-    public static <T extends Augmentable<T> & DataContainer> JavaTSBuilder jcTSB(final T augmentable) {
+    public static JavaTSBuilder jcTSB(final Augmentable<?> augmentable) {
         final var clazz = augmentable.implementedInterface();
         final var augmentations = augmentable.augmentations();
         return augmentations.isEmpty() ? jcTSB(clazz) : jcTSB(clazz, augmentations);
     }
 
-    private static <T extends Augmentable<T> & DataContainer> @NonNull JavaTSBuilder jcTSB(
-            final @NonNull Class<?> clazz,
-            final @NonNull Map<Class<? extends Augmentation<T>>, @NonNull Augmentation<T>> augmentations) {
+    private static @NonNull JavaTSBuilder jcTSB(final @NonNull Class<? extends DataContainer> clazz,
+            final @NonNull Map<? extends Class<?>, ? extends Augmentation<?>> augmentations) {
         return new JavaTSBuilder(clazz,
             augmentations.values().stream().sorted(AUGMENTATION_BY_CANONICAL_NAME).toList());
     }

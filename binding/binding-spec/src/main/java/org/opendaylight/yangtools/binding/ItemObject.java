@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
  * @see EntryObject
  * @since 16.0.0
   */
-public interface ItemObject<P extends DataContainer, T extends ItemObject<P, T>>
+public non-sealed interface ItemObject<P extends DataContainer, T extends ItemObject<P, T>>
         extends ChildOf<P>, Augmentable<T>, JavaDataContainer<T> {
     @Override
     Class<T> implementedInterface();
