@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.function.Supplier;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
 
 /**
  * Augmentable (extensible) object which could carry additional data defined by a third-party extension, without
@@ -23,7 +24,9 @@ import org.eclipse.jdt.annotation.Nullable;
  *
  * @param <T> Base class which should implements this interface and is target for augmentation.
  */
-public interface Augmentable<T extends Augmentable<T> & DataContainer> {
+public sealed interface Augmentable<T extends Augmentable<T>> extends DataContainer
+        permits AbstractAugmentable, CaseObject, ContainerObject, EntryObject, InstanceNotification, Notification,
+                RpcInput, RpcOutput {
     /**
      * Returns instance of augmentation, if present.
      *
