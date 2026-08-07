@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
 
 public final class BaseTypeNamespace {
-    static final ParserNamespace.@NonNull Writable<Empty, Object> INSTANCE = ParserNamespace.writable("baseType");
+    static final @NonNull UserNamespace<Empty, Object> INSTANCE = UserNamespace.of("baseType");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private BaseTypeNamespace() {

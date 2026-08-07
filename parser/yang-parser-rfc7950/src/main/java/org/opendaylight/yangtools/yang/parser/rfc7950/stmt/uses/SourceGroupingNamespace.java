@@ -13,13 +13,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace.Writable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
 
 public final class SourceGroupingNamespace {
-    static final @NonNull Writable<Empty, StmtContext<QName, GroupingStatement, GroupingEffectiveStatement>> INSTANCE =
-        ParserNamespace.writable("sourceGrouping");
+    static final @NonNull UserNamespace<Empty, StmtContext<QName, GroupingStatement, GroupingEffectiveStatement>>
+        INSTANCE = UserNamespace.of("sourceGrouping");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private SourceGroupingNamespace() {
