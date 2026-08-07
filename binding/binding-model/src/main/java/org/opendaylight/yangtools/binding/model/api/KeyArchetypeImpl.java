@@ -29,11 +29,6 @@ record KeyArchetypeImpl(
     }
 
     @Override
-    public JavaTypeName entryObjectName() {
-        return entryObject.name();
-    }
-
-    @Override
     public Map<String, MethodSignature> methods() {
         return collectMethods(statement.argument(), entryObject);
     }

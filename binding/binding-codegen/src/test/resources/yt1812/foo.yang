@@ -1,0 +1,27 @@
+module foo {
+  namespace foo;
+  prefix foo;
+
+  list current {
+    key foo;
+    leaf foo {
+      type string;
+    }
+  }
+
+  list deprecated {
+    status deprecated;
+    key foo;
+    leaf foo {
+      type string;
+    }
+  }
+
+  list obsolete {
+    status obsolete;
+    key foo;
+    leaf foo {
+      type string;
+    }
+  }
+}

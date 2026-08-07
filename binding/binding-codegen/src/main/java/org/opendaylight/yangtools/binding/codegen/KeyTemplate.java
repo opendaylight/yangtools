@@ -54,7 +54,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     @Override
     BlockBuilder body() {
         final var typeName = archetype.simpleName();
-        final var entryObject = importedName(archetype.entryObjectName());
+        final var entryObject = importedName(archetype.entryObject());
 
         return newBlockBuilder()
             // FIXME: take advantage of javadocBlock() to add a module reference and a snippet
@@ -64,7 +64,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
             .str(" * @see ").eol(entryObject)
             .eol(" */")
             .eol(generatedAnnotation())
-            // FIXME: YANGTOOLS-1812: generate deprecated annotation once we have the EntryObject's Archetype available
+            .frg(DeprecatedAnnotation.of(javaType(), archetype.entryObject().statement()))
             .str("public final class ").str(typeName).str(" implements ").gen(importedName(KEY), entryObject)
                 .jBlock(this::classBody).nl();
     }

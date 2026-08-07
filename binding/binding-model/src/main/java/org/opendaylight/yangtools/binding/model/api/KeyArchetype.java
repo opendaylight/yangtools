@@ -25,8 +25,14 @@ public sealed interface KeyArchetype extends Archetype permits KeyArchetypeImpl 
     @Override
     KeyEffectiveStatement statement();
 
-    JavaTypeName entryObjectName();
+    /**
+     * {@return the {@link EntryObjectArchetype} to which this key is attached}
+     */
+    EntryObjectArchetype entryObject();
 
+    /**
+     * {@return the key names and the corresponding {@link MethodSignature}s}
+     */
     Map<String, MethodSignature> methods();
 
     static KeyArchetype of(final JavaTypeName name, final KeyEffectiveStatement statement,

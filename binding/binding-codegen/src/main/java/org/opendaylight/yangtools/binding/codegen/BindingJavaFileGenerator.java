@@ -94,7 +94,7 @@ final class BindingJavaFileGenerator {
                     }
                 }
                 case KeyArchetype archetype -> {
-                    final var entryName = archetype.entryObjectName();
+                    final var entryName = archetype.entryObject().name();
                     final var prev = entryToKey.putIfAbsent(entryName, archetype);
                     if (prev != null) {
                         throw new VerifyException(
