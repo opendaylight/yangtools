@@ -36,9 +36,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace.ReadOnly;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace.Writable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
 
 /**
  * Baseline {@link ParserNamespace}s mostly derived from YANG specification.
@@ -49,17 +49,17 @@ public final class ParserNamespaces {
      * identifier namespace, where each extension is identified by a QName formed from the defining module's QNameModule
      * and the identifier specified in extension statement's argument.
      */
-    public static final @NonNull Writable<QName,
+    public static final @NonNull UserNamespace<QName,
         StmtContext<QName, ExtensionStatement, ExtensionEffectiveStatement>> EXTENSION =
-            ParserNamespace.writable("extension");
+            UserNamespace.of("extension");
 
     /**
      * Feature namespace. All feature names defined in a module and its submodules share the same feature identifier
      * namespace. Each feature is identified by a QName formed from the defining module's QNameModule and the feature
      * name.
      */
-    public static final @NonNull Writable<QName,
-        StmtContext<QName, FeatureStatement, FeatureEffectiveStatement>> FEATURE = ParserNamespace.writable("feature");
+    public static final @NonNull UserNamespace<QName,
+        StmtContext<QName, FeatureStatement, FeatureEffectiveStatement>> FEATURE = UserNamespace.of("feature");
 
     /**
      * Grouping namespace. * All grouping names defined within a parent node or at the top level of the module
@@ -69,26 +69,25 @@ public final class ParserNamespaces {
      * <p>This means that any descendant node may use that grouping, and it MUST NOT define a grouping with the same
      * name.
      */
-    public static final @NonNull Writable<QName,
+    public static final @NonNull UserNamespace<QName,
         StmtContext<QName, GroupingStatement, GroupingEffectiveStatement>> GROUPING =
-            ParserNamespace.writable("grouping");
+            UserNamespace.of("grouping");
 
     /**
      * Identity namespace. All identity names defined in a module and its submodules share the same identity identifier
      * namespace.
      */
-    public static final @NonNull Writable<QName,
+    public static final @NonNull UserNamespace<QName,
         StmtContext<QName, IdentityStatement, IdentityEffectiveStatement>> IDENTITY =
-            ParserNamespace.writable("identity");
+            UserNamespace.of("identity");
 
     /**
      * Module namespace. All modules known to the reactor are populated to this namespace. Each module is identified
      * by a {@link SourceIdentifier}. This namespace implies that the combination of {@code module name} and
      * {@code revision} is unique. This is important for JSON parser, which uses module names to identify namespaces.
      */
-    public static final @NonNull ReadOnly<SourceIdentifier,
-        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> MODULE =
-            ParserNamespace.readOnly("module");
+    public static final @NonNull ReactorNamespace<SourceIdentifier,
+        StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> MODULE = ReactorNamespace.of("module");
 
     /**
      * Derived types namespace. All derived type names defined within a parent node or at the top level of the module
@@ -100,41 +99,41 @@ public final class ParserNamespaces {
      * <p>This namespace includes all type definitions implied by the language in which the current statement resides
      * (e.g. RFC6020/RFC7950 for YANG 1.0/1.1).
      */
-    public static final @NonNull Writable<QName,
-        StmtContext<QName, TypedefStatement, TypedefEffectiveStatement>> TYPE = ParserNamespace.writable("typedef");
+    public static final @NonNull UserNamespace<QName,
+        StmtContext<QName, TypedefStatement, TypedefEffectiveStatement>> TYPE = UserNamespace.of("typedef");
 
     /**
      * A derived namespace allowing lookup of modules based on their {@link QNameModule}.
      */
-    public static final @NonNull ReadOnly<QNameModule,
+    public static final @NonNull ReactorNamespace<QNameModule,
         StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> NAMESPACE_TO_MODULE =
-            ParserNamespace.readOnly("namespace-to-module");
+            ReactorNamespace.of("namespace-to-module");
 
     /**
      * Source-specific mapping of prefix strings to module context.
      */
-    public static final @NonNull ReadOnly<String,
+    public static final @NonNull ReactorNamespace<String,
         StmtContext<Unqualified, ModuleStatement, ModuleEffectiveStatement>> IMPORTED_MODULE =
-            ParserNamespace.readOnly("imported-module");
+            ReactorNamespace.of("imported-module");
 
     /**
      * Source-specific mapping of included submodule names to submodule.
      */
-    public static final @NonNull ReadOnly<Unqualified,
+    public static final @NonNull ReactorNamespace<Unqualified,
         StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>> INCLUDED_SUBMODULE =
-            ParserNamespace.readOnly("included-submodule");
+            ReactorNamespace.of("included-submodule");
 
-    public static final @NonNull ReadOnly<Empty, FeatureSet> SUPPORTED_FEATURES =
-        ParserNamespace.readOnly("supportedFeatures");
+    public static final @NonNull ReactorNamespace<Empty, FeatureSet> SUPPORTED_FEATURES =
+        ReactorNamespace.of("supportedFeatures");
 
     /**
      * Namespace used for storing information about modules that support deviation resolution.
      * Map key (QNameModule) denotes a module which can be deviated by the modules specified in the Map value.
      */
-    public static final @NonNull ReadOnly<Empty, SetMultimap<QNameModule, QNameModule>> MODULES_DEVIATED_BY =
-        ParserNamespace.readOnly("moduleDeviations");
+    public static final @NonNull ReactorNamespace<Empty, SetMultimap<QNameModule, QNameModule>> MODULES_DEVIATED_BY =
+        ReactorNamespace.of("moduleDeviations");
 
-    private static final @NonNull Writable<?, ?> SCHEMA_TREE = ParserNamespace.writable("schemaTree");
+    private static final @NonNull UserNamespace<?, ?> SCHEMA_TREE = UserNamespace.of("schemaTree");
 
     /**
      * Statement local namespace, which holds direct schema node descendants. This corresponds to the contents of the
@@ -146,8 +145,8 @@ public final class ParserNamespaces {
      */
     @SuppressWarnings("unchecked")
     public static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
-            @NonNull Writable<QName, StmtContext<QName, D, E>> schemaTree() {
-        return (Writable<QName, StmtContext<QName, D, E>>) SCHEMA_TREE;
+            @NonNull UserNamespace<QName, StmtContext<QName, D, E>> schemaTree() {
+        return (UserNamespace<QName, StmtContext<QName, D, E>>) SCHEMA_TREE;
     }
 
     private ParserNamespaces() {

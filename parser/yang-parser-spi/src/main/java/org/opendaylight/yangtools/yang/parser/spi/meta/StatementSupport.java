@@ -394,8 +394,8 @@ public abstract non-sealed class StatementSupport<A, D extends DeclaredStatement
      * as well as {@link StatementDefinitions} and {@link StmtContext#sourceVersion()} of the source root statement.
      */
     @Beta
-    public static final ParserNamespace.@NonNull Writable<QName, StatementSupport<?, ?, ?>> NAMESPACE =
-        ParserNamespace.writable("statementSupports");
+    public static final @NonNull UserNamespace<QName, StatementSupport<?, ?, ?>> NAMESPACE =
+        UserNamespace.of("statementSupports");
 
     private final @NonNull StatementDefinition<A, D, E> publicDefinition;
     private final @NonNull StatementPolicy<A, D> policy;

@@ -10,14 +10,13 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
 
 /**
  * ThirdPartyNamespace.
  */
 public final class ThirdPartyNamespace {
-    public static final ParserNamespace.@NonNull Writable<Empty, String> INSTANCE =
-        ParserNamespace.writable("third-party");
+    public static final @NonNull UserNamespace<Empty, String> INSTANCE = UserNamespace.of("third-party");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private ThirdPartyNamespace() {

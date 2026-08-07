@@ -20,10 +20,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
 
 /**
  * A replica of a different statement. It does not allow modification, but produces an effective statement from a
@@ -159,7 +159,7 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
 
     @Override
     @Deprecated
-    public <K, V> void addToNs(final ParserNamespace.Writable<K, V> type, final K key, final V value) {
+    public <K, V> void addToNs(final UserNamespace<K, V> type, final K key, final V value) {
         throw new UnsupportedOperationException();
     }
 

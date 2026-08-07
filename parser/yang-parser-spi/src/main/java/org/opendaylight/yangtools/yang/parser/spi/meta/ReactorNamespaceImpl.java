@@ -11,8 +11,8 @@ import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-record ReadOnlyParserNamespace<K, V>(@NonNull String name) implements ParserNamespace.ReadOnly<K, V> {
-    ReadOnlyParserNamespace {
+record ReactorNamespaceImpl<K, V>(@NonNull String name) implements ReactorNamespace<K, V> {
+    ReactorNamespaceImpl {
         if (name.isBlank()) {
             throw new IllegalArgumentException("blank name");
         }
@@ -30,6 +30,6 @@ record ReadOnlyParserNamespace<K, V>(@NonNull String name) implements ParserName
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(ParserNamespace.ReadOnly.class).add("name", name).toString();
+        return MoreObjects.toStringHelper(ReactorNamespace.class).add("name", name).toString();
     }
 }

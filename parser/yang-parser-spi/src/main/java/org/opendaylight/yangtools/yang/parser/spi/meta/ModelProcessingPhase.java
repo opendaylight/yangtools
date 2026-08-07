@@ -25,7 +25,7 @@ public enum ModelProcessingPhase {
      *
      * <p>At end of this phase all source related contexts should be bind to their imports and includes to allow
      * visibility of custom defined statements in subsequent phases. Most notably all
-     * {@link ParserNamespace#readOnly(String)} namespaces are initialized.
+     * {@link ReactorNamespace#of(String)} namespaces are initialized.
      */
     SOURCE_LINKAGE(INIT, ExecutionOrder.SOURCE_LINKAGE),
     // FIXME: YANGTOOLS-1840: this phase should include all statements except TypeStatement and DefaultStatement
