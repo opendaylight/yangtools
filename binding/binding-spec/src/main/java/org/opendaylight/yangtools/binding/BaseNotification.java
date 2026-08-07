@@ -13,5 +13,5 @@ package org.opendaylight.yangtools.binding;
  * notifications (as represented by {@link InstanceNotification}.
  */
 public sealed interface BaseNotification extends DataContainer permits Notification, InstanceNotification {
-
+    // nothing else
 }

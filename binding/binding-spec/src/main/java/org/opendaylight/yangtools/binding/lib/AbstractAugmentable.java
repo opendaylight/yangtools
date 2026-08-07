@@ -14,14 +14,13 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
-import org.opendaylight.yangtools.binding.DataContainer;
 
 /**
  * Abstract base class for implementing immutable {@link Augmentable} classes. This class is provided as a convenience.
  *
  * @param <T> Augmentable type
  */
-public abstract class AbstractAugmentable<T extends Augmentable<T> & DataContainer & JavaDataContainer<T>>
+public abstract non-sealed class AbstractAugmentable<T extends Augmentable<T> & JavaDataContainer<T>>
         extends AbstractDataContainer<T>
         implements Augmentable<T> {
     private final @NonNull ImmutableMap<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> augmentations;
