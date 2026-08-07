@@ -28,7 +28,10 @@ package org.opendaylight.yangtools.binding;
  * we can safely make the inference of {@code GroupingChild -> childOf -> Case -> choiceIn -> Parent}.
  *
  * @param <P> Parent {@link DataContainer}
+ * @param <T> concrete choice type
  */
-public non-sealed interface ChoiceIn<P extends DataContainer> extends DataContainer {
-
+public non-sealed interface ChoiceIn<P extends DataContainer, T extends ChoiceIn<P, T>>
+        extends DataContainer, ImplementedChoice<P> {
+    @Override
+    Class<T> implementedChoice();
 }
