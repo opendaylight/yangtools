@@ -21,6 +21,7 @@ import java.util.Set;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -322,7 +323,7 @@ public class DefaultBindingGeneratorTest {
     }
 
     private static MethodSignature assertGeneratedMethod(final List<MethodSignature> methods, final String name) {
-        return methods.stream().filter(method -> name.equals(method.name()))
+        return methods.stream().filter(method -> name.equals(Naming.GETTER_PREFIX + method.suffix()))
             .findFirst()
             .orElseThrow(() -> new AssertionError("Method " + name + " not present"));
     }

@@ -42,11 +42,12 @@ record DataContainerGetters(List<GetterShape> methods, List<GetterShape> partial
         final var methods = archetype.getMethodDefinitions();
         final var nameToSpec = LinkedHashMap.<String, GetterShape>newLinkedHashMap(methods.size());
         for (var method : methods) {
-            final var name = method.name();
-            verify(nameToSpec.put(name, new GetterShape(method, partials.containsKey(name))) == null);
+            final var suffix = method.suffix();
+            verify(nameToSpec.put(suffix, new GetterShape(method, partials.containsKey(suffix))) == null);
         }
         return new DataContainerGetters(List.copyOf(nameToSpec.values()), partials.values().stream()
-            .filter(method -> !nameToSpec.containsKey(method.name()))
+            // FIXME: duplicate suffix construction
+            .filter(method -> !nameToSpec.containsKey(method.suffix()))
             .map(method -> new GetterShape(method, true))
             .toList());
     }
@@ -54,7 +55,7 @@ record DataContainerGetters(List<GetterShape> methods, List<GetterShape> partial
     private static void collectPartialMethods(final HashMap<String, MethodSignature> partials,
             final DataContainerArchetype.Partial archetype) {
         for (var method : archetype.getMethodDefinitions()) {
-            partials.putIfAbsent(method.name(), method);
+            partials.putIfAbsent(method.suffix(), method);
         }
         for (var partial : archetype.partials()) {
             collectPartialMethods(partials, partial);
