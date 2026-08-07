@@ -265,12 +265,12 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             }
 
             // FIXME: talk to BindingRuntimeType's view of the corresponding archetype instead of reflection
-            private static @Nullable Class<ChoiceIn<?>> findCaseChoice(
+            private static @Nullable Class<ChoiceIn<?, ?>> findCaseChoice(
                     final Class<? extends DataObject> caseClass) {
                 for (var type : caseClass.getGenericInterfaces()) {
                     if (type instanceof Class<?> typeClass && ChoiceIn.class.isAssignableFrom(typeClass)) {
                         @SuppressWarnings("unchecked")
-                        final var ret = (Class<ChoiceIn<?>>) typeClass.asSubclass(ChoiceIn.class);
+                        final var ret = (Class<ChoiceIn<?, ?>>) typeClass.asSubclass(ChoiceIn.class);
                         return ret;
                     }
                 }

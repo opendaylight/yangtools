@@ -118,9 +118,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
             bb.frg(new DataContainerGetterMethods(this));
         }
 
-        return bb
-            .frg(contract.implementationIn(this))
-            .cB();
+        return contractMethods(bb).cB();
     }
 
     // FIXME: This method forces the use of ConcreteType and ParameterizedType. Replace Type with a BlockFragment
@@ -137,6 +135,11 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
 
     BlockFragment constants() {
         return null;
+    }
+
+    @NonNullByDefault
+    BlockBuilder contractMethods(final BlockBuilder bb) {
+        return bb.frg(contract.implementationIn(this));
     }
 
     @NonNullByDefault

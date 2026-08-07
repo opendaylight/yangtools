@@ -17,8 +17,14 @@ import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
  * @param <T> concrete case type
  * @since 16.0.0
  */
-public interface CaseObject<P extends DataContainer, C extends ChoiceIn<P>, T extends CaseObject<P, C, T>>
-        extends Augmentable<T>, DataObject, JavaDataContainer<T> {
+public non-sealed interface CaseObject<
+        P extends DataContainer,
+        C extends ChoiceIn<P, ? super T>,
+        T extends CaseObject<P, C, T>>
+        extends Augmentable<T>, DataObject, ChoiceContract<P, C>, JavaDataContainer<T> {
+    @Override
+    Class<T> implementedCase();
+
     @Override
     Class<T> implementedInterface();
 }

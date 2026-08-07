@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
@@ -26,11 +28,17 @@ final class ChoiceInTemplate extends ArchetypeTemplate<ChoiceInArchetype> {
 
     @Override
     BlockBuilder body() {
+        final var simpleName = archetype.simpleName();
         final var stmt = archetype.statement();
         return newBodyBuilder(stmt)
-            .str("public interface ").str(archetype.simpleName()).str(" extends ")
-                .gen(importedName(CHOICE_IN), importedName(archetype.parentName())).oB()
+            .str("public interface ").str(simpleName).str(" extends ")
+                .gen(importedName(CHOICE_IN), importedName(archetype.parentName()), importedName(archetype)).oB()
                 .frg(new QNameConstant.InInterface(this, stmt.argument()))
+                .nl()
+                .at().eol(importedName(OVERRIDE))
+                .str("default Class<").str(simpleName).str("> implementedChoice()").oB()
+                    .str("return ").str(simpleName).eol(".class;")
+                .cB()
             .cB();
     }
 }

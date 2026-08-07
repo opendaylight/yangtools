@@ -88,7 +88,7 @@ import org.slf4j.LoggerFactory;
  * ambiguous reference and issue warn once when they are encountered -- tracking warning information in
  * {@link #ambiguousByCaseChildWarnings}.
  */
-final class ChoiceCodecContext<T extends ChoiceIn<?>>
+final class ChoiceCodecContext<T extends ChoiceIn<?, ?>>
         extends DataContainerCodecContext<T, ChoiceRuntimeType, ChoiceCodecPrototype<T>>
         implements BindingChoiceCodecTreeNode<T> {
     private static final Logger LOG = LoggerFactory.getLogger(ChoiceCodecContext.class);
