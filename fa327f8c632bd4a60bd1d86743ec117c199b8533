@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2710db3a_bfc25578",
+        "filename": "codec/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 84,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-08-07T14:15:30Z",
+      "side": 1,
+      "message": "This check changes the API behaviour. Where previously mixing the Factory\u0027s context and Inference\u0027s context would parse, with this check it will throw.",
+      "revId": "fa327f8c632bd4a60bd1d86743ec117c199b8533",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
