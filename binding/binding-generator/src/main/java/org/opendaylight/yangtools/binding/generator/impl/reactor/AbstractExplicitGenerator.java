@@ -344,8 +344,13 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
 
     @NonNullByDefault
     MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list, final Type returnType) {
-        final var mb = MethodSignature.builder(statement, Naming.getGetterMethodName(localName().getLocalName()),
-            returnType);
+        throw new VerifyException("Attempted to construct getter for " + this);
+    }
+
+    @NonNullByDefault
+    static final MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list,
+            final SchemaTreeEffectiveStatement<?> statement,  final Type returnType) {
+        final var mb = MethodSignature.builder(statement, Naming.getGetterMethodName(statement.argument()), returnType);
         list.add(mb);
         return mb;
     }

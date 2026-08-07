@@ -55,6 +55,12 @@ abstract sealed class OperationContainerGenerator<
         dataTree.enterSchemaTree(statement().argument());
     }
 
+//    @Override
+//    final MethodSignature.Builder constructGetter(final List<MethodSignature.@NonNull Builder> list,
+//            final Type returnType) {
+//        return constructGetter(list, statement(), returnType);
+//    }
+
     @Override
     final A createTypeImpl(final JavaTypeName typeName, final S statement,
             final List<@NonNull GroupingArchetype> groupings) {

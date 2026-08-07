@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -38,6 +39,11 @@ abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEff
     @Override
     public final void pushToInference(final SchemaInferenceStack dataTree) {
         dataTree.enterDataTree(statement().argument());
+    }
+
+    @Override
+    final MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list, final Type returnType) {
+        return constructGetter(list, statement(), returnType);
     }
 
     @Override

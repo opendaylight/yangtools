@@ -19,6 +19,8 @@ import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ChoiceRuntimeType;
@@ -80,6 +82,11 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
     @Override
     void pushToInference(final SchemaInferenceStack dataTree) {
         // No-op
+    }
+
+    @Override
+    MethodSignature.Builder constructGetter(final List<MethodSignature.@NonNull Builder> list, final Type returnType) {
+        return constructGetter(list, statement(), returnType);
     }
 
     @NonNullByDefault

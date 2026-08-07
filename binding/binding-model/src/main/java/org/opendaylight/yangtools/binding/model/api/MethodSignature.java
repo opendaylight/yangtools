@@ -18,7 +18,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 /**
  * The Method Signature interface contains simplified meta model for Java interface method definition. Each method MUST
@@ -28,14 +28,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 @Beta
 public sealed interface MethodSignature extends Immutable permits MethodSignature0, MethodSignature1, MethodSignatureN {
     /**
-     * {@return the {@link EffectiveStatement} which led to this method}
+     * {@return the {@link SchemaTreeEffectiveStatement} which led to this method}
      */
-    // FIXME: sharpen to SchemaTreeEffectiveStatement
     // TODO: this is separate from returnType construct, but in some cases they overlap, like in:
     //         container foo {
     //           container bar;    <-- generates getBar() with ContainerObjectArchetype which has the same statement
     //         }
-    @NonNull EffectiveStatement<?, ?> statement();
+    @NonNull SchemaTreeEffectiveStatement<?> statement();
 
     /**
      * {@return the method name}
@@ -57,6 +56,7 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
     //       Anyway, our ability to deal with these kinds of problems is vastly improved with the introduction of
     //       DataContainerArchetype and we should be doing our level best to make things work even in face of such
     //       challenging models.
+    // FIXME: 'suffix' only
     @NonNull String name();
 
     /**
@@ -71,21 +71,22 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
     @NonNullByDefault
     List<AttachedAnnotation.ToMethod> annotations();
 
-    // FIXME: require QName-based statement
+    // FIXME: do not take a name
     @NonNullByDefault
-    static MethodSignature of(final EffectiveStatement<?, ?> statement, final String name, final Type returnType) {
+    static MethodSignature of(final SchemaTreeEffectiveStatement<?> statement, final String name,
+            final Type returnType) {
         return new MethodSignature0(statement, checkName(name), returnType);
     }
 
     @NonNullByDefault
-    static MethodSignature of(final EffectiveStatement<?, ?> statement, final String name, final Type returnType,
+    static MethodSignature of(final SchemaTreeEffectiveStatement<?> statement, final String name, final Type returnType,
             final AttachedAnnotation.ToMethod annotation) {
         return new MethodSignature1(statement, checkName(name), returnType, annotation);
     }
 
     @Beta
     @NonNullByDefault
-    static Builder builder(final EffectiveStatement<?, ?> statement, final String name, final Type returnType) {
+    static Builder builder(final SchemaTreeEffectiveStatement<?> statement, final String name, final Type returnType) {
         return new Builder(statement, checkName(name), returnType);
     }
 
@@ -105,14 +106,14 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
      */
     @Beta
     final class Builder {
-        private final @NonNull EffectiveStatement<?, ?> statement;
+        private final @NonNull SchemaTreeEffectiveStatement<?> statement;
         private final @NonNull String name;
         private final @NonNull Type returnType;
 
         private @Nullable ArrayList<AttachedAnnotation.@NonNull ToMethod> annotations = null;
 
         @NonNullByDefault
-        Builder(final EffectiveStatement<?, ?> statement, final String name, final Type returnType) {
+        Builder(final SchemaTreeEffectiveStatement<?> statement, final String name, final Type returnType) {
             this.statement = requireNonNull(statement);
             this.name = requireNonNull(name);
             this.returnType = requireNonNull(returnType);

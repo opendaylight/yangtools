@@ -16,6 +16,8 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -39,6 +41,11 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     @Override
     void pushToInference(final SchemaInferenceStack dataTree) {
         dataTree.enterDataTree(statement().argument());
+    }
+
+    @Override
+    MethodSignature.Builder constructGetter(final List<MethodSignature.@NonNull Builder> list, final Type returnType) {
+        return constructGetter(list, statement(), returnType);
     }
 
     @Override

@@ -8,11 +8,14 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import com.google.common.base.VerifyException;
+import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnydataRuntimeType;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnyxmlRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.AnydataRuntimeType;
@@ -100,6 +103,12 @@ abstract class OpaqueObjectGenerator<
     @Override
     void pushToInference(final SchemaInferenceStack dataTree) {
         dataTree.enterDataTree(statement().argument());
+    }
+
+    @Override
+    final MethodSignature.Builder constructGetter(final List<MethodSignature.@NonNull Builder> list,
+            final Type returnType) {
+        return constructGetter(list, statement(), returnType);
     }
 
     @NonNullByDefault
