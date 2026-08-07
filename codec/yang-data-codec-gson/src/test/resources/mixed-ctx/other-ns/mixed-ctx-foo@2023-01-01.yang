@@ -1,0 +1,13 @@
+// Same module name as mixed-ctx/v2023, but a different namespace.
+module mixed-ctx-foo {
+  namespace "urn:opendaylight:yangtools:mixed-ctx-other";
+  prefix mcf;
+
+  revision 2023-01-01;
+
+  container top {
+    leaf name {
+      type string;
+    }
+  }
+}

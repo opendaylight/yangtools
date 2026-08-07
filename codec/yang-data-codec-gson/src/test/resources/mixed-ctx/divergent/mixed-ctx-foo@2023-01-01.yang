@@ -1,0 +1,20 @@
+// Same module name, same namespace and same revision as mixed-ctx/v2023, but sharing none of its
+// contents: no top, no name, no base-id, no my-identity.
+module mixed-ctx-foo {
+  namespace "urn:opendaylight:yangtools:mixed-ctx-foo";
+  prefix mcf;
+
+  revision 2023-01-01;
+
+  identity unrelated-base;
+
+  container alpha {
+    leaf beta {
+      type int32;
+    }
+  }
+
+  leaf-list gamma {
+    type string;
+  }
+}
