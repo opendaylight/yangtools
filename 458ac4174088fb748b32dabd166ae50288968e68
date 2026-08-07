@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "9bc2ebee_8d2f7be3",
+        "filename": "binding/binding-generator/src/main/java/org/opendaylight/yangtools/binding/generator/impl/reactor/OperationContainerGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-08-07T22:37:53Z",
+      "side": 1,
+      "message": "remove",
+      "range": {
+        "startLine": 59,
+        "startChar": 12,
+        "endLine": 59,
+        "endChar": 27
+      },
+      "revId": "458ac4174088fb748b32dabd166ae50288968e68",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
