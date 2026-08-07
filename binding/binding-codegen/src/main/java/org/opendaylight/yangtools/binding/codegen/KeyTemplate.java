@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
@@ -152,6 +153,14 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
             }
             sb.append(", ");
         }
+    }
+
+    /**
+     * {@return the {@link BlockFragment} used to clone the property, or {@code null}}
+     * @param type the type
+     */
+    private static @Nullable BlockFragment cloneOrNull(final Type type) {
+        return type.isArray() ? bb -> bb.str(".clone()") : null;
     }
 
     private static long serialVersionUID(final KeyArchetype archetype) {
