@@ -13,8 +13,10 @@ import org.opendaylight.yangtools.binding.ChoiceIn;
  * Example of a {@link ChoiceIn} specialization. Assuming the model
  * {@snippet lang="yang" :
  *    module foo {
- *      choice foo {
- *        case bar;
+ *      choice foo-choice {
+ *        case bar-case {
+ *          container bar-case-container;
+ *        }
  *      }
  *    }
  * }

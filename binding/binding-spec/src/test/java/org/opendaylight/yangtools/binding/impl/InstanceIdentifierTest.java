@@ -25,6 +25,8 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataObjectReference;
+import org.opendaylight.yangtools.binding.test.mock.BarCase;
+import org.opendaylight.yangtools.binding.test.mock.BarCaseContainer;
 import org.opendaylight.yangtools.binding.test.mock.FooRoot;
 import org.opendaylight.yangtools.binding.test.mock.InstantiatedFoo;
 import org.opendaylight.yangtools.binding.test.mock.Node;
@@ -125,5 +127,15 @@ class InstanceIdentifierTest {
         final var deserialized = assertInstanceOf(DataObjectIdentifier.class, inputStream.readObject());
 
         assertEquals(fooRoot, deserialized);
+    }
+
+    @Test
+    void barCaseContainerAddressableThroughCase() {
+        final var bcc = DataObjectIdentifier.builder(BarCase.class, BarCaseContainer.class).build();
+        assertEquals("""
+            DataObjectIdentifier[
+              <org.opendaylight.yangtools.binding.test.mock.BarCase>org.opendaylight.yangtools.binding.test.mock.\
+            BarCaseContainer
+            ]""", bcc.toString());
     }
 }
