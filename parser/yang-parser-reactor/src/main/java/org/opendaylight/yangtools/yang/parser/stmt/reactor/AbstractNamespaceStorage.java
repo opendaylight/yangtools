@@ -16,6 +16,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -76,7 +78,7 @@ abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permi
         return local;
     }
 
-    final <K, V> void addToNamespace(final ParserNamespace.Writable<K, V> type, final K key, final V value) {
+    final <K, V> void addToNamespace(final UserNamespace<K, V> type, final K key, final V value) {
         accessNamespace(type).valueTo(this, key, value);
     }
 
@@ -92,14 +94,14 @@ abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permi
     }
 
     @Override
-    public <K, V> V putToLocalStorage(final ParserNamespace.Writable<K, V> type, final K key, final V value) {
+    public <K, V> V putToLocalStorage(final UserNamespace<K, V> type, final K key, final V value) {
         final V ret = ensureLocalNamespace(type).put(key, value);
         onNamespaceElementAdded(type, key, value);
         return ret;
     }
 
     @Override
-    public final <K, V> V putToLocalStorageIfAbsent(final ParserNamespace.Writable<K, V> type, final K key,
+    public final <K, V> V putToLocalStorageIfAbsent(final UserNamespace<K, V> type, final K key,
             final V value) {
         final V ret = ensureLocalNamespace(type).putIfAbsent(key, value);
         if (ret == null) {
@@ -108,12 +110,12 @@ abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permi
         return ret;
     }
 
-    private <K, V> Map<K, V> ensureLocalNamespace(final ParserNamespace.Writable<K, V> type) {
+    private <K, V> Map<K, V> ensureLocalNamespace(final UserNamespace<K, V> type) {
         final var existing = getLocalNamespace(type);
         return existing != null ? existing : allocateLocalNamespace(type);
     }
 
-    private <K, V> Map<K, V> allocateLocalNamespace(final ParserNamespace.Writable<K, V> type) {
+    private <K, V> Map<K, V> allocateLocalNamespace(final UserNamespace<K, V> type) {
         final var ret = new HashMap<K, V>(1);
         setNamespace(type, ret);
         return ret;
@@ -127,7 +129,7 @@ abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permi
      * @param type the namespace
      * @param map the namespace contents
      */
-    final <K, V> void resolveLinkage(final ParserNamespace.@NonNull ReadOnly<K, V> type,
+    final <K, V> void resolveLinkage(final @NonNull ReactorNamespace<K, V> type,
             final Map<@NonNull ? extends K, @NonNull ? extends V> map) {
         final var namespace = requireNonNull(type);
         final var contents = Map.<K, V>copyOf(map);

@@ -168,10 +168,10 @@ public abstract class NamespaceBehaviour<K, V> {
     }
 
     protected final void addToStorage(final NamespaceStorage storage, final K key, final V value) {
-        if (!(namespace instanceof ParserNamespace.Writable<K, V> writable)) {
+        if (!(namespace instanceof UserNamespace<K, V> user)) {
             throw new UnsupportedOperationException();
         }
-        storage.putToLocalStorage(writable, key, value);
+        storage.putToLocalStorage(user, key, value);
     }
 
     @Override

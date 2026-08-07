@@ -41,12 +41,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.ExecutionOrder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport.CopyPolicy;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.UndeclaredStatementFactory;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceAccess.KeyedValueAddedListener;
 import org.slf4j.Logger;
@@ -69,7 +69,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         /**
          * Invoked whenever a new item is added to a namespace.
          */
-        void namespaceItemAdded(StatementContextBase<?, ?, ?> context, ParserNamespace.Writable<?, ?> namespace,
+        void namespaceItemAdded(StatementContextBase<?, ?, ?> context, UserNamespace<?, ?> namespace,
             Object key, Object value);
     }
 
@@ -263,7 +263,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     @Override
-    public final <K, V> void addToNs(final ParserNamespace.Writable<K, V> type, final K key, final V value) {
+    public final <K, V> void addToNs(final UserNamespace<K, V> type, final K key, final V value) {
         addToNamespace(type, key, value);
     }
 
@@ -587,7 +587,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return definition;
     }
 
-    final <K, V> void onNamespaceItemAddedAction(final ParserNamespace.Writable<K, V> namespace, final K key,
+    final <K, V> void onNamespaceItemAddedAction(final UserNamespace<K, V> namespace, final K key,
             final OnNamespaceItemAdded listener) {
         final var access = accessNamespace(namespace);
         final var potential = access.valueFrom(this, key);
@@ -605,7 +605,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         });
     }
 
-    final <K, V> void onNamespaceItemAddedAction(final ParserNamespace.Writable<K, V> namespace,
+    final <K, V> void onNamespaceItemAddedAction(final UserNamespace<K, V> namespace,
             final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
         final var access = accessNamespace(namespace);
@@ -627,7 +627,7 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     private <K, V> void waitForPhase(final Object value, final NamespaceAccess<K, V> access,
-            final ParserNamespace.Writable<K, V> namespace, final ModelProcessingPhase phase,
+            final UserNamespace<K, V> namespace, final ModelProcessingPhase phase,
             final NamespaceKeyCriterion<K> criterion, final OnNamespaceItemAdded listener) {
         ((StatementContextBase<?, ?, ?>) value).addPhaseCompletedListener(phase, (context, phaseCompleted) -> {
             final var match = access.entryFrom(this, criterion);

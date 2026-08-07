@@ -11,8 +11,8 @@ import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
-record WritableParserNamespace<K, V>(@NonNull String name) implements ParserNamespace.Writable<K, V> {
-    WritableParserNamespace {
+record UserNamespaceImpl<K, V>(@NonNull String name) implements UserNamespace<K, V> {
+    UserNamespaceImpl {
         if (name.isBlank()) {
             throw new IllegalArgumentException("blank name");
         }
@@ -30,6 +30,6 @@ record WritableParserNamespace<K, V>(@NonNull String name) implements ParserName
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(ParserNamespace.Writable.class).add("name", name).toString();
+        return MoreObjects.toStringHelper(UserNamespace.class).add("name", name).toString();
     }
 }

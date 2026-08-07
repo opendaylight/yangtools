@@ -39,17 +39,17 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class YangDataStatementSupport
         extends AbstractStatementSupport<YangDataName, YangDataStatement, YangDataEffectiveStatement> {
-    private static final ParserNamespace.@NonNull Writable<YangDataName,
+    private static final @NonNull UserNamespace<YangDataName,
         StmtContext<YangDataName, YangDataStatement, YangDataEffectiveStatement>> NAMESPACE =
-            ParserNamespace.writable("yang-data");
+            UserNamespace.of("yang-data");
     public static final NamespaceBehaviour<YangDataName,
         StmtContext<YangDataName, YangDataStatement, YangDataEffectiveStatement>> BEHAVIOUR =
         NamespaceBehaviour.global(NAMESPACE);
