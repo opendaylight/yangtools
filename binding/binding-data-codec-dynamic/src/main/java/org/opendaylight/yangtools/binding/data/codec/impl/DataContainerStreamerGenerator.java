@@ -330,7 +330,7 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
     private static @Nullable MethodSignature lookupMethod(final DataContainerArchetype archetype,
             final String methodName) {
         for (var method : archetype.getMethodDefinitions()) {
-            if (methodName.equals(method.name())) {
+            if (methodName.equals(Naming.GETTER_PREFIX + method.suffix())) {
                 return method;
             }
         }

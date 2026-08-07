@@ -67,7 +67,7 @@ class AugmentedTypeTest {
 
         MethodSignature getHigherLayerIfMethod = null;
         for (var method : gtInterface.getMethodDefinitions()) {
-            if (method.name().equals("getHigherLayerIf")) {
+            if (method.suffix().equals("HigherLayerIf")) {
                 getHigherLayerIfMethod = method;
                 break;
             }
@@ -97,7 +97,7 @@ class AugmentedTypeTest {
 
         final var gtTunnelId = tunnelKeyProperties.get("tunnel-id");
         assertNotNull(gtTunnelId, "tunnelId is null");
-        assertEquals("getTunnelId", gtTunnelId.name());
+        assertEquals("TunnelId", gtTunnelId.suffix());
         assertEquals(BaseYangTypes.INT32_TYPE, gtTunnelId.returnType());
 
         // 'NetworkLink2'
@@ -108,7 +108,7 @@ class AugmentedTypeTest {
 
         MethodSignature getIfcMethod = null;
         for (var method : networkLink2Methods) {
-            if (method.name().equals("getInterface")) {
+            if (method.suffix().equals("Interface")) {
                 getIfcMethod = method;
                 break;
             }

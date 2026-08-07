@@ -111,13 +111,13 @@ class YT1681Test {
         assertEquals(5, neighborMethods.size());
 
         final var getNeighborId = neighborMethods.stream()
-            .filter(method -> method.name().equals("getNeighborId"))
+            .filter(method -> method.suffix().equals("NeighborId"))
             .findFirst()
             .orElseThrow();
         assertEquals(BaseYangTypes.STRING_TYPE, getNeighborId.returnType());
 
         final var getNeighbor2Id = neighborMethods.stream()
-            .filter(method -> method.name().equals("getNeighbor2Id"))
+            .filter(method -> method.suffix().equals("Neighbor2Id"))
             .findFirst()
             .orElseThrow();
         assertEquals(BaseYangTypes.STRING_TYPE, getNeighbor2Id.returnType());
