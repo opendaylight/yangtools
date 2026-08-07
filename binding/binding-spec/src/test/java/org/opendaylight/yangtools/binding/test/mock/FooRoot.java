@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.test.mock;
 
-import org.opendaylight.yangtools.binding.ChildOf;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.ContainerObject;
 
-public interface FooRoot extends ChildOf<FooData>, DataObject {
+public interface FooRoot extends ContainerObject<FooData, FooRoot> {
     @Override
     default Class<FooRoot> implementedInterface() {
         return FooRoot.class;
