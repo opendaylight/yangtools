@@ -11,10 +11,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.YangData;
 
 class AbstractDataContainerTest {
-    private static final class Cont extends AbstractDataContainer<Cont> implements DataObject {
+    private static final class Cont extends AbstractDataContainer<Cont> implements YangData<Cont> {
         private final int field;
 
         Cont(final int field) {
