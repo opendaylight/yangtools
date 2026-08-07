@@ -39,23 +39,6 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
     /**
      * {@return the method name}
      */
-    // TODO: Investigate the relationship with statement once we remove ValueMechanics, as then we can generate
-    //       nonNullFoo/requireFoo from getter name -- and getterName is always derived from
-    //       Naming.getGetterMethodName(QName).
-    //
-    //       That may be a bug in the implementation not handling conflicts like:
-    //         container foo {
-    //           leaf bar { type string; }
-    //           leaf Bar { type uint64; }
-    //         }
-    //
-    //       Our ability to address such problems is limited by groupings, as they essentially freeze their view on
-    //       naming and may be sitting in a different compilation unit, so providing backpressure from instantiations
-    //       is a challenge.
-    //
-    //       Anyway, our ability to deal with these kinds of problems is vastly improved with the introduction of
-    //       DataContainerArchetype and we should be doing our level best to make things work even in face of such
-    //       challenging models.
     // FIXME: 'suffix' only
     @NonNull String name();
 
@@ -73,29 +56,21 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
 
     // FIXME: do not take a name
     @NonNullByDefault
-    static MethodSignature of(final SchemaTreeEffectiveStatement<?> statement, final String name,
-            final Type returnType) {
-        return new MethodSignature0(statement, checkName(name), returnType);
+    static MethodSignature of(final SchemaTreeEffectiveStatement<?> statement, final Type returnType) {
+        return new MethodSignature0(statement, Naming.getGetterMethodName(statement.argument()), returnType);
     }
 
     @NonNullByDefault
-    static MethodSignature of(final SchemaTreeEffectiveStatement<?> statement, final String name, final Type returnType,
+    static MethodSignature of(final SchemaTreeEffectiveStatement<?> statement, final Type returnType,
             final AttachedAnnotation.ToMethod annotation) {
-        return new MethodSignature1(statement, checkName(name), returnType, annotation);
+        return new MethodSignature1(statement, Naming.getGetterMethodName(statement.argument()), returnType,
+            annotation);
     }
 
     @Beta
     @NonNullByDefault
-    static Builder builder(final SchemaTreeEffectiveStatement<?> statement, final String name, final Type returnType) {
-        return new Builder(statement, checkName(name), returnType);
-    }
-
-    @NonNullByDefault
-    private static String checkName(final String name) {
-        if (!Naming.isGetterMethodName(name)) {
-            throw new IllegalArgumentException("invalid getter name '" + name + "'");
-        }
-        return name;
+    static Builder builder(final SchemaTreeEffectiveStatement<?> statement, final Type returnType) {
+        return new Builder(statement, returnType);
     }
 
     /**
@@ -107,15 +82,13 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
     @Beta
     final class Builder {
         private final @NonNull SchemaTreeEffectiveStatement<?> statement;
-        private final @NonNull String name;
         private final @NonNull Type returnType;
 
         private @Nullable ArrayList<AttachedAnnotation.@NonNull ToMethod> annotations = null;
 
         @NonNullByDefault
-        Builder(final SchemaTreeEffectiveStatement<?> statement, final String name, final Type returnType) {
+        Builder(final SchemaTreeEffectiveStatement<?> statement, final Type returnType) {
             this.statement = requireNonNull(statement);
-            this.name = requireNonNull(name);
             this.returnType = requireNonNull(returnType);
         }
 
@@ -165,6 +138,7 @@ public sealed interface MethodSignature extends Immutable permits MethodSignatur
          */
         @NonNullByDefault
         public MethodSignature build() {
+            final var name = Naming.getGetterMethodName(statement.argument());
             final var local = annotations;
             if (local == null) {
                 return new MethodSignature0(statement, name, returnType);

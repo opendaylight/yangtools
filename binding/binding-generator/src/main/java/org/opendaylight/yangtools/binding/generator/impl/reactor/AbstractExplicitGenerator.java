@@ -16,7 +16,6 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresentation;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
@@ -350,7 +349,27 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     @NonNullByDefault
     static final MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list,
             final SchemaTreeEffectiveStatement<?> statement,  final Type returnType) {
-        final var mb = MethodSignature.builder(statement, Naming.getGetterMethodName(statement.argument()), returnType);
+        // FIXME: This method assumes a injective mapping from YANG identifier to method suffix. That is not the case,
+        //        as we have dealt with a similar problem for class names, where we have the whol NamingStrategy thing
+        //        and fallbacks.
+        //
+        //        And example of this problem is
+        //
+        //          container foo {
+        //            leaf bar { type string; }
+        //            leaf Bar { type uint64; }
+        //          }
+        //
+        //       Our ability to address such problems is limited by groupings, as they essentially freeze their view on
+        //       naming and may be sitting in a different compilation unit, so providing backpressure from
+        //       instantiations is a challenge.
+        //
+        //       Anyway we should be doing our level best to make things work even in face of such challenging models.
+        //
+        //       In the mean time MethodSignature derives the suffix via Naming.getGetterMethodName(QName), but retains
+        //       it as an API detail. If/when we have a solution, it is a simple matter of providing a separate builder
+        //       and supply the suffix into it.
+        final var mb = MethodSignature.builder(statement, returnType);
         list.add(mb);
         return mb;
     }
