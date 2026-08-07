@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.GENERATED;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NONNULL;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NULLABLE;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
@@ -22,8 +20,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.isRequireMethod
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstLower;
 
 import com.google.common.base.CharMatcher;
-import java.util.Arrays;
-import java.util.Objects;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -101,18 +97,6 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     @NonNullByDefault
     final String fullyQualifiedName(final Type intype, final String annotation) {
         return javaType.getFullyQualifiedReference(intype, annotation);
-    }
-
-    /**
-     * Return imported name of java.util class, whose hashCode/equals methods we want to invoke for a type. Returns
-     * {@link Arrays} if the type is an array, {@link Objects} otherwise.
-     *
-     * @param returnType A property return Type
-     * @return Imported class name
-     */
-    @NonNullByDefault
-    final String importedUtilClass(final Type returnType) {
-        return importedName(returnType.isArray() ? JU_ARRAYS : JU_OBJECTS);
     }
 
     final @NonNull String generatedAnnotation() {
