@@ -49,6 +49,7 @@ import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
@@ -311,8 +312,18 @@ final class BuilderTemplate extends BaseTemplate {
 
     private static Set<MethodSignature> getSpecifiedGetters(final DataContainerArchetype type) {
         return type.getMethodDefinitions().stream()
-            .filter(JavaFileTemplate::hasOverrideAnnotation)
+            .filter(BuilderTemplate::hasOverrideAnnotation)
             .collect(ImmutableSet.toImmutableSet());
+    }
+
+    /**
+     * Check whether specified method has an attached annotation which corresponds to {@code @Override}.
+     *
+     * @param method Method to examine
+     * @return True if there is an override annotation
+     */
+    private static boolean hasOverrideAnnotation(final MethodSignature method) {
+        return method.annotations().stream().anyMatch(OverrideAnnotation.class::isInstance);
     }
 
     /**

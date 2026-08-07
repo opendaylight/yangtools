@@ -30,7 +30,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
-import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
@@ -160,16 +159,6 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
             throw new IllegalArgumentException(getterName + " is not a getter");
         }
         return toFirstLower(getterName.substring(prefix.length()));
-    }
-
-    /**
-     * Check whether specified method has an attached annotation which corresponds to {@code @Override}.
-     *
-     * @param method Method to examine
-     * @return True if there is an override annotation
-     */
-    static boolean hasOverrideAnnotation(final MethodSignature method) {
-        return method.annotations().stream().anyMatch(OverrideAnnotation.class::isInstance);
     }
 
     static String encodeJavadocSymbols(final String description) {
