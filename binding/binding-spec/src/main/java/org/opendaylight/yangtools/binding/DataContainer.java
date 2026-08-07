@@ -22,6 +22,6 @@ package org.opendaylight.yangtools.binding;
  * </ul>
  */
 public sealed interface DataContainer extends BindingContract<DataContainer>
-    permits BaseNotification, ChoiceIn, DataObject, DataRoot, Grouping, NotificationBody, YangData {
+    permits Augmentable, BaseNotification, ChoiceIn, DataObject, DataRoot, Grouping, NotificationBody, YangData {
     // Nothing else
 }

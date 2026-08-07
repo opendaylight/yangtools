@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
  * @param <T> concrete container type
  * @since 16.0.0
  */
-public interface ContainerObject<P extends DataContainer, T extends ContainerObject<P, T>>
+public non-sealed interface ContainerObject<P extends DataContainer, T extends ContainerObject<P, T>>
         extends Augmentable<T>, ChildOf<P>, JavaDataContainer<T> {
     @Override
     Class<T> implementedInterface();
