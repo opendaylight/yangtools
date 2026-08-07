@@ -72,7 +72,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
          * @return this builder
          * @throws NullPointerException if {@code augmentation} is {@code null}
          */
-        <A extends Augmentation<? super T>> @NonNull Builder<A> augmentation(@NonNull Class<A> augmentation);
+        <A extends Augmentation<? super T, A>> @NonNull Builder<A> augmentation(@NonNull Class<A> augmentation);
 
         /**
          * Append the specified container as a child of the data object this build currently references. This method

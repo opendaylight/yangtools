@@ -24,19 +24,19 @@ import org.opendaylight.yangtools.binding.DataContainer;
 public abstract class AbstractAugmentable<T extends Augmentable<T> & DataContainer & JavaDataContainer<T>>
         extends AbstractDataContainer<T>
         implements Augmentable<T> {
-    private final @NonNull ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations;
+    private final @NonNull ImmutableMap<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> augmentations;
 
     // FIXME: reconsider usefulness of this constructor: document it or remove it
     protected AbstractAugmentable() {
         augmentations = ImmutableMap.of();
     }
 
-    protected AbstractAugmentable(final Map<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations) {
+    protected AbstractAugmentable(final Map<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> augmentations) {
         this.augmentations = ImmutableMap.copyOf(augmentations);
     }
 
     protected AbstractAugmentable(
-            final ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations) {
+            final ImmutableMap<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> augmentations) {
         this.augmentations = requireNonNull(augmentations);
     }
 
@@ -46,12 +46,12 @@ public abstract class AbstractAugmentable<T extends Augmentable<T> & DataContain
 
     @Override
     @SuppressWarnings("unchecked")
-    public final <A extends Augmentation<T>> A augmentation(final Class<A> augmentationType) {
+    public final <A extends Augmentation<T, A>> A augmentation(final Class<A> augmentationType) {
         return (A) augmentations.get(requireNonNull(augmentationType));
     }
 
     @Override
-    public final ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations() {
+    public final ImmutableMap<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> augmentations() {
         return augmentations;
     }
 }

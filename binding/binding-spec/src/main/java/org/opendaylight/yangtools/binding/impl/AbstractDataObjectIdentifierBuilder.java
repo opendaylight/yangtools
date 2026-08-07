@@ -40,7 +40,7 @@ public abstract sealed class AbstractDataObjectIdentifierBuilder<T extends DataO
     }
 
     @Override
-    public final <A extends Augmentation<? super T>> Builder<A> augmentation(final Class<A> augmentation) {
+    public final <A extends Augmentation<? super T, A>> Builder<A> augmentation(final Class<A> augmentation) {
         return append(new NodeStep<>(augmentation));
     }
 

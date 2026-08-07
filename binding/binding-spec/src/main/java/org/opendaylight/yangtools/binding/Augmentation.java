@@ -15,7 +15,8 @@ package org.opendaylight.yangtools.binding;
  *
  * @param <T> Class to which this implementation is extension.
  */
-public interface Augmentation<T> extends DataObject {
+public interface Augmentation<A extends Augmentable<A> & DataContainer, T extends Augmentation<A, T>>
+        extends DataObject {
     @Override
-    Class<? extends Augmentation<T>> implementedInterface();
+    Class<T> implementedInterface();
 }

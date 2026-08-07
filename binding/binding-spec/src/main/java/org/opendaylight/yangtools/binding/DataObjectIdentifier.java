@@ -53,7 +53,7 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
         }
 
         @Override
-        <A extends Augmentation<? super T>> Builder<A> augmentation(Class<A> augmentation);
+        <A extends Augmentation<? super T, A>> Builder<A> augmentation(Class<A> augmentation);
 
         @Override
         <N extends ChildOf<? super T>> Builder<N> child(Class<N> container);

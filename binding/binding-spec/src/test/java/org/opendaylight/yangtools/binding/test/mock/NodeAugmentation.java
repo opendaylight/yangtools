@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.binding.test.mock;
 
 import org.opendaylight.yangtools.binding.Augmentation;
 
-public interface NodeAugmentation extends Augmentation<Node> {
+public interface NodeAugmentation extends Augmentation<Node, NodeAugmentation> {
     @Override
     default Class<NodeAugmentation> implementedInterface() {
         return NodeAugmentation.class;

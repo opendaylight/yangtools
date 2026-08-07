@@ -63,7 +63,7 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
     }
 
     @Override
-    public <A extends Augmentation<? super T>> Builder<A> augmentation(final Class<A> augmentation) {
+    public <A extends Augmentation<? super T, A>> Builder<A> augmentation(final Class<A> augmentation) {
         return append(new NodeStep<>(augmentation));
     }
 
