@@ -13,7 +13,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
@@ -58,8 +57,7 @@ record KeyArchetypeImpl(
     private static void collectMethods(final LinkedHashMap<String, @Nullable MethodSignature> keyToMethod,
             final DataContainerArchetype archetype) {
         for (var method : archetype.getMethodDefinitions()) {
-            // FIXME: remove the && check when we emit only getters
-            if (method.statement() instanceof LeafEffectiveStatement leaf && Naming.isGetterMethodName(method.name())) {
+            if (method.statement() instanceof LeafEffectiveStatement leaf) {
                 keyToMethod.replace(leaf.argument().getLocalName(), null, method);
             }
         }

@@ -21,8 +21,9 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.NPE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.SUPPRESS_WARNINGS;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
+import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
-import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
+import static org.opendaylight.yangtools.binding.contract.Naming.toFirstLower;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
 import static org.opendaylight.yangtools.binding.model.ri.Types.OBJECT;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isListType;
@@ -35,6 +36,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
@@ -110,7 +112,9 @@ final class BuilderTemplate extends BaseTemplate {
         if (targetTemplate instanceof EntryObjectTemplate entryTarget) {
             final var key = entryTarget.key;
             final var keyMethods = key.methods().values().stream()
-                .collect(Collectors.toMap(MethodSignature::name, method -> new GetterShape(method, false)));
+                .map(method -> Map.entry(method.suffix(), method))
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                    entry -> new GetterShape(entry.getKey(), entry.getValue(), false)));
             props = new WithKey(allMethods, keyMethods.values().stream().sorted().toList(),
                 allMethods.stream().filter(getter -> !keyMethods.containsKey(getter.name())).toList(), key);
         } else {
@@ -277,9 +281,7 @@ final class BuilderTemplate extends BaseTemplate {
 
         final var bb = newBlockBuilder();
         for (var getter : ifc.getMethodDefinitions()) {
-            if (isGetterMethodName(getter.name())) {
-                bb.eol(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
-            }
+            bb.eol(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
         }
 
         for (var partial : ifc.partials()) {
@@ -292,7 +294,7 @@ final class BuilderTemplate extends BaseTemplate {
             final Set<MethodSignature> alreadySetProperties) {
         final var bb = newBlockBuilder();
         for (var getter : implementedIfc.getMethodDefinitions()) {
-            if (isGetterMethodName(getter.name()) && getterByName(alreadySetProperties, getter.name()) == null) {
+            if (getterBySuffix(alreadySetProperties, getter.suffix()) == null) {
                 bb.eol(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
             }
         }
@@ -445,7 +447,7 @@ final class BuilderTemplate extends BaseTemplate {
 
         final var bb = newBlockBuilder();
         for (var getter : ifc.getMethodDefinitions()) {
-            if (isGetterMethodName(getter.name()) && !hasOverrideAnnotation(getter)) {
+            if (!hasOverrideAnnotation(getter)) {
                 bb.eol(printPropertySetter(getter, "castArg", propertyNameFromGetter(getter)));
             }
         }
@@ -455,53 +457,56 @@ final class BuilderTemplate extends BaseTemplate {
     // FIXME: return BlockBuilder
     @NonNullByDefault
     private String printPropertySetter(final MethodSignature getter, final String receiver, final String propertyName) {
-        final var getterName = getter.name();
-
-        final var ownGetter = findGetter(getterName);
+        final var suffix = getter.suffix();
+        final var ownGetter = findGetter(suffix);
         final var ownGetterType = ownGetter.returnType();
         if (strictTypeEquals(getter.returnType(), ownGetterType)) {
-            return "this._" + propertyName + " = " + receiver + '.' + getterName + "();";
+            return "this._" + propertyName + " = " + receiver + "." + GETTER_PREFIX + suffix + "();";
         }
         if (ownGetterType instanceof ParameterizedType parameterized) {
             final var itemType = parameterized.getActualTypeArguments().getFirst();
             if (isListType(parameterized)) {
-                return printPropertySetter(getterName, receiver, propertyName, "checkListFieldCast",
+                return printPropertySetter(suffix, receiver, propertyName, "checkListFieldCast",
                     importedName(itemType));
             }
             if (isSetType(parameterized)) {
-                return printPropertySetter(getterName, receiver, propertyName, "checkSetFieldCast",
+                return printPropertySetter(suffix, receiver, propertyName, "checkSetFieldCast",
                     importedName(itemType));
             }
         }
-        return printPropertySetter(getterName, receiver, propertyName, "checkFieldCast", importedName(ownGetterType));
+        return printPropertySetter(suffix, receiver, propertyName, "checkFieldCast", importedName(ownGetterType));
     }
 
     @NonNullByDefault
-    private String printPropertySetter(final String getterName, final String receiver, final String propertyName,
+    private String printPropertySetter(final String suffix, final String receiver, final String propertyName,
             final String checkerName, final String className) {
-        return "this._" + propertyName + " = " + importedName(CODEHELPERS) + '.' + checkerName + '('
-            + className + ".class, \"" + propertyName + "\", " + receiver + '.' + getterName + "());";
+        return "this._" + propertyName + " = " + importedName(CODEHELPERS) + "." + checkerName + "("
+            + className + ".class, \"" + propertyName + "\", " + receiver + '.' + GETTER_PREFIX + suffix + "());";
     }
 
     @NonNullByDefault
-    private MethodSignature findGetter(final String getterName) {
-        final var getter = getterByName(targetType, getterName);
+    private MethodSignature findGetter(final String suffix) {
+        final var getter = getterBySuffix(targetType, suffix);
         if (getter == null) {
             throw new IllegalStateException(
                 "%s should be present in %s type or in one of its ancestors as getter".formatted(
-                    propertyNameFromGetter(getterName), targetType));
+                    toFirstLower(suffix), targetType));
         }
         return getter;
     }
 
-    private static @Nullable MethodSignature getterByName(final @NonNull DataContainerArchetype implType,
-            final @NonNull String getterName) {
-        final var getter = getterByName(implType.getMethodDefinitions(), getterName);
+    private static @NonNull String propertyNameFromGetter(final MethodSignature getter) {
+        return toFirstLower(getter.suffix());
+    }
+
+    private static @Nullable MethodSignature getterBySuffix(final @NonNull DataContainerArchetype implType,
+            final @NonNull String suffix) {
+        final var getter = getterBySuffix(implType.getMethodDefinitions(), suffix);
         if (getter != null) {
             return getter;
         }
         for (var partial : implType.partials()) {
-            final var getterImpl = getterByName(partial, getterName);
+            final var getterImpl = getterBySuffix(partial, suffix);
             if (getterImpl != null) {
                 return getterImpl;
             }
@@ -510,19 +515,14 @@ final class BuilderTemplate extends BaseTemplate {
         return null;
     }
 
-    static @Nullable MethodSignature getterByName(final @NonNull Collection<@NonNull MethodSignature> methods,
-        final @NonNull String implMethodName) {
+    static @Nullable MethodSignature getterBySuffix(final @NonNull Collection<@NonNull MethodSignature> methods,
+            final @NonNull String implSuffix) {
         for (var method : methods) {
-            final var methodName = method.name();
-            if (isGetterMethodName(methodName) && isSameProperty(method.name(), implMethodName)) {
+            if (implSuffix.equals(method.suffix())) {
                 return method;
             }
         }
         return null;
-    }
-
-    private static boolean isSameProperty(final String getterName1, final String getterName2) {
-        return propertyNameFromGetter(getterName1).equals(propertyNameFromGetter(getterName2));
     }
 
     private static boolean strictTypeEquals(final Type type1, final Type type2) {

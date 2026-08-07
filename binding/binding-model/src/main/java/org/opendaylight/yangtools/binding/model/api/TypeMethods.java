@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.contract.Naming;
 
 /**
  * Utility methods for {@link Type} implementations.
@@ -88,7 +89,7 @@ final class TypeMethods {
     @NonNullByDefault
     static String toString(final MethodSignature self) {
         final var helper = MoreObjects.toStringHelper(MethodSignature.class).omitNullValues()
-            .add("name", self.name())
+            .add("name", Naming.GETTER_PREFIX + self.suffix())
             .add("returnType", self.returnType());
         final var annotations = self.annotations();
         if (!annotations.isEmpty()) {
