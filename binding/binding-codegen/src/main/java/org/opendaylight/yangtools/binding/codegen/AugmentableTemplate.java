@@ -8,12 +8,8 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
  * Base class for code generators based on {@link AugmentableArchetype}.
@@ -22,14 +18,9 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 @NonNullByDefault
 abstract sealed class AugmentableTemplate<T extends AugmentableArchetype> extends InterfaceTemplate<T>
         permits CaseObjectTemplate, ChildOfTemplate, ContainerObjectTemplate, InstanceNotificationTemplate,
-                KeyedListNotificationTemplate, NotificationTemplate, RpcInputTemplate, RpcOutputTemplate {
-    static final ConcreteType AUGMENTABLE = ConcreteType.ofClass(Augmentable.class);
-
+                ItemObjectTemplate, KeyedListNotificationTemplate, NotificationTemplate, RpcInputTemplate,
+                RpcOutputTemplate {
     AugmentableTemplate(final DataRootArchetype root, final T archetype) {
         super(root, archetype, DataContainerContract.JAVA, true);
-    }
-
-    final Type extendsAugmentable() {
-        return ParameterizedType.of(AUGMENTABLE, archetype);
     }
 }

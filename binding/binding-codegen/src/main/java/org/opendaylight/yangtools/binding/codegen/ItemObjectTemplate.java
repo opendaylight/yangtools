@@ -10,17 +10,22 @@ package org.opendaylight.yangtools.binding.codegen;
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.ItemObject;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 
 /**
- * Template for {@link DataObject} specializations generated for {@link list} statements without a {@code key}
- * statement.
+ * Template for {@link ItemObject} specializations.
  */
 @NonNullByDefault
-final class ItemObjectTemplate extends ChildOfTemplate<ItemObjectArchetype> implements ArchetypeTemplate.WithBuilder {
+final class ItemObjectTemplate extends AugmentableTemplate<ItemObjectArchetype>
+        implements ArchetypeTemplate.WithBuilder {
+    private static final ConcreteType ITEM_OBJECT = ConcreteType.ofClass(ItemObject.class);
+
     ItemObjectTemplate(final DataRootArchetype root, final ItemObjectArchetype archetype) {
         super(root, archetype);
     }
@@ -31,8 +36,11 @@ final class ItemObjectTemplate extends ChildOfTemplate<ItemObjectArchetype> impl
     }
 
     @Override
-    Iterator<? extends Type> extendsAfterChildOf() {
-        return Iterators.forArray(extendsAugmentable(), extendsJavaDataContainer());
+    Iterator<? extends Type> extendsTypes() {
+        return Iterators.concat(
+            Iterators.singletonIterator(
+                ParameterizedType.of(ITEM_OBJECT, TypeRef.of(archetype.parentName()), archetype)),
+            super.extendsTypes());
     }
 
     @Override

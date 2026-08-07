@@ -9,12 +9,11 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.ItemObject;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
- * The {@link DataContainerArchetype} for {@link DataObject}s specializations generated for {@code list} statements
- * without a {@code key}.
+ * The {@link DataContainerArchetype} for an {@link ItemObject}.
  *
  * @since 16.0.0
  */

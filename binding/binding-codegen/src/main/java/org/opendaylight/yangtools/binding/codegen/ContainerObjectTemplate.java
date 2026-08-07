@@ -36,7 +36,8 @@ final class ContainerObjectTemplate extends AugmentableTemplate<ContainerObjectA
         return BuilderTemplate.of(this);
     }
 
-    @Override Iterator<? extends Type> extendsTypes() {
+    @Override
+    Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
             Iterators.singletonIterator(
                 ParameterizedType.of(CONTAINER_OBJECT, TypeRef.of(archetype.parentName()), archetype)),

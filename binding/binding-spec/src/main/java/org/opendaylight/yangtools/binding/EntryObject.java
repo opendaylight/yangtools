@@ -17,10 +17,11 @@ import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
  *     This interface's name is derived from 'Entry' as in 'Map.Entry', which is a connection we want to make when
  *     someone is faced with this interface. We forego the 'Map' part, as it is implied.
  *     The logic here is that {@code EntryObject} is an entry on a {@code Map<Key, EntryObject>}, whereas {@code list}
- *     statements are mapped to {@code List<ElementObject>}.
+ *     statements are mapped to {@code List<ItemObject>}.
  *
  * @param <T> {@link EntryObject} type
  * @param <K> {@link Key} type
+ * @see ItemObject
  */
 public non-sealed interface EntryObject<T extends EntryObject<T, K>, K extends Key<T>>
         extends Augmentable<T>, DataObject, KeyAware<K>, JavaDataContainer<T> {
