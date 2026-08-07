@@ -12,11 +12,11 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 @NonNullByDefault
 record MethodSignature0(
-        EffectiveStatement<?, ?> statement,
+        SchemaTreeEffectiveStatement<?> statement,
         String name,
         Type returnType) implements MethodSignature {
     MethodSignature0 {

@@ -69,7 +69,7 @@ abstract class AbstractTypeAwareGenerator<
     @Override
     final MethodSignature.Builder constructGetter(final List<MethodSignature.@NonNull Builder> list,
             final Type returnType) {
-        final var ret = super.constructGetter(list, returnType);
+        final var ret = constructGetter(list, statement(), returnType);
         if (contextType != null) {
             ret.addAnnotation(new RoutingContextAnnotation(contextType.getArchetype()));
         }
