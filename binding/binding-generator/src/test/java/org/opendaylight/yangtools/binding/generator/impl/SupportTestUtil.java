@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.List;
+import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -39,7 +40,7 @@ final class SupportTestUtil {
             boolean nameMatchFound = false;
             String typeNameFound = "";
             for (var searchedSignIn : searchedSignsIn) {
-                if (searchedSignWhat.getName().equals(searchedSignIn.name())) {
+                if (searchedSignWhat.getName().equals(Naming.GETTER_PREFIX + searchedSignIn.suffix())) {
                     nameMatchFound = true;
                     typeNameFound = resolveFullNameOfReturnType(searchedSignIn.returnType());
                     if (searchedSignWhat.getType().equals(typeNameFound)) {

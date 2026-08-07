@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
@@ -110,7 +111,9 @@ final class BuilderTemplate extends BaseTemplate {
         if (targetTemplate instanceof EntryObjectTemplate entryTarget) {
             final var key = entryTarget.key;
             final var keyMethods = key.methods().values().stream()
-                .collect(Collectors.toMap(MethodSignature::name, method -> new GetterShape(method, false)));
+                .map(method -> Map.entry(method.suffix(), method))
+                .collect(Collectors.toMap(Map.Entry::getKey,
+                    entry -> new GetterShape(entry.getKey(), entry.getValue(), false)));
             props = new WithKey(allMethods, keyMethods.values().stream().sorted().toList(),
                 allMethods.stream().filter(getter -> !keyMethods.containsKey(getter.name())).toList(), key);
         } else {

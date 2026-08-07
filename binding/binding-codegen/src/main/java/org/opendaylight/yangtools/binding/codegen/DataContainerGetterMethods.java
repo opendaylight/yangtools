@@ -8,14 +8,12 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.JavaFileTemplate.propertyNameFromGetter;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NSEE;
 import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX;
 
 import com.google.common.base.CharMatcher;
-import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -136,38 +134,35 @@ final class DataContainerGetterMethods implements BlockFragment {
         }
 
         final var method = getter.method();
-        final var getterName = method.name();
-        final var stem = getterName.substring(3);
-
         bb
             .nl()
             .txt(accessorJavadoc(method, ", guaranteed to be non-null", NSEE))
             .frg(override)
             .frg(deprecated)
-            .str("default ").str(importedNonNull(method.returnType())).str(" " + REQUIRE_PREFIX).str(stem).str("()")
+            .str("default ").str(importedNonNull(method.returnType())).str(" " + REQUIRE_PREFIX).str(method.suffix())
+                .str("()")
                 .oB()
-                .str("return ").str(importedName(CODEHELPERS)).str(".require(").str(getterName)
-                    // FIXME: property name!
-                    .str("(), ").jStr(stem.toLowerCase(Locale.ROOT)).eol(");")
+                .str("return ").str(importedName(CODEHELPERS)).str(".require(").str(getter.name())
+                    .str("(), ").jStr(getter.propName()).eol(");")
             .cB();
     }
 
     // FIXME: return a Block
-    private String accessorJavadoc(final MethodSignature method, final String orString) {
-        return accessorJavadoc(method, orString, null);
+    private String accessorJavadoc(final GetterShape getter, final String orString) {
+        return accessorJavadoc(getter, orString, null);
     }
 
     // FIXME: return a Block
-    private String accessorJavadoc(final MethodSignature method, final String orString,
+    private String accessorJavadoc(final GetterShape getter, final String orString,
             final @Nullable JavaTypeName exception) {
-        final var optDescription = method.statement()
+        final var optDescription = getter.method().statement()
             .findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class);
         if (optDescription.isEmpty()) {
-            return simpleAccessorJavadoc(method, orString, exception);
+            return simpleAccessorJavadoc(getter, orString, exception);
         }
 
         final var reference = optDescription.orElseThrow();
-        final var propName = propertyNameFromGetter(method);
+        final var propName = getter.propName();
         final var bb = template.newBlockBuilder()
             .str("Return ").str(propName).str(orString).eol(".")
             .blk(formatReference(reference))
@@ -180,9 +175,9 @@ final class DataContainerGetterMethods implements BlockFragment {
     }
 
     // FIXME: return a Block
-    private String simpleAccessorJavadoc(final MethodSignature method, final String orString,
+    private String simpleAccessorJavadoc(final GetterShape getter, final String orString,
             final @Nullable JavaTypeName exception) {
-        final var propName = propertyNameFromGetter(method);
+        final var propName = getter.propName();
 
         final var bb = template.newBlockBuilder()
             .str("{@return {@code ").str(importedType(method)).str("} ").str(propName).str(orString).eol("}");

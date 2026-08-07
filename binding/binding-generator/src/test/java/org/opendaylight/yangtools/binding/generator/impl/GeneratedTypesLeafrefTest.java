@@ -86,7 +86,7 @@ class GeneratedTypesLeafrefTest {
         assertNotNull(gtTopoMethods);
         MethodSignature condLeafref = null;
         for (var method : gtTopoMethods) {
-            if (method.name().equals("getCondLeafref")) {
+            if (method.suffix().equals("CondLeafref")) {
                 condLeafref = method;
             }
         }
@@ -113,8 +113,8 @@ class GeneratedTypesLeafrefTest {
         assertNotNull(gtIfcMethods);
         MethodSignature getHigherLayerIf = null;
         for (var method : gtIfcMethods) {
-            switch (method.name()) {
-                case "getHigherLayerIf" -> getHigherLayerIf = method;
+            switch (method.suffix()) {
+                case "HigherLayerIf" -> getHigherLayerIf = method;
                 default -> {
                     // no-op
                 }
@@ -132,7 +132,7 @@ class GeneratedTypesLeafrefTest {
         assertNotNull(gtNetworkLinkMethods);
         MethodSignature getIfc = null;
         for (var method : gtNetworkLinkMethods) {
-            if (method.name().equals("getInterface")) {
+            if (method.suffix().equals("Interface")) {
                 getIfc = method;
             }
         }
@@ -147,7 +147,7 @@ class GeneratedTypesLeafrefTest {
         assertNotNull(gtSourceMethods);
         MethodSignature getIdSource = null;
         for (var method : gtSourceMethods) {
-            if (method.name().equals("getId")) {
+            if (method.suffix().equals("Id")) {
                 getIdSource = method;
             }
         }
@@ -162,7 +162,7 @@ class GeneratedTypesLeafrefTest {
         assertNotNull(gtDestMethods);
         MethodSignature getIdDest = null;
         for (var method : gtDestMethods) {
-            if (method.name().equals("getId")) {
+            if (method.suffix().equals("Id")) {
                 getIdDest = method;
             }
         }
