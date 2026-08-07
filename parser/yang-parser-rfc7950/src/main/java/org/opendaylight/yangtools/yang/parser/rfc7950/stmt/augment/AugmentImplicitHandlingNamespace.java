@@ -10,16 +10,16 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
 
 /**
  * Helper namespace for attaching target information to augmentation statements. This is then used to ensure that
  * the effective augment has correct implicit statements created.
  */
 public final class AugmentImplicitHandlingNamespace {
-    static final ParserNamespace.@NonNull Writable<Empty, Mutable<?, ?, ?>> INSTANCE =
-        ParserNamespace.writable("augment-implicit-handling");
+    static final @NonNull UserNamespace<Empty, Mutable<?, ?, ?>> INSTANCE =
+        UserNamespace.of("augment-implicit-handling");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private AugmentImplicitHandlingNamespace() {

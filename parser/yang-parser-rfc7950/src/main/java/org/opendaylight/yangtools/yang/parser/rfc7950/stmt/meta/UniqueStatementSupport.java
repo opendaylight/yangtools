@@ -49,10 +49,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class UniqueStatementSupport
@@ -176,7 +176,7 @@ public final class UniqueStatementSupport
                     Maps.uniqueIndex(unique.getArgument(),
                         desc -> action.requiresEffectiveCtxPath(list,
                             // FIXME: why do we need this cast?
-                            (ParserNamespace.Writable) ParserNamespaces.schemaTree(), desc.getNodeIdentifiers()))));
+                            (UserNamespace) ParserNamespaces.schemaTree(), desc.getNodeIdentifiers()))));
             }
         }
 

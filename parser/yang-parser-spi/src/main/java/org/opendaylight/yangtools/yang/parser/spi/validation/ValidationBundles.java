@@ -11,7 +11,7 @@ package org.opendaylight.yangtools.yang.parser.spi.validation;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ParserNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
 
 /**
  * Namespace used for validating whether a node is of some type, e.g. usable target for some operation or has other
@@ -47,8 +47,8 @@ public final class ValidationBundles {
         SUPPORTED_DATA_NODES
     }
 
-    public static final ParserNamespace.@NonNull Writable<ValidationBundleType, Collection<?>> NAMESPACE =
-        ParserNamespace.writable("validationBundles");
+    public static final @NonNull UserNamespace<ValidationBundleType, Collection<?>> NAMESPACE =
+        UserNamespace.of("validationBundles");
 
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.global(NAMESPACE);
 

@@ -148,10 +148,10 @@ public interface ModelActionBuilder {
     default <K, D extends DeclaredStatement<?>> @NonNull Prerequisite<D> requiresDeclared(
             final StmtContext<?, ?, ?> context, final ParserNamespace<K, StmtContext<?, ? extends D, ?>> namespace,
             final K key) {
-        if (!(namespace instanceof ParserNamespace.Writable<K, StmtContext<?, ? extends D, ?>> writable)) {
+        if (!(namespace instanceof UserNamespace<K, StmtContext<?, ? extends D, ?>> user)) {
             throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
         }
-        return requiresDeclared(context, writable, key);
+        return requiresDeclared(context, user, key);
     }
 
     /**
@@ -161,7 +161,7 @@ public interface ModelActionBuilder {
      */
     @Deprecated
     <K, D extends DeclaredStatement<?>> @NonNull Prerequisite<D> requiresDeclared(StmtContext<?, ?, ?> context,
-        ParserNamespace.Writable<K, StmtContext<?, ? extends D, ?>> namespace, K key);
+        UserNamespace<K, StmtContext<?, ? extends D, ?>> namespace, K key);
 
     /**
      * Action requires that the specified context completes specified phase before {@link #apply(InferenceAction)}
@@ -177,41 +177,41 @@ public interface ModelActionBuilder {
     @Deprecated(since = "15.0.1", forRemoval = true)
     default <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresCtx(final StmtContext<?, ?, ?> context,
             final @NonNull ParserNamespace<K, C> namespace, final K key, final ModelProcessingPhase phase) {
-        if (!(namespace instanceof ParserNamespace.Writable<K, C> writable)) {
+        if (!(namespace instanceof UserNamespace<K, C> user)) {
             throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
         }
-        return requiresCtx(context, writable, key, phase);
+        return requiresCtx(context, user, key, phase);
     }
 
     <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresCtx(StmtContext<?, ?, ?> context,
-        ParserNamespace.@NonNull Writable<K, C> namespace, K key, ModelProcessingPhase phase);
+        @NonNull UserNamespace<K, C> namespace, K key, ModelProcessingPhase phase);
 
     @Deprecated(since = "15.0.1", forRemoval = true)
     default <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresCtx(final StmtContext<?, ?, ?> context,
             final @NonNull ParserNamespace<K, C> namespace, final NamespaceKeyCriterion<K> criterion,
             final ModelProcessingPhase phase) {
-        if (!(namespace instanceof ParserNamespace.Writable<K, C> writable)) {
+        if (!(namespace instanceof UserNamespace<K, C> user)) {
             throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
         }
-        return requiresCtx(context, writable, criterion, phase);
+        return requiresCtx(context, user, criterion, phase);
     }
 
     <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresCtx(StmtContext<?, ?, ?> context,
-        ParserNamespace.@NonNull Writable<K, C> namespace, NamespaceKeyCriterion<K> criterion,
+        @NonNull UserNamespace<K, C> namespace, NamespaceKeyCriterion<K> criterion,
         ModelProcessingPhase phase);
 
     @Deprecated(since = "15.0.1", forRemoval = true)
     default <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresEffectiveCtxPath(
             final StmtContext<?, ?, ?> context, final @NonNull ParserNamespace<K, C> namespace,
             final Iterable<K> keys) {
-        if (!(namespace instanceof ParserNamespace.Writable<K, C> writable)) {
+        if (!(namespace instanceof UserNamespace<K, C> user)) {
             throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
         }
-        return requiresEffectiveCtxPath(context, writable, keys);
+        return requiresEffectiveCtxPath(context, user, keys);
     }
 
     <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresEffectiveCtxPath(StmtContext<?, ?, ?> context,
-        ParserNamespace.@NonNull Writable<K, C> namespace, Iterable<K> keys);
+        @NonNull UserNamespace<K, C> namespace, Iterable<K> keys);
 
     /**
      * Action mutates the effective model of specified statement. This is a shorthand for
@@ -228,27 +228,27 @@ public interface ModelActionBuilder {
     default <K, E extends EffectiveStatement<?, ?>> @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(
             final StmtContext<?, ?, ?> context, final ParserNamespace<K, ? extends StmtContext<?, ?, ?>> namespace,
             final K key) {
-        if (!(namespace instanceof ParserNamespace.Writable<K, ? extends StmtContext<?, ?, ?>> writable)) {
+        if (!(namespace instanceof UserNamespace<K, ? extends StmtContext<?, ?, ?>> user)) {
             throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
         }
-        return mutatesEffectiveCtx(context, writable, key);
+        return mutatesEffectiveCtx(context, user, key);
     }
 
     <K, E extends EffectiveStatement<?, ?>> @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(
-        StmtContext<?, ?, ?> context, ParserNamespace.Writable<K, ? extends StmtContext<?, ?, ?>> namespace, K key);
+        StmtContext<?, ?, ?> context, UserNamespace<K, ? extends StmtContext<?, ?, ?>> namespace, K key);
 
     @Deprecated(since = "15.0.1", forRemoval = true)
     default <K, E extends EffectiveStatement<?, ?>> @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(
             final StmtContext<?, ?, ?> context, final ParserNamespace<K, ? extends StmtContext<?, ?, ?>> namespace,
             final Iterable<K> keys) {
-        if (!(namespace instanceof ParserNamespace.Writable<K, ? extends StmtContext<?, ?, ?>> writable)) {
+        if (!(namespace instanceof UserNamespace<K, ? extends StmtContext<?, ?, ?>> user)) {
             throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
         }
-        return mutatesEffectiveCtxPath(context, writable, keys);
+        return mutatesEffectiveCtxPath(context, user, keys);
     }
 
     <K, E extends EffectiveStatement<?, ?>> @NonNull Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(
-        StmtContext<?, ?, ?> context, ParserNamespace.Writable<K, ? extends StmtContext<?, ?, ?>> namespace,
+        StmtContext<?, ?, ?> context, UserNamespace<K, ? extends StmtContext<?, ?, ?>> namespace,
         Iterable<K> keys);
 
     /**
@@ -279,10 +279,10 @@ public interface ModelActionBuilder {
     @Deprecated(since = "15.0.1", forRemoval = true)
     default <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresDeclaredCtx(
             final StmtContext<?, ?, ?> context, final ParserNamespace<K, C> namespace, final K key) {
-        if (!(namespace instanceof ParserNamespace.Writable<K, C> writable)) {
+        if (!(namespace instanceof UserNamespace<K, C> user)) {
             throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
         }
-        return requiresDeclaredCtx(context, writable, key);
+        return requiresDeclaredCtx(context, user, key);
     }
 
     /**
@@ -292,7 +292,7 @@ public interface ModelActionBuilder {
      */
     @Deprecated
     <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresDeclaredCtx(StmtContext<?, ?, ?> context,
-        ParserNamespace.Writable<K, C> namespace, K key);
+        UserNamespace<K, C> namespace, K key);
 
     /**
      * Create a requirement on specified statement to become effective.
@@ -312,10 +312,10 @@ public interface ModelActionBuilder {
     default <K, E extends EffectiveStatement<?, ?>> @NonNull Prerequisite<E> requiresEffective(
             final StmtContext<?, ?, ?> context, final ParserNamespace<K, StmtContext<?, ?, ? extends E>> namespace,
             final K key) {
-        if (!(namespace instanceof ParserNamespace.Writable<K, StmtContext<?, ?, ? extends E>> writable)) {
+        if (!(namespace instanceof UserNamespace<K, StmtContext<?, ?, ? extends E>> user)) {
             throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
         }
-        return requiresEffective(context, writable, key);
+        return requiresEffective(context, user, key);
     }
 
     /**
@@ -325,7 +325,7 @@ public interface ModelActionBuilder {
      */
     @Deprecated
     <K, E extends EffectiveStatement<?, ?>> @NonNull Prerequisite<E> requiresEffective(StmtContext<?, ?, ?> context,
-        ParserNamespace.Writable<K, StmtContext<?, ?, ? extends E>> namespace, K key);
+        UserNamespace<K, StmtContext<?, ?, ? extends E>> namespace, K key);
 
     /**
      * Create a requirement on specified statement context to become effective.
@@ -335,10 +335,10 @@ public interface ModelActionBuilder {
     @Deprecated(since = "15.0.1", forRemoval = true)
     default <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresEffectiveCtx(
             final StmtContext<?, ?, ?> context, final ParserNamespace<K, C> namespace, final K key) {
-        if (!(namespace instanceof ParserNamespace.Writable<K, C> writable)) {
+        if (!(namespace instanceof UserNamespace<K, C> user)) {
             throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
         }
-        return requiresEffectiveCtx(context, writable, key);
+        return requiresEffectiveCtx(context, user, key);
     }
 
     /**
@@ -348,7 +348,7 @@ public interface ModelActionBuilder {
      */
     @Deprecated
     <K, C extends StmtContext<?, ?, ?>> @NonNull Prerequisite<C> requiresEffectiveCtx(StmtContext<?, ?, ?> context,
-        ParserNamespace.Writable<K, C> namespace, K key);
+        UserNamespace<K, C> namespace, K key);
 
     /**
      * Mark the fact that this action is mutating a namespace.
@@ -358,10 +358,10 @@ public interface ModelActionBuilder {
     @Deprecated(since = "15.0.1", forRemoval = true)
     default @NonNull Prerequisite<Mutable<?, ?, ?>> mutatesNs(final Mutable<?, ?, ?> ctx,
             final ParserNamespace<?, ?> namespace) {
-        if (!(namespace instanceof ParserNamespace.Writable<?, ?> writable)) {
+        if (!(namespace instanceof UserNamespace<?, ?> user)) {
             throw new IllegalArgumentException("requirement on non-writable namespace " + namespace);
         }
-        return mutatesNs(ctx, writable);
+        return mutatesNs(ctx, user);
     }
 
     /**
@@ -370,5 +370,5 @@ public interface ModelActionBuilder {
      * @deprecated Undocumented method. Use at your own risk.
      */
     @Deprecated
-    @NonNull Prerequisite<Mutable<?, ?, ?>> mutatesNs(Mutable<?, ?, ?> ctx, ParserNamespace.Writable<?, ?> namespace);
+    @NonNull Prerequisite<Mutable<?, ?, ?>> mutatesNs(Mutable<?, ?, ?> ctx, UserNamespace<?, ?> namespace);
 }
