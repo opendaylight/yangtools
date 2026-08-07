@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
  * @param <T> concrete {@link RpcOutput} type
  */
 // FIXME: YANGTOOLS-1921: extends ParentObject<T>
-public interface RpcInput<T extends RpcInput<T>> extends Augmentable<T>, JavaDataContainer<T>, DataObject {
+public non-sealed interface RpcInput<T extends RpcInput<T>> extends Augmentable<T>, JavaDataContainer<T>, DataObject {
     @Override
     Class<T> implementedInterface();
 }
