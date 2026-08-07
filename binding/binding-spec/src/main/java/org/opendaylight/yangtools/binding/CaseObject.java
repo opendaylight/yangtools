@@ -21,6 +21,8 @@ public non-sealed interface CaseObject<
         P extends DataContainer,
         C extends ChoiceIn<P, ? super T>,
         T extends CaseObject<P, C, T>>
+        // FIXME: not just DataObject, but also ChildOf<P>, allowing direct addressability -- but can codec deal with
+        //        that?
         extends Augmentable<T>, ChoiceContract<P, C>, DataObject, JavaDataContainer<T> {
     @Override
     default Class<T> implementedCase() {
