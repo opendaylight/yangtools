@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
@@ -55,18 +54,5 @@ final class CaseObjectTemplate extends AugmentableTemplate<CaseObjectArchetype>
     @Override
     QNameConstant constants() {
         return new QNameConstant.InInterface(this, archetype.statement().argument());
-    }
-
-    @Override
-    BlockBuilder contractMethods(final BlockBuilder bb) {
-        // FIXME: use selfref
-        final var self = archetype.canonicalName();
-
-        return super.contractMethods(bb
-            .nl()
-            .at().eol(importedName(OVERRIDE))
-            .str("default Class<").str(self).str("> implementedCase()").oB()
-                .str("return ").str(self).eol(".class;")
-            .cB());
     }
 }

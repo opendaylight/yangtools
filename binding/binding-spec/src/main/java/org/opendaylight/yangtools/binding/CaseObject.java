@@ -21,9 +21,11 @@ public non-sealed interface CaseObject<
         P extends DataContainer,
         C extends ChoiceIn<P, ? super T>,
         T extends CaseObject<P, C, T>>
-        extends Augmentable<T>, DataObject, ChoiceContract<P, C>, JavaDataContainer<T> {
+        extends Augmentable<T>, ChoiceContract<P, C>, DataObject, JavaDataContainer<T> {
     @Override
-    Class<T> implementedCase();
+    default Class<T> implementedCase() {
+        return implementedInterface();
+    }
 
     @Override
     Class<T> implementedInterface();
