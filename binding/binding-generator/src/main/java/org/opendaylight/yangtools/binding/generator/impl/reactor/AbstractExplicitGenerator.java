@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresentation;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -28,7 +27,6 @@ import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AddedByUsesAware;
 import org.opendaylight.yangtools.yang.model.api.CopyableNode;
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 import org.slf4j.Logger;
@@ -348,7 +346,6 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list, final Type returnType) {
         final var mb = MethodSignature.builder(statement, Naming.getGetterMethodName(localName().getLocalName()),
             returnType);
-        addDeprecatedAnnotation(mb, statement);
         list.add(mb);
         return mb;
     }
@@ -361,17 +358,6 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     @NonNullByDefault
     Type methodReturnType() {
         return getGeneratedType();
-    }
-
-    @NonNullByDefault
-    static final void addDeprecatedAnnotation(final MethodSignature.Builder builder,
-            final EffectiveStatement<?, ?> statement) {
-        if (statement instanceof DocumentedNode.WithStatus withStatus) {
-            final var deprecated = DeprecatedAnnotation.ofStatus(withStatus.getStatus());
-            if (deprecated != null) {
-                builder.addAnnotation(deprecated);
-            }
-        }
     }
 
     @Override

@@ -45,7 +45,6 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
-import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
@@ -219,11 +218,6 @@ final class BuilderTemplate extends BaseTemplate {
                 bb.str("private ").str(importedName(with.key)).eol(" key;");
             }
         };
-    }
-
-    @Nullable DeprecatedAnnotation deprecatedAnnotation() {
-        return targetType.statement() instanceof DocumentedNode.WithStatus withStatus
-            ? DeprecatedAnnotation.ofStatus(withStatus.getStatus()) : null;
     }
 
     private @Nullable BlockFragment generateDeprecatedAnnotation() {

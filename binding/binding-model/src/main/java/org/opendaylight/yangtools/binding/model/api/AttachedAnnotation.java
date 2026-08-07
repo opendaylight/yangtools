@@ -26,8 +26,7 @@ public sealed interface AttachedAnnotation permits AttachedAnnotation.ToMethod {
     /**
      * An annotation attached to a method, e.g. when the {@link #type()} allows use with {@link ElementType#METHOD}.
      */
-    sealed interface ToMethod extends AttachedAnnotation
-            permits DeprecatedAnnotation, OverrideAnnotation, RoutingContextAnnotation {
+    sealed interface ToMethod extends AttachedAnnotation permits OverrideAnnotation, RoutingContextAnnotation {
         @Override
         default List<ElementType> targets() {
             return List.of(ElementType.METHOD);

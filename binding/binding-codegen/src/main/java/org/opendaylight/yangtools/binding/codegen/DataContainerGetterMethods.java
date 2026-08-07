@@ -21,7 +21,6 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
-import org.opendaylight.yangtools.binding.model.api.DeprecatedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
@@ -74,11 +73,14 @@ final class DataContainerGetterMethods implements BlockFragment {
 //                bbb.at().eol(template.importedName(OVERRIDE));
 //            } :  null;
 
+            final var deprecated = DeprecatedAnnotation.of(template.javaType(), method.statement());
+
             // getFoo()
             bb
                 .txt(accessorJavadoc(method, ", or {@code null} if it is not present"))
                 .frg(generateAnnotations(method))
 //                .frg(override)
+                .frg(deprecated)
                 .str(nullableType(method.returnType())).sp().str(method.name()).eol("();");
 
             switch (method.statement()) {
@@ -89,6 +91,7 @@ final class DataContainerGetterMethods implements BlockFragment {
                         .txt(accessorJavadoc(method, ", or an empty instance if it is not present"))
                         .frg(generateAnnotations(method))
 //                        .frg(override)
+                        .frg(deprecated)
                         .str(importedNonNull(method.returnType())).str(" " + NONNULL_PREFIX).str(method.name()
                             .substring(3)).eol("();");
                 case ListEffectiveStatement stmt -> {
@@ -101,6 +104,7 @@ final class DataContainerGetterMethods implements BlockFragment {
                         .txt(accessorJavadoc(method, ", or an empty list if it is not present"))
                         .frg(generateAnnotations(method))
 //                        .frg(override)
+                        .frg(deprecated)
                         .str("default ").str(importedNonNull(method.returnType())).str(" " + NONNULL_PREFIX).str(stem)
                             .str("()")
                             .oB()
@@ -108,10 +112,10 @@ final class DataContainerGetterMethods implements BlockFragment {
                         .cB();
                 }
                 // a default requireFoo
-                case AnydataEffectiveStatement stmt -> generateRequireMethod(bb, getter, null);
-                case AnyxmlEffectiveStatement stmt -> generateRequireMethod(bb, getter, null);
-                case LeafEffectiveStatement stmt -> generateRequireMethod(bb, getter, null);
-                case LeafListEffectiveStatement stmt -> generateRequireMethod(bb, getter, null);
+                case AnydataEffectiveStatement stmt -> generateRequireMethod(bb, getter, null, deprecated);
+                case AnyxmlEffectiveStatement stmt -> generateRequireMethod(bb, getter, null, deprecated);
+                case LeafEffectiveStatement stmt -> generateRequireMethod(bb, getter, null, deprecated);
+                case LeafListEffectiveStatement stmt -> generateRequireMethod(bb, getter, null, deprecated);
                 default -> {
                     // nothing else
                 }
@@ -125,7 +129,7 @@ final class DataContainerGetterMethods implements BlockFragment {
     }
 
     private void generateRequireMethod(final BlockBuilder bb, final GetterShape getter,
-            final @Nullable BlockFragment override) {
+            final @Nullable BlockFragment override, final @Nullable DeprecatedAnnotation deprecated) {
         // FIXME: remove this bail out
         if (getter.hasOverride()) {
             return;
@@ -139,6 +143,7 @@ final class DataContainerGetterMethods implements BlockFragment {
             .nl()
             .txt(accessorJavadoc(method, ", guaranteed to be non-null", NSEE))
             .frg(override)
+            .frg(deprecated)
             .str("default ").str(importedNonNull(method.returnType())).str(" " + REQUIRE_PREFIX).str(stem).str("()")
                 .oB()
                 .str("return ").str(importedName(CODEHELPERS)).str(".require(").str(getterName)
@@ -267,11 +272,6 @@ final class DataContainerGetterMethods implements BlockFragment {
             for (var annotation : annotations) {
                 bb.at().str(importedName(annotation.type()));
                 switch (annotation) {
-                    case DeprecatedAnnotation deprecated -> {
-                        if (deprecated.forRemoval()) {
-                            bb.str("(forRemoval = true)");
-                        }
-                    }
                     case RoutingContextAnnotation routingContext -> {
                         bb.str("(value = ").str(template.importedName(routingContext.value())).str(".class)");
                     }
