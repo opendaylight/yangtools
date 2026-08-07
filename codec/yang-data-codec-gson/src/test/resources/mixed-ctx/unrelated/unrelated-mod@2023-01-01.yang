@@ -1,0 +1,13 @@
+// Shares nothing with mixed-ctx-foo -- not even the module name.
+module unrelated-mod {
+  namespace "urn:opendaylight:yangtools:unrelated-mod";
+  prefix um;
+
+  revision 2023-01-01;
+
+  container delta {
+    leaf epsilon {
+      type string;
+    }
+  }
+}
