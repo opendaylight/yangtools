@@ -13,7 +13,10 @@ package org.opendaylight.yangtools.binding;
  *
  * @author Tony Tkacik
  */
-public non-sealed interface DataObject extends DataContainer, BindingObject {
+public sealed interface DataObject extends DataContainer, BindingObject
+        permits Augmentation, CaseObject, ChildOf, EntryObject,
+                // FIXME: YANGTOOLS-1921: not these
+                InstanceNotification, Notification, RpcInput, RpcOutput {
     @Override
     Class<? extends DataObject> implementedInterface();
 }
