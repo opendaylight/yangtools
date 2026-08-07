@@ -29,8 +29,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  */
 // TODO: split this class up into reusable components, i.e. use composition instead of inheritance
 abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetype> extends ArchetypeTemplate<T>
-        permits AugmentableTemplate, AugmentationTemplate, DataRootTemplate, GroupingTemplate, NotificationBodyTemplate,
-                YangDataTemplate {
+        permits AugmentationTemplate, CaseObjectTemplate, ContainerObjectTemplate, DataRootTemplate,
+                EntryObjectTemplate, GroupingTemplate, InstanceNotificationTemplate, ItemObjectTemplate,
+                KeyedListNotificationTemplate, NotificationTemplate, NotificationBodyTemplate, RpcInputTemplate,
+                RpcOutputTemplate, YangDataTemplate {
     private static final @NonNull ConcreteType JAVA_DATACONTAINER = ConcreteType.ofClass(JavaDataContainer.class);
 
     // TODO: this should be lazily instantiated  and refcounted as it can be quite large and assuming one-time

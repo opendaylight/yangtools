@@ -21,11 +21,11 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * Template for {@link RpcOutput} specializations.
  */
 @NonNullByDefault
-final class RpcOutputTemplate extends AugmentableTemplate<RpcOutputArchetype> implements ArchetypeTemplate.WithBuilder {
+final class RpcOutputTemplate extends InterfaceTemplate<RpcOutputArchetype> implements ArchetypeTemplate.WithBuilder {
     private static final ConcreteType RPC_OUTPUT = ConcreteType.ofClass(RpcOutput.class);
 
     RpcOutputTemplate(final DataRootArchetype root, final RpcOutputArchetype archetype) {
-        super(root, archetype);
+        super(root, archetype, DataContainerContract.JAVA, true);
     }
 
     @Override

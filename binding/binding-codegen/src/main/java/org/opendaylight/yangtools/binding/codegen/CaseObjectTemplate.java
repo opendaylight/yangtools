@@ -25,15 +25,14 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
  * Template for a (non-existing) {@code CaseObject}.
  */
 @NonNullByDefault
-final class CaseObjectTemplate extends AugmentableTemplate<CaseObjectArchetype>
-        implements ArchetypeTemplate.WithBuilder {
+final class CaseObjectTemplate extends InterfaceTemplate<CaseObjectArchetype> implements ArchetypeTemplate.WithBuilder {
     private static final ConcreteType CASE_OBJECT = ConcreteType.ofClass(CaseObject.class);
 
     private final ChoiceInArchetype choiceIn;
 
     CaseObjectTemplate(final DataRootArchetype root, final CaseObjectArchetype archetype,
             final ChoiceInArchetype choiceIn) {
-        super(root, archetype);
+        super(root, archetype, DataContainerContract.JAVA, true);
         this.choiceIn = requireNonNull(choiceIn);
     }
 

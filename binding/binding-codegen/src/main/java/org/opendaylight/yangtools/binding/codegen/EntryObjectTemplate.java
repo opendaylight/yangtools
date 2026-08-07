@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
  * Template for {@link EntryObject} specializations.
  */
 @NonNullByDefault
-final class EntryObjectTemplate extends AugmentableTemplate<EntryObjectArchetype>
+final class EntryObjectTemplate extends InterfaceTemplate<EntryObjectArchetype>
         implements ArchetypeTemplate.WithBuilder {
     private static final ConcreteType CHILD_OF = ConcreteType.ofClass(ChildOf.class);
     private static final ConcreteType ENTRY_OBJECT = ConcreteType.ofClass(EntryObject.class);
@@ -34,7 +34,7 @@ final class EntryObjectTemplate extends AugmentableTemplate<EntryObjectArchetype
     final KeyArchetype key;
 
     EntryObjectTemplate(final DataRootArchetype root, final EntryObjectArchetype archetype, final KeyArchetype key) {
-        super(root, archetype);
+        super(root, archetype, DataContainerContract.JAVA, true);
         this.key = requireNonNull(key);
     }
 

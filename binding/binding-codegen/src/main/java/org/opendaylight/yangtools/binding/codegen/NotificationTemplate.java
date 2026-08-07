@@ -21,12 +21,12 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * Template for a {@link NotificationArchetype}.
  */
 @NonNullByDefault
-final class NotificationTemplate extends AugmentableTemplate<NotificationArchetype>
+final class NotificationTemplate extends InterfaceTemplate<NotificationArchetype>
         implements ArchetypeTemplate.WithBuilder {
     private static final ConcreteType NOTIFICATION = ConcreteType.ofClass(Notification.class);
 
     NotificationTemplate(final DataRootArchetype root, final NotificationArchetype archetype) {
-        super(root, archetype);
+        super(root, archetype, DataContainerContract.JAVA, true);
     }
 
     @Override

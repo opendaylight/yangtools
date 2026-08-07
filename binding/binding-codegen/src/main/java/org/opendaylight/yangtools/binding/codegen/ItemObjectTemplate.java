@@ -22,12 +22,11 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
  * Template for {@link ItemObject} specializations.
  */
 @NonNullByDefault
-final class ItemObjectTemplate extends AugmentableTemplate<ItemObjectArchetype>
-        implements ArchetypeTemplate.WithBuilder {
+final class ItemObjectTemplate extends InterfaceTemplate<ItemObjectArchetype> implements ArchetypeTemplate.WithBuilder {
     private static final ConcreteType ITEM_OBJECT = ConcreteType.ofClass(ItemObject.class);
 
     ItemObjectTemplate(final DataRootArchetype root, final ItemObjectArchetype archetype) {
-        super(root, archetype);
+        super(root, archetype, DataContainerContract.JAVA, true);
     }
 
     @Override

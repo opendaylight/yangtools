@@ -23,12 +23,12 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
  * Template for a {@link ChildOf} interface.
  */
 @NonNullByDefault
-final class ContainerObjectTemplate extends AugmentableTemplate<ContainerObjectArchetype>
+final class ContainerObjectTemplate extends InterfaceTemplate<ContainerObjectArchetype>
         implements ArchetypeTemplate.WithBuilder {
     private static final ConcreteType CONTAINER_OBJECT = ConcreteType.ofClass(ContainerObject.class);
 
     ContainerObjectTemplate(final DataRootArchetype root, final ContainerObjectArchetype archetype) {
-        super(root, archetype);
+        super(root, archetype, DataContainerContract.JAVA, true);
     }
 
     @Override
