@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.generator.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -38,7 +37,6 @@ class GeneratedTypesBitsTest {
         int classPropertiesNumb = 0;
 
         boolean getByteLeafMethodFound = false;
-        boolean setByteLeafMethodFound = false;
 
         for (var genType : genTypes) {
             if (genType instanceof TypeObjectArchetype<?> archetype) {
@@ -60,12 +58,11 @@ class GeneratedTypesBitsTest {
                 if (methodSignaturesList != null) {
                     // loop through all methods
                     for (var methodSignature : methodSignaturesList) {
-                        switch (methodSignature.name()) {
-                            case "getByteLeaf" -> {
+                        switch (methodSignature.suffix()) {
+                            case "ByteLeaf" -> {
                                 getByteLeafMethodFound = true;
                                 assertEquals("ByteType", methodSignature.returnType().simpleName());
                             }
-                            case "setByteLeaf" -> setByteLeafMethodFound = true;
                             default -> {
                                 // no-op
                             }
@@ -84,7 +81,5 @@ class GeneratedTypesBitsTest {
         assertNotNull(methodSignaturesList);
 
         assertTrue(getByteLeafMethodFound);
-
-        assertFalse(setByteLeafMethodFound);
     }
 }

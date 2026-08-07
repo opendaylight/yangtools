@@ -30,7 +30,7 @@ class Bug1862Test {
             .map(ContainerObjectArchetype.class::cast)
             .findFirst().orElseThrow()
             .getMethodDefinitions().stream()
-            .filter(method -> method.name().equals("getBug1862RestrictedTypedef"))
+            .filter(method -> method.suffix().equals("Bug1862RestrictedTypedef"))
             .findFirst().orElseThrow();
 
         final var returnType = assertInstanceOf(ScalarTypeObjectArchetype.class, fooGetter.returnType());

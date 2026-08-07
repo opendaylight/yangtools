@@ -11,13 +11,6 @@ import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.GENERATED;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NONNULL;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NULLABLE;
-import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
-import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX;
-import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX;
-import static org.opendaylight.yangtools.binding.contract.Naming.isGetterMethodName;
-import static org.opendaylight.yangtools.binding.contract.Naming.isNonnullMethodName;
-import static org.opendaylight.yangtools.binding.contract.Naming.isRequireMethodName;
-import static org.opendaylight.yangtools.binding.contract.Naming.toFirstLower;
 
 import com.google.common.base.CharMatcher;
 import java.util.regex.Pattern;
@@ -25,7 +18,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
@@ -117,24 +109,6 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
             }
             default -> null;
         };
-    }
-
-    static final @NonNull String propertyNameFromGetter(final MethodSignature getter) {
-        return propertyNameFromGetter(getter.name());
-    }
-
-    static final @NonNull String propertyNameFromGetter(final String getterName) {
-        final String prefix;
-        if (isGetterMethodName(getterName)) {
-            prefix = GETTER_PREFIX;
-        } else if (isNonnullMethodName(getterName)) {
-            prefix = NONNULL_PREFIX;
-        } else if (isRequireMethodName(getterName)) {
-            prefix = REQUIRE_PREFIX;
-        } else {
-            throw new IllegalArgumentException(getterName + " is not a getter");
-        }
-        return toFirstLower(getterName.substring(prefix.length()));
     }
 
     static String encodeJavadocSymbols(final String description) {

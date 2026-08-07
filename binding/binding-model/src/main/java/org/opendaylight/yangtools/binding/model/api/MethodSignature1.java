@@ -17,13 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
 @NonNullByDefault
 record MethodSignature1(
         SchemaTreeEffectiveStatement<?> statement,
-        String name,
         Type returnType,
         AttachedAnnotation.ToMethod annotation) implements MethodSignature {
 
     MethodSignature1 {
         requireNonNull(statement);
-        requireNonNull(name);
         requireNonNull(returnType);
         requireNonNull(annotation);
     }

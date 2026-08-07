@@ -43,8 +43,8 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
     private static final String TRANSITIVE_GROUP = "TransitiveGroup";
     private static final String UNRESOLVED_GROUPING = "UnresolvedGrouping";
 
-    private static final String GET_LEAF1_NAME = "getLeaf1";
-    private static final String GET_LEAFLIST1_NAME = "getLeafList1";
+    private static final String GET_LEAF1_NAME = "Leaf1";
+    private static final String GET_LEAFLIST1_NAME = "LeafList1";
 
     private static final String GET_LEAF1_TYPE_OBJECT = "    Object getLeaf1();";
     private static final String GET_LEAF1_TYPE_STRING = "    String getLeaf1();";
@@ -267,15 +267,15 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     private static void verifyMethodAbsence(final Class<? extends DataContainerArchetype> expected,
-            final String typeName, final String getterName) {
-        verifyReturnType(expected, typeName, getterName, null);
+            final String typeName, final String suffix) {
+        verifyReturnType(expected, typeName, suffix, null);
     }
 
     private static void verifyReturnType(final Class<? extends DataContainerArchetype> expected, final String typeName,
-            final String getterName, final Type returnType) {
+            final String suffix, final Type returnType) {
         final var generated = typeByName(expected, typeName);
         assertNotNull(generated);
-        assertEquals(returnType, returnTypeByMethodName(generated, getterName));
+        assertEquals(returnType, returnTypeByMethodSuffix(generated, suffix));
     }
 
     private static <T extends DataContainerArchetype> @Nullable T typeByName(final Class<T> expected,
@@ -288,9 +288,9 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
         return null;
     }
 
-    private static Type returnTypeByMethodName(final DataContainerArchetype type, final String name) {
+    private static Type returnTypeByMethodSuffix(final DataContainerArchetype type, final String suffix) {
         for (var m : type.getMethodDefinitions()) {
-            if (m.name().equals(name)) {
+            if (suffix.equals(m.suffix())) {
                 return m.returnType();
             }
         }
