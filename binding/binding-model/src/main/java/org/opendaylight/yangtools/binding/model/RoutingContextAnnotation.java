@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.annotations.RoutingContext;
-import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 
 /**
@@ -23,7 +22,7 @@ import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
  */
 @Beta
 @NonNullByDefault
-public record RoutingContextAnnotation(IdentityArchetype value) implements AttachedAnnotation.ToMethod {
+public record RoutingContextAnnotation(IdentityArchetype value) implements GetterAnnotation {
     private static final TypeName TYPE = TypeName.ofClass(RoutingContext.class);
 
     public RoutingContextAnnotation {
