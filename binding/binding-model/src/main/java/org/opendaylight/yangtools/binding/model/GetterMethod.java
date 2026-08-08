@@ -6,7 +6,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.api;
+package org.opendaylight.yangtools.binding.model;
 
 import static java.util.Objects.requireNonNull;
 
@@ -18,6 +18,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.impl.GetterMethod0;
 import org.opendaylight.yangtools.binding.model.impl.GetterMethod1;
 import org.opendaylight.yangtools.binding.model.impl.GetterMethodN;
@@ -55,7 +56,7 @@ public sealed interface GetterMethod extends Immutable permits GetterMethod0, Ge
      * {@return List of annotation definitions attached to this method}
      */
     @NonNullByDefault
-    List<AttachedAnnotation.ToMethod> annotations();
+    List<GetterAnnotation> annotations();
 
     // FIXME: do not take a name
     @NonNullByDefault
@@ -65,8 +66,36 @@ public sealed interface GetterMethod extends Immutable permits GetterMethod0, Ge
 
     @NonNullByDefault
     static GetterMethod of(final SchemaTreeEffectiveStatement<?> statement, final Type returnType,
-            final AttachedAnnotation.ToMethod annotation) {
+            final GetterAnnotation annotation) {
         return new GetterMethod1(statement, returnType, annotation);
+    }
+
+    @NonNullByDefault
+    static GetterMethod of(final SchemaTreeEffectiveStatement<?> statement, final Type returnType,
+            final List<GetterAnnotation> annotations) {
+        return switch (annotations.size()) {
+            case 0 -> of(statement, returnType);
+            case 1 -> of(statement, returnType, annotations.getFirst());
+            default -> {
+                final var checked = new ArrayList<GetterAnnotation>(annotations.size());
+                for (var annotation : annotations) {
+                    if (!annotation.repeatable()) {
+                        final var type = annotation.type();
+                        for (var existing : checked) {
+                            if (annotation.equals(existing)) {
+                                throw new IllegalArgumentException("Attempt to repeat " + annotation);
+                            }
+                            if (type.equals(existing.type())) {
+                                throw new IllegalArgumentException(
+                                    "Attempt to repeat " + annotation + " after " + existing);
+                            }
+                        }
+                    }
+                    checked.add(annotation);
+                }
+                yield new GetterMethodN(statement, returnType, List.copyOf(checked));
+            }
+        };
     }
 
     @Beta
@@ -86,7 +115,7 @@ public sealed interface GetterMethod extends Immutable permits GetterMethod0, Ge
         private final @NonNull SchemaTreeEffectiveStatement<?> statement;
         private final @NonNull Type returnType;
 
-        private @Nullable ArrayList<AttachedAnnotation.@NonNull ToMethod> annotations = null;
+        private @Nullable ArrayList<@NonNull GetterAnnotation> annotations = null;
 
         @NonNullByDefault
         Builder(final SchemaTreeEffectiveStatement<?> statement, final Type returnType) {
@@ -95,36 +124,24 @@ public sealed interface GetterMethod extends Immutable permits GetterMethod0, Ge
         }
 
         /**
-         * Add an {@link AttachedAnnotation.ToMethod} to this builder.
+         * Add an {@link GetterAnnotation} to this builder.
          *
-         * @param annotation the {@link AttachedAnnotation.ToMethod}
+         * @param annotation the {@link GetterAnnotation}
          * @return this instance
          */
         @NonNullByDefault
-        public Builder addAnnotation(final AttachedAnnotation.ToMethod annotation) {
+        public Builder addAnnotation(final GetterAnnotation annotation) {
             annotations = addAnnotation(annotations, requireNonNull(annotation));
             return this;
         }
 
         @NonNullByDefault
-        private static ArrayList<AttachedAnnotation.ToMethod> addAnnotation(
-                final @Nullable ArrayList<AttachedAnnotation.ToMethod> list,
-                final AttachedAnnotation.ToMethod annotation) {
+        private static ArrayList<GetterAnnotation> addAnnotation(
+                final @Nullable ArrayList<GetterAnnotation> list, final GetterAnnotation annotation) {
             if (list == null) {
-                final var ret = new ArrayList<AttachedAnnotation.ToMethod>(2);
+                final var ret = new ArrayList<GetterAnnotation>(2);
                 ret.add(annotation);
                 return ret;
-            }
-            if (!annotation.repeatable()) {
-                final var type = annotation.type();
-                for (var existing : list) {
-                    if (annotation.equals(existing)) {
-                        throw new IllegalArgumentException("Attempt to repeat " + annotation);
-                    }
-                    if (type.equals(existing.type())) {
-                        throw new IllegalArgumentException("Attempt to repeat " + annotation + " after " + existing);
-                    }
-                }
             }
             list.add(annotation);
             return list;
@@ -141,12 +158,7 @@ public sealed interface GetterMethod extends Immutable permits GetterMethod0, Ge
         @NonNullByDefault
         public GetterMethod build() {
             final var local = annotations;
-            if (local == null) {
-                return new GetterMethod0(statement, returnType);
-            }
-            return local.size() == 1
-                ? new GetterMethod1(statement, returnType, local.getFirst())
-                : new GetterMethodN(statement, returnType, List.copyOf(local));
+            return local == null ? of(statement, returnType) : of(statement, returnType, local);
         }
     }
 }

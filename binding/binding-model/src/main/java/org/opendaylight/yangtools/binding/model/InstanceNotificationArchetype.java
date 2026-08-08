@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.model;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.InstanceNotification;
-import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.impl.InstanceNotificationArchetypeFromGrouping;
 import org.opendaylight.yangtools.binding.model.impl.InstanceNotificationArchetypeImpl;
 import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
