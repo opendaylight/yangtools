@@ -22,6 +22,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 @NonNullByDefault
 public sealed interface RpcInputArchetype extends AugmentableArchetype permits RpcInputArchetypeImpl {
     @Override
+    @SuppressWarnings("rawtypes")
+    default Class<RpcInput> contract() {
+        return RpcInput.class;
+    }
+
+    @Override
     InputEffectiveStatement statement();
 
     static RpcInputArchetype of(final TypeName typeName, final InputEffectiveStatement statement,

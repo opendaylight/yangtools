@@ -23,6 +23,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 @NonNullByDefault
 public sealed interface KeyedListNotificationArchetype extends DataContainerArchetype.OfNotification
         permits KeyedListNotificationArchetypeFromGrouping, KeyedListNotificationArchetypeImpl {
+    @Override
+    @SuppressWarnings("rawtypes")
+    default Class<KeyedListNotification> contract() {
+        return KeyedListNotification.class;
+    }
+
     /**
      * {@return the {@link TypeName} of the archetype in which this notification is defined}
      */

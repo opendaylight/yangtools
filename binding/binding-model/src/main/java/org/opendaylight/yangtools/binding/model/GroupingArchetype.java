@@ -22,6 +22,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement
 @NonNullByDefault
 public sealed interface GroupingArchetype extends DataContainerArchetype.Partial permits GroupingArchetypeImpl {
     @Override
+    default Class<Grouping> contract() {
+        return Grouping.class;
+    }
+
+    @Override
     GroupingEffectiveStatement statement();
 
     static GroupingArchetype of(final TypeName typeName, final GroupingEffectiveStatement statement,

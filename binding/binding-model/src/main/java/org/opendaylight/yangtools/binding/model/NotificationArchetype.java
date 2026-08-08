@@ -22,6 +22,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 @NonNullByDefault
 public sealed interface NotificationArchetype extends DataContainerArchetype.OfNotification
         permits NotificationArchetypeImpl {
+    @Override
+    @SuppressWarnings("rawtypes")
+    default Class<Notification> contract() {
+        return Notification.class;
+    }
 
     static NotificationArchetype of(final TypeName typeName, final NotificationEffectiveStatement statement,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,

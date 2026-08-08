@@ -22,6 +22,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 @NonNullByDefault
 public sealed interface AugmentationArchetype extends DataContainerArchetype permits AugmentationArchetypeImpl {
     @Override
+    @SuppressWarnings("rawtypes")
+    default Class<Augmentation> contract() {
+        return Augmentation.class;
+    }
+
+    @Override
     AugmentEffectiveStatement statement();
 
     /**

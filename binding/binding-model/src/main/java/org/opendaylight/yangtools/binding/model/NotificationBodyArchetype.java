@@ -23,6 +23,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 public sealed interface NotificationBodyArchetype extends DataContainerArchetype.Partial
         permits NotificationBodyArchetypeImpl {
     @Override
+    @SuppressWarnings("rawtypes")
+    default Class<NotificationBody> contract() {
+        return NotificationBody.class;
+    }
+
+    @Override
     NotificationEffectiveStatement statement();
 
     static NotificationBodyArchetype of(final TypeName typeName, final NotificationEffectiveStatement statement,

@@ -9,18 +9,25 @@ package org.opendaylight.yangtools.binding.model;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.CaseObject;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.model.impl.CaseObjectArchetypeImpl;
 import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 
 /**
- * The {@link DataContainerArchetype} for individual cases in a {@link ChoiceInArchetype}.
+ * The {@link DataContainerArchetype} for {@link CaseObject} specializations.
  *
  * @since 16.0.0
  */
 @NonNullByDefault
 public sealed interface CaseObjectArchetype extends AugmentableArchetype permits CaseObjectArchetypeImpl {
+    @Override
+    @SuppressWarnings("rawtypes")
+    default Class<CaseObject> contract() {
+        return CaseObject.class;
+    }
+
     @Override
     CaseEffectiveStatement statement();
 

@@ -45,8 +45,21 @@ public sealed interface DataContainerArchetype extends Archetype
     sealed interface OfNotification extends AugmentableArchetype
             permits InstanceNotificationArchetype, KeyedListNotificationArchetype, NotificationArchetype {
         @Override
+        Class<? extends BaseNotification> contract();
+
+        @Override
         NotificationEffectiveStatement statement();
     }
+
+    /**
+     * {@return the {@link DataContainer} contract of the generated class}
+     */
+    Class<? extends DataContainer> contract();
+
+    /**
+     * {@return the list of {@link GetterMethod}s the interface defines}
+     */
+    List<GetterMethod> getters();
 
     /**
      * {@return the list of {@link Partial}s the interface represented by this archetypes {@code extends}}
@@ -57,11 +70,6 @@ public sealed interface DataContainerArchetype extends Archetype
      * {@return the {@link TypeObjectArchetype}s for inner classes}
      */
     List<TypeObjectArchetype<?>> typeObjects();
-
-    /**
-     * {@return the list of {@link GetterMethod}s the interface defines}
-     */
-    List<GetterMethod> getters();
 
     @Override
     String toString();

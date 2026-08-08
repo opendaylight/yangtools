@@ -22,6 +22,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 @NonNullByDefault
 public sealed interface ContainerObjectArchetype extends ChildOfArchetype permits ContainerObjectArchetypeImpl {
     @Override
+    @SuppressWarnings("rawtypes")
+    default Class<ContainerObject> contract() {
+        return ContainerObject.class;
+    }
+
+    @Override
     ContainerEffectiveStatement statement();
 
     static ContainerObjectArchetype of(final TypeName typeName, final ContainerEffectiveStatement statement,

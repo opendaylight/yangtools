@@ -22,6 +22,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 @NonNullByDefault
 public sealed interface DataRootArchetype extends DataContainerArchetype permits DataRootArchetypeImpl {
     @Override
+    @SuppressWarnings("rawtypes")
+    default Class<DataRoot> contract() {
+        return DataRoot.class;
+    }
+
+    @Override
     ModuleEffectiveStatement statement();
 
     static DataRootArchetype of(final TypeName typeName, final ModuleEffectiveStatement statement,

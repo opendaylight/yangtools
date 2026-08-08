@@ -22,6 +22,12 @@ import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 @NonNullByDefault
 public sealed interface YangDataArchetype extends DataContainerArchetype permits YangDataArchetypeImpl {
     @Override
+    @SuppressWarnings("rawtypes")
+    default Class<YangData> contract() {
+        return YangData.class;
+    }
+
+    @Override
     YangDataEffectiveStatement statement();
 
     static YangDataArchetype of(final TypeName typeName, final YangDataEffectiveStatement statement,

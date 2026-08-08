@@ -21,6 +21,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
  */
 @NonNullByDefault
 public sealed interface EntryObjectArchetype extends ChildOfArchetype.OfList permits EntryObjectArchetypeImpl {
+    @Override
+    @SuppressWarnings("rawtypes")
+    default Class<EntryObject> contract() {
+        return EntryObject.class;
+    }
+
     /**
      * {@return the {link KeyArchetype} associated with this archetype}
      */

@@ -22,6 +22,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 @NonNullByDefault
 public sealed interface RpcOutputArchetype extends AugmentableArchetype permits RpcOutputArchetypeImpl {
     @Override
+    @SuppressWarnings("rawtypes")
+    default Class<RpcOutput> contract() {
+        return RpcOutput.class;
+    }
+
+    @Override
     OutputEffectiveStatement statement();
 
     static RpcOutputArchetype of(final TypeName typeName, final OutputEffectiveStatement statement,
