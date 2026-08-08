@@ -17,9 +17,9 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultChoiceRuntime
 import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ChoiceInArchetype;
+import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;

@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAugmentRuntim
 import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
+import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;

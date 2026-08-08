@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.List;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
-import org.opendaylight.yangtools.binding.model.api.GetterMethod;
+import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
