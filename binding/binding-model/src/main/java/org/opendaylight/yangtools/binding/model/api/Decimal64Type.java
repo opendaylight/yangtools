@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.impl.Decimal64TypeImpl;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 
 /**
@@ -29,10 +30,6 @@ public sealed interface Decimal64Type extends ConcreteType permits Decimal64Type
      * @throws IllegalArgumentException when {@code fractionDigits} is not in range [1..18]
      */
     static Decimal64Type ofFractionDigits(final int fractionDigits) {
-        try {
-            return Decimal64TypeImpl.INSTANCES[fractionDigits - 1];
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new IllegalArgumentException("Invalid fractionDigits " + fractionDigits, e);
-        }
+        return Decimal64TypeImpl.of(fractionDigits);
     }
 }

@@ -11,6 +11,9 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ChoiceIn;
 import org.opendaylight.yangtools.binding.model.TypeName;
+import org.opendaylight.yangtools.binding.model.impl.ChoiceInArchetype0;
+import org.opendaylight.yangtools.binding.model.impl.ChoiceInArchetype1;
+import org.opendaylight.yangtools.binding.model.impl.ChoiceInArchetypeN;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 
 /**
