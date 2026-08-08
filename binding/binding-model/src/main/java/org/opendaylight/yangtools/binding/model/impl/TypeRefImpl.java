@@ -15,22 +15,28 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 
+@SuppressWarnings("removal")
+@Deprecated(since = "16.0.0", forRemoval = true)
 @NonNullByDefault
 public record TypeRefImpl(TypeName name) implements TypeRef {
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public TypeRefImpl {
         requireNonNull(name);
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @Override
     public int hashCode() {
         return TypeMethods.hashCode(this);
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @Override
     public boolean equals(final @Nullable Object obj) {
         return TypeMethods.equals(this, obj);
     }
 
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(TypeRef.class).add("name", name).toString();
