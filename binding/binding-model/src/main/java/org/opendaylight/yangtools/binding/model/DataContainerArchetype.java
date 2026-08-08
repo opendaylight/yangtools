@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.binding.BaseNotification;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.lib.ImplementedInterface;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
 
 /**
  * An {@link Archetype} for a {@link DataContainer}. Most subclasses of {@link DataContainerArchetype} represent
@@ -50,6 +51,9 @@ public sealed interface DataContainerArchetype extends Archetype
         @Override
         NotificationEffectiveStatement statement();
     }
+
+    @Override
+    SchemaTreeAwareEffectiveStatement<?, ?> statement();
 
     /**
      * {@return the {@link DataContainer} contract of the generated class}
