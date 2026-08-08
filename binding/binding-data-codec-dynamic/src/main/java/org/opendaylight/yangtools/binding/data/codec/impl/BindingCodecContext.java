@@ -184,26 +184,12 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             }
         });
 
+    @NonNullByDefault
     private final LoadingCache<Class<? extends DataObject>, DataContainerCodecContext<?, ?, ?>> childrenByClass =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
-            public DataContainerCodecContext<?, ?, ?> load(final Class<? extends DataObject> key) {
-                return switch (context.getTypes().bindingChild(JavaTypeName.create(key))) {
-                    case ChoiceRuntimeType child ->
-                        new ChoiceCodecContext<>(key.asSubclass(ChoiceIn.class), child, BindingCodecContext.this);
-                    case ContainerRuntimeType child -> child.statement().presenceStatement() == null
-                        ? new StructuralContainerCodecContext<>(key, child, BindingCodecContext.this)
-                        : new ContainerLikeCodecContext<>(key, child, BindingCodecContext.this);
-                    case ContainerLikeRuntimeType child ->
-                        new ContainerLikeCodecContext<>(key, child, BindingCodecContext.this);
-                    case ListRuntimeType.WithKey child -> MapCodecContext.of(key, child, BindingCodecContext.this);
-                    case ListRuntimeType.WithoutKey child ->
-                        new ListCodecContext<>(key, child, BindingCodecContext.this);
-                    case null -> throw DataContainerCodecContext.childNullException(context, key,
-                        "%s is not top-level item.", key);
-                    default -> throw new IncorrectNestingException(
-                        "%s is not a valid data tree child of %s", key, this);
-                };
+            public DataContainerCodecContext<?, ?, ?> load(final Class<? extends DataObject> type) {
+                return loadStreamChild(type);
             }
         });
 
@@ -278,43 +264,28 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             }
         });
 
+    @NonNullByDefault
     private final LoadingCache<Class<? extends Action<?, ?, ?>>, CachedAction> actionsByClass =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public CachedAction load(final Class<? extends Action<?, ?, ?>> action) throws Exception {
-                final var runtimeType = context.getActionDefinition(requireNonNull(action));
-                if (runtimeType == null) {
-                    throw new IllegalStateException("Schema for " + action + "  not found");
-                }
-                final var archetype = runtimeType.javaType();
-                return new CachedAction(rpcDataByClass.get(context.loadClass(archetype.input())),
-                    rpcDataByClass.get(context.loadClass(archetype.output())));
+                return loadActionCodec(action);
             }
         });
-
-    private final LoadingCache<Class<?>, NotificationCodecContext<?>> notificationsByClass = CacheBuilder.newBuilder()
-        .build(new CacheLoader<>() {
+    @NonNullByDefault
+    private final LoadingCache<Class<?>, NotificationCodecContext<?>> notificationsByClass =
+        CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
-            public NotificationCodecContext<?> load(final Class<?> key) {
-                final var runtimeType = context.getTypes().bindingChild(JavaTypeName.create(key));
-                return switch (runtimeType) {
-                    case null -> throw new IllegalArgumentException(key + " is not a known class");
-                    case NotificationRuntimeType notification ->
-                        new NotificationCodecContext<>(key, notification, BindingCodecContext.this);
-                    default -> throw new IllegalArgumentException(key + " maps to unexpected " + runtimeType);
-                };
+            public NotificationCodecContext<?> load(final Class<?> notification) {
+                return loadNotificationByClass(notification);
             }
         });
+    @NonNullByDefault
     private final LoadingCache<Absolute, NotificationCodecContext<?>> notificationsByPath =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
-            public NotificationCodecContext<?> load(final Absolute key) {
-                final var cls = context.getClassForSchema(key);
-                try {
-                    return getNotificationContext(cls.asSubclass(Notification.class));
-                } catch (ClassCastException e) {
-                    throw new IllegalArgumentException("Path " + key + " does not represent a notification", e);
-                }
+            public NotificationCodecContext<?> load(final Absolute notification) {
+                return loadNotificationByPath(notification);
             }
         });
 
@@ -667,11 +638,31 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     NotificationCodecContext<?> getNotificationContext(final Absolute notification) {
-        return getOrRethrow(notificationsByPath, notification);
+        return getOrRethrow(notificationsByPath, requireNonNull(notification));
     }
 
     private NotificationCodecContext<?> getNotificationContext(final Class<?> notification) {
-        return getOrRethrow(notificationsByClass, notification);
+        return getOrRethrow(notificationsByClass, requireNonNull(notification));
+    }
+
+    @NonNullByDefault
+    private NotificationCodecContext<?> loadNotificationByClass(final Class<?> notification) {
+        final var runtimeType = context.getTypes().bindingChild(JavaTypeName.create(notification));
+        return switch (runtimeType) {
+            case null -> throw new IllegalArgumentException(notification + " is not a known class");
+            case NotificationRuntimeType type -> new NotificationCodecContext<>(notification, type, this);
+            default -> throw new IllegalArgumentException(notification + " maps to unexpected " + runtimeType);
+        };
+    }
+
+    @NonNullByDefault
+    private NotificationCodecContext<?> loadNotificationByPath(final Absolute path) {
+        final var cls = context.getClassForSchema(path);
+        try {
+            return getNotificationContext(cls.asSubclass(Notification.class));
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Path " + path + " does not represent a notification", e);
+        }
     }
 
     private ContainerLikeCodecContext<?> getRpc(final Class<? extends DataContainer> rpcInputOrOutput) {
@@ -683,7 +674,20 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     private CachedAction getActionCodec(final Class<? extends Action<?, ?, ?>> action) {
-        return getOrRethrow(actionsByClass, action);
+        return getOrRethrow(actionsByClass, requireNonNull(action));
+    }
+
+    @NonNullByDefault
+    private CachedAction loadActionCodec(final Class<? extends Action<?, ?, ?>> action)
+            throws ClassNotFoundException, ExecutionException {
+        final var runtimeType = context.getActionDefinition(action);
+        if (runtimeType == null) {
+            throw new IllegalStateException("Schema for " + action + "  not found");
+        }
+        final var archetype = runtimeType.javaType();
+        return new CachedAction(
+            rpcDataByClass.get(context.loadClass(archetype.input())),
+            rpcDataByClass.get(context.loadClass(archetype.output())));
     }
 
     @Override
@@ -855,6 +859,23 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         final var result = Notification.class.isAssignableFrom(childClass) ? getNotificationContext(childClass)
             : getOrRethrow(childrenByClass, childClass);
         return (DataContainerCodecContext<E, ?, ?>) result;
+    }
+
+    @NonNullByDefault
+    private  DataContainerCodecContext<?, ?, ?> loadStreamChild(final Class<? extends DataObject> key) {
+        final var runtimeType = context.getTypes().bindingChild(JavaTypeName.create(key));
+        return switch (runtimeType) {
+            case null -> throw DataContainerCodecContext.childNullException(context, key,
+                "%s is not top-level item.", key);
+            case ChoiceRuntimeType child -> new ChoiceCodecContext<>(key.asSubclass(ChoiceIn.class), child, this);
+            case ContainerRuntimeType child -> child.statement().presenceStatement() == null
+                ? new StructuralContainerCodecContext<>(key, child, this)
+                : new ContainerLikeCodecContext<>(key, child, this);
+            case ContainerLikeRuntimeType child -> new ContainerLikeCodecContext<>(key, child, this);
+            case ListRuntimeType.WithKey child -> MapCodecContext.of(key, child, this);
+            case ListRuntimeType.WithoutKey child -> new ListCodecContext<>(key, child, this);
+            default -> throw new IncorrectNestingException("%s is not a valid data tree child of %s", key, this);
+        };
     }
 
     @Override
