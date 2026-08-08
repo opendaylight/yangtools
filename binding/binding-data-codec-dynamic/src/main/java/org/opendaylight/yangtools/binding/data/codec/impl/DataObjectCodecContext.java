@@ -83,6 +83,9 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
 
         final var bindingClass = getBindingClass();
 
+
+
+
         // Final bits: generate the appropriate class, As a side effect we identify what Augmentations are possible
         final List<AugmentRuntimeType> possibleAugmentations;
         final var loader = prototype().contextFactory().getLoader();
@@ -107,6 +110,9 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
             generatedClass = CodecDataObjectGenerator.generate(loader, bindingClass, analysis.leafContexts,
                 analysis.daoProperties);
         }
+
+
+
 
         // All done: acquire the constructor: it is supposed to be public
         final MethodHandle ctor;
