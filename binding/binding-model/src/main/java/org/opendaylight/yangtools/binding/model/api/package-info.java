@@ -20,3 +20,6 @@
  */
 @org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.binding.model.api;
+
+import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;

@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import java.lang.annotation.ElementType;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.RoutingContextAnnotation;
 import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
