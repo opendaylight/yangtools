@@ -277,7 +277,7 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
         YangModuleInfo infoSub3 = null;
         for (var importedModule : importedModules) {
             final var moduleInfo = assertInstanceOf(YangModuleInfo.class, importedModule);
-            String name = moduleInfo.getName().getLocalName();
+            String name = moduleInfo.name().getLocalName();
 
             switch (name) {
                 case "import-module" -> infoImport = moduleInfo;
