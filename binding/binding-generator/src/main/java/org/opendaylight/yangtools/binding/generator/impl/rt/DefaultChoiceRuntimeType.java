@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
+import org.opendaylight.yangtools.binding.model.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;

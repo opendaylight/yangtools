@@ -5,15 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.api;
+package org.opendaylight.yangtools.binding.model;
 
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.annotations.RoutingContext;
-import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation.ToMethod;
+import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
+import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 
 /**
  * An attached {@link RoutingContext} annotation.
@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation.ToMethod;
  */
 @Beta
 @NonNullByDefault
-public record RoutingContextAnnotation(IdentityArchetype value) implements ToMethod {
+public record RoutingContextAnnotation(IdentityArchetype value) implements AttachedAnnotation.ToMethod {
     private static final TypeName TYPE = TypeName.ofClass(RoutingContext.class);
 
     public RoutingContextAnnotation {

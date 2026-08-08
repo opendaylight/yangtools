@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.binding.runtime.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.ChildOfArchetype;
-import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.ChildOfArchetype;
+import org.opendaylight.yangtools.binding.model.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ItemObjectArchetype;
+import org.opendaylight.yangtools.binding.model.KeyArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**

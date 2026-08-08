@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.OpaqueObject;
+import org.opendaylight.yangtools.binding.model.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 
 /**
  * Template for a {@link OpaqueObject} interface generated for an {@code anydata} or {@code anyxml} statement.

@@ -16,7 +16,7 @@ import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FI
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BaseIdentity;
-import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 
 /**

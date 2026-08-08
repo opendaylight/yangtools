@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
-import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
+import org.opendaylight.yangtools.binding.model.RpcInputArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 
 /**

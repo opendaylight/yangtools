@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.KeyedListActionArchetype;
+import org.opendaylight.yangtools.binding.model.RpcInputArchetype;
+import org.opendaylight.yangtools.binding.model.RpcOutputArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.KeyedListActionArchetype;
-import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
-import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 /**

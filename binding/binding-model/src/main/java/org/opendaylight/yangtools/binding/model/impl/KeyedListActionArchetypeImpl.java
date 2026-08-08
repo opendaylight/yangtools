@@ -11,10 +11,10 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.KeyedListActionArchetype;
+import org.opendaylight.yangtools.binding.model.RpcInputArchetype;
+import org.opendaylight.yangtools.binding.model.RpcOutputArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.KeyedListActionArchetype;
-import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
-import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 @NonNullByDefault

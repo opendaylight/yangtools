@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
+import org.opendaylight.yangtools.binding.model.RpcOutputArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.OutputRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;

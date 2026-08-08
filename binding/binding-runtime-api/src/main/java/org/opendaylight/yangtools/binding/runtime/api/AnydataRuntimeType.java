@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
-import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
+import org.opendaylight.yangtools.binding.model.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 
 /**

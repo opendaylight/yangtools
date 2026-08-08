@@ -11,9 +11,9 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ChoiceIn;
+import org.opendaylight.yangtools.binding.model.ChoiceInArchetype;
+import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
-import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 
 /**
  * Template for a {@link ChoiceIn} interface generated for a {@code choice} statement.

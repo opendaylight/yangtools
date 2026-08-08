@@ -14,10 +14,10 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.RPC_RESULT;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.KeyedListAction;
+import org.opendaylight.yangtools.binding.model.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.KeyedListActionArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.KeyedListActionArchetype;
 
 /**
  * Template for {@link KeyedListAction} specializations.

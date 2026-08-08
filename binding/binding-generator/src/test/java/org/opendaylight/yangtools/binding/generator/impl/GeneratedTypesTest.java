@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
+import org.opendaylight.yangtools.binding.model.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class GeneratedTypesTest {

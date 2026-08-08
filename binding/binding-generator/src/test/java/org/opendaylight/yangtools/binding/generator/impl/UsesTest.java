@@ -15,15 +15,15 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
-import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
-import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.NotificationArchetype;
-import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
-import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
+import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
+import org.opendaylight.yangtools.binding.model.CaseObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
+import org.opendaylight.yangtools.binding.model.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.ItemObjectArchetype;
+import org.opendaylight.yangtools.binding.model.NotificationArchetype;
+import org.opendaylight.yangtools.binding.model.RpcInputArchetype;
+import org.opendaylight.yangtools.binding.model.RpcOutputArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class UsesTest {
