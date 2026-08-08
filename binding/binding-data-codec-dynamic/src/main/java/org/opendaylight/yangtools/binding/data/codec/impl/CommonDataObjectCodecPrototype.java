@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
@@ -38,4 +39,7 @@ abstract sealed class CommonDataObjectCodecPrototype<R extends CompositeRuntimeT
     final @NonNull DataObjectStep<?> getBindingArg() {
         return step;
     }
+
+    @NonNullByDefault
+    abstract GeneratedDataContainer generateClass(DataContainerAnalysis<R> analysis);
 }
