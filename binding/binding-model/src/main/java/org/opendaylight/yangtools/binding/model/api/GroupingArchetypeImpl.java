@@ -20,7 +20,7 @@ record GroupingArchetypeImpl(
         GroupingEffectiveStatement statement,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<MethodSignature> methodSignatures) implements GroupingArchetype {
+        List<GetterMethod> methodSignatures) implements GroupingArchetype {
     GroupingArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
@@ -30,7 +30,7 @@ record GroupingArchetypeImpl(
     }
 
     @Override
-    public List<MethodSignature> getMethodDefinitions() {
+    public List<GetterMethod> getters() {
         return methodSignatures;
     }
 

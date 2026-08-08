@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultIdentityRuntimeType;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.IdentityRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
@@ -82,7 +82,7 @@ public final class IdentityGenerator
     }
 
     @Override
-    void addAsGetterMethod(final List<MethodSignature.Builder> list) {
+    void addAsGetterMethod(final List<GetterMethod.Builder> list) {
         // identities are a separate concept
     }
 }

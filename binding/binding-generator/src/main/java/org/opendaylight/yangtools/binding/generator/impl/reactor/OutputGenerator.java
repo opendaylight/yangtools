@@ -14,9 +14,9 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultOutputRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
@@ -47,8 +47,8 @@ final class OutputGenerator
     @Override
     RpcOutputArchetype createArchetype(final JavaTypeName typeName, final OutputEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings, final List<@NonNull TypeObjectArchetype<?>> typeObjects,
-            final List<@NonNull MethodSignature> methods) {
-        return RpcOutputArchetype.of(typeName, statement, groupings, typeObjects, methods);
+            final List<@NonNull GetterMethod> getters) {
+        return RpcOutputArchetype.of(typeName, statement, groupings, typeObjects, getters);
     }
 
     @Override

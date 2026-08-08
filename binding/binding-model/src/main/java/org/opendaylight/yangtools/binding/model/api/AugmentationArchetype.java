@@ -29,8 +29,8 @@ public sealed interface AugmentationArchetype extends DataContainerArchetype per
 
     static AugmentationArchetype of(final JavaTypeName typeName, final AugmentEffectiveStatement statement,
             final AugmentableArchetype target, final List<GroupingArchetype> groupings,
-            final List<TypeObjectArchetype<?>> typeObjects, final List<MethodSignature> methods) {
+            final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters) {
         return new AugmentationArchetypeImpl(typeName, statement, target, TypeMethods.copyList(groupings),
-            TypeMethods.copyList(typeObjects), TypeMethods.copyList(methods));
+            TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));
     }
 }

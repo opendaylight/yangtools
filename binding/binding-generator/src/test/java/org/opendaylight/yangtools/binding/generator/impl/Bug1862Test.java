@@ -29,8 +29,8 @@ class Bug1862Test {
                 "org.opendaylight.yang.gen.v1.urn.opendaylight.org.test.type.provider.model.rev140912.Foo"))
             .map(ContainerObjectArchetype.class::cast)
             .findFirst().orElseThrow()
-            .getMethodDefinitions().stream()
-            .filter(method -> method.suffix().equals("Bug1862RestrictedTypedef"))
+            .getters().stream()
+            .filter(getter -> getter.suffix().equals("Bug1862RestrictedTypedef"))
             .findFirst().orElseThrow();
 
         final var returnType = assertInstanceOf(ScalarTypeObjectArchetype.class, fooGetter.returnType());

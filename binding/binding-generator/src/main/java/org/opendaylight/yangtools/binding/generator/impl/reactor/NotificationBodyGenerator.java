@@ -15,9 +15,9 @@ import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationBodyRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationBodyRuntimeType;
@@ -49,11 +49,11 @@ final class NotificationBodyGenerator
     NotificationBodyArchetype createTypeImpl(final JavaTypeName typeName,
             final NotificationEffectiveStatement statement, final List<@NonNull GroupingArchetype> groupings) {
         return NotificationBodyArchetype.of(typeName, statement, groupings, collectTypeObjects(),
-            collectMethods());
+            collectGetters());
     }
 
     @Override
-    void addAsGetterMethod(final List<MethodSignature.Builder> list) {
+    void addAsGetterMethod(final List<GetterMethod.Builder> list) {
         // Notifications are a distinct concept
     }
 

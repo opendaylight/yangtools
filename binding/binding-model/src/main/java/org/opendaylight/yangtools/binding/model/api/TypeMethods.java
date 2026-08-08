@@ -80,15 +80,15 @@ final class TypeMethods {
     }
 
     /**
-     * Implementation of {@link MethodSignature#toString()}.
+     * Implementation of {@link GetterMethod#toString()}.
      *
      * @param archetypeClass the archetype class
      * @param self the archetype
      * @return a String
      */
     @NonNullByDefault
-    static String toString(final MethodSignature self) {
-        final var helper = MoreObjects.toStringHelper(MethodSignature.class).omitNullValues()
+    static String toString(final GetterMethod self) {
+        final var helper = MoreObjects.toStringHelper(GetterMethod.class).omitNullValues()
             .add("name", Naming.GETTER_PREFIX + self.suffix())
             .add("returnType", self.returnType());
         final var annotations = self.annotations();
@@ -160,7 +160,7 @@ final class TypeMethods {
         final var helper = MoreObjects.toStringHelper(archetypeClass).add("name", self.name());
         addNonEmpty(helper, "partials", self.partials());
         addNonEmpty(helper, "typeObjects", self.typeObjects());
-        final var methods = self.getMethodDefinitions();
+        final var methods = self.getters();
         if (!methods.isEmpty()) {
             helper.add("methods", methods);
         }

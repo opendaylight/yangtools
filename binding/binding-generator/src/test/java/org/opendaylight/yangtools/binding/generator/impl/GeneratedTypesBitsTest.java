@@ -17,7 +17,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -29,7 +29,7 @@ class GeneratedTypesBitsTest {
             "/simple-bits-demo.yang"));
         assertNotNull(genTypes);
 
-        List<MethodSignature> methodSignaturesList = null;
+        List<GetterMethod> gettersList = null;
 
         boolean leafParentFound = false;
 
@@ -54,10 +54,10 @@ class GeneratedTypesBitsTest {
             } else if (genType.simpleName().equals("LeafParentContainer")) {
                 leafParentFound = true;
                 // check of methods
-                methodSignaturesList = assertInstanceOf(ContainerObjectArchetype.class, genType).getMethodDefinitions();
-                if (methodSignaturesList != null) {
+                gettersList = assertInstanceOf(ContainerObjectArchetype.class, genType).getters();
+                if (gettersList != null) {
                     // loop through all methods
-                    for (var methodSignature : methodSignaturesList) {
+                    for (var methodSignature : gettersList) {
                         switch (methodSignature.suffix()) {
                             case "ByteLeaf" -> {
                                 getByteLeafMethodFound = true;
@@ -78,7 +78,7 @@ class GeneratedTypesBitsTest {
 
         assertTrue(leafParentFound);
 
-        assertNotNull(methodSignaturesList);
+        assertNotNull(gettersList);
 
         assertTrue(getByteLeafMethodFound);
     }

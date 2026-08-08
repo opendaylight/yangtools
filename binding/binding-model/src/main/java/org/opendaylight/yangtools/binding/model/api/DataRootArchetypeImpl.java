@@ -24,13 +24,13 @@ record DataRootArchetypeImpl(
         ModuleEffectiveStatement statement,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<MethodSignature> getMethodDefinitions) implements DataRootArchetype {
+        List<GetterMethod> getters) implements DataRootArchetype {
     DataRootArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(partials);
         requireNonNull(typeObjects);
-        requireNonNull(getMethodDefinitions);
+        requireNonNull(getters);
     }
 
     @Override

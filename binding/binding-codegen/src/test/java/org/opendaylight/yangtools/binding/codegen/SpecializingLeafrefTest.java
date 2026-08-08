@@ -289,9 +289,9 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
     }
 
     private static Type returnTypeByMethodSuffix(final DataContainerArchetype type, final String suffix) {
-        for (var m : type.getMethodDefinitions()) {
-            if (suffix.equals(m.suffix())) {
-                return m.returnType();
+        for (var getter : type.getters()) {
+            if (suffix.equals(getter.suffix())) {
+                return getter.returnType();
             }
         }
         return null;

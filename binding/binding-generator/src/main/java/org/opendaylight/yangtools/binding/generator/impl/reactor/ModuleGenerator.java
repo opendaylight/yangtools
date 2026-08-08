@@ -85,7 +85,7 @@ public final class ModuleGenerator extends DataContainerGenerator<ModuleEffectiv
     @Override
     DataRootArchetype createTypeImpl(final JavaTypeName typeName, final ModuleEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings) {
-        return DataRootArchetype.of(typeName, statement, groupings, collectTypeObjects(), collectMethods());
+        return DataRootArchetype.of(typeName, statement, groupings, collectTypeObjects(), collectGetters());
     }
 
     @NonNull Member getPrefixMember() {

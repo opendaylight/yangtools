@@ -51,26 +51,17 @@ public sealed interface DataContainerArchetype extends Archetype
     /**
      * {@return the list of {@link Partial}s the interface represented by this archetypes {@code extends}}
      */
-    default List<Partial> partials() {
-        return List.of();
-    }
+    List<Partial> partials();
 
     /**
      * {@return the {@link TypeObjectArchetype}s for inner classes}
      */
-    default List<TypeObjectArchetype<?>> typeObjects() {
-        return List.of();
-    }
+    List<TypeObjectArchetype<?>> typeObjects();
 
     /**
-     * {@return the list of methods the interface defines}
+     * {@return the list of {@link GetterMethod}s the interface defines}
      */
-    // FIXME: yes, these result in methods being generated, but they are somewhat subtle, as they also imply constants
-    //        for builders, etc. Most notably, KeyArchetype is presenting a subset of these defined in its corresponding
-    //        EntryObjectArchetype
-    default List<MethodSignature> getMethodDefinitions() {
-        return List.of();
-    }
+    List<GetterMethod> getters();
 
     @Override
     String toString();

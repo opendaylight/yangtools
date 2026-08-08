@@ -115,7 +115,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
             bb.frg(constants).newLine();
         }
 
-        final var methods = archetype.getMethodDefinitions();
+        final var methods = archetype.getters();
         if (!methods.isEmpty()) {
             bb.frg(new DataContainerGetterMethods(this));
         }

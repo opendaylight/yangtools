@@ -24,8 +24,8 @@ public sealed interface ContainerObjectArchetype extends ChildOfArchetype permit
 
     static ContainerObjectArchetype of(final JavaTypeName typeName, final ContainerEffectiveStatement statement,
             final JavaTypeName parentName, final List<GroupingArchetype> groupings,
-            final List<TypeObjectArchetype<?>> typeObjects, final List<MethodSignature> methods) {
+            final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters) {
         return new ContainerObjectArchetypeImpl(typeName, statement, parentName, TypeMethods.copyList(groupings),
-            TypeMethods.copyList(typeObjects), TypeMethods.copyList(methods));
+            TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));
     }
 }

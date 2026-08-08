@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 import java.util.List;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
@@ -24,10 +24,10 @@ final class SupportTestUtil {
     }
 
     static void containsMethods(final DataContainerArchetype genType, final NameTypePattern... searchedSignsWhat) {
-        containsMethods(genType.getMethodDefinitions(), searchedSignsWhat);
+        containsMethods(genType.getters(), searchedSignsWhat);
     }
 
-    static void containsMethods(final List<MethodSignature> searchedSignsIn,
+    static void containsMethods(final List<GetterMethod> searchedSignsIn,
             final NameTypePattern... searchedSignsWhat) {
         if (searchedSignsIn == null) {
             throw new IllegalArgumentException("List of method signatures in which should be searched can't be null");

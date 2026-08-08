@@ -24,8 +24,8 @@ public sealed interface DataRootArchetype extends DataContainerArchetype permits
 
     static DataRootArchetype of(final JavaTypeName typeName, final ModuleEffectiveStatement statement,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
-            final List<MethodSignature> methods) {
+            final List<GetterMethod> getters) {
         return new DataRootArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),
-            TypeMethods.copyList(typeObjects), TypeMethods.copyList(methods));
+            TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));
     }
 }

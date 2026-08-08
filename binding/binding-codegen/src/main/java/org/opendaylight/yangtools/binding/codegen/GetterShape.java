@@ -13,22 +13,22 @@ import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
- * The code generation shape of a {@link MethodSignature}.
+ * The code generation shape of a {@link GetterMethod}.
  */
 @NonNullByDefault
 final class GetterShape implements Comparable<GetterShape> {
     private static final int GETTER_PREFIX_LENGTH = GETTER_PREFIX.length();
 
-    private final MethodSignature method;
+    private final GetterMethod method;
     private final boolean hasOverride;
     private final String name;
     private final String propName;
 
-    GetterShape(final String suffix, final MethodSignature method, final boolean hasOverride) {
+    GetterShape(final String suffix, final GetterMethod method, final boolean hasOverride) {
         this.method = requireNonNull(method);
         this.hasOverride = hasOverride;
         name = GETTER_PREFIX + requireNonNull(suffix);
@@ -36,11 +36,11 @@ final class GetterShape implements Comparable<GetterShape> {
 
     }
 
-    GetterShape(final MethodSignature method, final boolean hasOverride) {
+    GetterShape(final GetterMethod method, final boolean hasOverride) {
         this(method.suffix(), method, hasOverride);
     }
 
-    MethodSignature method() {
+    GetterMethod method() {
         return method;
     }
 

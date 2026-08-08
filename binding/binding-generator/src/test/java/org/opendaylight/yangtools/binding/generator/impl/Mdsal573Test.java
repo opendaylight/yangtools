@@ -60,7 +60,7 @@ class Mdsal573Test {
 
         final var root = assertInstanceOf(DataRootArchetype.class, generateTypes.getFirst());
         assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal573.norev", "Mdsal573Data"), root.name());
-        assertEquals(List.of(), root.getMethodDefinitions());
+        assertEquals(List.of(), root.getters());
         assertThat(root.partials()).hasSize(2);
     }
 }

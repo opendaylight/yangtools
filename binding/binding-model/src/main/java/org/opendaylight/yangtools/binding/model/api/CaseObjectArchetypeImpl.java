@@ -21,7 +21,7 @@ record CaseObjectArchetypeImpl(
         JavaTypeName parentName,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<MethodSignature> methodSignatures) implements CaseObjectArchetype {
+        List<GetterMethod> methodSignatures) implements CaseObjectArchetype {
     CaseObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
@@ -32,7 +32,7 @@ record CaseObjectArchetypeImpl(
     }
 
     @Override
-    public List<MethodSignature> getMethodDefinitions() {
+    public List<GetterMethod> getters() {
         return methodSignatures;
     }
 

@@ -19,8 +19,8 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RoutingContextAnnotation;
@@ -252,8 +252,8 @@ final class DataContainerGetterMethods implements BlockFragment {
         return !type.packageName().isEmpty();
     }
 
-    private @Nullable BlockFragment generateAnnotations(final MethodSignature method) {
-        final var annotations = method.annotations();
+    private @Nullable BlockFragment generateAnnotations(final GetterMethod getter) {
+        final var annotations = getter.annotations();
         if (annotations.isEmpty()) {
             return null;
         }

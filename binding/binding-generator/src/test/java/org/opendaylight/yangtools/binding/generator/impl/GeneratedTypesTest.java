@@ -48,8 +48,8 @@ class GeneratedTypesTest {
         }
         assertNotNull(simpleContainer);
         assertNotNull(nestedContainer);
-        assertEquals(3, simpleContainer.getMethodDefinitions().size());
-        assertEquals(2, nestedContainer.getMethodDefinitions().size());
+        assertEquals(3, simpleContainer.getters().size());
+        assertEquals(2, nestedContainer.getters().size());
 
         int getFooMethodCounter = 0;
         int getBarMethodCounter = 0;
@@ -58,19 +58,19 @@ class GeneratedTypesTest {
         String getFooMethodReturnTypeName = "";
         String getBarMethodReturnTypeName = "";
         String getNestedContainerReturnTypeName = "";
-        for (var method : simpleContainer.getMethodDefinitions()) {
-            switch (method.suffix()) {
+        for (var getter : simpleContainer.getters()) {
+            switch (getter.suffix()) {
                 case "Foo" -> {
                     getFooMethodCounter++;
-                    getFooMethodReturnTypeName = method.returnType().simpleName();
+                    getFooMethodReturnTypeName = getter.returnType().simpleName();
                 }
                 case "Bar" -> {
                     getBarMethodCounter++;
-                    getBarMethodReturnTypeName = method.returnType().simpleName();
+                    getBarMethodReturnTypeName = getter.returnType().simpleName();
                 }
                 case "NestedContainer" -> {
                     getNestedContainerCounter++;
-                    getNestedContainerReturnTypeName = method.returnType().simpleName();
+                    getNestedContainerReturnTypeName = getter.returnType().simpleName();
                 }
                 default -> {
                     // no-op
@@ -93,15 +93,15 @@ class GeneratedTypesTest {
         getFooMethodReturnTypeName = "";
         getBarMethodReturnTypeName = "";
 
-        for (var method : nestedContainer.getMethodDefinitions()) {
-            switch (method.suffix()) {
+        for (var getter : nestedContainer.getters()) {
+            switch (getter.suffix()) {
                 case "Foo" -> {
                     getFooMethodCounter++;
-                    getFooMethodReturnTypeName = method.returnType().simpleName();
+                    getFooMethodReturnTypeName = getter.returnType().simpleName();
                 }
                 case "Bar" -> {
                     getBarMethodCounter++;
-                    getBarMethodReturnTypeName = method.returnType().simpleName();
+                    getBarMethodReturnTypeName = getter.returnType().simpleName();
                 }
                 default -> {
                     // no-op
@@ -137,8 +137,8 @@ class GeneratedTypesTest {
 
         assertNotNull(simpleContainer);
         assertNotNull(nestedContainer);
-        assertEquals(3, simpleContainer.getMethodDefinitions().size());
-        assertEquals(2, nestedContainer.getMethodDefinitions().size());
+        assertEquals(3, simpleContainer.getters().size());
+        assertEquals(2, nestedContainer.getters().size());
 
         int getFooMethodCounter = 0;
         int getBarMethodCounter = 0;
@@ -147,19 +147,19 @@ class GeneratedTypesTest {
         String getFooMethodReturnTypeName = "";
         String getBarMethodReturnTypeName = "";
         String getNestedContainerReturnTypeName = "";
-        for (var method : simpleContainer.getMethodDefinitions()) {
-            switch (method.suffix()) {
+        for (var getter : simpleContainer.getters()) {
+            switch (getter.suffix()) {
                 case "Foo" -> {
                     getFooMethodCounter++;
-                    getFooMethodReturnTypeName = method.returnType().simpleName();
+                    getFooMethodReturnTypeName = getter.returnType().simpleName();
                 }
                 case "Bar" -> {
                     getBarMethodCounter++;
-                    getBarMethodReturnTypeName = method.returnType().simpleName();
+                    getBarMethodReturnTypeName = getter.returnType().simpleName();
                 }
                 case "NestedContainer" -> {
                     getNestedContainerCounter++;
-                    getNestedContainerReturnTypeName = method.returnType().simpleName();
+                    getNestedContainerReturnTypeName = getter.returnType().simpleName();
                 }
                 default -> {
                     // no-op
@@ -182,15 +182,15 @@ class GeneratedTypesTest {
         getFooMethodReturnTypeName = "";
         getBarMethodReturnTypeName = "";
 
-        for (var method : nestedContainer.getMethodDefinitions()) {
-            switch (method.suffix()) {
+        for (var getter : nestedContainer.getters()) {
+            switch (getter.suffix()) {
                 case "Foo" -> {
                     getFooMethodCounter++;
-                    getFooMethodReturnTypeName = method.returnType().simpleName();
+                    getFooMethodReturnTypeName = getter.returnType().simpleName();
                 }
                 case "Bar" -> {
                     getBarMethodCounter++;
-                    getBarMethodReturnTypeName = method.returnType().simpleName();
+                    getBarMethodReturnTypeName = getter.returnType().simpleName();
                 }
                 default -> {
                     // no-op
@@ -239,10 +239,8 @@ class GeneratedTypesTest {
                 }
                 case ContainerObjectArchetype archetype -> {
                     switch (archetype.simpleName()) {
-                        case "ListParentContainer" ->
-                            listParentContainerMethodsCount = archetype.getMethodDefinitions().size();
-                        case "ListChildContainer" ->
-                            listChildContainerMethodsCount = archetype.getMethodDefinitions().size();
+                        case "ListParentContainer" -> listParentContainerMethodsCount = archetype.getters().size();
+                        case "ListChildContainer" -> listChildContainerMethodsCount = archetype.getters().size();
                         default -> {
                             // no-op
                         }
@@ -254,12 +252,12 @@ class GeneratedTypesTest {
                             "org.opendaylight.yang.gen.v1.urn.simple.container.demo.rev130227.list.parent.container",
                             "SimpleListKey"), archetype.keyName());
 
-                        simpleListMethodsCount = archetype.getMethodDefinitions().size();
-                        for (var method : archetype.getMethodDefinitions()) {
-                            switch (method.suffix()) {
+                        simpleListMethodsCount = archetype.getters().size();
+                        for (var getter : archetype.getters()) {
+                            switch (getter.suffix()) {
                                 case "ListChildContainer":
                                     getListChildContainerMethodCount++;
-                                    getListChildContainerMethodReturnTypeName = method.returnType().simpleName();
+                                    getListChildContainerMethodReturnTypeName = getter.returnType().simpleName();
                                     break;
                                 case "Foo":
                                     getFooMethodCount++;

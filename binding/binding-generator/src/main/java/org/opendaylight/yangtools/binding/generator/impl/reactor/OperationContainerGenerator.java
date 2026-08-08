@@ -12,9 +12,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
@@ -67,10 +67,10 @@ abstract sealed class OperationContainerGenerator<
             //        output = context.addAliasType(origContext, orig.getOutput(), action.getOutput());
             throw new UnsupportedOperationException("Lookup in original");
         }
-        return createArchetype(typeName, statement, groupings, collectTypeObjects(), collectMethods());
+        return createArchetype(typeName, statement, groupings, collectTypeObjects(), collectGetters());
     }
 
     @NonNullByDefault
     abstract @NonNull A createArchetype(JavaTypeName typeName, @NonNull S statement, List<GroupingArchetype> groupings,
-        List<TypeObjectArchetype<?>> typeObjects, List<MethodSignature> methods);
+        List<TypeObjectArchetype<?>> typeObjects, List<GetterMethod> getters);
 }

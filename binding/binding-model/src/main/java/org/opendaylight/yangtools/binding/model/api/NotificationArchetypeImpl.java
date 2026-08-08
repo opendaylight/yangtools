@@ -20,7 +20,7 @@ record NotificationArchetypeImpl(
         NotificationEffectiveStatement statement,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<MethodSignature> methodSignatures) implements NotificationArchetype {
+        List<GetterMethod> methodSignatures) implements NotificationArchetype {
     NotificationArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
@@ -30,7 +30,7 @@ record NotificationArchetypeImpl(
     }
 
     @Override
-    public List<MethodSignature> getMethodDefinitions() {
+    public List<GetterMethod> getters() {
         return methodSignatures;
     }
 

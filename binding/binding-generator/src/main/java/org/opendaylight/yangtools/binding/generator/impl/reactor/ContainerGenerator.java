@@ -14,9 +14,9 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultContainerRuntimeType;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
@@ -44,7 +44,7 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     }
 
     @Override
-    MethodSignature.Builder constructGetter(final List<MethodSignature.@NonNull Builder> list, final Type returnType) {
+    GetterMethod.Builder constructGetter(final List<GetterMethod.@NonNull Builder> list, final Type returnType) {
         return constructGetter(list, statement(), returnType);
     }
 
@@ -52,7 +52,7 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     ContainerObjectArchetype createTypeImpl(final JavaTypeName typeName, final ContainerEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings) {
         return ContainerObjectArchetype.of(typeName, statement, parentNameForChildOf(), groupings, collectTypeObjects(),
-            collectMethods());
+            collectGetters());
     }
 
     @Override

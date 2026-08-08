@@ -63,8 +63,8 @@ import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
@@ -319,7 +319,7 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
         };
     }
 
-    private @NonNull MethodSignature getMethod(final String methodName) {
+    private @NonNull GetterMethod getMethod(final String methodName) {
         final var method = lookupMethod(archetype, methodName);
         if (method == null) {
             throw new VerifyException("No method for " + methodName + " in " + archetype);
@@ -327,9 +327,9 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
         return method;
     }
 
-    private static @Nullable MethodSignature lookupMethod(final DataContainerArchetype archetype,
+    private static @Nullable GetterMethod lookupMethod(final DataContainerArchetype archetype,
             final String methodName) {
-        for (var method : archetype.getMethodDefinitions()) {
+        for (var method : archetype.getters()) {
             if (methodName.equals(Naming.GETTER_PREFIX + method.suffix())) {
                 return method;
             }

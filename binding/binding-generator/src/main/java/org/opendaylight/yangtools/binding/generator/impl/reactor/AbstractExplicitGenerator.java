@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresentation;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
@@ -323,7 +323,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    void addAsGetterMethod(final List<MethodSignature.Builder> list) {
+    void addAsGetterMethod(final List<GetterMethod.Builder> list) {
         if (isAugmenting()) {
             // Do not process augmented nodes: they will be taken care of in their home augmentation
             return;
@@ -342,12 +342,12 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list, final Type returnType) {
+    GetterMethod.Builder constructGetter(final List<GetterMethod.Builder> list, final Type returnType) {
         throw new VerifyException("Attempted to construct getter for " + this);
     }
 
     @NonNullByDefault
-    static final MethodSignature.Builder constructGetter(final List<MethodSignature.Builder> list,
+    static final GetterMethod.Builder constructGetter(final List<GetterMethod.Builder> list,
             final SchemaTreeEffectiveStatement<?> statement,  final Type returnType) {
         // FIXME: This method assumes a injective mapping from YANG identifier to method suffix. That is not the case,
         //        as we have dealt with a similar problem for class names, where we have the whol NamingStrategy thing
@@ -369,13 +369,13 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         //       In the mean time MethodSignature derives the suffix via Naming.getGetterMethodName(QName), but retains
         //       it as an API detail. If/when we have a solution, it is a simple matter of providing a separate builder
         //       and supply the suffix into it.
-        final var mb = MethodSignature.builder(statement, returnType);
+        final var mb = GetterMethod.builder(statement, returnType);
         list.add(mb);
         return mb;
     }
 
     @NonNullByDefault
-    void addAsGetterMethodOverride(final List<MethodSignature.Builder> list) {
+    void addAsGetterMethodOverride(final List<GetterMethod.Builder> list) {
         // No-op for most cases
     }
 

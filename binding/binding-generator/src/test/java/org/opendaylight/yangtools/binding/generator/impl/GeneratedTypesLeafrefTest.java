@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -82,9 +82,9 @@ class GeneratedTypesLeafrefTest {
         assertNotNull(gtTopology);
 
         // Topology
-        final var gtTopoMethods = gtTopology.getMethodDefinitions();
+        final var gtTopoMethods = gtTopology.getters();
         assertNotNull(gtTopoMethods);
-        MethodSignature condLeafref = null;
+        GetterMethod condLeafref = null;
         for (var method : gtTopoMethods) {
             if (method.suffix().equals("CondLeafref")) {
                 condLeafref = method;
@@ -109,9 +109,9 @@ class GeneratedTypesLeafrefTest {
         assertEquals(JavaTypeName.create(
             "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces", "InterfaceKey"),
             gtIfc.keyName());
-        final var gtIfcMethods = gtIfc.getMethodDefinitions();
+        final var gtIfcMethods = gtIfc.getters();
         assertNotNull(gtIfcMethods);
-        MethodSignature getHigherLayerIf = null;
+        GetterMethod getHigherLayerIf = null;
         for (var method : gtIfcMethods) {
             switch (method.suffix()) {
                 case "HigherLayerIf" -> getHigherLayerIf = method;
@@ -128,9 +128,9 @@ class GeneratedTypesLeafrefTest {
         assertEquals("Set", getHigherLayerIfType.simpleName());
 
         // NetworkLink
-        final var gtNetworkLinkMethods = gtNetworkLink.getMethodDefinitions();
+        final var gtNetworkLinkMethods = gtNetworkLink.getters();
         assertNotNull(gtNetworkLinkMethods);
-        MethodSignature getIfc = null;
+        GetterMethod getIfc = null;
         for (var method : gtNetworkLinkMethods) {
             if (method.suffix().equals("Interface")) {
                 getIfc = method;
@@ -143,9 +143,9 @@ class GeneratedTypesLeafrefTest {
         assertEquals("String", getIfcType.simpleName());
 
         // SourceNode
-        final var gtSourceMethods = gtSource.getMethodDefinitions();
+        final var gtSourceMethods = gtSource.getters();
         assertNotNull(gtSourceMethods);
-        MethodSignature getIdSource = null;
+        GetterMethod getIdSource = null;
         for (var method : gtSourceMethods) {
             if (method.suffix().equals("Id")) {
                 getIdSource = method;
@@ -158,9 +158,9 @@ class GeneratedTypesLeafrefTest {
         assertEquals("Uri", getIdType.simpleName());
 
         // DestinationNode
-        final var gtDestMethods = gtDest.getMethodDefinitions();
+        final var gtDestMethods = gtDest.getters();
         assertNotNull(gtDestMethods);
-        MethodSignature getIdDest = null;
+        GetterMethod getIdDest = null;
         for (var method : gtDestMethods) {
             if (method.suffix().equals("Id")) {
                 getIdDest = method;
@@ -176,7 +176,7 @@ class GeneratedTypesLeafrefTest {
         assertEquals(JavaTypeName.create("""
             org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.network.links.network.link.\
             tunnels""", "TunnelKey"), gtTunnel.keyName());
-        assertThat(gtTunnel.getMethodDefinitions()).hasSize(1);
+        assertThat(gtTunnel.getters()).hasSize(1);
 
         // TunnelKey
         final var gtTunnelKeyProps = gtTunnelKey.methods();

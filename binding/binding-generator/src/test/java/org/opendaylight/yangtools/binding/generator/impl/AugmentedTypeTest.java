@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -65,8 +65,8 @@ class AugmentedTypeTest {
             "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
             "InterfaceKey"), gtInterface.keyName());
 
-        MethodSignature getHigherLayerIfMethod = null;
-        for (var method : gtInterface.getMethodDefinitions()) {
+        GetterMethod getHigherLayerIfMethod = null;
+        for (var method : gtInterface.getters()) {
             if (method.suffix().equals("HigherLayerIf")) {
                 getHigherLayerIfMethod = method;
                 break;
@@ -79,7 +79,7 @@ class AugmentedTypeTest {
         assertNotNull(gtInterfaceKey, "InterfaceKey is null");
         final var methods = gtInterfaceKey.methods();
         assertNotNull(methods, "properties is null");
-        MethodSignature gtInterfaceId = methods.get("interface-id");
+        final var gtInterfaceId = methods.get("interface-id");
         assertNotNull(gtInterfaceId, "interfaceId is null");
         assertEquals(BaseYangTypes.STRING_TYPE, gtInterfaceId.returnType());
 
@@ -88,7 +88,7 @@ class AugmentedTypeTest {
         assertEquals(JavaTypeName.create("""
             org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.network.links.network.\
             link.tunnels""", "TunnelKey"), gtTunnel.keyName());
-        assertThat(gtTunnel.getMethodDefinitions()).hasSize(2);
+        assertThat(gtTunnel.getters()).hasSize(2);
 
         // 'TunnelKey'
         assertNotNull(gtTunnelKey, "TunnelKey is null");
@@ -103,10 +103,10 @@ class AugmentedTypeTest {
         // 'NetworkLink2'
         assertNotNull(gtNetworkLink2, "NetworkLink2 is null");
 
-        final var networkLink2Methods = gtNetworkLink2.getMethodDefinitions();
+        final var networkLink2Methods = gtNetworkLink2.getters();
         assertNotNull(networkLink2Methods, "NetworkLink2 methods are null");
 
-        MethodSignature getIfcMethod = null;
+        GetterMethod getIfcMethod = null;
         for (var method : networkLink2Methods) {
             if (method.suffix().equals("Interface")) {
                 getIfcMethod = method;

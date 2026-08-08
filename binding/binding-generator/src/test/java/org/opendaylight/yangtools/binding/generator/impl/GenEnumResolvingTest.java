@@ -56,15 +56,12 @@ class GenEnumResolvingTest {
             "Enum LinkUpDownTrapEnable MUST contain 2 values!");
         assertEquals(7, operStatus.valueToConstant().size(), "Enum OperStatus MUST contain 7 values!");
 
-        final var methods = genInterface.getMethodDefinitions();
-
-        assertNotNull(methods, "Generated Interface cannot contain NULL reference for Method Signature Definitions!");
-
-        assertEquals(14, methods.size());
+        final var getters = genInterface.getters();
+        assertEquals(14, getters.size());
         EnumTypeObjectArchetype ianaIfType = null;
-        for (var method : methods) {
-            if (method.suffix().equals("Type")) {
-                if (method.returnType() instanceof EnumTypeObjectArchetype enumeration) {
+        for (var getter : getters) {
+            if (getter.suffix().equals("Type")) {
+                if (getter.returnType() instanceof EnumTypeObjectArchetype enumeration) {
                     ianaIfType = enumeration;
                 }
             }
@@ -105,7 +102,7 @@ class GenEnumResolvingTest {
 
         EnumTypeObjectArchetype linkUpDownTrapEnable = null;
         EnumTypeObjectArchetype operStatus = null;
-        final var methods = genInterface.getMethodDefinitions();
+        final var methods = genInterface.getters();
         assertNotNull(methods, "Generated Type Interface cannot contain NULL reference to Enumeration types!");
 
         assertEquals(4, methods.size());

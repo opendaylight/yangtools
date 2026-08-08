@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 
 /**
  * A {@link BlockFragment} emitting getter methods for a {@link DataContainerArchetype}.
@@ -34,28 +34,28 @@ record DataContainerGetters(List<GetterShape> methods, List<GetterShape> partial
 
     static DataContainerGetters of(final DataContainerArchetype archetype) {
         // traverse the DataContainerArchetype's partials and collect their methods
-        final var partials = new HashMap<String, MethodSignature>();
+        final var partials = new HashMap<String, GetterMethod>();
         for (var partial : archetype.partials()) {
             collectPartialMethods(partials, partial);
         }
 
-        final var methods = archetype.getMethodDefinitions();
-        final var nameToSpec = LinkedHashMap.<String, GetterShape>newLinkedHashMap(methods.size());
-        for (var method : methods) {
-            final var suffix = method.suffix();
-            verify(nameToSpec.put(suffix, new GetterShape(method, partials.containsKey(suffix))) == null);
+        final var getters = archetype.getters();
+        final var nameToShape = LinkedHashMap.<String, GetterShape>newLinkedHashMap(getters.size());
+        for (var getter : getters) {
+            final var suffix = getter.suffix();
+            verify(nameToShape.put(suffix, new GetterShape(getter, partials.containsKey(suffix))) == null);
         }
-        return new DataContainerGetters(List.copyOf(nameToSpec.values()), partials.values().stream()
+        return new DataContainerGetters(List.copyOf(nameToShape.values()), partials.values().stream()
             // FIXME: duplicate suffix construction
-            .filter(method -> !nameToSpec.containsKey(method.suffix()))
+            .filter(method -> !nameToShape.containsKey(method.suffix()))
             .map(method -> new GetterShape(method, true))
             .toList());
     }
 
-    private static void collectPartialMethods(final HashMap<String, MethodSignature> partials,
+    private static void collectPartialMethods(final HashMap<String, GetterMethod> partials,
             final DataContainerArchetype.Partial archetype) {
-        for (var method : archetype.getMethodDefinitions()) {
-            partials.putIfAbsent(method.suffix(), method);
+        for (var getter : archetype.getters()) {
+            partials.putIfAbsent(getter.suffix(), getter);
         }
         for (var partial : archetype.partials()) {
             collectPartialMethods(partials, partial);

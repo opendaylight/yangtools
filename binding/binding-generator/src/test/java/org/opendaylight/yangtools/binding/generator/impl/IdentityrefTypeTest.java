@@ -52,10 +52,10 @@ class IdentityrefTypeTest {
             .findFirst()
             .orElseThrow());
 
-        var methodSignatures = moduleGenType.getMethodDefinitions();
-        assertEquals(1, methodSignatures.size());
+        var getters = moduleGenType.getters();
+        assertEquals(1, getters.size());
 
-        var methodSignature = methodSignatures.getFirst();
+        var methodSignature = getters.getFirst();
         assertEquals("Lf", methodSignature.suffix());
         assertEquals("org.opendaylight.yang.gen.v1.urn.identityref.module.rev131109.SomeIdentity",
             methodSignature.returnType().canonicalName());

@@ -21,7 +21,7 @@ record InstanceNotificationArchetypeImpl(
         JavaTypeName parentName,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<MethodSignature> methodSignatures) implements InstanceNotificationArchetype {
+        List<GetterMethod> methodSignatures) implements InstanceNotificationArchetype {
     InstanceNotificationArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
@@ -32,7 +32,7 @@ record InstanceNotificationArchetypeImpl(
     }
 
     @Override
-    public List<MethodSignature> getMethodDefinitions() {
+    public List<GetterMethod> getters() {
         return methodSignatures;
     }
 

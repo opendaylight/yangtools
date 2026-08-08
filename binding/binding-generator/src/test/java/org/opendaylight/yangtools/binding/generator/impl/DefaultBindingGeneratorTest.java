@@ -29,9 +29,9 @@ import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
@@ -79,7 +79,7 @@ public class DefaultBindingGeneratorTest {
     @Test
     void javaTypeForSchemaDefinitionLeafrefToEnumType() {
         final var bData = assertInstanceOf(DataRootArchetype.class, assertGeneratedType(TEST_TYPE_PROVIDER_B_DATA));
-        final var bDataMethods = bData.getMethodDefinitions();
+        final var bDataMethods = bData.getters();
         assertEquals(4, bDataMethods.size());
 
         final var bEnumType = assertInstanceOf(EnumTypeObjectArchetype.class,
@@ -316,14 +316,14 @@ public class DefaultBindingGeneratorTest {
                 .returnType());
     }
 
-    private static <A extends DataContainerArchetype> MethodSignature assertGeneratedMethod(final JavaTypeName typeName,
+    private static <A extends DataContainerArchetype> GetterMethod assertGeneratedMethod(final JavaTypeName typeName,
             final Class<A> archetypeClass, final String methodName) {
         return assertGeneratedMethod(
-            assertInstanceOf(archetypeClass, assertGeneratedType(typeName)).getMethodDefinitions(), methodName);
+            assertInstanceOf(archetypeClass, assertGeneratedType(typeName)).getters(), methodName);
     }
 
-    private static MethodSignature assertGeneratedMethod(final List<MethodSignature> methods, final String name) {
-        return methods.stream().filter(method -> name.equals(Naming.GETTER_PREFIX + method.suffix()))
+    private static GetterMethod assertGeneratedMethod(final List<GetterMethod> getters, final String name) {
+        return getters.stream().filter(method -> name.equals(Naming.GETTER_PREFIX + method.suffix()))
             .findFirst()
             .orElseThrow(() -> new AssertionError("Method " + name + " not present"));
     }

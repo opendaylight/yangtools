@@ -46,10 +46,10 @@ class Mdsal320Test {
         final var bar1 = assertInstanceOf(UnionTypeObjectArchetype.class, barTypes.getLast());
         assertEquals("Bar$1", bar1.simpleName());
 
-        final var fooMethods = foo.getMethodDefinitions();
-        assertEquals(1, fooMethods.size());
+        final var fooGetters = foo.getters();
+        assertEquals(1, fooGetters.size());
 
-        final var getBar = fooMethods.getFirst();
+        final var getBar = fooGetters.getFirst();
         final var getBarType = assertInstanceOf(UnionTypeObjectArchetype.class, getBar.returnType());
         assertEquals(bar, getBarType);
 

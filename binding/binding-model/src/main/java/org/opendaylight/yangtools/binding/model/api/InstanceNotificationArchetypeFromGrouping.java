@@ -38,7 +38,7 @@ record InstanceNotificationArchetypeFromGrouping(
     }
 
     @Override
-    public List<MethodSignature> getMethodDefinitions() {
+    public List<GetterMethod> getters() {
         return List.of();
     }
 

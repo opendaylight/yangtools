@@ -24,8 +24,8 @@ public sealed interface GroupingArchetype extends DataContainerArchetype.Partial
 
     static GroupingArchetype of(final JavaTypeName typeName, final GroupingEffectiveStatement statement,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
-            final List<MethodSignature> methods) {
+            final List<GetterMethod> getters) {
         return new GroupingArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),
-            TypeMethods.copyList(typeObjects), TypeMethods.copyList(methods));
+            TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));
     }
 }

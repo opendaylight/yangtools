@@ -102,21 +102,21 @@ class YT1681Test {
             }"""));
         assertEquals(2, types.size());
 
-        final var neighborMethods = types.stream()
+        final var neighborGetters = types.stream()
             .filter(type -> type.simpleName().equals("Neighbor"))
             .findFirst()
             .map(ItemObjectArchetype.class::cast)
             .orElseThrow()
-            .getMethodDefinitions();
-        assertEquals(5, neighborMethods.size());
+            .getters();
+        assertEquals(5, neighborGetters.size());
 
-        final var getNeighborId = neighborMethods.stream()
+        final var getNeighborId = neighborGetters.stream()
             .filter(method -> method.suffix().equals("NeighborId"))
             .findFirst()
             .orElseThrow();
         assertEquals(BaseYangTypes.STRING_TYPE, getNeighborId.returnType());
 
-        final var getNeighbor2Id = neighborMethods.stream()
+        final var getNeighbor2Id = neighborGetters.stream()
             .filter(method -> method.suffix().equals("Neighbor2Id"))
             .findFirst()
             .orElseThrow();

@@ -28,7 +28,7 @@ record KeyArchetypeImpl(
     }
 
     @Override
-    public Map<String, MethodSignature> methods() {
+    public Map<String, GetterMethod> methods() {
         return collectMethods(statement.argument(), entryObject);
     }
 
@@ -44,9 +44,9 @@ record KeyArchetypeImpl(
 
     // TODO: iteration order needs to match argument declaration order to retain compatibility, but perhaps we can
     //       relax that
-    static LinkedHashMap<String, @Nullable MethodSignature> collectMethods(final KeyArgument keyArgument,
+    static LinkedHashMap<String, @Nullable GetterMethod> collectMethods(final KeyArgument keyArgument,
             final EntryObjectArchetype entryObject) {
-        final var keyToMethod = LinkedHashMap.<String, @Nullable MethodSignature>newLinkedHashMap(keyArgument.size());
+        final var keyToMethod = LinkedHashMap.<String, @Nullable GetterMethod>newLinkedHashMap(keyArgument.size());
         for (var qname : keyArgument) {
             keyToMethod.put(qname.getLocalName(), null);
         }
@@ -54,9 +54,9 @@ record KeyArchetypeImpl(
         return keyToMethod;
     }
 
-    private static void collectMethods(final LinkedHashMap<String, @Nullable MethodSignature> keyToMethod,
+    private static void collectMethods(final LinkedHashMap<String, @Nullable GetterMethod> keyToMethod,
             final DataContainerArchetype archetype) {
-        for (var method : archetype.getMethodDefinitions()) {
+        for (var method : archetype.getters()) {
             if (method.statement() instanceof LeafEffectiveStatement leaf) {
                 keyToMethod.replace(leaf.argument().getLocalName(), null, method);
             }

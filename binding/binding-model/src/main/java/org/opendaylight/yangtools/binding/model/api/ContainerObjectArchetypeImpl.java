@@ -21,7 +21,7 @@ record ContainerObjectArchetypeImpl(
         JavaTypeName parentName,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<MethodSignature> methodSignatures) implements ContainerObjectArchetype {
+        List<GetterMethod> methodSignatures) implements ContainerObjectArchetype {
     ContainerObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
@@ -31,7 +31,7 @@ record ContainerObjectArchetypeImpl(
     }
 
     @Override
-    public List<MethodSignature> getMethodDefinitions() {
+    public List<GetterMethod> getters() {
         return methodSignatures;
     }
 

@@ -24,9 +24,9 @@ import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.MethodSignature;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype.Anydata;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype.Anyxml;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -125,15 +125,11 @@ class Mdsal675Test {
 
         // ensure module class has only getter for root container
         final var moduleType = assertArchetype(genTypesMap, MODULE_CLASS_NAME, DataRootArchetype.class);
-        assertNotNull(moduleType.getMethodDefinitions());
-        assertEquals(List.of("RootContainer"), moduleType.getMethodDefinitions().stream()
-            .map(MethodSignature::suffix)
-            .toList());
+        assertEquals(List.of("RootContainer"), moduleType.getters().stream().map(GetterMethod::suffix).toList());
 
         // ensure yang-data at non-top level is ignored (no getters in parent container)
         final var rootContainerType = assertContainer(genTypesMap, ROOT_CONTAINER_CLASS_NAME);
-        assertNotNull(rootContainerType.getMethodDefinitions());
-        assertEquals(List.of(), rootContainerType.getMethodDefinitions());
+        assertEquals(List.of(), rootContainerType.getters());
     }
 
     @Test
@@ -226,8 +222,8 @@ class Mdsal675Test {
 
     private static void assertHasMethod(final DataContainerArchetype genType, final String methodSuffix,
             final Type returnType) {
-        assertThat(genType.getMethodDefinitions())
-            .anyMatch(method -> methodSuffix.equals(method.suffix()) && returnType.equals(method.returnType()));
+        assertThat(genType.getters())
+            .anyMatch(getter -> methodSuffix.equals(getter.suffix()) && returnType.equals(getter.returnType()));
     }
 
     @NonNullByDefault
