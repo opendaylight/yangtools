@@ -12,8 +12,8 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation;
-import org.opendaylight.yangtools.binding.model.api.GetterMethod;
+import org.opendaylight.yangtools.binding.model.GetterAnnotation;
+import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
@@ -25,7 +25,7 @@ public record GetterMethod0(SchemaTreeEffectiveStatement<?> statement, Type retu
     }
 
     @Override
-    public List<AttachedAnnotation.ToMethod> annotations() {
+    public List<GetterAnnotation> annotations() {
         return List.of();
     }
 

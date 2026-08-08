@@ -12,7 +12,6 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
-import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.impl.KeyArchetypeImpl;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 
