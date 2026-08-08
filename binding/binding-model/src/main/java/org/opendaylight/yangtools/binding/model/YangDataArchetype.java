@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.model;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangData;
-import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
 import org.opendaylight.yangtools.binding.model.impl.YangDataArchetypeImpl;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
