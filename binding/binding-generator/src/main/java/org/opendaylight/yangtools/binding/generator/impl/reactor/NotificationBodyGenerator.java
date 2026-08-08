@@ -15,10 +15,10 @@ import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationBodyRuntimeType;
 import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationBodyRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -48,8 +48,7 @@ final class NotificationBodyGenerator
     @Override
     NotificationBodyArchetype createTypeImpl(final TypeName typeName,
             final NotificationEffectiveStatement statement, final List<@NonNull GroupingArchetype> groupings) {
-        return NotificationBodyArchetype.of(typeName, statement, groupings, collectTypeObjects(),
-            collectGetters());
+        return NotificationBodyArchetype.of(typeName, statement, groupings, collectTypeObjects(), collectGetters());
     }
 
     @Override
