@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.impl.RestrictedTypeImpl;
 
 /**
  * The BaseTypeWithRestrictions is marker interface that encapsulates definition of java
