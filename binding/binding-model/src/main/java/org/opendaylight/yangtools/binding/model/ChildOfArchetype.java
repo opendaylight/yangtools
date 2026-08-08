@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.binding.model;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.ChoiceIn;
+import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
- * An {@link AugmentableArchetype} that implements {@link ChoiceIn}.
+ * An {@link AugmentableArchetype} that implements {@link ChildOf}.
  *
  * @since 16.0.0
  */
