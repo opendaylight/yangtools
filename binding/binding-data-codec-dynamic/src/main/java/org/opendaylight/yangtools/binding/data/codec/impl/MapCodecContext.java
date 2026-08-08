@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.KeylessStep;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
-import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -71,8 +70,10 @@ abstract sealed class MapCodecContext<I extends Key<D>, D extends EntryObject<D,
         final var type = prototype.runtimeType();
         final var codec = prototype.contextFactory().getPathArgumentCodec(bindingClass, type);
 
-        return type.statement().effectiveOrdering() == Ordering.SYSTEM ? new Unordered<>(prototype, keyMethod, codec)
-            : new Ordered<>(prototype, keyMethod, codec);
+        return switch (type.statement().effectiveOrdering()) {
+            case SYSTEM -> new Unordered<>(prototype, keyMethod, codec);
+            case USER -> new Ordered<>(prototype, keyMethod, codec);
+        };
     }
 
     @Override
