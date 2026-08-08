@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.impl.RestrictedDecimal64TypeImpl;
 
 /**
  * {@link RestrictedType} corresponding to {@link Decimal64Type}.

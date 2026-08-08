@@ -11,6 +11,8 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.model.TypeName;
+import org.opendaylight.yangtools.binding.model.impl.NotificationBodyArchetypeImpl;
+import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**

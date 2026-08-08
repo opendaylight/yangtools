@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.concepts.Immutable;
 
@@ -51,4 +52,10 @@ public sealed interface Type extends Immutable permits Archetype, ConcreteType, 
     default boolean isArray() {
         return name().isArray();
     }
+
+    @Override
+    int hashCode();
+
+    @Override
+    boolean equals(@Nullable Object obj);
 }

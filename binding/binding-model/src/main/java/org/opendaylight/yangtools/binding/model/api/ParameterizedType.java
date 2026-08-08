@@ -13,6 +13,10 @@ import java.util.Objects;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.TypeName;
+import org.opendaylight.yangtools.binding.model.impl.ParameterizedType0;
+import org.opendaylight.yangtools.binding.model.impl.ParameterizedType1;
+import org.opendaylight.yangtools.binding.model.impl.ParameterizedType2;
+import org.opendaylight.yangtools.binding.model.impl.ParameterizedTypeN;
 
 /**
  * Represents an instance of simple parameterized type such as List&lt;String&gt;. The parameterized Type is designed
