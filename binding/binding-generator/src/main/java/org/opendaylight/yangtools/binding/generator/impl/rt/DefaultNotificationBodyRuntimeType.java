@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
-import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
+import org.opendaylight.yangtools.binding.model.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationBodyRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;

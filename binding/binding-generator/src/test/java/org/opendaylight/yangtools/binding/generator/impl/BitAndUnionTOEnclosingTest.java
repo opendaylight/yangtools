@@ -16,34 +16,34 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class BitAndUnionTOEnclosingTest {
-    private static List<Archetype> genTypes = null;
-    private static ContainerObjectArchetype parentContainer = null;
+    private static List<Archetype> TYPES = null;
+    private static ContainerObjectArchetype PARENT_CONTAINER = null;
 
     @BeforeAll
     static void loadTestResources() {
-        genTypes = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource("/bit_and_union.yang"));
+        TYPES = DefaultBindingGenerator.generateFor(YangParserTestUtils.parseYangResource("/bit_and_union.yang"));
 
-        for (var genType : genTypes) {
+        for (var genType : TYPES) {
             if (genType.simpleName().equals("ParentContainer")
                 && genType instanceof ContainerObjectArchetype archetype) {
-                parentContainer = archetype;
+                PARENT_CONTAINER = archetype;
             }
         }
     }
 
     @Test
     void testNestedTypesInLeaf() {
-        final var enclosedTypes = parentContainer.typeObjects();
+        final var enclosedTypes = PARENT_CONTAINER.typeObjects();
         assertEquals(3, enclosedTypes.size());
 
         // nested types in leaf
@@ -91,7 +91,7 @@ class BitAndUnionTOEnclosingTest {
         UnionTypeObjectArchetype typeUnionTypedef = null;
         int typeUnionTypedefCounter = 0;
 
-        for (var genType : genTypes) {
+        for (var genType : TYPES) {
             if (genType.simpleName().equals("TypeUnion") && genType instanceof UnionTypeObjectArchetype gto) {
                 typeUnionTypedef = gto;
                 typeUnionTypedefCounter++;
@@ -133,12 +133,12 @@ class BitAndUnionTOEnclosingTest {
 
     @Test
     public void bitAndUnionEnclosingTest() {
-        assertNotNull(parentContainer, "Parent container object wasn't found.");
-        containsMethods(parentContainer, new NameTypePattern("getLf", "Lf"));
+        assertNotNull(PARENT_CONTAINER, "Parent container object wasn't found.");
+        containsMethods(PARENT_CONTAINER, new NameTypePattern("getLf", "Lf"));
 
         BitsTypeObjectArchetype bitLeaf = null;
         UnionTypeObjectArchetype unionLeaf = null;
-        for (var archetype : parentContainer.typeObjects()) {
+        for (var archetype : PARENT_CONTAINER.typeObjects()) {
             if (archetype.simpleName().equals("BitLeaf")) {
                 bitLeaf = assertInstanceOf(BitsTypeObjectArchetype.class, archetype);
             } else if (archetype.simpleName().equals("UnionLeaf")) {

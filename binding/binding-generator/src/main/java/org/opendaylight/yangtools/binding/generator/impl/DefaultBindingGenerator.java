@@ -17,7 +17,7 @@ import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.binding.generator.BindingGenerator;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.Generator;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.GeneratorReactor;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 

@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.binding.runtime.api;
 import java.util.List;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 
 /**

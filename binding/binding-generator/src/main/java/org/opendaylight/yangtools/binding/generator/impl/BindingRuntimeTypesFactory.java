@@ -26,10 +26,10 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.GeneratorReacto
 import org.opendaylight.yangtools.binding.generator.impl.reactor.IdentityGenerator;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.ModuleGenerator;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultBindingRuntimeTypes;
+import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
+import org.opendaylight.yangtools.binding.model.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
-import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeTypes;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;

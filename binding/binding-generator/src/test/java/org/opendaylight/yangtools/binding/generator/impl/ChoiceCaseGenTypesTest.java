@@ -15,11 +15,11 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 import java.util.List;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
-import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
-import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
+import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
+import org.opendaylight.yangtools.binding.model.CaseObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ChoiceInArchetype;
+import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class ChoiceCaseGenTypesTest {

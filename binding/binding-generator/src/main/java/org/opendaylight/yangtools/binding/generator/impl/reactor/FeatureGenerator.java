@@ -12,7 +12,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultFeatureRuntimeType;
-import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
+import org.opendaylight.yangtools.binding.model.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.FeatureRuntimeType;

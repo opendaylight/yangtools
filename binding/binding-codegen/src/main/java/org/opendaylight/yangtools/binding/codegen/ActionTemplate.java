@@ -14,9 +14,9 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.RPC_RESULT;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
+import org.opendaylight.yangtools.binding.model.ActionArchetype;
+import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.ActionArchetype;
-import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 
 /**
  * Template for {@link Action} specializations.

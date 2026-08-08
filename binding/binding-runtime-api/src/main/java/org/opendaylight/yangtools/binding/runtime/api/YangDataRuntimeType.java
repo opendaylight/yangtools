@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
-import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
+import org.opendaylight.yangtools.binding.model.YangDataArchetype;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 
 /**

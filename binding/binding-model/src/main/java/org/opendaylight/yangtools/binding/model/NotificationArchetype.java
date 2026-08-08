@@ -5,31 +5,29 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.api;
+package org.opendaylight.yangtools.binding.model;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.NotificationBody;
-import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.impl.NotificationBodyArchetypeImpl;
+import org.opendaylight.yangtools.binding.Notification;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
+import org.opendaylight.yangtools.binding.model.impl.NotificationArchetypeImpl;
 import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
- * The {@link DataContainerArchetype} for {@link NotificationBody} specializations.
+ * The {@link DataContainerArchetype} for {@link Notification} specializations.
  *
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface NotificationBodyArchetype extends DataContainerArchetype.Partial
-        permits NotificationBodyArchetypeImpl {
-    @Override
-    NotificationEffectiveStatement statement();
+public sealed interface NotificationArchetype extends DataContainerArchetype.OfNotification
+        permits NotificationArchetypeImpl {
 
-    static NotificationBodyArchetype of(final TypeName typeName, final NotificationEffectiveStatement statement,
+    static NotificationArchetype of(final TypeName typeName, final NotificationEffectiveStatement statement,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
             final List<GetterMethod> getters) {
-        return new NotificationBodyArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),
+        return new NotificationArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),
             TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));
     }
 }

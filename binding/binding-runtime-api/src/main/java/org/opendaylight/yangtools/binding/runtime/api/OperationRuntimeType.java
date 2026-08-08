@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.runtime.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.OperationArchetype;
+import org.opendaylight.yangtools.binding.model.OperationArchetype;
 
 /**
  * Common interface for run-time types associated with invokable operations, such as those defined by {@code action} and
