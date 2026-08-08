@@ -184,26 +184,12 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             }
         });
 
+    @NonNullByDefault
     private final LoadingCache<Class<? extends DataObject>, DataContainerCodecContext<?, ?, ?>> childrenByClass =
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
-            public DataContainerCodecContext<?, ?, ?> load(final Class<? extends DataObject> key) {
-                return switch (context.getTypes().bindingChild(JavaTypeName.create(key))) {
-                    case ChoiceRuntimeType child ->
-                        new ChoiceCodecContext<>(key.asSubclass(ChoiceIn.class), child, BindingCodecContext.this);
-                    case ContainerRuntimeType child -> child.statement().presenceStatement() == null
-                        ? new StructuralContainerCodecContext<>(key, child, BindingCodecContext.this)
-                        : new ContainerLikeCodecContext<>(key, child, BindingCodecContext.this);
-                    case ContainerLikeRuntimeType child ->
-                        new ContainerLikeCodecContext<>(key, child, BindingCodecContext.this);
-                    case ListRuntimeType.WithKey child -> MapCodecContext.of(key, child, BindingCodecContext.this);
-                    case ListRuntimeType.WithoutKey child ->
-                        new ListCodecContext<>(key, child, BindingCodecContext.this);
-                    case null -> throw DataContainerCodecContext.childNullException(context, key,
-                        "%s is not top-level item.", key);
-                    default -> throw new IncorrectNestingException(
-                        "%s is not a valid data tree child of %s", key, this);
-                };
+            public DataContainerCodecContext<?, ?, ?> load(final Class<? extends DataObject> type) {
+                return loadStreamChild(type);
             }
         });
 
@@ -855,6 +841,23 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         final var result = Notification.class.isAssignableFrom(childClass) ? getNotificationContext(childClass)
             : getOrRethrow(childrenByClass, childClass);
         return (DataContainerCodecContext<E, ?, ?>) result;
+    }
+
+    @NonNullByDefault
+    private  DataContainerCodecContext<?, ?, ?> loadStreamChild(final Class<? extends DataObject> key) {
+        final var runtimeType = context.getTypes().bindingChild(JavaTypeName.create(key));
+        return switch (runtimeType) {
+            case null -> throw DataContainerCodecContext.childNullException(context, key,
+                "%s is not top-level item.", key);
+            case ChoiceRuntimeType child -> new ChoiceCodecContext<>(key.asSubclass(ChoiceIn.class), child, this);
+            case ContainerRuntimeType child -> child.statement().presenceStatement() == null
+                ? new StructuralContainerCodecContext<>(key, child, this)
+                : new ContainerLikeCodecContext<>(key, child, this);
+            case ContainerLikeRuntimeType child -> new ContainerLikeCodecContext<>(key, child, this);
+            case ListRuntimeType.WithKey child -> MapCodecContext.of(key, child, this);
+            case ListRuntimeType.WithoutKey child -> new ListCodecContext<>(key, child, this);
+            default -> throw new IncorrectNestingException("%s is not a valid data tree child of %s", key, this);
+        };
     }
 
     @Override
