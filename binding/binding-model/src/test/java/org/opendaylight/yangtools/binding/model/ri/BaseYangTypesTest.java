@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.impl.ConcreteTypeImpl;
 
 class BaseYangTypesTest {
     @Test
@@ -26,6 +27,6 @@ class BaseYangTypesTest {
         assertEquals("Map", stringBooleanMap.simpleName());
         assertEquals(2, stringBooleanMap.getActualTypeArguments().size());
 
-        assertEquals(ConcreteType.ofClass(BindingInstanceIdentifier.class), BaseYangTypes.INSTANCE_IDENTIFIER);
+        assertEquals(new ConcreteTypeImpl(BindingInstanceIdentifier.class), BaseYangTypes.INSTANCE_IDENTIFIER);
     }
 }

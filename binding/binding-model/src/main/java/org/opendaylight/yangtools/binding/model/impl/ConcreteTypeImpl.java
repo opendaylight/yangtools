@@ -22,6 +22,10 @@ public record ConcreteTypeImpl(TypeName name) implements ConcreteType {
         requireNonNull(name);
     }
 
+    public ConcreteTypeImpl(final Class<?> typeClass) {
+        this(TypeName.ofClass(typeClass));
+    }
+
     @Override
     public RestrictedType withRestrictions(final Restrictions restrictions) {
         return new RestrictedTypeImpl(name, restrictions);

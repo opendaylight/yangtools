@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
@@ -86,7 +85,7 @@ public class DefaultBindingGeneratorTest {
         final var enumsType = assertInstanceOf(ParameterizedType.class,
             assertGeneratedMethod(bDataMethods, "getEnums").returnType());
 
-        assertEquals(ConcreteType.ofClass(Set.class), enumsType.getRawType());
+        assertEquals(TypeName.ofClass(Set.class), enumsType.getRawType().name());
         final var enumsTypeArgs = enumsType.getActualTypeArguments();
         assertEquals(1, enumsTypeArgs.size());
         assertEquals(TEST_TYPE_PROVIDER + ".Foo.ListOfEnums", enumsTypeArgs.getFirst().canonicalName());

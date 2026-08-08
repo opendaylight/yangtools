@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.impl.ConcreteTypeImpl;
 
 /**
  * Central mapping of types.
@@ -22,11 +23,11 @@ import org.opendaylight.yangtools.binding.model.api.Type;
 // FIXME: YANGTOOLS-1910: these are used to MethodSignature.getReturnType and should be properly modeled there
 public final class Types {
 
-    public static final @NonNull ConcreteType OBJECT = ConcreteType.ofClass(Object.class);
+    public static final @NonNull ConcreteType OBJECT = new ConcreteTypeImpl(Object.class);
 
-    private static final @NonNull ConcreteType LIST_TYPE = ConcreteType.ofClass(List.class);
-    private static final @NonNull ConcreteType MAP_TYPE = ConcreteType.ofClass(Map.class);
-    private static final @NonNull ConcreteType SET_TYPE = ConcreteType.ofClass(Set.class);
+    private static final @NonNull ConcreteType LIST_TYPE = new ConcreteTypeImpl(List.class);
+    private static final @NonNull ConcreteType MAP_TYPE = new ConcreteTypeImpl(Map.class);
+    private static final @NonNull ConcreteType SET_TYPE = new ConcreteTypeImpl(Set.class);
     private static final @NonNull ParameterizedType LIST_TYPE_WILDCARD = ParameterizedType.of(LIST_TYPE);
     private static final @NonNull ParameterizedType SET_TYPE_WILDCARD = ParameterizedType.of(SET_TYPE);
 

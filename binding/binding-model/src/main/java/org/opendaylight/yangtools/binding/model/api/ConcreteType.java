@@ -8,8 +8,9 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.impl.ConcreteTypeImpl;
+import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
+import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 
 /**
@@ -30,11 +31,13 @@ public sealed interface ConcreteType extends Type permits Decimal64Type, Concret
     /**
      * {@return a {@link ConcreteType} for specified type {@link Class}}
      * @param typeClass the type class
+     * @deprecated Use the constants in {@link BaseYangTypes} and {@link Types} instead.
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     static ConcreteType ofClass(final Class<?> typeClass) {
         if (typeClass.equals(Decimal64.class)) {
             throw new IllegalArgumentException("Cannot instantiate on Decimal64, use Decimal64Type instead");
         }
-        return new ConcreteTypeImpl(TypeName.ofClass(typeClass));
+        return new ConcreteTypeImpl(typeClass);
     }
 }
