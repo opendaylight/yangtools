@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * A template for something that can be turned in to the contents of a file.
@@ -21,7 +21,7 @@ abstract sealed class Template permits JavaFileTemplate {
     /**
      * {@return the name of the type this generator is bound to}
      */
-    abstract JavaTypeName typeName();
+    abstract TypeName typeName();
 
     /**
      * Generate the file into specified {@code Appendable}.

@@ -13,10 +13,10 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GetterMethod;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -61,7 +61,7 @@ class AugmentedTypeTest {
 
         // 'Interface
         assertNotNull(gtInterface, "gtInterface is null");
-        assertEquals(JavaTypeName.create(
+        assertEquals(TypeName.of(
             "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
             "InterfaceKey"), gtInterface.keyName());
 
@@ -85,7 +85,7 @@ class AugmentedTypeTest {
 
         // 'Tunnel'
         assertNotNull(gtTunnel, "Tunnel is null");
-        assertEquals(JavaTypeName.create("""
+        assertEquals(TypeName.of("""
             org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.network.links.network.\
             link.tunnels""", "TunnelKey"), gtTunnel.keyName());
         assertThat(gtTunnel.getters()).hasSize(2);

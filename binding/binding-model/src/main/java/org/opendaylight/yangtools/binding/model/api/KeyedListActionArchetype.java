@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.KeyedListAction;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 /**
@@ -28,14 +29,14 @@ public sealed interface KeyedListActionArchetype extends OperationArchetype.OfAc
 
     /**
      * {@return an KeyedListActionArchetype}
-     * @param name the archetype's {@link JavaTypeName}}
+     * @param name the archetype's {@link TypeName}}
      * @param statement the {@link ActionEffectiveStatement}
      * @param input the {@link RpcInputArchetype} of the action's input
      * @param output the {@link RpcOutputArchetype} of the action's output
      * @param parentName the name of the parent archetype
      */
-    static KeyedListActionArchetype of(final JavaTypeName name, final ActionEffectiveStatement statement,
-            final RpcInputArchetype input, final RpcOutputArchetype output, final JavaTypeName parentName) {
+    static KeyedListActionArchetype of(final TypeName name, final ActionEffectiveStatement statement,
+            final RpcInputArchetype input, final RpcOutputArchetype output, final TypeName parentName) {
         return new KeyedListActionArchetypeImpl(name, statement, input, output, parentName);
     }
 }

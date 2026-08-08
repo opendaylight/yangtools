@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EntryObject;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
@@ -22,10 +23,10 @@ public sealed interface EntryObjectArchetype extends ChildOfArchetype.OfList per
     /**
      * {@return the {link KeyArchetype} associated with this archetype}
      */
-    JavaTypeName keyName();
+    TypeName keyName();
 
-    static EntryObjectArchetype of(final JavaTypeName typeName, final ListEffectiveStatement statement,
-            final JavaTypeName parentName, final JavaTypeName keyName, final List<GroupingArchetype> groupings,
+    static EntryObjectArchetype of(final TypeName typeName, final ListEffectiveStatement statement,
+            final TypeName parentName, final TypeName keyName, final List<GroupingArchetype> groupings,
             final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters) {
         return new EntryObjectArchetypeImpl(typeName, statement, parentName, keyName, TypeMethods.copyList(groupings),
             TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));

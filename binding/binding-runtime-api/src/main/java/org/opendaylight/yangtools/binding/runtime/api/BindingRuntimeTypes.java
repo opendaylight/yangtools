@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -44,7 +44,7 @@ public interface BindingRuntimeTypes extends RuntimeTypeContainer, Immutable {
      */
     @Nullable IdentityRuntimeType identityChild(QName qname);
 
-    @Nullable RuntimeType lookupRuntimeType(JavaTypeName typeName);
+    @Nullable RuntimeType lookupRuntimeType(TypeName typeName);
 
     @Nullable ModuleRuntimeType lookupModule(QNameModule module);
 

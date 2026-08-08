@@ -27,8 +27,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ChoiceIn;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -96,7 +96,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
              classes required for Java equivalent of effective YANG type definitions</li>
      *   <li>bind {@code leafref} and {@code identityref} references to their Java class roots</li>
      *   <li>resolve {@link ChoiceIn}/{@link ChildOf} hierarchy</li>
-     *   <li>assign Java package names and {@link JavaTypeName}s to all generated classes</li>
+     *   <li>assign Java package names and {@link TypeName}s to all generated classes</li>
      *   <li>create {@link Type} instances</li>
      * </ol>
      *
@@ -194,7 +194,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         //         care of this step during tree construction, hence this now a no-op.
 
         /*
-         * Step 8: assign java packages and JavaTypeNames
+         * Step 8: assign java packages and TypeNames
          *
          * This is a really tricky part, as we have large number of factors to consider:
          * - we are mapping grouping, typedef, identity and schema tree namespaces into Fully Qualified Class Names,

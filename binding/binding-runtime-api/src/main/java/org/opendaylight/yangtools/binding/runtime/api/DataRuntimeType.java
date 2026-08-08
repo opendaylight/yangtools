@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * Marker interface for concrete {@link RuntimeType}s relevant when dealing data hierarchy. This interface does not have
@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
  * {@code NormalizedNode}. That relationship may not be straightforward, but notably it excludes constructs like
  * {@link NotificationRuntimeType}, {@link IdentityRuntimeType}, {@link ActionRuntimeType}, {@link GroupingRuntimeType},
  * and similar, as those exist in outside of {@code data tree} contract, but are still part of what
- * {@link RuntimeTypeContainer#bindingChild(JavaTypeName)} considers as child constructs.
+ * {@link RuntimeTypeContainer#bindingChild(TypeName)} considers as child constructs.
  */
 public sealed interface DataRuntimeType extends RuntimeType
         permits AugmentRuntimeType, CaseRuntimeType, ChoiceRuntimeType, ContainerLikeRuntimeType, LeafListRuntimeType,

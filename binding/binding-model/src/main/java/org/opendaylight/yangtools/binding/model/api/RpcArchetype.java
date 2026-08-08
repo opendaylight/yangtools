@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Rpc;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 
 /**
@@ -20,12 +21,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 public sealed interface RpcArchetype extends OperationArchetype permits RpcArchetypeImpl {
     /**
      * {@return an RpcArchetype}
-     * @param name the archetype's {@link JavaTypeName}}
+     * @param name the archetype's {@link TypeName}}
      * @param statement the {@link RpcEffectiveStatement}
      * @param input the {@link RpcInputArchetype} of the RPC's input
      * @param output the {@link RpcOutputArchetype} of the RPC's output
      */
-    static RpcArchetype of(final JavaTypeName name, final RpcEffectiveStatement statement,
+    static RpcArchetype of(final TypeName name, final RpcEffectiveStatement statement,
             final RpcInputArchetype input, final RpcOutputArchetype output) {
         return new RpcArchetypeImpl(name, statement, input, output);
     }

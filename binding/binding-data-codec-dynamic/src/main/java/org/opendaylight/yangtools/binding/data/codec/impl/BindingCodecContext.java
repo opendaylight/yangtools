@@ -78,7 +78,7 @@ import org.opendaylight.yangtools.binding.data.codec.spi.AbstractBindingNormaliz
 import org.opendaylight.yangtools.binding.data.codec.spi.BindingDOMCodecServices;
 import org.opendaylight.yangtools.binding.data.codec.spi.BindingSchemaMapping;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerLikeRuntimeType;
@@ -293,7 +293,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
         CacheBuilder.newBuilder().build(new CacheLoader<>() {
             @Override
             public ContainerLikeCodecContext<?> load(final Class<?> key) {
-                final var runtimeType = context.getTypes().lookupRuntimeType(JavaTypeName.create(key));
+                final var runtimeType = context.getTypes().lookupRuntimeType(TypeName.ofClass(key));
                 if (runtimeType == null) {
                     throw new IllegalArgumentException(key + " is not a known class");
                 }
@@ -647,7 +647,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @NonNullByDefault
     private NotificationCodecContext<?> loadNotificationByClass(final Class<?> notification) {
-        final var runtimeType = context.getTypes().bindingChild(JavaTypeName.create(notification));
+        final var runtimeType = context.getTypes().bindingChild(TypeName.ofClass(notification));
         return switch (runtimeType) {
             case null -> throw new IllegalArgumentException(notification + " is not a known class");
             case NotificationRuntimeType type -> new NotificationCodecContext<>(notification, type, this);
@@ -863,7 +863,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @NonNullByDefault
     private  DataContainerCodecContext<?, ?, ?> loadStreamChild(final Class<? extends DataObject> key) {
-        final var runtimeType = context.getTypes().bindingChild(JavaTypeName.create(key));
+        final var runtimeType = context.getTypes().bindingChild(TypeName.ofClass(key));
         return switch (runtimeType) {
             case null -> throw DataContainerCodecContext.childNullException(context, key,
                 "%s is not top-level item.", key);

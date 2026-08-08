@@ -11,11 +11,12 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 
 @NonNullByDefault
 record RpcArchetypeImpl(
-        JavaTypeName name,
+        TypeName name,
         RpcEffectiveStatement statement,
         RpcInputArchetype input,
         RpcOutputArchetype output) implements RpcArchetype {

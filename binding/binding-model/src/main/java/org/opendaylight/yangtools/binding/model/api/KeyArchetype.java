@@ -12,6 +12,7 @@ import java.util.Map;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 
 /**
@@ -35,7 +36,7 @@ public sealed interface KeyArchetype extends Archetype permits KeyArchetypeImpl 
      */
     Map<String, GetterMethod> methods();
 
-    static KeyArchetype of(final JavaTypeName name, final KeyEffectiveStatement statement,
+    static KeyArchetype of(final TypeName name, final KeyEffectiveStatement statement,
             final EntryObjectArchetype entryObject) {
         final var eoName = entryObject.name();
         if (!name.packageName().equals(eoName.packageName()) || !name.localName().startsWith(eoName.localName())) {

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ChoiceIn;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 
 /**
@@ -25,10 +26,10 @@ public sealed interface CaseObjectArchetype extends AugmentableArchetype permits
     /**
      * {@return the name of the {@link ChoiceIn} in which this object is a branch}
      */
-    JavaTypeName parentName();
+    TypeName parentName();
 
-    static CaseObjectArchetype of(final JavaTypeName typeName, final CaseEffectiveStatement statement,
-            final JavaTypeName parentName, final List<GroupingArchetype> groupings,
+    static CaseObjectArchetype of(final TypeName typeName, final CaseEffectiveStatement statement,
+            final TypeName parentName, final List<GroupingArchetype> groupings,
             final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters) {
         return new CaseObjectArchetypeImpl(typeName, statement, parentName, TypeMethods.copyList(groupings),
             TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));

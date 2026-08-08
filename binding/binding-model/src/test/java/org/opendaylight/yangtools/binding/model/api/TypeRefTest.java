@@ -10,17 +10,18 @@ package org.opendaylight.yangtools.binding.model.api;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
-class TypeTest {
+class TypeRefTest {
     @Test
     void testCreateNewReferencedType() {
-        final var refType = TypeRef.of(JavaTypeName.create("org.opendaylight.yangtools.test", "RefTypeTest"));
+        final var refType = TypeRef.of(TypeName.of("org.opendaylight.yangtools.test", "RefTypeTest"));
         assertEquals("RefTypeTest", refType.simpleName());
     }
 
     @Test
     void testToStringMethod() {
-        final var refType = TypeRef.of(JavaTypeName.create("org.opendaylight.yangtools.test", "RefTypeTest"));
+        final var refType = TypeRef.of(TypeName.of("org.opendaylight.yangtools.test", "RefTypeTest"));
         assertEquals("TypeRef{name=org.opendaylight.yangtools.test.RefTypeTest}", refType.toString());
     }
 }

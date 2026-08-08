@@ -12,25 +12,26 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.annotations.RoutingContext;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.AttachedAnnotation.ToMethod;
 
 /**
  * An attached {@link RoutingContext} annotation.
  *
- * @param value the {@link JavaTypeName} of {@link RoutingContext#value()}
+ * @param value the {@link TypeName} of {@link RoutingContext#value()}
  * @since 16.0.0
  */
 @Beta
 @NonNullByDefault
 public record RoutingContextAnnotation(IdentityArchetype value) implements ToMethod {
-    private static final JavaTypeName TYPE = JavaTypeName.create(RoutingContext.class);
+    private static final TypeName TYPE = TypeName.ofClass(RoutingContext.class);
 
     public RoutingContextAnnotation {
         requireNonNull(value);
     }
 
     @Override
-    public JavaTypeName type() {
+    public TypeName type() {
         return TYPE;
     }
 }

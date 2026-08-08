@@ -11,9 +11,9 @@ import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyedListNotificationArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -28,7 +28,7 @@ final class KeyedListNotificationTemplate extends InterfaceTemplate<KeyedListNot
         implements ArchetypeTemplate.WithBuilder {
     private static final ConcreteType KEYED_LIST_NOTIFICATION = ConcreteType.ofClass(KeyedListNotification.class);
 
-    private final JavaTypeName keyName;
+    private final TypeName keyName;
 
     KeyedListNotificationTemplate(final DataRootArchetype root, final KeyedListNotificationArchetype archetype,
             final KeyArchetype key) {

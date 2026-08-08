@@ -12,9 +12,10 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 @NonNullByDefault
-record TypeRefImpl(JavaTypeName name) implements TypeRef {
+record TypeRefImpl(TypeName name) implements TypeRef {
     TypeRefImpl {
         requireNonNull(name);
     }

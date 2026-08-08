@@ -15,10 +15,10 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultGroupingRuntimeType;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.GroupingRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -75,7 +75,7 @@ final class GroupingGenerator extends DataContainerGenerator<GroupingEffectiveSt
     }
 
     @Override
-    GroupingArchetype createTypeImpl(final JavaTypeName typeName, final GroupingEffectiveStatement statement,
+    GroupingArchetype createTypeImpl(final TypeName typeName, final GroupingEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings) {
         return GroupingArchetype.of(typeName, statement, groupings, collectTypeObjects(), collectGetters());
     }

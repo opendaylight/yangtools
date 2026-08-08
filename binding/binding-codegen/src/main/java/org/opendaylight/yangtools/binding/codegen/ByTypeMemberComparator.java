@@ -12,11 +12,11 @@ import java.io.Serializable;
 import java.util.Comparator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -110,7 +110,7 @@ final class ByTypeMemberComparator implements Comparator<GetterShape>, Serializa
     }
 
     @NonNullByDefault
-    private static VerifyException unhandled(final JavaTypeName typeName) {
+    private static VerifyException unhandled(final TypeName typeName) {
         return new VerifyException("Unhandled " + typeName);
     }
 

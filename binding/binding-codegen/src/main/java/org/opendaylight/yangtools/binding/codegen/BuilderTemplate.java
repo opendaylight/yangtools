@@ -44,11 +44,11 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.GetterMethod;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -91,7 +91,7 @@ final class BuilderTemplate extends BaseTemplate {
      */
     static final @NonNull String AUGMENTATION_FIELD = "augmentation";
 
-    private static final @NonNull JavaTypeName GROUPING = JavaTypeName.create(Grouping.class);
+    private static final @NonNull TypeName GROUPING = TypeName.ofClass(Grouping.class);
 
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default

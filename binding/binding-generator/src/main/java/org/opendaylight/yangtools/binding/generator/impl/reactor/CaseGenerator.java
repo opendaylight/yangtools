@@ -13,10 +13,10 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultCaseRuntimeType;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -43,7 +43,7 @@ final class CaseGenerator extends CompositeSchemaTreeGenerator<CaseEffectiveStat
     }
 
     @Override
-    CaseObjectArchetype createTypeImpl(final JavaTypeName typeName, final CaseEffectiveStatement statement,
+    CaseObjectArchetype createTypeImpl(final TypeName typeName, final CaseEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings) {
         // We also are implementing target choice's type. This is tricky, as we need to cover two distinct cases:
         // - being a child of a choice (i.e. normal definition)

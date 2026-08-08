@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.OpaqueObject;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 
 /**
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
  */
 @NonNullByDefault
 final class OpaqueObjectTemplate extends ArchetypeTemplate<OpaqueObjectArchetype<?>> {
-    private static final JavaTypeName OPAQUE_OBJECT = JavaTypeName.create(OpaqueObject.class);
+    private static final TypeName OPAQUE_OBJECT = TypeName.ofClass(OpaqueObject.class);
 
     OpaqueObjectTemplate(final DataRootArchetype root, final OpaqueObjectArchetype<?> archetype) {
         super(root, archetype);

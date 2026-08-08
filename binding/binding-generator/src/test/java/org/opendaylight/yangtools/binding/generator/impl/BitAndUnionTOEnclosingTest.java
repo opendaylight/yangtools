@@ -16,10 +16,10 @@ import static org.opendaylight.yangtools.binding.generator.impl.SupportTestUtil.
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -54,7 +54,7 @@ class BitAndUnionTOEnclosingTest {
         assertEquals(1, lfLeafs.size(), "Lf TO has incorrect number of occurences.");
         final var lfLeaf = lfLeafs.getFirst();
         assertEquals(
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", "ParentContainer"),
+            TypeName.of("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", "ParentContainer"),
             lfLeaf.name().immediatelyEnclosingClass());
 
         // nested types in Lf
@@ -150,10 +150,10 @@ class BitAndUnionTOEnclosingTest {
         assertNotNull(unionLeaf, "UnionLeaf TO wasn't found.");
 
         assertEquals(
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", "ParentContainer"),
+            TypeName.of("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", "ParentContainer"),
             bitLeaf.name().immediatelyEnclosingClass());
         assertEquals(
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", "ParentContainer"),
+            TypeName.of("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626", "ParentContainer"),
             unionLeaf.name().immediatelyEnclosingClass());
 
         assertNull(bitLeaf.superType());

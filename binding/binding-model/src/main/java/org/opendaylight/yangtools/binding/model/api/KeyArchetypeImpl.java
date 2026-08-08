@@ -13,12 +13,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 
 record KeyArchetypeImpl(
-        @NonNull JavaTypeName name,
+        @NonNull TypeName name,
         @NonNull KeyEffectiveStatement statement,
         @NonNull EntryObjectArchetype entryObject) implements KeyArchetype {
     KeyArchetypeImpl {

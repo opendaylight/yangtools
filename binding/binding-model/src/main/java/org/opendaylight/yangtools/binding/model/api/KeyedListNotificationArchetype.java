@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
@@ -21,20 +22,20 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 public sealed interface KeyedListNotificationArchetype extends DataContainerArchetype.OfNotification
         permits KeyedListNotificationArchetypeFromGrouping, KeyedListNotificationArchetypeImpl {
     /**
-     * {@return the {@link JavaTypeName} of the archetype in which this notification is defined}
+     * {@return the {@link TypeName} of the archetype in which this notification is defined}
      */
-    JavaTypeName parentName();
+    TypeName parentName();
 
-    static KeyedListNotificationArchetype of(final JavaTypeName typeName,
-            final NotificationEffectiveStatement statement, final JavaTypeName parentName,
+    static KeyedListNotificationArchetype of(final TypeName typeName,
+            final NotificationEffectiveStatement statement, final TypeName parentName,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
             final List<GetterMethod> getters) {
         return new KeyedListNotificationArchetypeImpl(typeName, statement, parentName, TypeMethods.copyList(groupings),
             TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));
     }
 
-    static KeyedListNotificationArchetype of(final JavaTypeName typeName,
-            final NotificationEffectiveStatement statement, final JavaTypeName parentName,
+    static KeyedListNotificationArchetype of(final TypeName typeName,
+            final NotificationEffectiveStatement statement, final TypeName parentName,
             final NotificationBodyArchetype notificationBody) {
         return new KeyedListNotificationArchetypeFromGrouping(typeName, statement, parentName, notificationBody);
     }

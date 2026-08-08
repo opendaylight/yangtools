@@ -24,9 +24,9 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 @NonNullByDefault
 abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeObjectArchetype> {
     private static final class Base extends BitsTypeObjectTemplate {
-        private static final JavaTypeName BITS_TYPE_OBJECT = JavaTypeName.create(BitsTypeObject.class);
+        private static final TypeName BITS_TYPE_OBJECT = TypeName.ofClass(BitsTypeObject.class);
 
         Base(final GeneratedClass javaType, final BitsTypeObjectArchetype archetype, final DataRootArchetype root) {
             super(javaType, archetype, root);
@@ -220,7 +220,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
         }
     }
 
-    private static final JavaTypeName IMMUTABLE_SET = JavaTypeName.create(ImmutableSet.class);
+    private static final TypeName IMMUTABLE_SET = TypeName.ofClass(ImmutableSet.class);
     private static final String VALID_NAMES_NAME = "VALID_NAMES";
 
     private BitsTypeObjectTemplate(final GeneratedClass javaType, final BitsTypeObjectArchetype archetype,

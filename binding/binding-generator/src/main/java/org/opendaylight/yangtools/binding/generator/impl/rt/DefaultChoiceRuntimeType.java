@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
 import java.util.List;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -32,7 +32,7 @@ public final class DefaultChoiceRuntimeType extends AbstractCompositeRuntimeType
     }
 
     @Override
-    public CaseRuntimeType bindingCaseChild(final JavaTypeName typeName) {
+    public CaseRuntimeType bindingCaseChild(final TypeName typeName) {
         final var child = bindingChild(typeName);
         return child instanceof CaseRuntimeType caseChild ? caseChild : null;
     }

@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -23,12 +23,12 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * must be used. The {@link Archetype} is provided solely for its information about structural properties of the
  * corresponding Java class and should be ignored as an implementation detail.
  */
-public interface GeneratedRuntimeType extends RuntimeType, Identifiable<JavaTypeName> {
+public interface GeneratedRuntimeType extends RuntimeType, Identifiable<TypeName> {
     @Override
     Archetype javaType();
 
     @Override
-    default JavaTypeName getIdentifier() {
+    default TypeName getIdentifier() {
         return javaType().name();
     }
 }

@@ -26,10 +26,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
@@ -55,27 +55,27 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
             this.enclosingClass = requireNonNull(enclosingClass);
         }
 
-        private Nested(final GeneratedClass enclosingClass, final JavaTypeName name,
+        private Nested(final GeneratedClass enclosingClass, final TypeName name,
                 final DataContainerArchetype targetType) {
             super(name, targetType);
             this.enclosingClass = requireNonNull(enclosingClass);
         }
 
         @Override
-        boolean importCheckedType(final JavaTypeName type) {
+        boolean importCheckedType(final TypeName type) {
             // Defer to enclosing type, which needs to re-run its checks
             return enclosingClass.checkAndImportType(type);
         }
 
         @Override
-        String localTypeName(final JavaTypeName type) {
+        String localTypeName(final TypeName type) {
             // Check if the type is a reference to our immediately-enclosing type
             final var enclosingName = enclosingClass.name();
             return enclosingName.equals(type) ? enclosingName.simpleName() : findLocalTypeName(type);
 
         }
 
-        private String findLocalTypeName(final JavaTypeName type) {
+        private String findLocalTypeName(final TypeName type) {
             final var descendant = findDescandantPath(type);
             return descendant == null
                 // The type is not present in our hierarchy, defer to our immediately-enclosing type, which may be able
@@ -93,7 +93,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
             return sb.toString();
         }
 
-        private @Nullable Iterator<String> findDescandantPath(final JavaTypeName type) {
+        private @Nullable Iterator<String> findDescandantPath(final TypeName type) {
             var enclosing = type.immediatelyEnclosingClass();
             if (enclosing == null) {
                 throw new VerifyException("no immediately enclosing class in " + type);
@@ -120,28 +120,28 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
      * compilation unit. Since we are generating only public classes, this is synonymous to a top-level Java type.
      */
     static final class TopLevel extends GeneratedClass {
-        private final HashBiMap<JavaTypeName, String> importedTypes = HashBiMap.create();
+        private final HashBiMap<TypeName, String> importedTypes = HashBiMap.create();
 
         private TopLevel(final Archetype genType) {
             super(genType);
         }
 
-        private TopLevel(final JavaTypeName builderName, final String implName,
+        private TopLevel(final TypeName builderName, final String implName,
                 final DataContainerArchetype targetType) {
             super(builderName, implName, targetType);
         }
 
         // FIXME: this method should not be exposed
         @Deprecated
-        Stream<JavaTypeName> imports() {
+        Stream<TypeName> imports() {
             return importedTypes.entrySet().stream()
                 .filter(this::needsExplicitImport)
                 .map(Entry::getKey)
-                .sorted(Comparator.comparing(JavaTypeName::toString));
+                .sorted(Comparator.comparing(TypeName::toString));
         }
 
         @Override
-        String localTypeName(final JavaTypeName type) {
+        String localTypeName(final TypeName type) {
             // Locally-anchored type, this is simple: just strip the first local name component and concat the others
             final var it = type.localNameComponents().iterator();
             it.next();
@@ -154,7 +154,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
         }
 
         @Override
-        boolean importCheckedType(final JavaTypeName type) {
+        boolean importCheckedType(final TypeName type) {
             if (importedTypes.containsKey(type)) {
                 return true;
             }
@@ -166,7 +166,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
             return true;
         }
 
-        private boolean needsExplicitImport(final Entry<JavaTypeName, String> entry) {
+        private boolean needsExplicitImport(final Entry<TypeName, String> entry) {
             final var name = entry.getKey();
 
             if (!name().packageName().equals(name.packageName())) {
@@ -184,13 +184,13 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
         }
     }
 
-    private final HashMap<JavaTypeName, @Nullable String> nameCache = new HashMap<>();
+    private final HashMap<TypeName, @Nullable String> nameCache = new HashMap<>();
     private final Map<String, Nested> nestedClasses;
     private final Set<String> conflictingNames;
-    private final JavaTypeName name;
+    private final TypeName name;
 
     // for BuilderTemplate's TopLevel class
-    private GeneratedClass(final JavaTypeName builderName, final String implName,
+    private GeneratedClass(final TypeName builderName, final String implName,
             final DataContainerArchetype targetType) {
         name = requireNonNull(builderName);
         nestedClasses = Map.of(implName, new Nested(this, builderName.createEnclosed(implName), targetType));
@@ -198,7 +198,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
     }
 
     // for BuilderImplTemplate's Nested class
-    private GeneratedClass(final JavaTypeName name, final DataContainerArchetype targetType) {
+    private GeneratedClass(final TypeName name, final DataContainerArchetype targetType) {
         this.name = requireNonNull(name);
         nestedClasses = Map.of();
         final var set = collectAccessibleTypes(targetType);
@@ -263,15 +263,15 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
         return new TopLevel(genType);
     }
 
-    static GeneratedClass.TopLevel of(final JavaTypeName builderName, final String implSimpleName,
+    static GeneratedClass.TopLevel of(final TypeName builderName, final String implSimpleName,
             final DataContainerArchetype targetType) {
         return new TopLevel(builderName, implSimpleName, targetType);
     }
 
     /**
-     * {@return the {@link JavaTypeName name} of this class}
+     * {@return the {@link TypeName name} of this class}
      */
-    final JavaTypeName name() {
+    final TypeName name() {
         return name;
     }
 
@@ -324,7 +324,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
         }
     }
 
-    final String getReferenceString(final JavaTypeName type) {
+    final String getReferenceString(final TypeName type) {
         if (type.packageName().isEmpty()) {
             // This is a packageless primitive type, refer to it directly
             return type.simpleName();
@@ -365,22 +365,22 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
         return verifyNotNull(nestedClasses.get(requireNonNull(simpleName)));
     }
 
-    final boolean checkAndImportType(final JavaTypeName type) {
+    final boolean checkAndImportType(final TypeName type) {
         // We can import the type only if it does not conflict with us or our immediately-enclosed types
         final var simpleName = type.simpleName();
         return !simpleName.equals(name().simpleName()) && !nestedClasses.containsKey(simpleName)
                 && !conflictingNames.contains(simpleName) && importCheckedType(type);
     }
 
-    abstract boolean importCheckedType(JavaTypeName type);
+    abstract boolean importCheckedType(TypeName type);
 
-    abstract String localTypeName(JavaTypeName type);
+    abstract String localTypeName(TypeName type);
 
-    private String foreignTypeName(final JavaTypeName type) {
+    private String foreignTypeName(final TypeName type) {
         return checkAndImportType(type) ? type.simpleName() : type.toString();
     }
 
-    private String packageTypeName(final JavaTypeName type) {
+    private String packageTypeName(final TypeName type) {
         // Try to anchor the top-level type and use a local reference
         return checkAndImportType(type.topLevelClass()) ? type.localName() : type.toString();
     }

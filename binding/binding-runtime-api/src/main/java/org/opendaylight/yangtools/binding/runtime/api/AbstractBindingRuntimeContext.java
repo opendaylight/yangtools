@@ -25,8 +25,8 @@ import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.YangData;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
@@ -61,7 +61,7 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
 
     @Override
     public final <T extends Augmentation<?>> AugmentRuntimeType getAugmentationDefinition(final Class<T> augClass) {
-        return getTypes().lookupRuntimeType(JavaTypeName.create(augClass)) instanceof AugmentRuntimeType augment
+        return getTypes().lookupRuntimeType(TypeName.ofClass(augClass)) instanceof AugmentRuntimeType augment
             ? augment : null;
     }
 
@@ -72,22 +72,22 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
         checkArgument(!Action.class.isAssignableFrom(cls), "Supplied class must not be an action (%s is)", cls);
         checkArgument(!Notification.class.isAssignableFrom(cls), "Supplied class must not be a notification (%s is)",
             cls);
-        return (CompositeRuntimeType) getTypes().lookupRuntimeType(JavaTypeName.create(cls));
+        return (CompositeRuntimeType) getTypes().lookupRuntimeType(TypeName.ofClass(cls));
     }
 
     @Override
     public final ActionRuntimeType getActionDefinition(final Class<? extends Action<?, ?, ?>> cls) {
-        return (ActionRuntimeType) getTypes().lookupRuntimeType(JavaTypeName.create(requireNonNull(cls)));
+        return (ActionRuntimeType) getTypes().lookupRuntimeType(TypeName.ofClass(requireNonNull(cls)));
     }
 
     @Override
     public final RpcRuntimeType getRpcDefinition(final Class<? extends Rpc<?, ?>> cls) {
-        return (RpcRuntimeType) getTypes().lookupRuntimeType(JavaTypeName.create(cls));
+        return (RpcRuntimeType) getTypes().lookupRuntimeType(TypeName.ofClass(cls));
     }
 
     @Override
     public final RuntimeType getTypeWithSchema(final Class<?> type) {
-        final var ret = getTypes().lookupRuntimeType(JavaTypeName.create(type));
+        final var ret = getTypes().lookupRuntimeType(TypeName.ofClass(type));
         if (ret == null) {
             throw new IllegalArgumentException("Failed to find schema for " + type);
         }
@@ -151,7 +151,7 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
         }
     }
 
-    private <T> @NonNull Class<T> loadChecked(final Class<? super T> expected, final @NonNull JavaTypeName type)
+    private <T> @NonNull Class<T> loadChecked(final Class<? super T> expected, final @NonNull TypeName type)
             throws ClassNotFoundException {
         final Class<T> actual = loadClass(type);
         LOG.trace("Loaded {}", actual.asSubclass(expected));

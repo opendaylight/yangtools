@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeTypes;
 import org.opendaylight.yangtools.binding.runtime.api.GroupingRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -28,84 +28,87 @@ class Mdsal669Test {
 
     @Test
     void barIsUsed() {
-        assertInstances(JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "Bar"),
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "Foo"),
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "Target1"),
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev.used.augmented", "ToBeAugmented1"),
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev.used.augmented.indirect",
-                "ToBeAugmented1"));
+        assertInstances(
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "Bar"),
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "Foo"),
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "Target1"),
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev.used.augmented", "ToBeAugmented1"),
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev.used.augmented.indirect", "ToBeAugmented1"));
     }
 
     @Test
     void bazIsUsedByOneAndTwo() {
-        assertInstances(JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "Baz"),
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "One"),
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "Two"));
+        assertInstances(
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "Baz"),
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "One"),
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "Two"));
     }
 
     @Test
     void unusedIsNotUsed() {
-        assertInstances(JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "Unused"));
+        assertInstances(TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "Unused"));
     }
 
     @Test
     void fooAsStringIsNotUsed() {
-        assertInstances(JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "FooAsString"));
+        assertInstances(TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "FooAsString"));
     }
 
     @Test
     void unusedBarIsNotUsed() {
-        assertInstances(JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "UnusedBar"));
+        assertInstances(TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UnusedBar"));
     }
 
     @Test
     void unusedAugmendIsNotUsed() {
-        assertInstances(JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "UnusedAugmented"));
+        assertInstances(TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UnusedAugmented"));
     }
 
     @Test
     void unusedIntermediateAugmentedIsNotUsed() {
-        assertInstances(
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "UnusedIntermediateAugmentedUser"));
-        assertInstances(
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "UnusedIntermediateAugmented"));
+        assertInstances(TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UnusedIntermediateAugmentedUser"));
+        assertInstances(TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UnusedIntermediateAugmented"));
     }
 
     @Test
     void usedAugmentedIndirectIsUsed() {
-        assertInstances(JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedIndirectGrp"),
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedIndirectUser"));
-        assertInstances(JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedIndirect"),
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedIndirectUser"));
+        assertInstances(
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedIndirectGrp"),
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedIndirectUser"));
+        assertInstances(
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedIndirect"),
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedIndirectUser"));
     }
 
     @Test
     void usedAugmentedIsUsed() {
-        assertInstances(JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmented"),
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedUser"));
+        assertInstances(
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmented"),
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedUser"));
     }
 
     @Test
     void toBeAugmentedIsUsed() {
-        assertInstances(JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "ToBeAugmented"),
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedIndirectUser"),
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedUser"));
+        assertInstances(
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "ToBeAugmented"),
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedIndirectUser"),
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal669.norev", "UsedAugmentedUser"));
     }
 
     @NonNullByDefault
-    private static void assertInstances(final JavaTypeName groupingTypeName, final JavaTypeName... instanceTypeNames) {
+    private static void assertInstances(final TypeName groupingTypeName, final TypeName... instanceTypeNames) {
         assertEquals(
             Arrays.stream(instanceTypeNames).map(Mdsal669Test::assertType).collect(Collectors.toSet()),
             Set.copyOf(assertGrouping(groupingTypeName).instantiations()));
     }
 
     @NonNullByDefault
-    private static GroupingRuntimeType assertGrouping(final JavaTypeName typeName) {
+    private static GroupingRuntimeType assertGrouping(final TypeName typeName) {
         return assertInstanceOf(GroupingRuntimeType.class, assertType(typeName));
     }
 
     @NonNullByDefault
-    private static RuntimeType assertType(final JavaTypeName typeName) {
+    private static RuntimeType assertType(final TypeName typeName) {
         final var ret = RUNTIME_TYPES.lookupRuntimeType(typeName);
         assertNotNull(ret);
         return ret;

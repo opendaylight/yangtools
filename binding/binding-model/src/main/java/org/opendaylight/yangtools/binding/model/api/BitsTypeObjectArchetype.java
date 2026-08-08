@@ -15,6 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.BitsTypeObject;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
@@ -26,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 @Beta
 @NonNullByDefault
 public record BitsTypeObjectArchetype(
-        JavaTypeName name,
+        TypeName name,
         TypeEffectiveStatement.MandatoryIn<?, ?> statement,
         BitsTypeDefinition typeDefinition,
         @Nullable BitsTypeObjectArchetype superType) implements TypeObjectArchetype.OfClass<BitsTypeObject> {
@@ -36,7 +37,7 @@ public record BitsTypeObjectArchetype(
         requireNonNull(typeDefinition);
     }
 
-    public BitsTypeObjectArchetype(final JavaTypeName name, final TypeEffectiveStatement.MandatoryIn<?, ?> statement,
+    public BitsTypeObjectArchetype(final TypeName name, final TypeEffectiveStatement.MandatoryIn<?, ?> statement,
             final BitsTypeDefinition typeDefinition) {
         this(name, statement, typeDefinition, null);
     }

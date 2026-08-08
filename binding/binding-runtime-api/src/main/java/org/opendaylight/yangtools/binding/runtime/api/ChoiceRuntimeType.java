@@ -11,8 +11,8 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 
 /**
@@ -34,7 +34,7 @@ public non-sealed interface ChoiceRuntimeType extends CompositeRuntimeType, Data
      * @return {@link CaseRuntimeType}, or null if absent
      * @throws NullPointerException if {@code typeName} is null
      */
-    @Nullable CaseRuntimeType bindingCaseChild(JavaTypeName typeName);
+    @Nullable CaseRuntimeType bindingCaseChild(TypeName typeName);
 
     /**
      * Return all {@link CaseRuntimeType} valid at this type's statement.

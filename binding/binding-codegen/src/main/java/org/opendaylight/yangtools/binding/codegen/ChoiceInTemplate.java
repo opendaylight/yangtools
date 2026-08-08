@@ -11,16 +11,16 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ChoiceIn;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 
 /**
  * Template for a {@link ChoiceIn} interface generated for a {@code choice} statement.
  */
 @NonNullByDefault
 final class ChoiceInTemplate extends ArchetypeTemplate<ChoiceInArchetype> {
-    private static final JavaTypeName CHOICE_IN = JavaTypeName.create(ChoiceIn.class);
+    private static final TypeName CHOICE_IN = TypeName.ofClass(ChoiceIn.class);
 
     ChoiceInTemplate(final DataRootArchetype root, final ChoiceInArchetype archetype) {
         super(root, archetype);

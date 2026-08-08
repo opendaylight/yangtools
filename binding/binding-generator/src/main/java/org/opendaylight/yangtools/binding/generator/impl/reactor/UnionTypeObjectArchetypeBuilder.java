@@ -18,11 +18,11 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeObjectSupport.Union.Dependencies;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
@@ -67,14 +67,14 @@ final class UnionTypeObjectArchetypeBuilder {
         this.definingStatement = requireNonNull(definingStatement);
     }
 
-    static UnionTypeObjectArchetype buildArchetype(final JavaTypeName typeName,
+    static UnionTypeObjectArchetype buildArchetype(final TypeName typeName,
             final TypeEffectiveStatement.MandatoryIn<?, ?> statement, final UnionTypeDefinition typeDefinition,
             final TypeEffectiveStatement type, final Dependencies dependencies) {
         return new UnionTypeObjectArchetypeBuilder(statement).createUnion(dependencies, typeName, type, typeDefinition);
     }
 
     private UnionTypeObjectArchetype createUnion(
-            final Dependencies dependencies, final JavaTypeName typeName, final TypeEffectiveStatement type,
+            final Dependencies dependencies, final TypeName typeName, final TypeEffectiveStatement type,
             final TypeDefinition<?> typedef) {
         final var enclosedTypes = new ArrayList<TypeObjectArchetype<?>>();
         // A linear list of properties generated from subtypes. We need this information for runtime types, as it allows

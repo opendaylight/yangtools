@@ -18,7 +18,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * A {@link BlockFragment} generating {@link JavaDataContainer} method implementations.
@@ -42,7 +42,7 @@ record JavaDataContainerMethods(
         javaTS(bb);
     }
 
-    private String importedName(final JavaTypeName type) {
+    private String importedName(final TypeName type) {
         return javaType.getReferenceString(type);
     }
 

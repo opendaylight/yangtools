@@ -23,12 +23,12 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.UnionTypeObject;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
  * A template for {@link UnionTypeObject} specializations.
  */
 final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionTypeObjectArchetype> {
-    private static final @NonNull JavaTypeName UNION_TYPE_OBJECT = JavaTypeName.create(UnionTypeObject.class);
+    private static final @NonNull TypeName UNION_TYPE_OBJECT = TypeName.ofClass(UnionTypeObject.class);
     private static final Comparator<Tag> TAG_COMPARATOR = Comparator.comparing(Tag::name);
     private static final ObjectEquality<Tag> EQUALITY = new ObjectEquality<>(true) {
         @Override

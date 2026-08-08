@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ContainerObject;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 /**
@@ -22,8 +23,8 @@ public sealed interface ContainerObjectArchetype extends ChildOfArchetype permit
     @Override
     ContainerEffectiveStatement statement();
 
-    static ContainerObjectArchetype of(final JavaTypeName typeName, final ContainerEffectiveStatement statement,
-            final JavaTypeName parentName, final List<GroupingArchetype> groupings,
+    static ContainerObjectArchetype of(final TypeName typeName, final ContainerEffectiveStatement statement,
+            final TypeName parentName, final List<GroupingArchetype> groupings,
             final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters) {
         return new ContainerObjectArchetypeImpl(typeName, statement, parentName, TypeMethods.copyList(groupings),
             TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));

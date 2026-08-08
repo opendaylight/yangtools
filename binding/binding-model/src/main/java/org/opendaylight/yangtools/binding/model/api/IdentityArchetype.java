@@ -13,6 +13,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.BaseIdentity;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 
 /**
@@ -25,23 +26,23 @@ public sealed interface IdentityArchetype extends Archetype {
     /**
      * An {@link IdentityArchetype} specialized from {@link BaseIdentity}.
      *
-     * @param name this type's {@link JavaTypeName}}
+     * @param name this type's {@link TypeName}}
      * @param statement the {@link IdentityEffectiveStatement}
      * @since 16.0.0
      */
-    record Base(JavaTypeName name, IdentityEffectiveStatement statement) implements IdentityArchetype {
-        private static final JavaTypeName BASE_IDENTITY = JavaTypeName.create(BaseIdentity.class);
+    record Base(TypeName name, IdentityEffectiveStatement statement) implements IdentityArchetype {
+        private static final TypeName BASE_IDENTITY = TypeName.ofClass(BaseIdentity.class);
 
         public Base {
             name = checkName(name);
         }
 
         @Override
-        public List<JavaTypeName> interfaces() {
+        public List<TypeName> interfaces() {
             return List.of(BASE_IDENTITY);
         }
 
-        private static JavaTypeName checkName(final JavaTypeName name) {
+        private static TypeName checkName(final TypeName name) {
             if (name.equals(BASE_IDENTITY)) {
                 throw new IllegalArgumentException("invalid name " + BASE_IDENTITY);
             }
@@ -62,15 +63,15 @@ public sealed interface IdentityArchetype extends Archetype {
     /**
      * An {@link IdentityArchetype} specialized from one or more generated interfaces.
      *
-     * @param name this type's {@link JavaTypeName}}
+     * @param name this type's {@link TypeName}}
      * @param statement the {@link IdentityEffectiveStatement}
      * @param interfaces specialized interfaces
      * @since 16.0.0
      */
     record Derived(
-            JavaTypeName name,
+            TypeName name,
             IdentityEffectiveStatement statement,
-            List<JavaTypeName> interfaces) implements IdentityArchetype {
+            List<TypeName> interfaces) implements IdentityArchetype {
         public Derived {
             name = Base.checkName(name);
             requireNonNull(statement);
@@ -97,5 +98,5 @@ public sealed interface IdentityArchetype extends Archetype {
     /**
      * {@return the non-empty list of interfaces this archetype extends}
      */
-    List<JavaTypeName> interfaces();
+    List<TypeName> interfaces();
 }

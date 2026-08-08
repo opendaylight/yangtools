@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * Enumeration of possible placements for a particular type. This provides a tie-in between the {@link Generator} tree
- * and the layout of resulting Java classes as dictated by {@link JavaTypeName} and {@link CollisionDomain}.
+ * and the layout of resulting Java classes as dictated by {@link TypeName} and {@link CollisionDomain}.
  */
 enum ClassPlacement {
     /**

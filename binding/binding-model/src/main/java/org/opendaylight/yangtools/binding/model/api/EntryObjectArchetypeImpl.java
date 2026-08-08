@@ -12,14 +12,15 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 @NonNullByDefault
 record EntryObjectArchetypeImpl(
-        JavaTypeName name,
+        TypeName name,
         ListEffectiveStatement statement,
-        JavaTypeName parentName,
-        JavaTypeName keyName,
+        TypeName parentName,
+        TypeName keyName,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
         List<GetterMethod> methodSignatures) implements EntryObjectArchetype {

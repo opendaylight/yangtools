@@ -21,12 +21,12 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAugmentRuntimeType;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -151,7 +151,7 @@ public abstract sealed class AugmentGenerator
     }
 
     @Override
-    final AugmentationArchetype createTypeImpl(final JavaTypeName typeName, final AugmentEffectiveStatement statement,
+    final AugmentationArchetype createTypeImpl(final TypeName typeName, final AugmentEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings) {
         final var targetType = targetGenerator().getGeneratedType();
         if (!(targetType instanceof AugmentableArchetype target)) {

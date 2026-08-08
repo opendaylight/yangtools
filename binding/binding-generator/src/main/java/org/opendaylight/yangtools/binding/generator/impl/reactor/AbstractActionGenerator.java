@@ -11,8 +11,8 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultActionRuntimeType;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.OperationArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
@@ -44,14 +44,14 @@ abstract sealed class AbstractActionGenerator extends OperationGenerator<ActionE
     }
 
     @Override
-    final OperationArchetype.OfAction createTypeImpl(final JavaTypeName typeName,
+    final OperationArchetype.OfAction createTypeImpl(final TypeName typeName,
             final ActionEffectiveStatement statement, final RpcInputArchetype input, final RpcOutputArchetype output) {
         return createTypeImpl(typeName, statement, input, output, getParent().typeName());
     }
 
     @NonNullByDefault
-    abstract OperationArchetype.OfAction createTypeImpl(JavaTypeName typeName, ActionEffectiveStatement statement,
-        RpcInputArchetype input, RpcOutputArchetype output, JavaTypeName parentName);
+    abstract OperationArchetype.OfAction createTypeImpl(TypeName typeName, ActionEffectiveStatement statement,
+        RpcInputArchetype input, RpcOutputArchetype output, TypeName parentName);
 
     @Override
     final CompositeRuntimeTypeBuilder<ActionEffectiveStatement, ActionRuntimeType> createBuilder(

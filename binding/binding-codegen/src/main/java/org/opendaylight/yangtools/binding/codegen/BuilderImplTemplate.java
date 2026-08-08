@@ -20,9 +20,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.lib.AbstractAugmentable;
 import org.opendaylight.yangtools.binding.lib.AbstractDataContainer;
 import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
@@ -32,19 +32,17 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 //        would allow proper specialization based on properties.isEmpty(), augmentType != null and keyType != null.
 final class BuilderImplTemplate extends BaseTemplate {
     /**
-     * {@link AbstractDataContainer} as a {@link JavaTypeName}.
+     * {@link AbstractDataContainer} as a {@link TypeName}.
      */
-    private static final @NonNull JavaTypeName ABSTRACT_DATA_CONTAINER =
-        JavaTypeName.create(AbstractDataContainer.class);
+    private static final @NonNull TypeName ABSTRACT_DATA_CONTAINER = TypeName.ofClass(AbstractDataContainer.class);
     /**
-     * {@link AbstractAugmentable} as a {@link JavaTypeName}.
+     * {@link AbstractAugmentable} as a {@link TypeName}.
      */
-    private static final @NonNull JavaTypeName ABSTRACT_AUGMENTABLE =
-        JavaTypeName.create(AbstractAugmentable.class);
+    private static final @NonNull TypeName ABSTRACT_AUGMENTABLE = TypeName.ofClass(AbstractAugmentable.class);
     /**
-     * {@link AbstractEntryObject} as a {@link JavaTypeName}.
+     * {@link AbstractEntryObject} as a {@link TypeName}.
      */
-    private static final @NonNull JavaTypeName ABSTRACT_ENTRY_OBJECT = JavaTypeName.create(AbstractEntryObject.class);
+    private static final @NonNull TypeName ABSTRACT_ENTRY_OBJECT = TypeName.ofClass(AbstractEntryObject.class);
 
     private final @NonNull BuilderTemplate builder;
 

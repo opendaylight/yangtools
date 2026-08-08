@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingChoiceCodecTreeNode;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ChoiceRuntimeType;
@@ -115,7 +115,7 @@ final class ChoiceCodecContext<T extends ChoiceIn<?, ?>>
         final var choiceType = prototype.runtimeType();
         final var factory = prototype.contextFactory();
         final var context = factory.runtimeContext();
-        final var localCases = new HashSet<JavaTypeName>();
+        final var localCases = new HashSet<TypeName>();
         for (var caseType : choiceType.validCaseChildren()) {
             final var caseClass = loadCase(context, caseType);
             final var caseProto = new CaseCodecPrototype<>(caseClass, caseType, factory);

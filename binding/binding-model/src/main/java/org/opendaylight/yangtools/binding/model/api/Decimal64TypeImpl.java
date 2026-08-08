@@ -10,11 +10,12 @@ package org.opendaylight.yangtools.binding.model.api;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 
 @NonNullByDefault
 record Decimal64TypeImpl(int fractionDigits) implements Decimal64Type {
-    private static final JavaTypeName NAME = JavaTypeName.create(Decimal64.class);
+    private static final TypeName NAME = TypeName.ofClass(Decimal64.class);
 
     static final @NonNull Decimal64Type[] INSTANCES;
 
@@ -33,7 +34,7 @@ record Decimal64TypeImpl(int fractionDigits) implements Decimal64Type {
     }
 
     @Override
-    public JavaTypeName name() {
+    public TypeName name() {
         return NAME;
     }
 

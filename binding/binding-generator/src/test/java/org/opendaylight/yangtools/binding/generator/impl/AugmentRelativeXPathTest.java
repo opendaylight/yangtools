@@ -12,8 +12,8 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -46,7 +46,7 @@ class AugmentRelativeXPathTest {
                 assertEquals("interface-id", property.getKey());
                 final var returnType = property.getValue().returnType();
                 assertNotNull(returnType, "interfaceId return type is null");
-                assertEquals(JavaTypeName.create(String.class), returnType.name());
+                assertEquals(TypeName.ofClass(String.class), returnType.name());
             } else if (type.simpleName().equals("Interface")) {
                 gtInterface = assertInstanceOf(EntryObjectArchetype.class, type);
 
@@ -54,7 +54,7 @@ class AugmentRelativeXPathTest {
                 assertNotNull(gtInterfaceGetters, "Interface methods are null");
                 assertEquals(2, gtInterfaceGetters.size());
 
-                assertEquals(JavaTypeName.create(
+                assertEquals(TypeName.of(
                     "org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.interfaces",
                     "InterfaceKey"), gtInterface.keyName());
             } else if (type.simpleName().equals("Tunnel")) {
@@ -64,7 +64,7 @@ class AugmentRelativeXPathTest {
                 assertNotNull(tunnelGetters, "Tunnel methods are null");
                 assertEquals(1, tunnelGetters.size());
 
-                assertEquals(JavaTypeName.create("""
+                assertEquals(TypeName.of("""
                     org.opendaylight.yang.gen.v1.urn.model.augment._abstract.topology.rev130503.topology.network.links.\
                     network.link.tunnels""", "TunnelKey"), gtTunnel.keyName());
             } else if (type.simpleName().equals("TunnelKey")) {
@@ -79,7 +79,7 @@ class AugmentRelativeXPathTest {
                 final var returnType = property.getValue().returnType();
                 assertNotNull(returnType, "tunnelId return type is null");
                 assertEquals(
-                    JavaTypeName.create("org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208", "Uri"),
+                    TypeName.of("org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208", "Uri"),
                     returnType.name());
             }
         }

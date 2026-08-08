@@ -1,11 +1,12 @@
 /*
  * Copyright (c) 2018 Pantheon Technologies, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2026 PANTHEON.tech, s.r.o.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.api;
+package org.opendaylight.yangtools.binding.model;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
@@ -27,8 +28,8 @@ import org.slf4j.LoggerFactory;
  * sections 4 and 8. It deals with primitive, array and reference types.
  */
 @NonNullByDefault
-public abstract sealed class JavaTypeName implements Identifier {
-    private static final class Primitive extends JavaTypeName {
+public abstract sealed class TypeName implements Identifier {
+    private static final class Primitive extends TypeName {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
 
@@ -42,7 +43,7 @@ public abstract sealed class JavaTypeName implements Identifier {
         }
 
         @Override
-        public @Nullable JavaTypeName immediatelyEnclosingClass() {
+        public @Nullable TypeName immediatelyEnclosingClass() {
             return null;
         }
 
@@ -53,7 +54,7 @@ public abstract sealed class JavaTypeName implements Identifier {
         }
 
         @Override
-        public JavaTypeName createEnclosed(final String simpleName) {
+        public TypeName createEnclosed(final String simpleName) {
             throw new UnsupportedOperationException("Primitive type " + simpleName() + " cannot enclose type "
                     + simpleName);
         }
@@ -69,12 +70,12 @@ public abstract sealed class JavaTypeName implements Identifier {
         }
 
         @Override
-        public JavaTypeName createSibling(final String simpleName) {
+        public TypeName createSibling(final String simpleName) {
             return new Primitive(simpleName);
         }
 
         @Override
-        public JavaTypeName topLevelClass() {
+        public TypeName topLevelClass() {
             return this;
         }
 
@@ -84,7 +85,7 @@ public abstract sealed class JavaTypeName implements Identifier {
         }
     }
 
-    private abstract static sealed class Reference extends JavaTypeName {
+    private abstract static sealed class Reference extends TypeName {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
 
@@ -98,7 +99,7 @@ public abstract sealed class JavaTypeName implements Identifier {
         }
 
         @Override
-        public final JavaTypeName createEnclosed(final String simpleName) {
+        public final TypeName createEnclosed(final String simpleName) {
             checkValidName(requireNonNull(simpleName));
             return new Nested(this, simpleName);
         }
@@ -136,12 +137,12 @@ public abstract sealed class JavaTypeName implements Identifier {
         }
 
         @Override
-        public JavaTypeName createSibling(final String simpleName) {
+        public TypeName createSibling(final String simpleName) {
             return new TopLevel(packageName, simpleName);
         }
 
         @Override
-        public @Nullable JavaTypeName immediatelyEnclosingClass() {
+        public @Nullable TypeName immediatelyEnclosingClass() {
             return null;
         }
 
@@ -158,7 +159,7 @@ public abstract sealed class JavaTypeName implements Identifier {
         }
 
         @Override
-        public JavaTypeName topLevelClass() {
+        public TypeName topLevelClass() {
             return this;
         }
 
@@ -185,12 +186,12 @@ public abstract sealed class JavaTypeName implements Identifier {
         }
 
         @Override
-        public JavaTypeName createSibling(final String simpleName) {
+        public TypeName createSibling(final String simpleName) {
             return immediatelyEnclosingClass.createEnclosed(simpleName);
         }
 
         @Override
-        public @NonNull JavaTypeName immediatelyEnclosingClass() {
+        public @NonNull TypeName immediatelyEnclosingClass() {
             return immediatelyEnclosingClass;
         }
 
@@ -217,38 +218,22 @@ public abstract sealed class JavaTypeName implements Identifier {
         }
 
         @Override
-        public JavaTypeName topLevelClass() {
+        public TypeName topLevelClass() {
             return immediatelyEnclosingClass.topLevelClass();
         }
     }
 
-    private static final Logger LOG = LoggerFactory.getLogger(JavaTypeName.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TypeName.class);
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private final String simpleName;
 
-    JavaTypeName(final String simpleName) {
+    TypeName(final String simpleName) {
         if (simpleName.isEmpty()) {
             throw new IllegalArgumentException("empty simple name");
         }
         this.simpleName = simpleName;
-    }
-
-    /**
-     * Create a TypeName for an existing class.
-     *
-     * @param clazz Class instance
-     * @return A new TypeName
-     * @throws NullPointerException if clazz is null
-     */
-    public static JavaTypeName create(final Class<?> clazz) {
-        final var enclosingClass = clazz.getEnclosingClass();
-        if (enclosingClass != null) {
-            return create(enclosingClass).createEnclosed(clazz.getSimpleName());
-        }
-        final var pkg = clazz.getPackage();
-        return pkg == null ? new Primitive(clazz.getSimpleName()) : new TopLevel(pkg.getName(), clazz.getSimpleName());
     }
 
     /**
@@ -260,8 +245,24 @@ public abstract sealed class JavaTypeName implements Identifier {
      * @throws NullPointerException if any of the arguments is null
      * @throws IllegalArgumentException if any of the arguments is empty
      */
-    public static JavaTypeName create(final String packageName, final String simpleName) {
+    public static TypeName of(final String packageName, final String simpleName) {
         return new TopLevel(packageName, simpleName);
+    }
+
+    /**
+     * Create a TypeName for an existing class.
+     *
+     * @param clazz Class instance
+     * @return A new TypeName
+     * @throws NullPointerException if clazz is null
+     */
+    public static TypeName ofClass(final Class<?> clazz) {
+        final var enclosingClass = clazz.getEnclosingClass();
+        if (enclosingClass != null) {
+            return ofClass(enclosingClass).createEnclosed(clazz.getSimpleName());
+        }
+        final var pkg = clazz.getPackage();
+        return pkg == null ? new Primitive(clazz.getSimpleName()) : new TopLevel(pkg.getName(), clazz.getSimpleName());
     }
 
     /**
@@ -283,7 +284,7 @@ public abstract sealed class JavaTypeName implements Identifier {
      * @throws IllegalArgumentException if the simpleName hides any of the enclosing types or if it is empty
      * @throws UnsupportedOperationException if this type name does not support nested type
      */
-    public abstract JavaTypeName createEnclosed(String simpleName);
+    public abstract TypeName createEnclosed(String simpleName);
 
     /**
      * Create a TypeName for a class immediately enclosed by this class, potentially falling back to appending it with
@@ -298,7 +299,7 @@ public abstract sealed class JavaTypeName implements Identifier {
      * @throws UnsupportedOperationException if this type name does not support nested type
      */
     @SuppressWarnings("checkstyle:hiddenField")
-    public final JavaTypeName createEnclosed(final String simpleName, final String fallbackSuffix) {
+    public final TypeName createEnclosed(final String simpleName, final String fallbackSuffix) {
         checkArgument(!simpleName.isEmpty());
         try {
             return createEnclosed(simpleName);
@@ -319,7 +320,7 @@ public abstract sealed class JavaTypeName implements Identifier {
      * @throws IllegalArgumentException if the simpleName is empty
      */
     // TODO: we could detect/allocate names in this method such that they don't conflict.
-    public abstract JavaTypeName createSibling(String simpleName);
+    public abstract TypeName createSibling(String simpleName);
 
     /**
      * {@return the {@code canonical name} string of this name}
@@ -342,14 +343,14 @@ public abstract sealed class JavaTypeName implements Identifier {
     public abstract String packageName();
 
     /**
-     * {@return enclosing class JavaTypeName, or {@code null} if not present}
+     * {@return enclosing class TypeName, or {@code null} if not present}
      */
-    public abstract @Nullable JavaTypeName immediatelyEnclosingClass();
+    public abstract @Nullable TypeName immediatelyEnclosingClass();
 
     /**
-     * {@return the top-level class JavaTypeName which is containing this type, or self if this type is a top-level one}
+     * {@return the top-level class TypeName which is containing this type, or self if this type is a top-level one}
      */
-    public abstract JavaTypeName topLevelClass();
+    public abstract TypeName topLevelClass();
 
     /**
      * {@return the package-local name by which this type can be referenced by classes living in the same package}
@@ -377,7 +378,7 @@ public abstract sealed class JavaTypeName implements Identifier {
 
     @Override
     public final boolean equals(final @Nullable Object obj) {
-        return this == obj || obj instanceof JavaTypeName other
+        return this == obj || obj instanceof TypeName other
             && simpleName.equals(other.simpleName) && packageName().equals(other.packageName())
             && Objects.equals(immediatelyEnclosingClass(), other.immediatelyEnclosingClass());
     }

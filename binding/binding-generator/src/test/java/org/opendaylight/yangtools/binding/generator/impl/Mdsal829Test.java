@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.util.Set;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -31,7 +31,7 @@ class Mdsal829Test {
         final var types = BindingRuntimeTypesFactory.createTypes(MODEL_CONTEXT);
         assertSame(MODEL_CONTEXT, types.modelContext());
         final var schema = types.lookupRuntimeType(
-            JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal829.norev", "Mdsal829Data"));
+            TypeName.of("org.opendaylight.yang.gen.v1.mdsal829.norev", "Mdsal829Data"));
         assertNotNull(schema);
     }
 }

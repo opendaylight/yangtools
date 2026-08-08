@@ -12,11 +12,12 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 
 @NonNullByDefault
 record RpcOutputArchetypeImpl(
-        JavaTypeName name,
+        TypeName name,
         OutputEffectiveStatement statement,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,

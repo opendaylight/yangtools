@@ -14,8 +14,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnydataRuntimeType;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnyxmlRuntimeType;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.GetterMethod;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.AnydataRuntimeType;
@@ -51,7 +51,7 @@ abstract class OpaqueObjectGenerator<
         }
 
         @Override
-        OpaqueObjectArchetype.Anydata createTypeImpl(final JavaTypeName name,
+        OpaqueObjectArchetype.Anydata createTypeImpl(final TypeName name,
                 final AnydataEffectiveStatement statement) {
             return new OpaqueObjectArchetype.Anydata(name, statement);
         }
@@ -82,7 +82,7 @@ abstract class OpaqueObjectGenerator<
         }
 
         @Override
-        OpaqueObjectArchetype.Anyxml createTypeImpl(final JavaTypeName name, final AnyxmlEffectiveStatement statement) {
+        OpaqueObjectArchetype.Anyxml createTypeImpl(final TypeName name, final AnyxmlEffectiveStatement statement) {
             return new OpaqueObjectArchetype.Anyxml(name, statement);
         }
 
@@ -119,7 +119,7 @@ abstract class OpaqueObjectGenerator<
     }
 
     @NonNullByDefault
-    abstract OpaqueObjectArchetype<S> createTypeImpl(JavaTypeName name, S statement);
+    abstract OpaqueObjectArchetype<S> createTypeImpl(TypeName name, S statement);
 
     @Override
     final R createInternalRuntimeType(final AugmentResolver resolver, final S statement, final Type type) {

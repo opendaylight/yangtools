@@ -14,12 +14,12 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultChoiceRuntimeType;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
@@ -95,7 +95,7 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
     }
 
     @Override
-    ChoiceInArchetype createTypeImpl(final JavaTypeName typeName, final ChoiceEffectiveStatement statement,
+    ChoiceInArchetype createTypeImpl(final TypeName typeName, final ChoiceEffectiveStatement statement,
             final List<GroupingArchetype> groupings) {
         if (!groupings.isEmpty()) {
             throw new VerifyException("Illegal grouping in " + statement);

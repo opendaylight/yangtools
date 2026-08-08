@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * Represents an instance of simple parameterized type such as List&lt;String&gt;. The parameterized Type is designed
@@ -22,7 +23,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 public sealed interface ParameterizedType extends Type
         permits ParameterizedType0, ParameterizedType1, ParameterizedType2, ParameterizedTypeN {
     @Override
-    default JavaTypeName name() {
+    default TypeName name() {
         return getRawType().name();
     }
 

@@ -15,9 +15,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
@@ -54,9 +54,9 @@ class PresenceContainerTest {
             MODULE.findDataTreeChild(DIRECTORY_QNAME, USER_QNAME).orElseThrow());
         final var key = userList.keyStatement();
         assertNotNull(key);
-        final var parentName = JavaTypeName.create("foo", "parent");
-        final var keyName = JavaTypeName.create("foo", "key");
-        final var listName = JavaTypeName.create("foo", "list");
+        final var parentName = TypeName.of("foo", "parent");
+        final var keyName = TypeName.of("foo", "key");
+        final var listName = TypeName.of("foo", "list");
         final var archetype = EntryObjectArchetype.of(listName, userList, parentName, keyName, List.of(), List.of(),
             List.of());
 
@@ -71,8 +71,7 @@ class PresenceContainerTest {
         final var scpContainer = assertInstanceOf(ContainerEffectiveStatement.class,
             MODULE.findDataTreeChild(DIRECTORY_QNAME, SCP_QNAME).orElseThrow());
         assertFalse(BuilderTemplate.isNonPresenceContainer(ContainerObjectArchetype.of(
-            JavaTypeName.create("foo", "foo"), scpContainer, JavaTypeName.create("foo", "parent"), List.of(), List.of(),
-            List.of())));
+            TypeName.of("foo", "foo"), scpContainer, TypeName.of("foo", "parent"), List.of(), List.of(), List.of())));
     }
 
     /**
@@ -83,7 +82,6 @@ class PresenceContainerTest {
         final var dataContainer = assertInstanceOf(ContainerEffectiveStatement.class,
             MODULE.findDataTreeChild(DIRECTORY_QNAME, DATA_QNAME).orElseThrow());
         assertTrue(BuilderTemplate.isNonPresenceContainer(ContainerObjectArchetype.of(
-            JavaTypeName.create("foo", "foo"), dataContainer, JavaTypeName.create("foo", "parent"), List.of(),
-            List.of(), List.of())));
+            TypeName.of("foo", "foo"), dataContainer, TypeName.of("foo", "parent"), List.of(), List.of(), List.of())));
     }
 }

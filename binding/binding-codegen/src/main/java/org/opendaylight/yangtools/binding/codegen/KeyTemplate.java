@@ -17,8 +17,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  */
 @NonNullByDefault
 final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
-    private static final JavaTypeName KEY = JavaTypeName.create(Key.class);
+    private static final TypeName KEY = TypeName.ofClass(Key.class);
     // FIXME: ReturnType
     private static final ObjectEquality<Map.Entry<String, Type>> EQUALITY = new ObjectEquality<>(false) {
         @Override
@@ -166,7 +166,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
     private static long serialVersionUID(final KeyArchetype archetype) {
         final var svh = new SerialVersionHelper(archetype.name())
             .setAbstract(false)
-            .addInterface(JavaTypeName.create(Key.class));
+            .addInterface(TypeName.ofClass(Key.class));
         for (var qname : archetype.statement().argument()) {
             svh.addField(Naming.getPropertyName(qname.getLocalName()));
         }

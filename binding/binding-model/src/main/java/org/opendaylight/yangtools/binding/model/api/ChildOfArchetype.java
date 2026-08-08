@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ChoiceIn;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
@@ -30,5 +31,5 @@ public sealed interface ChildOfArchetype extends AugmentableArchetype
     /**
      * {@return the parent type name}
      */
-    JavaTypeName parentName();
+    TypeName parentName();
 }

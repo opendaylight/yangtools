@@ -15,9 +15,9 @@ import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FI
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangFeature;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.FeatureArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -25,8 +25,8 @@ import org.opendaylight.yangtools.yang.common.QName;
  */
 @NonNullByDefault
 final class FeatureTemplate extends ArchetypeTemplate<FeatureArchetype> {
-    private static final JavaTypeName QNAME = JavaTypeName.create(QName.class);
-    private static final JavaTypeName YANG_FEATURE = JavaTypeName.create(YangFeature.class);
+    private static final TypeName QNAME = TypeName.ofClass(QName.class);
+    private static final TypeName YANG_FEATURE = TypeName.ofClass(YangFeature.class);
 
     FeatureTemplate(final DataRootArchetype root, final FeatureArchetype type) {
         super(root, type);

@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.OpaqueObject;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.runtime.api.ChoiceRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerLikeRuntimeType;
@@ -138,7 +138,7 @@ final class DataContainerAnalysis<R extends CompositeRuntimeType> {
     private static @NonNull DataContainerPrototype<?, ?> getChildPrototype(final CompositeRuntimeType type,
             final CodecContextFactory factory, final @Nullable Class<? extends DataObject> caseClass,
             final Class<? extends DataContainer> childClass) {
-        final var child = type.bindingChild(JavaTypeName.create(childClass));
+        final var child = type.bindingChild(TypeName.ofClass(childClass));
         if (child == null) {
             throw DataContainerCodecContext.childNullException(factory.runtimeContext(), childClass,
                 "Node %s does not have child named %s", type, childClass);

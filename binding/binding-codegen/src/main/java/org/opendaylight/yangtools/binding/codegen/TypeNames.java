@@ -22,117 +22,117 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.lib.CodeHelpers;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
 /**
- * Well-known {@link JavaTypeName} constants which do not have a single user.
+ * Well-known {@link TypeName} constants which do not have a single user.
  */
 @NonNullByDefault
 final class TypeNames {
     /**
-     * {@code java.lang.Class} as a JavaTypeName.
+     * {@code java.lang.Class} as a TypeName.
      */
-    static final JavaTypeName CLASS = JavaTypeName.create(Class.class);
+    static final TypeName CLASS = TypeName.ofClass(Class.class);
     /**
-     * {@code java.lang.IllegalArgumentException} as a JavaTypeName.
+     * {@code java.lang.IllegalArgumentException} as a TypeName.
      */
-    static final JavaTypeName IAE = JavaTypeName.create(IllegalArgumentException.class);
+    static final TypeName IAE = TypeName.ofClass(IllegalArgumentException.class);
     /**
-     * {@code java.lang.NullPointerException} as a JavaTypeName.
+     * {@code java.lang.NullPointerException} as a TypeName.
      */
-    static final JavaTypeName NPE = JavaTypeName.create(NullPointerException.class);
+    static final TypeName NPE = TypeName.ofClass(NullPointerException.class);
     /**
-     * {@code java.lang.NoSuchElementException} as a JavaTypeName.
+     * {@code java.lang.NoSuchElementException} as a TypeName.
      */
-    static final JavaTypeName NSEE = JavaTypeName.create(NoSuchElementException.class);
+    static final TypeName NSEE = TypeName.ofClass(NoSuchElementException.class);
     /**
-     * {@code java.lang.Object} as a JavaTypeName.
+     * {@code java.lang.Object} as a TypeName.
      */
-    static final JavaTypeName OBJECT = JavaTypeName.create(Object.class);
+    static final TypeName OBJECT = TypeName.ofClass(Object.class);
     /**
-     * {@code java.lang.String} as a JavaTypeName.
+     * {@code java.lang.String} as a TypeName.
      */
-    static final JavaTypeName STRING = JavaTypeName.create(String.class);
+    static final TypeName STRING = TypeName.ofClass(String.class);
     /**
-     * {@code java.lang.Override} as a JavaTypeName.
+     * {@code java.lang.Override} as a TypeName.
      */
-    static final JavaTypeName OVERRIDE = JavaTypeName.create(Override.class);
+    static final TypeName OVERRIDE = TypeName.ofClass(Override.class);
     /**
-     * {@code java.lang.SuppressWarnings} as a JavaTypeName.
+     * {@code java.lang.SuppressWarnings} as a TypeName.
      */
-    static final JavaTypeName SUPPRESS_WARNINGS = JavaTypeName.create(SuppressWarnings.class);
+    static final TypeName SUPPRESS_WARNINGS = TypeName.ofClass(SuppressWarnings.class);
     /**
-     * {@code java.lang.void} as a JavaTypeName.
+     * {@code java.lang.void} as a TypeName.
      */
-    static final JavaTypeName VOID = JavaTypeName.create(void.class);
+    static final TypeName VOID = TypeName.ofClass(void.class);
 
     /**
-     * {@code java.util.Arrays} as a JavaTypeName.
+     * {@code java.util.Arrays} as a TypeName.
      */
-    static final JavaTypeName JU_ARRAYS = JavaTypeName.create(Arrays.class);
+    static final TypeName JU_ARRAYS = TypeName.ofClass(Arrays.class);
     /**
-     * {@code java.util.HashMap} as a JavaTypeName.
+     * {@code java.util.HashMap} as a TypeName.
      */
-    static final JavaTypeName JU_BASE64 = JavaTypeName.create(Base64.class);
+    static final TypeName JU_BASE64 = TypeName.ofClass(Base64.class);
     /**
-     * {@code java.util.HashMap} as a JavaTypeName.
+     * {@code java.util.HashMap} as a TypeName.
      */
-    static final JavaTypeName JU_HASHMAP = JavaTypeName.create(HashMap.class);
+    static final TypeName JU_HASHMAP = TypeName.ofClass(HashMap.class);
     /**
-     * {@code java.util.List} as a JavaTypeName.
+     * {@code java.util.List} as a TypeName.
      */
-    static final JavaTypeName JU_LIST = JavaTypeName.create(List.class);
+    static final TypeName JU_LIST = TypeName.ofClass(List.class);
     /**
-     * {@code java.util.Map} as a JavaTypeName.
+     * {@code java.util.Map} as a TypeName.
      */
-    static final JavaTypeName JU_MAP = JavaTypeName.create(Map.class);
+    static final TypeName JU_MAP = TypeName.ofClass(Map.class);
     /**
-     * {@code java.util.Objects} as a JavaTypeName.
+     * {@code java.util.Objects} as a TypeName.
      */
-    static final JavaTypeName JU_OBJECTS = JavaTypeName.create(Objects.class);
+    static final TypeName JU_OBJECTS = TypeName.ofClass(Objects.class);
     /**
-     * {@code java.util.regex.Pattern} as a JavaTypeName.
+     * {@code java.util.regex.Pattern} as a TypeName.
      */
-    static final JavaTypeName JUR_PATTERN = JavaTypeName.create(Pattern.class);
+    static final TypeName JUR_PATTERN = TypeName.ofClass(Pattern.class);
 
     /**
-     * {@code javax.annotation.processing.Generated} as a JavaTypeName.
+     * {@code javax.annotation.processing.Generated} as a TypeName.
      */
-    static final JavaTypeName GENERATED = JavaTypeName.create(Generated.class);
+    static final TypeName GENERATED = TypeName.ofClass(Generated.class);
 
     /**
-     * {@code javax.management.ConstructorParameters} as a JavaTypeName.
+     * {@code javax.management.ConstructorParameters} as a TypeName.
      */
-    static final JavaTypeName CONSTRUCTOR_PARAMETERS = JavaTypeName.create(ConstructorParameters.class);
+    static final TypeName CONSTRUCTOR_PARAMETERS = TypeName.ofClass(ConstructorParameters.class);
 
     /**
-     * {@code org.eclipse.jdt.annotation.NonNull} as a JavaTypeName.
+     * {@code org.eclipse.jdt.annotation.NonNull} as a TypeName.
      */
-    static final JavaTypeName NONNULL = JavaTypeName.create(NonNull.class);
+    static final TypeName NONNULL = TypeName.ofClass(NonNull.class);
     /**
-     * {@code org.eclipse.jdt.annotation.NonNullByDefault} as a JavaTypeName.
+     * {@code org.eclipse.jdt.annotation.NonNullByDefault} as a TypeName.
      */
-    static final JavaTypeName NONNULL_BY_DEFAULT = JavaTypeName.create(NonNullByDefault.class);
+    static final TypeName NONNULL_BY_DEFAULT = TypeName.ofClass(NonNullByDefault.class);
     /**
-     * {@code org.eclipse.jdt.annotation.Nullable} as a JavaTypeName.
+     * {@code org.eclipse.jdt.annotation.Nullable} as a TypeName.
      */
-    static final JavaTypeName NULLABLE = JavaTypeName.create(Nullable.class);
+    static final TypeName NULLABLE = TypeName.ofClass(Nullable.class);
 
     /**
-     * {@code com.google.common.util.concurrent.ListenableFuture} as a JavaTypeName.
+     * {@code com.google.common.util.concurrent.ListenableFuture} as a TypeName.
      */
-    static final JavaTypeName LISTENABLE_FUTURE = JavaTypeName.create(ListenableFuture.class);
+    static final TypeName LISTENABLE_FUTURE = TypeName.ofClass(ListenableFuture.class);
 
     /**
-     * {@code org.opendaylight.yangtools.binding.lib.CodeHelpers} as a JavaTypeName.
+     * {@code org.opendaylight.yangtools.binding.lib.CodeHelpers} as a TypeName.
      */
-    static final JavaTypeName CODEHELPERS = JavaTypeName.create(CodeHelpers.class);
+    static final TypeName CODEHELPERS = TypeName.ofClass(CodeHelpers.class);
 
     /**
-     * {@code org.opendaylight.yangtools.yang.common.RpcResult} as a JavaTypeName.
+     * {@code org.opendaylight.yangtools.yang.common.RpcResult} as a TypeName.
      */
-    static final JavaTypeName RPC_RESULT = JavaTypeName.create(RpcResult.class);
+    static final TypeName RPC_RESULT = TypeName.ofClass(RpcResult.class);
 
     private TypeNames() {
         // hidden on purpose

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
@@ -22,7 +23,7 @@ public sealed interface DataRootArchetype extends DataContainerArchetype permits
     @Override
     ModuleEffectiveStatement statement();
 
-    static DataRootArchetype of(final JavaTypeName typeName, final ModuleEffectiveStatement statement,
+    static DataRootArchetype of(final TypeName typeName, final ModuleEffectiveStatement statement,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
             final List<GetterMethod> getters) {
         return new DataRootArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),

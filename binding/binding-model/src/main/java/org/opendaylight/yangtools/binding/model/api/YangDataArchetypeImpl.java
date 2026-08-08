@@ -12,11 +12,12 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 
 @NonNullByDefault
 record YangDataArchetypeImpl(
-        JavaTypeName name,
+        TypeName name,
         YangDataEffectiveStatement statement,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,

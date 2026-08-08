@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangFeature;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 
 /**
@@ -21,7 +22,7 @@ public sealed interface FeatureArchetype extends Archetype permits FeatureArchet
     @Override
     FeatureEffectiveStatement statement();
 
-    static FeatureArchetype of(final JavaTypeName name, final FeatureEffectiveStatement statement) {
+    static FeatureArchetype of(final TypeName name, final FeatureEffectiveStatement statement) {
         return new FeatureArchetypeImpl(name, statement);
     }
 }

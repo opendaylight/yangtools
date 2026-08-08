@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import java.lang.annotation.ElementType;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * An instance of {@link #type()} annotation. This may be applicable to
@@ -34,9 +35,9 @@ public sealed interface AttachedAnnotation permits AttachedAnnotation.ToMethod {
     }
 
     /**
-     * {@return the {@link JavaTypeName} of this annotation}
+     * {@return the {@link TypeName} of this annotation}
      */
-    JavaTypeName type();
+    TypeName type();
 
     /**
      * {@return the {@link ElementType}s that are valid targets of this annotation}

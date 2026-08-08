@@ -14,8 +14,8 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.RPC_RESULT;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.OpaqueObject;
 import org.opendaylight.yangtools.binding.Rpc;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.RpcArchetype;
 
 /**
@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.binding.model.api.RpcArchetype;
  */
 @NonNullByDefault
 final class RpcTemplate extends ArchetypeTemplate<RpcArchetype> {
-    private static final JavaTypeName RPC = JavaTypeName.create(Rpc.class);
+    private static final TypeName RPC = TypeName.ofClass(Rpc.class);
 
     RpcTemplate(final DataRootArchetype root, final RpcArchetype archetype) {
         super(root, archetype);

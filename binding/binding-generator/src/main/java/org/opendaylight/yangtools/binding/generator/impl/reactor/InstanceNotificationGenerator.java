@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.InstanceNotification;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.InstanceNotificationArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
@@ -29,16 +29,16 @@ final class InstanceNotificationGenerator extends AbstractInstanceNotificationGe
     }
 
     @Override
-    InstanceNotificationArchetype createTypeImpl(final JavaTypeName typeName,
-            final NotificationEffectiveStatement statement, final JavaTypeName parentName,
+    InstanceNotificationArchetype createTypeImpl(final TypeName typeName,
+            final NotificationEffectiveStatement statement, final TypeName parentName,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
             final List<GetterMethod> getters) {
         return InstanceNotificationArchetype.of(typeName, statement, parentName, groupings, typeObjects, getters);
     }
 
     @Override
-    InstanceNotificationArchetype createTypeImpl(final JavaTypeName typeName,
-            final NotificationEffectiveStatement statement, final JavaTypeName parentName,
+    InstanceNotificationArchetype createTypeImpl(final TypeName typeName,
+            final NotificationEffectiveStatement statement, final TypeName parentName,
             final NotificationBodyArchetype notificationBody) {
         return InstanceNotificationArchetype.of(typeName, statement, parentName, notificationBody);
     }

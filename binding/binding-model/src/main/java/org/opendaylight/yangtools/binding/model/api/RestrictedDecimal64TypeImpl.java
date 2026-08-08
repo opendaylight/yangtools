@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 @NonNullByDefault
 record RestrictedDecimal64TypeImpl(Decimal64Type type, Restrictions restrictions) implements RestrictedDecimal64Type {
@@ -25,7 +26,7 @@ record RestrictedDecimal64TypeImpl(Decimal64Type type, Restrictions restrictions
     }
 
     @Override
-    public JavaTypeName name() {
+    public TypeName name() {
         return type.name();
     }
 
