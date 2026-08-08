@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.data.codec.impl;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataObject;
@@ -28,10 +27,6 @@ sealed class ListCodecContext<D extends DataObject, R extends ListRuntimeType> e
 
     ListCodecContext(final ListCodecPrototype<R> prototype) {
         super(prototype);
-    }
-
-    ListCodecContext(final ListCodecPrototype<R> prototype, final Method keyMethod) {
-        super(prototype, keyMethod);
     }
 
     @Override

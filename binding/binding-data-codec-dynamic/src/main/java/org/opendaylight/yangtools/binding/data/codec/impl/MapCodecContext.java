@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
@@ -19,7 +18,6 @@ import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyStep;
 import org.opendaylight.yangtools.binding.KeylessStep;
-import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -28,15 +26,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 abstract sealed class MapCodecContext<I extends Key<D>, D extends EntryObject<D, I>>
         extends ListCodecContext<D, ListRuntimeType.WithKey> {
     private static final class Ordered<I extends Key<D>, D extends EntryObject<D, I>> extends MapCodecContext<I, D> {
-        Ordered(final MapCodecPrototype prototype, final Method keyMethod, final IdentifiableItemCodec codec) {
-            super(prototype, keyMethod, codec);
+        Ordered(final MapCodecPrototype prototype, final IdentifiableItemCodec codec) {
+            super(prototype, codec);
         }
     }
 
     static final class Unordered<I extends Key<D>, D extends EntryObject<D, I>> extends MapCodecContext<I, D> {
-        private Unordered(final MapCodecPrototype prototype, final Method keyMethod,
-                final IdentifiableItemCodec codec) {
-            super(prototype, keyMethod, codec);
+        private Unordered(final MapCodecPrototype prototype, final IdentifiableItemCodec codec) {
+            super(prototype, codec);
         }
 
         @Override
@@ -47,9 +44,8 @@ abstract sealed class MapCodecContext<I extends Key<D>, D extends EntryObject<D,
 
     private final IdentifiableItemCodec codec;
 
-    private MapCodecContext(final MapCodecPrototype prototype, final Method keyMethod,
-            final IdentifiableItemCodec codec) {
-        super(prototype, keyMethod);
+    private MapCodecContext(final MapCodecPrototype prototype, final IdentifiableItemCodec codec) {
+        super(prototype);
         this.codec = requireNonNull(codec);
     }
 
@@ -59,20 +55,12 @@ abstract sealed class MapCodecContext<I extends Key<D>, D extends EntryObject<D,
     }
 
     static @NonNull MapCodecContext<?, ?> of(final MapCodecPrototype prototype) {
-        final var bindingClass = prototype.javaClass();
-        final Method keyMethod;
-        try {
-            keyMethod = bindingClass.getMethod(Naming.KEY_AWARE_KEY_NAME);
-        } catch (NoSuchMethodException e) {
-            throw new IllegalStateException("Required method not available", e);
-        }
-
         final var type = prototype.runtimeType();
-        final var codec = prototype.contextFactory().getPathArgumentCodec(bindingClass, type);
+        final var codec = prototype.contextFactory().getPathArgumentCodec(prototype.javaClass(), type);
 
         return switch (type.statement().effectiveOrdering()) {
-            case SYSTEM -> new Unordered<>(prototype, keyMethod, codec);
-            case USER -> new Ordered<>(prototype, keyMethod, codec);
+            case SYSTEM -> new Unordered<>(prototype, codec);
+            case USER -> new Ordered<>(prototype, codec);
         };
     }
 

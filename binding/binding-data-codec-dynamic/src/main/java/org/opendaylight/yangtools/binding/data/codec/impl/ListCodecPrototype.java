@@ -25,4 +25,9 @@ sealed class ListCodecPrototype<R extends ListRuntimeType> extends DataObjectCod
     ListCodecContext<?, R> createInstance() {
         return new ListCodecContext<>(this);
     }
+
+    @Override
+    <T extends CodecDataObject<T>> GenClass<T> generateClass(final DataContainerAnalysis<R> analysis) {
+        return generateAugmentable(analysis, runtimeType());
+    }
 }

@@ -53,4 +53,9 @@ final class AugmentationCodecPrototype<T extends Augmentation<?>>
     @NonNull ImmutableSet<NodeIdentifier> getChildArgs() {
         return childArgs;
     }
+
+    @Override
+    <T extends CodecDataObject<T>> GenClass<T> generateClass(final DataContainerAnalysis<AugmentRuntimeType> analysis) {
+        return generate(analysis);
+    }
 }

@@ -130,6 +130,12 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
         NotificationCodecContext<?> createInstance() {
             throw new UnsupportedOperationException("Should never be invoked");
         }
+
+        @Override
+        <T extends CodecDataObject<T>> GenClass<T> generateClass(
+                final DataContainerAnalysis<NotificationRuntimeType> analysis) {
+            return generateAugmentable(analysis, runtimeType());
+        }
     }
 
     private enum ConstructorImplementation implements Implementation {

@@ -25,4 +25,10 @@ sealed class ContainerLikeCodecPrototype extends DataObjectCodecPrototype<Contai
     ContainerLikeCodecContext<?> createInstance() {
         return new ContainerLikeCodecContext<>(this);
     }
+
+    @Override
+    <T extends CodecDataObject<T>> GenClass<T> generateClass(
+            final DataContainerAnalysis<ContainerLikeRuntimeType> analysis) {
+        return generateAugmentable(analysis, runtimeType());
+    }
 }
