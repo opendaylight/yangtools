@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.RpcOutput;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 
 /**
@@ -22,7 +23,7 @@ public sealed interface RpcOutputArchetype extends AugmentableArchetype permits 
     @Override
     OutputEffectiveStatement statement();
 
-    static RpcOutputArchetype of(final JavaTypeName typeName, final OutputEffectiveStatement statement,
+    static RpcOutputArchetype of(final TypeName typeName, final OutputEffectiveStatement statement,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
             final List<GetterMethod> getters) {
         return new RpcOutputArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),

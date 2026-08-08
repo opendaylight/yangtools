@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Notification;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 /**
@@ -21,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 public sealed interface NotificationArchetype extends DataContainerArchetype.OfNotification
         permits NotificationArchetypeImpl {
 
-    static NotificationArchetype of(final JavaTypeName typeName, final NotificationEffectiveStatement statement,
+    static NotificationArchetype of(final TypeName typeName, final NotificationEffectiveStatement statement,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
             final List<GetterMethod> getters) {
         return new NotificationArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),

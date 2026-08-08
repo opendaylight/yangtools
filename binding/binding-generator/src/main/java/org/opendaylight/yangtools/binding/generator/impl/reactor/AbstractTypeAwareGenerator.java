@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.GetterMethod;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.RoutingContextAnnotation;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
@@ -56,7 +56,7 @@ abstract class AbstractTypeAwareGenerator<
     }
 
     @Override
-    final JavaTypeName createTypeName() {
+    final TypeName createTypeName() {
         // FIXME: we should be be assigning a non-conflict name here
         return getParent().typeName().createEnclosed(assignedName(), "$");
     }

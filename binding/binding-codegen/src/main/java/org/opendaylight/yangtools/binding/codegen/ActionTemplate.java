@@ -14,17 +14,17 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.RPC_RESULT;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ActionArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 
 /**
  * Template for {@link Action} specializations.
  */
 @NonNullByDefault
 final class ActionTemplate extends ArchetypeTemplate<ActionArchetype> {
-    private static final JavaTypeName ACTION = JavaTypeName.create(Action.class);
-    private static final JavaTypeName DATA_OBJECT_IDENTIFIER = JavaTypeName.create(DataObjectIdentifier.class);
+    private static final TypeName ACTION = TypeName.ofClass(Action.class);
+    private static final TypeName DATA_OBJECT_IDENTIFIER = TypeName.ofClass(DataObjectIdentifier.class);
 
     ActionTemplate(final DataRootArchetype root, final ActionArchetype archetype) {
         super(root, archetype);

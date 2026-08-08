@@ -15,6 +15,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.UnionTypeObject;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 
@@ -29,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 @Beta
 @NonNullByDefault
 public record UnionTypeObjectArchetype(
-        JavaTypeName name,
+        TypeName name,
         TypeEffectiveStatement.MandatoryIn<?, ?> statement,
         List<String> typePropertyNames,
         List<Type> typePropertyTypes,

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ItemObject;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 /**
@@ -20,8 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 @NonNullByDefault
 public sealed interface ItemObjectArchetype extends ChildOfArchetype.OfList permits ItemObjectArchetypeImpl {
 
-    static ItemObjectArchetype of(final JavaTypeName typeName, final ListEffectiveStatement statement,
-            final JavaTypeName parentName, final List<GroupingArchetype> groupings,
+    static ItemObjectArchetype of(final TypeName typeName, final ListEffectiveStatement statement,
+            final TypeName parentName, final List<GroupingArchetype> groupings,
             final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters) {
         return new ItemObjectArchetypeImpl(typeName, statement, parentName, TypeMethods.copyList(groupings),
             TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));

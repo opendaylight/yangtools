@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ActionArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
@@ -24,9 +24,9 @@ final class ActionGenerator extends AbstractActionGenerator {
     }
 
     @Override
-    ActionArchetype createTypeImpl(final JavaTypeName typeName,
+    ActionArchetype createTypeImpl(final TypeName typeName,
             final ActionEffectiveStatement statement, final RpcInputArchetype input, final RpcOutputArchetype output,
-            final JavaTypeName parentName) {
+            final TypeName parentName) {
         return ActionArchetype.of(typeName, statement, input, output, parentName);
     }
 }

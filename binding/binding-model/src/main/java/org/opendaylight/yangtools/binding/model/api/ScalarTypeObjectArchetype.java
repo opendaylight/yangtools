@@ -14,6 +14,7 @@ import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 
@@ -24,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
  */
 @Beta
 public record ScalarTypeObjectArchetype(
-        @NonNull JavaTypeName name,
+        @NonNull TypeName name,
         TypeEffectiveStatement.@NonNull MandatoryIn<?, ?> statement,
         @NonNull TypeDefinition<?> typeDefinition,
         @NonNull ConcreteType valueType,

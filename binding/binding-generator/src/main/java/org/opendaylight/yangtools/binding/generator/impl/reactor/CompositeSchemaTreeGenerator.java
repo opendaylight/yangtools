@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ChildOf;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
@@ -27,10 +27,10 @@ abstract sealed class CompositeSchemaTreeGenerator<
     }
 
     /**
-     * {@return the {@link JavaTypeName} to use as the {@code P} parameter of {@link ChildOf}}
+     * {@return the {@link TypeName} to use as the {@code P} parameter of {@link ChildOf}}
      */
     @NonNullByDefault
-    final JavaTypeName parentNameForChildOf() {
+    final TypeName parentNameForChildOf() {
         var ancestor = getParent();
         while (true) {
             // choice/case hierarchy does not factor into 'ChildOf' hierarchy, hence we need to skip them

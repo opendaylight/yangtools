@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Grouping;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 
 /**
@@ -22,7 +23,7 @@ public sealed interface GroupingArchetype extends DataContainerArchetype.Partial
     @Override
     GroupingEffectiveStatement statement();
 
-    static GroupingArchetype of(final JavaTypeName typeName, final GroupingEffectiveStatement statement,
+    static GroupingArchetype of(final TypeName typeName, final GroupingEffectiveStatement statement,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
             final List<GetterMethod> getters) {
         return new GroupingArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),

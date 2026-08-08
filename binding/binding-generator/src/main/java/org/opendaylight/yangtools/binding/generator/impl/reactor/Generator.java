@@ -21,8 +21,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
@@ -40,7 +40,7 @@ public abstract class Generator implements Iterable<Generator> {
 
     private Optional<Member> member;
     private GeneratorResult result;
-    private JavaTypeName typeName;
+    private TypeName typeName;
     private String javaPackage;
 
     Generator() {
@@ -190,16 +190,16 @@ public abstract class Generator implements Iterable<Generator> {
         return Naming.normalizePackageName(parentPackage + '.' + myPackage);
     }
 
-    final @NonNull JavaTypeName typeName() {
-        JavaTypeName local = typeName;
+    final @NonNull TypeName typeName() {
+        TypeName local = typeName;
         if (local == null) {
             typeName = local = createTypeName();
         }
         return local;
     }
 
-    @NonNull JavaTypeName createTypeName() {
-        return JavaTypeName.create(getPackageParent().javaPackage(), assignedName());
+    @NonNull TypeName createTypeName() {
+        return TypeName.of(getPackageParent().javaPackage(), assignedName());
     }
 
     @NonNull DataContainerGenerator<?, ?> getPackageParent() {

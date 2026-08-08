@@ -12,13 +12,14 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 
 @NonNullByDefault
 record ChoiceInArchetypeN(
-        JavaTypeName name,
+        TypeName name,
         ChoiceEffectiveStatement statement,
-        JavaTypeName parentName,
+        TypeName parentName,
         List<CaseObjectArchetype> cases) implements ChoiceInArchetype {
     public ChoiceInArchetypeN {
         requireNonNull(name);

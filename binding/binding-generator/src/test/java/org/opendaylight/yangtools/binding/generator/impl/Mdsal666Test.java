@@ -11,14 +11,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal666Test {
-    private static final JavaTypeName FOO = JavaTypeName.create("org.opendaylight.yang.gen.v1.foo.norev", "Foo");
-    private static final JavaTypeName FOO_GRP = JavaTypeName.create("org.opendaylight.yang.gen.v1.foo.norev", "Foo$G");
-    private static final JavaTypeName BAZ_GRP = JavaTypeName.create("org.opendaylight.yang.gen.v1.foo.norev.bar",
+    private static final TypeName FOO = TypeName.of("org.opendaylight.yang.gen.v1.foo.norev", "Foo");
+    private static final TypeName FOO_GRP = TypeName.of("org.opendaylight.yang.gen.v1.foo.norev", "Foo$G");
+    private static final TypeName BAZ_GRP = TypeName.of("org.opendaylight.yang.gen.v1.foo.norev.bar",
         "Baz$G");
 
     @Test

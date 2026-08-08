@@ -12,13 +12,14 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveStatement;
 
 @NonNullByDefault
 record KeyedListNotificationArchetypeImpl(
-        JavaTypeName name,
+        TypeName name,
         NotificationEffectiveStatement statement,
-        JavaTypeName parentName,
+        TypeName parentName,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
         List<GetterMethod> methodSignatures) implements KeyedListNotificationArchetype {

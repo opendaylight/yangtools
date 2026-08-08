@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyedListActionArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ContainerRuntimeType;
@@ -49,12 +49,12 @@ class Mdsal824Test {
 
         final var barInput = assertInstanceOf(InputRuntimeType.class,
             barAction.schemaTreeChild(QName.create("bar", "input")));
-        assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.foo.norev.act.grp", "FooInput"),
+        assertEquals(TypeName.of("org.opendaylight.yang.gen.v1.foo.norev.act.grp", "FooInput"),
             barInput.javaType().name());
 
         final var barOutput = assertInstanceOf(OutputRuntimeType.class,
             barAction.schemaTreeChild(QName.create("bar", "output")));
-        assertEquals(JavaTypeName.create("org.opendaylight.yang.gen.v1.foo.norev.act.grp", "FooOutput"),
+        assertEquals(TypeName.of("org.opendaylight.yang.gen.v1.foo.norev.act.grp", "FooOutput"),
             barOutput.javaType().name());
     }
 }

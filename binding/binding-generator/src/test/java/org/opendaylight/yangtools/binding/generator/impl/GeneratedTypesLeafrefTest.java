@@ -15,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.GetterMethod;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -106,7 +106,7 @@ class GeneratedTypesLeafrefTest {
         assertEquals("java.lang.String", ifcIdPropType.canonicalName());
 
         // Interface
-        assertEquals(JavaTypeName.create(
+        assertEquals(TypeName.of(
             "org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.interfaces", "InterfaceKey"),
             gtIfc.keyName());
         final var gtIfcMethods = gtIfc.getters();
@@ -173,7 +173,7 @@ class GeneratedTypesLeafrefTest {
         assertEquals("Uri", getIdDestType.simpleName());
 
         // Tunnel
-        assertEquals(JavaTypeName.create("""
+        assertEquals(TypeName.of("""
             org.opendaylight.yang.gen.v1.urn.model._abstract.topology.rev130208.topology.network.links.network.link.\
             tunnels""", "TunnelKey"), gtTunnel.keyName());
         assertThat(gtTunnel.getters()).hasSize(1);

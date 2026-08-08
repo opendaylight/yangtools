@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -18,9 +19,9 @@ import org.opendaylight.yangtools.concepts.Immutable;
 @NonNullByDefault
 public sealed interface Type extends Immutable permits Archetype, ConcreteType, ParameterizedType, TypeRef {
     /**
-     * {@return this type's {@link JavaTypeName}}
+     * {@return this type's {@link TypeName}}
      */
-    JavaTypeName name();
+    TypeName name();
 
     /**
      * {@return name of the package that interface belongs to}

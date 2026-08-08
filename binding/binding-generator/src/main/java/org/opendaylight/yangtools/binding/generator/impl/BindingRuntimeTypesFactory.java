@@ -26,10 +26,10 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.GeneratorReacto
 import org.opendaylight.yangtools.binding.generator.impl.reactor.IdentityGenerator;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.ModuleGenerator;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultBindingRuntimeTypes;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.CaseObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeTypes;
 import org.opendaylight.yangtools.binding.runtime.api.CaseRuntimeType;
@@ -51,10 +51,10 @@ final class BindingRuntimeTypesFactory implements Mutable {
     private final HashMap<QNameModule, ModuleRuntimeType> modules = new HashMap<>();
     // Identities, indexed by their QName
     private final HashMap<QName, IdentityRuntimeType> identities = new HashMap<>();
-    // All known types, indexed by their JavaTypeName
-    private final HashMap<JavaTypeName, RuntimeType> allTypes = new HashMap<>();
+    // All known types, indexed by their TypeName
+    private final HashMap<TypeName, RuntimeType> allTypes = new HashMap<>();
     // All known 'choice's to their corresponding cases
-    private final HashMultimap<JavaTypeName, CaseRuntimeType> choiceToCases = HashMultimap.create();
+    private final HashMultimap<TypeName, CaseRuntimeType> choiceToCases = HashMultimap.create();
     // All case to cases mapping, values are the cases that can substitute case that is the key
     private final HashMultimap<CaseObjectArchetype, CaseRuntimeType> caseToSubstitutionCases = HashMultimap.create();
     // All augment to augments mapping where values are augments that can substitute augment that is the key

@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint32;
 import org.opendaylight.yangtools.yang.common.Uint64;
@@ -16,9 +16,9 @@ import org.opendaylight.yangtools.yang.common.Uint8;
 
 final class Uint64RangeGenerator extends AbstractUnsignedRangeGenerator<Uint64> {
     /**
-     * {@code java.lang.Long} as a JavaTypeName.
+     * {@code java.lang.Long} as a TypeName.
      */
-    private static final @NonNull JavaTypeName LONG = JavaTypeName.create(Long.class);
+    private static final @NonNull TypeName LONG = TypeName.ofClass(Long.class);
 
     Uint64RangeGenerator() {
         super(Uint64.class, long.class.getName(), Uint64.ZERO, Uint64.MAX_VALUE);

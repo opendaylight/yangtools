@@ -18,9 +18,9 @@ import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.GetterMethod;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RoutingContextAnnotation;
@@ -48,7 +48,7 @@ final class DataContainerGetterMethods implements BlockFragment {
         this.template = requireNonNull(template);
     }
 
-    private String importedName(final JavaTypeName type) {
+    private String importedName(final TypeName type) {
         return template.importedName(type);
     }
 
@@ -148,7 +148,7 @@ final class DataContainerGetterMethods implements BlockFragment {
 
     // FIXME: return a Block
     private String accessorJavadoc(final GetterShape getter, final String orString,
-            final @Nullable JavaTypeName exception) {
+            final @Nullable TypeName exception) {
         final var optDescription = getter.method().statement()
             .findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class);
         if (optDescription.isEmpty()) {
@@ -170,7 +170,7 @@ final class DataContainerGetterMethods implements BlockFragment {
 
     // FIXME: return a Block
     private String simpleAccessorJavadoc(final GetterShape getter, final String orString,
-            final @Nullable JavaTypeName exception) {
+            final @Nullable TypeName exception) {
         final var propName = getter.propName();
 
         final var bb = template.newBlockBuilder()

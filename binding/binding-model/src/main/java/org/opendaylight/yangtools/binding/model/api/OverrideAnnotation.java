@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * An attached {@link Override} annotation.
@@ -18,7 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @Beta
 @NonNullByDefault
 public final class OverrideAnnotation implements AttachedAnnotation.ToMethod {
-    private static final JavaTypeName TYPE = JavaTypeName.create(Override.class);
+    private static final TypeName TYPE = TypeName.ofClass(Override.class);
 
     /**
      * The singleton {@link OverrideAnnotation} instance.
@@ -30,7 +31,7 @@ public final class OverrideAnnotation implements AttachedAnnotation.ToMethod {
     }
 
     @Override
-    public JavaTypeName type() {
+    public TypeName type() {
         return TYPE;
     }
 

@@ -13,9 +13,9 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Set;
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EntryObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -248,7 +248,7 @@ class GeneratedTypesTest {
                 }
                 case EntryObjectArchetype archetype -> {
                     if (archetype.simpleName().equals("SimpleList")) {
-                        assertEquals(JavaTypeName.create(
+                        assertEquals(TypeName.of(
                             "org.opendaylight.yang.gen.v1.urn.simple.container.demo.rev130227.list.parent.container",
                             "SimpleListKey"), archetype.keyName());
 

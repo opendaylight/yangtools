@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding.runtime.api;
 
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -34,7 +34,7 @@ public interface RuntimeTypeContainer extends Immutable {
     @Nullable RuntimeType schemaTreeChild(QName qname);
 
     /**
-     * Look up a child by the {@link JavaTypeName} of its generated class. This lookup, while very similar to
+     * Look up a child by the {@link TypeName} of its generated class. This lookup, while very similar to
      * {@link #schemaTreeChild(QName)}, does not precisely match the {@code schema tree} nor does it match
      * {@code YangInstanceIdentifier} addressing.
      * It will resolve constructs generated for {@code choice}, {@code case}, {@code notification}, {@code rpc},
@@ -45,7 +45,7 @@ public interface RuntimeTypeContainer extends Immutable {
      * @return Corresponding {@link RuntimeType}, or null if not found
      * @throws NullPointerException if {@code typeName} is null
      */
-    @Nullable GeneratedRuntimeType bindingChild(JavaTypeName typeName);
+    @Nullable GeneratedRuntimeType bindingChild(TypeName typeName);
 
     // FIXME: consider removing this method
     default @Nullable RuntimeType bindingChild(final Type type) {

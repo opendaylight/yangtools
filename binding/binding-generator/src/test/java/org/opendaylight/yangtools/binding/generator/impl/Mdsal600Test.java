@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 @NonNullByDefault
 class Mdsal600Test {
-    private static final JavaTypeName FOO = JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal600.norev", "Foo");
+    private static final TypeName FOO = TypeName.of("org.opendaylight.yang.gen.v1.mdsal600.norev", "Foo");
 
     @Test
     void mdsal600Test() {

@@ -18,9 +18,9 @@ import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  */
 @NonNullByDefault
 final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> {
-    private static final JavaTypeName ROOT_META = JavaTypeName.create(RootMeta.class);
+    private static final TypeName ROOT_META = TypeName.ofClass(RootMeta.class);
     private static final ConcreteType DATA_ROOT = ConcreteType.ofClass(DataRoot.class);
 
     private DataRootTemplate(final DataRootArchetype archetype) {

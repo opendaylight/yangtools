@@ -11,10 +11,10 @@ import com.google.common.base.VerifyException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.OperationArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
@@ -42,7 +42,7 @@ public abstract sealed class OperationGenerator<
     }
 
     @Override
-    final OperationArchetype createTypeImpl(final JavaTypeName typeName, final S statement,
+    final OperationArchetype createTypeImpl(final TypeName typeName, final S statement,
             final List<GroupingArchetype> groupings) {
         if (!groupings.isEmpty()) {
             throw new VerifyException("Illegal grouping in " + statement);
@@ -53,7 +53,7 @@ public abstract sealed class OperationGenerator<
     }
 
     @NonNullByDefault
-    abstract OperationArchetype createTypeImpl(JavaTypeName typeName, @NonNull S statement, RpcInputArchetype input,
+    abstract OperationArchetype createTypeImpl(TypeName typeName, @NonNull S statement, RpcInputArchetype input,
         RpcOutputArchetype output);
 
     @NonNullByDefault

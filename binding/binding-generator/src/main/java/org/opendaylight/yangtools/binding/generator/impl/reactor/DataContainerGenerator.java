@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
@@ -461,7 +461,7 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
     }
 
     @NonNullByDefault
-    abstract Archetype createTypeImpl(JavaTypeName typeName, @NonNull S statement, List<GroupingArchetype> groupings);
+    abstract Archetype createTypeImpl(TypeName typeName, @NonNull S statement, List<GroupingArchetype> groupings);
 
     @NonNullByDefault
     final List<GetterMethod> collectGetters() {

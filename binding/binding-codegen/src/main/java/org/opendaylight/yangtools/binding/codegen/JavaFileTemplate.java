@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
@@ -43,7 +43,7 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     }
 
     @Override
-    final JavaTypeName typeName() {
+    final TypeName typeName() {
         return javaType.name();
     }
 
@@ -67,7 +67,7 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
     }
 
     @NonNullByDefault
-    final String importedName(final JavaTypeName intype) {
+    final String importedName(final TypeName intype) {
         return javaType.getReferenceString(intype);
     }
 

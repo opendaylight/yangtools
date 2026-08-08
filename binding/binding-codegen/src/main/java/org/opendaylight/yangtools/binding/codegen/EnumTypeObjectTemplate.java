@@ -15,9 +15,9 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 
 /**
@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
  */
 @NonNullByDefault
 final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArchetype> {
-    private static final JavaTypeName ENUM_TYPE_OBJECT = JavaTypeName.create(EnumTypeObject.class);
+    private static final TypeName ENUM_TYPE_OBJECT = TypeName.ofClass(EnumTypeObject.class);
 
     private EnumTypeObjectTemplate(final GeneratedClass javaType, final EnumTypeObjectArchetype archetype,
             final DataRootArchetype root) {
@@ -76,7 +76,7 @@ final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArche
         final var codeHelpers = importedName(CODEHELPERS);
         final var iae = importedName(IAE);
         final var nonnullSelf = importedNonNull(archetype);
-        // FIXME: add a utility to work on JavaTypeName for this
+        // FIXME: add a utility to work on TypeName for this
         final var nonnullString = importedNonNull(BaseYangTypes.STRING_TYPE);
         final var npe = importedName(NPE);
         final var nullableSelf = importedNullable(archetype);

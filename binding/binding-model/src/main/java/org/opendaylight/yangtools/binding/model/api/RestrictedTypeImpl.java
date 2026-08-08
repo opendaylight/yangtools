@@ -11,9 +11,10 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 @NonNullByDefault
-record RestrictedTypeImpl(JavaTypeName name, Restrictions restrictions) implements RestrictedType {
+record RestrictedTypeImpl(TypeName name, Restrictions restrictions) implements RestrictedType {
     RestrictedTypeImpl {
         requireNonNull(name);
         // FIXME: require non-empty?

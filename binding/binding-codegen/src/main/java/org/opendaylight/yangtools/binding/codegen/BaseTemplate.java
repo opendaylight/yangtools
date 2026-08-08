@@ -22,6 +22,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
@@ -29,7 +30,6 @@ import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.NotificationBodyArchetype;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
@@ -95,7 +95,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         out.append("package ").append(javaType.name().packageName()).append(";\n\n");
 
         // import block
-        final var importedNames = topLevel.imports().toArray(JavaTypeName[]::new);
+        final var importedNames = topLevel.imports().toArray(TypeName[]::new);
         for (var importedName : importedNames) {
             out.append("import ").append(importedName.canonicalName()).append(";\n");
         }
@@ -181,7 +181,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         }
         // FIXME: this is equivalent to genTo.isTypedef() so we should be able to unify the two concepts -- but really
         //        that sounds like it should be handled in those templates ... perhaps we should receive these from
-        //        the caller as 'List<JavaTypeName> seeAlso'?
+        //        the caller as 'List<TypeName> seeAlso'?
         if (stmt instanceof TypedefEffectiveStatement && type instanceof TypeObjectArchetype.OfClass<?> toArchetype) {
             final var superType = toArchetype.getSuperType();
             if (superType != null) {

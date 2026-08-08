@@ -14,8 +14,8 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.RPC_RESULT;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.KeyedListAction;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyedListActionArchetype;
 
@@ -24,10 +24,10 @@ import org.opendaylight.yangtools.binding.model.api.KeyedListActionArchetype;
  */
 @NonNullByDefault
 final class KeyedListActionTemplate extends ArchetypeTemplate<KeyedListActionArchetype> {
-    private static final JavaTypeName KEYED_LIST_ACTION = JavaTypeName.create(KeyedListAction.class);
-    private static final JavaTypeName WITH_KEY = JavaTypeName.create(DataObjectIdentifier.WithKey.class);
+    private static final TypeName KEYED_LIST_ACTION = TypeName.ofClass(KeyedListAction.class);
+    private static final TypeName WITH_KEY = TypeName.ofClass(DataObjectIdentifier.WithKey.class);
 
-    private final JavaTypeName keyName;
+    private final TypeName keyName;
 
     KeyedListActionTemplate(final DataRootArchetype root, final KeyedListActionArchetype archetype,
             final KeyArchetype key) {

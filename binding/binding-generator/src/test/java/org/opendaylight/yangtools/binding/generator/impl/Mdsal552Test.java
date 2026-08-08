@@ -11,18 +11,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ContainerObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal552Test {
-    private static final JavaTypeName BAR_INPUT =
-        JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal552.norev", "BarInput");
-    private static final JavaTypeName BAZ =
-        JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal552.norev", "Baz");
-    private static final JavaTypeName ENUMERATION =
-        JavaTypeName.create("org.opendaylight.yang.gen.v1.mdsal552.norev", "Mdsal552Data").createEnclosed("Foo");
+    private static final TypeName BAR_INPUT = TypeName.of("org.opendaylight.yang.gen.v1.mdsal552.norev", "BarInput");
+    private static final TypeName BAZ = TypeName.of("org.opendaylight.yang.gen.v1.mdsal552.norev", "Baz");
+    private static final TypeName ENUMERATION =
+        TypeName.of("org.opendaylight.yang.gen.v1.mdsal552.norev", "Mdsal552Data").createEnclosed("Foo");
 
     @Test
     void enumLeafrefTest() {

@@ -16,9 +16,9 @@ import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangData;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.YangDataArchetype;
@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.common.YangDataName;
  */
 @NonNullByDefault
 final class YangDataTemplate extends InterfaceTemplate<YangDataArchetype> implements ArchetypeTemplate.WithBuilder {
-    private static final JavaTypeName YANG_DATA_NAME = JavaTypeName.create(YangDataName.class);
+    private static final TypeName YANG_DATA_NAME = TypeName.ofClass(YangDataName.class);
     private static final ConcreteType YANG_DATA = ConcreteType.ofClass(YangData.class);
 
     YangDataTemplate(final DataRootArchetype root, final YangDataArchetype archetype) {

@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.YangData;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.runtime.api.ActionRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
@@ -74,7 +74,7 @@ public abstract class ForwardingBindingRuntimeContext extends ForwardingObject i
     }
 
     @Override
-    public <T> Class<T> loadClass(final JavaTypeName typeName) throws ClassNotFoundException {
+    public <T> Class<T> loadClass(final TypeName typeName) throws ClassNotFoundException {
         return delegate().loadClass(typeName);
     }
 

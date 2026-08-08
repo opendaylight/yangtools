@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.binding.data.codec.api.IncorrectNestingExcepti
 import org.opendaylight.yangtools.binding.data.codec.api.MissingClassInLoadingStrategyException;
 import org.opendaylight.yangtools.binding.data.codec.api.MissingSchemaException;
 import org.opendaylight.yangtools.binding.data.codec.api.MissingSchemaForClassException;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.runtime.api.BindingRuntimeContext;
 import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -219,7 +219,7 @@ abstract sealed class DataContainerCodecContext<D extends DataContainer, R exten
         }
 
         try {
-            runtimeContext.loadClass(JavaTypeName.create(childClass));
+            runtimeContext.loadClass(TypeName.ofClass(childClass));
         } catch (final ClassNotFoundException e) {
             return new MissingClassInLoadingStrategyException(
                 "User supplied class " + childClass.getName() + " is not available in " + runtimeContext, e);

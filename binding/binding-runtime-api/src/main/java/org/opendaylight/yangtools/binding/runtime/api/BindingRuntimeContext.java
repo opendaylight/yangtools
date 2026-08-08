@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.YangData;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -38,7 +38,7 @@ public interface BindingRuntimeContext extends Immutable {
 
     @NonNull BindingRuntimeTypes getTypes();
 
-    <T> @NonNull Class<T> loadClass(@NonNull JavaTypeName type) throws ClassNotFoundException;
+    <T> @NonNull Class<T> loadClass(@NonNull TypeName type) throws ClassNotFoundException;
 
     default <T> @NonNull Class<T> loadClass(final @NonNull Type type) throws ClassNotFoundException {
         return loadClass(type.name());

@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Operation;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 /**
@@ -26,9 +27,9 @@ public sealed interface OperationArchetype extends Archetype permits OperationAr
         ActionEffectiveStatement statement();
 
         /**
-         * {@return the {@link JavaTypeName} of the archetype in which this action is defined}
+         * {@return the {@link TypeName} of the archetype in which this action is defined}
          */
-        JavaTypeName parentName();
+        TypeName parentName();
     }
 
     /**

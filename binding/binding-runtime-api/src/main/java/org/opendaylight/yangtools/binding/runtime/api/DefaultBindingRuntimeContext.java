@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * Runtime Context for Java YANG Binding classes. It provides information derived from the backing effective model,
@@ -33,7 +33,7 @@ public final class DefaultBindingRuntimeContext extends AbstractBindingRuntimeCo
     }
 
     @Override
-    public <T> Class<T> loadClass(final JavaTypeName type) throws ClassNotFoundException {
+    public <T> Class<T> loadClass(final TypeName type) throws ClassNotFoundException {
         return moduleInfos.loadClass(type.toString());
     }
 }

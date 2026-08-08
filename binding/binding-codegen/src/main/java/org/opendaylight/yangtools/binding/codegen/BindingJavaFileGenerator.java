@@ -14,6 +14,7 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ActionArchetype;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
 import org.opendaylight.yangtools.binding.model.api.AugmentationArchetype;
@@ -29,7 +30,6 @@ import org.opendaylight.yangtools.binding.model.api.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.InstanceNotificationArchetype;
 import org.opendaylight.yangtools.binding.model.api.ItemObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyedListActionArchetype;
 import org.opendaylight.yangtools.binding.model.api.KeyedListNotificationArchetype;
@@ -74,8 +74,8 @@ final class BindingJavaFileGenerator {
         //   - DataRootArchetypes, as they provide ModuleEffectiveStatement for other templates to use
         //   - KeyArchetype, as they provide KeyArchetype binding
         final var modules = new HashMap<String, @Nullable DataRootArchetype>();
-        final var entryToKey = new HashMap<JavaTypeName, KeyArchetype>();
-        final var choiceByName = new HashMap<JavaTypeName, ChoiceInArchetype>();
+        final var entryToKey = new HashMap<TypeName, KeyArchetype>();
+        final var choiceByName = new HashMap<TypeName, ChoiceInArchetype>();
         for (var type : types) {
             switch (type) {
                 case ChoiceInArchetype archetype -> {

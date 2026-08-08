@@ -11,9 +11,10 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 @NonNullByDefault
-record ConcreteTypeImpl(JavaTypeName name) implements ConcreteType {
+record ConcreteTypeImpl(TypeName name) implements ConcreteType {
     ConcreteTypeImpl {
         requireNonNull(name);
     }

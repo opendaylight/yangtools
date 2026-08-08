@@ -11,15 +11,15 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.OpaqueObjectArchetype;
 
 abstract class AbstractOpaqueTest {
     @NonNullByDefault
     static final void assertOpaqueNode(final List<Archetype> types, final String ns, final String pkg,
             final String name) {
-        final var typeName = JavaTypeName.create("org.opendaylight.yang.gen.v1." + ns + ".norev" + pkg, name);
+        final var typeName = TypeName.of("org.opendaylight.yang.gen.v1." + ns + ".norev" + pkg, name);
         assertInstanceOf(OpaqueObjectArchetype.class,
             types.stream().filter(t -> typeName.equals(t.name())).findFirst().orElseThrow());
     }

@@ -21,7 +21,7 @@ import java.security.Provider;
 import java.util.ArrayList;
 import java.util.Comparator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -69,9 +69,9 @@ final class SerialVersionHelper {
         }
     }
 
-    static final JavaTypeName SERIALIZABLE = JavaTypeName.create(Serializable.class);
+    static final TypeName SERIALIZABLE = TypeName.ofClass(Serializable.class);
 
-    private static final Comparator<JavaTypeName> IFACE_COMPARATOR = Comparator.comparing(JavaTypeName::canonicalName);
+    private static final Comparator<TypeName> IFACE_COMPARATOR = Comparator.comparing(TypeName::canonicalName);
     private static final DigestFactory DIGEST_FACTORY;
 
     static {
@@ -101,14 +101,14 @@ final class SerialVersionHelper {
         return new CloneableFactory(md);
     }
 
-    private final ArrayList<JavaTypeName> interfaces = new ArrayList<>();
+    private final ArrayList<TypeName> interfaces = new ArrayList<>();
     private final ArrayList<String> methods = new ArrayList<>();
     private final ArrayList<String> fields = new ArrayList<>();
-    private final JavaTypeName clazz;
+    private final TypeName clazz;
 
     private boolean isAbstract = true;
 
-    SerialVersionHelper(final JavaTypeName clazz) {
+    SerialVersionHelper(final TypeName clazz) {
         this.clazz = requireNonNull(clazz);
     }
 
@@ -122,7 +122,7 @@ final class SerialVersionHelper {
         return this;
     }
 
-    SerialVersionHelper addInterface(final JavaTypeName name) {
+    SerialVersionHelper addInterface(final TypeName name) {
         interfaces.add(requireNonNull(name));
         return this;
     }

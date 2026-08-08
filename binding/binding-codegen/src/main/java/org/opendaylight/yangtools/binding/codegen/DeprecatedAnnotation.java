@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  */
 @NonNullByDefault
 record DeprecatedAnnotation(String deprecated, boolean forRemoval) implements BlockFragment {
-    private static final JavaTypeName DEPRECATED = JavaTypeName.create(Deprecated.class);
+    private static final TypeName DEPRECATED = TypeName.ofClass(Deprecated.class);
 
     DeprecatedAnnotation {
         requireNonNull(deprecated);

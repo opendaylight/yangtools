@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * A {@link Type} which is a plain reference with no other implications.
@@ -20,7 +21,7 @@ public sealed interface TypeRef extends Type permits TypeRefImpl {
      * {@return a {@link TypeRef} with specified name}
      * @param name the type name
      */
-    static TypeRef of(final JavaTypeName name) {
+    static TypeRef of(final TypeName name) {
         return new TypeRefImpl(name);
     }
 }

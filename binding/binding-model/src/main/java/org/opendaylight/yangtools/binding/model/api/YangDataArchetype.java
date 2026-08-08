@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangData;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 
 /**
@@ -22,7 +23,7 @@ public sealed interface YangDataArchetype extends DataContainerArchetype permits
     @Override
     YangDataEffectiveStatement statement();
 
-    static YangDataArchetype of(final JavaTypeName typeName, final YangDataEffectiveStatement statement,
+    static YangDataArchetype of(final TypeName typeName, final YangDataEffectiveStatement statement,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
             final List<GetterMethod> getters) {
         return new YangDataArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),

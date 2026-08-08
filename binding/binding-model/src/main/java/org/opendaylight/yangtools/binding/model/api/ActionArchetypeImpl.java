@@ -11,15 +11,16 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 
 @NonNullByDefault
 record ActionArchetypeImpl(
-        JavaTypeName name,
+        TypeName name,
         ActionEffectiveStatement statement,
         RpcInputArchetype input,
         RpcOutputArchetype output,
-        JavaTypeName parentName) implements ActionArchetype {
+        TypeName parentName) implements ActionArchetype {
     ActionArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);

@@ -32,10 +32,10 @@ import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.UnsafeSecret;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.contract.RegexPatterns;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
@@ -47,7 +47,7 @@ import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 @NonNullByDefault
 abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarTypeObjectArchetype> {
     private static final class Base extends ScalarTypeObjectTemplate {
-        private static final JavaTypeName SCALAR_TYPE_OBJECT = JavaTypeName.create(ScalarTypeObject.class);
+        private static final TypeName SCALAR_TYPE_OBJECT = TypeName.ofClass(ScalarTypeObject.class);
 
         Base(final GeneratedClass javaType, final ScalarTypeObjectArchetype archetype, final DataRootArchetype root) {
             super(javaType, archetype, root);
@@ -370,9 +370,9 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
     }
 
     /**
-     * {@code org.opendaylight.yangtools.binding.UnsafeSecret} as a JavaTypeName.
+     * {@code org.opendaylight.yangtools.binding.UnsafeSecret} as a TypeName.
      */
-    private static final JavaTypeName UNSAFE_SECRET = JavaTypeName.create(UnsafeSecret.class);
+    private static final TypeName UNSAFE_SECRET = TypeName.ofClass(UnsafeSecret.class);
     /**
      * All types that have a {@code valueOf(String)} static factory method suitable for directly implementing
      * {@code getDefaultValue(String}}.

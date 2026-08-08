@@ -12,11 +12,12 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 
 @NonNullByDefault
 record AugmentationArchetypeImpl(
-        JavaTypeName name,
+        TypeName name,
         AugmentEffectiveStatement statement,
         AugmentableArchetype target,
         List<Partial> partials,

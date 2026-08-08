@@ -15,7 +15,7 @@ import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.
 import static org.opendaylight.yangtools.binding.contract.Naming.QNAME_STATIC_FIELD_NAME;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -45,7 +45,7 @@ abstract sealed class QNameConstant implements BlockFragment {
         }
     }
 
-    private static final JavaTypeName QNAME = JavaTypeName.create(QName.class);
+    private static final TypeName QNAME = TypeName.ofClass(QName.class);
 
     private final ArchetypeTemplate<?> template;
     private final QName value;

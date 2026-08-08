@@ -11,8 +11,8 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 
 import com.google.common.collect.Range;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 import org.opendaylight.yangtools.yang.common.Uint16;
 import org.opendaylight.yangtools.yang.common.Uint8;
@@ -25,9 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
  */
 final class Decimal64RangeGenerator extends AbstractRangeGenerator<Decimal64> {
     /**
-     * {@code org.opendaylight.yangtools.yang.common.Decimal64} as a JavaTypeName.
+     * {@code org.opendaylight.yangtools.yang.common.Decimal64} as a TypeName.
      */
-    private static final @NonNull JavaTypeName DECIMAL64 = JavaTypeName.create(Decimal64.class);
+    private static final @NonNull TypeName DECIMAL64 = TypeName.ofClass(Decimal64.class);
 
     private final int fractionDigits;
 

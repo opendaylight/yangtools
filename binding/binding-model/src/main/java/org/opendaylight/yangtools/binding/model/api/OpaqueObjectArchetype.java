@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.OpaqueObject;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
@@ -28,13 +29,13 @@ public sealed interface OpaqueObjectArchetype<S extends DataTreeEffectiveStateme
     /**
      * An {@link OpaqueObjectArchetype} for an {@link AnydataEffectiveStatement}.
      *
-     * @param name this type's {@link JavaTypeName}}
+     * @param name this type's {@link TypeName}}
      * @param statement the {@link AnydataEffectiveStatement}
      * @since 16.0.0
      */
     @NonNullByDefault
     record Anydata(
-            JavaTypeName name,
+            TypeName name,
             AnydataEffectiveStatement statement) implements OpaqueObjectArchetype<AnydataEffectiveStatement> {
         public Anydata {
             requireNonNull(name);
@@ -55,13 +56,13 @@ public sealed interface OpaqueObjectArchetype<S extends DataTreeEffectiveStateme
     /**
      * An {@link OpaqueObjectArchetype} for an {@link AnyxmlEffectiveStatement}.
      *
-     * @param name this type's {@link JavaTypeName}}
+     * @param name this type's {@link TypeName}}
      * @param statement the {@link AnyxmlEffectiveStatement}
      * @since 16.0.0
      */
     @NonNullByDefault
     record Anyxml(
-            JavaTypeName name,
+            TypeName name,
             AnyxmlEffectiveStatement statement) implements OpaqueObjectArchetype<AnyxmlEffectiveStatement> {
         public Anyxml {
             requireNonNull(name);

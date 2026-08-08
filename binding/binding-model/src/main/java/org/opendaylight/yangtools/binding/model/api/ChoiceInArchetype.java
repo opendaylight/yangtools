@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ChoiceIn;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 
 /**
@@ -26,15 +27,15 @@ public sealed interface ChoiceInArchetype extends Archetype
     /**
      * {@return the parent name}
      */
-    JavaTypeName parentName();
+    TypeName parentName();
 
     /**
      * {@return possible {@link CaseObjectArchetype}s}
      */
     List<CaseObjectArchetype> cases();
 
-    static ChoiceInArchetype of(final JavaTypeName name, final ChoiceEffectiveStatement statement,
-            final JavaTypeName parentName, final List<CaseObjectArchetype> cases) {
+    static ChoiceInArchetype of(final TypeName name, final ChoiceEffectiveStatement statement,
+            final TypeName parentName, final List<CaseObjectArchetype> cases) {
         return switch (cases.size()) {
             case 0 -> new ChoiceInArchetype0(name, statement, parentName);
             case 1 -> new ChoiceInArchetype1(name, statement, parentName, cases.getFirst());

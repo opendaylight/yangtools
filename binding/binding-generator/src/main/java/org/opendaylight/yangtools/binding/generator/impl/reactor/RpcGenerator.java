@@ -11,8 +11,8 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultRpcRuntimeType;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Archetype;
-import org.opendaylight.yangtools.binding.model.api.JavaTypeName;
 import org.opendaylight.yangtools.binding.model.api.RpcArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcInputArchetype;
 import org.opendaylight.yangtools.binding.model.api.RpcOutputArchetype;
@@ -40,7 +40,7 @@ final class RpcGenerator extends OperationGenerator<RpcEffectiveStatement, RpcRu
     }
 
     @Override
-    RpcArchetype createTypeImpl(final JavaTypeName typeName, final RpcEffectiveStatement statement,
+    RpcArchetype createTypeImpl(final TypeName typeName, final RpcEffectiveStatement statement,
             final RpcInputArchetype input, final RpcOutputArchetype output) {
         return RpcArchetype.of(typeName, statement, input, output);
     }

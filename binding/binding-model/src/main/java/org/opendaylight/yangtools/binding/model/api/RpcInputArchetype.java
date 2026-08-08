@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.RpcInput;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 
 /**
@@ -22,7 +23,7 @@ public sealed interface RpcInputArchetype extends AugmentableArchetype permits R
     @Override
     InputEffectiveStatement statement();
 
-    static RpcInputArchetype of(final JavaTypeName typeName, final InputEffectiveStatement statement,
+    static RpcInputArchetype of(final TypeName typeName, final InputEffectiveStatement statement,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
             final List<GetterMethod> getters) {
         return new RpcInputArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),

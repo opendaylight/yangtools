@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 
 /**
@@ -27,7 +28,7 @@ public sealed interface AugmentationArchetype extends DataContainerArchetype per
      */
     AugmentableArchetype target();
 
-    static AugmentationArchetype of(final JavaTypeName typeName, final AugmentEffectiveStatement statement,
+    static AugmentationArchetype of(final TypeName typeName, final AugmentEffectiveStatement statement,
             final AugmentableArchetype target, final List<GroupingArchetype> groupings,
             final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters) {
         return new AugmentationArchetypeImpl(typeName, statement, target, TypeMethods.copyList(groupings),
