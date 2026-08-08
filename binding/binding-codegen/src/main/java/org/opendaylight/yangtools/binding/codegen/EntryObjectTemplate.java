@@ -48,7 +48,7 @@ final class EntryObjectTemplate extends InterfaceTemplate<EntryObjectArchetype>
         return Iterators.concat(
             Iterators.forArray(
                 ParameterizedType.of(CHILD_OF, TypeRef.of(archetype.parentName())),
-                ParameterizedType.of(ENTRY_OBJECT, archetype, TypeRef.of(archetype.keyName()))),
+                ParameterizedType.of(ENTRY_OBJECT, archetype, key)),
             super.extendsTypes());
     }
 
