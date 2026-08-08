@@ -13,7 +13,7 @@ import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.GetterMethod;
+import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
