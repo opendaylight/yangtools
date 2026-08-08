@@ -5,30 +5,30 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.api;
+package org.opendaylight.yangtools.binding.model;
 
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.YangData;
-import org.opendaylight.yangtools.binding.model.TypeName;
+import org.opendaylight.yangtools.binding.RpcOutput;
+import org.opendaylight.yangtools.binding.model.api.GetterMethod;
+import org.opendaylight.yangtools.binding.model.impl.RpcOutputArchetypeImpl;
 import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
-import org.opendaylight.yangtools.binding.model.impl.YangDataArchetypeImpl;
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 
 /**
- * The {@link DataContainerArchetype} for {@link YangData} specializations.
+ * The {@link DataContainerArchetype} for {@link RpcOutput} specializations.
  *
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface YangDataArchetype extends DataContainerArchetype permits YangDataArchetypeImpl {
+public sealed interface RpcOutputArchetype extends AugmentableArchetype permits RpcOutputArchetypeImpl {
     @Override
-    YangDataEffectiveStatement statement();
+    OutputEffectiveStatement statement();
 
-    static YangDataArchetype of(final TypeName typeName, final YangDataEffectiveStatement statement,
+    static RpcOutputArchetype of(final TypeName typeName, final OutputEffectiveStatement statement,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
             final List<GetterMethod> getters) {
-        return new YangDataArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),
+        return new RpcOutputArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),
             TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));
     }
 }

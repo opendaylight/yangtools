@@ -15,7 +15,7 @@ import java.util.Comparator;
 import java.util.List;
 import org.junit.jupiter.api.BeforeAll;
 import org.opendaylight.yangtools.binding.generator.impl.DefaultBindingGenerator;
-import org.opendaylight.yangtools.binding.model.api.Archetype;
+import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 abstract class BaseCompilationTest {
