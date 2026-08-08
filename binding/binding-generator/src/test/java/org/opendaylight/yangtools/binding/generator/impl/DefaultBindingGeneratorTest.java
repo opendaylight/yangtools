@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.binding.model.api.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.ScalarTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.binding.model.api.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
@@ -93,9 +92,9 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void generatedTypeForExtendedDefinitionTypeWithIdentityrefBaseType() {
-        assertEquals(TypeRef.of(TypeName.of(TEST_TYPE_PROVIDER, "Aes")),
+        assertEquals(TypeName.of(TEST_TYPE_PROVIDER, "Aes"),
             assertGeneratedMethod(CONSTRUCTION_TYPE_TEST, ContainerObjectArchetype.class, "getAesIdentityrefType")
-                .returnType());
+                .returnType().name());
     }
 
     @Test
@@ -186,8 +185,9 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void javaTypeForSchemaDefinitionIdentityrefExtType() {
-        assertEquals(TypeRef.of(TypeName.of(TEST_TYPE_PROVIDER, "CryptoAlg")),
-            assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, ContainerObjectArchetype.class, "getCrypto").returnType());
+        assertEquals(TypeName.of(TEST_TYPE_PROVIDER, "CryptoAlg"),
+            assertGeneratedMethod(TEST_TYPE_PROVIDER_FOO, ContainerObjectArchetype.class, "getCrypto")
+                .returnType().name());
     }
 
     @Test
