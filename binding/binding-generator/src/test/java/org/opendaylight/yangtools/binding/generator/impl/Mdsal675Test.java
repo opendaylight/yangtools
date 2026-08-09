@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.binding.model.OpaqueObjectArchetype.Anydata;
 import org.opendaylight.yangtools.binding.model.OpaqueObjectArchetype.Anyxml;
 import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.YangDataArchetype;
+import org.opendaylight.yangtools.binding.model.api.SystemLeafList;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -71,7 +72,7 @@ class Mdsal675Test {
         // yang-data > leaf-list
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithLeafList"),
-            Types.setTypeFor(ScalarTypes.STRING),
+            SystemLeafList.of(ScalarTypes.STRING),
             "LeafListFromYangData");
         // yang-data > anydata
         assertYangDataGenType(
@@ -108,7 +109,7 @@ class Mdsal675Test {
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithLeafListFromGroup"),
             assertGrouping(genTypesMap, PACKAGE + "GrpForLeafList"),
-            Types.setTypeFor(ScalarTypes.UINT32),
+            SystemLeafList.of(ScalarTypes.UINT32),
             "LeafListFromGroup");
         // yang-data > uses > group > anydata
         assertYangDataGenType(

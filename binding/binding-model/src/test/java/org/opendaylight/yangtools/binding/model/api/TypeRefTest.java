@@ -12,6 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.TypeName;
 
+@SuppressWarnings("removal")
 class TypeRefTest {
     @Test
     void testCreateNewReferencedType() {

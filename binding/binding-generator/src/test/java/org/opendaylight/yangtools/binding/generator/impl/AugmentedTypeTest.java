@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.api.SystemLeafList;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class AugmentedTypeTest {
@@ -73,7 +73,7 @@ class AugmentedTypeTest {
             }
         }
         assertNotNull(getHigherLayerIfMethod, "getHigherLayerIf method is null");
-        assertEquals(Types.setTypeFor(ScalarTypes.STRING), getHigherLayerIfMethod.returnType());
+        assertEquals(SystemLeafList.of(ScalarTypes.STRING), getHigherLayerIfMethod.returnType());
 
         // 'InterfaceKey'
         assertNotNull(gtInterfaceKey, "InterfaceKey is null");
