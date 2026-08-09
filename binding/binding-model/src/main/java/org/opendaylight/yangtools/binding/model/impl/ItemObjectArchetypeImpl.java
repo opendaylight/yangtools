@@ -25,19 +25,14 @@ public record ItemObjectArchetypeImpl(
         TypeName parentName,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<GetterMethod> methodSignatures) implements ItemObjectArchetype {
+        List<GetterMethod> getters) implements ItemObjectArchetype {
     public ItemObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(parentName);
         requireNonNull(partials);
         requireNonNull(typeObjects);
-        requireNonNull(methodSignatures);
-    }
-
-    @Override
-    public List<GetterMethod> getters() {
-        return methodSignatures;
+        requireNonNull(getters);
     }
 
     @Override

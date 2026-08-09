@@ -24,18 +24,13 @@ public record GroupingArchetypeImpl(
         GroupingEffectiveStatement statement,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<GetterMethod> methodSignatures) implements GroupingArchetype {
+        List<GetterMethod> getters) implements GroupingArchetype {
     public GroupingArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(partials);
         requireNonNull(typeObjects);
-        requireNonNull(methodSignatures);
-    }
-
-    @Override
-    public List<GetterMethod> getters() {
-        return methodSignatures;
+        requireNonNull(getters);
     }
 
     @Override

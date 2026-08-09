@@ -25,18 +25,13 @@ public record ContainerObjectArchetypeImpl(
         TypeName parentName,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<GetterMethod> methodSignatures) implements ContainerObjectArchetype {
+        List<GetterMethod> getters) implements ContainerObjectArchetype {
     public ContainerObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(partials);
         requireNonNull(typeObjects);
-        requireNonNull(methodSignatures);
-    }
-
-    @Override
-    public List<GetterMethod> getters() {
-        return methodSignatures;
+        requireNonNull(getters);
     }
 
     @Override

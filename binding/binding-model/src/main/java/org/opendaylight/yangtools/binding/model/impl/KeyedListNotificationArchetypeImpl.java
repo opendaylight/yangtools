@@ -25,19 +25,14 @@ public record KeyedListNotificationArchetypeImpl(
         TypeName parentName,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<GetterMethod> methodSignatures) implements KeyedListNotificationArchetype {
+        List<GetterMethod> getters) implements KeyedListNotificationArchetype {
     public KeyedListNotificationArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(parentName);
         requireNonNull(partials);
         requireNonNull(typeObjects);
-        requireNonNull(methodSignatures);
-    }
-
-    @Override
-    public List<GetterMethod> getters() {
-        return methodSignatures;
+        requireNonNull(getters);
     }
 
     @Override

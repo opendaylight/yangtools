@@ -26,17 +26,12 @@ public record EntryObjectArchetypeImpl(
         TypeName keyName,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<GetterMethod> methodSignatures) implements EntryObjectArchetype {
+        List<GetterMethod> getters) implements EntryObjectArchetype {
     public EntryObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(typeObjects);
-        requireNonNull(methodSignatures);
-    }
-
-    @Override
-    public List<GetterMethod> getters() {
-        return methodSignatures;
+        requireNonNull(getters);
     }
 
     @Override

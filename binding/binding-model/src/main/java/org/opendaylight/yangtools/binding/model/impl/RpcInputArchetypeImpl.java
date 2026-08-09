@@ -24,18 +24,13 @@ public record RpcInputArchetypeImpl(
         InputEffectiveStatement statement,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<GetterMethod> methodSignatures) implements RpcInputArchetype {
+        List<GetterMethod> getters) implements RpcInputArchetype {
     public RpcInputArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(partials);
         requireNonNull(typeObjects);
-        requireNonNull(methodSignatures);
-    }
-
-    @Override
-    public List<GetterMethod> getters() {
-        return methodSignatures;
+        requireNonNull(getters);
     }
 
     @Override
