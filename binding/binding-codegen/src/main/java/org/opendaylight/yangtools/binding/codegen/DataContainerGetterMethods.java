@@ -18,6 +18,7 @@ import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.gaul.modernizer_maven_annotations.SuppressModernizer;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.OverrideAnnotation;
@@ -180,6 +181,8 @@ final class DataContainerGetterMethods implements BlockFragment {
         return bb.toJavadocBlock();
     }
 
+    // FIXME: use indexOf(' ') instead of StringTokenizer
+    @SuppressModernizer
     private static BlockBuilder formatReference(final String reference) {
         final var bb = Block.builder()
             // FIXME: use a @snippet here
@@ -196,7 +199,6 @@ final class DataContainerGetterMethods implements BlockFragment {
         var sb = new StringBuilder();
         var isFirstElementOnNewLineEmptyChar = false;
 
-        // FIXME: use indexOf(' ') instead of StringTokenizer
         final var tokenizer = new StringTokenizer(formattedText, " ", true);
         while (tokenizer.hasMoreTokens()) {
             final var nextElement = tokenizer.nextToken();
