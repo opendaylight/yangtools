@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.annotations.RoutingContext;
-import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 
 /**
  * An attached {@link RoutingContext} annotation.

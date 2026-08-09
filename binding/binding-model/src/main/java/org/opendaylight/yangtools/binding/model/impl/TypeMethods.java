@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.binding.model.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
+import org.opendaylight.yangtools.binding.model.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.OperationArchetype;
 import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
@@ -167,13 +168,13 @@ public final class TypeMethods {
     }
 
     /**
-     * Implementation of {@link ChoceInArchetype#toString()}.
+     * Implementation of {@link ChoiceInArchetype#toString()}.
      *
      * @param self the archetype
      * @return a String
      */
     @NonNullByDefault
-    static  String toString(final ChoiceInArchetype self) {
+    static String toString(final ChoiceInArchetype self) {
         final var helper = MoreObjects.toStringHelper(ChoiceInArchetype.class)
             .add("name", self.name())
             .add("parentName", self.parentName());
@@ -192,6 +193,19 @@ public final class TypeMethods {
     @NonNullByDefault
     static <A extends DataContainerArchetype> String toString(final Class<A> archetypeClass, final A self) {
         return toStringHelper(archetypeClass, self).toString();
+    }
+
+    /**
+     * Implementation of {@link IdentityArchetype#toString()}.
+     *
+     * @param self the archetype
+     * @return a String
+     */
+    @NonNullByDefault
+    static String toString(final IdentityArchetype self) {
+        final var helper = MoreObjects.toStringHelper(IdentityArchetype.class).add("name", self.name());
+        addNonEmpty(helper, "baseIdentities", self.baseIdentities());
+        return helper.toString();
     }
 
     /**
