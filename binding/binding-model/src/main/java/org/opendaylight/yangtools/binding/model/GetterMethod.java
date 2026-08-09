@@ -8,14 +8,10 @@
  */
 package org.opendaylight.yangtools.binding.model;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import java.util.ArrayList;
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataContainer;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.model.api.Type;
@@ -29,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
  * Prototype for a getter method carried in a {@link DataContainer}.
  */
 @Beta
+@NonNullByDefault
 public sealed interface GetterMethod extends Immutable permits GetterMethod0, GetterMethod1, GetterMethodN {
     /**
      * {@return the {@link SchemaTreeEffectiveStatement} which led to this method}
@@ -37,12 +34,12 @@ public sealed interface GetterMethod extends Immutable permits GetterMethod0, Ge
     //         container foo {
     //           container bar;    <-- generates getBar() with ContainerObjectArchetype which has the same statement
     //         }
-    @NonNull SchemaTreeEffectiveStatement<?> statement();
+    SchemaTreeEffectiveStatement<?> statement();
 
     /**
      * {@return the method's suffix, e.g. the {@code Foo} in {@code getFoo}. Typically computed on each access.}
      */
-    default @NonNull String suffix() {
+    default String suffix() {
         return Naming.getGetterSuffix(statement().argument());
     }
 
@@ -50,27 +47,23 @@ public sealed interface GetterMethod extends Immutable permits GetterMethod0, Ge
      * {@return the method return type}
      */
     // FIXME: dedicated 'ReturnType'
-    @NonNull Type returnType();
+    Type returnType();
 
     /**
      * {@return List of annotation definitions attached to this method}
      */
-    @NonNullByDefault
     List<GetterAnnotation> annotations();
 
     // FIXME: do not take a name
-    @NonNullByDefault
     static GetterMethod of(final SchemaTreeEffectiveStatement<?> statement, final Type returnType) {
         return new GetterMethod0(statement, returnType);
     }
 
-    @NonNullByDefault
     static GetterMethod of(final SchemaTreeEffectiveStatement<?> statement, final Type returnType,
             final GetterAnnotation annotation) {
         return new GetterMethod1(statement, returnType, annotation);
     }
 
-    @NonNullByDefault
     static GetterMethod of(final SchemaTreeEffectiveStatement<?> statement, final Type returnType,
             final List<GetterAnnotation> annotations) {
         return switch (annotations.size()) {
@@ -96,69 +89,5 @@ public sealed interface GetterMethod extends Immutable permits GetterMethod0, Ge
                 yield new GetterMethodN(statement, returnType, List.copyOf(checked));
             }
         };
-    }
-
-    @Beta
-    @NonNullByDefault
-    static Builder builder(final SchemaTreeEffectiveStatement<?> statement, final Type returnType) {
-        return new Builder(statement, returnType);
-    }
-
-    /**
-     * A builder for {@link GetterMethod}s.
-     *
-     * @see GetterMethod
-     * @since 16.0.0
-     */
-    @Beta
-    final class Builder {
-        private final @NonNull SchemaTreeEffectiveStatement<?> statement;
-        private final @NonNull Type returnType;
-
-        private @Nullable ArrayList<@NonNull GetterAnnotation> annotations = null;
-
-        @NonNullByDefault
-        Builder(final SchemaTreeEffectiveStatement<?> statement, final Type returnType) {
-            this.statement = requireNonNull(statement);
-            this.returnType = requireNonNull(returnType);
-        }
-
-        /**
-         * Add an {@link GetterAnnotation} to this builder.
-         *
-         * @param annotation the {@link GetterAnnotation}
-         * @return this instance
-         */
-        @NonNullByDefault
-        public Builder addAnnotation(final GetterAnnotation annotation) {
-            annotations = addAnnotation(annotations, requireNonNull(annotation));
-            return this;
-        }
-
-        @NonNullByDefault
-        private static ArrayList<GetterAnnotation> addAnnotation(
-                final @Nullable ArrayList<GetterAnnotation> list, final GetterAnnotation annotation) {
-            if (list == null) {
-                final var ret = new ArrayList<GetterAnnotation>(2);
-                ret.add(annotation);
-                return ret;
-            }
-            list.add(annotation);
-            return list;
-        }
-
-        /**
-         * Returns <code>new</code> <i>immutable</i> instance of Method Signature. <br>
-         * The <code>definingType</code> param cannot be <code>null</code>. Every method in Java MUST be declared and
-         * defined inside the scope of <code>class</code> or <code>interface</code> definition. In case that defining
-         * Type will be passed as <code>null</code> reference the method SHOULD thrown {@link IllegalArgumentException}.
-         *
-         * @return <code>new</code> <i>immutable</i> instance of Method Signature.
-         */
-        @NonNullByDefault
-        public GetterMethod build() {
-            final var local = annotations;
-            return local == null ? of(statement, returnType) : of(statement, returnType, local);
-        }
     }
 }

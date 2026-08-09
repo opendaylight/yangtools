@@ -104,7 +104,8 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
     }
 
     @Override
-    void addAsGetterMethod(final List<GetterMethod.Builder> list) {
+    GetterMethod asGetterMethod() {
         // typedefs are a separate concept
+        return null;
     }
 }

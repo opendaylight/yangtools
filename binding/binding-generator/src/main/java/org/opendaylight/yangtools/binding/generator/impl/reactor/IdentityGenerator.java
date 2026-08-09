@@ -80,7 +80,8 @@ public final class IdentityGenerator
     }
 
     @Override
-    void addAsGetterMethod(final List<GetterMethod.Builder> list) {
+    GetterMethod asGetterMethod() {
         // identities are a separate concept
+        return null;
     }
 }

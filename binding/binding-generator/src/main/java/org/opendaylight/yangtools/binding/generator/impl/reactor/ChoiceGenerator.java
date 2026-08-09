@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import com.google.common.base.VerifyException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -17,6 +18,7 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultChoiceRuntime
 import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ChoiceInArchetype;
+import org.opendaylight.yangtools.binding.model.GetterAnnotation;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
@@ -85,8 +87,8 @@ final class ChoiceGenerator extends CompositeSchemaTreeGenerator<ChoiceEffective
     }
 
     @Override
-    GetterMethod.Builder constructGetter(final List<GetterMethod.@NonNull Builder> list, final Type returnType) {
-        return constructGetter(list, statement(), returnType);
+    GetterMethod constructGetter(final Type returnType, final Iterator<@NonNull GetterAnnotation> annotations) {
+        return constructGetter(statement(), returnType, annotations);
     }
 
     @NonNullByDefault
