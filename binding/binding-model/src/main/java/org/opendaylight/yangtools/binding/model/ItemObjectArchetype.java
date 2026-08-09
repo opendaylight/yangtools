@@ -20,7 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface ItemObjectArchetype extends ChildOfArchetype.OfList permits ItemObjectArchetypeImpl {
+public sealed interface ItemObjectArchetype extends ChildOfArchetype.OfList, ReturnType
+        permits ItemObjectArchetypeImpl {
     @Override
     @SuppressWarnings("rawtypes")
     default Class<ItemObject> contract() {

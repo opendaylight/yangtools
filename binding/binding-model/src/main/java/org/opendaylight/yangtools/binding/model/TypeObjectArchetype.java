@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
  * @since 16.0.0
  */
 @Beta
-public sealed interface TypeObjectArchetype<T extends TypeObject> extends Archetype
+public sealed interface TypeObjectArchetype<T extends TypeObject> extends Archetype, ReturnType
         permits EnumTypeObjectArchetype, TypeObjectArchetype.OfClass {
     /**
      * Common interface for {@link TypeObjectArchetype}s other than {@link EnumTypeObjectArchetype}. These archetypes
