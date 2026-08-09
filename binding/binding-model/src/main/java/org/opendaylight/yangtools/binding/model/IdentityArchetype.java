@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.model;
 
+import java.util.Comparator;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BaseIdentity;
+import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.impl.IdentityArchetype0;
 import org.opendaylight.yangtools.binding.model.impl.IdentityArchetype1;
 import org.opendaylight.yangtools.binding.model.impl.IdentityArchetypeN;
@@ -46,7 +48,10 @@ public sealed interface IdentityArchetype extends Archetype
             case 0 -> of(name, statement);
             case 1 -> of(name, statement, baseIdentities.getFirst());
             default -> {
-                final var unique = baseIdentities.stream().distinct().toList();
+                final var unique = baseIdentities.stream()
+                    .distinct()
+                    .sorted(Comparator.comparing(Type::name))
+                    .toList();
                 yield unique.size() == 1 ?  of(name, statement, unique.getFirst())
                     : new IdentityArchetypeN(name, statement, List.copyOf(unique));
             }
