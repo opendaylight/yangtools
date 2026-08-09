@@ -14,14 +14,14 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.GetterAnnotation;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.ReturnType;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStatement;
 
 @NonNullByDefault
-public record GetterMethod0(SchemaTreeEffectiveStatement<?> statement, Type returnType) implements GetterMethod {
+public record GetterMethod0(SchemaTreeEffectiveStatement<?> statement, ReturnType type) implements GetterMethod {
     public GetterMethod0 {
         requireNonNull(statement);
-        requireNonNull(returnType);
+        requireNonNull(type);
     }
 
     @Override

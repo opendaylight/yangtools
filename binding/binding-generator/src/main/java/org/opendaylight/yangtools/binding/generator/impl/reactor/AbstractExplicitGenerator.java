@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresent
 import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.GetterAnnotation;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
+import org.opendaylight.yangtools.binding.model.ReturnType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
@@ -347,13 +348,13 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    GetterMethod constructGetter(final Type returnType, final Iterator<GetterAnnotation> annotations) {
+    GetterMethod constructGetter(final ReturnType returnType, final Iterator<GetterAnnotation> annotations) {
         throw new VerifyException("Attempted to construct getter for " + this);
     }
 
     @NonNullByDefault
-    static final GetterMethod constructGetter(final SchemaTreeEffectiveStatement<?> statement, final Type returnType,
-            final Iterator<GetterAnnotation> annotations) {
+    static final GetterMethod constructGetter(final SchemaTreeEffectiveStatement<?> statement,
+            final ReturnType returnType, final Iterator<GetterAnnotation> annotations) {
         // FIXME: This method assumes a injective mapping from YANG identifier to method suffix. That is not the case,
         //        as we have dealt with a similar problem for class names, where we have the whol NamingStrategy thing
         //        and fallbacks.
@@ -388,8 +389,8 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    Type methodReturnType() {
-        return getGeneratedType();
+    ReturnType methodReturnType() {
+        throw new VerifyException("Attempted create method from " + this);
     }
 
     @Override

@@ -19,9 +19,6 @@ import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.ReturnTypeCompat;
-import org.opendaylight.yangtools.binding.model.api.SystemEntryObject;
-import org.opendaylight.yangtools.binding.model.api.UserEntryObject;
 import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -47,12 +44,8 @@ final class EntryObjectGenerator extends ListGenerator {
     }
 
     @Override
-    ReturnTypeCompat methodReturnType() {
-        final var archetype = getGeneratedType();
-        return switch (statement().effectiveOrdering()) {
-            case SYSTEM -> new SystemEntryObject(archetype);
-            case USER -> new UserEntryObject(archetype);
-        };
+    EntryObjectArchetype methodReturnType() {
+        return getGeneratedType();
     }
 
     @Override

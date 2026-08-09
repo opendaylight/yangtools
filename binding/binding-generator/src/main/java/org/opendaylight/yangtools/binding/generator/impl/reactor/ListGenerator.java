@@ -15,10 +15,9 @@ import org.opendaylight.yangtools.binding.model.ChildOfArchetype;
 import org.opendaylight.yangtools.binding.model.GetterAnnotation;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.ReturnType;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.ReturnTypeCompat;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -44,12 +43,9 @@ abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEff
     }
 
     @Override
-    final GetterMethod constructGetter(final Type returnType, final Iterator<GetterAnnotation> annotations) {
+    final GetterMethod constructGetter(final  ReturnType returnType, final Iterator<GetterAnnotation> annotations) {
         return constructGetter(statement(), returnType, annotations);
     }
-
-    @Override
-    abstract ReturnTypeCompat methodReturnType();
 
     @Override
     final ChildOfArchetype.OfList createTypeImpl(final TypeName typeName, final ListEffectiveStatement statement,

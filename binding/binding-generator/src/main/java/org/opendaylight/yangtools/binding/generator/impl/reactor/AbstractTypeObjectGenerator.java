@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.binding.model.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.OverrideAnnotation;
+import org.opendaylight.yangtools.binding.model.ReturnType;
 import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
@@ -224,7 +225,7 @@ abstract class AbstractTypeObjectGenerator<
      * The type of single-element return type of the getter method associated with this generator. This is retained for
      * run-time type purposes. It may be uninitialized, in which case this object must have a generated type.
      */
-    private Type methodReturnTypeElement;
+    private ReturnType methodReturnTypeElement;
 
     @NonNullByDefault
     AbstractTypeObjectGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
@@ -406,7 +407,7 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     @Override
-    Type methodReturnType() {
+    final ReturnType methodReturnType() {
         return methodReturnElementType();
     }
 
@@ -420,7 +421,7 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     @NonNullByDefault
-    final Type methodReturnElementType() {
+    final ReturnType methodReturnElementType() {
         var local = methodReturnTypeElement;
         if (local == null) {
             methodReturnTypeElement = local = createMethodReturnElementType();
@@ -429,11 +430,11 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     @NonNullByDefault
-    private Type createMethodReturnElementType() {
+    private ReturnType createMethodReturnElementType() {
         final var generatedType = tryGeneratedType();
         if (generatedType != null) {
             // We have generated a type here, so return it. This covers 'bits', 'enumeration' and 'union'.
-            return generatedType;
+            return (ReturnType) generatedType;
         }
 
         if (refType != null) {
@@ -447,7 +448,7 @@ abstract class AbstractTypeObjectGenerator<
             return prev.methodReturnType();
         }
 
-        final Type baseType;
+        final ReturnType baseType;
         if (baseGen == null) {
             if (!(support instanceof TypeObjectSupport.Scalar scalar)) {
                 throw new VerifyException("Cannot resolve type " + support.type.argument() + " in " + this);
@@ -455,13 +456,14 @@ abstract class AbstractTypeObjectGenerator<
             baseType = scalar.javaType;
         } else {
             // We are derived from a base generator. Defer to its type for return.
-            baseType = baseGen.getGeneratedType();
+            baseType = baseGen.methodReturnType();
         }
 
         return restrictType(baseType, Restrictions.compute(statement(), support.type));
     }
 
-    static final @NonNull Type restrictType(final @NonNull Type baseType, final @Nullable Restrictions restrictions) {
+    @NonNullByDefault
+    static final ReturnType restrictType(final ReturnType baseType, final @Nullable Restrictions restrictions) {
         if (restrictions == null || restrictions.isEmpty()) {
             // No additional restrictions, return base type
             return baseType;
