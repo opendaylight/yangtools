@@ -23,6 +23,7 @@ public record CaseObjectArchetypeImpl(
         TypeName name,
         CaseEffectiveStatement statement,
         TypeName parentName,
+        TypeName choiceName,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
         List<GetterMethod> getters) implements CaseObjectArchetype {
@@ -30,6 +31,7 @@ public record CaseObjectArchetypeImpl(
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(parentName);
+        requireNonNull(choiceName);
         requireNonNull(partials);
         requireNonNull(typeObjects);
         requireNonNull(getters);
@@ -47,6 +49,9 @@ public record CaseObjectArchetypeImpl(
 
     @Override
     public String toString() {
-        return TypeMethods.toStringHelper(CaseObjectArchetype.class, this).add("parentName", parentName).toString();
+        return TypeMethods.toStringHelper(CaseObjectArchetype.class, this)
+            .add("parentName", parentName)
+            .add("choiceName", choiceName)
+            .toString();
     }
 }

@@ -32,14 +32,19 @@ public sealed interface CaseObjectArchetype extends AugmentableArchetype permits
     CaseEffectiveStatement statement();
 
     /**
-     * {@return the name of the {@link ChoiceIn} in which this object is a branch}
+     * {@return the name of the parent of the {@link ChoiceIn} in which this object is a branch}
      */
     TypeName parentName();
 
+    /**
+     * {@return the name of the {@link ChoiceIn} in which this object is a branch}
+     */
+    TypeName choiceName();
+
     static CaseObjectArchetype of(final TypeName typeName, final CaseEffectiveStatement statement,
-            final TypeName parentName, final List<GroupingArchetype> groupings,
+            final TypeName parentName, final TypeName choiceName, final List<GroupingArchetype> groupings,
             final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters) {
-        return new CaseObjectArchetypeImpl(typeName, statement, parentName, TypeMethods.copyList(groupings),
-            TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));
+        return new CaseObjectArchetypeImpl(typeName, statement, parentName, choiceName,
+            TypeMethods.copyList(groupings), TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));
     }
 }

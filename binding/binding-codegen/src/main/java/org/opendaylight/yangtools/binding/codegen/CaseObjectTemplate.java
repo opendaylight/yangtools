@@ -7,14 +7,11 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.CaseObject;
 import org.opendaylight.yangtools.binding.model.CaseObjectArchetype;
-import org.opendaylight.yangtools.binding.model.ChoiceInArchetype;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
@@ -28,12 +25,8 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
 final class CaseObjectTemplate extends InterfaceTemplate<CaseObjectArchetype> implements ArchetypeTemplate.WithBuilder {
     private static final ConcreteType CASE_OBJECT = ConcreteType.ofClass(CaseObject.class);
 
-    private final ChoiceInArchetype choiceIn;
-
-    CaseObjectTemplate(final DataRootArchetype root, final CaseObjectArchetype archetype,
-            final ChoiceInArchetype choiceIn) {
+    CaseObjectTemplate(final DataRootArchetype root, final CaseObjectArchetype archetype) {
         super(root, archetype, DataContainerContract.JAVA, true);
-        this.choiceIn = requireNonNull(choiceIn);
     }
 
     @Override
@@ -43,9 +36,10 @@ final class CaseObjectTemplate extends InterfaceTemplate<CaseObjectArchetype> im
 
     @Override
     Iterator<? extends Type> extendsTypes() {
+        final var choiceIn = TypeRef.of(archetype.choiceName());
         return Iterators.concat(
             Iterators.forArray(
-                ParameterizedType.of(CASE_OBJECT, TypeRef.of(choiceIn.parentName()), choiceIn, archetype),
+                ParameterizedType.of(CASE_OBJECT, TypeRef.of(archetype.parentName()), choiceIn, archetype),
                 choiceIn),
             super.extendsTypes());
     }

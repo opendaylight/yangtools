@@ -120,7 +120,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
                         case CaseRuntimeType caseType -> {
                             caseToChildren.put(caseType, generatorsToStatements(childGenIt));
                             // Global indexing of cases generated for a particular choice
-                            choiceToCases.put(caseType.javaType().parentName(), caseType);
+                            choiceToCases.put(caseType.javaType().choiceName(), caseType);
                         }
                         case AugmentRuntimeType augmentType ->
                             augmentToChildren.put(augmentType, generatorsToStatements(childGenIt));
