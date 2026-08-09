@@ -177,7 +177,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
             // Find target Augmentation<Foo> and reference Foo
             sb
                 .append("\n\n")
-                .append("@see ").append(importedName(augmentation.target()));
+                .append("@see ").append(importedName(augmentation.targetName()));
         }
         // FIXME: this is equivalent to genTo.isTypedef() so we should be able to unify the two concepts -- but really
         //        that sounds like it should be handled in those templates ... perhaps we should receive these from

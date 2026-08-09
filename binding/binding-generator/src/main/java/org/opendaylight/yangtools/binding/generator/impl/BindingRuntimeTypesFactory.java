@@ -240,7 +240,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
 
             // loop invariants
             final var runtimeType = runtime.javaType();
-            final var runtimeTarget = runtimeType.target();
+            final var runtimeTarget = runtimeType.targetName();
             final var runtimeIfaces = runtimeType.partials();
             final var runtimeChildren = augToChildrenStmts.get(runtime);
 
@@ -253,7 +253,7 @@ final class BindingRuntimeTypesFactory implements Mutable {
 
                 // check if both have the same target type
                 final var substitType = substit.javaType();
-                if (!runtimeTarget.equals(substitType.target())) {
+                if (!runtimeTarget.equals(substitType.targetName())) {
                     continue;
                 }
 

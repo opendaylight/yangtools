@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAugmentRuntimeType;
 import org.opendaylight.yangtools.binding.model.Archetype;
-import org.opendaylight.yangtools.binding.model.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
@@ -153,12 +152,8 @@ public abstract sealed class AugmentGenerator
     @Override
     final AugmentationArchetype createTypeImpl(final TypeName typeName, final AugmentEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings) {
-        final var targetType = targetGenerator().getGeneratedType();
-        if (!(targetType instanceof AugmentableArchetype target)) {
-            throw new VerifyException("Unexpected target " + targetType);
-        }
-
-        return AugmentationArchetype.of(typeName, statement, target, groupings, collectTypeObjects(), collectGetters());
+        return AugmentationArchetype.of(typeName, statement, targetGenerator().typeName(), groupings,
+            collectTypeObjects(), collectGetters());
     }
 
     boolean matchesInstantiated(final AugmentEffectiveStatement statement) {

@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 
 /**
  * Template for {@link Augmentation} specializations.
@@ -38,7 +39,8 @@ final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype
     @Override
     Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.forArray(ParameterizedType.of(AUGMENTATION, archetype.target()), extendsJavaDataContainer()),
+            Iterators.forArray(
+                ParameterizedType.of(AUGMENTATION, TypeRef.of(archetype.targetName())), extendsJavaDataContainer()),
             super.extendsTypes());
     }
 
