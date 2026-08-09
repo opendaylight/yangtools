@@ -25,7 +25,8 @@ import org.opendaylight.yangtools.binding.model.impl.ParameterizedTypeN;
  */
 @NonNullByDefault
 public sealed interface ParameterizedType extends Type
-        permits ParameterizedType0, ParameterizedType1, ParameterizedType2, ParameterizedTypeN, SystemEntryObject {
+        permits ParameterizedType0, ParameterizedType1, ParameterizedType2, ParameterizedTypeN, SystemEntryObject,
+                SystemLeafset {
     @Override
     default TypeName name() {
         return getRawType().name();

@@ -26,7 +26,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_N
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstLower;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isListType;
-import static org.opendaylight.yangtools.binding.model.ri.Types.isSetType;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -52,6 +51,7 @@ import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.UnknownLeafrefType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.SystemEntryObject;
+import org.opendaylight.yangtools.binding.model.api.SystemLeafset;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 
@@ -465,7 +465,7 @@ final class BuilderTemplate extends BaseTemplate {
                 return printPropertySetter(suffix, receiver, propertyName, "checkListFieldCast",
                     importedName(itemType));
             }
-            if (isSetType(parameterized)) {
+            if (parameterized instanceof SystemLeafset) {
                 return printPropertySetter(suffix, receiver, propertyName, "checkSetFieldCast",
                     importedName(itemType));
             }
@@ -669,7 +669,7 @@ final class BuilderTemplate extends BaseTemplate {
     private @NonNull BlockBuilder generateSetter(final GetterShape getter) {
         final var returnType = getter.type();
         if (returnType instanceof ParameterizedType parameterized) {
-            if (isListType(parameterized) || isSetType(parameterized)) {
+            if (isListType(parameterized) || parameterized instanceof SystemLeafset) {
                 final var arguments = parameterized.getActualTypeArguments();
                 return arguments.isEmpty() ? generateListSetter(getter, UnknownLeafrefType.INSTANCE)
                     : generateListSetter(getter, arguments.getFirst());

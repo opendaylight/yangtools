@@ -22,17 +22,6 @@ class TypesTest {
     }
 
     @Test
-    void testSetTypeFor() {
-        final var setType = Types.setTypeFor(UnknownLeafrefType.INSTANCE);
-        assertEquals("Set", setType.simpleName());
-    }
-
-    @Test
-    void testSetTypeForNull() {
-        assertThrows(NullPointerException.class, () -> Types.setTypeFor(null));
-    }
-
-    @Test
     void testListTypeFor() {
         final var listType = Types.listTypeFor(UnknownLeafrefType.INSTANCE);
         assertEquals("List", listType.simpleName());

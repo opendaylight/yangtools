@@ -29,12 +29,11 @@ import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.UnknownLeafrefType;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.SystemLeafset;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 
 class SpecializingLeafrefTest extends BaseCompilationTest {
-    private static final ParameterizedType SET_STRING_TYPE  = Types.setTypeFor(ScalarTypes.STRING);
+    private static final SystemLeafset SET_STRING_TYPE  = SystemLeafset.of(ScalarTypes.STRING);
 
     private static final String BAR_CONT = "BarCont";
     private static final String BOOLEAN_CONT = "BooleanCont";
@@ -79,7 +78,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
     @Test
     void testGroupingWithUnresolvedLeafRefs() throws Exception {
         verifyReturnType(GroupingArchetype.class, "FooGrp", GET_LEAF1_NAME, UnknownLeafrefType.INSTANCE);
-        verifyReturnType(GroupingArchetype.class, "FooGrp", GET_LEAFLIST1_NAME, Types.setTypeWildcard());
+        verifyReturnType(GroupingArchetype.class, "FooGrp", GET_LEAFLIST1_NAME, SystemLeafset.UNKNOWN);
 
         final String content = getFileContent("FooGrp");
 

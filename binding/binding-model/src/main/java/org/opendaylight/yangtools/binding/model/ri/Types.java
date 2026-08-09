@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.model.ri;
 
 import java.util.List;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
@@ -22,37 +21,10 @@ import org.opendaylight.yangtools.binding.model.impl.ConcreteTypeImpl;
 // FIXME: YANGTOOLS-1910: these are used to MethodSignature.getReturnType and should be properly modeled there
 public final class Types {
     private static final @NonNull ConcreteType LIST_TYPE = new ConcreteTypeImpl(List.class);
-    private static final @NonNull ConcreteType SET_TYPE = new ConcreteTypeImpl(Set.class);
     private static final @NonNull ParameterizedType LIST_TYPE_WILDCARD = ParameterizedType.of(LIST_TYPE);
-    private static final @NonNull ParameterizedType SET_TYPE_WILDCARD = ParameterizedType.of(SET_TYPE);
 
     private Types() {
         // hidden on purpose
-    }
-
-    /**
-     * Returns an instance of {@link ParameterizedType} describing the typed {@link Set}&lt;V&gt; with concrete type
-     * of value.
-     *
-     * @param valueType Value Type
-     * @return Description of generic type instance of Set
-     */
-    @NonNullByDefault
-    public static ParameterizedType setTypeFor(final Type valueType) {
-        return ParameterizedType.of(SET_TYPE, valueType);
-    }
-
-    /**
-     * Returns an instance of {@link ParameterizedType} describing the typed {@link Set}&lt;?&gt;.
-     *
-     * @return Description of type instance of Set
-     */
-    public static @NonNull ParameterizedType setTypeWildcard() {
-        return SET_TYPE_WILDCARD;
-    }
-
-    public static boolean isSetType(final ParameterizedType type) {
-        return SET_TYPE.equals(type.getRawType());
     }
 
     /**

@@ -41,7 +41,7 @@ public record SystemEntryObject(EntryObjectArchetype entryObject) implements Par
     }
 
     @Override
-    public Type getRawType() {
+    public ConcreteType getRawType() {
         return MAP;
     }
 

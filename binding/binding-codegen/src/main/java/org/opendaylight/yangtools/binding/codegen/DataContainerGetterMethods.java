@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.binding.model.RoutingContextAnnotation;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.SystemEntryObject;
+import org.opendaylight.yangtools.binding.model.api.SystemLeafset;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
@@ -242,7 +243,7 @@ final class DataContainerGetterMethods implements BlockFragment {
     private String nullableType(final GetterShape getter) {
         final var type = getter.type();
         if (isObject(type) && type instanceof ParameterizedType param
-            && (param instanceof SystemEntryObject || Types.isListType(param) || Types.isSetType(param))) {
+            && (param instanceof SystemEntryObject || Types.isListType(param) || param instanceof SystemLeafset)) {
             return template.importedNullable(type);
         }
         return template.importedName(type);
