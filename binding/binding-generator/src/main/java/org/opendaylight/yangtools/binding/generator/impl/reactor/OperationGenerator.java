@@ -37,8 +37,9 @@ public abstract sealed class OperationGenerator<
     }
 
     @Override
-    final void addAsGetterMethod(final List<GetterMethod.Builder> list) {
+    final GetterMethod asGetterMethod() {
         // RPCs/Actions are a separate concept
+        return null;
     }
 
     @Override

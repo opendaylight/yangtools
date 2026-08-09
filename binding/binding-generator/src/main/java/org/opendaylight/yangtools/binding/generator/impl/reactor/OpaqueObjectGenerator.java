@@ -8,12 +8,13 @@
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
 import com.google.common.base.VerifyException;
-import java.util.List;
+import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnydataRuntimeType;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnyxmlRuntimeType;
+import org.opendaylight.yangtools.binding.model.GetterAnnotation;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.OpaqueObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
@@ -106,8 +107,8 @@ abstract class OpaqueObjectGenerator<
     }
 
     @Override
-    final GetterMethod.Builder constructGetter(final List<GetterMethod.@NonNull Builder> list, final Type returnType) {
-        return constructGetter(list, statement(), returnType);
+    final GetterMethod constructGetter(final Type returnType, final Iterator<@NonNull GetterAnnotation> annotations) {
+        return constructGetter(statement(), returnType, annotations);
     }
 
     @NonNullByDefault

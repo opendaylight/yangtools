@@ -54,8 +54,9 @@ abstract sealed class AbstractNotificationGenerator
         NotificationEffectiveStatement statement, List<GroupingArchetype> groupings);
 
     @Override
-    final void addAsGetterMethod(final List<GetterMethod.Builder> list) {
+    final GetterMethod asGetterMethod() {
         // Notifications are a distinct concept
+        return null;
     }
 
     @Override

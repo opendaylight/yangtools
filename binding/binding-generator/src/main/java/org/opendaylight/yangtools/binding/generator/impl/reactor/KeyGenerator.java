@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
-import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.Naming;
@@ -75,7 +74,8 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
     }
 
     @Override
-    void addAsGetterMethod(final List<GetterMethod.Builder> list) {
+    GetterMethod asGetterMethod() {
         // Keys are explicitly handled by their corresponding list
+        return null;
     }
 }

@@ -12,6 +12,7 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.base.VerifyException;
+import com.google.common.collect.Iterators;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -482,22 +483,22 @@ abstract class AbstractTypeObjectGenerator<
     }
 
     @Override
-    final void addAsGetterMethodOverride(final List<GetterMethod.@NonNull Builder> list) {
+    final @Nullable GetterMethod constructGetterMethodOverride() {
         if (!(refType instanceof ResolvedLeafref)) {
             // We are not dealing with a leafref or have nothing to add
-            return;
+            return null;
         }
 
         final var prev = (AbstractTypeObjectGenerator<?, ?>) getPrevious();
         if (prev.refType instanceof ResolvedLeafref) {
             // We should be already inheriting the correct type
-            return;
+            return null;
         }
 
         // Note: this may we wrapped for leaf-list, hence we need to deal with that
         final var myType = methodReturnType();
         LOG.trace("Override of {} to {}", this, myType);
-        constructGetter(list, myType).addAnnotation(OverrideAnnotation.INSTANCE);
+        return constructGetter(myType, Iterators.singletonIterator(OverrideAnnotation.INSTANCE));
     }
 
     @Override
