@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface IdentityArchetype extends Archetype
+public sealed interface IdentityArchetype extends Archetype, ReturnType
         permits IdentityArchetype0, IdentityArchetype1, IdentityArchetypeN {
     @Override
     IdentityEffectiveStatement statement();

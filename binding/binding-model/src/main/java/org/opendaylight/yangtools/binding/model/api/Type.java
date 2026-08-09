@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.model.api;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.ReturnType;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.concepts.Immutable;
 
@@ -18,8 +19,9 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * and package name, except of primitive types like int, byte etc. In case of mapping of primitive type the package name
  * MUST be left as empty string.
  */
+@SuppressWarnings("removal")
 @NonNullByDefault
-public sealed interface Type extends Immutable permits Archetype, ConcreteType, ParameterizedType, TypeRef {
+public sealed interface Type extends Immutable permits Archetype, ParameterizedType, ReturnType, TypeRef {
     /**
      * {@return this type's {@link TypeName}}
      */
