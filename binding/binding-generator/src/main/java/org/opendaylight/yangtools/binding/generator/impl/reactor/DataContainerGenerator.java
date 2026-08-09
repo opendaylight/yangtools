@@ -465,7 +465,7 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
 
     @NonNullByDefault
     final List<GetterMethod> collectGetters() {
-        final var list = new ArrayList<GetterMethod.Builder>();
+        final var list = new ArrayList<GetterMethod>();
 
         for (var child : this) {
             // Only process explicit generators here
@@ -474,7 +474,7 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
             }
         }
 
-        return list.isEmpty() ? List.of() : list.stream().map(GetterMethod.Builder::build).toList();
+        return List.copyOf(list);
     }
 
     @NonNullByDefault

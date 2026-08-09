@@ -118,7 +118,7 @@ abstract sealed class YangDataGenerator
     }
 
     @Override
-    final void addAsGetterMethod(final List<GetterMethod.Builder> list) {
+    final void addAsGetterMethod(final List<GetterMethod> list) {
         // is not a part of any structure
     }
 }

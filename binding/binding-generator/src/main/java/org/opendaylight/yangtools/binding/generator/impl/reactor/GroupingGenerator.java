@@ -81,7 +81,7 @@ final class GroupingGenerator extends DataContainerGenerator<GroupingEffectiveSt
     }
 
     @Override
-    void addAsGetterMethod(final List<GetterMethod.Builder> list) {
+    void addAsGetterMethod(final List<GetterMethod> list) {
         // groupings are a separate concept
     }
 

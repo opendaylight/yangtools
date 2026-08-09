@@ -195,7 +195,7 @@ public abstract sealed class AugmentGenerator
     }
 
     @Override
-    final void addAsGetterMethod(final List<GetterMethod.Builder> list) {
+    final void addAsGetterMethod(final List<GetterMethod> list) {
         // Augments are never added as getters, as they are handled via Augmentable mechanics
     }
 

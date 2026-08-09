@@ -56,7 +56,7 @@ final class FeatureGenerator extends AbstractExplicitGenerator<FeatureEffectiveS
     }
 
     @Override
-    void addAsGetterMethod(final List<GetterMethod.Builder> list) {
+    void addAsGetterMethod(final List<GetterMethod> list) {
         // features are a separate concept
     }
 }

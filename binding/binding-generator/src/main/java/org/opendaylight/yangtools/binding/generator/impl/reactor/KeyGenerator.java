@@ -75,7 +75,7 @@ final class KeyGenerator extends AbstractExplicitGenerator<KeyEffectiveStatement
     }
 
     @Override
-    void addAsGetterMethod(final List<GetterMethod.Builder> list) {
+    void addAsGetterMethod(final List<GetterMethod> list) {
         // Keys are explicitly handled by their corresponding list
     }
 }
