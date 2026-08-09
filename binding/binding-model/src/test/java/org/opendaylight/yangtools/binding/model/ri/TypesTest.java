@@ -11,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
+import org.opendaylight.yangtools.binding.model.UnknownLeafrefType;
 import org.opendaylight.yangtools.binding.model.impl.ConcreteTypeImpl;
 
 class TypesTest {
@@ -22,7 +23,7 @@ class TypesTest {
 
     @Test
     void testMapTypeFor() {
-        final var mapType = Types.mapTypeFor(Types.OBJECT, Types.OBJECT);
+        final var mapType = Types.mapTypeFor(UnknownLeafrefType.INSTANCE, UnknownLeafrefType.INSTANCE);
         assertEquals("Map", mapType.simpleName());
     }
 
@@ -33,7 +34,7 @@ class TypesTest {
 
     @Test
     void testSetTypeFor() {
-        final var setType = Types.setTypeFor(Types.OBJECT);
+        final var setType = Types.setTypeFor(UnknownLeafrefType.INSTANCE);
         assertEquals("Set", setType.simpleName());
     }
 
@@ -44,7 +45,7 @@ class TypesTest {
 
     @Test
     void testListTypeFor() {
-        final var listType = Types.listTypeFor(Types.OBJECT);
+        final var listType = Types.listTypeFor(UnknownLeafrefType.INSTANCE);
         assertEquals("List", listType.simpleName());
     }
 

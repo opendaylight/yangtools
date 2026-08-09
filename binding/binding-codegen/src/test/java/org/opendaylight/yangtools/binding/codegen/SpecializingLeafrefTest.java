@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.ScalarTypes;
+import org.opendaylight.yangtools.binding.model.UnknownLeafrefType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -77,7 +78,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testGroupingWithUnresolvedLeafRefs() throws Exception {
-        verifyReturnType(GroupingArchetype.class, "FooGrp", GET_LEAF1_NAME, Types.OBJECT);
+        verifyReturnType(GroupingArchetype.class, "FooGrp", GET_LEAF1_NAME, UnknownLeafrefType.INSTANCE);
         verifyReturnType(GroupingArchetype.class, "FooGrp", GET_LEAFLIST1_NAME, Types.setTypeWildcard());
 
         final String content = getFileContent("FooGrp");
@@ -135,7 +136,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testLeafrefWhichPointsBoolean() throws Exception {
-        verifyReturnType(GroupingArchetype.class, UNRESOLVED_GROUPING, GET_LEAF1_NAME, Types.OBJECT);
+        verifyReturnType(GroupingArchetype.class, UNRESOLVED_GROUPING, GET_LEAF1_NAME, UnknownLeafrefType.INSTANCE);
         verifyReturnType(ContainerObjectArchetype.class, BOOLEAN_CONT, GET_LEAF1_NAME, ScalarTypes.BOOLEAN);
 
         final String unresolvedGrouping = getFileContent(UNRESOLVED_GROUPING);

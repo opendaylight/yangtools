@@ -22,9 +22,6 @@ import org.opendaylight.yangtools.binding.model.impl.ConcreteTypeImpl;
  */
 // FIXME: YANGTOOLS-1910: these are used to MethodSignature.getReturnType and should be properly modeled there
 public final class Types {
-
-    public static final @NonNull ConcreteType OBJECT = new ConcreteTypeImpl(Object.class);
-
     private static final @NonNull ConcreteType LIST_TYPE = new ConcreteTypeImpl(List.class);
     private static final @NonNull ConcreteType MAP_TYPE = new ConcreteTypeImpl(Map.class);
     private static final @NonNull ConcreteType SET_TYPE = new ConcreteTypeImpl(Set.class);

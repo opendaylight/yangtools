@@ -33,8 +33,8 @@ import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.UnknownLeafrefType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -204,7 +204,7 @@ public class DefaultBindingGeneratorTest {
 
     @Test
     void testUnresolvedLeafref() {
-        assertSame(Types.OBJECT,
+        assertSame(UnknownLeafrefType.INSTANCE,
             assertGeneratedMethod(TypeName.of(TEST_TYPE_PROVIDER_B, "Grp"), GroupingArchetype.class,
                 "getUnresolvableLeafref").returnType());
     }

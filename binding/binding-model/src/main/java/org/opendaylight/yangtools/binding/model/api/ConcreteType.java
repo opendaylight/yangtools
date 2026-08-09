@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.ReturnType;
 import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.impl.ConcreteTypeImpl;
 import org.opendaylight.yangtools.binding.model.ri.Types;
@@ -22,7 +23,7 @@ import org.opendaylight.yangtools.yang.common.Decimal64;
  */
 // FIXME: promote to binding.model under 'ScalarType'
 @NonNullByDefault
-public sealed interface ConcreteType extends Type permits Decimal64Type, ConcreteTypeImpl, RestrictedType {
+public sealed interface ConcreteType extends ReturnType permits Decimal64Type, ConcreteTypeImpl, RestrictedType {
     /**
      * {@return this type's equivalent with specified {@link Restrictions}}
      * @param newRestrictions the restrictions to apply

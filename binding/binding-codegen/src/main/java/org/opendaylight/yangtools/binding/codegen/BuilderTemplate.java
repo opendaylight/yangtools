@@ -25,7 +25,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstLower;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
-import static org.opendaylight.yangtools.binding.model.ri.Types.OBJECT;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isListType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isMapType;
 import static org.opendaylight.yangtools.binding.model.ri.Types.isSetType;
@@ -51,6 +50,7 @@ import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.TypeName;
+import org.opendaylight.yangtools.binding.model.UnknownLeafrefType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
@@ -671,7 +671,7 @@ final class BuilderTemplate extends BaseTemplate {
         if (returnType instanceof ParameterizedType parameterized) {
             if (isListType(parameterized) || isSetType(parameterized)) {
                 final var arguments = parameterized.getActualTypeArguments();
-                return arguments.isEmpty() ? generateListSetter(getter, OBJECT)
+                return arguments.isEmpty() ? generateListSetter(getter, UnknownLeafrefType.INSTANCE)
                     : generateListSetter(getter, arguments.getFirst());
             }
             if (isMapType(parameterized)) {
