@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import java.util.Iterator;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -14,6 +15,7 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultContainerRuntimeType;
 import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
+import org.opendaylight.yangtools.binding.model.GetterAnnotation;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
@@ -44,8 +46,8 @@ final class ContainerGenerator extends CompositeSchemaTreeGenerator<ContainerEff
     }
 
     @Override
-    GetterMethod.Builder constructGetter(final List<GetterMethod.@NonNull Builder> list, final Type returnType) {
-        return constructGetter(list, statement(), returnType);
+    GetterMethod constructGetter(final Type returnType, final Iterator<@NonNull GetterAnnotation> annotations) {
+        return constructGetter(statement(), returnType, annotations);
     }
 
     @Override

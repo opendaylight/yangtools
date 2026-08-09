@@ -12,13 +12,16 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.generator.impl.tree.StatementRepresentation;
 import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.GetterAnnotation;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
@@ -322,33 +325,35 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         return domain.addPrimary(this, new CamelCaseNamingStrategy(namespace(), localName()));
     }
 
-    @NonNullByDefault
-    void addAsGetterMethod(final List<GetterMethod.Builder> list) {
+    @Nullable GetterMethod asGetterMethod() {
         if (isAugmenting()) {
             // Do not process augmented nodes: they will be taken care of in their home augmentation
-            return;
+            return null;
         }
         if (isAddedByUses()) {
             // If this generator has been added by a uses node, it is already taken care of by the corresponding
             // grouping. There is one exception to this rule: 'type leafref' can use a relative path to point
             // outside of its home grouping. In this case we need to examine the instantiation until we succeed in
             // resolving the reference.
-            addAsGetterMethodOverride(list);
-            return;
+            return constructGetterMethodOverride();
         }
 
-        final var returnType = methodReturnType();
-        constructGetter(list, returnType);
+        return constructGetter(methodReturnType(), Collections.emptyIterator());
+    }
+
+    @Nullable GetterMethod constructGetterMethodOverride() {
+        // No-op for most cases
+        return null;
     }
 
     @NonNullByDefault
-    GetterMethod.Builder constructGetter(final List<GetterMethod.Builder> list, final Type returnType) {
+    GetterMethod constructGetter(final Type returnType, final Iterator<GetterAnnotation> annotations) {
         throw new VerifyException("Attempted to construct getter for " + this);
     }
 
     @NonNullByDefault
-    static final GetterMethod.Builder constructGetter(final List<GetterMethod.Builder> list,
-            final SchemaTreeEffectiveStatement<?> statement,  final Type returnType) {
+    static final GetterMethod constructGetter(final SchemaTreeEffectiveStatement<?> statement, final Type returnType,
+            final Iterator<GetterAnnotation> annotations) {
         // FIXME: This method assumes a injective mapping from YANG identifier to method suffix. That is not the case,
         //        as we have dealt with a similar problem for class names, where we have the whol NamingStrategy thing
         //        and fallbacks.
@@ -369,14 +374,17 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         //       In the mean time MethodSignature derives the suffix via Naming.getGetterMethodName(QName), but retains
         //       it as an API detail. If/when we have a solution, it is a simple matter of providing a separate builder
         //       and supply the suffix into it.
-        final var mb = GetterMethod.builder(statement, returnType);
-        list.add(mb);
-        return mb;
-    }
-
-    @NonNullByDefault
-    void addAsGetterMethodOverride(final List<GetterMethod.Builder> list) {
-        // No-op for most cases
+        if (!annotations.hasNext()) {
+            return GetterMethod.of(statement, returnType);
+        }
+        final var first = annotations.next();
+        if (!annotations.hasNext()) {
+            return GetterMethod.of(statement, returnType, first);
+        }
+        final var list = new ArrayList<GetterAnnotation>();
+        list.add(first);
+        annotations.forEachRemaining(list::add);
+        return GetterMethod.of(statement, returnType, list);
     }
 
     @NonNullByDefault

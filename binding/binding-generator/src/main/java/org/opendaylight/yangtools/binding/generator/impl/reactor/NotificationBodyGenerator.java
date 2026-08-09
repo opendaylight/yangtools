@@ -52,8 +52,9 @@ final class NotificationBodyGenerator
     }
 
     @Override
-    void addAsGetterMethod(final List<GetterMethod.Builder> list) {
+    GetterMethod asGetterMethod() {
         // Notifications are a distinct concept
+        return null;
     }
 
     @Override
