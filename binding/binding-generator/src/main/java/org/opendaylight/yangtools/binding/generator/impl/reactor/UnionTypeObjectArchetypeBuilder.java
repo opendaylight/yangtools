@@ -16,10 +16,12 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeObjectSupport.Union.Dependencies;
 import org.opendaylight.yangtools.binding.model.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ReturnType;
 import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
@@ -44,8 +46,8 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 @NonNullByDefault
 final class UnionTypeObjectArchetypeBuilder {
     // FIXME: remove this map
-    private static final ImmutableMap<QName, ConcreteType> SIMPLE_TYPES =
-        ImmutableMap.<QName, ConcreteType>builder()
+    private static final ImmutableMap<QName, @Nullable ConcreteType> SIMPLE_TYPES =
+        ImmutableMap.<QName, @Nullable ConcreteType>builder()
             .put(BuiltInType.BINARY.typeName(), ScalarTypes.BINARY)
             .put(BuiltInType.BOOLEAN.typeName(), ScalarTypes.BOOLEAN)
             .put(BuiltInType.EMPTY.typeName(), ScalarTypes.EMPTY)
@@ -130,7 +132,7 @@ final class UnionTypeObjectArchetypeBuilder {
                 } else {
                     final var subDef = subType.typeDefinition();
 
-                    Type baseType = SIMPLE_TYPES.get(subName);
+                    ReturnType baseType = SIMPLE_TYPES.get(subName);
                     if (baseType == null) {
                         if (!BuiltInType.DECIMAL64.typeName().equals(subName)) {
                             // This has to be a reference to a typedef, let's lookup it up and pick up its type

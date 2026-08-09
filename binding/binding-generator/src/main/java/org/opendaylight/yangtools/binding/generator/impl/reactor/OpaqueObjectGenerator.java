@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultAnyxmlRuntime
 import org.opendaylight.yangtools.binding.model.GetterAnnotation;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.OpaqueObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ReturnType;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.AnydataRuntimeType;
@@ -107,8 +108,14 @@ abstract class OpaqueObjectGenerator<
     }
 
     @Override
-    final GetterMethod constructGetter(final Type returnType, final Iterator<@NonNull GetterAnnotation> annotations) {
+    final GetterMethod constructGetter(final ReturnType returnType,
+            final Iterator<@NonNull GetterAnnotation> annotations) {
         return constructGetter(statement(), returnType, annotations);
+    }
+
+    @Override
+    final OpaqueObjectArchetype<S> methodReturnType() {
+        return getArchetype();
     }
 
     @NonNullByDefault

@@ -13,8 +13,8 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.IdentityArchetype;
+import org.opendaylight.yangtools.binding.model.ReturnType;
 import org.opendaylight.yangtools.binding.model.UnknownLeafrefType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 
 abstract sealed class TypeReference {
     private static final class Identityref extends TypeReference {
@@ -59,7 +59,7 @@ abstract sealed class TypeReference {
         }
 
         @Override
-        Type methodReturnType() {
+        ReturnType methodReturnType() {
             return referencedGenerator.methodReturnElementType();
         }
     }
@@ -85,7 +85,7 @@ abstract sealed class TypeReference {
         }
 
         @Override
-        Type methodReturnType() {
+        ReturnType methodReturnType() {
             throw new UnsupportedOperationException("Cannot ascertain type", cause);
         }
     }
@@ -102,5 +102,5 @@ abstract sealed class TypeReference {
         return new Identityref(referencedGenerators);
     }
 
-    abstract @NonNull Type methodReturnType();
+    abstract @NonNull ReturnType methodReturnType();
 }

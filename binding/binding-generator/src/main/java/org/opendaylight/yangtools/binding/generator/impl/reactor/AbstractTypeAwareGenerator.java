@@ -13,10 +13,10 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.GetterAnnotation;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
+import org.opendaylight.yangtools.binding.model.ReturnType;
 import org.opendaylight.yangtools.binding.model.RoutingContextAnnotation;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.odlext.model.api.ContextReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -69,7 +69,8 @@ abstract class AbstractTypeAwareGenerator<
     }
 
     @Override
-    final GetterMethod constructGetter(final Type returnType, final Iterator<@NonNull GetterAnnotation> annotations) {
+    final GetterMethod constructGetter(final ReturnType returnType,
+            final Iterator<@NonNull GetterAnnotation> annotations) {
         final var local = contextType;
         return constructGetter(statement(), returnType, local == null ? annotations : Iterators.concat(annotations,
             Iterators.singletonIterator(new RoutingContextAnnotation(contextType.getArchetype()))));
