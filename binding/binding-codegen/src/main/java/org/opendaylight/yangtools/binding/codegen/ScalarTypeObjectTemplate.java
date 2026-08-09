@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.TypeConstants.PATTERN_CONSTANT_NAME;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CONSTRUCTOR_PARAMETERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JUR_PATTERN;
@@ -22,7 +23,6 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.CONST_STO_REGISTRAR;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.nameInModuleOf;
 import static org.opendaylight.yangtools.binding.contract.Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME;
-import static org.opendaylight.yangtools.binding.model.ri.TypeConstants.PATTERN_CONSTANT_NAME;
 
 import com.google.common.base.MoreObjects;
 import java.util.LinkedHashMap;
@@ -39,7 +39,6 @@ import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
-import org.opendaylight.yangtools.binding.model.ri.TypeConstants;
 
 /**
  * A template for {@link ScalarTypeObject} specializations.
