@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.ReturnTypeCompat;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -47,7 +47,7 @@ abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEff
     }
 
     @Override
-    abstract ParameterizedType methodReturnType();
+    abstract ReturnTypeCompat methodReturnType();
 
     @Override
     final ChildOfArchetype.OfList createTypeImpl(final TypeName typeName, final ListEffectiveStatement statement,

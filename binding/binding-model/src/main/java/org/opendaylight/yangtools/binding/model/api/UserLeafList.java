@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.IdentityArchetype;
@@ -21,32 +20,32 @@ import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
 
 /**
  * {@link ParameterizedType} compatibility with {@link ReturnType} being either a {@link ConcreteType} or
- * {@link UnknownLeafrefType} combined with a system-ordered {@code leaf-list}.
+ * {@link UnknownLeafrefType} combined with a user-ordered {@code leaf-list}.
  *
  * @since 16.0.0
  */
 @Beta
 @NonNullByDefault
 @SuppressWarnings("removal")
-public final class SystemLeafList implements ReturnTypeCompat {
+public final class UserLeafList implements ReturnTypeCompat {
     /**
      * Singleton instance for reporting {@link UnknownLeafrefType}.
      */
-    public static final SystemLeafList UNKNOWN = new SystemLeafList(List.of());
+    public static final UserLeafList UNKNOWN = new UserLeafList(List.of());
 
-    static final ConcreteTypeImpl SET = new ConcreteTypeImpl(Set.class);
+    static final ConcreteTypeImpl LIST = new ConcreteTypeImpl(List.class);
 
     private final List<Type> typeArguments;
 
-    private SystemLeafList(final List<ReturnType> typeArguments) {
+    private UserLeafList(final List<ReturnType> typeArguments) {
         this.typeArguments = List.copyOf(typeArguments);
     }
 
-    public static SystemLeafList of(final Type typeArgument) {
+    public static UserLeafList of(final Type typeArgument) {
         return switch (typeArgument) {
-            case ConcreteType concrete -> new SystemLeafList(List.of(concrete));
-            case IdentityArchetype identity -> new SystemLeafList(List.of(identity));
-            case TypeObjectArchetype<?> typeObject -> new SystemLeafList(List.of(typeObject));
+            case ConcreteType concrete -> new UserLeafList(List.of(concrete));
+            case IdentityArchetype identity -> new UserLeafList(List.of(identity));
+            case TypeObjectArchetype<?> typeObject -> new UserLeafList(List.of(typeObject));
             case UnknownLeafrefType unknown -> UNKNOWN;
             default -> throw new IllegalArgumentException(typeArgument + " is not an allowed type");
         };
@@ -59,7 +58,7 @@ public final class SystemLeafList implements ReturnTypeCompat {
 
     @Override
     public ConcreteType getRawType() {
-        return SET;
+        return LIST;
     }
 
     @Override

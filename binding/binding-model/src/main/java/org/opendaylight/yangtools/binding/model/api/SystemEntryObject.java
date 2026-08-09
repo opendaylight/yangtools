@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.binding.model.impl.ConcreteTypeImpl;
 import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
 
 /**
- * {@link ParameterizedType} compatibility with {@link ReturnType} being {@link EntryObjectArchetype}.
+ * {@link ParameterizedType} compatibility with {@link ReturnType} being a system-ordered {@link EntryObjectArchetype}.
  *
  * @param entryObject the {@link EntryObjectArchetype}
  * @since 16.0.0
@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
 @Beta
 @NonNullByDefault
 @SuppressWarnings("removal")
-public record SystemEntryObject(EntryObjectArchetype entryObject) implements ParameterizedType {
+public record SystemEntryObject(EntryObjectArchetype entryObject) implements ReturnTypeCompat {
     static final ConcreteTypeImpl MAP = new ConcreteTypeImpl(Map.class);
 
     public SystemEntryObject {

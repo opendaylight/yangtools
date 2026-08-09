@@ -25,7 +25,6 @@ import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstLower;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
-import static org.opendaylight.yangtools.binding.model.ri.Types.isListType;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
@@ -49,10 +48,13 @@ import org.opendaylight.yangtools.binding.model.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.UnknownLeafrefType;
+import org.opendaylight.yangtools.binding.model.api.AnyItemObject;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.SystemEntryObject;
 import org.opendaylight.yangtools.binding.model.api.SystemLeafList;
 import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.api.UserEntryObject;
+import org.opendaylight.yangtools.binding.model.api.UserLeafList;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 
 /**
@@ -461,7 +463,7 @@ final class BuilderTemplate extends BaseTemplate {
         }
         if (ownGetterType instanceof ParameterizedType parameterized) {
             final var itemType = parameterized.getActualTypeArguments().getFirst();
-            if (isListType(parameterized)) {
+            if (parameterized instanceof UserLeafList) {
                 return printPropertySetter(suffix, receiver, propertyName, "checkListFieldCast",
                     importedName(itemType));
             }
@@ -666,19 +668,24 @@ final class BuilderTemplate extends BaseTemplate {
         }
     }
 
-    private @NonNull BlockBuilder generateSetter(final GetterShape getter) {
+    @NonNullByDefault
+    private BlockBuilder generateSetter(final GetterShape getter) {
         final var returnType = getter.type();
-        if (returnType instanceof ParameterizedType parameterized) {
-            if (isListType(parameterized) || parameterized instanceof SystemLeafList) {
-                final var arguments = parameterized.getActualTypeArguments();
-                return arguments.isEmpty() ? generateListSetter(getter, UnknownLeafrefType.INSTANCE)
-                    : generateListSetter(getter, arguments.getFirst());
-            }
-            if (parameterized instanceof SystemEntryObject) {
-                return generateMapSetter(getter, parameterized.getActualTypeArguments().get(1));
-            }
-        }
-        return generateSimpleSetter(getter, returnType);
+        return switch (returnType) {
+            case AnyItemObject(var itemObject) -> generateListSetter(getter, itemObject);
+            case SystemEntryObject(var entryObject) -> generateMapSetter(getter, entryObject);
+            case UserEntryObject(var entryObject) -> generateListSetter(getter, entryObject);
+            case SystemLeafList compat -> generateSetter(getter, compat.getActualTypeArguments());
+            case UserLeafList compat -> generateSetter(getter, compat.getActualTypeArguments());
+            default -> generateSimpleSetter(getter, returnType);
+        };
+    }
+
+    @NonNullByDefault
+    private BlockBuilder generateSetter(final GetterShape getter, final List<Type> arguments) {
+        return arguments.isEmpty()
+            ? generateListSetter(getter, UnknownLeafrefType.INSTANCE)
+            : generateListSetter(getter, arguments.getFirst());
     }
 
     private @NonNull BlockBuilder generateListSetter(final GetterShape getter, final Type actualType) {

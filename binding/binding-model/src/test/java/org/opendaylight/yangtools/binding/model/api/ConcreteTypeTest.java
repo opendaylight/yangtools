@@ -5,30 +5,17 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.ri;
+package org.opendaylight.yangtools.binding.model.api;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.model.UnknownLeafrefType;
 import org.opendaylight.yangtools.binding.model.impl.ConcreteTypeImpl;
 
-class TypesTest {
+class ConcreteTypeTest {
     @Test
     void testPrimitiveType() {
         final var primitiveType = new ConcreteTypeImpl(String[].class);
-        assertEquals("String[]", primitiveType.simpleName());
-    }
-
-    @Test
-    void testListTypeFor() {
-        final var listType = Types.listTypeFor(UnknownLeafrefType.INSTANCE);
-        assertEquals("List", listType.simpleName());
-    }
-
-    @Test
-    void testListTypeForNull() {
-        assertThrows(NullPointerException.class, () -> Types.listTypeFor(null));
+        assertEquals("String[]", primitiveType.name().toString());
     }
 }

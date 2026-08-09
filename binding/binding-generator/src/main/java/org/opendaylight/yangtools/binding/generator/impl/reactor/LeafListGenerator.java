@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultLeafListRuntimeType;
-import org.opendaylight.yangtools.binding.model.UnknownLeafrefType;
+import org.opendaylight.yangtools.binding.model.api.ReturnTypeCompat;
 import org.opendaylight.yangtools.binding.model.api.SystemLeafList;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.Types;
+import org.opendaylight.yangtools.binding.model.api.UserLeafList;
 import org.opendaylight.yangtools.binding.runtime.api.LeafListRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 
@@ -33,13 +33,13 @@ final class LeafListGenerator
     }
 
     @Override
-    Type methodReturnType() {
+    ReturnTypeCompat methodReturnType() {
         // If we are a leafref and the reference cannot be resolved, we need to generate a list wildcard, not
         // List<Object>, we will try to narrow the return type in subclasses.
         final var type = super.methodReturnType();
         return switch (statement().effectiveOrdering()) {
             case SYSTEM -> SystemLeafList.of(type);
-            case USER -> type instanceof UnknownLeafrefType ? Types.listTypeWildcard() : Types.listTypeFor(type);
+            case USER -> UserLeafList.of(type);
         };
     }
 

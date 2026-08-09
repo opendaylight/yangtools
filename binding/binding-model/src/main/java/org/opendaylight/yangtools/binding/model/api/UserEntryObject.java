@@ -5,26 +5,40 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.impl;
+package org.opendaylight.yangtools.binding.model.api;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.EntryObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ReturnType;
+import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
 
+/**
+ * {@link ParameterizedType} compatibility with {@link ReturnType} being a user-ordered {@link EntryObjectArchetype}.
+ *
+ * @param entryObject the {@link EntryObjectArchetype}
+ * @since 16.0.0
+ */
+@Beta
 @NonNullByDefault
 @SuppressWarnings("removal")
-public record ParameterizedType0(Type getRawType) implements ParameterizedType {
-    public ParameterizedType0 {
-        requireNonNull(getRawType);
+public record UserEntryObject(EntryObjectArchetype entryObject) implements ReturnTypeCompat {
+    public UserEntryObject {
+        requireNonNull(entryObject);
     }
 
     @Override
     public List<Type> getActualTypeArguments() {
-        return List.of();
+        return List.of(entryObject);
+    }
+
+    @Override
+    public ConcreteType getRawType() {
+        return UserLeafList.LIST;
     }
 
     @Override

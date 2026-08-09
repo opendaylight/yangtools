@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 
 @NonNullByDefault
+@SuppressWarnings("removal")
 public record ParameterizedType1(Type getRawType, Type firstArg) implements ParameterizedType {
     public ParameterizedType1 {
         requireNonNull(getRawType);

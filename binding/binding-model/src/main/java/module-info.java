@@ -8,7 +8,6 @@
 module org.opendaylight.yangtools.binding.model {
     exports org.opendaylight.yangtools.binding.model;
     exports org.opendaylight.yangtools.binding.model.api;
-    exports org.opendaylight.yangtools.binding.model.ri;
 
     requires transitive org.opendaylight.yangtools.binding.spec;
     requires transitive org.opendaylight.yangtools.concepts;

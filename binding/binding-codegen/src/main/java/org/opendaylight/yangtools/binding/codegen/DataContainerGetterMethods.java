@@ -23,11 +23,8 @@ import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.OverrideAnnotation;
 import org.opendaylight.yangtools.binding.model.RoutingContextAnnotation;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.SystemEntryObject;
-import org.opendaylight.yangtools.binding.model.api.SystemLeafList;
+import org.opendaylight.yangtools.binding.model.api.ReturnTypeCompat;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
@@ -242,8 +239,7 @@ final class DataContainerGetterMethods implements BlockFragment {
 
     private String nullableType(final GetterShape getter) {
         final var type = getter.type();
-        if (isObject(type) && type instanceof ParameterizedType param
-            && (param instanceof SystemEntryObject || Types.isListType(param) || param instanceof SystemLeafList)) {
+        if (isObject(type) && type instanceof ReturnTypeCompat) {
             return template.importedNullable(type);
         }
         return template.importedName(type);
