@@ -46,19 +46,6 @@ enum DataContainerContract {
         }
     },
     /**
-     * Generate a default method narrowed to exactly the generated type and return its class, like
-     * {@link DataRootTemplate}.
-     */
-    // TODO: reconsider usefulness of this
-    BINDING {
-        @Override
-        BlockFragment implementationIn(final InterfaceTemplate<?> template) {
-            return bb -> bb
-                .nl()
-                .frg(new ImplementedInterfaceMethod.Canonical(template));
-        }
-    },
-    /**
      * Same as {@value #BINDING}, but also generate default methods implementing the {@link JavaContract}, like
      * {@link ContainerObjectTemplate}.
      */

@@ -30,8 +30,8 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
      * An {@link ArchetypeTemplate} which comes with a {@link BuilderTemplate}.
      */
     sealed interface WithBuilder permits AugmentationTemplate, CaseObjectTemplate, ContainerObjectTemplate,
-            EntryObjectTemplate, InstanceNotificationTemplate, ItemObjectTemplate, KeyedListNotificationTemplate,
-            NotificationTemplate, RpcInputTemplate, RpcOutputTemplate, YangDataTemplate {
+            DataRootTemplate, EntryObjectTemplate, InstanceNotificationTemplate, ItemObjectTemplate,
+            KeyedListNotificationTemplate, NotificationTemplate, RpcInputTemplate, RpcOutputTemplate, YangDataTemplate {
         /**
          * {@return a new BuilderTemplate}
          */

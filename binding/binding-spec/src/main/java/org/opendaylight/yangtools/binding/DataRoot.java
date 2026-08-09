@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.binding;
 
+import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
+
 /**
  * Data Root of YANG module.
  */
-public non-sealed interface DataRoot<T extends DataRoot<T>> extends DataContainer {
+public non-sealed interface DataRoot<T extends DataRoot<T>> extends DataContainer, JavaDataContainer<T> {
     @Override
     Class<T> implementedInterface();
 }

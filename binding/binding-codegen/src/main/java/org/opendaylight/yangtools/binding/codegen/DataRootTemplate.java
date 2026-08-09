@@ -28,18 +28,22 @@ import org.opendaylight.yangtools.binding.model.api.Type;
  * Template for {@link DataRoot} specializations.
  */
 @NonNullByDefault
-final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> {
+final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> implements ArchetypeTemplate.WithBuilder {
     private static final TypeName ROOT_META = TypeName.ofClass(RootMeta.class);
     private static final ConcreteType DATA_ROOT = ConcreteType.ofClass(DataRoot.class);
 
     private DataRootTemplate(final DataRootArchetype archetype) {
-        // TODO: use Contract.JAVA
-        super(archetype, archetype, DataContainerContract.BINDING, false);
+        super(archetype, archetype, DataContainerContract.JAVA, false);
     }
 
     static DataRootTemplate of(final DataRootArchetype root, final DataRootArchetype archetype) {
         verify(root.equals(archetype));
         return new DataRootTemplate(archetype);
+    }
+
+    @Override
+    public BuilderTemplate newBuilderTemplate() {
+        return BuilderTemplate.of(this);
     }
 
     @Override
