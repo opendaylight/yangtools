@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.gaul.modernizer_maven_annotations.SuppressModernizer;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 
 // FIXME: remove this class
@@ -94,6 +95,8 @@ final class DocUtils {
             TAIL_COMMENT_PATTERN.matcher(ENTITY_ESCAPER.escape(description)).replaceAll("&#42;&#47;"), 0));
     }
 
+    // FIXME: use indexOf(' ') instead of StringTokenizer
+    @SuppressModernizer
     private static @NonNull String formatToParagraph(final String text, final int nextLineIndent) {
         if (text == null || text.isEmpty()) {
             return "";
