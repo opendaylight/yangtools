@@ -30,7 +30,7 @@ class Bug5151Test extends BaseCompilationTest {
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
         final var generatedFiles = FileSearchUtil.getFiles(sourcesOutputDir);
-        assertEquals(14, generatedFiles.size());
+        assertEquals(15, generatedFiles.size());
 
         final var fooContainerFile = generatedFiles.get("FooContainer.java");
         assertNotNull(fooContainerFile);

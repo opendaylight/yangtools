@@ -50,7 +50,7 @@ class TypedefCompilationTest extends BaseCompilationTest {
         assertRegularFile(parent, "UnionExt2.java");
         assertRegularFile(parent, "UnionExt3.java");
         assertRegularFile(parent, "UnionExt4.java");
-        CompilationTestUtils.assertFilesCount(parent, 30);
+        CompilationTestUtils.assertFilesCount(parent, 31);
         CompilationTestUtils.assertFilesCount(sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_FOO), 1);
 
         // Test if sources are compilable

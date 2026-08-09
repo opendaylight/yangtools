@@ -33,7 +33,7 @@ class NestedGroupingCompilationTest extends BaseCompilationTest {
         assertRegularFile(parent, "Foo.java");
         assertRegularFile(parent, "FooBuilder.java");
         assertRegularFile(parent, "TestData.java");
-        assertFilesCount(parent, 4);
+        assertFilesCount(parent, 5);
         final var svcParent = sourcesOutputDir.resolve(NS_SVC_TEST);
         assertFilesCount(svcParent, 1);
 

@@ -71,7 +71,7 @@ class CompilationTest extends BaseCompilationTest {
         assertRegularFile(parent, "LinksBuilder.java");
         assertRegularFile(parent, "LinksKey.java");
         assertRegularFile(parent, "TestData.java");
-        CompilationTestUtils.assertFilesCount(parent, 6);
+        CompilationTestUtils.assertFilesCount(parent, 7);
         final var svcParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_TEST);
         CompilationTestUtils.assertFilesCount(svcParent, 1);
 
@@ -137,7 +137,7 @@ class CompilationTest extends BaseCompilationTest {
         assertRegularFile(parent, "RootContainer.java");
         assertRegularFile(parent, "rootcontainer/PresenceContainer.java");
         assertRegularFile(parent, "rootcontainer/NonPresenceContainer.java");
-        CompilationTestUtils.assertFilesCount(parent, 4);
+        CompilationTestUtils.assertFilesCount(parent, 5);
         var svcParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_TEST);
         CompilationTestUtils.assertFilesCount(svcParent, 1);
 
@@ -187,7 +187,7 @@ class CompilationTest extends BaseCompilationTest {
         assertRegularFile(parent, "ExplicitRouteObject.java");
         assertRegularFile(parent, "PathKeySubobject.java");
         assertRegularFile(parent, "FooData.java");
-        CompilationTestUtils.assertFilesCount(parent, 10);
+        CompilationTestUtils.assertFilesCount(parent, 11);
         var svcParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_FOO);
         CompilationTestUtils.assertFilesCount(svcParent, 1);
 
@@ -248,7 +248,7 @@ class CompilationTest extends BaseCompilationTest {
         assertRegularFile(parent, "BasicExplicitRouteSubobjects.java");
         assertRegularFile(parent, "ExplicitRouteSubobjects.java");
         assertRegularFile(parent, "RouteSubobjects.java");
-        CompilationTestUtils.assertFilesCount(parent, 6);
+        CompilationTestUtils.assertFilesCount(parent, 7);
         svcParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_BAR);
         CompilationTestUtils.assertFilesCount(svcParent, 1);
 
@@ -293,7 +293,7 @@ class CompilationTest extends BaseCompilationTest {
         assertRegularFile(parent, "PathAttributes.java");
         assertRegularFile(parent, "Update.java");
         assertRegularFile(parent, "UpdateBuilder.java");
-        CompilationTestUtils.assertFilesCount(parent, 6);
+        CompilationTestUtils.assertFilesCount(parent, 7);
         var svcParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_FOO);
         CompilationTestUtils.assertFilesCount(svcParent, 1);
 
@@ -315,7 +315,7 @@ class CompilationTest extends BaseCompilationTest {
         assertRegularFile(parent, "Destination.java");
         assertRegularFile(parent, "PathAttributes1.java");
         assertRegularFile(parent, "PathAttributes1Builder.java");
-        CompilationTestUtils.assertFilesCount(parent, 6);
+        CompilationTestUtils.assertFilesCount(parent, 7);
         svcParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_BAR);
         CompilationTestUtils.assertFilesCount(svcParent, 1);
 
@@ -352,7 +352,7 @@ class CompilationTest extends BaseCompilationTest {
         parent = sourcesOutputDir.resolve(CompilationTestUtils.NS_BAZ);
         assertRegularFile(parent, "BazData.java");
         assertRegularFile(parent, "LinkstateDestination.java");
-        CompilationTestUtils.assertFilesCount(parent, 3);
+        CompilationTestUtils.assertFilesCount(parent, 4);
         svcParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_BAZ);
         CompilationTestUtils.assertFilesCount(svcParent, 1);
 
@@ -410,7 +410,7 @@ class CompilationTest extends BaseCompilationTest {
         assertRegularFile(parent, "Nodes.java");
         assertRegularFile(parent, "NodesBuilder.java");
         assertRegularFile(parent, "Alg.java");
-        CompilationTestUtils.assertFilesCount(parent, 4);
+        CompilationTestUtils.assertFilesCount(parent, 5);
         CompilationTestUtils.assertFilesCount(sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_TEST), 1);
 
         // Test if sources are compilable
@@ -470,14 +470,14 @@ class CompilationTest extends BaseCompilationTest {
 
         // Test if all sources are generated
         final var fooParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_FOO);
-        CompilationTestUtils.assertFilesCount(fooParent, 3);
+        CompilationTestUtils.assertFilesCount(fooParent, 4);
         CompilationTestUtils.assertFilesCount(sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_FOO), 1);
         assertRegularFile(fooParent, "FooData.java");
         assertRegularFile(fooParent, "Nodes.java");
         assertRegularFile(fooParent, "NodesBuilder.java");
 
         final var barParent = sourcesOutputDir.resolve(CompilationTestUtils.NS_BAR);
-        CompilationTestUtils.assertFilesCount(barParent, 2);
+        CompilationTestUtils.assertFilesCount(barParent, 3);
         CompilationTestUtils.assertFilesCount(sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_BAR), 1);
         assertRegularFile(barParent, "BarData.java");
         assertRegularFile(barParent, "IdentityClass.java");

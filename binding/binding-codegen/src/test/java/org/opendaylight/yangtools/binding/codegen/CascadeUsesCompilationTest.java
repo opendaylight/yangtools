@@ -42,7 +42,7 @@ class CascadeUsesCompilationTest extends BaseCompilationTest {
         assertRegularFile(parent, "FooGr1.java");
         assertRegularFile(parent, "Nodes.java");
         assertRegularFile(parent, "NodesBuilder.java");
-        assertFilesCount(parent, 5);
+        assertFilesCount(parent, 6);
         var svcParent = sourcesOutputDir.resolve(NS_SVC_FOO);
         assertFilesCount(svcParent, 1);
 
@@ -51,7 +51,7 @@ class CascadeUsesCompilationTest extends BaseCompilationTest {
         assertRegularFile(parent, "BarData.java");
         assertRegularFile(parent, "BarGr1.java");
         assertRegularFile(parent, "BarGr2.java");
-        assertFilesCount(parent, 3);
+        assertFilesCount(parent, 4);
         svcParent = sourcesOutputDir.resolve(NS_SVC_BAR);
         assertFilesCount(svcParent, 1);
 
@@ -59,7 +59,7 @@ class CascadeUsesCompilationTest extends BaseCompilationTest {
         parent = sourcesOutputDir.resolve(NS_BAZ);
         assertRegularFile(parent, "BazData.java");
         assertRegularFile(parent, "BazGr1.java");
-        assertFilesCount(parent, 2);
+        assertFilesCount(parent, 3);
         svcParent = sourcesOutputDir.resolve(NS_SVC_BAZ);
         assertFilesCount(svcParent, 1);
 

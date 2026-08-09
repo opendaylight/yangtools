@@ -38,7 +38,7 @@ public class BuilderGeneratorTest extends BaseCompilationTest {
         TYPES = generateTestSources("/compilation/test-types", SOURCES);
         assertEquals(27, TYPES.size());
         FILES = getFiles(SOURCES);
-        assertEquals(47, FILES.size());
+        assertEquals(48, FILES.size());
     }
 
     @AfterAll

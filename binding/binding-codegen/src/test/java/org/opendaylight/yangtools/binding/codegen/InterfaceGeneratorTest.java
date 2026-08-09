@@ -30,7 +30,7 @@ class InterfaceGeneratorTest extends BaseCompilationTest {
         SOURCES = CompilationTestUtils.generatorOutput("status-means-deprecated");
         assertEquals(4, generateTestSources("/compilation/bug586", SOURCES).size());
         FILES = getFiles(SOURCES);
-        assertEquals(17, FILES.size());
+        assertEquals(18, FILES.size());
     }
 
     @AfterAll
@@ -92,6 +92,22 @@ class InterfaceGeneratorTest extends BaseCompilationTest {
                 @Override
                 default Class<org.opendaylight.yang.gen.v1.urn.yang.foo.rev140328.FooData> implementedInterface() {
                     return org.opendaylight.yang.gen.v1.urn.yang.foo.rev140328.FooData.class;
+                }
+
+                @Override
+                default int javaHC() {
+                    return CodeHelpers.jcHC1(getServices());
+                }
+
+                @Override
+                default boolean javaEQ(org.opendaylight.yang.gen.v1.urn.yang.foo.rev140328.FooData obj) {
+                    return Objects.equals(getServices(), obj.getServices());
+                }
+
+                @Override
+                default String javaTS() {
+                    return CodeHelpers.jcTS1(org.opendaylight.yang.gen.v1.urn.yang.foo.rev140328.FooData.class, \
+            "services", getServices());
                 }
             }
             """);

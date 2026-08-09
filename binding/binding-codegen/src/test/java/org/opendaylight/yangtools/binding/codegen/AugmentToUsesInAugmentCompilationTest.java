@@ -26,7 +26,7 @@ class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
         assertRegularFile(fooParent, "IgpLinkAttributes.java");
         assertRegularFile(fooParent, "Link1.java");
         assertRegularFile(fooParent, "Link1Builder.java");
-        CompilationTestUtils.assertFilesCount(fooParent, 5);
+        CompilationTestUtils.assertFilesCount(fooParent, 6);
         CompilationTestUtils.assertFilesCount(sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_FOO), 1);
 
         // Test if all sources are generated from 'module bar'
@@ -36,7 +36,7 @@ class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
         assertRegularFile(barParent, "NetworkTopologyBuilder.java");
         assertRegularFile(barParent, "Link.java");
         assertRegularFile(barParent, "LinkAttributes.java");
-        CompilationTestUtils.assertFilesCount(barParent, 7);
+        CompilationTestUtils.assertFilesCount(barParent, 8);
         CompilationTestUtils.assertFilesCount(sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_BAR), 1);
 
         final var networkParent = barParent.resolve("network");
@@ -59,7 +59,7 @@ class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
         assertRegularFile(bazParent, "IgpLinkAttributes1.java");
         assertRegularFile(bazParent, "IgpLinkAttributes1Builder.java");
         assertRegularFile(bazParent, "LinkAttributes.java");
-        CompilationTestUtils.assertFilesCount(bazParent, 5);
+        CompilationTestUtils.assertFilesCount(bazParent, 6);
         CompilationTestUtils.assertFilesCount(sourcesOutputDir.resolve(CompilationTestUtils.NS_SVC_BAZ), 1);
 
         // Test if sources are compilable

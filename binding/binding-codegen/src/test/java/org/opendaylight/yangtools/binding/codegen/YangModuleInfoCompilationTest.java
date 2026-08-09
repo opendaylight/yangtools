@@ -51,8 +51,8 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
                 (module, representation) -> List.of("yang-module-info",
                     module.getName() + YangConstants.RFC6020_YANG_FILE_EXTENSION));
 
-        assertEquals(15, codegen.size());
-        assertEquals(14, codegen.row(GeneratedFileType.SOURCE).size());
+        assertEquals(17, codegen.size());
+        assertEquals(16, codegen.row(GeneratedFileType.SOURCE).size());
         assertEquals(1, codegen.row(GeneratedFileType.RESOURCE).size());
 
         for (var entry : codegen.row(GeneratedFileType.SOURCE).entrySet()) {
@@ -307,8 +307,8 @@ class YangModuleInfoCompilationTest extends BaseCompilationTest {
         final var codegen = new JavaFileGenerator(Map.of("test", "test"));
         final var files = codegen.generateFiles(context,
             Set.copyOf(context.getModules()), (module, representation) -> List.of(module.getName()));
-        assertEquals(15, files.size());
-        assertEquals(14, files.row(GeneratedFileType.SOURCE).size());
+        assertEquals(17, files.size());
+        assertEquals(16, files.row(GeneratedFileType.SOURCE).size());
         assertEquals(1, files.row(GeneratedFileType.RESOURCE).size());
     }
 

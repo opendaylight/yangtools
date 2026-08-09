@@ -28,7 +28,7 @@ public class YT1812Test extends BaseCompilationTest {
         SOURCES = CompilationTestUtils.generatorOutput("status-propagates-to-key");
         assertEquals(7, generateTestSources("/yt1812", SOURCES).size());
         FILES = getFiles(SOURCES);
-        assertEquals(19, FILES.size());
+        assertEquals(20, FILES.size());
     }
 
     @AfterAll
@@ -44,7 +44,6 @@ public class YT1812Test extends BaseCompilationTest {
         assertEquals(expected, assertDoesNotThrow(() -> Files.readString(file)));
     }
 
-
     @Test
     void rootDeprecatesGetters() {
         assertFileContent("FooData.java", """
@@ -53,7 +52,9 @@ public class YT1812Test extends BaseCompilationTest {
             import java.lang.Class;
             import java.lang.Deprecated;
             import java.lang.Override;
+            import java.lang.String;
             import java.util.Map;
+            import java.util.Objects;
             import javax.annotation.processing.Generated;
             import org.eclipse.jdt.annotation.NonNull;
             import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -149,6 +150,30 @@ public class YT1812Test extends BaseCompilationTest {
                 @Override
                 default Class<org.opendaylight.yang.gen.v1.foo.norev.FooData> implementedInterface() {
                     return org.opendaylight.yang.gen.v1.foo.norev.FooData.class;
+                }
+
+                @Override
+                default int javaHC() {
+                    return CodeHelpers.jcHCN(
+                        getCurrent(),
+                        getDeprecated(),
+                        getObsolete());
+                }
+
+                @Override
+                default boolean javaEQ(org.opendaylight.yang.gen.v1.foo.norev.FooData obj) {
+                    return Objects.equals(getCurrent(), obj.getCurrent())
+                        && Objects.equals(getDeprecated(), obj.getDeprecated())
+                        && Objects.equals(getObsolete(), obj.getObsolete());
+                }
+
+                @Override
+                default String javaTS() {
+                    return CodeHelpers.jcTSB(org.opendaylight.yang.gen.v1.foo.norev.FooData.class)
+                        .prop("current", getCurrent())
+                        .prop("deprecated", getDeprecated())
+                        .prop("obsolete", getObsolete())
+                        .build();
                 }
             }
             """);
