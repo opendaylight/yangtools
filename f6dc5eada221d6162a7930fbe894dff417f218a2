@@ -33,6 +33,42 @@
       "message": "this is being re-done in https://git.opendaylight.org/gerrit/c/yangtools/+/124695",
       "revId": "f6dc5eada221d6162a7930fbe894dff417f218a2",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9527a42f_0d231510",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-08-09T12:55:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "18b1ff6a_52fe23fa",
+      "revId": "f6dc5eada221d6162a7930fbe894dff417f218a2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "79a10b74_1d99e0e1",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 3
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-08-09T12:55:33Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "2f25de4f_a8726c9e",
+      "revId": "f6dc5eada221d6162a7930fbe894dff417f218a2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
