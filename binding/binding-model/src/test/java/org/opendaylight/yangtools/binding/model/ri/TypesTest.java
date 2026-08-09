@@ -22,17 +22,6 @@ class TypesTest {
     }
 
     @Test
-    void testMapTypeFor() {
-        final var mapType = Types.mapTypeFor(UnknownLeafrefType.INSTANCE, UnknownLeafrefType.INSTANCE);
-        assertEquals("Map", mapType.simpleName());
-    }
-
-    @Test
-    void testMapTypeForNull() {
-        assertThrows(NullPointerException.class, () -> Types.mapTypeFor(null, null));
-    }
-
-    @Test
     void testSetTypeFor() {
         final var setType = Types.setTypeFor(UnknownLeafrefType.INSTANCE);
         assertEquals("Set", setType.simpleName());

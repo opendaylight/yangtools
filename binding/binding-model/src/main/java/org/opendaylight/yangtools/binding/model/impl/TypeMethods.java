@@ -83,7 +83,7 @@ public final class TypeMethods {
      * @return a String
      */
     @NonNullByDefault
-    static String toString(final ParameterizedType self) {
+    public static String toString(final ParameterizedType self) {
         final var helper = MoreObjects.toStringHelper(ParameterizedType.class).add("name", self.name());
         final var arguments = self.getActualTypeArguments();
         if (!arguments.isEmpty()) {
