@@ -17,13 +17,16 @@ import static org.opendaylight.yangtools.binding.contract.Naming.VALUE_STATIC_FI
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BaseIdentity;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
+import org.opendaylight.yangtools.binding.model.IdentityArchetype;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * Template for a {@link BaseIdentity} interface generated for a {@code identity} statement.
  */
 @NonNullByDefault
 final class IdentityTemplate extends ArchetypeTemplate<IdentityArchetype> {
+    private static final TypeName BASE_IDENTITY = TypeName.ofClass(BaseIdentity.class);
+
     IdentityTemplate(final DataRootArchetype root, final IdentityArchetype type) {
         super(root, type);
     }
@@ -38,6 +41,7 @@ final class IdentityTemplate extends ArchetypeTemplate<IdentityArchetype> {
         final var stmt = archetype.statement();
 
         return newBodyBuilder(stmt, stmt.toSchemaNode())
+            // TODO: multi-line for more than one extended interfaces, just as we do for other interfaces
             .str("public interface ").str(typeName).str(" extends ").frg(this::appendInterfaces).oB()
                 .frg(new QNameConstant.InInterface(this, stmt.argument()))
                 .eol("/**")
@@ -80,10 +84,14 @@ final class IdentityTemplate extends ArchetypeTemplate<IdentityArchetype> {
     }
 
     private void appendInterfaces(final BlockBuilder bb) {
-        final var it = archetype.interfaces().iterator();
-        bb.str(importedName(it.next()));
-        while (it.hasNext()) {
-            bb.str(", ").str(importedName(it.next()));
+        final var it = archetype.baseIdentities().iterator();
+        if (it.hasNext()) {
+            bb.str(importedName(it.next()));
+            while (it.hasNext()) {
+                bb.str(", ").str(importedName(it.next()));
+            }
+        } else {
+            bb.str(importedName(BASE_IDENTITY));
         }
     }
 }

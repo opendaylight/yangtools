@@ -14,7 +14,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultIdentityRuntimeType;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
-import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
+import org.opendaylight.yangtools.binding.model.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.runtime.api.IdentityRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
@@ -60,10 +60,8 @@ public final class IdentityGenerator
     IdentityArchetype createTypeImpl() {
         final var typeName = typeName();
         final var statement = statement();
-        return baseIdentities.isEmpty() ? new IdentityArchetype.Base(typeName, statement)
-            : new IdentityArchetype.Derived(typeName,statement, baseIdentities.stream()
-                .map(baseIdentity -> baseIdentity.getArchetype().name())
-                .collect(Collectors.toUnmodifiableList()));
+        return IdentityArchetype.of(typeName, statement,
+            baseIdentities.stream().map(IdentityGenerator::getArchetype).toList());
     }
 
     @Override

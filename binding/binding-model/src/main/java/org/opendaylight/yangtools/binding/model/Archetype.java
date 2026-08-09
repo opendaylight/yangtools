@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.model;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 

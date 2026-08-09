@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.runtime.api;
 
-import org.opendaylight.yangtools.binding.model.api.IdentityArchetype;
+import org.opendaylight.yangtools.binding.model.IdentityArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 
 /**
