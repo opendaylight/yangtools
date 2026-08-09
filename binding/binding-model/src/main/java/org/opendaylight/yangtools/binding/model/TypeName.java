@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * sections 4 and 8. It deals with primitive, array and reference types.
  */
 @NonNullByDefault
-public abstract sealed class TypeName implements Identifier {
+public abstract sealed class TypeName implements Comparable<TypeName>, Identifier {
     private static final class Primitive extends TypeName {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
@@ -369,6 +369,12 @@ public abstract sealed class TypeName implements Identifier {
     public final boolean isArray() {
         // As per JLS Chapter 10. Arrays
         return simpleName.endsWith("[]");
+    }
+
+    @Override
+    public final int compareTo(final TypeName other) {
+        final var cmp = packageName().compareTo(other.packageName());
+        return cmp != 0 ? cmp : localName().compareTo(localName());
     }
 
     @Override
