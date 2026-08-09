@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
+import java.util.Iterator;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.model.ChildOfArchetype;
+import org.opendaylight.yangtools.binding.model.GetterAnnotation;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
@@ -42,8 +44,8 @@ abstract sealed class ListGenerator extends CompositeSchemaTreeGenerator<ListEff
     }
 
     @Override
-    final GetterMethod.Builder constructGetter(final List<GetterMethod.Builder> list, final Type returnType) {
-        return constructGetter(list, statement(), returnType);
+    GetterMethod constructGetter(final Type returnType, final Iterator<GetterAnnotation> annotations) {
+        return constructGetter(statement(), returnType, annotations);
     }
 
     @Override
