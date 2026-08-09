@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-final class AugmentationCodecContext<A extends Augmentation<?>>
+final class AugmentationCodecContext<A extends Augmentation<?, A>>
         extends CommonDataObjectCodecContext<A, AugmentRuntimeType> implements BindingAugmentationCodecTreeNode<A> {
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class,
         CommonDataObjectCodecContext.class, DataContainerNode.class);
@@ -106,7 +106,7 @@ final class AugmentationCodecContext<A extends Augmentation<?>>
     }
 
     @Override
-    Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(final DataContainerNode data) {
+    Map<Class<? extends Augmentation<?, ?>>, Augmentation<?, ?>> getAllAugmentationsFrom(final DataContainerNode data) {
         return Map.of();
     }
 }

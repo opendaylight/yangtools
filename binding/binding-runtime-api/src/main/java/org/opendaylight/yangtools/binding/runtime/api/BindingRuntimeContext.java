@@ -64,7 +64,7 @@ public interface BindingRuntimeContext extends Immutable {
      * @return Schema of augmentation or null if augmentation is not known in this context
      * @throws NullPointerException if {@code augClass} is null
      */
-    <T extends Augmentation<?>> @Nullable AugmentRuntimeType getAugmentationDefinition(@NonNull Class<T> augClass);
+    <T extends Augmentation<?, T>> @Nullable AugmentRuntimeType getAugmentationDefinition(@NonNull Class<T> augClass);
 
     /**
      * Returns defining {@link DataSchemaNode} for supplied class.

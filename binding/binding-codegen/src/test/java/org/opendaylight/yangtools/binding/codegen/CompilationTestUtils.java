@@ -278,7 +278,7 @@ public final class CompilationTestUtils {
      * @param genericTypeName fully qualified name of expected parameter type
      */
     static void testAugmentation(final Class<?> clazz, final String genericTypeName) {
-        assertImplementsParameterizedIfc(clazz, AUGMENTATION, genericTypeName);
+        assertImplementsParameterizedIfc(clazz, AUGMENTATION, genericTypeName, clazz.getCanonicalName());
     }
 
     /**

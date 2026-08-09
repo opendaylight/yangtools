@@ -52,7 +52,7 @@ public interface BindingCodecTree extends BindingDataObjectCodecTreeParent<Empty
      * @throws NullPointerException if {@code path} is {@code null}
      * @throws IllegalArgumentException if the codec cannot be resolved
      */
-    <A extends Augmentation<?>> @NonNull BindingAugmentationCodecTreeNode<A> getAugmentationCodec(
+    <A extends Augmentation<?, A>> @NonNull BindingAugmentationCodecTreeNode<A> getAugmentationCodec(
         DataObjectReference<A> path);
 
     /**

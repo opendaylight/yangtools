@@ -51,7 +51,7 @@ public final class CodeHelpers {
     /**
      * Compare {@link Augmentation} by their canonical class name.
      */
-    private static final Comparator<Augmentation<?>> AUGMENTATION_BY_CANONICAL_NAME =
+    private static final Comparator<Augmentation<?, ?>> AUGMENTATION_BY_CANONICAL_NAME =
         Comparator.comparing(aug -> aug.implementedInterface().getCanonicalName());
 
     private CodeHelpers() {
@@ -919,7 +919,7 @@ public final class CodeHelpers {
     }
 
     @NonNullByDefault
-    private static int hashAugmentations(final Collection<? extends Augmentation<?>> augmentations) {
+    private static int hashAugmentations(final Collection<? extends Augmentation<?, ?>> augmentations) {
         int result = 0;
         for (var augmentation : augmentations) {
             result += augmentation.hashCode();
@@ -1091,7 +1091,7 @@ public final class CodeHelpers {
 
     private static <T extends Augmentable<T> & DataContainer> @NonNull JavaTSBuilder jcTSB(
             final @NonNull Class<?> clazz,
-            final @NonNull Map<Class<? extends Augmentation<T>>, @NonNull Augmentation<T>> augmentations) {
+            final @NonNull Map<Class<? extends Augmentation<T, ?>>, @NonNull Augmentation<T, ?>> augmentations) {
         return new JavaTSBuilder(clazz,
             augmentations.values().stream().sorted(AUGMENTATION_BY_CANONICAL_NAME).toList());
     }

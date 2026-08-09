@@ -114,7 +114,7 @@ public interface BindingNormalizedNodeSerializer {
      * @return {@link NormalizedResult} representation
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
-    <A extends Augmentation<?>> @NonNull AugmentationResult toNormalizedAugmentation(DataObjectReference<A> path,
+    <A extends Augmentation<?, A>> @NonNull AugmentationResult toNormalizedAugmentation(DataObjectReference<A> path,
         A data);
 
     /**

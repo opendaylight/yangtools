@@ -48,7 +48,7 @@ public interface BindingDataObjectCodecTreeParent<T> {
      */
     <E extends DataObject> @NonNull BindingDataContainerCodecTreeNode<E> getStreamChild(@NonNull Class<E> childClass);
 
-    default <A extends Augmentation<?>> @NonNull BindingAugmentationCodecTreeNode<A> getStreamAugmentation(
+    default <A extends Augmentation<?, A>> @NonNull BindingAugmentationCodecTreeNode<A> getStreamAugmentation(
             final @NonNull Class<A> childClass) {
         final var result = getStreamChild(childClass);
         if (result instanceof BindingAugmentationCodecTreeNode) {

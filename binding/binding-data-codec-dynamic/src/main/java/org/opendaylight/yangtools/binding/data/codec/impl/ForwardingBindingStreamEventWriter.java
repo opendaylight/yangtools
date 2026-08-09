@@ -86,7 +86,7 @@ abstract class ForwardingBindingStreamEventWriter implements AnydataBindingStrea
     }
 
     @Override
-    public void startAugmentationNode(final Class<? extends Augmentation<?>> augmentationType) throws IOException {
+    public void startAugmentationNode(final Class<? extends Augmentation<?, ?>> augmentationType) throws IOException {
         delegate().startAugmentationNode(augmentationType);
     }
 

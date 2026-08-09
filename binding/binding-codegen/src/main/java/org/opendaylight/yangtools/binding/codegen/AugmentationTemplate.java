@@ -39,12 +39,13 @@ final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype
     @Override
     Iterator<? extends Type> extendsTypes() {
         return Iterators.concat(
-            Iterators.forArray(
-                ParameterizedType.of(AUGMENTATION, TypeRef.of(archetype.targetName())), extendsJavaDataContainer()),
+            Iterators.singletonIterator(
+                ParameterizedType.of(AUGMENTATION, TypeRef.of(archetype.targetName()), archetype)),
             super.extendsTypes());
     }
 
     static String augmentationOfIn(final DataContainerArchetype ofType, final GeneratedClass inClass) {
-        return inClass.getReferenceString(AUGMENTATION.name()) + "<" + inClass.getReferenceString(ofType.name()) + ">";
+        return inClass.getReferenceString(AUGMENTATION.name()) + "<" + inClass.getReferenceString(ofType.name())
+            + ", ?>";
     }
 }

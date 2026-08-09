@@ -13,11 +13,8 @@ import com.google.common.base.VerifyException;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
@@ -33,8 +30,6 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
                 EntryObjectTemplate, GroupingTemplate, InstanceNotificationTemplate, ItemObjectTemplate,
                 KeyedListNotificationTemplate, NotificationTemplate, NotificationBodyTemplate, RpcInputTemplate,
                 RpcOutputTemplate, YangDataTemplate {
-    private static final @NonNull ConcreteType JAVA_DATACONTAINER = ConcreteType.ofClass(JavaDataContainer.class);
-
     // TODO: this should be lazily instantiated  and refcounted as it can be quite large and assuming one-time
     //       file generation, we can free this. builders acess this as well and there is no guarantee of order of
     //       rendering ... so this needs further analysis.
@@ -128,11 +123,6 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     @NonNullByDefault
     Iterator<? extends Type> extendsTypes() {
         return archetype.partials().iterator();
-    }
-
-    @NonNullByDefault
-    final Type extendsJavaDataContainer() {
-        return ParameterizedType.of(JAVA_DATACONTAINER, archetype);
     }
 
     BlockFragment constants() {

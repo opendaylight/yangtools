@@ -164,20 +164,20 @@ public abstract class DataContainerStreamer<T extends DataContainer> {
 
     private static void commonStreamLeafset(final BindingStreamEventWriter writer, final Collection<?> value)
             throws IOException {
-        for (Object entry : value) {
+        for (var entry : value) {
             writer.leafSetEntryNode(entry);
         }
         writer.endNode();
     }
 
-    private static void emitAugmentation(final Class<? extends Augmentation<?>> type, final Augmentation<?> value,
+    private static void emitAugmentation(final Class<? extends Augmentation<?, ?>> type, final Augmentation<?, ?> value,
             final BindingStreamEventWriter writer, final DataContainerSerializerRegistry registry) throws IOException {
         /*
          * Binding Specification allowed to insert augmentation with null for value, which effectively could be used to
          * remove augmentation from builder / DTO.
          */
         if (value != null) {
-            final DataContainerSerializer serializer = registry.getSerializer(type);
+            final var serializer = registry.getSerializer(type);
             if (serializer != null) {
                 serializer.serialize(value, writer);
             } else {

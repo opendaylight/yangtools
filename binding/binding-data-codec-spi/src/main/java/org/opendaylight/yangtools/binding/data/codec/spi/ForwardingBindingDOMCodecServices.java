@@ -87,7 +87,7 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
-    public <A extends Augmentation<?>> @NonNull AugmentationResult toNormalizedAugmentation(
+    public <A extends Augmentation<?, A>> @NonNull AugmentationResult toNormalizedAugmentation(
             final DataObjectReference<A> path, final A data) {
         return delegate().toNormalizedAugmentation(path, data);
     }
@@ -201,7 +201,7 @@ public abstract class ForwardingBindingDOMCodecServices extends ForwardingObject
     }
 
     @Override
-    public <A extends Augmentation<?>> BindingAugmentationCodecTreeNode<A> getAugmentationCodec(
+    public <A extends Augmentation<?, A>> BindingAugmentationCodecTreeNode<A> getAugmentationCodec(
             final DataObjectReference<A> path) {
         return delegate().getAugmentationCodec(path);
     }

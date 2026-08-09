@@ -48,30 +48,34 @@ public non-sealed interface BindingDataContainerCodecTreeNode<T extends DataCont
      */
     <E extends DataObject> @Nullable BindingDataContainerCodecTreeNode<E> streamChild(@NonNull Class<E> childClass);
 
-    default <A extends Augmentation<?>> @Nullable BindingAugmentationCodecTreeNode<A> streamAugmentation(
+    default <A extends Augmentation<?, A>> @Nullable BindingAugmentationCodecTreeNode<A> streamAugmentation(
             final @NonNull Class<A> childClass) {
         final var result = streamChild(childClass);
-        if (result instanceof BindingAugmentationCodecTreeNode) {
-            return (BindingAugmentationCodecTreeNode<A>) result;
-        } else if (result == null) {
-            return null;
-        } else {
-            throw new IllegalArgumentException(
+        return switch (result)  {
+            case null -> null;
+            case BindingAugmentationCodecTreeNode<?> node -> {
+                @SuppressWarnings("unchecked")
+                final var ret = (BindingAugmentationCodecTreeNode<A>) node;
+                yield ret;
+            }
+            default -> throw new IllegalArgumentException(
                 "Child " + childClass.getName() + " results in non-Augmentation " + result);
-        }
+        };
     }
 
     default <E extends DataObject> @Nullable BindingDataObjectCodecTreeNode<E> streamDataObject(
             final @NonNull Class<E> childClass) {
         final var result = streamChild(childClass);
-        if (result instanceof BindingDataObjectCodecTreeNode) {
-            return (BindingDataObjectCodecTreeNode<E>) result;
-        } else if (result == null) {
-            return null;
-        } else {
-            throw new IllegalArgumentException(
+        return switch (result)  {
+            case null -> null;
+            case BindingDataObjectCodecTreeNode<?> node -> {
+                @SuppressWarnings("unchecked")
+                final var ret = (BindingDataObjectCodecTreeNode<E>) node;
+                yield ret;
+            }
+            default -> throw new IllegalArgumentException(
                 "Child " + childClass.getName() + " results in non-DataObject " + result);
-        }
+        };
     }
 
     /**

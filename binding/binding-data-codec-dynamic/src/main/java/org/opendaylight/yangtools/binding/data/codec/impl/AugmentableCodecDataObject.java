@@ -44,7 +44,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
 
     // Used via VarHandle
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
-    private volatile ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> cachedAugmentations;
+    private volatile ImmutableMap<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> cachedAugmentations;
 
     protected AugmentableCodecDataObject(final CommonDataObjectCodecContext<T, ?> context,
             final DataContainerNode data) {
@@ -53,7 +53,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
 
     @SuppressWarnings("unchecked")
     @Override
-    public final <A extends Augmentation<T>> @Nullable A augmentation(final Class<A> augmentationType) {
+    public final <A extends Augmentation<T, A>> @Nullable A augmentation(final Class<A> augmentationType) {
         requireNonNull(augmentationType, "Supplied augmentation must not be null.");
 
         final var aug = acquireAugmentations();
@@ -78,21 +78,22 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
     }
 
     @Override
-    public final ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations() {
+    public final ImmutableMap<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> augmentations() {
         final var local = acquireAugmentations();
         return local != null ? local : loadAugmentations();
     }
 
-    private ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> acquireAugmentations() {
-        return (ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>>) CACHED_AUGMENTATIONS.getAcquire(this);
+    private ImmutableMap<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> acquireAugmentations() {
+        return (ImmutableMap<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>>)
+            CACHED_AUGMENTATIONS.getAcquire(this);
     }
 
     @SuppressWarnings("unchecked")
-    private @NonNull ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> loadAugmentations() {
+    private @NonNull ImmutableMap<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> loadAugmentations() {
         @SuppressWarnings("rawtypes")
         final Map extracted = codecContext().getAllAugmentationsFrom(codecData());
-        final var ret = ImmutableMap.<Class<? extends Augmentation<T>>, Augmentation<T>>copyOf(extracted);
+        final var ret = ImmutableMap.<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>>copyOf(extracted);
         final Object witness = CACHED_AUGMENTATIONS.compareAndExchangeRelease(this, null, ret);
-        return witness == null ? ret : (ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>>) witness;
+        return witness == null ? ret : (ImmutableMap<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>>) witness;
     }
 }

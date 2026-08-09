@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 @Beta
-public interface BindingAugmentationCodecTreeNode<T extends Augmentation<?>>
+public interface BindingAugmentationCodecTreeNode<T extends Augmentation<?, T>>
         extends CommonDataObjectCodecTreeNode<T> {
     /**
      * Return an {@link Augmentation} instance backed by specified parent data. Implementations are free to return

@@ -118,6 +118,6 @@ public abstract sealed class CommonDataObjectCodecContext<D extends DataObject, 
         return byYang.keySet();
     }
 
-    abstract @NonNull Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(
+    abstract @NonNull Map<Class<? extends Augmentation<?, ?>>, Augmentation<?, ?>> getAllAugmentationsFrom(
         DataContainerNode data);
 }

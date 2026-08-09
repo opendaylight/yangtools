@@ -46,7 +46,7 @@ public final class ListsBindingUtils {
         return new TopLevelListBuilder().withKey(key).build();
     }
 
-    public static TopLevelList topLevelList(final TopLevelListKey key, final Augmentation<TopLevelList> augment) {
+    public static TopLevelList topLevelList(final TopLevelListKey key, final Augmentation<TopLevelList, ?> augment) {
         return new TopLevelListBuilder().withKey(key).addAugmentation(augment).build();
     }
 

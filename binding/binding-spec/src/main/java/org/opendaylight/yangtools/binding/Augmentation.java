@@ -7,15 +7,19 @@
  */
 package org.opendaylight.yangtools.binding;
 
+import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
+
 /**
  * Augmentation (extension) of other interface. This interface uniquely bounds Augmentation to generated interface.
  *
  * <p>All interfaces generated from YANG Augmentation statement must implement this interface with parameter {@code P}
  * which uniquely points to it's target class.
  *
- * @param <T> Class to which this implementation is extension.
+ * @param <A> Class to which this implementation is extension.
+ * @param <T> concrete augmentation type
  */
-public interface Augmentation<T> extends DataObject {
+public interface Augmentation<A extends Augmentable<A> & DataContainer, T extends Augmentation<A, T>>
+        extends DataObject, JavaDataContainer<T> {
     @Override
-    Class<? extends Augmentation<T>> implementedInterface();
+    Class<T> implementedInterface();
 }

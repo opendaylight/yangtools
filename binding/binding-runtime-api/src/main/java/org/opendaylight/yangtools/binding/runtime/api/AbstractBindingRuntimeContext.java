@@ -60,7 +60,7 @@ public abstract class AbstractBindingRuntimeContext implements BindingRuntimeCon
     private static final Logger LOG = LoggerFactory.getLogger(AbstractBindingRuntimeContext.class);
 
     @Override
-    public final <T extends Augmentation<?>> AugmentRuntimeType getAugmentationDefinition(final Class<T> augClass) {
+    public final <T extends Augmentation<?, T>> AugmentRuntimeType getAugmentationDefinition(final Class<T> augClass) {
         return getTypes().lookupRuntimeType(TypeName.ofClass(augClass)) instanceof AugmentRuntimeType augment
             ? augment : null;
     }

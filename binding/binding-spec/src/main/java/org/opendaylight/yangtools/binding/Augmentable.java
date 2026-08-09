@@ -32,7 +32,7 @@ public interface Augmentable<T extends Augmentable<T> & DataContainer> {
      * @return instance of {@code A}, or {@code null} if the augmentationType is not present
      * @throws NullPointerException if {@code augmentationType} is {@code null}
      */
-    default <A extends Augmentation<T>> @Nullable A augmentation(final Class<A> augmentationType) {
+    default <A extends Augmentation<T, A>> @Nullable A augmentation(final Class<A> augmentationType) {
         return augmentationType.cast(augmentations().get(augmentationType));
     }
 
@@ -48,7 +48,7 @@ public interface Augmentable<T extends Augmentable<T> & DataContainer> {
      * @apiNote
      *     The design here follows {@link Optional#orElseThrow()},
      */
-    default <A extends Augmentation<T>> @NonNull A augmentationOrElseThrow(final Class<A> augmentationType) {
+    default <A extends Augmentation<T, A>> @NonNull A augmentationOrElseThrow(final Class<A> augmentationType) {
         final var augmentation = augmentation(augmentationType);
         if (augmentation != null) {
             return augmentation;
@@ -70,7 +70,7 @@ public interface Augmentable<T extends Augmentable<T> & DataContainer> {
      * @apiNote
      *     The design here follows {@link Optional#orElseThrow(Supplier)},
      */
-    default <A extends Augmentation<T>, X extends Throwable> @NonNull A augmentationOrElseThrow(
+    default <A extends Augmentation<T, A>, X extends Throwable> @NonNull A augmentationOrElseThrow(
             final Class<A> augmentationType, final Supplier<@NonNull X> exceptionSupplier) throws X {
         final var augmentation = augmentation(augmentationType);
         if (augmentation != null) {
@@ -82,5 +82,5 @@ public interface Augmentable<T extends Augmentable<T> & DataContainer> {
     /**
      * {@return map of all augmentations}
      */
-    @NonNull Map<Class<? extends Augmentation<T>>, @NonNull Augmentation<T>> augmentations();
+    @NonNull Map<Class<? extends Augmentation<T, ?>>, @NonNull Augmentation<T, ?>> augmentations();
 }

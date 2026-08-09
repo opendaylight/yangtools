@@ -382,7 +382,7 @@ public interface BindingStreamEventWriter extends Closeable, Flushable {
      *             If augmentation is invalid in current context.
      * @throws IOException if an underlying IO error occurs
      */
-    void startAugmentationNode(Class<? extends Augmentation<?>> augmentationType) throws IOException;
+    void startAugmentationNode(Class<? extends Augmentation<?, ?>> augmentationType) throws IOException;
 
     /**
      * Emits anyxml node event.

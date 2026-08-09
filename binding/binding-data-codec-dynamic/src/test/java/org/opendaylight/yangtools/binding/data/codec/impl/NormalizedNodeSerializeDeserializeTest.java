@@ -177,9 +177,9 @@ class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodecTest {
     }
 
     private static @NonNull Top topWithAugments(
-            final Map<Class<? extends Augmentation<Top>>, ? extends Augmentation<Top>> augments) {
-        final TopBuilder topBuilder = new TopBuilder();
-        for (Augmentation<Top> augment : augments.values()) {
+            final Map<Class<? extends Augmentation<Top, ?>>, ? extends Augmentation<Top, ?>> augments) {
+        final var topBuilder = new TopBuilder();
+        for (var augment : augments.values()) {
             topBuilder.addAugmentation(augment);
         }
         return topBuilder.build();

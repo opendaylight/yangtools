@@ -150,7 +150,7 @@ final class BindingToNormalizedStreamWriter implements AnydataBindingStreamWrite
     }
 
     @Override
-    public void startAugmentationNode(final Class<? extends Augmentation<?>> augmentationType) throws IOException {
+    public void startAugmentationNode(final Class<? extends Augmentation<?, ?>> augmentationType) throws IOException {
         enter(augmentationType, NodeIdentifier.class);
     }
 

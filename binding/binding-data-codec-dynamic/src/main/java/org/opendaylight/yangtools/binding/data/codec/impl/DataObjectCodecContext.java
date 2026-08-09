@@ -175,7 +175,8 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
 
         final var factory = prototype().contextFactory();
         final var javaType = augment.javaType();
-        final Class<? extends Augmentation<?>> augClass;
+        @SuppressWarnings("rawtypes")
+        final Class<? extends Augmentation> augClass;
         try {
             augClass = factory.runtimeContext().loadClass(javaType);
         } catch (final ClassNotFoundException e) {
@@ -187,7 +188,7 @@ public abstract sealed class DataObjectCodecContext<D extends DataObject, T exte
 
     @Override
     @SuppressWarnings("unchecked")
-    Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(final DataContainerNode data) {
+    Map<Class<? extends Augmentation<?, ?>>, Augmentation<?, ?>> getAllAugmentationsFrom(final DataContainerNode data) {
         /**
          * Due to augmentation fields are at same level as direct children the data of each augmentation needs to be
          * aggregated into own container node, then only deserialized using associated prototype.

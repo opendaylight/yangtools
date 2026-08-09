@@ -880,7 +880,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
 
     @Override
     @SuppressWarnings("unchecked")
-    public <A extends Augmentation<?>> BindingAugmentationCodecTreeNode<A> getAugmentationCodec(
+    public <A extends Augmentation<?, A>> BindingAugmentationCodecTreeNode<A> getAugmentationCodec(
             final DataObjectReference<A> path) {
         final var codecContext = getCodecContextNode(path, null);
         if (codecContext instanceof BindingAugmentationCodecTreeNode) {
@@ -939,7 +939,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
     }
 
     @Override
-    public <A extends Augmentation<?>> AugmentationResult toNormalizedAugmentation(final DataObjectReference<A> path,
+    public <A extends Augmentation<?, A>> AugmentationResult toNormalizedAugmentation(final DataObjectReference<A> path,
             final A data) {
         final var result = toNormalizedNode(path, data);
         if (result instanceof AugmentationResult augment) {

@@ -27,7 +27,7 @@ public abstract class AbstractEntryObject<P extends DataContainer, T extends Ent
         extends AbstractAugmentable<T> implements EntryObject<P, T, K> {
     private final @NonNull K key;
 
-    protected AbstractEntryObject(final Map<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations,
+    protected AbstractEntryObject(final Map<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> augmentations,
             final K key) {
         super(augmentations);
         this.key = requireNonNull(key);

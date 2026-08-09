@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.binding.runtime.api.AugmentRuntimeType;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
-final class AugmentationCodecPrototype<T extends Augmentation<?>>
+final class AugmentationCodecPrototype<T extends Augmentation<?, T>>
         extends CommonDataObjectCodecPrototype<AugmentRuntimeType> {
     // Note: all NodeIdentifiers are expected to have the same QNameModule
     private final @NonNull ImmutableSet<NodeIdentifier> childArgs;
@@ -55,7 +55,7 @@ final class AugmentationCodecPrototype<T extends Augmentation<?>>
     }
 
     @Override
-    <T extends CodecDataObject<T>> GenClass<T> generateClass(final DataContainerAnalysis<AugmentRuntimeType> analysis) {
+    <X extends CodecDataObject<X>> GenClass<X> generateClass(final DataContainerAnalysis<AugmentRuntimeType> analysis) {
         return generate(analysis);
     }
 }

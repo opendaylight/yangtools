@@ -359,7 +359,7 @@ public class YT1812Test extends BaseCompilationTest {
                 private String _foo;
                 private CurrentKey key;
 
-                Map<Class<? extends Augmentation<Current>>, Augmentation<Current>> augmentation = Map.of();
+                Map<Class<? extends Augmentation<Current, ?>>, Augmentation<Current, ?>> augmentation = Map.of();
 
                 /**
                  * Construct an empty builder.
@@ -412,7 +412,7 @@ public class YT1812Test extends BaseCompilationTest {
                  * @throws NullPointerException if {@code augmentType} is {@code null}
                  */
                 @SuppressWarnings({ "unchecked", "checkstyle:methodTypeParameterName"})
-                public <E$$ extends Augmentation<Current>> E$$ augmentation(Class<E$$> augmentationType) {
+                public <E$$ extends Augmentation<Current, ?>> E$$ augmentation(Class<E$$> augmentationType) {
                     return (E$$) augmentation.get(Objects.requireNonNull(augmentationType));
                 }
 
@@ -447,7 +447,7 @@ public class YT1812Test extends BaseCompilationTest {
                  * @return this builder
                  * @throws NullPointerException if {@code augmentation} is null
                  */
-                public CurrentBuilder addAugmentation(Augmentation<Current> augmentation) {
+                public CurrentBuilder addAugmentation(Augmentation<Current, ?> augmentation) {
                     if (!(this.augmentation instanceof HashMap)) {
                         this.augmentation = new HashMap<>();
                     }
@@ -463,7 +463,7 @@ public class YT1812Test extends BaseCompilationTest {
                  * @param augmentationType augmentation type to be removed
                  * @return this builder
                  */
-                public CurrentBuilder removeAugmentation(Class<? extends Augmentation<Current>> augmentationType) {
+                public CurrentBuilder removeAugmentation(Class<? extends Augmentation<Current, ?>> augmentationType) {
                     if (this.augmentation instanceof HashMap) {
                         this.augmentation.remove(augmentationType);
                     }
@@ -710,7 +710,7 @@ public class YT1812Test extends BaseCompilationTest {
                 private String _foo;
                 private DeprecatedKey key;
 
-                Map<Class<? extends Augmentation<Deprecated>>, Augmentation<Deprecated>> augmentation = Map.of();
+                Map<Class<? extends Augmentation<Deprecated, ?>>, Augmentation<Deprecated, ?>> augmentation = Map.of();
 
                 /**
                  * Construct an empty builder.
@@ -763,7 +763,7 @@ public class YT1812Test extends BaseCompilationTest {
                  * @throws NullPointerException if {@code augmentType} is {@code null}
                  */
                 @SuppressWarnings({ "unchecked", "checkstyle:methodTypeParameterName"})
-                public <E$$ extends Augmentation<Deprecated>> E$$ augmentation(Class<E$$> augmentationType) {
+                public <E$$ extends Augmentation<Deprecated, ?>> E$$ augmentation(Class<E$$> augmentationType) {
                     return (E$$) augmentation.get(Objects.requireNonNull(augmentationType));
                 }
 
@@ -798,7 +798,7 @@ public class YT1812Test extends BaseCompilationTest {
                  * @return this builder
                  * @throws NullPointerException if {@code augmentation} is null
                  */
-                public DeprecatedBuilder addAugmentation(Augmentation<Deprecated> augmentation) {
+                public DeprecatedBuilder addAugmentation(Augmentation<Deprecated, ?> augmentation) {
                     if (!(this.augmentation instanceof HashMap)) {
                         this.augmentation = new HashMap<>();
                     }
@@ -814,7 +814,7 @@ public class YT1812Test extends BaseCompilationTest {
                  * @param augmentationType augmentation type to be removed
                  * @return this builder
                  */
-                public DeprecatedBuilder removeAugmentation(Class<? extends Augmentation<Deprecated>> \
+                public DeprecatedBuilder removeAugmentation(Class<? extends Augmentation<Deprecated, ?>> \
             augmentationType) {
                     if (this.augmentation instanceof HashMap) {
                         this.augmentation.remove(augmentationType);
@@ -1066,7 +1066,7 @@ public class YT1812Test extends BaseCompilationTest {
                 private String _foo;
                 private ObsoleteKey key;
 
-                Map<Class<? extends Augmentation<Obsolete>>, Augmentation<Obsolete>> augmentation = Map.of();
+                Map<Class<? extends Augmentation<Obsolete, ?>>, Augmentation<Obsolete, ?>> augmentation = Map.of();
 
                 /**
                  * Construct an empty builder.
@@ -1119,7 +1119,7 @@ public class YT1812Test extends BaseCompilationTest {
                  * @throws NullPointerException if {@code augmentType} is {@code null}
                  */
                 @SuppressWarnings({ "unchecked", "checkstyle:methodTypeParameterName"})
-                public <E$$ extends Augmentation<Obsolete>> E$$ augmentation(Class<E$$> augmentationType) {
+                public <E$$ extends Augmentation<Obsolete, ?>> E$$ augmentation(Class<E$$> augmentationType) {
                     return (E$$) augmentation.get(Objects.requireNonNull(augmentationType));
                 }
 
@@ -1154,7 +1154,7 @@ public class YT1812Test extends BaseCompilationTest {
                  * @return this builder
                  * @throws NullPointerException if {@code augmentation} is null
                  */
-                public ObsoleteBuilder addAugmentation(Augmentation<Obsolete> augmentation) {
+                public ObsoleteBuilder addAugmentation(Augmentation<Obsolete, ?> augmentation) {
                     if (!(this.augmentation instanceof HashMap)) {
                         this.augmentation = new HashMap<>();
                     }
@@ -1170,7 +1170,7 @@ public class YT1812Test extends BaseCompilationTest {
                  * @param augmentationType augmentation type to be removed
                  * @return this builder
                  */
-                public ObsoleteBuilder removeAugmentation(Class<? extends Augmentation<Obsolete>> augmentationType) {
+                public ObsoleteBuilder removeAugmentation(Class<? extends Augmentation<Obsolete, ?>> augmentationType) {
                     if (this.augmentation instanceof HashMap) {
                         this.augmentation.remove(augmentationType);
                     }
