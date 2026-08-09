@@ -48,6 +48,7 @@ public sealed interface ScalarTypeObjectArchetype extends TypeObjectArchetype.Of
     /**
      * {@return the {@link ConcreteType} of the type returned by {@link ScalarTypeObject#getValue()}}
      */
+    // FIXME: narrow this down to 'ScalarType'
     ConcreteType valueType();
 
     /**

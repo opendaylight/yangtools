@@ -17,8 +17,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EnumTypeObject;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 
 /**
  * Template for {@link EnumTypeObject}s.
@@ -77,7 +77,7 @@ final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArche
         final var iae = importedName(IAE);
         final var nonnullSelf = importedNonNull(archetype);
         // FIXME: add a utility to work on TypeName for this
-        final var nonnullString = importedNonNull(BaseYangTypes.STRING_TYPE);
+        final var nonnullString = importedNonNull(ScalarTypes.STRING);
         final var npe = importedName(NPE);
         final var nullableSelf = importedNullable(archetype);
         final var override = importedName(OVERRIDE);

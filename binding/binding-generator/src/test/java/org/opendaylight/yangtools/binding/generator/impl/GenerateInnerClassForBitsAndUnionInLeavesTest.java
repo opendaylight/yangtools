@@ -14,8 +14,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -48,7 +48,6 @@ class GenerateInnerClassForBitsAndUnionInLeavesTest {
 
         assertEquals(List.of(), unionLeaf.enclosedTypes());
         assertEquals(List.of("int32", "string", "string", "string", "uint8"), unionLeaf.typePropertyNames());
-        assertEquals(List.of(BaseYangTypes.INT32_TYPE, BaseYangTypes.STRING_TYPE, BaseYangTypes.UINT8_TYPE),
-            unionLeaf.typePropertyTypes());
+        assertEquals(List.of(ScalarTypes.INT32, ScalarTypes.STRING, ScalarTypes.UINT8), unionLeaf.typePropertyTypes());
     }
 }

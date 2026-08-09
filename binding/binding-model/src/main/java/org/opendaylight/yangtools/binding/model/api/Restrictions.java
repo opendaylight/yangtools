@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinit
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.ri.type.BaseTypes;
 
-// FIXME: MDSAL-85: specialize for supported types
+// FIXME: remove this class
 @Beta
 public final class Restrictions {
     private static final @NonNull Restrictions EMPTY = new Restrictions(null, null, ImmutableList.of());

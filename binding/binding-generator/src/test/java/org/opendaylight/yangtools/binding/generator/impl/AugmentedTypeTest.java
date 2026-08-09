@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.KeyArchetype;
+import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -73,7 +73,7 @@ class AugmentedTypeTest {
             }
         }
         assertNotNull(getHigherLayerIfMethod, "getHigherLayerIf method is null");
-        assertEquals(Types.setTypeFor(BaseYangTypes.STRING_TYPE), getHigherLayerIfMethod.returnType());
+        assertEquals(Types.setTypeFor(ScalarTypes.STRING), getHigherLayerIfMethod.returnType());
 
         // 'InterfaceKey'
         assertNotNull(gtInterfaceKey, "InterfaceKey is null");
@@ -81,7 +81,7 @@ class AugmentedTypeTest {
         assertNotNull(methods, "properties is null");
         final var gtInterfaceId = methods.get("interface-id");
         assertNotNull(gtInterfaceId, "interfaceId is null");
-        assertEquals(BaseYangTypes.STRING_TYPE, gtInterfaceId.returnType());
+        assertEquals(ScalarTypes.STRING, gtInterfaceId.returnType());
 
         // 'Tunnel'
         assertNotNull(gtTunnel, "Tunnel is null");
@@ -98,7 +98,7 @@ class AugmentedTypeTest {
         final var gtTunnelId = tunnelKeyProperties.get("tunnel-id");
         assertNotNull(gtTunnelId, "tunnelId is null");
         assertEquals("TunnelId", gtTunnelId.suffix());
-        assertEquals(BaseYangTypes.INT32_TYPE, gtTunnelId.returnType());
+        assertEquals(ScalarTypes.INT32, gtTunnelId.returnType());
 
         // 'NetworkLink2'
         assertNotNull(gtNetworkLink2, "NetworkLink2 is null");
@@ -115,6 +115,6 @@ class AugmentedTypeTest {
         }
 
         assertNotNull(getIfcMethod, "getInterface method is null");
-        assertEquals(BaseYangTypes.STRING_TYPE, getIfcMethod.returnType());
+        assertEquals(ScalarTypes.STRING, getIfcMethod.returnType());
     }
 }

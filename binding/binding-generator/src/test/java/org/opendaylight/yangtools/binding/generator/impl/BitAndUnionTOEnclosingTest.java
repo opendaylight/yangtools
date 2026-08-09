@@ -19,9 +19,9 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -68,7 +68,7 @@ class BitAndUnionTOEnclosingTest {
             lf1Leaf.name().immediatelyEnclosingClass().toString());
 
         assertEquals(List.of("string", "lf$1"), lfLeaf.typePropertyNames());
-        assertEquals(List.of(BaseYangTypes.STRING_TYPE, lf1Leaf), lfLeaf.typePropertyTypes());
+        assertEquals(List.of(ScalarTypes.STRING, lf1Leaf), lfLeaf.typePropertyTypes());
 
         // nested types in Lf1
         final var lf1Types = lf1Leaf.enclosedTypes();
@@ -79,10 +79,10 @@ class BitAndUnionTOEnclosingTest {
         assertEquals("org.opendaylight.yang.gen.v1.urn.bit.union.in.leaf.rev130626.ParentContainer.Lf.Lf$1",
             lf2Leaf.name().immediatelyEnclosingClass().toString());
         assertEquals(List.of("string", "uint64"), lf2Leaf.typePropertyNames());
-        assertEquals(List.of(BaseYangTypes.STRING_TYPE, BaseYangTypes.UINT64_TYPE), lf2Leaf.typePropertyTypes());
+        assertEquals(List.of(ScalarTypes.STRING, ScalarTypes.UINT64), lf2Leaf.typePropertyTypes());
 
         assertEquals(List.of("uint32", "int8", "string", "lf$2"), lf1Leaf.typePropertyNames());
-        assertEquals(List.of(BaseYangTypes.UINT32_TYPE, BaseYangTypes.INT8_TYPE, BaseYangTypes.STRING_TYPE, lf2Leaf),
+        assertEquals(List.of(ScalarTypes.UINT32, ScalarTypes.INT8, ScalarTypes.STRING, lf2Leaf),
             lf1Leaf.typePropertyTypes());
     }
 
@@ -114,7 +114,7 @@ class BitAndUnionTOEnclosingTest {
             "TypeUnion$1 has incorrect package name.");
 
         assertEquals(List.of("string", "typeUnion$1"), typeUnionTypedef.typePropertyNames());
-        assertEquals(List.of(BaseYangTypes.STRING_TYPE, typeUnion1), typeUnionTypedef.typePropertyTypes());
+        assertEquals(List.of(ScalarTypes.STRING, typeUnion1), typeUnionTypedef.typePropertyTypes());
 
         final var nestedUnions1 = typeUnion1.enclosedTypes();
         assertEquals(1, nestedUnions1.size());
@@ -124,11 +124,11 @@ class BitAndUnionTOEnclosingTest {
             "TypeUnion$2 has incorrect package name.");
 
         assertEquals(List.of("uint32", "int8", "string", "typeUnion$2"), typeUnion1.typePropertyNames());
-        assertEquals(List.of(BaseYangTypes.UINT32_TYPE, BaseYangTypes.INT8_TYPE, BaseYangTypes.STRING_TYPE, typeUnion2),
+        assertEquals(List.of(ScalarTypes.UINT32, ScalarTypes.INT8, ScalarTypes.STRING, typeUnion2),
             typeUnion1.typePropertyTypes());
 
         assertEquals(List.of("string", "uint64"), typeUnion2.typePropertyNames());
-        assertEquals(List.of(BaseYangTypes.STRING_TYPE, BaseYangTypes.UINT64_TYPE), typeUnion2.typePropertyTypes());
+        assertEquals(List.of(ScalarTypes.STRING, ScalarTypes.UINT64), typeUnion2.typePropertyTypes());
     }
 
     @Test
@@ -163,8 +163,6 @@ class BitAndUnionTOEnclosingTest {
 
         assertEquals(List.of(), unionLeaf.enclosedTypes());
         assertEquals(List.of("int32", "string", "string", "string", "uint8"), unionLeaf.typePropertyNames());
-        assertEquals(List.of(BaseYangTypes.INT32_TYPE, BaseYangTypes.STRING_TYPE, BaseYangTypes.UINT8_TYPE),
-            unionLeaf.typePropertyTypes());
-
+        assertEquals(List.of(ScalarTypes.INT32, ScalarTypes.STRING, ScalarTypes.UINT8), unionLeaf.typePropertyTypes());
     }
 }

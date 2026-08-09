@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.impl.ConcreteTypeImpl;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.common.Decimal64;
 
@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.common.Decimal64;
  * <p>These types support binding and unbinding additional {@link Restrictions} via their {@link RestrictedType}
  * specialization.
  */
+// FIXME: promote to binding.model under 'ScalarType'
 @NonNullByDefault
 public sealed interface ConcreteType extends Type permits Decimal64Type, ConcreteTypeImpl, RestrictedType {
     /**
@@ -31,7 +32,7 @@ public sealed interface ConcreteType extends Type permits Decimal64Type, Concret
     /**
      * {@return a {@link ConcreteType} for specified type {@link Class}}
      * @param typeClass the type class
-     * @deprecated Use the constants in {@link BaseYangTypes} and {@link Types} instead.
+     * @deprecated Use the constants in {@link ScalarTypes} and {@link Types} instead.
      */
     @Deprecated(since = "16.0.0", forRemoval = true)
     static ConcreteType ofClass(final Class<?> typeClass) {

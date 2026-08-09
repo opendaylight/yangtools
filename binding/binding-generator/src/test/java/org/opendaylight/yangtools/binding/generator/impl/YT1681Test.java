@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.ItemObjectArchetype;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
+import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class YT1681Test {
@@ -114,12 +114,12 @@ class YT1681Test {
             .filter(method -> method.suffix().equals("NeighborId"))
             .findFirst()
             .orElseThrow();
-        assertEquals(BaseYangTypes.STRING_TYPE, getNeighborId.returnType());
+        assertEquals(ScalarTypes.STRING, getNeighborId.returnType());
 
         final var getNeighbor2Id = neighborGetters.stream()
             .filter(method -> method.suffix().equals("Neighbor2Id"))
             .findFirst()
             .orElseThrow();
-        assertEquals(BaseYangTypes.STRING_TYPE, getNeighbor2Id.returnType());
+        assertEquals(ScalarTypes.STRING, getNeighbor2Id.returnType());
     }
 }

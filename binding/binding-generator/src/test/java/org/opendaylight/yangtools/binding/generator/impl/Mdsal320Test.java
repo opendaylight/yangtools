@@ -14,8 +14,8 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal320Test {
@@ -54,6 +54,6 @@ class Mdsal320Test {
         assertEquals(bar, getBarType);
 
         assertEquals(List.of("enumeration", "string", "bar$1"), bar.typePropertyNames());
-        assertEquals(List.of(enum1, BaseYangTypes.STRING_TYPE, bar1), bar.typePropertyTypes());
+        assertEquals(List.of(enum1, ScalarTypes.STRING, bar1), bar.typePropertyTypes());
     }
 }

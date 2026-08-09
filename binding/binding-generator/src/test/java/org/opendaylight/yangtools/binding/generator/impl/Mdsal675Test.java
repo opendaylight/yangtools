@@ -29,9 +29,9 @@ import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.ItemObjectArchetype;
 import org.opendaylight.yangtools.binding.model.OpaqueObjectArchetype.Anydata;
 import org.opendaylight.yangtools.binding.model.OpaqueObjectArchetype.Anyxml;
+import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.YangDataArchetype;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -66,12 +66,12 @@ class Mdsal675Test {
         // yang-data > leaf
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithLeaf"),
-            BaseYangTypes.STRING_TYPE,
+            ScalarTypes.STRING,
             "LeafFromYangData");
         // yang-data > leaf-list
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithLeafList"),
-            Types.setTypeFor(BaseYangTypes.STRING_TYPE),
+            Types.setTypeFor(ScalarTypes.STRING),
             "LeafListFromYangData");
         // yang-data > anydata
         assertYangDataGenType(
@@ -102,13 +102,13 @@ class Mdsal675Test {
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithLeafFromGroup"),
             assertGrouping(genTypesMap, PACKAGE + "GrpForLeaf"),
-            BaseYangTypes.UINT32_TYPE,
+            ScalarTypes.UINT32,
             "LeafFromGroup");
         // yang-data > uses > group > leaf-list
         assertYangDataGenType(
             assertYangData(genTypesMap, PACKAGE + "YangDataWithLeafListFromGroup"),
             assertGrouping(genTypesMap, PACKAGE + "GrpForLeafList"),
-            Types.setTypeFor(BaseYangTypes.UINT32_TYPE),
+            Types.setTypeFor(ScalarTypes.UINT32),
             "LeafListFromGroup");
         // yang-data > uses > group > anydata
         assertYangDataGenType(

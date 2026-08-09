@@ -17,9 +17,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 
@@ -32,7 +32,7 @@ class TypeUtilsTest {
 
     @Test
     void getBaseYangTypeTest() {
-        final var type = BaseYangTypes.STRING_TYPE;
+        final var type = ScalarTypes.STRING;
         assertSame(type, TypeUtils.getBaseYangType(type));
 
         assertEquals(type, TypeUtils.getBaseYangType(ScalarTypeObjectArchetype.of(

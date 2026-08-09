@@ -84,7 +84,7 @@ class BindingGeneratorImplTest {
     }
 
     @Test
-    void testBaseYangTypes() {
+    void testScalarTypes() {
         final var types = DefaultBindingGenerator.generateFor(
             YangParserTestUtils.parseYangResource("/base-yang-types.yang"));
         assertEquals(19, types.size());

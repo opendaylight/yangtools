@@ -27,13 +27,13 @@ import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
+import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.binding.model.ri.Types;
 
 class SpecializingLeafrefTest extends BaseCompilationTest {
-    private static final ParameterizedType SET_STRING_TYPE  = Types.setTypeFor(BaseYangTypes.STRING_TYPE);
+    private static final ParameterizedType SET_STRING_TYPE  = Types.setTypeFor(ScalarTypes.STRING);
 
     private static final String BAR_CONT = "BarCont";
     private static final String BOOLEAN_CONT = "BooleanCont";
@@ -88,7 +88,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testLeafLeafrefPointsLeaf() throws Exception {
-        verifyReturnType(GroupingArchetype.class, RESOLVED_LEAF_GRP, GET_LEAF1_NAME, BaseYangTypes.STRING_TYPE);
+        verifyReturnType(GroupingArchetype.class, RESOLVED_LEAF_GRP, GET_LEAF1_NAME, ScalarTypes.STRING);
 
         final String content = getFileContent(RESOLVED_LEAF_GRP);
 
@@ -97,7 +97,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
 
     @Test
     void testLeafLeafrefPointsLeafList() throws Exception {
-        verifyReturnType(GroupingArchetype.class, RESOLVED_LEAFLIST_GRP, GET_LEAF1_NAME, BaseYangTypes.STRING_TYPE);
+        verifyReturnType(GroupingArchetype.class, RESOLVED_LEAFLIST_GRP, GET_LEAF1_NAME, ScalarTypes.STRING);
 
         final String content = getFileContent(RESOLVED_LEAF_GRP);
 
@@ -136,7 +136,7 @@ class SpecializingLeafrefTest extends BaseCompilationTest {
     @Test
     void testLeafrefWhichPointsBoolean() throws Exception {
         verifyReturnType(GroupingArchetype.class, UNRESOLVED_GROUPING, GET_LEAF1_NAME, Types.OBJECT);
-        verifyReturnType(ContainerObjectArchetype.class, BOOLEAN_CONT, GET_LEAF1_NAME, BaseYangTypes.BOOLEAN_TYPE);
+        verifyReturnType(ContainerObjectArchetype.class, BOOLEAN_CONT, GET_LEAF1_NAME, ScalarTypes.BOOLEAN);
 
         final String unresolvedGrouping = getFileContent(UNRESOLVED_GROUPING);
         final String booleanCont = getFileContent(BOOLEAN_CONT);

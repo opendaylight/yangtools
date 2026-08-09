@@ -42,7 +42,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
 
         @Override
         boolean isBinaryType(final Map.Entry<String, Type> obj) {
-            // FIXME: check for BaseYangTypes.BINARY_TYPE
+            // FIXME: check for ScalarTypes.BINARY_TYPE
             return obj.getValue().isArray();
         }
     };

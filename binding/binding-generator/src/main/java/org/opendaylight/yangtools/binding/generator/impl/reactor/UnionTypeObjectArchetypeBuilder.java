@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.TypeObjectSupport.Union.Dependencies;
 import org.opendaylight.yangtools.binding.model.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
@@ -27,7 +28,6 @@ import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 import org.opendaylight.yangtools.binding.model.api.Type;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
@@ -46,19 +46,19 @@ final class UnionTypeObjectArchetypeBuilder {
     // FIXME: remove this map
     private static final ImmutableMap<QName, ConcreteType> SIMPLE_TYPES =
         ImmutableMap.<QName, ConcreteType>builder()
-            .put(BuiltInType.BINARY.typeName(), BaseYangTypes.BINARY_TYPE)
-            .put(BuiltInType.BOOLEAN.typeName(), BaseYangTypes.BOOLEAN_TYPE)
-            .put(BuiltInType.EMPTY.typeName(), BaseYangTypes.EMPTY_TYPE)
-            .put(BuiltInType.INSTANCE_IDENTIFIER.typeName(), BaseYangTypes.INSTANCE_IDENTIFIER)
-            .put(BuiltInType.INT8.typeName(), BaseYangTypes.INT8_TYPE)
-            .put(BuiltInType.INT16.typeName(), BaseYangTypes.INT16_TYPE)
-            .put(BuiltInType.INT32.typeName(), BaseYangTypes.INT32_TYPE)
-            .put(BuiltInType.INT64.typeName(), BaseYangTypes.INT64_TYPE)
-            .put(BuiltInType.STRING.typeName(), BaseYangTypes.STRING_TYPE)
-            .put(BuiltInType.UINT8.typeName(), BaseYangTypes.UINT8_TYPE)
-            .put(BuiltInType.UINT16.typeName(), BaseYangTypes.UINT16_TYPE)
-            .put(BuiltInType.UINT32.typeName(), BaseYangTypes.UINT32_TYPE)
-            .put(BuiltInType.UINT64.typeName(), BaseYangTypes.UINT64_TYPE)
+            .put(BuiltInType.BINARY.typeName(), ScalarTypes.BINARY)
+            .put(BuiltInType.BOOLEAN.typeName(), ScalarTypes.BOOLEAN)
+            .put(BuiltInType.EMPTY.typeName(), ScalarTypes.EMPTY)
+            .put(BuiltInType.INSTANCE_IDENTIFIER.typeName(), ScalarTypes.INSTANCE_IDENTIFIER)
+            .put(BuiltInType.INT8.typeName(), ScalarTypes.INT8)
+            .put(BuiltInType.INT16.typeName(), ScalarTypes.INT16)
+            .put(BuiltInType.INT32.typeName(), ScalarTypes.INT32)
+            .put(BuiltInType.INT64.typeName(), ScalarTypes.INT64)
+            .put(BuiltInType.STRING.typeName(), ScalarTypes.STRING)
+            .put(BuiltInType.UINT8.typeName(), ScalarTypes.UINT8)
+            .put(BuiltInType.UINT16.typeName(), ScalarTypes.UINT16)
+            .put(BuiltInType.UINT32.typeName(), ScalarTypes.UINT32)
+            .put(BuiltInType.UINT64.typeName(), ScalarTypes.UINT64)
             .build();
 
     private final TypeEffectiveStatement.MandatoryIn<?, ?> definingStatement;

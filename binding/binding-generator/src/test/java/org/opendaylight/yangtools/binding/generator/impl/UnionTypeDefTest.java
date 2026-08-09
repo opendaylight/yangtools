@@ -13,8 +13,8 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class UnionTypeDefTest {
@@ -44,6 +44,6 @@ class UnionTypeDefTest {
 
         final var refType = assertInstanceOf(UnionTypeObjectArchetype.class, enclosedTypes.getFirst());
         assertEquals(List.of("stringRefValue", "stringRefValue"), refType.typePropertyNames());
-        assertEquals(List.of(BaseYangTypes.STRING_TYPE), refType.typePropertyTypes());
+        assertEquals(List.of(ScalarTypes.STRING), refType.typePropertyTypes());
     }
 }

@@ -17,9 +17,9 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.model.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.ScalarTypes;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.ri.BaseYangTypes;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class ExtendedTypedefTest {
@@ -68,7 +68,7 @@ class ExtendedTypedefTest {
         extendTO = extendTO.superType();
         assertNotNull(extendTO, "SimpleTypedef2 should have extend.");
         assertEquals("SimpleTypedef1", extendTO.simpleName(), "SimpleTypedef2 should be extended with SimpleTypedef1.");
-        assertEquals(BaseYangTypes.UINT8_TYPE, assertInstanceOf(ScalarTypeObjectArchetype.class, extendTO).valueType());
+        assertEquals(ScalarTypes.UINT8, assertInstanceOf(ScalarTypeObjectArchetype.class, extendTO).valueType());
 
         assertNull(extendTO.superType(), "SimpleTypedef1 shouldn't have extend.");
 

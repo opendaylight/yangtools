@@ -57,7 +57,7 @@ final class GetterShape implements Comparable<GetterShape> {
     }
 
     boolean isBinary() {
-        // FIXME: compare to BaseYangTypes.BINARY_TYPE
+        // FIXME: compare to ScalarTypes.BINARY_TYPE
         return type().isArray();
     }
 

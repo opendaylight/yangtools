@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.binding.model.impl.RestrictedTypeImpl;
  * The BaseTypeWithRestrictions is marker interface that encapsulates definition of java
  * concrete type only with changed restriction values.
  */
+// FIXME: remove this interface and instead generate a ScalarTypeObject when a ScalarType is restricted
 @NonNullByDefault
 public sealed interface RestrictedType extends ConcreteType permits RestrictedTypeImpl, RestrictedDecimal64Type {
     /**
