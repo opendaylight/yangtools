@@ -372,7 +372,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         //
         //       Anyway we should be doing our level best to make things work even in face of such challenging models.
         //
-        //       In the mean time MethodSignature derives the suffix via Naming.getGetterMethodName(QName), but retains
+        //       In the mean time MethodSignature derives the suffix via Naming.getGetterSuffix(QName), but retains
         //       it as an API detail. If/when we have a solution, it is a simple matter of providing a separate builder
         //       and supply the suffix into it.
         if (!annotations.hasNext()) {

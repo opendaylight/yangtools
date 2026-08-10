@@ -217,10 +217,6 @@ public final class Naming {
         return toFirstUpper(toCamelCase(name.getLocalName()));
     }
 
-    public static @NonNull String getGetterMethodName(final String localName) {
-        return GETTER_PREFIX + toFirstUpper(getPropertyName(localName));
-    }
-
     public static @NonNull String getGetterMethodName(final QName name) {
         return GETTER_PREFIX + getGetterSuffix(name);
     }
