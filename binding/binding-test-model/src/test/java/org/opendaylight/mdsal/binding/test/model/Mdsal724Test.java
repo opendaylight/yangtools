@@ -21,13 +21,11 @@ class Mdsal724Test {
     @Test
     void testNotificationInstanceIdentifier() {
         @SuppressWarnings({ "rawtypes", "unchecked" })
-        final DataObjectStep<?> step = DataObjectStep.of((Class) OutOfPixieDustNotification.class);
-        final var steps = List.of(step);
-
-        // A DataObjectReference pointing at a notification, unsafe to create
-        final var ex = assertThrows(IllegalArgumentException.class, () -> DataObjectReference.ofUnsafeSteps(steps));
-        assertEquals("interface org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.md.sal.test"
-            + ".bi.ba.notification.rev150205.OutOfPixieDustNotification is not a valid path argument", ex.getMessage());
+        final var ex = assertThrows(IllegalArgumentException.class,
+            () -> DataObjectStep.of((Class) OutOfPixieDustNotification.class));
+        assertEquals("""
+            Invalid type interface org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.controller.md.sal.\
+            test.bi.ba.notification.rev150205.OutOfPixieDustNotification""", ex.getMessage());
     }
 
     @Test
