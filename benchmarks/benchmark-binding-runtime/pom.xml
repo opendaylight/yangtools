@@ -32,21 +32,21 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>14.0.23</version>
+                <version>15.0.2</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.ietf</groupId>
                 <artifactId>ietf-artifacts</artifactId>
-                <version>1.0.4</version>
+                <version>2.0.2</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.transportpce.models</groupId>
                 <artifactId>transportpce-models-artifacts</artifactId>
-                <version>23.1.0</version>
+                <version>24.0.1</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -130,6 +130,11 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>binding-runtime-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>dagger-yang-parser</artifactId>
+            <scope>runtime</scope>
         </dependency>
     </dependencies>
 
