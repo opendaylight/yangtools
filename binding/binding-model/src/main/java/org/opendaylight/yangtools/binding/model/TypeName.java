@@ -18,7 +18,7 @@ import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Identifier;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,11 +28,8 @@ import org.slf4j.LoggerFactory;
  * sections 4 and 8. It deals with primitive, array and reference types.
  */
 @NonNullByDefault
-public abstract sealed class TypeName implements Comparable<TypeName>, Identifier {
+public abstract sealed class TypeName implements Comparable<TypeName>, Immutable {
     private static final class Primitive extends TypeName {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
         Primitive(final String simpleName) {
             super(simpleName);
         }
@@ -86,9 +83,6 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Identifie
     }
 
     private abstract static sealed class Reference extends TypeName {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
         Reference(final String simpleName) {
             super(simpleName);
         }
@@ -118,9 +112,6 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Identifie
     }
 
     private static final class TopLevel extends Reference {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
         private final String packageName;
 
         TopLevel(final String packageName, final String simpleName) {
@@ -170,9 +161,6 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Identifie
     }
 
     private static final class Nested extends Reference {
-        @java.io.Serial
-        private static final long serialVersionUID = 1L;
-
         private final Reference immediatelyEnclosingClass;
 
         Nested(final Reference immediatelyEnclosingClass, final String simpleName) {
@@ -224,8 +212,6 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Identifie
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(TypeName.class);
-    @java.io.Serial
-    private static final long serialVersionUID = 1L;
 
     private final String simpleName;
 
