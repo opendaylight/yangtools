@@ -43,8 +43,6 @@ class NamingTest {
 
     @Test
     public void basicTest() {
-        assertEquals("org.opendaylight.yang.gen.v1.test.uri.rev171026",
-            Naming.getRootPackageName(QName.create("test:URI", "2017-10-26", "test")));
         assertEquals("org.opendaylight.yang.gen.v1.urn.m.o.d.u.l.e.n.a.m.e.t.e.s.t._case._1digit.rev130910",
             Naming.getRootPackageName(QNameModule.ofRevision(
                 "urn:m*o+d,u;l=e.n/a-m@e.t$e#s't.case.1digit", "2013-09-10")));

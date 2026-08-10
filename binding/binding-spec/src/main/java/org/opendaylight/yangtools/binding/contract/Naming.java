@@ -153,10 +153,6 @@ public final class Naming {
         // Hidden on purpose
     }
 
-    public static @NonNull String getRootPackageName(final QName module) {
-        return getRootPackageName(module.getModule());
-    }
-
     public static @NonNull String getRootPackageName(final QNameModule module) {
         final var sb = new StringBuilder().append(PACKAGE_PREFIX).append('.');
         String namespace = module.namespace().toString();
