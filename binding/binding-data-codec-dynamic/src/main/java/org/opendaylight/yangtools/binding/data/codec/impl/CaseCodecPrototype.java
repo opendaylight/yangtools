@@ -22,7 +22,7 @@ final class CaseCodecPrototype<C extends CaseObject<?, ?, ?>> extends DataObject
     }
 
     @Override
-    <T extends CodecDataObject<T>> GenClass<T> generateClass(final DataContainerAnalysis<CaseRuntimeType> analysis) {
+    <T extends CodecDataObject<?>> GenClass<T> generateClass(final DataContainerAnalysis<CaseRuntimeType> analysis) {
         return generateAugmentable(analysis, runtimeType());
     }
 }

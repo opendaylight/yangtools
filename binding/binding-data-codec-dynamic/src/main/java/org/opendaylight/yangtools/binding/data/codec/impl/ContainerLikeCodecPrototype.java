@@ -27,7 +27,7 @@ sealed class ContainerLikeCodecPrototype extends DataObjectCodecPrototype<Contai
     }
 
     @Override
-    <T extends CodecDataObject<T>> GenClass<T> generateClass(
+    <T extends CodecDataObject<?>> GenClass<T> generateClass(
             final DataContainerAnalysis<ContainerLikeRuntimeType> analysis) {
         return generateAugmentable(analysis, runtimeType());
     }

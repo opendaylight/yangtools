@@ -25,8 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
  *
  * @param <T> DataObject type
  */
-public abstract class CodecDataObject<T extends DataObject & JavaDataContainer<T>> extends AbstractDataContainer<T>
-        implements DataObject {
+public abstract class CodecDataObject<T extends DataObject & JavaDataContainer<T>> extends AbstractDataContainer<T> {
     // An object representing a null value in a member field.
     private static final @NonNull Object NULL_VALUE = new Object();
 

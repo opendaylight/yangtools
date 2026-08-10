@@ -55,7 +55,7 @@ final class AugmentationCodecPrototype<T extends Augmentation<?, T>>
     }
 
     @Override
-    <X extends CodecDataObject<X>> GenClass<X> generateClass(final DataContainerAnalysis<AugmentRuntimeType> analysis) {
+    <X extends CodecDataObject<?>> GenClass<X> generateClass(final DataContainerAnalysis<AugmentRuntimeType> analysis) {
         return generate(analysis);
     }
 }

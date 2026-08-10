@@ -132,7 +132,7 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
         }
 
         @Override
-        <T extends CodecDataObject<T>> GenClass<T> generateClass(
+        <T extends CodecDataObject<?>> GenClass<T> generateClass(
                 final DataContainerAnalysis<NotificationRuntimeType> analysis) {
             return generateAugmentable(analysis, runtimeType());
         }

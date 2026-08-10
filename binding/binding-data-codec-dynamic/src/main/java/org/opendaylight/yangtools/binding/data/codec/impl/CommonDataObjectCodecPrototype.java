@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.binding.runtime.api.ListRuntimeType;
 abstract sealed class CommonDataObjectCodecPrototype<R extends CompositeRuntimeType>
         extends DataContainerPrototype<CommonDataObjectCodecContext<?, R>, R>
         permits AugmentationCodecPrototype, DataObjectCodecPrototype {
-    record GenClass<T extends CodecDataObject<T>>(
+    record GenClass<T extends CodecDataObject<?>>(
             @NonNull Class<T> clazz,
             @NonNull List<AugmentRuntimeType> possibleAugmentations) {
         GenClass {
@@ -56,16 +56,16 @@ abstract sealed class CommonDataObjectCodecPrototype<R extends CompositeRuntimeT
 
     // FIXME: this bit is not nice but it works
 
-    abstract <T extends CodecDataObject<T>> GenClass<T> generateClass(DataContainerAnalysis<R> analysis);
+    abstract <T extends CodecDataObject<?>> GenClass<T> generateClass(DataContainerAnalysis<R> analysis);
 
-    final <T extends CodecDataObject<T>> GenClass<T> generate(final DataContainerAnalysis<R> analysis) {
+    final <T extends CodecDataObject<?>> GenClass<T> generate(final DataContainerAnalysis<R> analysis) {
         return new GenClass<>(
             CodecDataObjectGenerator.<T>generate(contextFactory().getLoader(), javaClass(),
                 analysis.leafContexts, analysis.daoProperties),
             List.of());
     }
 
-    final <T extends CodecDataObject<T>> GenClass<T> generateAugmentable(final DataContainerAnalysis<R> analysis,
+    final <T extends CodecDataObject<?>> GenClass<T> generateAugmentable(final DataContainerAnalysis<R> analysis,
             final AugmentableRuntimeType runtimeType) {
         return new GenClass<>(
             CodecDataObjectGenerator.<T>generateAugmentable(contextFactory().getLoader(), javaClass(),
@@ -73,7 +73,7 @@ abstract sealed class CommonDataObjectCodecPrototype<R extends CompositeRuntimeT
             runtimeType.augments());
     }
 
-    final <T extends CodecDataObject<T>> GenClass<T> generateEntryObject(final DataContainerAnalysis<R> analysis,
+    final <T extends CodecDataObject<?>> GenClass<T> generateEntryObject(final DataContainerAnalysis<R> analysis,
             final ListRuntimeType.WithKey runtimeType, final Class<? extends DataContainer> parentClass,
             final Class<? extends Key<?>> keyClass) {
         return new GenClass<>(

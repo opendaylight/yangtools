@@ -122,14 +122,14 @@ final class CodecDataObjectGenerator<T extends CodecDataObject<?>> extends Codec
         this.superClass = requireNonNull(superClass);
     }
 
-    static <T extends CodecDataObject<T>> @NonNull Class<T> generate(final BindingClassLoader loader,
+    static <T extends CodecDataObject<?>> @NonNull Class<T> generate(final BindingClassLoader loader,
             final Class<?> bindingInterface, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
             final Map<Class<?>, PropertyInfo> daoProperties) {
         return CodecPackage.CODEC.generateClass(loader, bindingInterface,
             new CodecDataObjectGenerator<>(BB_CDO, new ReusableGetterGenerator(simpleProperties, daoProperties)));
     }
 
-    static <T extends CodecDataObject<T>> @NonNull Class<T> generateAugmentable(final BindingClassLoader loader,
+    static <T extends CodecDataObject<?>> @NonNull Class<T> generateAugmentable(final BindingClassLoader loader,
             final Class<?> bindingInterface, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
             final Map<Class<?>, PropertyInfo> daoProperties) {
         return CodecPackage.CODEC.generateClass(loader, bindingInterface,

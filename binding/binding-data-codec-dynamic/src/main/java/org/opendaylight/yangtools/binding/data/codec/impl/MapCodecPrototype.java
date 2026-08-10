@@ -32,7 +32,7 @@ final class MapCodecPrototype extends ListCodecPrototype<ListRuntimeType.WithKey
     }
 
     @Override
-    <T extends CodecDataObject<T>> GenClass<T> generateClass(
+    <T extends CodecDataObject<?>> GenClass<T> generateClass(
             final DataContainerAnalysis<ListRuntimeType.WithKey> analysis) {
         final var runtimeType = runtimeType();
         final var archetype = runtimeType.javaType();

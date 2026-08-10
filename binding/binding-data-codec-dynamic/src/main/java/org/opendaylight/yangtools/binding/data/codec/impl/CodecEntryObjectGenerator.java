@@ -38,7 +38,7 @@ final class CodecEntryObjectGenerator<T extends CodecDataObject<?>> extends Code
         this.parentClass = requireNonNull(parentClass);
     }
 
-    static <T extends CodecDataObject<T>> @NonNull Class<T> generate(final BindingClassLoader loader,
+    static <T extends CodecDataObject<?>> @NonNull Class<T> generate(final BindingClassLoader loader,
             final Class<?> bindingInterface, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
             final Map<Class<?>, PropertyInfo> daoProperties, final Class<? extends DataContainer> parentClass,
             final Class<? extends Key<?>> key) {
