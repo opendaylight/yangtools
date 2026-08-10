@@ -21,26 +21,27 @@ import org.opendaylight.yang.gen.v1.urn.onf.otcc.yang.tapi.photonic.media.rev221
 import org.opendaylight.yang.gen.v1.urn.onf.otcc.yang.tapi.streaming.rev221121.TapiStreamingData;
 import org.opendaylight.yang.gen.v1.urn.onf.otcc.yang.tapi.topology.rev221121.TapiTopologyData;
 import org.opendaylight.yang.gen.v1.urn.onf.otcc.yang.tapi.virtual.network.rev221121.TapiVirtualNetworkData;
+import org.opendaylight.yangtools.binding.meta.RootMeta;
 
 final class Tapi240 {
     private Tapi240() {
         // hidden on purpose
     }
 
-    static List<Class<?>> classes() {
+    static List<RootMeta<?>> classes() {
         return List.of(
-            TapiCommonData.class,
-            TapiConnectivityData.class,
-            TapiDigitalOtnData.class,
-            TapiDsrData.class,
-            TapiEquipmentData.class,
-            TapiEthData.class,
-            TapiNotificationData.class,
-            TapiOamData.class,
-            TapiPathComputationData.class,
-            TapiPhotonicMediaData.class,
-            TapiStreamingData.class,
-            TapiTopologyData.class,
-            TapiVirtualNetworkData.class);
+            TapiCommonData.META,
+            TapiConnectivityData.META,
+            TapiDigitalOtnData.META,
+            TapiDsrData.META,
+            TapiEquipmentData.META,
+            TapiEthData.META,
+            TapiNotificationData.META,
+            TapiOamData.META,
+            TapiPathComputationData.META,
+            TapiPhotonicMediaData.META,
+            TapiStreamingData.META,
+            TapiTopologyData.META,
+            TapiVirtualNetworkData.META);
     }
 }
