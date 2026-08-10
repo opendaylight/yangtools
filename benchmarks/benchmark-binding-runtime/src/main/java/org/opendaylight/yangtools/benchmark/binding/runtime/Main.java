@@ -13,7 +13,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.HashSet;
+import org.opendaylight.yangtools.binding.generator.impl.di.SingletonBindingRuntimeGenerator;
+import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.runtime.spi.BindingRuntimeHelpers;
+import org.opendaylight.yangtools.dagger.yang.parser.DaggerDefaultYangParserComponent;
+import org.opendaylight.yangtools.yang.parser.api.YangParserException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,8 +28,8 @@ public final class Main {
         // hidden on purpose
     }
 
-    public static void main(final String[] args) throws InterruptedException, IOException {
-        final var classes = new HashSet<Class<?>>();
+    public static void main(final String[] args) throws InterruptedException, IOException, YangParserException {
+        final var classes = new HashSet<RootMeta<?>>();
 
         for (var arg : args) {
             classes.addAll(switch (arg) {
@@ -35,11 +39,12 @@ public final class Main {
             });
         }
 
-        final var array = classes.toArray(Class<?>[]::new);
-        LOG.info("Constructing BindingRuntimeContext from {} root models", array.length);
+        LOG.info("Constructing BindingRuntimeContext from {} root models", classes.size());
 
         final var sw = Stopwatch.createStarted();
-        final var runtimeContext = BindingRuntimeHelpers.createRuntimeContext(array);
+        final var runtimeContext = BindingRuntimeHelpers.createRuntimeContext(
+            DaggerDefaultYangParserComponent.create().parserFactory(), new SingletonBindingRuntimeGenerator(),
+            classes);
         LOG.info("BindingRuntimeContext created in {}, running GC", sw.stop());
         Runtime.getRuntime().freeMemory();
 
