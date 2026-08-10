@@ -14,7 +14,9 @@ import java.io.InputStreamReader;
 import java.lang.ref.Reference;
 import java.nio.charset.Charset;
 import java.util.HashSet;
+import java.util.List;
 import org.opendaylight.yangtools.binding.generator.dagger.BindingRuntimeGeneratorModule;
+import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.runtime.spi.BindingRuntimeHelpers;
 import org.opendaylight.yangtools.dagger.yang.parser.DaggerDefaultYangParserComponent;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
@@ -27,7 +29,7 @@ public final class Main {
     // console output
     @SuppressWarnings("checkstyle:regexpSinglelineJava")
     public static void main(final String[] args) throws InterruptedException, IOException, YangParserException {
-        final var classes = new HashSet<Class<?>>();
+        final var classes = new HashSet<RootMeta<?>>();
 
         for (var arg : args) {
             classes.addAll(switch (arg) {
@@ -46,7 +48,7 @@ public final class Main {
         final var runtimeContext = BindingRuntimeHelpers.createRuntimeContext(
             DaggerDefaultYangParserComponent.create().parserFactory(),
             BindingRuntimeGeneratorModule.provideBindingRuntimeGenerator(),
-            classes);
+            List.copyOf(classes));
         System.out.println("BindingRuntimeContext created in " + sw.stop());
 
         System.out.println("Hit enter to run GC");
