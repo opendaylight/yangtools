@@ -14,7 +14,6 @@ import java.io.InputStreamReader;
 import java.lang.ref.Reference;
 import java.nio.charset.Charset;
 import java.util.HashSet;
-import java.util.List;
 import org.opendaylight.yangtools.binding.generator.dagger.BindingRuntimeGeneratorModule;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.runtime.spi.BindingRuntimeHelpers;
@@ -48,7 +47,7 @@ public final class Main {
         final var runtimeContext = BindingRuntimeHelpers.createRuntimeContext(
             DaggerDefaultYangParserComponent.create().parserFactory(),
             BindingRuntimeGeneratorModule.provideBindingRuntimeGenerator(),
-            List.copyOf(classes));
+            classes);
         System.out.println("BindingRuntimeContext created in " + sw.stop());
 
         System.out.println("Hit enter to run GC");
