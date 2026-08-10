@@ -18,19 +18,23 @@ import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 
+// N partials, N type objects
 @NonNullByDefault
-public record GroupingArchetypeImpl(
+public record GroupingArchetypeN0(
         TypeName name,
         GroupingEffectiveStatement statement,
-        List<Partial> partials,
-        List<TypeObjectArchetype<?>> typeObjects,
-        List<GetterMethod> getters) implements GroupingArchetype {
-    public GroupingArchetypeImpl {
+        List<GetterMethod> getters,
+        List<Partial> partials) implements GroupingArchetype {
+    public GroupingArchetypeN0 {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(partials);
-        requireNonNull(typeObjects);
         requireNonNull(getters);
+        requireNonNull(partials);
+    }
+
+    @Override
+    public List<TypeObjectArchetype<?>> typeObjects() {
+        return List.of();
     }
 
     @Override
