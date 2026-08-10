@@ -28,9 +28,9 @@ import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.ScalarTypes;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.UnknownLeafrefType;
 import org.opendaylight.yangtools.binding.model.api.SystemLeafList;
-import org.opendaylight.yangtools.binding.model.api.Type;
 
 class SpecializingLeafrefTest extends BaseCompilationTest {
     private static final SystemLeafList SET_STRING_TYPE  = SystemLeafList.of(ScalarTypes.STRING);

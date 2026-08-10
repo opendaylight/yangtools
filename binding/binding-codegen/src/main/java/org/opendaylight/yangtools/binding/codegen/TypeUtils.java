@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
  * Random utility methods for dealing with {@link Type} objects.

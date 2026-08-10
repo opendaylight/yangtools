@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.GetterAnnotation;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.ReturnType;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.runtime.api.RuntimeType;
 import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;

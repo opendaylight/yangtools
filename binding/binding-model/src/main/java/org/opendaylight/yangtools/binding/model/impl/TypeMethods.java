@@ -25,11 +25,11 @@ import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.OperationArchetype;
 import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
  * Utility methods for {@link Type} implementations.

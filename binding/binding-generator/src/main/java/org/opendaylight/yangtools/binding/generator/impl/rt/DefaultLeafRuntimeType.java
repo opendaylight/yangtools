@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.rt;
 
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.runtime.api.LeafRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 

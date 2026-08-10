@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.binding.model.api.AnyItemObject;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.SystemEntryObject;
 import org.opendaylight.yangtools.binding.model.api.SystemLeafList;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.UserEntryObject;
 import org.opendaylight.yangtools.binding.model.api.UserLeafList;
 import org.opendaylight.yangtools.binding.model.impl.GetterMethod0;

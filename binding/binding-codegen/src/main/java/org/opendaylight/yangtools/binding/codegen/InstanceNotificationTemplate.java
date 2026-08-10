@@ -13,9 +13,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.InstanceNotificationArchetype;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 
 /**

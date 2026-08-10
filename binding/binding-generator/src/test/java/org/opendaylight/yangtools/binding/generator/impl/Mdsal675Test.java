@@ -30,10 +30,10 @@ import org.opendaylight.yangtools.binding.model.ItemObjectArchetype;
 import org.opendaylight.yangtools.binding.model.OpaqueObjectArchetype.Anydata;
 import org.opendaylight.yangtools.binding.model.OpaqueObjectArchetype.Anyxml;
 import org.opendaylight.yangtools.binding.model.ScalarTypes;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.YangDataArchetype;
 import org.opendaylight.yangtools.binding.model.api.AnyItemObject;
 import org.opendaylight.yangtools.binding.model.api.SystemLeafList;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class Mdsal675Test {

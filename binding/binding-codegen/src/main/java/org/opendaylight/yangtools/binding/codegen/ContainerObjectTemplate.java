@@ -14,9 +14,9 @@ import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ContainerObject;
 import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.api.TypeRef;
 
 /**

@@ -15,7 +15,6 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.UnionTypeObject;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.impl.UnionTypeObjectArchetypeB;
 import org.opendaylight.yangtools.binding.model.impl.UnionTypeObjectArchetypeD;
 import org.opendaylight.yangtools.binding.model.impl.UnionTypeObjectArchetypeW;

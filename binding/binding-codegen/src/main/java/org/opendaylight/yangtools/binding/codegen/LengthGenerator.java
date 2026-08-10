@@ -16,7 +16,7 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

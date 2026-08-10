@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultKeyRuntimeType;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.KeyArchetype;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.runtime.api.KeyRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;

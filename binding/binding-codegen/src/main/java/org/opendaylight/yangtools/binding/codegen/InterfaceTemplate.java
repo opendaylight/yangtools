@@ -15,7 +15,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;

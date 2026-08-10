@@ -12,10 +12,10 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement.MandatoryIn;
 
 @NonNullByDefault

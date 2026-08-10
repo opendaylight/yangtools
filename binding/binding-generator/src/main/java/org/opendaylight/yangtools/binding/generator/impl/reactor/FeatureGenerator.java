@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultFeatureRuntimeType;
 import org.opendaylight.yangtools.binding.model.FeatureArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.runtime.api.FeatureRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;

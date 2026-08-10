@@ -14,7 +14,7 @@ import com.google.common.base.MoreObjects;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
-import org.opendaylight.yangtools.binding.model.api.Type;
+import org.opendaylight.yangtools.binding.model.Type;
 
 /**
  * The code generation shape of a {@link GetterMethod}.

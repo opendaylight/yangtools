@@ -17,11 +17,11 @@ import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.YangDataArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 
 /**

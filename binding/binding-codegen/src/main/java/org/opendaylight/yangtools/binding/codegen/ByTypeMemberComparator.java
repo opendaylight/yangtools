@@ -15,11 +15,11 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.BitsTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Decimal64Type;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
  * By type member {@link Comparator} which provides sorting by type for {@link GetterShape}s in a generated class.

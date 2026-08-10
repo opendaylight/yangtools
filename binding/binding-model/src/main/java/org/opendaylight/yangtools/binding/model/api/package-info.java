@@ -22,4 +22,5 @@
 package org.opendaylight.yangtools.binding.model.api;
 
 import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;

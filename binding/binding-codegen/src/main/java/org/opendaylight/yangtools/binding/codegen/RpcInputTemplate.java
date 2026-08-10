@@ -13,9 +13,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.RpcInputArchetype;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
  * Template for {@link RpcInput} specializations.

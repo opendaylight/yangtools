@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.binding.runtime.api;
 
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 

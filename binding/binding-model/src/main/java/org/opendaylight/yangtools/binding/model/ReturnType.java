@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.model;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 
 /**
  * A {@link Type} that is valid as being a part of the return type of a method generated for a {@link GetterMethod}.

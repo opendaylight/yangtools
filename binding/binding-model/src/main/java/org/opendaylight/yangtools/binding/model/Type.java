@@ -5,23 +5,25 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.model.api;
+package org.opendaylight.yangtools.binding.model;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.Archetype;
-import org.opendaylight.yangtools.binding.model.ReturnType;
-import org.opendaylight.yangtools.binding.model.TypeName;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.api.TypeRef;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
- * The Type interface defines the base type for all types defined in java. Each Type defined in java MUST contain name
- * and package name, except of primitive types like int, byte etc. In case of mapping of primitive type the package name
- * MUST be left as empty string.
+ * A binding type. These come it two basic forms:
+ * <ol>
+ *   <li>a pre-existing Java class, represented by {@link ConcreteType}</li>
+ *   <li>a generated Java class, represented by {@link Archetype}</li>
+ * </ol>
  */
-@SuppressWarnings("removal")
 @NonNullByDefault
-public sealed interface Type extends Immutable permits Archetype, ParameterizedType, ReturnType, TypeRef {
+@SuppressWarnings("removal")
+public sealed interface Type extends Immutable permits Archetype, ReturnType, ParameterizedType, TypeRef {
     /**
      * {@return this type's {@link TypeName}}
      */
@@ -61,4 +63,7 @@ public sealed interface Type extends Immutable permits Archetype, ParameterizedT
 
     @Override
     boolean equals(@Nullable Object obj);
+
+    @Override
+    String toString();
 }

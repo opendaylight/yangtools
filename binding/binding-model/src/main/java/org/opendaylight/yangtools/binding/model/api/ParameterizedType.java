@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.impl.ParameterizedType0;
 import org.opendaylight.yangtools.binding.model.impl.ParameterizedType1;

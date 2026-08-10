@@ -29,11 +29,11 @@ import org.opendaylight.yangtools.binding.model.EnumTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.IdentityArchetype;
 import org.opendaylight.yangtools.binding.model.ScalarTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ScalarTypes;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype.Tag;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 
 /**

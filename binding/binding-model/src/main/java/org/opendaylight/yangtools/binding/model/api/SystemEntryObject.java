@@ -16,6 +16,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.ReturnType;
+import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.impl.ConcreteTypeImpl;
 import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
 

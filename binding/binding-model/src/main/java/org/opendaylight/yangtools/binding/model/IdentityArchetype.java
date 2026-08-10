@@ -11,7 +11,6 @@ import java.util.Comparator;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BaseIdentity;
-import org.opendaylight.yangtools.binding.model.api.Type;
 import org.opendaylight.yangtools.binding.model.impl.IdentityArchetype0;
 import org.opendaylight.yangtools.binding.model.impl.IdentityArchetype1;
 import org.opendaylight.yangtools.binding.model.impl.IdentityArchetypeN;
