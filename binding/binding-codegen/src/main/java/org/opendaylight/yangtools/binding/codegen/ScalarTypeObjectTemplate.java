@@ -21,7 +21,7 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.OBJECT;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.CONST_STO_REGISTRAR;
-import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.nameInModuleOf;
+import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
 
 import com.google.common.base.MoreObjects;
 import java.util.LinkedHashMap;
@@ -440,7 +440,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
         bb.cB();
 
         if (scalarType.hasRestrictions()) {
-            final var yangModuleInfo = nameInModuleOf(archetype);
+            final var yangModuleInfo = yangModuleInfoOf(root);
 
             bb
                 .nl()

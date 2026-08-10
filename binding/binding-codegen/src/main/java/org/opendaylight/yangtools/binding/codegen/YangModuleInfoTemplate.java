@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.binding.lib.ScalarTypeObjectRegistrar;
 import org.opendaylight.yangtools.binding.meta.UnsafeAccess;
 import org.opendaylight.yangtools.binding.meta.YangModelBindingProvider;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
-import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -130,11 +130,9 @@ public final class YangModuleInfoTemplate {
             .isPresent();
     }
 
-    @Deprecated(since = "16.0.0", forRemoval = true)
     @NonNullByDefault
-    static TypeName nameInModuleOf(final Archetype archetype) {
-        // Yeah: not pretty but works
-        return TypeName.of(rootToService(archetype.packageName()), CLASS_NAME);
+    static TypeName yangModuleInfoOf(final DataRootArchetype root) {
+        return yangModuleInfoOf(root.statement().localQNameModule());
     }
 
     @NonNullByDefault
