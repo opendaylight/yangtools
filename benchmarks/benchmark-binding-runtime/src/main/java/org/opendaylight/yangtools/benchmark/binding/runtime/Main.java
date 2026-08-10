@@ -16,8 +16,8 @@ import java.nio.charset.Charset;
 import java.util.HashSet;
 import org.opendaylight.yangtools.binding.generator.dagger.BindingRuntimeGeneratorModule;
 import org.opendaylight.yangtools.binding.runtime.spi.BindingRuntimeHelpers;
+import org.opendaylight.yangtools.dagger.yang.parser.DaggerDefaultYangParserComponent;
 import org.opendaylight.yangtools.yang.parser.api.YangParserException;
-import org.opendaylight.yangtools.yang.parser.impl.dagger.DaggerYangParserComponent;
 
 public final class Main {
     private Main() {
@@ -37,7 +37,6 @@ public final class Main {
             });
         }
 
-        final var array = classes.toArray(Class<?>[]::new);
         System.out.println("Constructing BindingRuntimeContext from " + classes.size() + " root models");
         System.out.println("Hit enter when ready");
         final var in = new BufferedReader(new InputStreamReader(System.in, Charset.defaultCharset()));
@@ -45,9 +44,9 @@ public final class Main {
 
         final var sw = Stopwatch.createStarted();
         final var runtimeContext = BindingRuntimeHelpers.createRuntimeContext(
-            DaggerYangParserComponent.create().parserFactory(),
+            DaggerDefaultYangParserComponent.create().parserFactory(),
             BindingRuntimeGeneratorModule.provideBindingRuntimeGenerator(),
-            array);
+            classes);
         System.out.println("BindingRuntimeContext created in " + sw.stop());
 
         System.out.println("Hit enter to run GC");
