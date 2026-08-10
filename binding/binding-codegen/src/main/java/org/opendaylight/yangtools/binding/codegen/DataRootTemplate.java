@@ -53,7 +53,7 @@ final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> {
     BlockFragment constants() {
         return bb -> {
             final var rootMeta = importedName(ROOT_META);
-            final var moduleInfo = importedName(yangModuleInfoOf(archetype.statement().localQNameModule()));
+            final var moduleInfo = importedName(yangModuleInfoOf(root));
             // FIXME: YANGTOOLS-1808: use selfRef()
             final var type = archetype.canonicalName();
 
