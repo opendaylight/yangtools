@@ -213,10 +213,6 @@ public final class Naming {
         return toFirstUpper(toCamelCase(localName));
     }
 
-    public static @NonNull String getClassName(final QName name) {
-        return toFirstUpper(toCamelCase(name.getLocalName()));
-    }
-
     public static @NonNull String getGetterSuffix(final QName name) {
         final String candidate = toFirstUpper(toCamelCase(name.getLocalName()));
         return "Class".equals(candidate) ? "XmlClass" : candidate;

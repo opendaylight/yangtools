@@ -23,7 +23,6 @@ class NamingTest {
 
     @Test
     void testGetClassName() {
-        assertEquals("TestClass", Naming.getClassName(QName.create("testNS", "testClass")));
         assertEquals("TestClass", Naming.getClassName("testClass"));
         assertEquals("", Naming.getClassName(""));
         assertEquals("SomeTestingClassName", Naming.getClassName("  some-testing_class name   "));
