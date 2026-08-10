@@ -27,6 +27,7 @@
     </properties>
 
     <modules>
+        <module>benchmark-binding-runtime</module>
         <module>benchmark-data-tree</module>
     </modules>
 </project>
