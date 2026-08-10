@@ -21,13 +21,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.Action;
 import org.opendaylight.yangtools.binding.BindingContract;
-import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.KeyAware;
-import org.opendaylight.yangtools.binding.Rpc;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
@@ -143,16 +140,6 @@ public final class Naming {
      * Name of {@link BindingContract#implementedInterface()}.
      */
     public static final @NonNull String BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME = "implementedInterface";
-
-    /**
-     * Name of {@link Action#invoke(DataObjectIdentifier, RpcInput)}.
-     */
-    public static final @NonNull String ACTION_INVOKE_NAME = "invoke";
-
-    /**
-     * Name of {@link Rpc#invoke(org.opendaylight.yangtools.binding.RpcInput)}.
-     */
-    public static final @NonNull String RPC_INVOKE_NAME = "invoke";
 
     /**
      * Name of {@link ScalarTypeObject#getValue()}.
