@@ -263,11 +263,6 @@ public final class Naming {
         return methodName.startsWith(GETTER_PREFIX);
     }
 
-    public static @NonNull String getGetterMethodForNonnull(final String methodName) {
-        checkArgument(isNonnullMethodName(methodName));
-        return GETTER_PREFIX + methodName.substring(NONNULL_PREFIX.length());
-    }
-
     public static @NonNull String getNonnullMethodName(final String localName) {
         return NONNULL_PREFIX + toFirstUpper(getPropertyName(localName));
     }
