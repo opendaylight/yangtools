@@ -46,7 +46,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeEffectiveStateme
 @Beta
 public abstract sealed class DataObjectCodecContext<D extends DataObject, T extends CompositeRuntimeType>
         extends CommonDataObjectCodecContext<D, T> implements BindingDataObjectCodecTreeNode<D>
-        permits CaseCodecContext, ContainerLikeCodecContext, ListCodecContext, NotificationCodecContext {
+        permits CaseCodecContext, ContainerLikeCodecContext, ListCodecContext {
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class,
         CommonDataObjectCodecContext.class, DataContainerNode.class);
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,

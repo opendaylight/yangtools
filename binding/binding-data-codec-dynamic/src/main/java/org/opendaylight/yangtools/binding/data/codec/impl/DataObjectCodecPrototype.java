@@ -16,8 +16,7 @@ import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 abstract sealed class DataObjectCodecPrototype<T extends CompositeRuntimeType> extends CommonDataObjectCodecPrototype<T>
-        permits CaseCodecPrototype, ContainerLikeCodecPrototype, ListCodecPrototype,
-                NotificationCodecContext.Prototype {
+        permits CaseCodecPrototype, ContainerLikeCodecPrototype, ListCodecPrototype {
     private final @NonNull NodeIdentifier yangArg;
 
     DataObjectCodecPrototype(final Class<?> cls, final NodeIdentifier yangArg, final T type,

@@ -35,17 +35,16 @@ import net.bytebuddy.jar.asm.Opcodes;
 import net.bytebuddy.matcher.ElementMatchers;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.BaseNotification;
-import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.EventInstantAware;
+import org.opendaylight.yangtools.binding.ParentObject;
 import org.opendaylight.yangtools.binding.loader.BindingClassLoader.GeneratorResult;
 import org.opendaylight.yangtools.binding.runtime.api.NotificationRuntimeType;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-final class NotificationCodecContext<D extends DataObject & BaseNotification>
-        extends DataObjectCodecContext<D, NotificationRuntimeType> {
+final class NotificationCodecContext<D extends BaseNotification & ParentObject<D>>
+        extends DataContainerCodecContext<D, NotificationRuntimeType, NotificationCodecContext.Prototype<D>> {
     private static final Generic EVENT_INSTANT_AWARE = TypeDefinition.Sort.describe(EventInstantAware.class);
 
     private static final String EVENT_INSTANT_NAME;
@@ -120,22 +119,22 @@ final class NotificationCodecContext<D extends DataObject & BaseNotification>
      * Prototype for a {@code notification}. This class only exists because DataContainerCodecContext requires a
      * prototype.
      */
-    static final class Prototype<D extends DataObject & BaseNotification>
-            extends DataObjectCodecPrototype<NotificationRuntimeType> {
+    static final class Prototype<N extends BaseNotification & ParentObject<N>>
+            extends ParentObjectCodecPrototype<N, NotificationCodecContext<N>, Prototype<N>, NotificationRuntimeType> {
         private Prototype(final Class<?> cls, final NotificationRuntimeType type, final CodecContextFactory factory) {
-            super(cls, NodeIdentifier.create(type.statement().argument()), type, factory);
+            super(factory, type);
         }
 
         @Override
-        NotificationCodecContext<?> createInstance() {
+        NotificationCodecContext<N> createInstance() {
             throw new UnsupportedOperationException("Should never be invoked");
         }
-
-        @Override
-        <T extends CodecDataObject<?>> GenClass<T> generateClass(
-                final DataContainerAnalysis<NotificationRuntimeType> analysis) {
-            return generateAugmentable(analysis, runtimeType());
-        }
+//
+//        @Override
+//        <T extends CodecDataObject<?>> GenClass<T> generateClass(
+//                final DataContainerAnalysis<NotificationRuntimeType> analysis) {
+//            return generateAugmentable(analysis, runtimeType());
+//        }
     }
 
     private enum ConstructorImplementation implements Implementation {

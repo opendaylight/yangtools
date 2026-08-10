@@ -555,6 +555,7 @@ public final class BindingCodecContext extends AbstractBindingNormalizedNodeSeri
             case ValueNodeCodecContext valueNode -> {
                 return checkValueCodec(valueNode, it);
             }
+            default -> throw new VerifyException("Should never reach " + nextNode);
         }
 
         ListCodecContext<?, ?> currentList = null;

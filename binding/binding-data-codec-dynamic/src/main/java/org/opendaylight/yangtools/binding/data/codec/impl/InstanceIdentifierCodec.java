@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.List;
 import org.opendaylight.yangtools.binding.BindingInstanceIdentifier;
@@ -44,7 +45,8 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
     @Override
     public BindingInstanceIdentifier toBindingInstanceIdentifier(final YangInstanceIdentifier domPath) {
         final var steps = new ArrayList<DataObjectStep<?>>();
-        return switch (context.lookupCodecContext(domPath, steps)) {
+        final var next = context.lookupCodecContext(domPath, steps);
+        return switch (next) {
             case null -> null;
             case CaseCodecContext<?> caseCodec -> null;
             case ChoiceCodecContext<?> choice -> null;
@@ -65,6 +67,7 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
                     new LeafPropertyStep<>(doi.lastStep().type(), valueCodec.valueType(),
                         valueCodec.getSchema().getQName().unbind()));
             }
+            default -> throw new VerifyException("Should never readh " + next);
         };
     }
 
@@ -107,12 +110,11 @@ final class InstanceIdentifierCodec implements BindingInstanceIdentifierCodec,
             }
             case LeafListPropertyStep<?, ?> leafList -> {
                 // validate and add step into the individual LeafSetEntryNode
-                if (codec instanceof LeafSetNodeCodecContext leafListCodec) {
-                    domArgs.add(new NodeWithValue<>(childArg.getNodeType(),
-                        leafListCodec.getValueCodec().deserialize(leafList.value())));
-                } else {
+                if (!(codec instanceof LeafSetNodeCodecContext leafListCodec)) {
                     throw new IllegalArgumentException(leafList + " does not match context " + codec);
                 }
+                domArgs.add(new NodeWithValue<>(childArg.getNodeType(),
+                    leafListCodec.getValueCodec().deserialize(leafList.value())));
             }
         }
 
