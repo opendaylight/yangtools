@@ -113,7 +113,7 @@ final class DataContainerStreamerGenerator<T extends DataContainerStreamer<?>> i
     // startMapEntryNode(obj.key(), UNKNOWN_SIZE)
     private static final @NonNull StackManipulation START_MAP_ENTRY_NODE = new StackManipulation.Compound(
         OBJ,
-        invokeMethod(KeyAware.class, Naming.KEY_AWARE_KEY_NAME),
+        invokeMethod(KeyAware.class, "key"),
         UNKNOWN_SIZE,
         invokeMethod(BindingStreamEventWriter.class, "startMapEntryNode", Key.class, int.class));
 

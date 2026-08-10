@@ -22,7 +22,6 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.SUPPRESS_WARNINGS;
 import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
-import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstLower;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
 
@@ -390,7 +389,7 @@ final class BuilderTemplate extends BaseTemplate {
 
                 switch (props) {
                     case WithKey with -> {
-                        bb.eol("this.key = base." + KEY_AWARE_KEY_NAME + "();");
+                        bb.eol("this.key = base.key();");
                         for (var getter : with.keyGetters) {
                             bb.str("this.").str(getter.fieldName()).str(" = base.").str(getter.name()).eol("();");
                         }
@@ -628,7 +627,7 @@ final class BuilderTemplate extends BaseTemplate {
                 bb
                     .eol("/**")
                     .str(" * Return current value associated with the property corresponding to {@link ")
-                        .str(importedName(targetType)).eol('#' + KEY_AWARE_KEY_NAME + "()}.")
+                        .str(importedName(targetType)).eol("#key()}.")
                     .eol(" *")
                     .eol(" * @return current value")
                     .eol(" */");
@@ -637,7 +636,7 @@ final class BuilderTemplate extends BaseTemplate {
                     .at().eol(importedName(OVERRIDE));
             }
             bb
-                .str("public ").str(importedName(withKey.key)).str(' ' + KEY_AWARE_KEY_NAME + "()").oB()
+                .str("public ").str(importedName(withKey.key)).str(" key()").oB()
                     .eol("return key;")
                 .cB()
                 .newLine();
@@ -805,8 +804,8 @@ final class BuilderTemplate extends BaseTemplate {
         if (props instanceof WithKey withKey) {
             bb
                 .eol("/**")
-                .str(" * Set the key value corresponding to {@link ").str(importedName(targetType)).str("#")
-                    .str(KEY_AWARE_KEY_NAME).eol("()} to the specified")
+                .str(" * Set the key value corresponding to {@link ").str(importedName(targetType))
+                    .eol("#key()} to the specified")
                 .txt("""
                        * value.
                        *
