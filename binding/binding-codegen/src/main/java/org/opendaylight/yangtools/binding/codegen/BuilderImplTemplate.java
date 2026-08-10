@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.contract.Naming.BUILDER_SUFFIX;
-import static org.opendaylight.yangtools.binding.contract.Naming.KEY_AWARE_KEY_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX;
 
 import java.util.List;
@@ -109,7 +108,7 @@ final class BuilderImplTemplate extends BaseTemplate {
                     .nl()
                     .str("private static ").str(importedNonNull(with.key())).str(" extractKey(").str(builderName)
                         .str(" base)").oB()
-                        .str("final var key = base." + KEY_AWARE_KEY_NAME).eol("();")
+                        .eol("final var key = base.key();")
                         .eol("return key != null ? key")
                         .str("    : new ").str(importedName(with.key())).str("(");
 
