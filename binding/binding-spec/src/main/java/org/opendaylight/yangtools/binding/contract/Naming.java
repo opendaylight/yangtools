@@ -259,27 +259,6 @@ public final class Naming {
         return GETTER_PREFIX + getGetterSuffix(name);
     }
 
-    public static boolean isGetterMethodName(final String methodName) {
-        return methodName.startsWith(GETTER_PREFIX);
-    }
-
-    public static boolean isNonnullMethodName(final String methodName) {
-        return methodName.startsWith(NONNULL_PREFIX);
-    }
-
-    public static @NonNull String getGetterMethodForRequire(final String methodName) {
-        checkArgument(isRequireMethodName(methodName));
-        return GETTER_PREFIX + methodName.substring(REQUIRE_PREFIX.length());
-    }
-
-    public static @NonNull String getRequireMethodName(final String localName) {
-        return REQUIRE_PREFIX + toFirstUpper(getPropertyName(localName));
-    }
-
-    public static boolean isRequireMethodName(final String methodName) {
-        return methodName.startsWith(REQUIRE_PREFIX);
-    }
-
     public static @NonNull String getGetterSuffix(final QName name) {
         final String candidate = toFirstUpper(toCamelCase(name.getLocalName()));
         return "Class".equals(candidate) ? "XmlClass" : candidate;
