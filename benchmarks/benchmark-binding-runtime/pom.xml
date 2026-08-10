@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+<!--
+ Copyright (c) 2026 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+
+ This program and the accompanying materials are made available under the
+ terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ and is available at http://www.eclipse.org/legal/epl-v10.html
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.opendaylight.odlparent</groupId>
+        <artifactId>odlparent</artifactId>
+        <version>14.3.1</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>org.opendaylight.yangtools</groupId>
+    <artifactId>benchmark-binding-runtime</artifactId>
+    <version>16.0.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <odlparent.dependency.enforce>true</odlparent.dependency.enforce>
+        <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
+        <doclint>all,-missing</doclint>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yangtools-artifacts</artifactId>
+                <version>14.0.23</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.ietf</groupId>
+                <artifactId>ietf-artifacts</artifactId>
+                <version>1.0.4</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.transportpce.models</groupId>
+                <artifactId>transportpce-models-artifacts</artifactId>
+                <version>23.1.0</version>
+                <scope>import</scope>
+                <type>pom</type>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.ietf.model</groupId>
+            <artifactId>iana-if-type</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.ietf.model</groupId>
+            <artifactId>iana-routing-types</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.ietf.model</groupId>
+            <artifactId>rfc6241</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.ietf.model</groupId>
+            <artifactId>rfc6991-ietf-inet-types</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.ietf.model</groupId>
+            <artifactId>rfc6991-ietf-yang-types</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.ietf.model</groupId>
+            <artifactId>rfc8343</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.ietf.model</groupId>
+            <artifactId>rfc8345-ietf-network</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.ietf.model</groupId>
+            <artifactId>rfc8345-ietf-network-topology</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.transportpce.models</groupId>
+            <artifactId>openconfig-240119</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.transportpce.models</groupId>
+            <artifactId>openroadm-common-13.1.1</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.transportpce.models</groupId>
+            <artifactId>openroadm-device-13.1.1</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.transportpce.models</groupId>
+            <artifactId>openroadm-network-13.1.1</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.transportpce.models</groupId>
+            <artifactId>openroadm-service-13.1.1</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.transportpce.models</groupId>
+            <artifactId>tapi-2.4.0</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>binding-generator</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>binding-runtime-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>binding-runtime-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.eclipse.jdt:org.eclipse.jdt.annotation</exclude>
+                                </excludes>
+                            </artifactSet>
+                            <filter>
+                                <artifact>*:*</artifact>
+                                <excludes>
+                                    <exclude>module-info.class</exclude>
+                                    <exclude>META-INF/*.SF</exclude>
+                                    <exclude>META-INF/*.DSA</exclude>
+                                    <exclude>META-INF/*.RSA</exclude>
+                                    <exclude>META-INF/versions/**</exclude>
+                                </excludes>
+                            </filter>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>org.opendaylight.yangtools.benchmark.binding.runtime.Main</mainClass>
+                                </transformer>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
