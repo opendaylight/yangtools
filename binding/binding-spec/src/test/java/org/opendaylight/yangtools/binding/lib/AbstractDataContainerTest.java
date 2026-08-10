@@ -10,11 +10,13 @@ package org.opendaylight.yangtools.binding.lib;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
+import java.util.Map;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.Augmentation;
+import org.opendaylight.yangtools.binding.RpcOutput;
 
 class AbstractDataContainerTest {
-    private static final class Cont extends AbstractDataContainer<Cont> implements DataObject {
+    private static final class Cont extends AbstractDataContainer<Cont> implements RpcOutput<Cont> {
         private final int field;
 
         Cont(final int field) {
@@ -24,6 +26,11 @@ class AbstractDataContainerTest {
         @Override
         public Class<Cont> implementedInterface() {
             return Cont.class;
+        }
+
+        @Override
+        public Map<Class<? extends Augmentation<Cont, ?>>, Augmentation<Cont, ?>> augmentations() {
+            return Map.of();
         }
 
         @Override

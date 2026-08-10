@@ -30,7 +30,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.top.level.list.NestedListBuilder;
-import org.opendaylight.yangtools.binding.DataObject;
+import org.opendaylight.yangtools.binding.ContainerObject;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
 import org.opendaylight.yangtools.binding.EntryObject;
 
@@ -39,7 +39,7 @@ class LazyBindingMapTest extends AbstractBindingCodecTest {
     private static Top TOP;
 
     @Mock
-    private DataObject mockDataObject;
+    private ContainerObject<?, ?> mockDataObject;
     @Mock
     private EntryObject<?, ?, ?> mockEntryObject;
 

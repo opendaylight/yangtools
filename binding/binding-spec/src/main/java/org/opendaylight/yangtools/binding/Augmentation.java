@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
  * @param <A> Class to which this implementation is extension.
  * @param <T> concrete augmentation type
  */
-public interface Augmentation<A extends Augmentable<A> & DataContainer, T extends Augmentation<A, T>>
+public non-sealed interface Augmentation<A extends Augmentable<A> & DataContainer, T extends Augmentation<A, T>>
         extends DataObject, JavaDataContainer<T> {
     @Override
     Class<T> implementedInterface();

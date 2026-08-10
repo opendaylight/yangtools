@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.opendaylight.yangtools.binding.ContainerObject;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.data.codec.api.BindingNormalizedNodeCodec;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -26,7 +27,7 @@ class NonCachingCodecTest {
     @Mock
     private ContainerNode node;
     @Mock
-    private DataObject object;
+    private ContainerObject<?, ?> object;
 
     @BeforeEach
     void beforeEach() {
