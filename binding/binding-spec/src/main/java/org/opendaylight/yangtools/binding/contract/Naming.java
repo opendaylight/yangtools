@@ -319,7 +319,6 @@ public final class Naming {
      * @throws NullPointerException if {@code templateName} is {@code null}
      * @throws IllegalArgumentException if {@code templateName} is empty
      */
-    // TODO: take YangDataName once we have it readily available
     public static String mapYangDataName(final YangDataName templateName) {
         return mapEnumAssignedName(templateName.name());
     }
