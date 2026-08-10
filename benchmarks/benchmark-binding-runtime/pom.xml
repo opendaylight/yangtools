@@ -100,6 +100,10 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.transportpce.models</groupId>
+            <artifactId>openconfig-240119</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.transportpce.models</groupId>
             <artifactId>openroadm-common-13.1.1</artifactId>
         </dependency>
         <dependency>
