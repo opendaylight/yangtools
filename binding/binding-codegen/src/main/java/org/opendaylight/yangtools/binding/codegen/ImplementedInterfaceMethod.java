@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CLASS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
-import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BindingContract;
@@ -45,8 +44,7 @@ abstract sealed class ImplementedInterfaceMethod implements BlockFragment {
     public final void appendTo(final BlockBuilder bb) {
         bb
             .at().eol(template.importedName(OVERRIDE))
-            .str("default ").gen(template.importedName(CLASS), selfRef)
-                .str(" " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "()").oB()
+            .str("default ").gen(template.importedName(CLASS), selfRef).str(" implementedInterface()").oB()
                 .str("return ").str(selfRef).eol(".class;")
             .cB();
     }

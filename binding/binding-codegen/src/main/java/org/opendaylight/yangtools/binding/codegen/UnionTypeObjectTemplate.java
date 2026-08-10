@@ -12,7 +12,6 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_BASE64;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
-import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 
 import com.google.common.collect.Iterables;
 import java.util.Comparator;
@@ -362,7 +361,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
                 bb.str(importedName(JU_ARRAYS)).str(".toString(").str(field).eol(".values());");
             } else if (type instanceof IdentityArchetype) {
                 // generated identity
-                bb.str(field).eol("." + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "().toString();");
+                bb.str(field).eol(".implementedInterface().toString();");
             } else {
                 // generated type
                 bb.str(field).eol(".getValue().toString();");

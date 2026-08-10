@@ -21,7 +21,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.binding.BindingContract;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.Key;
 import org.opendaylight.yangtools.binding.RpcInput;
@@ -129,11 +128,6 @@ public final class Naming {
     private static final Pattern COLON_SLASH_SLASH = Pattern.compile("://", Pattern.LITERAL);
     private static final String QUOTED_DOT = Matcher.quoteReplacement(".");
     private static final Splitter DOT_SPLITTER = Splitter.on('.');
-
-    /**
-     * Name of {@link BindingContract#implementedInterface()}.
-     */
-    public static final @NonNull String BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME = "implementedInterface";
 
     /**
      * Name of {@link ScalarTypeObject#getValue()}.

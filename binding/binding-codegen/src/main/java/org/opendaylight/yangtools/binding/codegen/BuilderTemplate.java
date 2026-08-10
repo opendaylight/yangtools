@@ -20,7 +20,6 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NPE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.SUPPRESS_WARNINGS;
-import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstLower;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
@@ -841,8 +840,7 @@ final class BuilderTemplate extends BaseTemplate {
                     .str("if (!(this." + AUGMENTATION_FIELD + " instanceof ").str(hashMapRef).str("))").oB()
                         .str("this." + AUGMENTATION_FIELD + " = new ").str(hashMapRef).eol("<>();")
                     .cB()
-                    .eol("this." + AUGMENTATION_FIELD + ".put(augmentation."
-                        + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "(), augmentation);")
+                    .eol("this." + AUGMENTATION_FIELD + ".put(augmentation.implementedInterface(), augmentation);")
                     .eol("return this;")
                 .cB()
                 .nl()

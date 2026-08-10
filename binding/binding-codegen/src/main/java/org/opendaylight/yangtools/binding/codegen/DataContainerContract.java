@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CLASS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
-import static org.opendaylight.yangtools.binding.contract.Naming.BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.BindingContract;
@@ -42,7 +41,7 @@ enum DataContainerContract {
                 .at().eol(template.importedName(OVERRIDE))
                 // FIXME: use selfRef instead of canonical name
                 .str(template.importedName(CLASS)).str("<? extends ").str(template.archetype.canonicalName())
-                    .eol("> " + BINDING_CONTRACT_IMPLEMENTED_INTERFACE_NAME + "();");
+                    .eol("> implementedInterface();");
         }
     },
     /**
