@@ -22,12 +22,6 @@ class NamingTest {
     }
 
     @Test
-    void testGetMethodName() {
-        assertEquals("testLocalName", Naming.getMethodName(QName.create("testNS", "testLocalName")));
-        assertEquals("testYangIdentifier", Naming.getMethodName("TestYangIdentifier"));
-    }
-
-    @Test
     void testGetClassName() {
         assertEquals("TestClass", Naming.getClassName(QName.create("testNS", "testClass")));
         assertEquals("TestClass", Naming.getClassName("testClass"));

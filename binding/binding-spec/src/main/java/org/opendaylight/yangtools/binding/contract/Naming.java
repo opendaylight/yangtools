@@ -251,14 +251,6 @@ public final class Naming {
         return toFirstUpper(toCamelCase(name.getLocalName()));
     }
 
-    public static @NonNull String getMethodName(final String yangIdentifier) {
-        return toFirstLower(toCamelCase(yangIdentifier));
-    }
-
-    public static @NonNull String getMethodName(final QName name) {
-        return getMethodName(name.getLocalName());
-    }
-
     public static @NonNull String getGetterMethodName(final String localName) {
         return GETTER_PREFIX + toFirstUpper(getPropertyName(localName));
     }
