@@ -12,26 +12,32 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
-import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 @NonNullByDefault
-public record GroupingArchetypeImpl(
+public record EntryObjectArchetypeN00(
         TypeName name,
-        GroupingEffectiveStatement statement,
-        List<Partial> partials,
-        List<TypeObjectArchetype<?>> typeObjects,
-        List<GetterMethod> getters) implements GroupingArchetype {
-    public GroupingArchetypeImpl {
+        ListEffectiveStatement statement,
+        TypeName parentName,
+        TypeName keyName,
+        List<GetterMethod> getters,
+        List<Partial> partials) implements EntryObjectArchetype {
+    public EntryObjectArchetypeN00 {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(partials);
-        requireNonNull(typeObjects);
         requireNonNull(getters);
+        requireNonNull(partials);
     }
+
+    @Override
+    public List<TypeObjectArchetype<?>> typeObjects() {
+        return List.of();
+    }
+
 
     @Override
     public int hashCode() {
@@ -45,6 +51,6 @@ public record GroupingArchetypeImpl(
 
     @Override
     public String toString() {
-        return TypeMethods.toString(GroupingArchetype.class, this);
+        return TypeMethods.toString(EntryObjectArchetype.class, this);
     }
 }

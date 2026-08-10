@@ -12,26 +12,29 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
+import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 
+// N partials, N type objects
 @NonNullByDefault
-public record ContainerObjectArchetypeImpl(
+public record GroupingArchetypeN0(
         TypeName name,
-        ContainerEffectiveStatement statement,
-        TypeName parentName,
-        List<Partial> partials,
-        List<TypeObjectArchetype<?>> typeObjects,
-        List<GetterMethod> getters) implements ContainerObjectArchetype {
-    public ContainerObjectArchetypeImpl {
+        GroupingEffectiveStatement statement,
+        List<GetterMethod> getters,
+        List<Partial> partials) implements GroupingArchetype {
+    public GroupingArchetypeN0 {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(partials);
-        requireNonNull(typeObjects);
         requireNonNull(getters);
+        requireNonNull(partials);
+    }
+
+    @Override
+    public List<TypeObjectArchetype<?>> typeObjects() {
+        return List.of();
     }
 
     @Override
@@ -46,6 +49,6 @@ public record ContainerObjectArchetypeImpl(
 
     @Override
     public String toString() {
-        return TypeMethods.toString(ContainerObjectArchetype.class, this);
+        return TypeMethods.toString(GroupingArchetype.class, this);
     }
 }
