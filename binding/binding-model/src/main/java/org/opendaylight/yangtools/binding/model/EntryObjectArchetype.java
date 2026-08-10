@@ -10,7 +10,10 @@ package org.opendaylight.yangtools.binding.model;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EntryObject;
-import org.opendaylight.yangtools.binding.model.impl.EntryObjectArchetypeImpl;
+import org.opendaylight.yangtools.binding.model.impl.EntryObjectArchetype000;
+import org.opendaylight.yangtools.binding.model.impl.EntryObjectArchetype0N0;
+import org.opendaylight.yangtools.binding.model.impl.EntryObjectArchetypeN00;
+import org.opendaylight.yangtools.binding.model.impl.EntryObjectArchetypeNN0;
 import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
@@ -21,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
  */
 @NonNullByDefault
 public sealed interface EntryObjectArchetype extends ChildOfArchetype.OfList, ReturnType
-        permits EntryObjectArchetypeImpl {
+        permits EntryObjectArchetype000, EntryObjectArchetype0N0, EntryObjectArchetypeN00, EntryObjectArchetypeNN0 {
     @Override
     @SuppressWarnings("rawtypes")
     default Class<EntryObject> contract() {
@@ -36,7 +39,31 @@ public sealed interface EntryObjectArchetype extends ChildOfArchetype.OfList, Re
     static EntryObjectArchetype of(final TypeName typeName, final ListEffectiveStatement statement,
             final TypeName parentName, final TypeName keyName, final List<GroupingArchetype> groupings,
             final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters) {
-        return new EntryObjectArchetypeImpl(typeName, statement, parentName, keyName, TypeMethods.copyList(groupings),
-            TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));
+        final var gtrs = TypeMethods.copyList(getters);
+        return switch (groupings.size()) {
+            case 0 -> of0xx(typeName, statement, parentName, keyName, gtrs, typeObjects);
+            default -> ofNxx(typeName, statement, parentName, keyName, gtrs, TypeMethods.copyList(groupings),
+                typeObjects);
+        };
+    }
+
+    private static EntryObjectArchetype of0xx(final TypeName typeName, final ListEffectiveStatement statement,
+            final TypeName parentName, final TypeName keyName, final List<GetterMethod> getters,
+            final List<TypeObjectArchetype<?>> typeObjects) {
+        return switch (typeObjects.size()) {
+            case 0 -> new EntryObjectArchetype000(typeName, statement, parentName, keyName, getters);
+            default -> new EntryObjectArchetype0N0(typeName, statement, parentName, keyName, getters,
+                TypeMethods.copyList(typeObjects));
+        };
+    }
+
+    private static EntryObjectArchetype ofNxx(final TypeName typeName, final ListEffectiveStatement statement,
+            final TypeName parentName, final TypeName keyName, final List<GetterMethod> getters,
+            final List<Partial> partials, final List<TypeObjectArchetype<?>> typeObjects) {
+        return switch (typeObjects.size()) {
+            case 0 -> new EntryObjectArchetypeN00(typeName, statement, parentName, keyName, getters, partials);
+            default -> new EntryObjectArchetypeNN0(typeName, statement, parentName, keyName, getters, partials,
+                TypeMethods.copyList(typeObjects));
+        };
     }
 }

@@ -12,27 +12,33 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
+import org.opendaylight.yangtools.binding.model.EntryObjectArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 
 @NonNullByDefault
-public record AugmentationArchetypeImpl(
+public record EntryObjectArchetype000(
         TypeName name,
-        AugmentEffectiveStatement statement,
-        TypeName targetName,
-        List<Partial> partials,
-        List<TypeObjectArchetype<?>> typeObjects,
-        List<GetterMethod> getters) implements AugmentationArchetype {
-    public AugmentationArchetypeImpl {
+        ListEffectiveStatement statement,
+        TypeName parentName,
+        TypeName keyName,
+        List<GetterMethod> getters) implements EntryObjectArchetype {
+    public EntryObjectArchetype000 {
         requireNonNull(name);
         requireNonNull(statement);
-        requireNonNull(targetName);
-        requireNonNull(partials);
-        requireNonNull(typeObjects);
         requireNonNull(getters);
+    }
+
+    @Override
+    public List<Partial> partials() {
+        return List.of();
+    }
+
+    @Override
+    public List<TypeObjectArchetype<?>> typeObjects() {
+        return List.of();
     }
 
     @Override
@@ -47,6 +53,6 @@ public record AugmentationArchetypeImpl(
 
     @Override
     public String toString() {
-        return TypeMethods.toStringHelper(AugmentationArchetype.class, this).add("target", targetName()).toString();
+        return TypeMethods.toString(EntryObjectArchetype.class, this);
     }
 }

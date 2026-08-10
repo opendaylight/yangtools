@@ -10,7 +10,10 @@ package org.opendaylight.yangtools.binding.model;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentation;
-import org.opendaylight.yangtools.binding.model.impl.AugmentationArchetypeImpl;
+import org.opendaylight.yangtools.binding.model.impl.AugmentationArchetype00;
+import org.opendaylight.yangtools.binding.model.impl.AugmentationArchetype0N;
+import org.opendaylight.yangtools.binding.model.impl.AugmentationArchetypeN0;
+import org.opendaylight.yangtools.binding.model.impl.AugmentationArchetypeNN;
 import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 
@@ -20,7 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface AugmentationArchetype extends DataContainerArchetype permits AugmentationArchetypeImpl {
+public sealed interface AugmentationArchetype extends DataContainerArchetype
+        permits AugmentationArchetype00, AugmentationArchetype0N, AugmentationArchetypeN0, AugmentationArchetypeNN {
     @Override
     @SuppressWarnings("rawtypes")
     default Class<Augmentation> contract() {
@@ -38,7 +42,30 @@ public sealed interface AugmentationArchetype extends DataContainerArchetype per
     static AugmentationArchetype of(final TypeName typeName, final AugmentEffectiveStatement statement,
             final TypeName targetName, final List<GroupingArchetype> groupings,
             final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters) {
-        return new AugmentationArchetypeImpl(typeName, statement, targetName, TypeMethods.copyList(groupings),
-            TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));
+        final var gtrs = TypeMethods.copyList(getters);
+        return switch (groupings.size()) {
+            case 0 -> of0x(typeName, statement, targetName, gtrs, typeObjects);
+            default -> ofNx(typeName, statement, targetName, gtrs, TypeMethods.copyList(groupings), typeObjects);
+        };
+    }
+
+    private static AugmentationArchetype of0x(final TypeName typeName, final AugmentEffectiveStatement statement,
+            final TypeName targetName, final List<GetterMethod> getters,
+            final List<TypeObjectArchetype<?>> typeObjects) {
+        return switch (typeObjects.size()) {
+            case 0 -> new AugmentationArchetype00(typeName, statement, targetName, getters);
+            default -> new AugmentationArchetype0N(typeName, statement, targetName, getters,
+                TypeMethods.copyList(typeObjects));
+        };
+    }
+
+    private static AugmentationArchetype ofNx(final TypeName typeName, final AugmentEffectiveStatement statement,
+            final TypeName targetName, final List<GetterMethod> getters, final List<Partial> partials,
+            final List<TypeObjectArchetype<?>> typeObjects) {
+        return switch (typeObjects.size()) {
+            case 0 -> new AugmentationArchetypeN0(typeName, statement, targetName, getters, partials);
+            default -> new AugmentationArchetypeNN(typeName, statement, targetName, getters, partials,
+                TypeMethods.copyList(typeObjects));
+        };
     }
 }
