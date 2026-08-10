@@ -22,7 +22,6 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.CONST_STO_REGISTRAR;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.nameInModuleOf;
-import static org.opendaylight.yangtools.binding.contract.Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME;
 
 import com.google.common.base.MoreObjects;
 import java.util.LinkedHashMap;
@@ -96,8 +95,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
             bb
                 .nl()
                 .at().eol(override)
-                .str("public final ").str(importedName(valueType)).str(' ' + SCALAR_TYPE_OBJECT_GET_VALUE_NAME + "()")
-                .oB()
+                .str("public final ").str(importedName(valueType)).str(" getValue()").oB()
                 .str("return _value");
             if (valueType.isArray()) {
                 bb.str(".clone()");

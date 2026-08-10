@@ -130,11 +130,6 @@ public final class Naming {
     private static final Splitter DOT_SPLITTER = Splitter.on('.');
 
     /**
-     * Name of {@link ScalarTypeObject#getValue()}.
-     */
-    public static final @NonNull String SCALAR_TYPE_OBJECT_GET_VALUE_NAME = "getValue";
-
-    /**
      * Prefix for normal getter methods.
      */
     public static final @NonNull String GETTER_PREFIX = "get";

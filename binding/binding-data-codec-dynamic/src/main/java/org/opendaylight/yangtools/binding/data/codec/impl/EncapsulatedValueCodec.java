@@ -20,7 +20,6 @@ import java.lang.invoke.MethodType;
 import java.util.concurrent.ExecutionException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
-import org.opendaylight.yangtools.binding.contract.Naming;
 
 /**
  * Derived YANG types are just immutable value holders for simple value
@@ -45,7 +44,7 @@ final class EncapsulatedValueCodec extends SchemaUnawareCodec {
             @Override
             public EncapsulatedValueCodec load(final Class<? extends ScalarTypeObject> key)
                     throws ReflectiveOperationException {
-                final var method = key.getMethod(Naming.SCALAR_TYPE_OBJECT_GET_VALUE_NAME);
+                final var method = key.getMethod("getValue");
                 final var lookup = MethodHandles.publicLookup();
                 final var retType = method.getReturnType();
                 return new EncapsulatedValueCodec(lookup.findConstructor(key,
