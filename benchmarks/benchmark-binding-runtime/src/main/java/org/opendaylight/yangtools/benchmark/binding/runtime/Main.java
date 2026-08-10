@@ -29,6 +29,7 @@ public final class Main {
 
         for (var arg : args) {
             classes.addAll(switch (arg) {
+                case "openconfig" -> OpenConfig240119.classes();
                 case "openroadm" -> OpenRoadm1311.classes();
                 case "tapi" -> Tapi240.classes();
                 default -> throw new IllegalArgumentException("Unknown model set '" + arg + "'");
