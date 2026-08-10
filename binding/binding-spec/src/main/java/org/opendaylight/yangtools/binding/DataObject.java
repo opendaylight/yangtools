@@ -13,6 +13,7 @@ package org.opendaylight.yangtools.binding;
  *
  * @author Tony Tkacik
  */
+// FIXME: not DataContainer nor BindingObject
 public sealed interface DataObject extends DataContainer, BindingObject
         permits Augmentation, CaseObject, ChildOf,
                 // FIXME: YANGTOOLS-1921: not these
