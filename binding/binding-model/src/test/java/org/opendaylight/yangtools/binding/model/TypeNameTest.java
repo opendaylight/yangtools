@@ -7,15 +7,23 @@
  */
 package org.opendaylight.yangtools.binding.model;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HexFormat;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 
 class TypeNameTest {
@@ -144,5 +152,61 @@ class TypeNameTest {
         assertTrue(baseType1.equals(baseType4));
         assertFalse(baseType1.equals(baseType5));
         assertFalse(baseType1.equals(null));
+    }
+
+    @Test
+    void primitiveSerializationWorks() {
+        final var orig = TypeName.ofClass(int.class);
+        assertEquals(orig, assertSerDes(orig, """
+            aced00057372003b6f72672e6f70656e6461796c696768742e79616e67746f6f6c732e62696e64696e672e6d6f64656c2e547970654\
+            e616d65245072696d69746976650000000000000001020000787200316f72672e6f70656e6461796c696768742e79616e67746f6f6c\
+            732e62696e64696e672e6d6f64656c2e547970654e616d6500000000000000010200014c000a73696d706c654e616d657400124c6a6\
+            176612f6c616e672f537472696e673b7870740003696e74"""));
+    }
+
+    @Test
+    void topLevelSerializationWorks() {
+        final var orig = TypeName.ofClass(Object.class);
+        assertEquals(orig, assertSerDes(orig, """
+            aced00057372003a6f72672e6f70656e6461796c696768742e79616e67746f6f6c732e62696e64696e672e6d6f64656c2e547970654\
+            e616d6524546f704c6576656c00000000000000010200014c000b7061636b6167654e616d657400124c6a6176612f6c616e672f5374\
+            72696e673b7872003b6f72672e6f70656e6461796c696768742e79616e67746f6f6c732e62696e64696e672e6d6f64656c2e5479706\
+            54e616d65245265666572656e63650000000000000001020000787200316f72672e6f70656e6461796c696768742e79616e67746f6f\
+            6c732e62696e64696e672e6d6f64656c2e547970654e616d6500000000000000010200014c000a73696d706c654e616d6571007e000\
+            178707400064f626a6563747400096a6176612e6c616e67"""));
+    }
+
+    @Test
+    void nestedSerializationWorks() {
+        final var orig = TypeName.ofClass(Object.class).createEnclosed("Foo").createEnclosed("Bar");
+        assertEquals(orig, assertSerDes(orig, """
+            aced0005737200386f72672e6f70656e6461796c696768742e79616e67746f6f6c732e62696e64696e672e6d6f64656c2e547970654\
+            e616d65244e657374656400000000000000010200014c0019696d6d6564696174656c79456e636c6f73696e67436c61737374003d4c\
+            6f72672f6f70656e6461796c696768742f79616e67746f6f6c732f62696e64696e672f6d6f64656c2f547970654e616d65245265666\
+            572656e63653b7872003b6f72672e6f70656e6461796c696768742e79616e67746f6f6c732e62696e64696e672e6d6f64656c2e5479\
+            70654e616d65245265666572656e63650000000000000001020000787200316f72672e6f70656e6461796c696768742e79616e67746\
+            f6f6c732e62696e64696e672e6d6f64656c2e547970654e616d6500000000000000010200014c000a73696d706c654e616d65740012\
+            4c6a6176612f6c616e672f537472696e673b78707400034261727371007e0000740003466f6f7372003a6f72672e6f70656e6461796\
+            c696768742e79616e67746f6f6c732e62696e64696e672e6d6f64656c2e547970654e616d6524546f704c6576656c00000000000000\
+            010200014c000b7061636b6167654e616d6571007e00047871007e00027400064f626a6563747400096a6176612e6c616e67"""));
+    }
+
+    @NonNullByDefault
+    private static TypeName assertSerDes(final TypeName name, final String expectedHexString) {
+        final var baos = new ByteArrayOutputStream();
+        assertDoesNotThrow(() -> {
+            try (var oos = new ObjectOutputStream(baos)) {
+                oos.writeObject(name);
+            }
+        });
+
+        final var bytes = baos.toByteArray();
+        assertEquals(expectedHexString, HexFormat.of().formatHex(bytes));
+
+        return assertDoesNotThrow(() -> {
+            try (var ois = new ObjectInputStream(new ByteArrayInputStream(bytes))) {
+                return assertInstanceOf(TypeName.class, ois.readObject());
+            }
+        });
     }
 }
