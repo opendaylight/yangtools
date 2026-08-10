@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import java.io.ObjectStreamException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -29,7 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 @NonNullByDefault
 public abstract sealed class TypeName implements Comparable<TypeName>, Identifier {
-    private static final class Primitive extends TypeName {
+    static final class Primitive extends TypeName {
         @java.io.Serial
         private static final long serialVersionUID = 1L;
 
@@ -82,6 +83,11 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Identifie
         @Override
         public String canonicalName() {
             return simpleName();
+        }
+
+        @Override
+        Object writeReplace() throws ObjectStreamException {
+            return new TNPv1(simpleName());
         }
     }
 
@@ -167,6 +173,11 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Identifie
         StringBuilder appendClass(final StringBuilder sb) {
             return sb.append(packageName).append('.').append(simpleName());
         }
+
+        @Override
+        Object writeReplace() throws ObjectStreamException {
+            return new TNTv1(packageName, simpleName());
+        }
     }
 
     private static final class Nested extends Reference {
@@ -220,6 +231,11 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Identifie
         @Override
         public TypeName topLevelClass() {
             return immediatelyEnclosingClass.topLevelClass();
+        }
+
+        @Override
+        Object writeReplace() throws ObjectStreamException {
+            throw new UnsupportedOperationException();
         }
     }
 
@@ -393,4 +409,7 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Identifie
     public final String toString() {
         return canonicalName();
     }
+
+    @java.io.Serial
+    abstract Object writeReplace() throws ObjectStreamException;
 }
