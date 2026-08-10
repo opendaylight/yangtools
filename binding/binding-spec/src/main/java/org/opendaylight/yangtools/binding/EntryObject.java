@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding;
 
-import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
-
 /**
  * A {@link DataObject} which represents a single entry in a {@code list} with a {@code key} -- and hence it has a
  * {@link #key()}.
@@ -25,10 +23,7 @@ import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
  * @see ItemObject
  */
 public non-sealed interface EntryObject<P extends DataContainer, T extends EntryObject<P, T, K>, K extends Key<T>>
-        extends Augmentable<T>, ChildOf<P>, JavaDataContainer<T>, KeyAware<K> {
-    @Override
-    Class<T> implementedInterface();
-
+        extends Augmentable<T>, ChildOf<P>, ParentObject<T>, KeyAware<K> {
     @Override
     K key();
 }

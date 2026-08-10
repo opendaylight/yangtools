@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding;
 
-import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
-
 /**
  * A concrete {@code case} in a {@code choice}.
  *
@@ -23,12 +21,9 @@ public non-sealed interface CaseObject<
         T extends CaseObject<P, C, T>>
         // FIXME: not just DataObject, but also ChildOf<P>, allowing direct addressability -- but can codec deal with
         //        that?
-        extends Augmentable<T>, ChoiceContract<P, C>, DataObject, JavaDataContainer<T> {
+        extends Augmentable<T>, ChoiceContract<P, C>, DataObject, ParentObject<T> {
     @Override
     default Class<T> implementedCase() {
         return implementedInterface();
     }
-
-    @Override
-    Class<T> implementedInterface();
 }

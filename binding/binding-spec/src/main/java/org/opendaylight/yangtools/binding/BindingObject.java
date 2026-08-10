@@ -25,6 +25,8 @@ package org.opendaylight.yangtools.binding;
  * @author Jie Han
  */
 public sealed interface BindingObject
-    permits Annotation, BaseIdentity, Grouping, DataObject, Key, NotificationBody, OpaqueObject, TypeObject, YangData {
+    // FIXME: YANGTOOLS-1921: not DataObject directly
+    permits Annotation, BaseIdentity, Grouping, DataObject, Key, NotificationBody, OpaqueObject, ParentObject,
+            TypeObject, YangData {
     // nothing else
 }

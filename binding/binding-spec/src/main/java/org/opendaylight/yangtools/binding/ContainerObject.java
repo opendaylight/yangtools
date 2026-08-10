@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding;
 
-import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
-
 /**
  * A {@link DataObject} which represents a {@code container} with a {@code key}.
  *
@@ -17,7 +15,6 @@ import org.opendaylight.yangtools.binding.lib.JavaDataContainer;
  * @since 16.0.0
  */
 public non-sealed interface ContainerObject<P extends DataContainer, T extends ContainerObject<P, T>>
-        extends Augmentable<T>, ChildOf<P>, JavaDataContainer<T> {
-    @Override
-    Class<T> implementedInterface();
+    extends Augmentable<T>, ChildOf<P>, ParentObject<T> {
+    // nothing else
 }
