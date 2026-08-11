@@ -26,7 +26,7 @@ final class ItemObjectTemplate extends InterfaceTemplate<ItemObjectArchetype> im
     private static final ConcreteType ITEM_OBJECT = ConcreteType.ofClass(ItemObject.class);
 
     ItemObjectTemplate(final DataRootArchetype root, final ItemObjectArchetype archetype) {
-        super(root, archetype, DataContainerContract.JAVA, true);
+        super(root, archetype);
     }
 
     @Override
@@ -45,5 +45,14 @@ final class ItemObjectTemplate extends InterfaceTemplate<ItemObjectArchetype> im
     @Override
     QNameConstant constants() {
         return new QNameConstant.InInterface(this, archetype.statement().argument());
+    }
+
+    @Override
+    BlockBuilder contractMethods(final BlockBuilder bb) {
+        return bb
+            .nl()
+            .frg(new ImplementedInterfaceMethod.Canonical(this))
+            .nl()
+            .frg(new JavaDataContainerMethods(javaType(), getters, true));
     }
 }

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.VerifyException;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNull;
@@ -34,16 +32,10 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     //       file generation, we can free this. builders acess this as well and there is no guarantee of order of
     //       rendering ... so this needs further analysis.
     final @NonNull DataContainerGetters getters;
-    final boolean augmentable;
-
-    private final @NonNull DataContainerContract contract;
 
     @NonNullByDefault
-    InterfaceTemplate(final DataRootArchetype root, final T archetype, final DataContainerContract contract,
-            final boolean augmentable) {
+    InterfaceTemplate(final DataRootArchetype root, final T archetype) {
         super(root, archetype);
-        this.contract = requireNonNull(contract);
-        this.augmentable = augmentable;
         getters = DataContainerGetters.of(archetype);
     }
 
@@ -131,7 +123,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
 
     @NonNullByDefault
     BlockBuilder contractMethods(final BlockBuilder bb) {
-        return bb.frg(contract.implementationIn(this));
+        return bb;
     }
 
     @NonNullByDefault

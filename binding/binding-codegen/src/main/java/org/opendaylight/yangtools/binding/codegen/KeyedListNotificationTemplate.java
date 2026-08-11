@@ -32,7 +32,7 @@ final class KeyedListNotificationTemplate extends InterfaceTemplate<KeyedListNot
 
     KeyedListNotificationTemplate(final DataRootArchetype root, final KeyedListNotificationArchetype archetype,
             final KeyArchetype key) {
-        super(root, archetype, DataContainerContract.JAVA, true);
+        super(root, archetype);
         keyName = key.name();
     }
 
@@ -53,5 +53,14 @@ final class KeyedListNotificationTemplate extends InterfaceTemplate<KeyedListNot
     @Override
     QNameConstant constants() {
         return new QNameConstant.InInterface(this, archetype.statement().argument());
+    }
+
+    @Override
+    BlockBuilder contractMethods(final BlockBuilder bb) {
+        return bb
+            .nl()
+            .frg(new ImplementedInterfaceMethod.Canonical(this))
+            .nl()
+            .frg(new JavaDataContainerMethods(javaType(), getters, true));
     }
 }

@@ -32,7 +32,7 @@ final class EntryObjectTemplate extends InterfaceTemplate<EntryObjectArchetype>
     final KeyArchetype key;
 
     EntryObjectTemplate(final DataRootArchetype root, final EntryObjectArchetype archetype, final KeyArchetype key) {
-        super(root, archetype, DataContainerContract.JAVA, true);
+        super(root, archetype);
         this.key = requireNonNull(key);
     }
 
@@ -52,5 +52,14 @@ final class EntryObjectTemplate extends InterfaceTemplate<EntryObjectArchetype>
     @Override
     QNameConstant constants() {
         return new QNameConstant.InInterface(this, archetype.statement().argument());
+    }
+
+    @Override
+    BlockBuilder contractMethods(final BlockBuilder bb) {
+        return bb
+            .nl()
+            .frg(new ImplementedInterfaceMethod.Canonical(this))
+            .nl()
+            .frg(new JavaDataContainerMethods(javaType(), getters, true));
     }
 }

@@ -28,7 +28,7 @@ final class ContainerObjectTemplate extends InterfaceTemplate<ContainerObjectArc
     private static final ConcreteType CONTAINER_OBJECT = ConcreteType.ofClass(ContainerObject.class);
 
     ContainerObjectTemplate(final DataRootArchetype root, final ContainerObjectArchetype archetype) {
-        super(root, archetype, DataContainerContract.JAVA, true);
+        super(root, archetype);
     }
 
     @Override
@@ -47,5 +47,14 @@ final class ContainerObjectTemplate extends InterfaceTemplate<ContainerObjectArc
     @Override
     QNameConstant constants() {
         return new QNameConstant.InInterface(this, archetype.statement().argument());
+    }
+
+    @Override
+    BlockBuilder contractMethods(final BlockBuilder bb) {
+        return bb
+            .nl()
+            .frg(new ImplementedInterfaceMethod.Canonical(this))
+            .nl()
+            .frg(new JavaDataContainerMethods(javaType(), getters, true));
     }
 }
