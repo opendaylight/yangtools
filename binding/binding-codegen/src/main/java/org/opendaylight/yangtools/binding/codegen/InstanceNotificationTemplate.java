@@ -27,7 +27,7 @@ final class InstanceNotificationTemplate extends InterfaceTemplate<InstanceNotif
     private static final ConcreteType INSTANCE_NOTIFICATION = ConcreteType.ofClass(InstanceNotification.class);
 
     InstanceNotificationTemplate(final DataRootArchetype root, final InstanceNotificationArchetype archetype) {
-        super(root, archetype, DataContainerContract.JAVA, true);
+        super(root, archetype, true);
     }
 
     @Override
@@ -46,5 +46,14 @@ final class InstanceNotificationTemplate extends InterfaceTemplate<InstanceNotif
     @Override
     QNameConstant constants() {
         return new QNameConstant.InInterface(this, archetype.statement().argument());
+    }
+
+    @Override
+    BlockBuilder contractMethods(final BlockBuilder bb) {
+        return bb
+            .nl()
+            .frg(new ImplementedInterfaceMethod.Canonical(this))
+            .nl()
+            .frg(new JavaDataContainerMethods(javaType(), getters, true));
     }
 }

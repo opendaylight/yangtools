@@ -26,7 +26,7 @@ final class CaseObjectTemplate extends InterfaceTemplate<CaseObjectArchetype> im
     private static final ConcreteType CASE_OBJECT = ConcreteType.ofClass(CaseObject.class);
 
     CaseObjectTemplate(final DataRootArchetype root, final CaseObjectArchetype archetype) {
-        super(root, archetype, DataContainerContract.JAVA, true);
+        super(root, archetype, true);
     }
 
     @Override
@@ -48,4 +48,14 @@ final class CaseObjectTemplate extends InterfaceTemplate<CaseObjectArchetype> im
     QNameConstant constants() {
         return new QNameConstant.InInterface(this, archetype.statement().argument());
     }
+
+    @Override
+    BlockBuilder contractMethods(final BlockBuilder bb) {
+        return bb
+            .nl()
+            .frg(new ImplementedInterfaceMethod.Canonical(this))
+            .nl()
+            .frg(new JavaDataContainerMethods(javaType(), getters, true));
+    }
+
 }

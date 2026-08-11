@@ -33,7 +33,7 @@ final class YangDataTemplate extends InterfaceTemplate<YangDataArchetype> implem
     private static final ConcreteType YANG_DATA = ConcreteType.ofClass(YangData.class);
 
     YangDataTemplate(final DataRootArchetype root, final YangDataArchetype archetype) {
-        super(root, archetype, DataContainerContract.JAVA, false);
+        super(root, archetype, false);
     }
 
     @Override
@@ -61,5 +61,14 @@ final class YangDataTemplate extends InterfaceTemplate<YangDataArchetype> implem
                     .str(" " + NAME_STATIC_FIELD_NAME + " = ").str(importedName(yangModuleInfo))
                     .str("." + YANGDATANAMEOF_METHOD_NAME + "(").jStr(yangDataName.name()).eol(");");
         };
+    }
+
+    @Override
+    BlockBuilder contractMethods(final BlockBuilder bb) {
+        return bb
+            .nl()
+            .frg(new ImplementedInterfaceMethod.Canonical(this))
+            .nl()
+            .frg(new JavaDataContainerMethods(javaType(), getters, false));
     }
 }

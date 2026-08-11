@@ -24,7 +24,7 @@ final class GroupingTemplate extends InterfaceTemplate<GroupingArchetype> {
     private static final ConcreteType GROUPING = ConcreteType.ofClass(Grouping.class);
 
     GroupingTemplate(final DataRootArchetype root, final GroupingArchetype archetype) {
-        super(root, archetype, DataContainerContract.NONE, false);
+        super(root, archetype, false);
     }
 
     @Override

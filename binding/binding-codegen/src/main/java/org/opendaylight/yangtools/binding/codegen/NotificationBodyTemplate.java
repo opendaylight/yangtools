@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.CLASS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
+
 import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -25,7 +28,7 @@ final class NotificationBodyTemplate extends InterfaceTemplate<NotificationBodyA
     private static final ConcreteType NOTIFICATION_BODY = ConcreteType.ofClass(NotificationBody.class);
 
     NotificationBodyTemplate(final DataRootArchetype root, final NotificationBodyArchetype archetype) {
-        super(root, archetype, DataContainerContract.NARROW, false);
+        super(root, archetype, false);
     }
 
     @Override
@@ -33,5 +36,15 @@ final class NotificationBodyTemplate extends InterfaceTemplate<NotificationBodyA
         return Iterators.concat(
             Iterators.singletonIterator(ParameterizedType.of(NOTIFICATION_BODY, archetype)),
             super.extendsTypes());
+    }
+
+    @Override
+    BlockBuilder contractMethods(final BlockBuilder bb) {
+        return bb
+            .nl()
+            .at().eol(importedName(OVERRIDE))
+            // FIXME: use selfRef instead of canonical name
+            .str(importedName(CLASS)).str("<? extends ").str(archetype.canonicalName())
+                .eol("> implementedInterface();");
     }
 }
