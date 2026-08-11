@@ -14,9 +14,6 @@ module org.opendaylight.yangtools.binding.generator {
     exports org.opendaylight.yangtools.binding.generator;
     exports org.opendaylight.yangtools.binding.generator.dagger;
 
-    // FIXME: remove this package
-    exports org.opendaylight.yangtools.binding.generator.impl.di;
-
     provides BindingGenerator with DefaultBindingGenerator;
     provides BindingRuntimeGenerator with DefaultBindingRuntimeGenerator;
 
