@@ -33,8 +33,7 @@ final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> {
     private static final ConcreteType DATA_ROOT = ConcreteType.ofClass(DataRoot.class);
 
     private DataRootTemplate(final DataRootArchetype archetype) {
-        // TODO: use Contract.JAVA
-        super(archetype, archetype, DataContainerContract.BINDING, false);
+        super(archetype, archetype, false);
     }
 
     static DataRootTemplate of(final DataRootArchetype root, final DataRootArchetype archetype) {
@@ -66,5 +65,12 @@ final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> {
                     .str(moduleInfo).str('.' + INSTANCE_FIELD_NAME + ", ")
                     .str(moduleInfo).eol('.' + CONST_UNSAFE_ACCESS + ");");
         };
+    }
+
+    @Override
+    BlockBuilder contractMethods(final BlockBuilder bb) {
+        return bb
+            .nl()
+            .frg(new ImplementedInterfaceMethod.Canonical(this));
     }
 }
