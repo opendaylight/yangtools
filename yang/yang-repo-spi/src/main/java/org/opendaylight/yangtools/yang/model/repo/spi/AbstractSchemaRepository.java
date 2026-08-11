@@ -17,14 +17,13 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.concepts.Registration;
@@ -47,13 +46,14 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
      * Source identifier -> representation -> provider map. We usually are looking for
      * a specific representation of a source.
      */
-    private final @GuardedBy("this") Map<SourceIdentifier, ListMultimap<Class<? extends SourceRepresentation>,
+    @GuardedBy("this")
+    private final HashMap<SourceIdentifier, ListMultimap<Class<? extends SourceRepresentation>,
             SchemaSourceRegistration>> sources = new HashMap<>();
-
-    /*
+   /*
      * Schema source listeners.
      */
-    private final @GuardedBy("this") List<SchemaListenerRegistration> listeners = new ArrayList<>();
+    @GuardedBy("this")
+    private final ArrayList<SchemaListenerRegistration> listeners = new ArrayList<>();
 
     private static <T extends SourceRepresentation> ListenableFuture<T> fetchSource(
             final SourceIdentifier sourceId, final Iterator<SchemaSourceRegistration> it) {

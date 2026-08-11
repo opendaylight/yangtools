@@ -13,8 +13,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Verify;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.FluentFuture;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -23,13 +23,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
-import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.AbstractRegistration;
@@ -63,9 +61,10 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     private static final Logger LOG = LoggerFactory.getLogger(YangTextSchemaContextResolver.class);
     private static final Duration SOURCE_LIFETIME = Duration.ofSeconds(60);
 
-    private final Collection<SourceIdentifier> requiredSources = new ConcurrentLinkedDeque<>();
-    private final Multimap<SourceIdentifier, YangTextSource> texts = ArrayListMultimap.create();
-    private final @GuardedBy("this") Map<QNameModule, List<ImmutableSet<String>>> registeredFeatures = new HashMap<>();
+    private final ConcurrentLinkedDeque<SourceIdentifier> requiredSources = new ConcurrentLinkedDeque<>();
+    private final ArrayListMultimap<SourceIdentifier, YangTextSource> texts = ArrayListMultimap.create();
+    @GuardedBy("this")
+    private final HashMap<QNameModule, List<ImmutableSet<String>>> registeredFeatures = new HashMap<>();
     private final AtomicReference<Optional<EffectiveModelContext>> currentSchemaContext =
             new AtomicReference<>(Optional.empty());
     private final GuavaSchemaSourceCache<YangIRSource> cache;
@@ -76,7 +75,8 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
 
     private volatile Object version = new Object();
     private volatile Object contextVersion = version;
-    private @GuardedBy("this") FeatureSet supportedFeatures = null;
+    @GuardedBy("this")
+    private FeatureSet supportedFeatures = null;
 
     private YangTextSchemaContextResolver(final YangTextToIRSourceTransformer textToIR,
             final SchemaRepository repository, final SchemaSourceRegistry registry) {
