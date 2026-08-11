@@ -122,18 +122,6 @@ public final class StatementSupportBundle implements Immutable {
     }
 
     /**
-     * Return a new {@link Builder} for a {@link StatementSupportBundle} derived from specific parent.
-     *
-     * @param parent the parent
-     * @return A new {@link Builder}
-     * @deprecated Use {@link #builderDerivedFrom(StatementSupportBundle)} instead.
-     */
-    @Deprecated(since = "14.0.20", forRemoval = true)
-    public static @NonNull Builder derivedFrom(final StatementSupportBundle parent) {
-        return builderDerivedFrom(parent);
-    }
-
-    /**
      * {@return statement definitions common for all versions}
      */
     public @NonNull ImmutableMap<QName, StatementSupport<?, ?, ?>> getCommonDefinitions() {
