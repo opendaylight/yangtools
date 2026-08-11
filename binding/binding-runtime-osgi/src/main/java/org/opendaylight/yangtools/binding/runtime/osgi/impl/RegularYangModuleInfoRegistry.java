@@ -9,11 +9,10 @@ package org.opendaylight.yangtools.binding.runtime.osgi.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-import org.checkerframework.checker.lock.qual.GuardedBy;
-import org.checkerframework.checker.lock.qual.Holding;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.meta.YangFeatureProvider;
@@ -38,9 +37,12 @@ final class RegularYangModuleInfoRegistry extends YangModuleInfoRegistry {
     private final ComponentFactory<OSGiModuleInfoSnapshotImpl> contextFactory;
     private final ModuleInfoSnapshotResolver resolver;
 
-    private @GuardedBy("this") ComponentInstance<OSGiModuleInfoSnapshotImpl> currentInstance;
-    private @GuardedBy("this") ModuleInfoSnapshot currentSnapshot;
-    private @GuardedBy("this") int generation;
+    @GuardedBy("this")
+    private ComponentInstance<OSGiModuleInfoSnapshotImpl> currentInstance;
+    @GuardedBy("this")
+    private ModuleInfoSnapshot currentSnapshot;
+    @GuardedBy("this")
+    private int generation;
 
     private volatile boolean ignoreScanner = true;
 
@@ -102,7 +104,7 @@ final class RegularYangModuleInfoRegistry extends YangModuleInfoRegistry {
         return resolver.registerModuleFeatures(cast.boundModule(), cast.supportedFeatures());
     }
 
-    @Holding("this")
+    @GuardedBy("this")
     private void updateService() {
         final ModuleInfoSnapshot newSnapshot;
         try {
@@ -116,7 +118,7 @@ final class RegularYangModuleInfoRegistry extends YangModuleInfoRegistry {
             return;
         }
 
-        final ComponentInstance<OSGiModuleInfoSnapshotImpl> newInstance = contextFactory.newInstance(
+        final var newInstance = contextFactory.newInstance(
             OSGiModuleInfoSnapshotImpl.props(nextGeneration(), newSnapshot));
         if (currentInstance != null) {
             currentInstance.dispose();
@@ -125,7 +127,7 @@ final class RegularYangModuleInfoRegistry extends YangModuleInfoRegistry {
         currentSnapshot = newSnapshot;
     }
 
-    @Holding("this")
+    @GuardedBy("this")
     private long nextGeneration() {
         return generation == -1 ? -1 : ++generation;
     }
