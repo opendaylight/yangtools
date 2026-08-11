@@ -484,7 +484,6 @@ abstract class AbstractTypeObjectGenerator<
         };
     }
 
-    @Override
     final @Nullable GetterMethod constructGetterMethodOverride() {
         if (!(refType instanceof ResolvedLeafref)) {
             // We are not dealing with a leafref or have nothing to add

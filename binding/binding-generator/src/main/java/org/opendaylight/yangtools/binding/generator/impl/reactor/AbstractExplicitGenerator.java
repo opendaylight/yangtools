@@ -326,6 +326,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
         return domain.addPrimary(this, new CamelCaseNamingStrategy(namespace(), localName()));
     }
 
+    // FIXME: separate this method into a separate mixin interface
     @Nullable GetterMethod asGetterMethod() {
         if (isAugmenting()) {
             // Do not process augmented nodes: they will be taken care of in their home augmentation
@@ -336,15 +337,14 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
             // grouping. There is one exception to this rule: 'type leafref' can use a relative path to point
             // outside of its home grouping. In this case we need to examine the instantiation until we succeed in
             // resolving the reference.
-            return constructGetterMethodOverride();
+            //
+            // This dispatch is not exactly nice but it beats defining a no-op method here only to have it overridden
+            // by a final method in AbstractTypeObjectGenerator: this dispatches directly where it needs to
+            return this instanceof AbstractTypeObjectGenerator<?, ?> typeObjectGenerator
+                ? typeObjectGenerator.constructGetterMethodOverride() : null;
         }
 
         return constructGetter(methodReturnType(), Collections.emptyIterator());
-    }
-
-    @Nullable GetterMethod constructGetterMethodOverride() {
-        // No-op for most cases
-        return null;
     }
 
     @NonNullByDefault
