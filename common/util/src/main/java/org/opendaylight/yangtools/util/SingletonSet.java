@@ -35,17 +35,6 @@ public abstract sealed class SingletonSet<E> implements SequencedSet<E>, Immutab
         return element == null ? (SingletonSet<E>) NullElement.INSTANCE : new Regular<>(element);
     }
 
-    /**
-     * Return the single element contained in this set.
-     *
-     * @return This set's element.
-     * @deprecated Use {@link #getFirst()} instead.
-     */
-    @Deprecated(since = "14.0.0", forRemoval = true)
-    public final E getElement() {
-        return getFirst();
-    }
-
     @Override
     public abstract E getFirst();
 
