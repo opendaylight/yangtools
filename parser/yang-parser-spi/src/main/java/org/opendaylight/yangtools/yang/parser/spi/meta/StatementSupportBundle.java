@@ -1,4 +1,4 @@
-/*
+
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -119,18 +119,6 @@ public final class StatementSupportBundle implements Immutable {
      */
     public static @NonNull Builder builderDerivedFrom(final StatementSupportBundle parent) {
         return new Builder(parent.getSupportedVersions(), parent);
-    }
-
-    /**
-     * Return a new {@link Builder} for a {@link StatementSupportBundle} derived from specific parent.
-     *
-     * @param parent the parent
-     * @return A new {@link Builder}
-     * @deprecated Use {@link #builderDerivedFrom(StatementSupportBundle)} instead.
-     */
-    @Deprecated(since = "14.0.20", forRemoval = true)
-    public static @NonNull Builder derivedFrom(final StatementSupportBundle parent) {
-        return builderDerivedFrom(parent);
     }
 
     /**
