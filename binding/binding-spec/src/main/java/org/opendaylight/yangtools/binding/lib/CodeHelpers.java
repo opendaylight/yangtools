@@ -512,9 +512,7 @@ public final class CodeHelpers {
     }
 
     //
-    ////
-    ////// JavaContract.javaHC support methods
-    ////
+    // JavaContract.javaHC support methods
     //
 
     /**
@@ -986,9 +984,7 @@ public final class CodeHelpers {
     }
 
     //
-    ////
-    ////// JavaContract.javaTS support methods
-    ////
+    // JavaContract.javaTS support methods
     //
 
     /**
@@ -1097,9 +1093,7 @@ public final class CodeHelpers {
     }
 
     //
-    ////
-    ////// BaseIdentity implementation methods
-    ////
+    // BaseIdentity implementation methods
     //
 
     /**
@@ -1130,9 +1124,7 @@ public final class CodeHelpers {
     }
 
     //
-    ////
-    ////// BitsTypeObject implementation methods
-    ////
+    // BitsTypeObject implementation methods
     //
 
     /**
@@ -1203,9 +1195,7 @@ public final class CodeHelpers {
     }
 
     //
-    ////
-    ////// ScalarTypeObject implementation methods
-    ////
+    // ScalarTypeObject implementation methods
     //
 
     /**
