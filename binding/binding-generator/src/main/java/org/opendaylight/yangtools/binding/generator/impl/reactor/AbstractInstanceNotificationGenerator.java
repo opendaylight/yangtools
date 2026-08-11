@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 abstract sealed class AbstractInstanceNotificationGenerator extends AbstractNotificationGenerator
         permits InstanceNotificationGenerator, KeyedListNotificationGenerator {
     AbstractInstanceNotificationGenerator(final NotificationEffectiveStatement statement,
-            final DataContainerGenerator<?, ?> parent) {
+            final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

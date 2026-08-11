@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 final class OutputGenerator
         extends OperationContainerGenerator<OutputEffectiveStatement, OutputRuntimeType, RpcOutputArchetype> {
     @NonNullByDefault
-    OutputGenerator(final OutputEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
+    OutputGenerator(final OutputEffectiveStatement statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
