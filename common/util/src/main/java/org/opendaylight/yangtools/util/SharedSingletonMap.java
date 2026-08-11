@@ -143,11 +143,6 @@ public abstract sealed class SharedSingletonMap<K, V>
         return new Unordered<>(entry.getKey(), entry.getValue());
     }
 
-    @Deprecated(since = "14.0.0", forRemoval = true)
-    public final Entry<K, V> getEntry() {
-        return firstEntry();
-    }
-
     @Override
     public final Entry<K, V> firstEntry() {
         return Map.entry(keySet.getFirst(), value);
