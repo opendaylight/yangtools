@@ -226,7 +226,11 @@ final class BlockBuilder extends Block.Builder {
      */
     @NonNullByDefault
     BlockBuilder jStr(final String str) {
-        buf().append('"').append(verifyStr(str)).append('"');
+        if (str.isEmpty()) {
+            buf().append("\"\"");
+        } else {
+            buf().append('"').append(verifyStr(str)).append('"');
+        }
         return this;
     }
 

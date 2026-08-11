@@ -1,0 +1,10 @@
+module yt1937 {
+  prefix yt1937;
+  namespace yt1937;
+
+  typedef frontend-type {
+    type string {
+      pattern "";
+    }
+  }
+}
