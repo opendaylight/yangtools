@@ -35,8 +35,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 public abstract sealed class DataContainerGenerator<S extends EffectiveStatement<?, ?>, R extends CompositeRuntimeType>
         extends CompositeGenerator<S, R>
         permits AugmentGenerator, AugmentableGenerator, GroupingGenerator, ModuleGenerator, YangDataGenerator,
-                // FIXME: YANGTOOLS-1935: not this one
-                NotificationBodyGenerator,
                 // FIXME: YANGTOOLS-1934: not these two
                 ChoiceGenerator, OperationGenerator {
     /**

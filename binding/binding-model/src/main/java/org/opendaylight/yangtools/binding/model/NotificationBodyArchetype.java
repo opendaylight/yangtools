@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface NotificationBodyArchetype extends DataContainerArchetype.Partial
+public sealed interface NotificationBodyArchetype extends AugmentableArchetype, DataContainerArchetype.Partial
         permits NotificationBodyArchetypeImpl {
     @Override
     @SuppressWarnings("rawtypes")

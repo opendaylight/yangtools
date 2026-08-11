@@ -12,6 +12,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationRuntimeType;
 import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
@@ -51,7 +52,8 @@ abstract sealed class AbstractNotificationGenerator
 
     @Override
     abstract DataContainerArchetype.OfNotification createTypeImpl(TypeName typeName,
-        NotificationEffectiveStatement statement, List<GroupingArchetype> groupings);
+        NotificationEffectiveStatement statement, List<GroupingArchetype> groupings,
+        List<AugmentationArchetype> augments);
 
     @Override
     final GetterMethod asGetterMethod() {

@@ -61,5 +61,11 @@ module opendaylight-test-notification {
             uses notif-grp;
         }
     }
+
+    augment /wood/tree/in-grp {
+        leaf from-augment {
+            type string;
+        }
+    }
 }
 

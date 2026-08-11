@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.generator.impl.reactor;
 import com.google.common.base.VerifyException;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
@@ -32,7 +33,8 @@ abstract sealed class AbstractInstanceNotificationGenerator extends AbstractNoti
 
     @Override
     final DataContainerArchetype.OfNotification createTypeImpl(final TypeName typeName,
-            final NotificationEffectiveStatement statement, final List<GroupingArchetype> groupings) {
+            final NotificationEffectiveStatement statement, final List<GroupingArchetype> groupings,
+            final List<AugmentationArchetype> augments) {
         final var parentName = getParent().typeName();
         final var orig = getOriginal();
         if (orig.equals(this)) {

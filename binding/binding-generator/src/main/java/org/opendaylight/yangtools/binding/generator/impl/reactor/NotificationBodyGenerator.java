@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultNotificationBodyRuntimeType;
 import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.NotificationBodyArchetype;
@@ -29,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * A composite generator producing {@link NotificationBody}s for {@code notifications} declared in {@code grouping}s.
  */
 final class NotificationBodyGenerator
-        extends DataContainerGenerator<NotificationEffectiveStatement, NotificationBodyRuntimeType> {
+        extends AugmentableGenerator<NotificationEffectiveStatement, NotificationBodyRuntimeType> {
     @NonNullByDefault
     NotificationBodyGenerator(final NotificationEffectiveStatement statement, final GroupingGenerator parent) {
         super(statement, parent);
@@ -47,7 +48,8 @@ final class NotificationBodyGenerator
 
     @Override
     NotificationBodyArchetype createTypeImpl(final TypeName typeName,
-            final NotificationEffectiveStatement statement, final List<@NonNull GroupingArchetype> groupings) {
+            final NotificationEffectiveStatement statement, final List<@NonNull GroupingArchetype> groupings,
+            final List<@NonNull AugmentationArchetype> augments) {
         return NotificationBodyArchetype.of(typeName, statement, groupings, collectTypeObjects(), collectGetters());
     }
 
@@ -68,7 +70,8 @@ final class NotificationBodyGenerator
                 if (!augments.isEmpty()) {
                     throw new VerifyException("Unexpected augments " + augments);
                 }
-                return new DefaultNotificationBodyRuntimeType((NotificationBodyArchetype) type, statement, children);
+                return new DefaultNotificationBodyRuntimeType((NotificationBodyArchetype) type, statement, children,
+                    augments);
             }
         };
     }
