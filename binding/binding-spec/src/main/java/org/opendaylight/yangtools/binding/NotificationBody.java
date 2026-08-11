@@ -18,5 +18,6 @@ package org.opendaylight.yangtools.binding;
  * @param <B> Concrete {@link NotificationBody} type
  */
 public non-sealed interface NotificationBody<B extends NotificationBody<B>> extends BindingObject, DataContainer {
-    // Nothing else
+    @Override
+    Class<? extends B> implementedInterface();
 }
