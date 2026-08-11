@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * A composite generator producing {@link NotificationBody}s for {@code notifications} declared in {@code grouping}s.
  */
 final class NotificationBodyGenerator
-        extends DataContainerGenerator<NotificationEffectiveStatement, NotificationBodyRuntimeType> {
+        extends AugmentableGenerator<NotificationEffectiveStatement, NotificationBodyRuntimeType> {
     @NonNullByDefault
     NotificationBodyGenerator(final NotificationEffectiveStatement statement, final GroupingGenerator parent) {
         super(statement, parent);
@@ -68,7 +68,8 @@ final class NotificationBodyGenerator
                 if (!augments.isEmpty()) {
                     throw new VerifyException("Unexpected augments " + augments);
                 }
-                return new DefaultNotificationBodyRuntimeType((NotificationBodyArchetype) type, statement, children);
+                return new DefaultNotificationBodyRuntimeType((NotificationBodyArchetype) type, statement, children,
+                    augments);
             }
         };
     }

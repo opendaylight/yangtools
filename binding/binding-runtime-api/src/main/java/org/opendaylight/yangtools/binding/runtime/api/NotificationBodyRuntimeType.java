@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 /**
  * A {@link CompositeRuntimeType} associated with a {@code notification} statement.
  */
-public interface NotificationBodyRuntimeType extends CompositeRuntimeType {
+public interface NotificationBodyRuntimeType extends AugmentableRuntimeType {
     @Override
     NotificationBodyArchetype javaType();
 

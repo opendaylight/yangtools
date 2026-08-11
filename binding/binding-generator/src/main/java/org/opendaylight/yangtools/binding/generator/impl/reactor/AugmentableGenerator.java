@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 abstract sealed class AugmentableGenerator<S extends EffectiveStatement<?, ?>, R extends AugmentableRuntimeType>
         extends DataContainerGenerator<S, R> implements AugmentTargetGenerator
         permits AbstractNotificationGenerator, CaseGenerator, ContainerGenerator, ListGenerator,
-                OperationContainerGenerator {
+                NotificationBodyGenerator, OperationContainerGenerator {
     @NonNullByDefault
     AugmentableGenerator(final S statement) {
         super(statement);
