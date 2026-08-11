@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 final class InputGenerator
         extends OperationContainerGenerator<InputEffectiveStatement, InputRuntimeType, RpcInputArchetype> {
     @NonNullByDefault
-    InputGenerator(final InputEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
+    InputGenerator(final InputEffectiveStatement statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

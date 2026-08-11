@@ -27,7 +27,7 @@ public abstract sealed class OperationGenerator<
         R extends OperationRuntimeType> extends DataContainerGenerator<S, R>
         permits AbstractActionGenerator, RpcGenerator {
     @NonNullByDefault
-    OperationGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
+    OperationGenerator(final S statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
