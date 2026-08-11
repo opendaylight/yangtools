@@ -121,7 +121,7 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
     /**
      * List of {@code augment} statements targeting this generator. This list is maintained only for the primary
      * incarnation. This list is an evolving entity until after we have finished linkage of original statements. It is
-     * expected to be stable at the start of {@code step 2} in {@link GeneratorReactor#execute(TypeBuilderFactory)}.
+     * expected to be stable at the start of {@code step 2} in {@link GeneratorReactor#execute()}.
      */
     private @NonNull List<AugmentGenerator> augments = List.of();
 
