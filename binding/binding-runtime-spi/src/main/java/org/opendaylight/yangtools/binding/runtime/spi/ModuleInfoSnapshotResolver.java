@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.MultimapBuilder;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,8 +24,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-import org.checkerframework.checker.lock.qual.GuardedBy;
-import org.checkerframework.checker.lock.qual.Holding;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.DataRoot;
@@ -93,11 +92,14 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
 
     private final YangTextSchemaContextResolver ctxResolver;
 
-    private final @GuardedBy("this") ListMultimap<SourceIdentifier, RegisteredModuleInfo> sourceToInfoReg =
+    @GuardedBy("this")
+    private final ListMultimap<SourceIdentifier, RegisteredModuleInfo> sourceToInfoReg =
         MultimapBuilder.hashKeys().arrayListValues().build();
-    private final @GuardedBy("this") ListMultimap<Class<? extends DataRoot<?>>,
-            ImmutableSet<YangFeature<?, ?>>> moduleToFeatures = MultimapBuilder.hashKeys().arrayListValues().build();
-    private @GuardedBy("this") @Nullable ModuleInfoSnapshot currentSnapshot;
+    @GuardedBy("this")
+    private final ListMultimap<Class<? extends DataRoot<?>>, ImmutableSet<YangFeature<?, ?>>> moduleToFeatures =
+        MultimapBuilder.hashKeys().arrayListValues().build();
+    @GuardedBy("this")
+    private @Nullable ModuleInfoSnapshot currentSnapshot;
 
     public ModuleInfoSnapshotResolver(final String name, final YangTextToIRSourceTransformer textToIR,
             final YangParserFactory parserFactory) {
@@ -133,7 +135,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
         return ret;
     }
 
-    @Holding("this")
+    @GuardedBy("this")
     private Registration register(final @NonNull YangModuleInfo moduleInfo) {
         final var regInfos = flatDependencies(moduleInfo).stream()
             .map(this::registerModuleInfo)
@@ -150,7 +152,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
     /*
      * Perform registration of a YangModuleInfo.
      */
-    @Holding("this")
+    @GuardedBy("this")
     private RegisteredModuleInfo registerModuleInfo(final @NonNull YangModuleInfo info) {
         // First search for an existing explicit registration
         final var sourceId = sourceIdentifierFrom(info);
@@ -187,7 +189,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
         return updateSnapshot(effectiveModel);
     }
 
-    @Holding("this")
+    @GuardedBy("this")
     private @NonNull ModuleInfoSnapshot updateSnapshot(final EffectiveModelContext modelContext) {
         // Alright, now let's find out which sources got captured
         final var sources = new HashSet<SourceIdentifier>();

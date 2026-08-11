@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import com.google.errorprone.annotations.concurrent.GuardedBy;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Iterator;
@@ -23,8 +24,6 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Stream;
-import org.checkerframework.checker.lock.qual.GuardedBy;
-import org.checkerframework.checker.lock.qual.Holding;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
 import org.slf4j.Logger;
@@ -165,8 +164,10 @@ abstract class AbstractBatchingExecutor<K, T> extends AbstractSimpleIdentifiable
         private final Condition notFull = lock.newCondition();
         private final @NonNull K key;
 
-        private final @GuardedBy("lock") Queue<T> queue = new ArrayDeque<>();
-        private @GuardedBy("lock") boolean exiting;
+        @GuardedBy("lock")
+        private final Queue<T> queue = new ArrayDeque<>();
+        @GuardedBy("lock")
+        private boolean exiting;
 
         DispatcherTask(final @NonNull K key, final @NonNull Iterator<T> tasks) {
             this.key = requireNonNull(key);
@@ -244,7 +245,7 @@ abstract class AbstractBatchingExecutor<K, T> extends AbstractSimpleIdentifiable
             }
         }
 
-        @Holding("lock")
+        @GuardedBy("lock")
         private boolean waitForQueue() {
             long timeout = TASK_WAIT_NANOS;
 

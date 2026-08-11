@@ -28,6 +28,6 @@ module org.opendaylight.yangtools.binding.runtime.spi {
 
     // Annotations
     requires static transitive org.eclipse.jdt.annotation;
-    requires static org.checkerframework.checker.qual;
+    requires static com.google.errorprone.annotations;
     requires static org.osgi.annotation.bundle;
 }

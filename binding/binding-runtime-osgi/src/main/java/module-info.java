@@ -19,7 +19,7 @@ module org.opendaylight.yangtools.binding.runtime.osgi {
     requires static org.apache.karaf.features.core;
 
     // Annotations
-    requires static org.checkerframework.checker.qual;
+    requires static com.google.errorprone.annotations;
     requires static org.eclipse.jdt.annotation;
     requires static org.osgi.annotation.bundle;
     requires static org.osgi.service.component.annotations;
