@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 abstract sealed class AbstractActionGenerator extends OperationGenerator<ActionEffectiveStatement, ActionRuntimeType>
         permits ActionGenerator, KeyedListActionGenerator {
     @NonNullByDefault
-    AbstractActionGenerator(final ActionEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
+    AbstractActionGenerator(final ActionEffectiveStatement statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

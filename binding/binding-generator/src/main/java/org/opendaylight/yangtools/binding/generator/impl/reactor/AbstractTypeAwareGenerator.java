@@ -35,7 +35,7 @@ abstract class AbstractTypeAwareGenerator<
     private IdentityGenerator contextType;
 
     @NonNullByDefault
-    AbstractTypeAwareGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
+    AbstractTypeAwareGenerator(final S statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

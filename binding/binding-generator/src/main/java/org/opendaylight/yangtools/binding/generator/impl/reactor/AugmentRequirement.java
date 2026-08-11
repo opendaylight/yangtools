@@ -41,12 +41,12 @@ final class AugmentRequirement implements Mutable {
     private final @NonNull AugmentGenerator augment;
     private final @NonNull Iterator<QName> remaining;
 
-    private @NonNull DataContainerGenerator<?, ?> target;
+    private @NonNull CompositeGenerator<?, ?> target;
     private QNameModule localNamespace;
     private QName qname;
 
     @NonNullByDefault
-    private AugmentRequirement(final AugmentGenerator augment, final DataContainerGenerator<?, ?> target) {
+    private AugmentRequirement(final AugmentGenerator augment, final CompositeGenerator<?, ?> target) {
         this.augment = requireNonNull(augment);
         this.target = requireNonNull(target);
         remaining = augment.statement().argument().getNodeIdentifiers().iterator();
@@ -115,21 +115,21 @@ final class AugmentRequirement implements Mutable {
         }
 
         // Lastly try local statements adjusted with namespace, if applicable
-        gen = target.findLocalSchemaTreeGenerator(squashNamespaces.contains(qname.getModule())
-            ? qname.bindTo(verifyNotNull(localNamespace)) : qname);
+        gen = target.findLocalSchemaTreeGenerator(
+            squashNamespaces.contains(qname.getModule()) ? qname.bindTo(verifyNotNull(localNamespace)) : qname);
         if (gen != null) {
             return progressTo(gen);
         }
         return LinkageProgress.NONE;
     }
 
-    private @NonNull LinkageProgress moveTo(final @NonNull DataContainerGenerator<?, ?> newTarget) {
+    private @NonNull LinkageProgress moveTo(final @NonNull CompositeGenerator<?, ?> newTarget) {
         target = newTarget;
         return tryProgress();
     }
 
     private @NonNull LinkageProgress progressTo(final @NonNull AbstractExplicitGenerator<?, ?> newTarget) {
-        if (!(newTarget instanceof DataContainerGenerator<?, ?> targetContainer)) {
+        if (!(newTarget instanceof CompositeGenerator<?, ?> targetContainer)) {
             throw new VerifyException("Unexpected generator " + newTarget);
         }
         target = targetContainer;
