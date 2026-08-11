@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.AugmentableRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  */
 abstract sealed class OperationContainerGenerator<
         S extends DataTreeEffectiveStatement<?>,
-        R extends CompositeRuntimeType,
+        R extends AugmentableRuntimeType,
         A extends AugmentableArchetype> extends AugmentableGenerator<S, R>
         permits InputGenerator, OutputGenerator {
     @NonNullByDefault

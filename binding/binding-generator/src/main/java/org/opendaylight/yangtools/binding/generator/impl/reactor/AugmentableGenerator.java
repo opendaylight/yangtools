@@ -13,14 +13,14 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.AugmentableRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * A {@link DataContainerGenerator} which additionally is an {@link AugmentTargetGenerator}.
  */
-// FIXME: sharpen to AugmentableRuntimeType and also NotificationBody
-abstract sealed class AugmentableGenerator<S extends EffectiveStatement<?, ?>, R extends CompositeRuntimeType>
+// FIXME: JIRA: YANGTOOLS-1935: also NotificationBody
+abstract sealed class AugmentableGenerator<S extends EffectiveStatement<?, ?>, R extends AugmentableRuntimeType>
         extends DataContainerGenerator<S, R> implements AugmentTargetGenerator
         permits AbstractNotificationGenerator, CaseGenerator, ContainerGenerator, ListGenerator,
                 OperationContainerGenerator {
