@@ -7,11 +7,8 @@
  */
 package org.opendaylight.yangtools.binding.generator.impl.reactor;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.ArrayDeque;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 
@@ -20,10 +17,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
  * This is essentially a stack of {@link DataContainerGenerator}s which should be examined.
  */
 final class AugmentResolver implements Mutable {
-    private final ArrayDeque<DataContainerGenerator<?, ?>> stack = new ArrayDeque<>();
+    private final ArrayDeque<CompositeGenerator<?, ?>> stack = new ArrayDeque<>();
 
     void enter(final DataContainerGenerator<?, ?> generator) {
-        stack.push(requireNonNull(generator));
+        stack.push(generator);
     }
 
     void exit() {
@@ -32,27 +29,11 @@ final class AugmentResolver implements Mutable {
 
     @NonNull AugmentGenerator getAugment(final AugmentEffectiveStatement statement) {
         for (var generator : stack) {
-            final var found = findAugment(generator, statement);
+            final var found = generator.findAugmentByStatement(statement);
             if (found != null) {
                 return found;
             }
         }
         throw new IllegalStateException("Failed to resolve " + statement + " in " + stack);
-    }
-
-    private @Nullable AugmentGenerator findAugment(final DataContainerGenerator<?, ?> generator,
-            final AugmentEffectiveStatement statement) {
-        for (var augment : generator.augments()) {
-            if (augment.matchesInstantiated(statement)) {
-                return augment;
-            }
-        }
-        for (var grouping : generator.groupings()) {
-            final var found = findAugment(grouping, statement);
-            if (found != null) {
-                return found;
-            }
-        }
-        return null;
     }
 }

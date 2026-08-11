@@ -72,7 +72,7 @@ final class ChoiceGenerator extends DataContainerGenerator<ChoiceEffectiveStatem
     }
 
     @NonNullByDefault
-    ChoiceGenerator(final ChoiceEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
+    ChoiceGenerator(final ChoiceEffectiveStatement statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

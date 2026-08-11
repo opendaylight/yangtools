@@ -36,7 +36,7 @@ final class GroupingGenerator extends DataContainerGenerator<GroupingEffectiveSt
     private List<DataContainerGenerator<?, ?>> users;
 
     @NonNullByDefault
-    GroupingGenerator(final GroupingEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
+    GroupingGenerator(final GroupingEffectiveStatement statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

@@ -37,7 +37,7 @@ final class TypedefGenerator extends AbstractTypeObjectGenerator<TypedefEffectiv
     private List<AbstractTypeObjectGenerator<?, ?>> derivedGenerators = null;
 
     @NonNullByDefault
-    TypedefGenerator(final TypedefEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
+    TypedefGenerator(final TypedefEffectiveStatement statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

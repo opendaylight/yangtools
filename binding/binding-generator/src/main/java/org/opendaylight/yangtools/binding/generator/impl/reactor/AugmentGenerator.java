@@ -91,10 +91,10 @@ public abstract sealed class AugmentGenerator
         return otherIt.hasNext() ? -1 : 0;
     };
 
-    private DataContainerGenerator<?, ?> targetGen;
+    private CompositeGenerator<?, ?> targetGen;
 
     @NonNullByDefault
-    AugmentGenerator(final AugmentEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
+    AugmentGenerator(final AugmentEffectiveStatement statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
@@ -214,12 +214,12 @@ public abstract sealed class AugmentGenerator
         };
     }
 
-    final void setTargetGenerator(final DataContainerGenerator<?, ?> targetGenerator) {
+    final void setTargetGenerator(final CompositeGenerator<?, ?> targetGenerator) {
         verify(targetGen == null, "Attempted to relink %s, already have target %s", this, targetGen);
         targetGen = requireNonNull(targetGenerator);
     }
 
-    final @NonNull DataContainerGenerator<?, ?> targetGenerator() {
+    final @NonNull CompositeGenerator<?, ?> targetGenerator() {
         final var ret = targetGen;
         if (ret != null) {
             return ret;

@@ -33,7 +33,7 @@ final class EntryObjectGenerator extends ListGenerator {
 
     @NonNullByDefault
     EntryObjectGenerator(final ListEffectiveStatement statement, final KeyEffectiveStatement key,
-            final DataContainerGenerator<?, ?> parent) {
+            final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
         keyGenerator = new KeyGenerator(key, parent, this);
     }

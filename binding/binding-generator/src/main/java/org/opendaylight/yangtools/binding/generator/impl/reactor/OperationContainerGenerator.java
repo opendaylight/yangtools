@@ -29,7 +29,7 @@ abstract sealed class OperationContainerGenerator<
         A extends AugmentableArchetype> extends DataContainerGenerator<S, R>
         permits InputGenerator, OutputGenerator {
     @NonNullByDefault
-    OperationContainerGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
+    OperationContainerGenerator(final S statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
@@ -39,7 +39,7 @@ abstract sealed class OperationContainerGenerator<
     }
 
     @Override
-    final DataContainerGenerator<?, ?> getPackageParent() {
+    final CompositeGenerator<?, ?> getPackageParent() {
         return getParent().getParent();
     }
 

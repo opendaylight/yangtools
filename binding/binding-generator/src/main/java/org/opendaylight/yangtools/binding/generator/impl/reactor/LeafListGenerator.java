@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement
 final class LeafListGenerator
         extends AbstractTypeAwareGenerator<LeafListEffectiveStatement, LeafListRuntimeType, LeafListGenerator> {
     @NonNullByDefault
-    LeafListGenerator(final LeafListEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
+    LeafListGenerator(final LeafListEffectiveStatement statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

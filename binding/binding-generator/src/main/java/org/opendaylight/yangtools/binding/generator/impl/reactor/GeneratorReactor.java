@@ -247,7 +247,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         for (var gen : parent) {
             gen.ensureMember();
             collectCollisionDomains(result, gen);
-            if (gen instanceof DataContainerGenerator<?, ?> compositeGen) {
+            if (gen instanceof CompositeGenerator<?, ?> compositeGen) {
                 result.add(compositeGen.domain());
             }
         }
@@ -366,11 +366,11 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
     // Note: unlike other methods, this method pushes matching child to the stack
     private void linkUsesDependencies(final Iterable<? extends Generator> parent) {
         for (var child : parent) {
-            if (child instanceof DataContainerGenerator<?, ?> composite) {
-                LOG.trace("Visiting composite {}", composite);
-                stack.push(composite);
-                composite.linkUsesDependencies(this);
-                linkUsesDependencies(composite);
+            if (child instanceof DataContainerGenerator<?, ?> dataContainer) {
+                LOG.trace("Visiting composite {}", dataContainer);
+                stack.push(dataContainer);
+                dataContainer.linkUsesDependencies(this);
+                linkUsesDependencies(dataContainer);
                 stack.pop();
             }
         }
@@ -400,25 +400,31 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         return progress;
     }
 
-    private void linkDependencies(final Iterable<? extends Generator> parent) {
+    private void linkDependencies(final Iterable<? extends @NonNull Generator> parent) {
         for (var child : parent) {
-            if (child instanceof AbstractDependentGenerator<?, ?> dependent) {
-                dependent.linkDependencies(this);
-            } else if (child instanceof DataContainerGenerator) {
-                stack.push(child);
-                linkDependencies(child);
-                stack.pop();
+            switch (child) {
+                case AbstractDependentGenerator<?, ?> dependent -> dependent.linkDependencies(this);
+                case CompositeGenerator<?, ?> composite -> {
+                    stack.push(composite);
+                    linkDependencies(composite);
+                    stack.pop();
+                }
+                default -> {
+                    // no-op
+                }
             }
         }
     }
 
-    private void bindTypeDefinition(final Iterable<? extends Generator> parent) {
+    private void bindTypeDefinition(final Iterable<? extends @NonNull Generator> parent) {
         for (var child : parent) {
             stack.push(child);
-            if (child instanceof AbstractTypeObjectGenerator<?, ?> typeObject) {
-                typeObject.bindTypeDefinition(this);
-            } else if (child instanceof DataContainerGenerator) {
-                bindTypeDefinition(child);
+            switch (child) {
+                case AbstractTypeObjectGenerator<?, ?> typeObject -> typeObject.bindTypeDefinition(this);
+                case CompositeGenerator<?, ?> composite -> bindTypeDefinition(child);
+                default -> {
+                    // no-op
+                }
             }
             stack.pop();
         }
@@ -468,13 +474,17 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
         LOG.debug("Grouping usage completed after {} pass(es) with unused {} grouping(s)", passes, remaining.size());
     }
 
-    private static void freezeGroupingUsers(final Iterable<? extends Generator> parent) {
+    private static void freezeGroupingUsers(final Iterable<? extends @NonNull Generator> parent) {
         for (var child : parent) {
-            if (child instanceof DataContainerGenerator<?, ?> composite) {
-                if (composite instanceof GroupingGenerator grouping) {
+            switch (child) {
+                case GroupingGenerator grouping -> {
                     grouping.freezeUsers();
+                    freezeGroupingUsers(grouping);
                 }
-                freezeGroupingUsers(composite);
+                case CompositeGenerator<?, ?> composite -> freezeGroupingUsers(composite);
+                default -> {
+                    // no-op
+                }
             }
         }
     }

@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  */
 final class ContainerGenerator extends DataContainerGenerator<ContainerEffectiveStatement, ContainerRuntimeType> {
     @NonNullByDefault
-    ContainerGenerator(final ContainerEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
+    ContainerGenerator(final ContainerEffectiveStatement statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
