@@ -192,11 +192,12 @@ abstract sealed class CompositeGenerator<S extends EffectiveStatement<?, ?>, R e
     abstract @Nullable AbstractExplicitGenerator<?, ?> findInferredGenerator(@NonNull QName qname);
 
 
-    // FIXME: These four methods are specific to augment handling and should be exposed as aninterface towards callers.
-    //        As per RFC7950:
+    // FIXME: YANGTOOLS-1934: these four methods are specific to augment handling and should be part of
+    //        AugmentTargetGenerator because, as per RFC7950:
     //           This node is called the augment's target node.  The target node MUST be either
     //           a container, list, choice, case, input, output, or notification node.
-    //        So things like OperationGenerator are explicitly excluded, yet we have it here.
+    //        So things like OperationGenerator are explicitly excluded, yet we have it here (or rather as a subclass of
+    //        DataContainerGenerator)
 
     @NonNullByDefault
     abstract void addAugment(AugmentGenerator augment);

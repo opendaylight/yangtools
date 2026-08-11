@@ -33,9 +33,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 
 public abstract sealed class DataContainerGenerator<S extends EffectiveStatement<?, ?>, R extends CompositeRuntimeType>
         extends CompositeGenerator<S, R>
-        permits AbstractNotificationGenerator, AugmentGenerator, CaseGenerator, ChoiceGenerator, ContainerGenerator,
-                GroupingGenerator, ListGenerator, ModuleGenerator, NotificationBodyGenerator,
-                OperationContainerGenerator, OperationGenerator, YangDataGenerator {
+        permits AugmentGenerator, AugmentableGenerator, GroupingGenerator, ModuleGenerator, YangDataGenerator,
+                // FIXME: YANGTOOLS-1935: not this one
+                NotificationBodyGenerator,
+                // FIXME: YANGTOOLS-1934: not these two
+                ChoiceGenerator, OperationGenerator {
     /**
      * List of {@code augment} statements targeting this generator. This list is maintained only for the primary
      * incarnation. This list is an evolving entity until after we have finished linkage of original statements. It is
@@ -59,6 +61,7 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
         super(statement, parent);
     }
 
+    // FIXME: this should be part AugmentTargetGenerator
     final @NonNull List<AugmentGenerator> augments() {
         return augments;
     }
@@ -78,11 +81,13 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
 
     abstract @NonNull CompositeRuntimeTypeBuilder<S, R> createBuilder(@NonNull S statement);
 
+    // FIXME: this should be reworked with AugmentTargetGenerator in mind
     @Override
     final R createInternalRuntimeType(final AugmentResolver resolver, final S statement, final Type type) {
         return createBuilder(statement).populate(resolver, this).build(verifyGeneratedType(type));
     }
 
+    // FIXME: this should be reworked with AugmentTargetGenerator in mind
     final @Nullable AbstractExplicitGenerator<?, ?> findGenerator(final List<EffectiveStatement<?, ?>> stmtPath) {
         return findGenerator(MatchStrategy.identity(), stmtPath, 0);
     }

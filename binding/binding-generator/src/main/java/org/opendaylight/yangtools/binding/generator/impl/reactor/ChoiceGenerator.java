@@ -34,7 +34,9 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 /**
  * Generator corresponding to a {@code choice} statement.
  */
-final class ChoiceGenerator extends DataContainerGenerator<ChoiceEffectiveStatement, ChoiceRuntimeType> {
+final class ChoiceGenerator
+        extends DataContainerGenerator<ChoiceEffectiveStatement, ChoiceRuntimeType>
+        implements AugmentTargetGenerator {
     static final class ChoiceBuilder extends CompositeRuntimeTypeBuilder<ChoiceEffectiveStatement, ChoiceRuntimeType> {
         private final List<CaseRuntimeType> augmentedCases = new ArrayList<>();
 
