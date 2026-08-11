@@ -29,7 +29,7 @@ public final class IdentityGenerator
     private List<IdentityGenerator> baseIdentities = null;
 
     @NonNullByDefault
-    IdentityGenerator(final IdentityEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
+    IdentityGenerator(final IdentityEffectiveStatement statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

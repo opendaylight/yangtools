@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  */
 final class CaseGenerator extends DataContainerGenerator<CaseEffectiveStatement, CaseRuntimeType> {
     @NonNullByDefault
-    CaseGenerator(final CaseEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
+    CaseGenerator(final CaseEffectiveStatement statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
