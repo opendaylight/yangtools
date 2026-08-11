@@ -32,8 +32,8 @@ public sealed interface RpcOutputArchetype extends AugmentableArchetype permits 
 
     static RpcOutputArchetype of(final TypeName typeName, final OutputEffectiveStatement statement,
             final List<GroupingArchetype> groupings, final List<TypeObjectArchetype<?>> typeObjects,
-            final List<GetterMethod> getters) {
+            final List<GetterMethod> getters, final List<AugmentationArchetype> augmentations) {
         return new RpcOutputArchetypeImpl(typeName, statement, TypeMethods.copyList(groupings),
-            TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));
+            TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters), TypeMethods.copyList(augmentations));
     }
 }

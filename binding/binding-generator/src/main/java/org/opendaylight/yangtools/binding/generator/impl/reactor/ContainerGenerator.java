@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
 import org.opendaylight.yangtools.binding.generator.impl.rt.DefaultContainerRuntimeType;
 import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.GetterAnnotation;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
@@ -57,9 +58,9 @@ final class ContainerGenerator extends AugmentableGenerator<ContainerEffectiveSt
 
     @Override
     ContainerObjectArchetype createTypeImpl(final TypeName typeName, final ContainerEffectiveStatement statement,
-            final List<@NonNull GroupingArchetype> groupings) {
+            final List<@NonNull GroupingArchetype> groupings, final List<@NonNull AugmentationArchetype> augments) {
         return ContainerObjectArchetype.of(typeName, statement, parentNameForChildOf(), groupings, collectTypeObjects(),
-            collectGetters());
+            collectGetters(), collectAugmentations());
     }
 
     @Override

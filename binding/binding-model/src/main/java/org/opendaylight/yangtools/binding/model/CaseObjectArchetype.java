@@ -43,8 +43,10 @@ public sealed interface CaseObjectArchetype extends AugmentableArchetype permits
 
     static CaseObjectArchetype of(final TypeName typeName, final CaseEffectiveStatement statement,
             final TypeName parentName, final TypeName choiceName, final List<GroupingArchetype> groupings,
-            final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters) {
+            final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters,
+            final List<AugmentationArchetype> augmentations) {
         return new CaseObjectArchetypeImpl(typeName, statement, parentName, choiceName,
-            TypeMethods.copyList(groupings), TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));
+            TypeMethods.copyList(groupings), TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters),
+            TypeMethods.copyList(augmentations));
     }
 }

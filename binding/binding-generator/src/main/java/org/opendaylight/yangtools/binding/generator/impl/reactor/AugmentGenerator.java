@@ -150,6 +150,11 @@ public abstract sealed class AugmentGenerator
     }
 
     @Override
+    AugmentationArchetype getGeneratedType() {
+        return (AugmentationArchetype) super.getGeneratedType();
+    }
+
+    @Override
     final AugmentationArchetype createTypeImpl(final TypeName typeName, final AugmentEffectiveStatement statement,
             final List<@NonNull GroupingArchetype> groupings) {
         return AugmentationArchetype.of(typeName, statement, targetGenerator().typeName(), groupings,

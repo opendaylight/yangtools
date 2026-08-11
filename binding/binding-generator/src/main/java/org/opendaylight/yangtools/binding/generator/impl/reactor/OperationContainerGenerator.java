@@ -12,11 +12,12 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.generator.impl.reactor.CollisionDomain.Member;
 import org.opendaylight.yangtools.binding.model.AugmentableArchetype;
+import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.AugmentableRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -25,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  */
 abstract sealed class OperationContainerGenerator<
         S extends DataTreeEffectiveStatement<?>,
-        R extends CompositeRuntimeType,
+        R extends AugmentableRuntimeType,
         A extends AugmentableArchetype> extends AugmentableGenerator<S, R>
         permits InputGenerator, OutputGenerator {
     @NonNullByDefault
@@ -57,7 +58,8 @@ abstract sealed class OperationContainerGenerator<
 
     @Override
     final A createTypeImpl(final TypeName typeName, final S statement,
-            final List<@NonNull GroupingArchetype> groupings) {
+            final List<@NonNull GroupingArchetype> groupings,
+            final List<@NonNull AugmentationArchetype> augmentations) {
         if (getParent() instanceof ActionGenerator actionParent && actionParent.isAddedByUses()) {
             //        final ActionDefinition orig = findOrigAction(parentSchema, action).get();
             //        // Original definition may live in a different module, make sure we account for that
@@ -67,7 +69,7 @@ abstract sealed class OperationContainerGenerator<
             //        output = context.addAliasType(origContext, orig.getOutput(), action.getOutput());
             throw new UnsupportedOperationException("Lookup in original");
         }
-        return createArchetype(typeName, statement, groupings, collectTypeObjects(), collectGetters());
+        return createArchetype(typeName, statement, groupings, collectTypeObjects(), collectGetters(), augmentations);
     }
 
     @NonNullByDefault

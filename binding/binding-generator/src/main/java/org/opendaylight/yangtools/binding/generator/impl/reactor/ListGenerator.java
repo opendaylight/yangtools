@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.contract.StatementNamespace;
+import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.ChildOfArchetype;
 import org.opendaylight.yangtools.binding.model.GetterAnnotation;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
@@ -49,7 +50,7 @@ abstract sealed class ListGenerator extends AugmentableGenerator<ListEffectiveSt
 
     @Override
     final ChildOfArchetype.OfList createTypeImpl(final TypeName typeName, final ListEffectiveStatement statement,
-            final List<GroupingArchetype> groupings) {
+            final List<GroupingArchetype> groupings, final List<AugmentationArchetype> augments) {
         return createTypeImpl(typeName, statement, groupings, collectTypeObjects(), collectGetters());
     }
 

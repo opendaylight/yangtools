@@ -7,13 +7,19 @@
  */
 package org.opendaylight.yangtools.binding.model;
 
+import java.util.List;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentable;
 
 /**
  * An {@link DataContainerArchetype} for an {@link Augmentable} interface.
  */
+@NonNullByDefault
 public sealed interface AugmentableArchetype extends DataContainerArchetype
     permits CaseObjectArchetype, ChildOfArchetype, DataContainerArchetype.OfNotification, RpcInputArchetype,
             RpcOutputArchetype {
-    // nothing else
+    /**
+     * {@return the set of {@link AugmentationArchetype}s targetting this archetype}
+     */
+    List<AugmentationArchetype> augmentations();
 }

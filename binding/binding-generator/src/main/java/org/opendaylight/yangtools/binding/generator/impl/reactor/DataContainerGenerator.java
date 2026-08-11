@@ -18,6 +18,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.Type;
@@ -268,12 +269,17 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
 
     @Override
     final Archetype createTypeImpl() {
-        return createTypeImpl(typeName(), statement(), groupings.isEmpty() ? List.of()
-            : groupings.stream().map(GroupingGenerator::getGeneratedType).toList());
+        return createTypeImpl(typeName(), statement(),
+            groupings.isEmpty() ? List.of() : groupings.stream().map(GroupingGenerator::getGeneratedType).toList());
     }
 
     @NonNullByDefault
     abstract Archetype createTypeImpl(TypeName typeName, @NonNull S statement, List<GroupingArchetype> groupings);
+
+    @NonNullByDefault
+    final List<AugmentationArchetype> collectAugmentations() {
+        return augments.isEmpty() ? List.of() : augments.stream().map(AugmentGenerator::getGeneratedType).toList();
+    }
 
     @NonNullByDefault
     final List<GetterMethod> collectGetters() {

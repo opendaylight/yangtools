@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.binding.model.impl.ContainerObjectArchetype000
 import org.opendaylight.yangtools.binding.model.impl.ContainerObjectArchetype0N0;
 import org.opendaylight.yangtools.binding.model.impl.ContainerObjectArchetypeN00;
 import org.opendaylight.yangtools.binding.model.impl.ContainerObjectArchetypeNN0;
+import org.opendaylight.yangtools.binding.model.impl.ContainerObjectArchetypeNNN;
 import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
@@ -25,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
 @NonNullByDefault
 public sealed interface ContainerObjectArchetype extends ChildOfArchetype, ReturnType
         permits ContainerObjectArchetype000, ContainerObjectArchetype0N0, ContainerObjectArchetypeN00,
-                ContainerObjectArchetypeNN0 {
+                ContainerObjectArchetypeNN0, ContainerObjectArchetypeNNN {
     @Override
     @SuppressWarnings("rawtypes")
     default Class<ContainerObject> contract() {
@@ -37,11 +38,17 @@ public sealed interface ContainerObjectArchetype extends ChildOfArchetype, Retur
 
     static ContainerObjectArchetype of(final TypeName typeName, final ContainerEffectiveStatement statement,
             final TypeName parentName, final List<GroupingArchetype> groupings,
-            final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters) {
+            final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters,
+            final List<AugmentationArchetype> augmentations) {
         final var gtrs = TypeMethods.copyList(getters);
-        return switch (groupings.size()) {
-            case 0 -> of0xx(typeName, statement, parentName, gtrs, typeObjects);
-            default -> ofNxx(typeName, statement, parentName, gtrs, TypeMethods.copyList(groupings), typeObjects);
+        return switch (augmentations.size()) {
+            case 0 -> switch (groupings.size()) {
+                case 0 -> of0xx(typeName, statement, parentName, gtrs, typeObjects);
+                default -> ofNxx(typeName, statement, parentName, gtrs, TypeMethods.copyList(groupings), typeObjects);
+            };
+            default -> new ContainerObjectArchetypeNNN(typeName, statement, parentName, gtrs,
+                TypeMethods.copyList(groupings), TypeMethods.copyList(typeObjects),
+                TypeMethods.copyList(augmentations));
         };
     }
 

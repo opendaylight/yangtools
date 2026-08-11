@@ -13,26 +13,27 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
+import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
-import org.opendaylight.yangtools.binding.model.RpcOutputArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
-import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 @NonNullByDefault
-public record RpcOutputArchetypeImpl(
+public record ContainerObjectArchetypeNNN(
         TypeName name,
-        OutputEffectiveStatement statement,
+        ContainerEffectiveStatement statement,
+        TypeName parentName,
+        List<GetterMethod> getters,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<GetterMethod> getters,
-        List<AugmentationArchetype> augmentations) implements RpcOutputArchetype {
-    public RpcOutputArchetypeImpl {
+        List<AugmentationArchetype> augmentations) implements ContainerObjectArchetype {
+    public ContainerObjectArchetypeNNN {
         requireNonNull(name);
         requireNonNull(statement);
+        requireNonNull(getters);
         requireNonNull(partials);
         requireNonNull(typeObjects);
-        requireNonNull(getters);
         requireNonNull(augmentations);
     }
 
@@ -48,6 +49,6 @@ public record RpcOutputArchetypeImpl(
 
     @Override
     public String toString() {
-        return TypeMethods.toString(RpcOutputArchetype.class, this);
+        return TypeMethods.toString(ContainerObjectArchetype.class, this);
     }
 }

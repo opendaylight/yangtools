@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.ItemObjectArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
@@ -25,7 +26,8 @@ public record ItemObjectArchetypeImpl(
         TypeName parentName,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<GetterMethod> getters) implements ItemObjectArchetype {
+        List<GetterMethod> getters,
+        List<AugmentationArchetype> augmentations) implements ItemObjectArchetype {
     public ItemObjectArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
@@ -33,6 +35,7 @@ public record ItemObjectArchetypeImpl(
         requireNonNull(partials);
         requireNonNull(typeObjects);
         requireNonNull(getters);
+        requireNonNull(augmentations);
     }
 
     @Override

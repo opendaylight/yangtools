@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.RpcInputArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
@@ -24,13 +25,15 @@ public record RpcInputArchetypeImpl(
         InputEffectiveStatement statement,
         List<Partial> partials,
         List<TypeObjectArchetype<?>> typeObjects,
-        List<GetterMethod> getters) implements RpcInputArchetype {
+        List<GetterMethod> getters,
+        List<AugmentationArchetype> augmentations) implements RpcInputArchetype {
     public RpcInputArchetypeImpl {
         requireNonNull(name);
         requireNonNull(statement);
         requireNonNull(partials);
         requireNonNull(typeObjects);
         requireNonNull(getters);
+        requireNonNull(augmentations);
     }
 
     @Override

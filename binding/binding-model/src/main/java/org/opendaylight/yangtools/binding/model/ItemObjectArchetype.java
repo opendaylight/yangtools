@@ -30,8 +30,9 @@ public sealed interface ItemObjectArchetype extends ChildOfArchetype.OfList, Ret
 
     static ItemObjectArchetype of(final TypeName typeName, final ListEffectiveStatement statement,
             final TypeName parentName, final List<GroupingArchetype> groupings,
-            final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters) {
+            final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters,
+            final List<AugmentationArchetype> augmentations) {
         return new ItemObjectArchetypeImpl(typeName, statement, parentName, TypeMethods.copyList(groupings),
-            TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters));
+            TypeMethods.copyList(typeObjects), TypeMethods.copyList(getters), TypeMethods.copyList(augmentations));
     }
 }

@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.InstanceNotificationArchetype;
 import org.opendaylight.yangtools.binding.model.NotificationBodyArchetype;
@@ -45,6 +46,12 @@ public record InstanceNotificationArchetypeFromGrouping(
     @Override
     public List<GetterMethod> getters() {
         return List.of();
+    }
+
+    @Override
+    public List<AugmentationArchetype> augmentations() {
+        // FIXME: YANGTOOLS-1935: pick up from notificationBody?
+        throw new UnsupportedOperationException();
     }
 
     @Override
