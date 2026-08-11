@@ -25,7 +25,7 @@ final class RpcInputTemplate extends InterfaceTemplate<RpcInputArchetype> implem
     private static final ConcreteType RPC_INPUT = ConcreteType.ofClass(RpcInput.class);
 
     RpcInputTemplate(final DataRootArchetype root, final RpcInputArchetype archetype) {
-        super(root, archetype, DataContainerContract.JAVA, true);
+        super(root, archetype, true);
     }
 
     @Override
@@ -43,5 +43,14 @@ final class RpcInputTemplate extends InterfaceTemplate<RpcInputArchetype> implem
     @Override
     QNameConstant constants() {
         return new QNameConstant.InInterface(this, archetype.statement().argument());
+    }
+
+    @Override
+    BlockBuilder contractMethods(final BlockBuilder bb) {
+        return bb
+            .nl()
+            .frg(new ImplementedInterfaceMethod.Canonical(this))
+            .nl()
+            .frg(new JavaDataContainerMethods(javaType(), getters, true));
     }
 }
