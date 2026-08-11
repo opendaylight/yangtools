@@ -30,7 +30,7 @@ abstract sealed class AbstractNotificationGenerator
         permits AbstractInstanceNotificationGenerator, NotificationGenerator {
     @NonNullByDefault
     AbstractNotificationGenerator(final NotificationEffectiveStatement statement,
-            final DataContainerGenerator<?, ?> parent) {
+            final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

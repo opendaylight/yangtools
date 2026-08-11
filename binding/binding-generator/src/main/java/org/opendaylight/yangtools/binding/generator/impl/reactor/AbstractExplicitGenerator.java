@@ -71,7 +71,7 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
     }
 
     @NonNullByDefault
-    AbstractExplicitGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
+    AbstractExplicitGenerator(final S statement, final CompositeGenerator<?, ?> parent) {
         super(parent);
         this.statement = requireNonNull(statement);
     }

@@ -228,7 +228,7 @@ abstract class AbstractTypeObjectGenerator<
     private ReturnType methodReturnTypeElement;
 
     @NonNullByDefault
-    AbstractTypeObjectGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
+    AbstractTypeObjectGenerator(final S statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
         support = TypeObjectSupport.of(statement().typeStatement());
     }

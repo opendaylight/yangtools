@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
 @NonNullByDefault
 final class InstanceNotificationGenerator extends AbstractInstanceNotificationGenerator {
     InstanceNotificationGenerator(final NotificationEffectiveStatement statement,
-            final DataContainerGenerator<?, ?> parent) {
+            final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

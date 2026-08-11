@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 abstract class AbstractDependentGenerator<S extends EffectiveStatement<?, ?>, R extends RuntimeType>
         extends AbstractExplicitGenerator<S, R> {
     @NonNullByDefault
-    AbstractDependentGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {
+    AbstractDependentGenerator(final S statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 

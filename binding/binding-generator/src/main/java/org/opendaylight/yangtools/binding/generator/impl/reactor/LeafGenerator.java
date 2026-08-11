@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
  */
 final class LeafGenerator extends AbstractTypeAwareGenerator<LeafEffectiveStatement, LeafRuntimeType, LeafGenerator> {
     @NonNullByDefault
-    LeafGenerator(final LeafEffectiveStatement statement, final DataContainerGenerator<?, ?> parent) {
+    LeafGenerator(final LeafEffectiveStatement statement, final CompositeGenerator<?, ?> parent) {
         super(statement, parent);
     }
 
