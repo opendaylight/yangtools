@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collection;
@@ -138,24 +137,6 @@ public abstract sealed class BindingClassLoader extends ClassLoader
 
     BindingClassLoader(final BindingClassLoader parentLoader) {
         this(parentLoader, parentLoader.dumpDir);
-    }
-
-    /**
-     * Instantiate a new BindingClassLoader, which serves as the root of generated code loading.
-     *
-     * @param rootClass Class from which to derive the class loader
-     * @param dumpDir Directory in which to dump loaded bytecode
-     * @return A new BindingClassLoader.
-     * @throws NullPointerException if {@code parentLoader} is {@code null}
-     * @deprecated Use {@link #builder(Class)} instead
-     */
-    @Deprecated(since = "14.0.7")
-    public static @NonNull BindingClassLoader create(final Class<?> rootClass, final @Nullable File dumpDir) {
-        final var builder = builder(rootClass);
-        if (dumpDir != null) {
-            builder.dumpBytecode(dumpDir.toPath());
-        }
-        return builder.build();
     }
 
     public static @NonNull Builder builder(final Class<?> rootClass) {

@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
-import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
