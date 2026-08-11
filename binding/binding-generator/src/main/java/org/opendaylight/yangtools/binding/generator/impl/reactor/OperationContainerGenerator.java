@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 abstract sealed class OperationContainerGenerator<
         S extends DataTreeEffectiveStatement<?>,
         R extends CompositeRuntimeType,
-        A extends AugmentableArchetype> extends CompositeSchemaTreeGenerator<S, R>
+        A extends AugmentableArchetype> extends DataContainerGenerator<S, R>
         permits InputGenerator, OutputGenerator {
     @NonNullByDefault
     OperationContainerGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {

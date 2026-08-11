@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * Abstract base generator corresponding to a {@code notification} statement.
  */
 abstract sealed class AbstractNotificationGenerator
-        extends CompositeSchemaTreeGenerator<NotificationEffectiveStatement, NotificationRuntimeType>
+        extends DataContainerGenerator<NotificationEffectiveStatement, NotificationRuntimeType>
         permits AbstractInstanceNotificationGenerator, NotificationGenerator {
     @NonNullByDefault
     AbstractNotificationGenerator(final NotificationEffectiveStatement statement,

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.GetterMethod;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
@@ -111,7 +112,9 @@ import org.slf4j.LoggerFactory;
  */
 public abstract sealed class DataContainerGenerator<S extends EffectiveStatement<?, ?>, R extends CompositeRuntimeType>
         extends AbstractExplicitGenerator<S, R>
-        permits AugmentGenerator, CompositeSchemaTreeGenerator, GroupingGenerator, ModuleGenerator, YangDataGenerator {
+        permits AbstractNotificationGenerator, AugmentGenerator, CaseGenerator, ChoiceGenerator, ContainerGenerator,
+                GroupingGenerator, ListGenerator, ModuleGenerator, NotificationBodyGenerator,
+                OperationContainerGenerator, OperationGenerator, YangDataGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(DataContainerGenerator.class);
 
     // FIXME: we want to allocate this lazily to lower memory footprint
@@ -496,6 +499,30 @@ public abstract sealed class DataContainerGenerator<S extends EffectiveStatement
         }
 
         return List.copyOf(list);
+    }
+
+    /**
+     * {@return the {@link TypeName} to use as the {@code P} parameter of {@link ChildOf}}
+     */
+    @NonNullByDefault
+    final TypeName parentNameForChildOf() {
+        var ancestor = getParent();
+        while (true) {
+            // choice/case hierarchy does not factor into 'ChildOf' hierarchy, hence we need to skip them
+            if (ancestor instanceof CaseGenerator || ancestor instanceof ChoiceGenerator) {
+                ancestor = ancestor.getParent();
+                continue;
+            }
+
+            // if we into a choice we need to follow the hierararchy of that choice
+            if (ancestor instanceof AugmentGenerator augment
+                && augment.targetGenerator() instanceof ChoiceGenerator targetChoice) {
+                ancestor = targetChoice;
+                continue;
+            }
+
+            return ancestor.typeName();
+        }
     }
 
     private @NonNull List<Generator> createChildren(final EffectiveStatement<?, ?> statement) {

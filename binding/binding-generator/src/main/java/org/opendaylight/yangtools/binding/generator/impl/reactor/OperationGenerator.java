@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public abstract sealed class OperationGenerator<
         S extends SchemaTreeEffectiveStatement<?>,
-        R extends OperationRuntimeType> extends CompositeSchemaTreeGenerator<S, R>
+        R extends OperationRuntimeType> extends DataContainerGenerator<S, R>
         permits AbstractActionGenerator, RpcGenerator {
     @NonNullByDefault
     OperationGenerator(final S statement, final DataContainerGenerator<?, ?> parent) {

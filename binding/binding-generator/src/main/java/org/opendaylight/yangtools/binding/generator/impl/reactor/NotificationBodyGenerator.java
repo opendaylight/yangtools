@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * A composite generator producing {@link NotificationBody}s for {@code notifications} declared in {@code grouping}s.
  */
 final class NotificationBodyGenerator
-        extends CompositeSchemaTreeGenerator<NotificationEffectiveStatement, NotificationBodyRuntimeType> {
+        extends DataContainerGenerator<NotificationEffectiveStatement, NotificationBodyRuntimeType> {
     @NonNullByDefault
     NotificationBodyGenerator(final NotificationEffectiveStatement statement, final GroupingGenerator parent) {
         super(statement, parent);
