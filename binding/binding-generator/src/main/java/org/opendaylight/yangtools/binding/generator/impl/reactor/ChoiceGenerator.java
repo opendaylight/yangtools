@@ -115,6 +115,9 @@ final class ChoiceGenerator
                 cases.add((CaseObjectArchetype) childCase.getOriginal().getGeneratedType());
             }
         }
+
+        // FIXME: YANGTOOLS-1934: collect choices from augments
+
         return ChoiceInArchetype.of(typeName, statement, getParent().typeName(), cases);
     }
 

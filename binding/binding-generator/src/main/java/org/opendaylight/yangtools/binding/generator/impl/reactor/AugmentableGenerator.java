@@ -11,19 +11,19 @@ import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.AugmentableArchetype;
+import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.runtime.api.CompositeRuntimeType;
+import org.opendaylight.yangtools.binding.runtime.api.AugmentableRuntimeType;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * A {@link DataContainerGenerator} which additionally is an {@link AugmentTargetGenerator}.
  */
-// FIXME: sharpen to AugmentableRuntimeType and also NotificationBody
-abstract sealed class AugmentableGenerator<S extends EffectiveStatement<?, ?>, R extends CompositeRuntimeType>
+abstract sealed class AugmentableGenerator<S extends EffectiveStatement<?, ?>, R extends AugmentableRuntimeType>
         extends DataContainerGenerator<S, R> implements AugmentTargetGenerator
         permits AbstractNotificationGenerator, CaseGenerator, ContainerGenerator, ListGenerator,
-                OperationContainerGenerator {
+                NotificationBodyGenerator, OperationContainerGenerator {
     @NonNullByDefault
     AugmentableGenerator(final S statement) {
         super(statement);
@@ -35,6 +35,13 @@ abstract sealed class AugmentableGenerator<S extends EffectiveStatement<?, ?>, R
     }
 
     @Override
+    final AugmentableArchetype createTypeImpl(final TypeName typeName, final @NonNull S statement,
+            final List<@NonNull GroupingArchetype> groupings) {
+        return createTypeImpl(typeName, statement, groupings, collectAugments());
+    }
+
+    @NonNullByDefault
     abstract AugmentableArchetype createTypeImpl(TypeName typeName, @NonNull S statement,
-        List<GroupingArchetype> groupings);
+        List<GroupingArchetype> groupings, List<AugmentationArchetype> augments);
+
 }
