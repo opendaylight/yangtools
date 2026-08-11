@@ -28,7 +28,7 @@ final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype
     private static final ConcreteType AUGMENTATION = ConcreteType.ofClass(Augmentation.class);
 
     AugmentationTemplate(final DataRootArchetype root, final AugmentationArchetype archetype) {
-        super(root, archetype, DataContainerContract.JAVA, false);
+        super(root, archetype, false);
     }
 
     @Override
@@ -42,6 +42,15 @@ final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype
             Iterators.singletonIterator(
                 ParameterizedType.of(AUGMENTATION, TypeRef.of(archetype.targetName()), archetype)),
             super.extendsTypes());
+    }
+
+    @Override
+    BlockBuilder contractMethods(final BlockBuilder bb) {
+        return bb
+            .nl()
+            .frg(new ImplementedInterfaceMethod.Canonical(this))
+            .nl()
+            .frg(new JavaDataContainerMethods(javaType(), getters, false));
     }
 
     static String augmentationOfIn(final DataContainerArchetype ofType, final GeneratedClass inClass) {

@@ -25,7 +25,7 @@ final class RpcOutputTemplate extends InterfaceTemplate<RpcOutputArchetype> impl
     private static final ConcreteType RPC_OUTPUT = ConcreteType.ofClass(RpcOutput.class);
 
     RpcOutputTemplate(final DataRootArchetype root, final RpcOutputArchetype archetype) {
-        super(root, archetype, DataContainerContract.JAVA, true);
+        super(root, archetype, true);
     }
 
     @Override
@@ -43,5 +43,14 @@ final class RpcOutputTemplate extends InterfaceTemplate<RpcOutputArchetype> impl
     @Override
     QNameConstant constants() {
         return new QNameConstant.InInterface(this, archetype.statement().argument());
+    }
+
+    @Override
+    BlockBuilder contractMethods(final BlockBuilder bb) {
+        return bb
+            .nl()
+            .frg(new ImplementedInterfaceMethod.Canonical(this))
+            .nl()
+            .frg(new JavaDataContainerMethods(javaType(), getters, true));
     }
 }
