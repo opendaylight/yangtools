@@ -9,6 +9,7 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.AugmentationTemplate.augmentationOfIn;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CLASS;
@@ -28,7 +29,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -547,15 +549,20 @@ final class BuilderTemplate extends BaseTemplate {
     }
 
     @NonNullByDefault
-    private Set<DataContainerArchetype.Partial> getAllIfcs(final DataContainerArchetype archetype) {
-        final var baseIfcs = new HashSet<DataContainerArchetype.Partial>();
+    private static List<DataContainerArchetype.Partial> getAllIfcs(final DataContainerArchetype archetype) {
+        final var ifaces = new HashMap<TypeName, DataContainerArchetype.Partial>();
+        fillAllInterfaces(ifaces, archetype);
+        return ifaces.values().stream().sorted(Comparator.comparing(Type::name)).toList();
+    }
+
+    private static void fillAllInterfaces(final HashMap<TypeName, DataContainerArchetype.Partial> ifaces,
+            final DataContainerArchetype archetype) {
         for (var partial : archetype.partials()) {
             if (!partial.getters().isEmpty()) {
-                baseIfcs.add(partial);
+                verify(ifaces.putIfAbsent(partial.name(), partial) == null);
             }
-            baseIfcs.addAll(getAllIfcs(partial));
+            fillAllInterfaces(ifaces, partial);
         }
-        return baseIfcs;
     }
 
 //    @NonNullByDefault
