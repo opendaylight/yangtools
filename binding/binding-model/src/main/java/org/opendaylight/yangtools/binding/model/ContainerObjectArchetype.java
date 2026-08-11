@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model;
 
+import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ContainerObject;
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
  *
  * @since 16.0.0
  */
+@Beta
 @NonNullByDefault
 public sealed interface ContainerObjectArchetype extends ChildOfArchetype, ReturnType
         permits ContainerObjectArchetype000, ContainerObjectArchetype0N0, ContainerObjectArchetypeN00,

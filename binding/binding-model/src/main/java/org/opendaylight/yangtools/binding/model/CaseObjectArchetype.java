@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model;
 
+import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.CaseObject;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
  *
  * @since 16.0.0
  */
+@Beta
 @NonNullByDefault
 public sealed interface CaseObjectArchetype extends AugmentableArchetype permits CaseObjectArchetypeImpl {
     @Override
@@ -41,6 +43,7 @@ public sealed interface CaseObjectArchetype extends AugmentableArchetype permits
      */
     TypeName choiceName();
 
+    @Beta
     static CaseObjectArchetype of(final TypeName typeName, final CaseEffectiveStatement statement,
             final TypeName parentName, final TypeName choiceName, final List<GroupingArchetype> groupings,
             final List<TypeObjectArchetype<?>> typeObjects, final List<GetterMethod> getters) {

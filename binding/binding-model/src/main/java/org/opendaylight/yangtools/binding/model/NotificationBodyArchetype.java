@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.binding.model;
 
+import com.google.common.annotations.Beta;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.NotificationBody;
@@ -19,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NotificationEffectiveState
  *
  * @since 16.0.0
  */
+@Beta
 @NonNullByDefault
 public sealed interface NotificationBodyArchetype extends DataContainerArchetype.Partial
         permits NotificationBodyArchetypeImpl {

@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.model;
 
+import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.binding.Augmentable;
 
 /**
  * An {@link DataContainerArchetype} for an {@link Augmentable} interface.
  */
+@Beta
 public sealed interface AugmentableArchetype extends DataContainerArchetype
     permits CaseObjectArchetype, ChildOfArchetype, DataContainerArchetype.OfNotification, RpcInputArchetype,
             RpcOutputArchetype {
