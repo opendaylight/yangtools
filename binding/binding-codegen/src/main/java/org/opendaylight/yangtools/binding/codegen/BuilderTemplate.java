@@ -904,10 +904,10 @@ final class BuilderTemplate extends BaseTemplate {
                         method) stack, making <a href="https://en.wikipedia.org/wiki/Escape_analysis">escape \
                   analysis</a> a lot
                         easier. Given enough compiler (JIT/AOT) prowess, the cost of th builder object can be completely
-                        eliminated</li>
-                  </ul>
-
                   """)
+            .eol("      eliminated</li>")
+            .eol("</ul>")
+            .nl()
             .str("@see ").str(target).nl();
     }
 

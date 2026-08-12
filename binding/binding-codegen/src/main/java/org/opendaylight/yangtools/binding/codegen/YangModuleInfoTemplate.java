@@ -184,21 +184,20 @@ public final class YangModuleInfoTemplate {
             .eol(" * The singleton instance.")
             .eol(" */")
             .eol("public static final @NonNull YangModuleInfo " + INSTANCE_FIELD_NAME + " = new " + CLASS_NAME + "();")
+            .nl()
+            .eol("/**")
             .txt("""
-
-                /**
-                 * The {@link ScalarTypeObjectRegistrar} instance. Exposed for technical reasons: this field should only
-                 * be referenced from a static initialization block of a generated ScalarTypeObject class.
-                 */
-                """)
+                  * The {@link ScalarTypeObjectRegistrar} instance. Exposed for technical reasons: this field should \
+                 only
+                 """)
+            .eol(" * be referenced from a static initialization block of a generated ScalarTypeObject class.")
+            .eol(" */")
             .str("public static final @NonNull ScalarTypeObjectRegistrar " + CONST_STO_REGISTRAR).eS()
-            .txt("""
-
-                  /**
-                   * The {@link UnsafeAccess} instance. Exposed for technical reasons: use this module's DataRoot's
-                   * {@code META} field and acquire an instance through its {@code unsafeAccess()} method instead.
-                   */
-                  """)
+            .nl()
+            .eol("/**")
+            .eol(" * The {@link UnsafeAccess} instance. Exposed for technical reasons: use this module's DataRoot's")
+            .eol(" * {@code META} field and acquire an instance through its {@code unsafeAccess()} method instead.")
+            .eol(" */")
             .str("public static final @NonNull UnsafeAccess " + CONST_UNSAFE_ACCESS).eS()
             .nl()
             .str("static").jBlock(si -> {
@@ -214,36 +213,34 @@ public final class YangModuleInfoTemplate {
             .nl()
             .blk(classBody(module, CLASS_NAME, submodules))
             .nl()
-            .txt("""
-                  /**
-                   * Create an interned {@link QName} with specified {@code localName} and namespace/revision of this
-                   * module.
-                   *
-                   * @param localName local name
-                   * @return A QName
-                   * @throws NullPointerException if {@code localName} is {@code null}
-                   * @throws IllegalArgumentException if {@code localName} is not a valid YANG identifier
-                   */
-                  """)
+            .eol("/**")
+            .eol(" * Create an interned {@link QName} with specified {@code localName} and namespace/revision of this")
+            .eol(" * module.")
+            .eol(" *")
+            .eol(" * @param localName local name")
+            .eol(" * @return A QName")
+            .eol(" * @throws NullPointerException if {@code localName} is {@code null}")
+            .eol(" * @throws IllegalArgumentException if {@code localName} is not a valid YANG identifier")
+            .eol(" */")
             .str("public static @NonNull QName " + QNAMEOF_METHOD_NAME + "(final String localName)").oB()
                 .eol("return QName.create(NAME, localName).intern();")
             .cB();
 
         if (hasYangData) {
             bb
+                .nl()
+                .eol("/**")
                 .txt("""
-
-                      /**
                        * Create an interned {@link YangDataName} with specified {@code templateName} and \
                       namespace/revision of
-                       * this module.
-                       *
-                       * @param templateName template name
-                       * @return A YangDataName
-                       * @throws NullPointerException if {@code templateName} is {@code null}
-                       * @throws IllegalArgumentException if {@code templateName} is empty
-                       */
                       """)
+                .eol(" * this module.")
+                .eol(" *")
+                .eol(" * @param templateName template name")
+                .eol(" * @return A YangDataName")
+                .eol(" * @throws NullPointerException if {@code templateName} is {@code null}")
+                .eol(" * @throws IllegalArgumentException if {@code templateName} is empty")
+                .eol(" */")
                 .str("public static @NonNull YangDataName " + YANGDATANAMEOF_METHOD_NAME
                     + "(final String templateName)").oB()
                     .eol("return new YangDataName(NAME.getModule(), templateName).intern();")
