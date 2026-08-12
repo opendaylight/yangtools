@@ -476,13 +476,11 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
 
         bb
             .nl()
-            .txt("""
-                /**
-                 * Creates a copy from Source Object.
-                 *
-                 * @param source Source object
-                 */
-                """)
+            .eol("/**")
+            .eol(" * Creates a copy from Source Object.")
+            .eol(" *")
+            .eol(" * @param source Source object")
+            .eol(" */")
             // FIXME: make this constructor protected?
             .str("public ").str(simpleName).str("(").str(simpleName).str(" source)").oB();
         appendFieldCopy(bb);

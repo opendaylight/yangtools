@@ -178,11 +178,9 @@ final class BuilderTemplate extends BaseTemplate {
         final var targetTypeName = importedName(targetType);
         bb
             .nl()
-            .txt("""
-                  /**
-                   * Construct an empty builder.
-                   */
-                  """)
+            .eol("/**")
+            .eol(" * Construct an empty builder.")
+            .eol(" */")
             .str("public ").str(simpleName).str("()").oB()
                 .eol("// No-op")
             .cB()
@@ -404,20 +402,17 @@ final class BuilderTemplate extends BaseTemplate {
     @NonNullByDefault
     private BlockBuilder generateMethodFieldsFromComment(final DataContainerArchetype type) {
         // FIXME: create a specialized JavadocBuilder to help with this
-        final var bb = newBlockBuilder().txt("""
-                    /**
-                     * Set fields from given grouping argument. Valid argument is instance of one of following types:
-                     * <ul>
-                    """);
+        final var bb = newBlockBuilder()
+            .eol("/**")
+            .eol(" * Set fields from given grouping argument. Valid argument is instance of one of following types:")
+            .eol(" * <ul>");
         for (var impl : getAllIfcs(type)) {
             bb.str(" *   <li>{@link ").str(importedName(impl)).eol("}</li>");
         }
         return bb
-            .txt("""
-                 * </ul>
-                 *
-                 * @param arg grouping object
-                """)
+            .eol(" * </ul>")
+            .eol(" *")
+            .eol(" * @param arg grouping object")
             .str(" * @throws ").str(importedName(IAE))
                 .eol(" if given argument is none of valid types or has property with incompatible value")
             .eol(" */");
@@ -745,13 +740,11 @@ final class BuilderTemplate extends BaseTemplate {
             .eol("/**")
             .str(" * Set the property corresponding to {@link ").str(importedName(targetType)).str("#")
                 .str(getter.name()).eol("()} to the specified")
-            .txt("""
-                 * value.
-                 *
-                 * @param values desired value
-                 * @return this builder
-                 */
-                """)
+            .eol(" * value.")
+            .eol(" *")
+            .eol(" * @param values desired value")
+            .eol(" * @return this builder")
+            .eol(" */")
             .str("public ").str(simpleName()).str(" set").str(toFirstUpper(propName)).str("(final ")
                 .str(importedName(getter.type())).str(" values)").oB();
 
@@ -812,13 +805,11 @@ final class BuilderTemplate extends BaseTemplate {
                 .eol("/**")
                 .str(" * Set the key value corresponding to {@link ").str(importedName(targetType))
                     .eol("#key()} to the specified")
-                .txt("""
-                       * value.
-                       *
-                       * @param key desired value
-                       * @return this builder
-                       */
-                      """)
+                .eol(" * value.")
+                .eol(" *")
+                .eol(" * @param key desired value")
+                .eol(" * @return this builder")
+                .eol(" */")
                 .str("public ").str(simpleName()).str(" withKey(final ").str(importedName(withKey.key)).str(" key)")
                     .oB()
                     .eol("this.key = key;")
@@ -833,13 +824,11 @@ final class BuilderTemplate extends BaseTemplate {
             final var augmentTypeRef = augmentationOfIn(targetType, javaType());
             final var hashMapRef = importedName(JU_HASHMAP);
             bb
-                .txt("""
-                      /**
-                       * Add an augmentation to this builder's product.
-                       *
-                       * @param augmentation augmentation to be added
-                       * @return this builder
-                      """)
+                .eol("/**")
+                .eol(" * Add an augmentation to this builder's product.")
+                .eol(" *")
+                .eol(" * @param augmentation augmentation to be added")
+                .eol(" * @return this builder")
                 .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentation} is null")
                 .eol(" */")
                 .str("public ").str(simpleName()).str(" addAugmentation(").str(augmentTypeRef)
@@ -851,16 +840,15 @@ final class BuilderTemplate extends BaseTemplate {
                     .eol("return this;")
                 .cB()
                 .nl()
-                .txt("""
-                      /**
+                .eol("/**")
+                .eol("""
                        * Remove an augmentation from this builder's product. If this builder does not track such an \
-                      augmentation
-                       * type, this method does nothing.
-                       *
-                       * @param augmentationType augmentation type to be removed
-                       * @return this builder
-                       */
-                      """)
+                      augmentation""")
+                .eol(" * type, this method does nothing.")
+                .eol(" *")
+                .eol(" * @param augmentationType augmentation type to be removed")
+                .eol(" * @return this builder")
+                .eol(" */")
                 .str("public ").str(simpleName()).str(" removeAugmentation(").str(importedName(CLASS))
                     .str("<? extends ").str(augmentTypeRef).str("> augmentationType)").oB()
                     .str("if (this." + AUGMENTATION_FIELD  + " instanceof ").str(hashMapRef).str(")").oB()
@@ -926,14 +914,12 @@ final class BuilderTemplate extends BaseTemplate {
     @NonNullByDefault
     private BlockBuilder generateAugmentation() {
         return newBlockBuilder()
-            .txt("""
-                  /**
-                   * Return the specified augmentation, if it is present in this builder.
-                   *
-                   * @param <E$$> augmentation type
-                   * @param augmentationType augmentation type class
-                   * @return Augmentation object from this builder, or {@code null} if not present
-                  """)
+            .eol("/**")
+            .eol(" * Return the specified augmentation, if it is present in this builder.")
+            .eol(" *")
+            .eol(" * @param <E$$> augmentation type")
+            .eol(" * @param augmentationType augmentation type class")
+            .eol(" * @return Augmentation object from this builder, or {@code null} if not present")
             .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentType} is {@code null}")
             .eol(" */")
             .at().str(importedName(SUPPRESS_WARNINGS)).eol("({ \"unchecked\", \"checkstyle:methodTypeParameterName\"})")

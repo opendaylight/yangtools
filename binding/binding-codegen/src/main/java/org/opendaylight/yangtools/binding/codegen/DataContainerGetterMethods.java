@@ -182,6 +182,7 @@ final class DataContainerGetterMethods implements BlockFragment {
 
     private static BlockBuilder formatReference(final String reference) {
         final var bb = Block.builder()
+            // FIXME: use a @snippet here
             .txt("""
                 <pre>
                     <code>

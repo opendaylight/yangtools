@@ -310,13 +310,12 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
 
     @NonNullByDefault
     private BlockBuilder generateStringValue() {
-        final var bb = newBlockBuilder().txt("""
-                      /**
-                       * Return a String representing the value of this union.
-                       *
-                       * @return String representation of this union's value.
-                       */
-                      """)
+        final var bb = newBlockBuilder()
+                .eol("/**")
+                .eol(" * Return a String representing the value of this union.")
+                .eol(" *")
+                .eol(" * @return String representation of this union's value.")
+                .eol(" */")
                 .str("public ").str(importedName(STRING)).str(" stringValue()").oB();
 
         for (var prop : finalProperties) {
@@ -383,13 +382,12 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
     private BlockBuilder copyConstructor() {
         final var simpleName = archetype.simpleName();
 
-        return newBlockBuilder().txt("""
-                  /**
-                   * Creates a copy from Source Object.
-                   *
-                   * @param source Source object
-                   */
-                  """)
+        return newBlockBuilder()
+            .eol("/**")
+            .eol(" * Creates a copy from Source Object.")
+            .eol(" *")
+            .eol(" * @param source Source object")
+            .eol(" */")
             .str("public ").str(simpleName).str("(").str(simpleName).str(" source)").jBlock(bb -> {
                 if (!parentProperties.isEmpty()) {
                     bb.eol("super(source);");

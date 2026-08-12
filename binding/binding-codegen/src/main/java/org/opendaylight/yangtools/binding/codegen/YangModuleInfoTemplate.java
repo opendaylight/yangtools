@@ -179,12 +179,10 @@ public final class YangModuleInfoTemplate {
         module.getRevision().ifPresent(revision -> bb.jStr(revision.toString()).str(", "));
         bb
             .jStr(module.getName()).eol(").intern();")
-            .txt("""
-
-                  /**
-                   * The singleton instance.
-                   */
-                  """)
+            .nl()
+            .eol("/**")
+            .eol(" * The singleton instance.")
+            .eol(" */")
             .eol("public static final @NonNull YangModuleInfo " + INSTANCE_FIELD_NAME + " = new " + CLASS_NAME + "();")
             .txt("""
 
@@ -355,30 +353,26 @@ public final class YangModuleInfoTemplate {
 
         bb
             .cB()
-            .txt("""
-
-                  @Override
-                  public QName name() {
-                      return NAME;
-                  }
-
-                  @Override
-                  protected String resourceName() {
-                  """)
-                .str("    return \"");
+            .nl()
+            .eol("@Override")
+            .str("public QName name()").oB()
+                .eol("return NAME;")
+            .cB()
+            .nl()
+            .eol("@Override")
+            .str("protected String resourceName()").oB()
+                .str("return \"");
         for (var pathItem : pathItems) {
             bb.str("/").str(pathItem);
         }
         bb
             .eol("\";")
-            .txt("""
-                  }
-
-                  @Override
-                  public ImmutableSet<YangModuleInfo> getImportedModules() {
-                      return importedModules;
-                  }
-                  """);
+            .cB()
+            .nl()
+            .eol("@Override")
+            .str("public ImmutableSet<YangModuleInfo> getImportedModules()").oB()
+                .eol("return importedModules;")
+            .cB();
 
         for (var sub : submodules) {
             final var subName = getClassName(sub.getName());
