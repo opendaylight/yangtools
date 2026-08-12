@@ -863,34 +863,34 @@ final class BuilderTemplate extends BaseTemplate {
     private @NonNull BlockBuilder createDescription() {
         final var target = importedName(targetType);
 
+        // FIXME: concentrate the introduction into the builder pattern into a package-info.java in the model root
+        //        package and here just link to it
         return newBlockBuilder()
             .str("Class that builds {@link ").str(target).eol("} instances. Overall design of the class is that of a")
-            .txt("""
+            .eol("""
                   <a href="https://en.wikipedia.org/wiki/Fluent_interface">fluent interface</a>, where method chaining \
-                  is used.
-
-                  <p>In general, this class is supposed to be used like this template:
-                  <pre>
-                    <code>
-                  """)
+                  is used.""")
+            .nl()
+            .eol("<p>In general, this class is supposed to be used like this template:")
+            // FIXME: use @snippet
+            .eol("<pre>")
+            .eol("  <code>")
             .str("    ").str(target).str(" create").str(target).eol("(int fooXyzzy, int barBaz) {")
             .str("        return new ").str(target).eol("Builder()")
-            .txt("""
-                              .setFoo(new FooBuilder().setXyzzy(fooXyzzy).build())
-                              .setBar(new BarBuilder().setBaz(barBaz).build())
-                              .build();
-                      }
-                    </code>
-                  </pre>
-
-                  """)
+            .eol("            .setFoo(new FooBuilder().setXyzzy(fooXyzzy).build())")
+            .eol("            .setBar(new BarBuilder().setBaz(barBaz).build())")
+            .eol("            .build();")
+            .eol("    }")
+            .eol("  </code>")
+            .eol("</pre>")
+            .nl()
             .str("<p>This pattern is supported by the immutable nature of ").str(target)
                 .eol(", as instances can be freely passed around without")
+            .eol("worrying about synchronization issues.")
+            .nl()
+            .eol("<p>As a side note: method chaining results in:")
+            .eol("<ul>")
             .txt("""
-                  worrying about synchronization issues.
-
-                  <p>As a side note: method chaining results in:
-                  <ul>
                     <li>very efficient Java bytecode, as the method invocation result, in this case the Builder \
                   reference, is
                         on the stack, so further method invocations just need to fill method arguments for the next \

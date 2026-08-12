@@ -183,10 +183,8 @@ final class DataContainerGetterMethods implements BlockFragment {
     private static BlockBuilder formatReference(final String reference) {
         final var bb = Block.builder()
             // FIXME: use a @snippet here
-            .txt("""
-                <pre>
-                    <code>
-                """);
+            .eol("<pre>")
+            .eol("    <code>");
 
         // FIXME: use a {@code} block which will render some of this encoding superfluous, but it requires paying
         //        attention to '}' pairing in input
@@ -231,11 +229,9 @@ final class DataContainerGetterMethods implements BlockFragment {
         }
 
         return bb
-            .txt("""
-                    </code>
-                </pre>
-
-                """);
+            .eol("    </code>")
+            .eol("</pre>")
+            .nl();
     }
 
     private String nullableType(final GetterShape getter) {
