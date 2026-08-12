@@ -29,7 +29,8 @@ final class OpaqueObjectTemplate extends ArchetypeTemplate<OpaqueObjectArchetype
         final var simpleName = archetype.simpleName();
 
         return newBodyBuilder(archetype.statement())
-            .str("public interface ").str(simpleName).str(" extends ").gen(importedName(OPAQUE_OBJECT), simpleName).oB()
+            .str("public interface ").str(simpleName).str(" extends ").str(importedName(OPAQUE_OBJECT)).lt()
+                .str(simpleName).gt().oB()
                 .frg(new QNameConstant.InInterface(this, archetype.statement().argument()))
                 .nl()
                 .frg(new ImplementedInterfaceMethod.Simple(this))

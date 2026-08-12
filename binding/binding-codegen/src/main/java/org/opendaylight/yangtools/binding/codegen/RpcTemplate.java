@@ -36,15 +36,15 @@ final class RpcTemplate extends ArchetypeTemplate<RpcArchetype> {
 
         return newBodyBuilder(archetype.statement())
             .eol("@java.lang.FunctionalInterface")
-            .str("public interface ").str(archetype.simpleName()).str(" extends ").gen(importedName(RPC), input, output)
-                .oB()
+            .str("public interface ").str(archetype.simpleName()).str(" extends ").str(importedName(RPC)).lt()
+                .str(input).cs().str(output).gt().oB()
                 .frg(new QNameConstant.InInterface(this, archetype.statement().argument()))
                 .nl()
                 .frg(new ImplementedInterfaceMethod.Simple(this))
                 .nl()
                 .at().eol(importedName(OVERRIDE))
-                .str(importedName(LISTENABLE_FUTURE)).str("<").gen(importedName(RPC_RESULT), output).str("> invoke(")
-                    .str(input).eol(" input);")
+                .str(importedName(LISTENABLE_FUTURE)).lt().str(importedName(RPC_RESULT)).lt().str(output)
+                    .str(">> invoke(").str(input).eol(" input);")
             .cB();
     }
 }

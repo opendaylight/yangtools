@@ -101,6 +101,25 @@ final class BlockBuilder extends Block.Builder {
         needIndent = currentIndent;
     }
 
+    @Override
+    BlockBuilder gt() {
+        buf().append('>');
+        return this;
+
+    }
+
+    @Override
+    BlockBuilder lt() {
+        buf().append('<');
+        return this;
+    }
+
+    @Override
+    BlockBuilder cs() {
+        buf().append(", ");
+        return this;
+    }
+
     // Prepare the buffer to receive some content
     @NonNullByDefault
     private StringBuilder buf() {
@@ -348,67 +367,6 @@ final class BlockBuilder extends Block.Builder {
                 blk.appendTo(this);
             }
         }
-        return this;
-    }
-
-    /**
-     * Append type reference parameterized with specified generic type argument. Short name for {@code generic}.
-     * Shorthand for {@code str(rawType).str("<").str(args).str(">")}.
-     *
-     * @param rawType the raw type
-     * @param arg the sole generic argument
-     * @return this instance
-     */
-    @NonNullByDefault
-    BlockBuilder gen(final String rawType, final String arg) {
-        return endGen(startGen(rawType, arg));
-    }
-
-    /**
-     * Append type reference parameterized with specified generic type arguments. Short name for {@code generic}.
-     * Shorthand for {@code str(rawType).str("<").str(arg0).str(", ").str(arg1).str(">")}.
-     *
-     * @param rawType the raw type
-     * @param arg0 the first generic argument
-     * @param arg1 the second generic argument
-     * @return this instance
-     */
-    @NonNullByDefault
-    BlockBuilder gen(final String rawType, final String arg0, final String arg1) {
-        return endGen(startGen(rawType, arg0).append(", ").append(verifyStr(arg1)));
-    }
-
-    /**
-     * Append type reference parameterized with specified generic type arguments. Short name for {@code generic}.
-     * Shorthand for {@code str(rawType).str("<").str(arg0).str(", ").str(arg1).str(", ") ... .str(">")}.
-     *
-     * @param rawType the raw type
-     * @param arg0 the first generic argument
-     * @param arg1 the second generic argument
-     * @param others the following generic arguments
-     * @return this instance
-     */
-    @NonNullByDefault
-    BlockBuilder gen(final String rawType, final String arg0, final String arg1, final String... others) {
-        if (others.length == 0) {
-            return gen(rawType, arg0, arg1);
-        }
-
-        final var sb = startGen(rawType, arg0).append(", ").append(verifyStr(arg1));
-        for (var arg : others) {
-            sb.append(", ").append(verifyStr(arg));
-        }
-        return endGen(sb);
-    }
-
-    @NonNullByDefault
-    private StringBuilder startGen(final String rawType, final String args) {
-        return buf().append(verifyStr(rawType)).append('<').append(verifyStr(args));
-    }
-
-    @NonNullByDefault
-    private BlockBuilder endGen(final StringBuilder sb) {
-        sb.append('>');
         return this;
     }
 

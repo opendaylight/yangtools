@@ -167,7 +167,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
                 if (!sit.hasNext()) {
                     break;
                 }
-                bb.str(", ");
+                bb.cs();
             }
             bb.eol(");").cB().newLine();
 
@@ -281,8 +281,8 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
 
     final void appendValidNamesConstant(final BlockBuilder bb, final Collection<? extends Bit> bits) {
         final var immutableSet = importedName(IMMUTABLE_SET);
-        bb.str("protected static final ").gen(immutableSet, importedName(STRING))
-            .str(" " + VALID_NAMES_NAME + " = ").str(immutableSet).str(".of(");
+        bb.str("protected static final ").str(immutableSet).lt().str(importedName(STRING))
+            .str("> " + VALID_NAMES_NAME + " = ").str(immutableSet).str(".of(");
 
         final var it = bits.iterator();
         while (true) {
@@ -290,7 +290,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
             if (!it.hasNext()) {
                 break;
             }
-            bb.str(", ");
+            bb.cs();
         }
 
         bb.eol(");").newLine();
@@ -305,7 +305,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
             if (!it.hasNext()) {
                 break;
             }
-            bb.str(", ");
+            bb.cs();
         }
         bb.str(")").oB();
     }
@@ -351,7 +351,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
         bb
             .nl()
             .at().eol(override)
-            .str("public ").gen(importedName(IMMUTABLE_SET), importedName(STRING)).str(" validNames()").oB()
+            .str("public ").str(importedName(IMMUTABLE_SET)).lt().str(importedName(STRING)).str("> validNames()").oB()
                 .eol("return " + VALID_NAMES_NAME + ";")
             .cB()
             .nl()

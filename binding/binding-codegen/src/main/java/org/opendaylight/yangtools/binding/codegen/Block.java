@@ -78,12 +78,33 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
         abstract void newLine();
 
         /**
-         * Append a {@code '\n'}.
+         * Append a {@code '\n'}. Short name for {@code new line}.
          *
          * @return this instance
          */
         @CheckReturnValue
         abstract Builder nl();
+
+        /**
+         * Append a {@code '>'}. Short name for {@code greater than}.
+         *
+         * @return this instance
+         */
+        abstract Builder gt();
+
+        /**
+         * Append a {@code '<'}. Short name for {@code less than}.
+         *
+         * @return this instance
+         */
+        abstract Builder lt();
+
+        /**
+         * Append a {@code ", "}. Short name for {@code comma, space}.
+         *
+         * @return this instance
+         */
+        abstract Builder cs();
 
         /**
          * Append a {@link String} simple string. The string has to be known to:

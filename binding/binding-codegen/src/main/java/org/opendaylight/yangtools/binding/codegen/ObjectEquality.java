@@ -120,7 +120,7 @@ abstract class ObjectEquality<T> {
             // Special case equivalent to ScalarTypeObject.toString()
             bb.str(".stoTS(").str(selfRef).str(".class, ");
         } else {
-            bb.str(".jcTS1(").str(selfRef).str(".class, ").jStr(name).str(", ");
+            bb.str(".jcTS1(").str(selfRef).str(".class, ").jStr(name).cs();
         }
         bb.str(fieldName(prop)).eol(");");
     }
@@ -128,7 +128,7 @@ abstract class ObjectEquality<T> {
     private void appendTSN(final BlockBuilder bb, final String selfRef, final List<T> props) {
         bb.str(".jcTSB(").str(selfRef).eol(".class)");
         for (var prop : props) {
-            bb.ind(".prop(").jStr(propName(prop)).str(", ").str(fieldName(prop)).eol(")");
+            bb.ind(".prop(").jStr(propName(prop)).cs().str(fieldName(prop)).eol(")");
         }
         bb.ind(".build();").newLine();
     }

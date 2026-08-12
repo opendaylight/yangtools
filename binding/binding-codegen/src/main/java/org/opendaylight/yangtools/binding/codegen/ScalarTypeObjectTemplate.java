@@ -53,8 +53,8 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
 
         @Override
         BlockFragment implFragment(final String valueType) {
-            return bb -> bb.str(" implements ").gen(importedName(SCALAR_TYPE_OBJECT), valueType)
-                .str(", java.io.Serializable");
+            return bb -> bb.str(" implements ").str(importedName(SCALAR_TYPE_OBJECT)).lt().str(valueType)
+                .str(">, java.io.Serializable");
         }
 
         @Override
@@ -68,7 +68,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
         void appendFieldInitialization(final BlockBuilder bb, final ConcreteType valueType) {
             bb.str("this._value = ").str(importedName(CODEHELPERS)).str(".requireValue(_value");
             if (valueType instanceof Decimal64Type decimal64) {
-                bb.str(", ").jInt(decimal64.fractionDigits());
+                bb.cs().jInt(decimal64.fractionDigits());
             }
             bb.str(")");
             if (valueType.isArray()) {
@@ -277,7 +277,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
                 if (!it.hasNext()) {
                     break;
                 }
-                bb.str(", ");
+                bb.cs();
             }
 
             bb
@@ -304,7 +304,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
                         if (!it.hasNext()) {
                             break;
                         }
-                        bb.str(", ");
+                        bb.cs();
                     }
 
                     bb.eol(" };");

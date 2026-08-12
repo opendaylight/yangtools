@@ -188,8 +188,7 @@ record JavaDataContainerMethods(
                 final var first = it.next();
                 if (!it.hasNext()) {
                     // one method
-                    appendAllocateTS(bb.str(".jcTS1(")).str(", ").jStr(first.propName()).str(", ").str(first.name())
-                        .eol("());");
+                    appendAllocateTS(bb.str(".jcTS1(")).cs().jStr(first.propName()).cs().str(first.name()).eol("());");
                     return;
                 }
 
@@ -211,7 +210,7 @@ record JavaDataContainerMethods(
     }
 
     private static void appendTS(final BlockBuilder bb, final GetterShape getter) {
-        bb.ind(".prop(").jStr(getter.propName()).str(", ").str(getter.name()).eol("())");
+        bb.ind(".prop(").jStr(getter.propName()).cs().str(getter.name()).eol("())");
     }
 
 }

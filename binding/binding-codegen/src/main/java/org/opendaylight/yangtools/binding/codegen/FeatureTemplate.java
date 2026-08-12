@@ -40,8 +40,8 @@ final class FeatureTemplate extends ArchetypeTemplate<FeatureArchetype> {
 
         return newBodyBuilder(stmt, stmt.toSchemaNode())
             .at().eol(importedName(NONNULL_BY_DEFAULT))
-            .str("public final class ").str(simpleName).str(" extends ")
-                .gen(importedName(YANG_FEATURE), simpleName, rootName).jBlock(bb -> {
+            .str("public final class ").str(simpleName).str(" extends ").str(importedName(YANG_FEATURE)).lt()
+                .str(simpleName).cs().str(rootName).gt().jBlock(bb -> {
                     final var override = importedName(OVERRIDE);
                     final var clazz = importedName(CLASS);
 
@@ -58,7 +58,7 @@ final class FeatureTemplate extends ArchetypeTemplate<FeatureArchetype> {
                         .cB()
                         .nl()
                         .at().eol(override)
-                        .str("public ").gen(clazz, simpleName).str(" implementedInterface()").oB()
+                        .str("public ").str(clazz).lt().str(simpleName).str("> implementedInterface()").oB()
                             .str("return ").str(simpleName).eol(".class;")
                         .cB()
                         .nl()
@@ -68,7 +68,7 @@ final class FeatureTemplate extends ArchetypeTemplate<FeatureArchetype> {
                         .cB()
                         .nl()
                         .at().eol(override)
-                        .str("public ").gen(clazz, rootName).str(" definingModule()").oB()
+                        .str("public ").str(clazz).lt().str(rootName).str("> definingModule()").oB()
                             .str("return ").str(rootName).eol(".class;")
                         .cB();
                 }).nl();

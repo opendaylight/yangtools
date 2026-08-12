@@ -61,7 +61,8 @@ final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> {
                 .str(" * The {@link ").str(rootMeta).eol("} associated with this module root.")
                 .eol(" */")
                 .at().eol(importedName(NONNULL_BY_DEFAULT))
-                .gen(rootMeta, type).str(" META = new ").str(rootMeta).str("<>(").str(type).str(".class, ")
+                .str(rootMeta).lt().str(type).gt().str(" META = new ").str(rootMeta).str("<>(")
+                    .str(type).str(".class, ")
                     .str(moduleInfo).str('.' + INSTANCE_FIELD_NAME + ", ")
                     .str(moduleInfo).eol('.' + CONST_UNSAFE_ACCESS + ");");
         };

@@ -593,7 +593,7 @@ final class BuilderTemplate extends BaseTemplate {
 //                    if (first) {
 //                        first = false;
 //                    } else {
-//                        bb.str(", ");
+//                        bb.cs();
 //                    }
 //                    bb.jString(xsd);
 //                }
@@ -607,7 +607,7 @@ final class BuilderTemplate extends BaseTemplate {
 //                    if (first) {
 //                        first = false;
 //                    } else {
-//                        bb.str(", ");
+//                        bb.cs();
 //                    }
 //                    bb.jString(pattern);
 //                }
@@ -923,8 +923,8 @@ final class BuilderTemplate extends BaseTemplate {
             .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentType} is {@code null}")
             .eol(" */")
             .at().str(importedName(SUPPRESS_WARNINGS)).eol("({ \"unchecked\", \"checkstyle:methodTypeParameterName\"})")
-            .str("public <E$$ extends ").str(augmentationOfIn(targetType, javaType()))
-                .str("> E$$ augmentation(").gen(importedName(CLASS), "E$$").str(" augmentationType)").oB()
+            .str("public <E$$ extends ").str(augmentationOfIn(targetType, javaType())).str("> E$$ augmentation(")
+                .str(importedName(CLASS)).str("<E$$> augmentationType)").oB()
                 .str("return (E$$) " + AUGMENTATION_FIELD + ".get(").str(importedName(JU_OBJECTS))
                     .eol(".requireNonNull(augmentationType));")
             .cB();

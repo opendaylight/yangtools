@@ -53,7 +53,7 @@ final class IdentityTemplate extends ArchetypeTemplate<IdentityArchetype> {
                     .eol("private static final long serialVersionUID = 1L;")
                     .nl()
                     .at().eol(override)
-                    .str("public ").gen(clazz, typeName).str(" implementedInterface()").oB()
+                    .str("public ").str(clazz).lt().str(typeName).str("> implementedInterface()").oB()
                         .str("return ").str(typeName).eol(".class;")
                     .cB()
                     .nl()
@@ -88,7 +88,7 @@ final class IdentityTemplate extends ArchetypeTemplate<IdentityArchetype> {
         if (it.hasNext()) {
             bb.str(importedName(it.next()));
             while (it.hasNext()) {
-                bb.str(", ").str(importedName(it.next()));
+                bb.cs().str(importedName(it.next()));
             }
         } else {
             bb.str(importedName(BASE_IDENTITY));

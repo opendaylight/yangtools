@@ -175,8 +175,8 @@ public final class YangModuleInfoTemplate {
             .eol("@javax.annotation.processing.Generated(\"mdsal-binding-generator\")")
             .str("public final class " + CLASS_NAME + " extends ResourceYangModuleInfo").oB()
                 .str("private static final @NonNull QName NAME = QName.create(")
-                    .jStr(module.getQNameModule().namespace().toString()).str(", ");
-        module.getRevision().ifPresent(revision -> bb.jStr(revision.toString()).str(", "));
+                    .jStr(module.getQNameModule().namespace().toString()).cs();
+        module.getRevision().ifPresent(revision -> bb.jStr(revision.toString()).cs());
         bb
             .jStr(module.getName()).eol(").intern();")
             .nl()
@@ -381,8 +381,8 @@ public final class YangModuleInfoTemplate {
                 .nl()
                 .str("private static final class ").str(subName).str("Info extends ResourceYangModuleInfo").oB()
                     .str("private final @NonNull QName NAME = QName.create(")
-                        .jStr(sub.getQNameModule().namespace().toString()).str(", ");
-            sub.getRevision().ifPresent(rev -> bb.jStr(rev.toString()).str(", "));
+                        .jStr(sub.getQNameModule().namespace().toString()).cs();
+            sub.getRevision().ifPresent(rev -> bb.jStr(rev.toString()).cs());
             bb
                 .jStr(sub.getName()).eol(").intern();")
                 .nl()

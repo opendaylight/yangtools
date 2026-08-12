@@ -65,8 +65,8 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
             .eol(" */")
             .eol(generatedAnnotation())
             .frg(DeprecatedAnnotation.of(javaType(), archetype.entryObject().statement()))
-            .str("public final class ").str(typeName).str(" implements ").gen(importedName(KEY), entryObject)
-                .jBlock(this::classBody).nl();
+            .str("public final class ").str(typeName).str(" implements ")
+                .str(importedName(KEY)).lt().str(entryObject).gt().jBlock(this::classBody).nl();
     }
 
     // Split out to keep indentation in check
@@ -101,7 +101,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
                 .str(")").oB();
         for (var prop : sortedProps) {
             bb.str("this._").str(prop.getKey()).str(" = ").str(importedName(CODEHELPERS)).str(".requireKeyProp(_")
-                .str(prop.getKey()).str(", ").jStr(prop.getKey()).str(")").frg(cloneOrNull(prop.getValue())).eS();
+                .str(prop.getKey()).cs().jStr(prop.getKey()).str(")").frg(cloneOrNull(prop.getValue())).eS();
             // FIXME: generate checker method invocation
         }
         bb.cB();

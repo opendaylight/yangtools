@@ -44,7 +44,7 @@ abstract sealed class ImplementedInterfaceMethod implements BlockFragment {
     public final void appendTo(final BlockBuilder bb) {
         bb
             .at().eol(template.importedName(OVERRIDE))
-            .str("default ").gen(template.importedName(CLASS), selfRef).str(" implementedInterface()").oB()
+            .str("default ").str(template.importedName(CLASS)).lt().str(selfRef).str("> implementedInterface()").oB()
                 .str("return ").str(selfRef).eol(".class;")
             .cB();
     }

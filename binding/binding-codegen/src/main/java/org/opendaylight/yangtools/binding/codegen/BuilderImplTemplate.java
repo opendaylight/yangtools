@@ -66,12 +66,12 @@ final class BuilderImplTemplate extends BaseTemplate {
             .frg(DeprecatedAnnotation.of(javaType(), targetType.statement()))
             .str("private static final class ").str(simpleName).str(" extends ");
         if (props instanceof BuilderTemplate.WithKey with) {
-            bb.gen(importedName(ABSTRACT_ENTRY_OBJECT), importedName(with.parentName()), implIface,
-                importedName(with.key()));
+            bb.str(importedName(ABSTRACT_ENTRY_OBJECT)).lt().str(importedName(with.parentName())).cs().str(implIface)
+                .cs().str(importedName(with.key())).gt();
         } else if (targetType instanceof AugmentableArchetype) {
-            bb.gen(importedName(ABSTRACT_AUGMENTABLE), implIface);
+            bb.str(importedName(ABSTRACT_AUGMENTABLE)).lt().str(implIface).gt();
         } else {
-            bb.gen(importedName(ABSTRACT_DATA_CONTAINER), implIface);
+            bb.str(importedName(ABSTRACT_DATA_CONTAINER)).lt().str(implIface).gt();
         }
         bb.str(" implements ").str(implIface).oB();
 
@@ -120,7 +120,7 @@ final class BuilderImplTemplate extends BaseTemplate {
                     if (!it.hasNext()) {
                         break;
                     }
-                    bb.str(", ");
+                    bb.cs();
                 }
 
                 bb

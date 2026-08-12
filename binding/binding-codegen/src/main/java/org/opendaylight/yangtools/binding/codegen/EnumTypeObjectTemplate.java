@@ -61,7 +61,7 @@ final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArche
                         bb.newLine();
                     }
                 });
-                bb.str(entry.getValue()).str("(").jInt(pair.getValue()).str(", ").jStr(pair.getName()).str(")");
+                bb.str(entry.getValue()).str("(").jInt(pair.getValue()).cs().jStr(pair.getName()).str(")");
 
                 if (!it.hasNext()) {
                     break;
