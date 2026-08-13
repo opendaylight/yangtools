@@ -53,6 +53,25 @@
         </dependencies>
     </dependencyManagement>
 
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.annotation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>binding-spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-common</artifactId>
+        </dependency>
+    </dependencies>
+
     <build>
         <!-- https://bugs.opendaylight.org/show_bug.cgi?id=6252 -->
         <resources>
@@ -75,24 +94,6 @@
                     <exists>src/main/yang</exists>
                 </file>
             </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.eclipse.jdt</groupId>
-                    <artifactId>org.eclipse.jdt.annotation</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.opendaylight.yangtools</groupId>
-                    <artifactId>binding-spec</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.opendaylight.yangtools</groupId>
-                    <artifactId>yang-common</artifactId>
-                </dependency>
-            </dependencies>
             <build>
                 <pluginManagement>
                     <plugins>
