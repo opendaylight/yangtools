@@ -20,7 +20,7 @@ def fixture_models_repos():
     shell(("rm -rf target src", "mkdir -p ./src/main/yang"))
 
     shell((f"git clone {YANGMODELS_REPO}"), cwd="./src/main/")
-    shell(("git submodule update --init --recursive"), cwd="./src/main/yang")
+    shell(("git submodule update --init --recursive standard"), cwd="./src/main/yang")
 
     shell(
         (
