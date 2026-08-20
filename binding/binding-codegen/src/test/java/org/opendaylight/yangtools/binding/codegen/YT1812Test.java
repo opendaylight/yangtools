@@ -300,6 +300,7 @@ public class YT1812Test extends BaseCompilationTest {
             package org.opendaylight.yang.gen.v1.foo.norev;
 
             import java.lang.Class;
+            import java.lang.Deprecated;
             import java.lang.NullPointerException;
             import java.lang.Override;
             import java.lang.String;
@@ -359,7 +360,8 @@ public class YT1812Test extends BaseCompilationTest {
                 private String _foo;
                 private CurrentKey key;
 
-                Map<Class<? extends Augmentation<Current, ?>>, Augmentation<Current, ?>> augmentation = Map.of();
+                private Map<Class<? extends Augmentation<Current, ?>>, Augmentation<Current, ?>> augmentation = \
+            Map.of();
 
                 /**
                  * Construct an empty builder.
@@ -389,7 +391,9 @@ public class YT1812Test extends BaseCompilationTest {
                  * Return current value associated with the property corresponding to {@link Current#key()}.
                  *
                  * @return current value
+                 * @deprecated This method will not be generated in a future release
                  */
+                @Deprecated(forRemoval = true)
                 public CurrentKey key() {
                     return key;
                 }
@@ -398,7 +402,9 @@ public class YT1812Test extends BaseCompilationTest {
                  * Return current value associated with the property corresponding to {@link Current#getFoo()}.
                  *
                  * @return current value
+                 * @deprecated This method will not be generated in a future release
                  */
+                @Deprecated(forRemoval = true)
                 public String getFoo() {
                     return _foo;
                 }
@@ -410,7 +416,9 @@ public class YT1812Test extends BaseCompilationTest {
                  * @param augmentationType augmentation type class
                  * @return Augmentation object from this builder, or {@code null} if not present
                  * @throws NullPointerException if {@code augmentType} is {@code null}
+                 * @deprecated This method will not be generated in a future release
                  */
+                @Deprecated(forRemoval = true)
                 @SuppressWarnings({ "unchecked", "checkstyle:methodTypeParameterName"})
                 public <E$$ extends Augmentation<Current, ?>> E$$ augmentation(Class<E$$> augmentationType) {
                     return (E$$) augmentation.get(Objects.requireNonNull(augmentationType));
@@ -488,9 +496,9 @@ public class YT1812Test extends BaseCompilationTest {
                     }
 
                     private static @NonNull CurrentKey extractKey(CurrentBuilder base) {
-                        final var key = base.key();
+                        final var key = base.key;
                         return key != null ? key
-                            : new CurrentKey(base.getFoo());
+                            : new CurrentKey(base._foo);
                     }
 
                     @Override
@@ -710,7 +718,8 @@ public class YT1812Test extends BaseCompilationTest {
                 private String _foo;
                 private DeprecatedKey key;
 
-                Map<Class<? extends Augmentation<Deprecated, ?>>, Augmentation<Deprecated, ?>> augmentation = Map.of();
+                private Map<Class<? extends Augmentation<Deprecated, ?>>, Augmentation<Deprecated, ?>> augmentation = \
+            Map.of();
 
                 /**
                  * Construct an empty builder.
@@ -740,7 +749,9 @@ public class YT1812Test extends BaseCompilationTest {
                  * Return current value associated with the property corresponding to {@link Deprecated#key()}.
                  *
                  * @return current value
+                 * @deprecated This method will not be generated in a future release
                  */
+                @java.lang.Deprecated(forRemoval = true)
                 public DeprecatedKey key() {
                     return key;
                 }
@@ -749,7 +760,9 @@ public class YT1812Test extends BaseCompilationTest {
                  * Return current value associated with the property corresponding to {@link Deprecated#getFoo()}.
                  *
                  * @return current value
+                 * @deprecated This method will not be generated in a future release
                  */
+                @java.lang.Deprecated(forRemoval = true)
                 public String getFoo() {
                     return _foo;
                 }
@@ -761,7 +774,9 @@ public class YT1812Test extends BaseCompilationTest {
                  * @param augmentationType augmentation type class
                  * @return Augmentation object from this builder, or {@code null} if not present
                  * @throws NullPointerException if {@code augmentType} is {@code null}
+                 * @deprecated This method will not be generated in a future release
                  */
+                @java.lang.Deprecated(forRemoval = true)
                 @SuppressWarnings({ "unchecked", "checkstyle:methodTypeParameterName"})
                 public <E$$ extends Augmentation<Deprecated, ?>> E$$ augmentation(Class<E$$> augmentationType) {
                     return (E$$) augmentation.get(Objects.requireNonNull(augmentationType));
@@ -841,9 +856,9 @@ public class YT1812Test extends BaseCompilationTest {
                     }
 
                     private static @NonNull DeprecatedKey extractKey(DeprecatedBuilder base) {
-                        final var key = base.key();
+                        final var key = base.key;
                         return key != null ? key
-                            : new DeprecatedKey(base.getFoo());
+                            : new DeprecatedKey(base._foo);
                     }
 
                     @Override
@@ -1066,7 +1081,8 @@ public class YT1812Test extends BaseCompilationTest {
                 private String _foo;
                 private ObsoleteKey key;
 
-                Map<Class<? extends Augmentation<Obsolete, ?>>, Augmentation<Obsolete, ?>> augmentation = Map.of();
+                private Map<Class<? extends Augmentation<Obsolete, ?>>, Augmentation<Obsolete, ?>> augmentation = \
+            Map.of();
 
                 /**
                  * Construct an empty builder.
@@ -1096,7 +1112,9 @@ public class YT1812Test extends BaseCompilationTest {
                  * Return current value associated with the property corresponding to {@link Obsolete#key()}.
                  *
                  * @return current value
+                 * @deprecated This method will not be generated in a future release
                  */
+                @Deprecated(forRemoval = true)
                 public ObsoleteKey key() {
                     return key;
                 }
@@ -1105,7 +1123,9 @@ public class YT1812Test extends BaseCompilationTest {
                  * Return current value associated with the property corresponding to {@link Obsolete#getFoo()}.
                  *
                  * @return current value
+                 * @deprecated This method will not be generated in a future release
                  */
+                @Deprecated(forRemoval = true)
                 public String getFoo() {
                     return _foo;
                 }
@@ -1117,7 +1137,9 @@ public class YT1812Test extends BaseCompilationTest {
                  * @param augmentationType augmentation type class
                  * @return Augmentation object from this builder, or {@code null} if not present
                  * @throws NullPointerException if {@code augmentType} is {@code null}
+                 * @deprecated This method will not be generated in a future release
                  */
+                @Deprecated(forRemoval = true)
                 @SuppressWarnings({ "unchecked", "checkstyle:methodTypeParameterName"})
                 public <E$$ extends Augmentation<Obsolete, ?>> E$$ augmentation(Class<E$$> augmentationType) {
                     return (E$$) augmentation.get(Objects.requireNonNull(augmentationType));
@@ -1196,9 +1218,9 @@ public class YT1812Test extends BaseCompilationTest {
                     }
 
                     private static @NonNull ObsoleteKey extractKey(ObsoleteBuilder base) {
-                        final var key = base.key();
+                        final var key = base.key;
                         return key != null ? key
-                            : new ObsoleteKey(base.getFoo());
+                            : new ObsoleteKey(base._foo);
                     }
 
                     @Override

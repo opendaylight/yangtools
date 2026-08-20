@@ -170,8 +170,8 @@ final class BuilderTemplate extends BaseTemplate {
             final var augmentTypeRef = augmentationOfIn(targetType, javaType());
             final var mapTypeRef = importedName(JU_MAP);
 
-            bb.str(mapTypeRef).str("<").str(importedName(CLASS)).str("<? extends ").str(augmentTypeRef).str(">, ")
-                .str(augmentTypeRef).str("> " + AUGMENTATION_FIELD + " = ").str(mapTypeRef).eol(".of();");
+            bb.str("private ").str(mapTypeRef).str("<").str(importedName(CLASS)).str("<? extends ").str(augmentTypeRef)
+                .str(">, ").str(augmentTypeRef).str("> " + AUGMENTATION_FIELD + " = ").str(mapTypeRef).eol(".of();");
         }
 
         final var targetTypeName = importedName(targetType);
@@ -629,7 +629,9 @@ final class BuilderTemplate extends BaseTemplate {
                     .str(importedName(targetType)).eol("#key()}.")
                 .eol(" *")
                 .eol(" * @return current value")
+                .eol(" * @deprecated This method will not be generated in a future release")
                 .eol(" */")
+                .frg(new DeprecatedAnnotation(javaType(), true))
                 .str("public ").str(importedName(withKey.key)).str(" key()").oB()
                     .eol("return key;")
                 .cB()
@@ -649,7 +651,9 @@ final class BuilderTemplate extends BaseTemplate {
                     .str(importedName(targetType)).str("#").str(getter.name()).eol("()}.")
                 .eol(" *")
                 .eol(" * @return current value")
+                .eol(" * @deprecated This method will not be generated in a future release")
                 .eol(" */")
+                .frg(new DeprecatedAnnotation(javaType(), true))
                 .blk(asGetterMethod(getter.propName(), getter.type()));
 
             if (!it.hasNext()) {
@@ -909,7 +913,9 @@ final class BuilderTemplate extends BaseTemplate {
             .eol(" * @param augmentationType augmentation type class")
             .eol(" * @return Augmentation object from this builder, or {@code null} if not present")
             .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentType} is {@code null}")
+            .eol(" * @deprecated This method will not be generated in a future release")
             .eol(" */")
+            .frg(new DeprecatedAnnotation(javaType(), true))
             .at().str(importedName(SUPPRESS_WARNINGS)).eol("({ \"unchecked\", \"checkstyle:methodTypeParameterName\"})")
             .str("public <E$$ extends ").str(augmentationOfIn(targetType, javaType())).str("> E$$ augmentation(")
                 .str(importedName(CLASS)).str("<E$$> augmentationType)").oB()

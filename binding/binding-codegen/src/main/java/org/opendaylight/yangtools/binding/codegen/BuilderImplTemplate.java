@@ -108,7 +108,7 @@ final class BuilderImplTemplate extends BaseTemplate {
                     .nl()
                     .str("private static ").str(importedNonNull(with.key())).str(" extractKey(").str(builderName)
                         .str(" base)").oB()
-                        .eol("final var key = base.key();")
+                        .eol("final var key = base.key;")
                         .eol("return key != null ? key")
                         .str("    : new ").str(importedName(with.key())).str("(");
 
@@ -116,7 +116,7 @@ final class BuilderImplTemplate extends BaseTemplate {
                 final var it = with.keyGetters().iterator();
                 while (true) {
                     final var getter = it.next();
-                    bb.str("base.").str(getter.name()).str("()");
+                    bb.str("base.").str(getter.fieldName());
                     if (!it.hasNext()) {
                         break;
                     }
@@ -184,9 +184,9 @@ final class BuilderImplTemplate extends BaseTemplate {
         for (var getter : getters) {
             bb.str("this.").str(getter.fieldName()).str(" = ");
             if (getter.method().statement() instanceof ListEffectiveStatement) {
-                bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(getter.name()).eol("());");
+                bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(getter.fieldName()).eol(");");
             } else {
-                bb.str("base.").str(getter.name()).eol("();");
+                bb.str("base.").str(getter.fieldName()).eS();
             }
         }
     }
