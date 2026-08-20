@@ -20,7 +20,7 @@ public interface NotificationNodeContainer {
      * Return the set of notifications in this container, keyed by QName. RFC7950 specifies that
      * {@link AugmentationSchemaNode}s, {@link GroupingDefinition}s, {@link ListSchemaNode}s and
      * {@link ContainerSchemaNode}s can also contain {@link NotificationDefinition}s.
-      *
+     *
      * @return set of notification nodes
      */
     @NonNull Collection<? extends @NonNull NotificationDefinition> getNotifications();

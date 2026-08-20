@@ -14,7 +14,7 @@ package org.opendaylight.yangtools.binding;
  * @param <T> {@link EntryObject} type
  * @see EntryObject
  * @since 16.0.0
-  */
+ */
 public non-sealed interface ItemObject<P extends DataContainer, T extends ItemObject<P, T>>
     extends Augmentable<T>, ChildOf<P>, ParentObject<T>  {
     // nothing else

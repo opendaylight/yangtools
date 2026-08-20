@@ -10,15 +10,13 @@ package org.opendaylight.yangtools.yang.data.util.codec;
 import com.google.common.annotations.Beta;
 
 /**
-  * A codec, which knows what the native representation for a particular data type is. It knows how to convert a native
-  * value to and from string representation based on some additional input or output context.
-  *
-  * @author Robert Varga
-  *
-  * @param <T> Data value type
-  * @param <I> Input context type
-  * @param <O> Output context type
-  */
+ * A codec, which knows what the native representation for a particular data type is. It knows how to convert a native
+ * value to and from string representation based on some additional input or output context.
+ *
+ * @param <T> Data value type
+ * @param <I> Input context type
+ * @param <O> Output context type
+ */
 @Beta
 public interface TypeAwareCodec<T, I, O> {
     /**

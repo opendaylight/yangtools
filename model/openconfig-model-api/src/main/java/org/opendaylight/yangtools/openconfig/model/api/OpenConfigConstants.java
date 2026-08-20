@@ -37,8 +37,8 @@ public final class OpenConfigConstants {
     public static final Revision REGEXP_POSIX_REVISION = Revision.of("2020-06-16");
 
     /**
-    * Runtime identity of model which exposed regexp-posix.
-    */
+     * Runtime identity of model which exposed regexp-posix.
+     */
     public static final QNameModule REGEXP_POSIX_MODULE = QNameModule.of(MODULE_NAMESPACE, REGEXP_POSIX_REVISION)
             .intern();
     /**

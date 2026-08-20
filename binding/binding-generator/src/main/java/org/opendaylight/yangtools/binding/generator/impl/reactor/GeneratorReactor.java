@@ -93,7 +93,7 @@ public final class GeneratorReactor extends GeneratorContext implements Mutable 
      *   <li>link the {@code identity} inheritance hierarchy by visiting all {@link IdentityGenerator}s and memoizing
      *       the {@code base} lookup</li>
      *   <li>link the {@code type} statements and resolve type restriction hierarchy, determining the set of Java
-             classes required for Java equivalent of effective YANG type definitions</li>
+     *       classes required for Java equivalent of effective YANG type definitions</li>
      *   <li>bind {@code leafref} and {@code identityref} references to their Java class roots</li>
      *   <li>resolve {@link ChoiceIn}/{@link ChildOf} hierarchy</li>
      *   <li>assign Java package names and {@link TypeName}s to all generated classes</li>

@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinitionAware;
 /**
  * Lazily-populated CodecCache. This is a non-thread-safe factory, which performs caching of codecs. It is most
  * appropriate for one-off encodings of repetitive data.
-*/
+ */
 @Beta
 public final class LazyCodecCache<T> extends CodecCache<T> {
     private final Map<TypeDefinitionAware, T> complexCodecs = new IdentityHashMap<>();

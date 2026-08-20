@@ -23,7 +23,7 @@ package org.opendaylight.yangtools.binding;
  *     public interface Baz extends DataObject, Foo {
  *
  *     }
-
+ *
  *     public interface Service<T extends Foo & DataObject> {
  *
  *        // ...

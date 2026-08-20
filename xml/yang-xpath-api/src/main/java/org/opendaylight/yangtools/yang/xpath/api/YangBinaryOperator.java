@@ -47,7 +47,7 @@ public enum YangBinaryOperator {
      */
     LT("<"),
     /**
-      * Left-hand operand is less than or equal to right-hand operand.
+     * Left-hand operand is less than or equal to right-hand operand.
      *
      * @see <a href="https://www.w3.org/TR/1999/REC-xpath-19991116/#NT-RelationalExpr">RelationalExpr</a>
      */

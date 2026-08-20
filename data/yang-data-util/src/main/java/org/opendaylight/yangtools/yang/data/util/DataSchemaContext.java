@@ -124,19 +124,19 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
     }
 
     /**
-    * This node is a {@link NormalizedNode} intermediate, not represented in RFC7950 XML encoding. This is typically
-    * one of
-    * <ul>
-    *   <li>{@link ChoiceNode} backed by a {@link ChoiceSchemaNode}, or</li>
-    *   <li>{@link LeafSetNode} backed by a {@link LeafListSchemaNode}, or</li>
-    *   <li>{@link MapNode} backed by a {@link ListSchemaNode} with a non-empty
-    *       {@link ListSchemaNode#getKeyDefinition()}, or</li>
-    *   <li>{@link UnkeyedListNode} backed by a {@link ListSchemaNode} with an empty
-    *       {@link ListSchemaNode#getKeyDefinition()}</li>
-    * </ul>
-    *
-    * <p>This trait is important for XML codec, but also for JSON encoding of {@link YangInstanceIdentifier}.
-    */
+     * This node is a {@link NormalizedNode} intermediate, not represented in RFC7950 XML encoding. This is typically
+     * one of
+     * <ul>
+     *   <li>{@link ChoiceNode} backed by a {@link ChoiceSchemaNode}, or</li>
+     *   <li>{@link LeafSetNode} backed by a {@link LeafListSchemaNode}, or</li>
+     *   <li>{@link MapNode} backed by a {@link ListSchemaNode} with a non-empty
+     *       {@link ListSchemaNode#getKeyDefinition()}, or</li>
+     *   <li>{@link UnkeyedListNode} backed by a {@link ListSchemaNode} with an empty
+     *       {@link ListSchemaNode#getKeyDefinition()}</li>
+     * </ul>
+     *
+     * <p>This trait is important for XML codec, but also for JSON encoding of {@link YangInstanceIdentifier}.
+     */
     sealed interface PathMixin extends Composite permits AbstractPathMixinContext {
         /**
          * The mixed-in {@link NodeIdentifier}.
@@ -151,8 +151,8 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
     /**
      * Marker interface for contexts which boil down to a simple, not-structured {@link ValueNode}. This can be one of
      * <ul>
-    *   <li>{@link LeafNode} backed by a {@link LeafSchemaNode}, or</li>
-    *   <li>{@link LeafSetNode} backed by a {@link LeafListSchemaNode}</li>
+     *   <li>{@link LeafNode} backed by a {@link LeafSchemaNode}, or</li>
+     *   <li>{@link LeafSetNode} backed by a {@link LeafListSchemaNode}</li>
      * </ul>
      *
      * <p>This trait interface is exposed for determining that the corresponding {@link TypeDefinition} of the

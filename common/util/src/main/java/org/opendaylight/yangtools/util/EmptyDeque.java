@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 /**
  * A specialized always-empty implementation of {@link java.util.Deque}. This implementation will always refuse new
  * elements in its {@link #offer(Object)} method.
-
+ *
  * @param <E> the type of elements held in this collection
  */
 public final class EmptyDeque<E> extends AbstractQueue<E> implements Deque<E>, Immutable {

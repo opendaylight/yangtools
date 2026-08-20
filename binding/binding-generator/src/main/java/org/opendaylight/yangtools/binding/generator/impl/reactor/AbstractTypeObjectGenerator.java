@@ -162,7 +162,7 @@ import org.slf4j.LoggerFactory;
  *         }
  *
  *         container bar {
-             uses grp;
+ *           uses grp;
  *
  *           leaf xyzzy {
  *             type string;

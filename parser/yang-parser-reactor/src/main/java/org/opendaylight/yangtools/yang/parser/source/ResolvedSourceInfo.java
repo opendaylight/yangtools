@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.source.ResolvedDependency.Resolved
 /**
  * DTO containing all the linkage information which needs to be supplied to a RootStatementContext. This info will be
  * used to construct linkage substatements like imports, includes, belongs-to etc...
-*/
+ */
 @NonNullByDefault
 public abstract sealed class ResolvedSourceInfo implements Immutable permits ResolvedModuleInfo, ResolvedSubmoduleInfo {
     private final List<ResolvedImport> imports;
