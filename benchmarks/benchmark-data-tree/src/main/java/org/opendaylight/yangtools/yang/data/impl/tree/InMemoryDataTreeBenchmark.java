@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
+import org.opendaylight.yangtools.yang.data.tree.dagger.ReferenceDataTreeFactoryModule;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
@@ -116,8 +116,8 @@ public class InMemoryDataTreeBenchmark {
 
     @Setup(Level.Trial)
     public void setup() throws DataValidationFailedException {
-        datastore = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION,
-            BenchmarkModel.createTestContext());
+        datastore = ReferenceDataTreeFactoryModule.provideDataTreeFactory()
+            .create(DataTreeConfiguration.DEFAULT_CONFIGURATION, BenchmarkModel.createTestContext());
 
         final DataTreeModification modification = begin();
         modification.write(BenchmarkModel.TEST_PATH, ImmutableNodes.newContainerBuilder()

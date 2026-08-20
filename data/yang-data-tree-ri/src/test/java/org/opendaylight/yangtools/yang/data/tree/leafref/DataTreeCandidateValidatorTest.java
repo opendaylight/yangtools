@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
+import org.opendaylight.yangtools.yang.data.tree.dagger.ReferenceDataTreeFactoryModule;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -127,7 +127,8 @@ public class DataTreeCandidateValidatorTest {
 
         leafrefLeafList = QName.create(valModuleQname, "leafref-leaf-list");
 
-        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
+        inMemoryDataTree = ReferenceDataTreeFactoryModule.provideDataTreeFactory()
+            .create(DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
 
         final var initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
 

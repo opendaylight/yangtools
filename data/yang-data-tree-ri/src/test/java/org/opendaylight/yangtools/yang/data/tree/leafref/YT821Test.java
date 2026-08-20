@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
+import org.opendaylight.yangtools.yang.data.tree.dagger.ReferenceDataTreeFactoryModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -36,14 +36,14 @@ class YT821Test {
     private static final QName REF_IN_CONTAINER = QName.create(ROOT, "ref-in-container");
     private static final YangInstanceIdentifier ROOT_ID = YangInstanceIdentifier.of(ROOT);
 
-    private static EffectiveModelContext schemaContext;
+    private static EffectiveModelContext modelContext;
     private static LeafRefContext leafRefContext;
 
     private DataTree dataTree;
 
     @BeforeAll
     static void beforeClass() {
-        schemaContext = YangParserTestUtils.parseYang("""
+        modelContext = YangParserTestUtils.parseYang("""
             module yt821 {
               namespace "urn:opendaylight:params:xml:ns:yang:foo";
               prefix foo;
@@ -86,18 +86,19 @@ class YT821Test {
                 }
               }
             }""");
-        leafRefContext = LeafRefContext.create(schemaContext);
+        leafRefContext = LeafRefContext.create(modelContext);
     }
 
     @AfterAll
     static void afterClass() {
-        schemaContext = null;
+        modelContext = null;
         leafRefContext = null;
     }
 
     @BeforeEach
     void before() {
-        dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
+        dataTree = ReferenceDataTreeFactoryModule.provideDataTreeFactory()
+            .create(DataTreeConfiguration.DEFAULT_CONFIGURATION, modelContext);
     }
 
     @Test

@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
+import org.opendaylight.yangtools.yang.data.tree.dagger.ReferenceDataTreeFactoryModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -39,19 +39,20 @@ class YT891Test {
     private static final QName LIST_IN_CONTAINER = QName.create(BAZ_TOP, "list-in-container");
     private static final YangInstanceIdentifier BAZ_TOP_ID = YangInstanceIdentifier.of(BAZ_TOP);
 
-    private static EffectiveModelContext schemaContext;
+    private static EffectiveModelContext modelContext;
     private static LeafRefContext leafRefContext;
 
     private DataTree dataTree;
 
     @BeforeEach
     void before() {
-        dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
+        dataTree = ReferenceDataTreeFactoryModule.provideDataTreeFactory()
+            .create(DataTreeConfiguration.DEFAULT_CONFIGURATION, modelContext);
     }
 
     @BeforeAll
     static void beforeClass() {
-        schemaContext = YangParserTestUtils.parseYang("""
+        modelContext = YangParserTestUtils.parseYang("""
             module bar {
               namespace "urn:opendaylight:params:xml:ns:yang:bar";
               prefix bar;
@@ -114,12 +115,12 @@ class YT891Test {
                 uses baz:grouping-with-leafref;
               }
             }""");
-        leafRefContext = LeafRefContext.create(schemaContext);
+        leafRefContext = LeafRefContext.create(modelContext);
     }
 
     @AfterAll
     static void afterClass() {
-        schemaContext = null;
+        modelContext = null;
         leafRefContext = null;
     }
 

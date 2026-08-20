@@ -10,8 +10,6 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeFactory;
 module org.opendaylight.yangtools.yang.data.tree {
     exports org.opendaylight.yangtools.yang.data.tree.dagger;
     exports org.opendaylight.yangtools.yang.data.tree.leafref;
-    // FIXME: 15.0.0: remove this package
-    exports org.opendaylight.yangtools.yang.data.tree.impl.di;
 
     provides DataTreeFactory with org.opendaylight.yangtools.yang.data.tree.impl.ReferenceDataTreeFactory;
 

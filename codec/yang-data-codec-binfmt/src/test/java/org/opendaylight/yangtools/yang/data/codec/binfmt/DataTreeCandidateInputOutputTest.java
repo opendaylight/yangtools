@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.tree.api.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.tree.impl.di.InMemoryDataTreeFactory;
+import org.opendaylight.yangtools.yang.data.tree.dagger.ReferenceDataTreeFactoryModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -44,7 +44,7 @@ class DataTreeCandidateInputOutputTest {
 
     private static EffectiveModelContext CONTEXT;
 
-    private final DataTree dataTree = new InMemoryDataTreeFactory()
+    private final DataTree dataTree = ReferenceDataTreeFactoryModule.provideDataTreeFactory()
         .create(DataTreeConfiguration.DEFAULT_CONFIGURATION, CONTEXT);
 
     @BeforeAll
