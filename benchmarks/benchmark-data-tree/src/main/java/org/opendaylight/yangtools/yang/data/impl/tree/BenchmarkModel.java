@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 /**
  * Benchmark model constants.
  *
- * @author Lukas Sedlak &lt;lsedlak@cisco.com&gt;
+ * @author Lukas Sedlak
  */
 final class BenchmarkModel {
     private static final QName TEST_QNAME = QName.create(

@@ -42,7 +42,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 /**
  * Benchmarking of InMemoryDataTree performance. JMH is used for microbenchmarking.
  *
- * @author Lukas Sedlak &lt;lsedlak@cisco.com&gt;
+ * @author Lukas Sedlak
  * @see <a href="http://openjdk.java.net/projects/code-tools/jmh/">JMH</a>
  */
 @State(Scope.Thread)
