@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.Revision;
 
 class QNameFactoryTest {
     @Test
@@ -28,7 +27,9 @@ class QNameFactoryTest {
     }
 
     private static QName lookup(final QName qname) {
-        return QNameFactory.create(qname.getLocalName(), qname.getNamespace().toString(),
-            qname.getRevision().map(Revision::toString).orElse(null));
+        final var module = qname.getModule();
+        final var revision = module.revision();
+        return QNameFactory.create(qname.getLocalName(), module.namespace().toString(),
+            revision != null ? revision.toString() : null);
     }
 }
