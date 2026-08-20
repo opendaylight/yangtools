@@ -19,7 +19,6 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_HASHMAP;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_MAP;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NPE;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.SUPPRESS_WARNINGS;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstLower;
@@ -197,7 +196,7 @@ final class BuilderTemplate extends BaseTemplate {
             .nl()
             .blk(generateEmptyInstance())
             .nl()
-            .blk(generateGetters(false));
+            .blk(generateGetters());
         if (isAugmentable) {
             bb.nl().blk(generateAugmentation());
         }
@@ -620,23 +619,17 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * {@return string with getter methods}
      */
-    private @NonNull BlockBuilder generateGetters(final boolean addOverride) {
+    private @NonNull BlockBuilder generateGetters() {
         final var bb = newBlockBuilder();
 
         if (props instanceof WithKey withKey) {
-            if (!addOverride) {
-                bb
-                    .eol("/**")
-                    .str(" * Return current value associated with the property corresponding to {@link ")
-                        .str(importedName(targetType)).eol("#key()}.")
-                    .eol(" *")
-                    .eol(" * @return current value")
-                    .eol(" */");
-            } else {
-                bb
-                    .at().eol(importedName(OVERRIDE));
-            }
             bb
+                .eol("/**")
+                .str(" * Return current value associated with the property corresponding to {@link ")
+                    .str(importedName(targetType)).eol("#key()}.")
+                .eol(" *")
+                .eol(" * @return current value")
+                .eol(" */")
                 .str("public ").str(importedName(withKey.key)).str(" key()").oB()
                     .eol("return key;")
                 .cB()
@@ -650,19 +643,14 @@ final class BuilderTemplate extends BaseTemplate {
 
         while (true) {
             final var getter = it.next();
-            if (!addOverride) {
-                bb
-                    .eol("/**")
-                    .str(" * Return current value associated with the property corresponding to {@link ")
-                        .str(importedName(targetType)).str("#").str(getter.name()).eol("()}.")
-                    .eol(" *")
-                    .eol(" * @return current value")
-                    .eol(" */");
-            } else {
-                bb
-                    .at().eol(importedName(OVERRIDE));
-            }
-            bb.blk(asGetterMethod(getter.propName(), getter.type()));
+            bb
+                .eol("/**")
+                .str(" * Return current value associated with the property corresponding to {@link ")
+                    .str(importedName(targetType)).str("#").str(getter.name()).eol("()}.")
+                .eol(" *")
+                .eol(" * @return current value")
+                .eol(" */")
+                .blk(asGetterMethod(getter.propName(), getter.type()));
 
             if (!it.hasNext()) {
                 return bb;
