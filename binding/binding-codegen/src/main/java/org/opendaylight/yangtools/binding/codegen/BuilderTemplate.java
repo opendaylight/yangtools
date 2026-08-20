@@ -170,7 +170,7 @@ final class BuilderTemplate extends BaseTemplate {
             final var augmentTypeRef = augmentationOfIn(targetType, javaType());
             final var mapTypeRef = importedName(JU_MAP);
 
-            bb.str("private ").str(mapTypeRef).str("<").str(importedName(CLASS)).str("<? extends ").str(augmentTypeRef)
+            bb.str("private ").str(mapTypeRef).lt().str(importedName(CLASS)).str("<? extends ").str(augmentTypeRef)
                 .str(">, ").str(augmentTypeRef).str("> " + AUGMENTATION_FIELD + " = ").str(mapTypeRef).eol(".of();");
         }
 
