@@ -300,14 +300,11 @@ public class YT1812Test extends BaseCompilationTest {
             package org.opendaylight.yang.gen.v1.foo.norev;
 
             import java.lang.Class;
-            import java.lang.Deprecated;
             import java.lang.NullPointerException;
             import java.lang.Override;
             import java.lang.String;
-            import java.lang.SuppressWarnings;
             import java.util.HashMap;
             import java.util.Map;
-            import java.util.Objects;
             import javax.annotation.processing.Generated;
             import org.eclipse.jdt.annotation.NonNull;
             import org.opendaylight.yangtools.binding.Augmentation;
@@ -386,43 +383,6 @@ public class YT1812Test extends BaseCompilationTest {
                 }
 
 
-
-                /**
-                 * Return current value associated with the property corresponding to {@link Current#key()}.
-                 *
-                 * @return current value
-                 * @deprecated This method will not be generated in a future release
-                 */
-                @Deprecated(forRemoval = true)
-                public CurrentKey key() {
-                    return key;
-                }
-
-                /**
-                 * Return current value associated with the property corresponding to {@link Current#getFoo()}.
-                 *
-                 * @return current value
-                 * @deprecated This method will not be generated in a future release
-                 */
-                @Deprecated(forRemoval = true)
-                public String getFoo() {
-                    return _foo;
-                }
-
-                /**
-                 * Return the specified augmentation, if it is present in this builder.
-                 *
-                 * @param <E$$> augmentation type
-                 * @param augmentationType augmentation type class
-                 * @return Augmentation object from this builder, or {@code null} if not present
-                 * @throws NullPointerException if {@code augmentType} is {@code null}
-                 * @deprecated This method will not be generated in a future release
-                 */
-                @Deprecated(forRemoval = true)
-                @SuppressWarnings({ "unchecked", "checkstyle:methodTypeParameterName"})
-                public <E$$ extends Augmentation<Current, ?>> E$$ augmentation(Class<E$$> augmentationType) {
-                    return (E$$) augmentation.get(Objects.requireNonNull(augmentationType));
-                }
 
                 /**
                  * Set the key value corresponding to {@link Current#key()} to the specified
@@ -665,7 +625,6 @@ public class YT1812Test extends BaseCompilationTest {
             import java.lang.SuppressWarnings;
             import java.util.HashMap;
             import java.util.Map;
-            import java.util.Objects;
             import javax.annotation.processing.Generated;
             import org.eclipse.jdt.annotation.NonNull;
             import org.opendaylight.yangtools.binding.Augmentation;
@@ -744,43 +703,6 @@ public class YT1812Test extends BaseCompilationTest {
                 }
 
 
-
-                /**
-                 * Return current value associated with the property corresponding to {@link Deprecated#key()}.
-                 *
-                 * @return current value
-                 * @deprecated This method will not be generated in a future release
-                 */
-                @java.lang.Deprecated(forRemoval = true)
-                public DeprecatedKey key() {
-                    return key;
-                }
-
-                /**
-                 * Return current value associated with the property corresponding to {@link Deprecated#getFoo()}.
-                 *
-                 * @return current value
-                 * @deprecated This method will not be generated in a future release
-                 */
-                @java.lang.Deprecated(forRemoval = true)
-                public String getFoo() {
-                    return _foo;
-                }
-
-                /**
-                 * Return the specified augmentation, if it is present in this builder.
-                 *
-                 * @param <E$$> augmentation type
-                 * @param augmentationType augmentation type class
-                 * @return Augmentation object from this builder, or {@code null} if not present
-                 * @throws NullPointerException if {@code augmentType} is {@code null}
-                 * @deprecated This method will not be generated in a future release
-                 */
-                @java.lang.Deprecated(forRemoval = true)
-                @SuppressWarnings({ "unchecked", "checkstyle:methodTypeParameterName"})
-                public <E$$ extends Augmentation<Deprecated, ?>> E$$ augmentation(Class<E$$> augmentationType) {
-                    return (E$$) augmentation.get(Objects.requireNonNull(augmentationType));
-                }
 
                 /**
                  * Set the key value corresponding to {@link Deprecated#key()} to the specified
@@ -1025,10 +947,8 @@ public class YT1812Test extends BaseCompilationTest {
             import java.lang.NullPointerException;
             import java.lang.Override;
             import java.lang.String;
-            import java.lang.SuppressWarnings;
             import java.util.HashMap;
             import java.util.Map;
-            import java.util.Objects;
             import javax.annotation.processing.Generated;
             import org.eclipse.jdt.annotation.NonNull;
             import org.opendaylight.yangtools.binding.Augmentation;
@@ -1107,43 +1027,6 @@ public class YT1812Test extends BaseCompilationTest {
                 }
 
 
-
-                /**
-                 * Return current value associated with the property corresponding to {@link Obsolete#key()}.
-                 *
-                 * @return current value
-                 * @deprecated This method will not be generated in a future release
-                 */
-                @Deprecated(forRemoval = true)
-                public ObsoleteKey key() {
-                    return key;
-                }
-
-                /**
-                 * Return current value associated with the property corresponding to {@link Obsolete#getFoo()}.
-                 *
-                 * @return current value
-                 * @deprecated This method will not be generated in a future release
-                 */
-                @Deprecated(forRemoval = true)
-                public String getFoo() {
-                    return _foo;
-                }
-
-                /**
-                 * Return the specified augmentation, if it is present in this builder.
-                 *
-                 * @param <E$$> augmentation type
-                 * @param augmentationType augmentation type class
-                 * @return Augmentation object from this builder, or {@code null} if not present
-                 * @throws NullPointerException if {@code augmentType} is {@code null}
-                 * @deprecated This method will not be generated in a future release
-                 */
-                @Deprecated(forRemoval = true)
-                @SuppressWarnings({ "unchecked", "checkstyle:methodTypeParameterName"})
-                public <E$$ extends Augmentation<Obsolete, ?>> E$$ augmentation(Class<E$$> augmentationType) {
-                    return (E$$) augmentation.get(Objects.requireNonNull(augmentationType));
-                }
 
                 /**
                  * Set the key value corresponding to {@link Obsolete#key()} to the specified

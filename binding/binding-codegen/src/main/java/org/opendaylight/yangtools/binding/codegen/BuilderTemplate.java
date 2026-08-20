@@ -17,7 +17,6 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.IAE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_HASHMAP;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_MAP;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NPE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.SUPPRESS_WARNINGS;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
@@ -165,8 +164,7 @@ final class BuilderTemplate extends BaseTemplate {
 //            .blk(constantsDeclarations())
             .nl();
 
-        final var isAugmentable = targetType instanceof AugmentableArchetype;
-        if (isAugmentable) {
+        if (targetType instanceof AugmentableArchetype) {
             final var augmentTypeRef = augmentationOfIn(targetType, javaType());
             final var mapTypeRef = importedName(JU_MAP);
 
@@ -175,7 +173,7 @@ final class BuilderTemplate extends BaseTemplate {
         }
 
         final var targetTypeName = importedName(targetType);
-        bb
+        return bb
             .nl()
             .eol("/**")
             .eol(" * Construct an empty builder.")
@@ -195,13 +193,6 @@ final class BuilderTemplate extends BaseTemplate {
             .blk(generateMethodFieldsFrom())
             .nl()
             .blk(generateEmptyInstance())
-            .nl()
-            .blk(generateGetters());
-        if (isAugmentable) {
-            bb.nl().blk(generateAugmentation());
-        }
-
-        return bb
             .nl()
             .blk(generateSetters())
             .nl()
@@ -616,54 +607,6 @@ final class BuilderTemplate extends BaseTemplate {
 //        return bb;
 //    }
 
-    /**
-     * {@return string with getter methods}
-     */
-    private @NonNull BlockBuilder generateGetters() {
-        final var bb = newBlockBuilder();
-
-        if (props instanceof WithKey withKey) {
-            bb
-                .eol("/**")
-                .str(" * Return current value associated with the property corresponding to {@link ")
-                    .str(importedName(targetType)).eol("#key()}.")
-                .eol(" *")
-                .eol(" * @return current value")
-                .eol(" * @deprecated This method will not be generated in a future release")
-                .eol(" */")
-                .frg(new DeprecatedAnnotation(javaType(), true))
-                .str("public ").str(importedName(withKey.key)).str(" key()").oB()
-                    .eol("return key;")
-                .cB()
-                .newLine();
-        }
-
-        final var it = props.allGetters().iterator();
-        if (!it.hasNext()) {
-            return bb;
-        }
-
-        while (true) {
-            final var getter = it.next();
-            bb
-                .eol("/**")
-                .str(" * Return current value associated with the property corresponding to {@link ")
-                    .str(importedName(targetType)).str("#").str(getter.name()).eol("()}.")
-                .eol(" *")
-                .eol(" * @return current value")
-                .eol(" * @deprecated This method will not be generated in a future release")
-                .eol(" */")
-                .frg(new DeprecatedAnnotation(javaType(), true))
-                .blk(asGetterMethod(getter.propName(), getter.type()));
-
-            if (!it.hasNext()) {
-                return bb;
-            }
-
-            bb.newLine();
-        }
-    }
-
     @NonNullByDefault
     private BlockBuilder generateSetter(final GetterShape getter) {
         final var returnType = getter.type();
@@ -901,27 +844,6 @@ final class BuilderTemplate extends BaseTemplate {
             .eol("</ul>")
             .nl()
             .str("@see ").str(target).nl();
-    }
-
-    @NonNullByDefault
-    private BlockBuilder generateAugmentation() {
-        return newBlockBuilder()
-            .eol("/**")
-            .eol(" * Return the specified augmentation, if it is present in this builder.")
-            .eol(" *")
-            .eol(" * @param <E$$> augmentation type")
-            .eol(" * @param augmentationType augmentation type class")
-            .eol(" * @return Augmentation object from this builder, or {@code null} if not present")
-            .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentType} is {@code null}")
-            .eol(" * @deprecated This method will not be generated in a future release")
-            .eol(" */")
-            .frg(new DeprecatedAnnotation(javaType(), true))
-            .at().str(importedName(SUPPRESS_WARNINGS)).eol("({ \"unchecked\", \"checkstyle:methodTypeParameterName\"})")
-            .str("public <E$$ extends ").str(augmentationOfIn(targetType, javaType())).str("> E$$ augmentation(")
-                .str(importedName(CLASS)).str("<E$$> augmentationType)").oB()
-                .str("return (E$$) " + AUGMENTATION_FIELD + ".get(").str(importedName(JU_OBJECTS))
-                    .eol(".requireNonNull(augmentationType));")
-            .cB();
     }
 
     /**
