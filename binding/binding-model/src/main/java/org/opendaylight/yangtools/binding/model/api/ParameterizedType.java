@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.binding.model.impl.ParameterizedType2;
 import org.opendaylight.yangtools.binding.model.impl.ParameterizedTypeN;
 
 /**
- * Represents an instance of simple parameterized type such as List&lt;String&gt;. The parameterized Type is designed
+ * Represents an instance of simple parameterized type such as {@code List<String>}. The parameterized Type is designed
  * to be used to store information of Java  Generic Type. The array of {@link #getActualTypeArguments()} holds
  * information of all generic parameters defined for Parameterized Type.
  */
@@ -36,7 +36,7 @@ public sealed interface ParameterizedType extends Type
 
     /**
      * {@return list of Types that are defined for Parameterized Type, empty indicates {@code Foo<>}}
-     * (for example if ParameterizedType encapsulates java generic Map that specifies two parameters Map&lt;K,V&gt;
+     * (for example if ParameterizedType encapsulates java generic Map that specifies two parameters {@code Map<K,V>}
      * and the K is java.lang.Integer and V is defined as GeneratedType the array will contain two Types to store
      * the information of generic parameters.)
      */

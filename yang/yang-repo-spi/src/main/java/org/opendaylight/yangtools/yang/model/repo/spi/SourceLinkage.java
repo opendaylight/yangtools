@@ -161,9 +161,9 @@ abstract sealed class SourceLinkage permits RevisionSourceLinkage {
      * <p>Note that this map contains only imports which are missing from the reactor, not transitive failures.
      * Examples:
      * <ul>
-     *   <li>if A imports B, B imports C, and both A and B are in the reactor, only B-&gt;C will be reported</li>
-     *   <li>if A imports B and C, B imports C, and both A and B are in the reactor, A-&gt;C and B-&gt;C will be
-     *       reported</li>
+     *   <li>if A imports B, B imports C, and both A and B are in the reactor, only {@code B->C} will be reported</li>
+     *   <li>if A imports B and C, B imports C, and both A and B are in the reactor, {@code A->C} and {@code B->C} will
+     *       be reported</li>
      * </ul>
      */
     final ImmutableMultimap<SourceIdentifier, SourceDependency> unsatisfiedImports() {
