@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface RevisionDateStatement extends DeclaredStatement<Revision> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link RevisionDateStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -49,6 +50,7 @@ public interface RevisionDateStatement extends DeclaredStatement<Revision> {
 
         /**
          * {@return the {@code RevisionDateStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull RevisionDateStatement getRevisionDateStatement() {

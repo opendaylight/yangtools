@@ -46,6 +46,7 @@ public interface ImportEffectiveStatement
 
     /**
      * {@return the {@link ModuleEffectiveStatement} imported by this statement}
+     *
      * @since 15.0.0
      */
     @NonNull ModuleEffectiveStatement importedModule();

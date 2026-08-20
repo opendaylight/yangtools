@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 
 /**
  * The equivalent of {@link StatementDeclaration} when we only have a {@link SourceIdentifier}.
+ *
  * @since 15.0.0
  */
 @Beta

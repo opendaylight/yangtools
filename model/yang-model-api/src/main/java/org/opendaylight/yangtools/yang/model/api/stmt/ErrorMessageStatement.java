@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface ErrorMessageStatement extends DeclaredHumanTextStatement {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link ErrorMessageStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -50,6 +51,7 @@ public interface ErrorMessageStatement extends DeclaredHumanTextStatement {
 
         /**
          * {@return the {@code ErrorMessageStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull ErrorMessageStatement getErrorMessageStatement() {

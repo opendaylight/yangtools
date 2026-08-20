@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface MinElementsStatement extends DeclaredStatement<MinElementsArgument> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link MinElementsStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -49,6 +50,7 @@ public interface MinElementsStatement extends DeclaredStatement<MinElementsArgum
 
         /**
          * {@return the {@code MinElementsStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull MinElementsStatement getMinElementsStatement() {

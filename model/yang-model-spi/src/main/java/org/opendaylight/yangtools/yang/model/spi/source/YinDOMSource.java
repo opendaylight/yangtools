@@ -156,6 +156,7 @@ public abstract sealed class YinDOMSource
 
     /**
      * {@return the {@link SourceRefProvider} attached to this source}
+     *
      * @since 14.0.22
      */
     public final SourceRefProvider refProvider() {

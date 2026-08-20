@@ -81,6 +81,7 @@ public non-sealed interface ModuleEffectiveStatement
 
     /**
      * {@return the equivalent of {@code namespaceStatement().argument()}}
+     *
      * @since 15.0.0
      */
     default @NonNull XMLNamespace namespaceArgument() {

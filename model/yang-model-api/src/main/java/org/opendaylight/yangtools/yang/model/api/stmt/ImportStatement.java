@@ -24,6 +24,7 @@ public interface ImportStatement extends DescriptionStatement.OptionalIn<Unquali
         RevisionDateStatement.OptionalIn<Unqualified> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link ImportStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta

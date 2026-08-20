@@ -53,6 +53,7 @@ public sealed interface ParameterizedType extends Type
 
     /**
      * {@return a new instance parameterized as {@code <?>}}
+     *
      * @param rawType the {@link Type} that is being parameterized
      */
     @Deprecated(since = "16.0.0", forRemoval = true)
@@ -62,6 +63,7 @@ public sealed interface ParameterizedType extends Type
 
     /**
      * {@return a new instance parameterized with a single argument}
+     *
      * @param rawType the {@link Type} that is being parameterized
      * @param arg the single argument
      */
@@ -72,6 +74,7 @@ public sealed interface ParameterizedType extends Type
 
     /**
      * {@return a new instance parameterized with two arguments}
+     *
      * @param rawType the {@link Type} that is being parameterized
      * @param firstArg the first argument
      * @param secondArg the second argument
@@ -83,6 +86,7 @@ public sealed interface ParameterizedType extends Type
 
     /**
      * {@return a new instance parameterized with two or more arguments}
+     *
      * @param rawType the {@link Type} that is being parameterized
      * @param firstArg the first argument
      * @param secondArg the second argument
@@ -97,6 +101,7 @@ public sealed interface ParameterizedType extends Type
 
     /**
      * {@return a new instance parameterized with specified arguments}
+     *
      * @param rawType the {@link Type} that is being parameterized
      * @param args the arguments
      */

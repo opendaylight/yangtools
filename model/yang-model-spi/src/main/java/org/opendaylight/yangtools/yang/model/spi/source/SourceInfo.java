@@ -78,6 +78,7 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
 
     /**
      * {@return the latest {@link Revision}, or {@code null} if no {@code revision} is present}
+     *
      * @since 15.0.0
      */
     default @Nullable Revision latestRevision() {
@@ -97,6 +98,7 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
 
     /**
      * {@return a new {@code SourceInfoRef} derived on this object's {@link #sourceId()}}
+     *
      * @since 15.0.0
      */
     SourceInfoRef newRef();
@@ -130,6 +132,7 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
         /**
          * {@return the {@code QName} projecting {@link #sourceId()} to the declared {@link #namespace()} and
          * {@link #latestRevision()}}
+         *
          * @since 15.0.0
          */
         public QName moduleName() {
@@ -291,6 +294,7 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
     interface Extractor {
         /**
          * {@return extracted {@link SourceInfo}}
+         *
          * @throws SourceSyntaxException if the {@link SourceInfo} cannot be extracted
          */
         SourceInfo extractSourceInfo() throws SourceSyntaxException;

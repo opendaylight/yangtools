@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface DefaultStatement extends DeclaredStatement<String> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link DefaultStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -49,6 +50,7 @@ public interface DefaultStatement extends DeclaredStatement<String> {
 
         /**
          * {@return the {@code DefaultStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull DefaultStatement getDefaultStatement() {
@@ -62,6 +64,7 @@ public interface DefaultStatement extends DeclaredStatement<String> {
 
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link DefaultStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta

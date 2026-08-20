@@ -67,6 +67,7 @@ public sealed interface UniqueArgument extends SizedIterable<Descendant> {
 
     /**
      * {@return a {@link UniqueArgument} containing specified {@link Descendant}}
+     *
      * @param descendant the {@link Descendant}
      */
     static UniqueArgument.OfOne of(final Descendant descendant) {
@@ -75,6 +76,7 @@ public sealed interface UniqueArgument extends SizedIterable<Descendant> {
 
     /**
      * {@return a {@link UniqueArgument} containing specified {@link Descendant}}s
+     *
      * @param descendants the {@link Descendant}s
      */
     static UniqueArgument of(final List<Descendant> descendants) {
@@ -94,6 +96,7 @@ public sealed interface UniqueArgument extends SizedIterable<Descendant> {
 
     /**
      * {@return return {@code true} if this argument contains specified {@link Descendant}}
+     *
      * @param descendant the {{@link Descendant}
      */
     boolean contains(Descendant descendant);

@@ -57,6 +57,7 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
     /**
      * {@return a new BlockBuilder initialized with javadoc block derived from the specified {@link DocumentedNode}
      * followed by an optional {@code Deprecated} annotation, followed by a {@code Generated} annotation}
+     *
      * @param stmt a {@link DataSchemaCompat} statement
      */
     final BlockBuilder newBodyBuilder(final DataSchemaCompat<?, ?> stmt) {
@@ -67,6 +68,7 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
      * {@return a new BlockBuilder initialized with javadoc block derived from the specified {@link DocumentedNode}
      * view of an {@link EffectiveStatement} followed by an optional {@code Deprecated} annotation, followed by
      * a {@code Generated} annotation}
+     *
      * @param stmt the {@link EffectiveStatement}
      * @param node the {@link DocumentedNode}
      */
@@ -78,6 +80,7 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
      * {@return a new BlockBuilder initialized with javadoc block derived from the specified {@link DocumentedNode}
      * view of an {@link EffectiveStatement} followed by an optional {@code Deprecated} annotation, followed by
      * a {@code Generated} annotation} if instructed opted into.
+     *
      * @param stmt the {@link EffectiveStatement}
      * @param node the {@link DocumentedNode}
      * @param generatedAnnotation {@code true} if we should also add {@code Generated} annotation

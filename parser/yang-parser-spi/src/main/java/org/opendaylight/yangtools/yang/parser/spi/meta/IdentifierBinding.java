@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public sealed interface IdentifierBinding extends Immutable permits DefaultIdentifierBinding {
     /**
      * {@return an instance backed by a {@link NamespaceBinding}}
+     *
      * @param namespaceBinding the {@link NamespaceBinding}
      * @since 15.0.0
      */
@@ -58,6 +59,7 @@ public sealed interface IdentifierBinding extends Immutable permits DefaultIdent
 
     /**
      * {@return the backing {@link NamespaceBinding}}
+     *
      * @since 15.0.0
      */
     NamespaceBinding namespaceBinding();
@@ -69,6 +71,7 @@ public sealed interface IdentifierBinding extends Immutable permits DefaultIdent
 
     /**
      * {@return the backing {@link YangNamespaceContext}}
+     *
      * @since 15.0.0
      */
     YangNamespaceContext yangNamespaceContext();

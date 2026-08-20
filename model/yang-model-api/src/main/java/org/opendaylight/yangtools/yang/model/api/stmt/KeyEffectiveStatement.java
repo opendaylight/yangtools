@@ -50,6 +50,7 @@ public interface KeyEffectiveStatement extends EffectiveStatement<KeyArgument, @
 
         /**
          * {@return the {@code KeyEffectiveStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull KeyEffectiveStatement getKeyStatement() {

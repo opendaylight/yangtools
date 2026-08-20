@@ -24,6 +24,7 @@ public interface DeviationStatement extends DescriptionStatement.OptionalIn<Abso
         DeviateStatement.MultipleIn<Absolute>, ReferenceStatement.OptionalIn<Absolute> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link DeviationStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta

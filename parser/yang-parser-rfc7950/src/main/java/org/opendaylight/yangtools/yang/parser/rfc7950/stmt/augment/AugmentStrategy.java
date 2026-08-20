@@ -459,6 +459,7 @@ abstract sealed class AugmentStrategy {
 
     /**
      * {@return all statements which is causing specified statement to be considered mandatory}
+     *
      * @param stmt the statement
      */
     @NonNullByDefault

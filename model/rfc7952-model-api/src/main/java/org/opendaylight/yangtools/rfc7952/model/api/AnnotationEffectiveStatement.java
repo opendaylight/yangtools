@@ -36,6 +36,7 @@ public interface AnnotationEffectiveStatement
     interface Index {
         /**
          * {@return the {@code AnnotationEffectiveStatement} with specified name, or {@code null} if not present}
+         *
          * @param name the {@link AnnotationName}
          */
         @Nullable AnnotationEffectiveStatement lookupAnnotation(AnnotationName name);
@@ -43,6 +44,7 @@ public interface AnnotationEffectiveStatement
 
     /**
      * {@return {@link AnnotationEffectiveStatement} corresponding to specified name, or {@code null} if not found}
+     *
      * @param modelContext to {@link EffectiveModelContext} to search
      * @param name the {@link AnnotationName} to look for
      */

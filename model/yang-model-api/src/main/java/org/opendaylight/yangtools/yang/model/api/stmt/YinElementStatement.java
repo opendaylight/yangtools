@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface YinElementStatement extends DeclaredStatement<Boolean> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link YinElementStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -48,6 +49,7 @@ public interface YinElementStatement extends DeclaredStatement<Boolean> {
 
         /**
          * {@return the {@code YinElementStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull YinElementStatement getYinElementStatement() {

@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface PathStatement extends DeclaredStatement<PathExpression> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link PathStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -50,6 +51,7 @@ public interface PathStatement extends DeclaredStatement<PathExpression> {
 
         /**
          * {@return the {@code PathStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull PathStatement getPathStatement() {

@@ -195,6 +195,7 @@ public sealed interface ElementCountMatcher extends Immutable {
     /**
      * {@return an {@link ElementCountMatcher} matching specified {@code min-elements}, or {@code null} if no matching
      * is needed}
+     *
      * @param atLeast the {@link AtLeast} matcher
      */
     static @Nullable ElementCountMatcher atLeast(final AtLeast atLeast) {
@@ -204,6 +205,7 @@ public sealed interface ElementCountMatcher extends Immutable {
     /**
      * {@return an ElementCountMatcher matching specified {@code min-elements}, or {@code null} if no matching is
      * needed}
+     *
      * @param atMost the {@link AtMost} matcher
      */
     static @Nullable ElementCountMatcher atMost(final AtMost atMost) {
@@ -213,6 +215,7 @@ public sealed interface ElementCountMatcher extends Immutable {
     /**
      * {@return an {@link ElementCountMatcher} matching optional {@code min-elements} and optional {@code max-elements},
      * or {@code null} if no matching is needed}
+     *
      * @param atLeast the {@link AtLeast} matcher or {@code null}
      * @param atMost the {@link AtMost} matcher or {@code null}
      */
@@ -226,6 +229,7 @@ public sealed interface ElementCountMatcher extends Immutable {
     /**
      * {@return an {@link ElementCountMatcher} matching specified {@code min-elements} and {@code max-elements}, or
      * {@code null} if no matching is needed}
+     *
      * @param atLeast the {@link AtLeast} matcher
      * @param atMost the {@link AtMost} matcher
      */
@@ -238,18 +242,21 @@ public sealed interface ElementCountMatcher extends Immutable {
 
     /**
      * {@return {@code null} if {@code elementCount} matches this matcher or a {@link Violation}}
+     *
      * @param elementCount the element count
      */
     @Nullable Violation matches(int elementCount);
 
     /**
      * {@return {@code null} if {@code elementCount} matches this matcher or a {@link Violation}}
+     *
      * @param elementCount the element count
      */
     @Nullable Violation matches(long elementCount);
 
     /**
      * {@return {@code null} if {@code elementCount} matches this matcher or a {@link Violation}}
+     *
      * @param elementCount the element count
      */
     @Nullable Violation matches(BigInteger elementCount);

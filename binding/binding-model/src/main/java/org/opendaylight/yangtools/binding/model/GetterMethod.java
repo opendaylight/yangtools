@@ -56,6 +56,7 @@ public sealed interface GetterMethod extends Immutable permits GetterMethod0, Ge
 
     /**
      * {@return the method {@link ReturnType} which needs to be combined with {@link #statement()}}
+     *
      * @see #returnType()
      * @see #statement()
      */
@@ -63,6 +64,7 @@ public sealed interface GetterMethod extends Immutable permits GetterMethod0, Ge
 
     /**
      * {@return the method return type in legacy format}
+     *
      * @see #type()
      */
     default Type returnType() {

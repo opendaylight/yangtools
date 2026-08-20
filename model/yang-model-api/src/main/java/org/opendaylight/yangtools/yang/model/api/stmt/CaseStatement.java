@@ -24,6 +24,7 @@ public non-sealed interface CaseStatement extends DataDefinitionStatement, DataD
         ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName>, WhenStatement.OptionalIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link CaseStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta

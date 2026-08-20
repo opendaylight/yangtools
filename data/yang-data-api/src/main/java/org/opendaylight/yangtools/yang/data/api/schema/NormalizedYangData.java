@@ -104,6 +104,7 @@ public non-sealed interface NormalizedYangData extends DataContainer {
 
         /**
          * {@return a built {@link NormalizedYangData}}
+         *
          * @throws IllegalStateException if this builder does not have sufficient state
          */
         NormalizedYangData build();

@@ -23,6 +23,7 @@ public interface IdentityStatement extends BaseStatement.MultipleIn<QName>, Desc
         IfFeatureStatement.MultipleIn<QName>, ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link IdentityStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta

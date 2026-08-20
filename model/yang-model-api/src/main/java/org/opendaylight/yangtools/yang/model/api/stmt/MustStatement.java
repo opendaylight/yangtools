@@ -24,6 +24,7 @@ public interface MustStatement extends DeclaredStatement<QualifiedBound>,
         ErrorMessageStatement.OptionalIn<QualifiedBound>, ReferenceStatement.OptionalIn<QualifiedBound> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link MustStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta

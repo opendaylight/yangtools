@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface OrderedByStatement extends DeclaredStatement<Ordering> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link OrderedByStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -50,6 +51,7 @@ public interface OrderedByStatement extends DeclaredStatement<Ordering> {
 
         /**
          * {@return the {@code OrderedByStatement}}
+         *
          * @throws NoSuchElementException if not present
          * @since 15.0.1
          */

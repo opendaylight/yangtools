@@ -50,6 +50,7 @@ public interface PresenceEffectiveStatement extends EffectiveStatement<String, @
 
         /**
          * {@return the {@code PresenceEffectiveStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull PresenceEffectiveStatement getPresenceStatement() {

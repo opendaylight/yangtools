@@ -51,6 +51,7 @@ public interface OrderedByEffectiveStatement extends EffectiveStatement<Ordering
 
         /**
          * {@return the {@code OrderedByEffectiveStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull OrderedByEffectiveStatement getOrderedByStatement() {

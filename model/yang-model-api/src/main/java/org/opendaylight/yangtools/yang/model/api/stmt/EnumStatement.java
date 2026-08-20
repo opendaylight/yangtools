@@ -22,6 +22,7 @@ public interface EnumStatement extends DescriptionStatement.OptionalIn<String>, 
         ReferenceStatement.OptionalIn<String>, StatusStatement.OptionalIn<String>, ValueStatement.OptionalIn<String> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link EnumStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta

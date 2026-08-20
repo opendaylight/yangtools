@@ -76,6 +76,7 @@ public interface NormalizedNodeDataOutput extends AutoCloseable, QNameAwareDataO
 
     /**
      * {@inheritDoc}
+     *
      * @throws IOException if an error occurs
      */
     @Override

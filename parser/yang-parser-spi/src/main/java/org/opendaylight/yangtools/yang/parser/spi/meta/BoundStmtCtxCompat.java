@@ -33,6 +33,7 @@ public sealed interface BoundStmtCtxCompat<A, D extends DeclaredStatement<A>>
 
     /**
      * {@return this context iff it produces specified {@link DeclaredStatement} representation, {@code null} otherwise}
+     *
      * @param <X> expected argument type
      * @param <Y> expected declared statement representation
      * @param type the declared statement class

@@ -250,6 +250,7 @@ public abstract non-sealed class StatementSupport<A, D extends DeclaredStatement
      *   <li>{@link ConfigHandling#IGNORE} in parent overrides both
      *       {@link ConfigHandling#RESOLVE} and {@link ConfigHandling#NORESOLVE} in children</li>
      * </ol>
+     *
      * @since 15.0.0
      */
     @Beta
@@ -368,6 +369,7 @@ public abstract non-sealed class StatementSupport<A, D extends DeclaredStatement
 
     /**
      * Policy dictating how {@code config} statements are treated in the context of their parent statement.
+     *
      * @since 15.0.0
      */
     @Beta
@@ -511,6 +513,7 @@ public abstract non-sealed class StatementSupport<A, D extends DeclaredStatement
 
     /**
      * {@return this statement's contribution to {@code SubtreePolicy}}
+     *
      * @since 15.0.0
      */
     public final @NonNull SubtreePolicy subtreePolicy() {

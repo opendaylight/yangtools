@@ -185,6 +185,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
     private abstract static sealed class ValueCheckers {
         /**
          * {@return a ValueCheckers instance appropriate for the specified {@link ScalarTypeObjectArchetype}}
+         *
          * @param archetype the {@link ScalarTypeObjectArchetype}
          */
         static final ValueCheckers of(final ScalarTypeObjectArchetype archetype) {

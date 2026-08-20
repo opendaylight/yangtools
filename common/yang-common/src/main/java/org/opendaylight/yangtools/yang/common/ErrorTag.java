@@ -109,6 +109,7 @@ public final class ErrorTag implements Serializable {
     public static final ErrorTag OPERATION_NOT_SUPPORTED = new ErrorTag("operation-not-supported");
     /**
      * {@code partial-operation} {@link ErrorTag}.
+     *
      * @deprecated This error-info is obsolete since RFC6241.
      */
     @Deprecated(since = "RFC6241")

@@ -23,6 +23,7 @@ public interface FeatureStatement extends DescriptionStatement.OptionalIn<QName>
         ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link FeatureStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta

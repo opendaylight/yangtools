@@ -157,6 +157,7 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
 
     /**
      * {@return the {@link BlockFragment} used to clone the property, or {@code null}}
+     *
      * @param type the type
      */
     private static @Nullable BlockFragment cloneOrNull(final Type type) {

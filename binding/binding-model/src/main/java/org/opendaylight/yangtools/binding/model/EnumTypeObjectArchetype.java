@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 
 /**
  * The {@link Archetype} for {@link EnumTypeObject} specializations.
+ *
  * @since 15.0.0
  */
 @Beta

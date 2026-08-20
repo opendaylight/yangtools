@@ -48,6 +48,7 @@ abstract sealed class AbstractIndexedEffectiveStatement<A, D extends DeclaredSta
     //       its way out
     /**
      * Create a Map containing the contents of the schema tree.
+     *
      * @param substatements Substatements to index
      * @return Index of the schema tree as a mutable Map
      * @throws NullPointerException if {@code substatements} is null

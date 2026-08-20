@@ -52,6 +52,7 @@ public sealed interface Type extends Immutable permits Archetype, ReturnType, Pa
 
     /**
      * {@return {@code true} if type represents a Java array type, {@code false} otherwise}
+     *
      * @since 15.1.0
      */
     default boolean isArray() {

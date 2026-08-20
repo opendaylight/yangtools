@@ -117,6 +117,7 @@ public interface TypeStatement extends DeclaredStatement<QName> {
 
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link TypeStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -142,6 +143,7 @@ public interface TypeStatement extends DeclaredStatement<QName> {
 
         /**
          * {@return the {@code TypeStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull TypeStatement getTypeStatement() {

@@ -30,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 public interface ModifierStatement extends DeclaredStatement<ModifierKind> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link ModifierStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -55,6 +56,7 @@ public interface ModifierStatement extends DeclaredStatement<ModifierKind> {
 
         /**
          * {@return the {@code ModifierStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull ModifierStatement getModifierStatement() {

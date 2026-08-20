@@ -52,6 +52,7 @@ final class ReactorStatementDefinitionResolver implements Mutable, StatementDefi
 
     /**
      * {@return {@link StatementSupport} with specified {@code QName}}
+     *
      * @param identifier {@code QName} of requested statement
      */
     @Nullable StatementSupport<?, ?, ?> lookupSupport(final @NonNull QName identifier) {

@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface BelongsToStatement extends PrefixStatement.MandatoryIn<Unqualified> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link BelongsToStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -49,6 +50,7 @@ public interface BelongsToStatement extends PrefixStatement.MandatoryIn<Unqualif
 
         /**
          * {@return the {@code BelongsToStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull BelongsToStatement getBelongsToStatement() {

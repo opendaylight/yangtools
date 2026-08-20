@@ -25,6 +25,7 @@ public interface LengthStatement extends DescriptionStatement.OptionalIn<ValueRa
         ReferenceStatement.OptionalIn<ValueRanges> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link LengthStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -50,6 +51,7 @@ public interface LengthStatement extends DescriptionStatement.OptionalIn<ValueRa
 
         /**
          * {@return the {@code LengthStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull LengthStatement getLengthStatement() {

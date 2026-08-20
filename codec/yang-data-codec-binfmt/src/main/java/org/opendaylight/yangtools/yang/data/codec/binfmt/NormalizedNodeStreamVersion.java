@@ -26,6 +26,7 @@ public enum NormalizedNodeStreamVersion {
     MAGNESIUM {
         /**
          * {@inheritDoc}
+         *
          * @implSpec
          *     This method always throws {@link UnsupportedOperationException}.
          * @deprecated This version is a historic one and writeout is not supported

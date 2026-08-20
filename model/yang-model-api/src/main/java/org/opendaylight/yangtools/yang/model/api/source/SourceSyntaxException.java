@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReferenceAw
 
 /**
  * An exception thrown when a {@link SourceRepresentation} is found to contain syntax errors.
+ *
  * @since 15.0.0
  */
 @NonNullByDefault

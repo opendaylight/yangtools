@@ -25,6 +25,7 @@ public interface OutputStatement extends DataDefinitionStatement.MultipleIn<QNam
         MustStatement.MultipleIn<QName>, TypedefStatement.MultipleIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link OutputStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -50,6 +51,7 @@ public interface OutputStatement extends DataDefinitionStatement.MultipleIn<QNam
 
         /**
          * {@return the {@code OutputStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull OutputStatement getOutputStatement() {

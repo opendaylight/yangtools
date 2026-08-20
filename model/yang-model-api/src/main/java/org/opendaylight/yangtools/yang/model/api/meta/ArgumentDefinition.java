@@ -51,6 +51,7 @@ public sealed interface ArgumentDefinition<A> extends Immutable permits DefaultA
 
     /**
      * {@return a human-friendly string representation of {link #argumentName()}}
+     *
      * @since 15.0.0
      */
     default @NonNull String humanName() {
@@ -61,6 +62,7 @@ public sealed interface ArgumentDefinition<A> extends Immutable permits DefaultA
 
     /**
      * {@return a plain argument name}
+     *
      * @since 15.0.0
      */
     default @NonNull String simpleName() {

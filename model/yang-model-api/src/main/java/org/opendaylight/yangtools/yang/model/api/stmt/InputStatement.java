@@ -25,6 +25,7 @@ public interface InputStatement extends DataDefinitionStatement.MultipleIn<QName
         MustStatement.MultipleIn<QName>, TypedefStatement.MultipleIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link InputStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -50,6 +51,7 @@ public interface InputStatement extends DataDefinitionStatement.MultipleIn<QName
 
         /**
          * {@return the {@code InputStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull InputStatement getInputStatement() {

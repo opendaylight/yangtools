@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface DescriptionStatement extends DeclaredHumanTextStatement {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link DescriptionStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -49,6 +50,7 @@ public interface DescriptionStatement extends DeclaredHumanTextStatement {
 
         /**
          * {@return the {@code DescriptionStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull DescriptionStatement getDescriptionStatement() {

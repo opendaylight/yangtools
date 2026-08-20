@@ -26,6 +26,7 @@ public sealed interface Decimal64Type extends ConcreteType permits Decimal64Type
 
     /**
      * {@return a {@link Decimal64Type} for specified fraction digits}
+     *
      * @param fractionDigits the fraction digits
      * @throws IllegalArgumentException when {@code fractionDigits} is not in range [1..18]
      */

@@ -115,6 +115,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
 
     /**
      * {@return string with class source code in JAVA format}
+     *
      * @param isInnerClass {@code true} if generated class is an inner class
      */
     @NonNullByDefault
@@ -156,6 +157,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
 
     /**
      * {@return string with class declaration in JAVA format}
+     *
      * @param isInnerClass boolean value which specify if generated class is|isn't inner
      */
     @NonNullByDefault
@@ -246,6 +248,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
 
     /**
      * {@return string with the list of the parameter names of the {@code parameters}, separated by {@code ", "}}
+     *
      * @param tags non-empty group of generated property instances which are transformed to the sequence
      *                   of parameter names, must not be empty
      */

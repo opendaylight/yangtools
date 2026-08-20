@@ -67,6 +67,7 @@ public sealed interface KeyArgument extends SizedIterable<QName> permits KeyArgu
 
     /**
      * {@return a {@link KeyArgument} containing specified {@code node-identifier}}
+     *
      * @param nodeIdentifier the {@code node-identifier}
      */
     static KeyArgument.OfOne of(final QName nodeIdentifier) {
@@ -75,6 +76,7 @@ public sealed interface KeyArgument extends SizedIterable<QName> permits KeyArgu
 
     /**
      * {@return a {@link KeyArgument} containing specified {@code node-identifier}}s
+     *
      * @param nodeIdentifiers the {@code node-identifier}s
      */
     static KeyArgument of(final List<QName> nodeIdentifiers) {
@@ -95,6 +97,7 @@ public sealed interface KeyArgument extends SizedIterable<QName> permits KeyArgu
 
     /**
      * {@return return {@code true} if this argument contains specified {@code node-identifier}}
+     *
      * @param nodeIdentifier the {@code node-identifier}
      */
     boolean contains(QName nodeIdentifier);

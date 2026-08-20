@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface StatementDefinitionResolver {
     /**
      * {@return the {@link StatementDefinition} with specified namespace and local name}
+     *
      * @param namespace namespace of requested statement
      * @param localName localName of requested statement
      */
@@ -26,6 +27,7 @@ public interface StatementDefinitionResolver {
 
     /**
      * {@return the {@link StatementDefinition} with specified namespace and local name}
+     *
      * @param namespace namespace of requested statement
      * @param localName localName of requested statement
      */

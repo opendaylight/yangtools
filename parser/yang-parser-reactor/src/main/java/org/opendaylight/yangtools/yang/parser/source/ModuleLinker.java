@@ -199,6 +199,7 @@ final class ModuleLinker extends SourceLinker {
     /**
      * {@return the {@link RevisionUnion} of a submodule that is known to be required by this module, but has not
      * been resolved yet, or {@code null} if the submodule has been resolved or the revision is not yet known}
+     *
      * @param submodule submodule name
      */
     @Nullable RevisionUnion lookupRevision(final Unqualified submodule) {
@@ -211,6 +212,7 @@ final class ModuleLinker extends SourceLinker {
 
     /**
      * {@return the memoized {@link SubmoduleLinker}, or {@code null} if the submodule was not yet resolved}
+     *
      * @param submodule submodule name
      */
     @Nullable SubmoduleLinker lookupSubmodule(final Unqualified submodule) {
@@ -303,6 +305,7 @@ final class ModuleLinker extends SourceLinker {
 
     /**
      * {@return the reference to the first include-without-revision of specified submodule or this module}
+     *
      * @param name submodule name
      */
     StatementSourceReference includeRefOf(final Unqualified name) {

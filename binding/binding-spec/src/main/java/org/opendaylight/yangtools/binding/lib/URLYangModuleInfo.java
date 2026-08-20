@@ -57,6 +57,7 @@ public final class URLYangModuleInfo implements YangModuleInfo {
     /**
      * {@return a new {@link URLYangModuleInfo} with specified name, streams supplied by specified {@link URL} and no
      * imported modules}
+     *
      * @param name the name
      * @param url the URL
      * @since 16.0.0

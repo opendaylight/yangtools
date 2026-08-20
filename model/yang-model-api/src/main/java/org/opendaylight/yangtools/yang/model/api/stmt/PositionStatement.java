@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface PositionStatement extends DeclaredStatement<Uint32> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link PositionStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -50,6 +51,7 @@ public interface PositionStatement extends DeclaredStatement<Uint32> {
 
         /**
          * {@return the {@code PositionStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull PositionStatement getPositionStatement() {

@@ -51,6 +51,7 @@ public interface MaxElementsEffectiveStatement
 
         /**
          * {@return the {@code MaxElementsEffectiveStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull MaxElementsEffectiveStatement getMaxElementsStatement() {

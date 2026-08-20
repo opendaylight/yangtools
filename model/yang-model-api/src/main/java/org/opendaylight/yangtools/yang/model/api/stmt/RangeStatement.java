@@ -25,6 +25,7 @@ public interface RangeStatement extends DescriptionStatement.OptionalIn<ValueRan
         ReferenceStatement.OptionalIn<ValueRanges> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link RangeStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -50,6 +51,7 @@ public interface RangeStatement extends DescriptionStatement.OptionalIn<ValueRan
 
         /**
          * {@return the {@code RangeStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull RangeStatement getRangeStatement() {

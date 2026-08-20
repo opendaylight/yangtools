@@ -50,6 +50,7 @@ public sealed interface SourceDependency extends Serializable
     /**
      * {@return the {@code StatementSourceReference} to the statement causing this dependency, or {@code null} if not
      * available}
+     *
      * @since 15.0.0
      */
     @Nullable StatementSourceReference sourceRef();

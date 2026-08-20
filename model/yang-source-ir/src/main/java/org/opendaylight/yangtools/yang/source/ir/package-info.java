@@ -7,6 +7,7 @@
  */
 /**
  * Integration between YANG Text and YANG IR source representations.
+ *
  * @since 15.0.0
  */
 package org.opendaylight.yangtools.yang.source.ir;

@@ -44,6 +44,7 @@ public final class SubstatementValidator {
 
     /**
      * {@return a {@link SubstatementValidator.Builder} producing validators for specified statement}
+     *
      * @param statement the statement which is being validated
      */
     @NonNullByDefault

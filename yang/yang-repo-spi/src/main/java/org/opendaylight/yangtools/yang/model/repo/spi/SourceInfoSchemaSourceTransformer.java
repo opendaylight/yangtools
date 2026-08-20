@@ -37,6 +37,7 @@ public final class SourceInfoSchemaSourceTransformer<
 
     /**
      * {@return a {@link SourceInfoSchemaSourceTransformer} resulting in a {@link YangIRSource}}
+     *
      * @param <I> the input {@link SourceRepresentation}
      * @param provider the provider {@link SchemaRepository}
      * @param consumer the consumer {@link SchemaSourceRegistry}
@@ -50,6 +51,7 @@ public final class SourceInfoSchemaSourceTransformer<
 
     /**
      * {@return a {@link SourceInfoSchemaSourceTransformer} resulting in a {@link YinDOMSource}}
+     *
      * @param <I> the input {@link SourceRepresentation}
      * @param provider the provider {@link SchemaRepository}
      * @param consumer the consumer {@link SchemaSourceRegistry}

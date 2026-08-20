@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface ErrorAppTagStatement extends DeclaredStatement<String> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link ErrorAppTagStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -48,6 +49,7 @@ public interface ErrorAppTagStatement extends DeclaredStatement<String> {
 
         /**
          * {@return the {@code ErrorAppTagStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull ErrorAppTagStatement getErrorAppTagStatement() {

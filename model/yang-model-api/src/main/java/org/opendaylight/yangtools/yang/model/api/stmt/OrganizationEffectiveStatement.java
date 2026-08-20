@@ -51,6 +51,7 @@ public interface OrganizationEffectiveStatement extends EffectiveHumanTextStatem
 
         /**
          * {@return the {@code OrganizationEffectiveStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull OrganizationEffectiveStatement getOrganizationStatement() {

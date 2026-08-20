@@ -51,6 +51,7 @@ public interface ContactEffectiveStatement extends EffectiveHumanTextStatement<@
 
         /**
          * {@return the {@code ContactEffectiveStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull ContactEffectiveStatement getContactStatement() {

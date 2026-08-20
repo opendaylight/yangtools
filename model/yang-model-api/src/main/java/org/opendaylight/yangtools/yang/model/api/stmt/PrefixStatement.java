@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface PrefixStatement extends DeclaredStatement<String> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link PrefixStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta

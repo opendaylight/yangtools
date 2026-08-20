@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface ReferenceStatement extends DeclaredHumanTextStatement {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link ReferenceStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -49,6 +50,7 @@ public interface ReferenceStatement extends DeclaredHumanTextStatement {
 
         /**
          * {@return the {@code ReferenceStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull ReferenceStatement getReferenceStatement() {

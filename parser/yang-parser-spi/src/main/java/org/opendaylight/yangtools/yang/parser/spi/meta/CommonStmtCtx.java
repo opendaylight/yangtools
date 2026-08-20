@@ -32,6 +32,7 @@ public interface CommonStmtCtx {
 
     /**
      * {@return the parent context}
+     *
      * @throws VerifyException if this statement is the root statement
      */
     @NonNull CommonStmtCtx coerceParentContext();
@@ -39,6 +40,7 @@ public interface CommonStmtCtx {
     /**
      * {@return {@code true} if this context produces the statement corresponding to the specified
      * {@link StatementDefinition}}
+     *
      * @param def the {@link StatementDefinition}
      * @since 15.0.0
      */
@@ -49,6 +51,7 @@ public interface CommonStmtCtx {
     /**
      * {@return {@code true} if this context produces a statement corresponding to any of the specified
      * {@link StatementDefinition}s}
+     *
      * @param first the first {@link StatementDefinition}s
      * @param second the second {@link StatementDefinition}s
      * @since 15.0.0
@@ -62,6 +65,7 @@ public interface CommonStmtCtx {
     /**
      * {@return {@code true} if this context produces a statement corresponding to any of the specified
      * {@link StatementDefinition}s}
+     *
      * @param defs the {@link StatementDefinition}s
      * @since 15.0.0
      */
@@ -78,6 +82,7 @@ public interface CommonStmtCtx {
     /**
      * {@return {@code true} if this context produces a statement corresponding to any of the specified
      * {@link StatementDefinition}s}
+     *
      * @param defs the {@link StatementDefinition}s
      * @since 15.0.0
      */
@@ -88,6 +93,7 @@ public interface CommonStmtCtx {
     /**
      * {@return {@code true} if this context produces a statement whose declared representation is assignment-compatible
      * with the specified type}
+     *
      * @param <D> declared statement representation
      * @param type {@link DeclaredStatement} representation
      */
@@ -98,6 +104,7 @@ public interface CommonStmtCtx {
     /**
      * {@return {@code true} if this context produces a statement whose effective representation is
      * assignment-compatible with the specified type}
+     *
      * @param <E> effective statement representation
      * @param type {@link EffectiveStatement} representation
      */
@@ -107,6 +114,7 @@ public interface CommonStmtCtx {
 
     /**
      * {@return {@code true} when this context produces a statement outside of YANG vocabulary}
+     *
      * @since 15.0.0
      */
     default boolean producesExtension() {
@@ -149,12 +157,14 @@ public interface CommonStmtCtx {
 
     /**
      * {@return the {@code QNameModule} representing this statement's source's home {@code module}}
+     *
      * @since 15.0.0
      */
     @NonNull QNameModule currentModule();
 
     /**
      * {@return the {@link YangVersion} used to bind this statement}
+     *
      * @since 15.0.0
      */
     @NonNull YangVersion sourceVersion();

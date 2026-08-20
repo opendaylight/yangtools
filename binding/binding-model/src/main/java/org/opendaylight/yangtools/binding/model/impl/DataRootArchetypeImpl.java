@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 
 /**
  * The default implementation {@link DataRootArchetype}.
+ *
  * @since 15.0.0
  */
 @NonNullByDefault

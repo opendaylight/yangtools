@@ -25,6 +25,7 @@ public interface WhenStatement extends DescriptionStatement.OptionalIn<Qualified
         ReferenceStatement.OptionalIn<QualifiedBound> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link WhenStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -50,6 +51,7 @@ public interface WhenStatement extends DescriptionStatement.OptionalIn<Qualified
 
         /**
          * {@return the {@code WhenStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull WhenStatement getWhenStatement() {

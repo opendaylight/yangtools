@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface UnitsStatement extends DeclaredStatement<String> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link UnitsStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -48,6 +49,7 @@ public interface UnitsStatement extends DeclaredStatement<String> {
 
         /**
          * {@return the {@code UnitsStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull UnitsStatement getUnitsStatement() {

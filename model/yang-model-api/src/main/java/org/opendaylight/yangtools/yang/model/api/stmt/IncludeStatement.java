@@ -23,6 +23,7 @@ public interface IncludeStatement extends DescriptionStatement.OptionalIn<Unqual
         ReferenceStatement.OptionalIn<Unqualified>, RevisionDateStatement.OptionalIn<Unqualified> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link IncludeStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta

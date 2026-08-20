@@ -190,6 +190,7 @@ public record SourceIdentifier(Unqualified name, @Nullable Revision revision)
 
     /**
      * {@return a {@code StatementSourceReference} loosely identifying the same source as this identifier}
+     *
      * @since 15.0.0
      */
     public DeclarationInSource toReference() {
@@ -198,6 +199,7 @@ public record SourceIdentifier(Unqualified name, @Nullable Revision revision)
 
     /**
      * {@inheritDoc}
+     *
      * @since 15.0.0
      */
     @Override

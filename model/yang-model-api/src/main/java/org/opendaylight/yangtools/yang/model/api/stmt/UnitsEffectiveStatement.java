@@ -50,6 +50,7 @@ public interface UnitsEffectiveStatement extends EffectiveStatement<String, @Non
 
         /**
          * {@return the {@code UnitsEffectiveStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull UnitsEffectiveStatement getUnitsStatement() {

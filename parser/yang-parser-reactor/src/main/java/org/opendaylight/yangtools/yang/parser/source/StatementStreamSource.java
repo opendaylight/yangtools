@@ -71,6 +71,7 @@ public sealed interface StatementStreamSource permits YangIRStatementStreamSourc
     interface Factory {
         /**
          * {@return a new {@link StatementStreamSource} backed by specified prefix mapping}
+         *
          * @param prefixToModule the prefix mapping
          */
         StatementStreamSource newStreamSource(Map<? extends Unqualified, ? extends QNameModule> prefixToModule);
@@ -86,6 +87,7 @@ public sealed interface StatementStreamSource permits YangIRStatementStreamSourc
     interface Support<S extends MaterializedSourceRepresentation<?, ?>> {
         /**
          * {@return a new {@link Factory} backed by specified source and version}
+         *
          * @param source the source
          * @param yangVersion the version
          */

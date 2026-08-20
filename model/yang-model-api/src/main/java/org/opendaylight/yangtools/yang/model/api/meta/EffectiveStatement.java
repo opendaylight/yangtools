@@ -45,6 +45,7 @@ public non-sealed interface EffectiveStatement<A, D extends DeclaredStatement<A>
     /**
      * {@return the {@link DeclaredStatement} declaring of effective statement or {@code null} if this effective
      * statement was inferred}
+     *
      * @since 15.0.0
      */
     @Nullable D declared();
@@ -52,6 +53,7 @@ public non-sealed interface EffectiveStatement<A, D extends DeclaredStatement<A>
     /**
      * {@return the {@link DeclaredStatement} declaring of effective statement or empty if this effective statement was
      * inferred}
+     *
      * @since 15.0.0
      */
     default @NonNull Optional<D> findDeclared() {
@@ -61,6 +63,7 @@ public non-sealed interface EffectiveStatement<A, D extends DeclaredStatement<A>
 
     /**
      * {@return the {@link DeclaredStatement} declaring of effective statement}}
+     *
      * @throws NoSuchElementException if if this effective statement was inferred
      * @since 15.0.0
      */

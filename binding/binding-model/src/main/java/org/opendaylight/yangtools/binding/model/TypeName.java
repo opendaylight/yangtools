@@ -350,6 +350,7 @@ public abstract sealed class TypeName implements Comparable<TypeName>, Immutable
 
     /**
      * {@return {@code true} if this name represents a Java array type, {@code false} otherwise}
+     *
      * @since 15.1.0
      */
     public final boolean isArray() {

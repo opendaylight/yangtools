@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface BaseStatement extends DeclaredStatement<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link BaseStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta

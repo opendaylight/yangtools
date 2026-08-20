@@ -19,6 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 public sealed interface TextRepresentation<S extends SourceRepresentation> permits YangTextSource, YinTextSource {
     /**
      * {@return the {@link TextRepresentation} specialization of {@link S}}
+     *
      * @see YangTextSource#textRepresentation()
      * @see YinTextSource#textRepresentation()
      */

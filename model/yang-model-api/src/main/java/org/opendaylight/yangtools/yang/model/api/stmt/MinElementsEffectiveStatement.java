@@ -51,6 +51,7 @@ public interface MinElementsEffectiveStatement
 
         /**
          * {@return the {@code MinElementsEffectiveStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull MinElementsEffectiveStatement getMinElementsStatement() {

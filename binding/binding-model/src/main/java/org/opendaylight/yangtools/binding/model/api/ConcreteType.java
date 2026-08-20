@@ -25,12 +25,14 @@ import org.opendaylight.yangtools.yang.common.Decimal64;
 public sealed interface ConcreteType extends ReturnType permits Decimal64Type, ConcreteTypeImpl, RestrictedType {
     /**
      * {@return this type's equivalent with specified {@link Restrictions}}
+     *
      * @param newRestrictions the restrictions to apply
      */
     RestrictedType withRestrictions(Restrictions newRestrictions);
 
     /**
      * {@return a {@link ConcreteType} for specified type {@link Class}}
+     *
      * @param typeClass the type class
      * @deprecated Use the constants in {@link ScalarTypes} instead.
      */

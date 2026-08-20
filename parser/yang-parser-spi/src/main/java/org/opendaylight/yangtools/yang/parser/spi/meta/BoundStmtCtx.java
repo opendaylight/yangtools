@@ -80,18 +80,21 @@ public interface BoundStmtCtx<A> extends CommonStmtCtx {
     /**
      * {@return {@code true} iff this statement resides within a subtree which is independent of the set of features
      * this parsing instance supports}
+     *
      * @since 15.0.0
      */
     boolean featureIndependent();
 
     /**
      * {@return {@code true} iff this statement resides within a subtree with implied structure {@link SubtreePolicy}}
+     *
      * @since 15.0.0
      */
     boolean inStructure();
 
     /**
      * {@return {@code true} iff this statement resides within a subtree with implied template {@link SubtreePolicy}}
+     *
      * @since 15.0.0
      */
     boolean inTemplate();

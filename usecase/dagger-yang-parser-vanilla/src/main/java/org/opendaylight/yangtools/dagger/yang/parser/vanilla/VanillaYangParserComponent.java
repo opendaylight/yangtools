@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yin.source.dom.dagger.YinDOMSourceModule;
 
 /**
  * A {@link Component} providing a plain RFC6020/RFC7950 {@link YangLibResolver}.
+ *
  * @since 15.0.0
  */
 @Singleton

@@ -59,6 +59,7 @@ public record RequestError(
 
     /**
      * {@return a RequestError equivalent of specified {@link RpcError}}
+     *
      * @param rpcError the {@link RpcError}
      */
     public static RequestError ofRpcError(final RpcError rpcError) {
@@ -67,6 +68,7 @@ public record RequestError(
 
     /**
      * {@return a RequestError equivalent of specified {@link RpcError} with an optional {@link ErrorPath}}
+     *
      * @param rpcError the {@link RpcError}
      * @param path the {@link ErrorPath}
      */

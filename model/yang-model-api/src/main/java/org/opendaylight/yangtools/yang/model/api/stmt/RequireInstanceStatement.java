@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface RequireInstanceStatement extends DeclaredStatement<Boolean> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link RequireInstanceStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -48,6 +49,7 @@ public interface RequireInstanceStatement extends DeclaredStatement<Boolean> {
 
         /**
          * {@return the {@code RequireInstanceStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull RequireInstanceStatement getRequireInstanceStatement() {

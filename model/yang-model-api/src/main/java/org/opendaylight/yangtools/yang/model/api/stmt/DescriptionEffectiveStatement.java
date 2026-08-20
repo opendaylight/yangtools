@@ -51,6 +51,7 @@ public interface DescriptionEffectiveStatement extends EffectiveHumanTextStateme
 
         /**
          * {@return the {@code DescriptionEffectiveStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull DescriptionEffectiveStatement getDescriptionStatement() {

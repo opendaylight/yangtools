@@ -34,6 +34,7 @@ public interface MaterializedSourceRepresentation<R extends SourceRepresentation
 
     /**
      * {@return this representation with the specified SourceIdentifier}
+     *
      * @param newSourceId the new {@link SourceIdentifier}
      */
     R withSourceId(SourceIdentifier newSourceId);

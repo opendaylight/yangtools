@@ -23,6 +23,7 @@ public interface LoadableClass<T> {
 
     /**
      * {@return the class bytes}
+     *
      * @param classLoader the {@link BindingClassLoader}
      */
     Class<T> load(BindingClassLoader classLoader);

@@ -491,6 +491,7 @@ public final class CodeHelpers {
 
     /**
      * {@return a clone of input bytes or {@code null}}
+     *
      * @param bytes input bytes
      */
     public static byte @Nullable [] copyArray(final byte @Nullable [] bytes) {
@@ -529,6 +530,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(int...)} for two hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @since 16.0.0
@@ -539,6 +541,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(int...)} for three hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -550,6 +553,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(int...)} for four hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -562,6 +566,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(int...)} for five hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -576,6 +581,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(int...)} for six hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -591,6 +597,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(int...)} for seven hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -607,6 +614,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(int...)} for eight hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -625,6 +633,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(int...)} for nine hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -644,6 +653,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(int...)} for ten hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -678,6 +688,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for two hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @since 16.0.0
@@ -689,6 +700,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for three hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -702,6 +714,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for four hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -716,6 +729,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for five hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -732,6 +746,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for six hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -749,6 +764,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for seven hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -767,6 +783,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for eight hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -787,6 +804,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for nine hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -809,6 +827,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@link #jcHC(Augmentable, int...)} for ten hash codes}
+     *
      * @param hashCode0 first hash code
      * @param hashCode1 second hash code
      * @param hashCode2 third hash code
@@ -832,6 +851,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@code bindingHashCode(augmentable, new int[0])}}
+     *
      * @param augmentable the {@link Augmentable} instance
      * @since 16.0.0
      */
@@ -842,6 +862,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@code bindingHashCode(Objects.hashCode(prop))}}
+     *
      * @param prop single property
      * @since 16.0.0
      */
@@ -852,6 +873,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@code bindingHashCode(Arrays.hashCode(prop))}}
+     *
      * @param prop single property
      * @since 16.0.0
      */
@@ -862,6 +884,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@code bindingHashCode(augmentable, Objects.hashCode(prop))}}
+     *
      * @param prop single property
      * @since 16.0.0
      */
@@ -872,6 +895,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the equivalent of {@code bindingHashCode(augmentable, Arrays.hashCode(prop))}}
+     *
      * @param prop single property
      * @since 16.0.0
      */
@@ -989,6 +1013,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the {@link JavaDataContainer#javaTS()} for container which cannot have any properties}
+     *
      * @param clazz the container class
      * @since 16.0.0
      */
@@ -1000,6 +1025,7 @@ public final class CodeHelpers {
     /**
      * {@return the {@link JavaDataContainer#javaTS()} for container which cannot have any properties, but is
      * {@link Augmentable}}
+     *
      * @param augmentable the augmentable instance
      * @since 16.0.0
      */
@@ -1012,6 +1038,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the {@link JavaDataContainer#javaTS()} for container which can have one property}
+     *
      * @param clazz the container class
      * @param name the property name
      * @param value property value, or {@code null} if absent
@@ -1024,6 +1051,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the {@link JavaDataContainer#javaTS()} for container which can have one {@code type binary} property}
+     *
      * @param clazz the container class
      * @param name the property name
      * @param value the binary property value, or {@code null} if absent
@@ -1037,6 +1065,7 @@ public final class CodeHelpers {
     /**
      * {@return the {@link JavaDataContainer#javaTS()} for container which can have one property
      * and is {@link Augmentable}}}
+     *
      * @param augmentable the augmentable instance
      * @param name the property name
      * @param value the property value, or {@code null} if absent
@@ -1051,6 +1080,7 @@ public final class CodeHelpers {
     /**
      * {@return the {@link JavaDataContainer#javaTS()} for container which can have one {@code type binary} property
      * and is {@link Augmentable}}}
+     *
      * @param augmentable the augmentable instance
      * @param name the property name
      * @param value the binary property value, or {@code null} if absent
@@ -1064,6 +1094,7 @@ public final class CodeHelpers {
 
     /**
      * {@return a {@link JavaTSBuilder} identifying specified class}
+     *
      * @param clazz the class to identify as
      * @since 16.0.0
      */
@@ -1075,6 +1106,7 @@ public final class CodeHelpers {
     /**
      * {@return a {@link JavaTSBuilder} identifying specified {@link Augmentable} {@link DataContainer} instance,
      * appending any augmentations present as {@code at the end}}
+     *
      * @param augmentable the {@link Augmentable} for which the string is being built.
      * @since 16.0.0
      */
@@ -1114,6 +1146,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the {@link BaseIdentity#toString()} string}
+     *
      * @param clazz the identity class
      * @param qname identity's assigned QName
      * @since 16.0.0
@@ -1200,6 +1233,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the {@link ScalarTypeObject#toString()} string}
+     *
      * @param clazz type object class
      * @param value the value
      * @since 16.0.0
@@ -1212,6 +1246,7 @@ public final class CodeHelpers {
 
     /**
      * {@return the {@link ScalarTypeObject#toString()} string}
+     *
      * @param clazz type object class
      * @param value the value
      * @since 16.0.0

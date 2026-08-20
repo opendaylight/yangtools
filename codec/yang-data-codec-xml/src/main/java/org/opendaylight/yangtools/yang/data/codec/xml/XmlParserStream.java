@@ -102,6 +102,7 @@ import org.w3c.dom.Document;
 public final class XmlParserStream implements Closeable, Flushable {
     /**
      * {@link QNameModule} for use with legacy XML attributes.
+     *
      * @deprecated The use on this namespace is discouraged and users are strongly encouraged to proper RFC7952 metadata
      *             annotations.
      */

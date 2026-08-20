@@ -29,6 +29,7 @@ public sealed interface KeyedListActionArchetype extends OperationArchetype.OfAc
 
     /**
      * {@return an KeyedListActionArchetype}
+     *
      * @param name the archetype's {@link TypeName}}
      * @param statement the {@link ActionEffectiveStatement}
      * @param input the {@link RpcInputArchetype} of the action's input

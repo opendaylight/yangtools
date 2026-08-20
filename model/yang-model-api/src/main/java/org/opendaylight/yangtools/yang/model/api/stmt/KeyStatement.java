@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface KeyStatement extends DeclaredStatement<KeyArgument> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link KeyStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -49,6 +50,7 @@ public interface KeyStatement extends DeclaredStatement<KeyArgument> {
 
         /**
          * {@return the {@code KeyStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull KeyStatement getKeyStatement() {

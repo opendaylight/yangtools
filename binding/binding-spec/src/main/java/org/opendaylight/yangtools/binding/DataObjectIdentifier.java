@@ -99,6 +99,7 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
 
         /**
          * {@return this instance}
+         *
          * @deprecated This method should not be directly invoked.
          */
         @Override
@@ -185,6 +186,7 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
 
     /**
      * {@return this instance}
+     *
      * @deprecated This method should not be directly invoked.
      */
     @Override

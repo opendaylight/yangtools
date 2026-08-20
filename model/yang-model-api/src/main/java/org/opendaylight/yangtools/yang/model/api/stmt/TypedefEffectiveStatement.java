@@ -42,6 +42,7 @@ public interface TypedefEffectiveStatement
      *     descendant node may use that typedef, and it MUST NOT define a
      *     typedef with the same name.
      * </pre>
+     *
      * @param <A> Argument type
      * @param <D> Class representing declared version of this statement.
      */

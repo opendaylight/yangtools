@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface YangVersionStatement extends DeclaredStatement<YangVersion> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link YangVersionStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -50,6 +51,7 @@ public interface YangVersionStatement extends DeclaredStatement<YangVersion> {
 
         /**
          * {@return the {@code YangVersionStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull YangVersionStatement getYangVersionStatement() {

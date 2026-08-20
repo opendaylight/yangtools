@@ -45,6 +45,7 @@ public final class DOMSourceXMLStreamReader extends DOMWrappingReader {
 
     /**
      * {@inheritDoc}
+     *
      * @deprecated Do not call this method.
      */
     @Override
@@ -55,6 +56,7 @@ public final class DOMSourceXMLStreamReader extends DOMWrappingReader {
 
     /**
      * {@inheritDoc}
+     *
      * @deprecated Do not call this method.
      */
     @Override

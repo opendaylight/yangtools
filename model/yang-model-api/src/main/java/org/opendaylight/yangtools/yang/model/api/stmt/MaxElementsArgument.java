@@ -172,6 +172,7 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
 
     /**
      * {@return a {@link MaxElementsArgument} bounded to a value}
+     *
      * @param value the value
      * @throws IllegalArgumentException if {@code value} is non-positive
      */
@@ -184,6 +185,7 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
 
     /**
      * {@return a {@link MaxElementsArgument} bounded to a value}
+     *
      * @param value the value
      * @throws IllegalArgumentException if {@code value} is non-positive
      */
@@ -196,6 +198,7 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
 
     /**
      * {@return a {@link MaxElementsArgument} bounded to a value}
+     *
      * @param value the value
      * @throws IllegalArgumentException if {@code value} is non-positive
      */
@@ -210,6 +213,7 @@ public sealed interface MaxElementsArgument extends Comparable<MaxElementsArgume
 
     /**
      * {@return a {@link MaxElementsArgument} value for specified argument string}
+     *
      * @param argument the argument string
      * @throws ParseException if {@code argument} does not represent a valid value
      */

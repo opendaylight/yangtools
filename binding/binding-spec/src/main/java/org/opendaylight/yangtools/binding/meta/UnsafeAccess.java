@@ -21,6 +21,7 @@ public interface UnsafeAccess {
     /**
      * {@return the {@link UnsafeScalarTypeObjectFactory} for the specified {@code typeClass}, or {@code null} if not
      * found}
+     *
      * @param <V> the value type
      * @param <T> the {@link ScalarTypeObject} type
      * @param typeObj an instance of the {@link ScalarTypeObject} class
@@ -31,6 +32,7 @@ public interface UnsafeAccess {
 
     /**
      * {@return the {@link UnsafeScalarTypeObjectFactory} for the specified {@code typeClass}}
+     *
      * @param <V> the value type
      * @param <T> the {@link ScalarTypeObject} type
      * @param typeObj an instance of the {@link ScalarTypeObject} class

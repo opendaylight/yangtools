@@ -30,6 +30,7 @@ public sealed interface MinElementsArgument extends Comparable<MinElementsArgume
         permits MinElementsArgument32, MinElementsArgument64, MinElementsArgumentBig {
     /**
      * {@return a {@link MinElementsArgument} with specified value}
+     *
      * @param value the value
      * @throws IllegalArgumentException if value is negative
      */
@@ -42,6 +43,7 @@ public sealed interface MinElementsArgument extends Comparable<MinElementsArgume
 
     /**
      * {@return a {@link MinElementsArgument} with specified value}
+     *
      * @param value the value
      * @throws IllegalArgumentException if value is negative
      */
@@ -55,6 +57,7 @@ public sealed interface MinElementsArgument extends Comparable<MinElementsArgume
 
     /**
      * {@return a {@link MinElementsArgument} with specified value}
+     *
      * @param value the value
      * @throws IllegalArgumentException if value is negative
      */

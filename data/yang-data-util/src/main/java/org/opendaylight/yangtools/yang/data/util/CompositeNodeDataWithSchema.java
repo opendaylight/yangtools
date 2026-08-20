@@ -205,6 +205,7 @@ public sealed class CompositeNodeDataWithSchema<T extends DataSchemaNode> extend
 
     /**
      * Return a hint about how may children we are going to generate.
+     *
      * @return Size of currently-present node list.
      */
     protected final int childSizeHint() {

@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface IfFeatureStatement extends DeclaredStatement<IfFeatureExpr> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link IfFeatureStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta

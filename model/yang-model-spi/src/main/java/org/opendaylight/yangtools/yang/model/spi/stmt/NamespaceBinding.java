@@ -32,6 +32,7 @@ public interface NamespaceBinding {
 
     /**
      * {@return the module for specified prefix, or {@code null} if no such module exists}
+     *
      * @param prefix the prefix
      */
     @Nullable QNameModule lookupModule(UnresolvedQName.Unqualified prefix);

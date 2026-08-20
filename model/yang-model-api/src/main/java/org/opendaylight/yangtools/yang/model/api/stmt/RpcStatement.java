@@ -24,6 +24,7 @@ public interface RpcStatement extends DescriptionStatement.OptionalIn<QName>, If
         ReferenceStatement.OptionalIn<QName>, StatusStatement.OptionalIn<QName>, TypedefStatement.MultipleIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link RpcStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta

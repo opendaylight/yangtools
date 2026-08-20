@@ -99,6 +99,7 @@ public sealed interface StatementDefinition<A, D extends DeclaredStatement<A>, E
 
     /**
      * {@return a human-friendly string representation of {link #statementName()}}
+     *
      * @since 15.0.0
      */
     default @NonNull String humanName() {
@@ -109,6 +110,7 @@ public sealed interface StatementDefinition<A, D extends DeclaredStatement<A>, E
 
     /**
      * {@return a plain statement name}
+     *
      * @since 15.0.0
      */
     default @NonNull String simpleName() {
@@ -130,6 +132,7 @@ public sealed interface StatementDefinition<A, D extends DeclaredStatement<A>, E
 
     /**
      * {@return {@link ArgumentDefinition}}
+     *
      * @throws NoSuchElementException if statement does not take argument
      */
     default @NonNull ArgumentDefinition<A> getArgumentDefinition() {
@@ -152,6 +155,7 @@ public sealed interface StatementDefinition<A, D extends DeclaredStatement<A>, E
 
     /**
      * {@return {@code true} if this definition represents an {@code extension} statement}
+     *
      * @since 15.0.0
      */
     @Beta
@@ -167,6 +171,7 @@ public sealed interface StatementDefinition<A, D extends DeclaredStatement<A>, E
 
     /**
      * {@return {@code true} IFF {@code obj} is the same instance as this object}
+     *
      * @param obj the reference object with which to compare.
      */
     @Override

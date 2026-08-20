@@ -45,6 +45,7 @@ public interface RpcError {
      *    unknown-element
      *    unknown-namespace
      * </pre>
+     *
      * @return a string if available or null otherwise.
      */
     ErrorTag getTag();

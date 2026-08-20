@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 public sealed interface RpcArchetype extends OperationArchetype permits RpcArchetypeImpl {
     /**
      * {@return an RpcArchetype}
+     *
      * @param name the archetype's {@link TypeName}}
      * @param statement the {@link RpcEffectiveStatement}
      * @param input the {@link RpcInputArchetype} of the RPC's input

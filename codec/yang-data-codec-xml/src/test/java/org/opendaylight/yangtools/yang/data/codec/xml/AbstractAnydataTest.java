@@ -93,6 +93,7 @@ abstract class AbstractAnydataTest extends AbstractXmlTest {
 
     /**
      * Transform DomSource object to formatted XML string.
+     *
      * @param node {@link DOMSource}
      * @return {@link String}
      * @throws TransformerException Internal {@link Transformer} exception

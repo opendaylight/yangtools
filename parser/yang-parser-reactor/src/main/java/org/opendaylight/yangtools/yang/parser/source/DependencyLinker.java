@@ -286,6 +286,7 @@ abstract sealed class DependencyLinker<D extends SourceDependency, T> {
 
     /**
      * {@return an instance for the specified set of initial dependencies}
+     *
      * @param <D> dependency type
      * @param <T> target type
      * @param dependencies the set of dependencies

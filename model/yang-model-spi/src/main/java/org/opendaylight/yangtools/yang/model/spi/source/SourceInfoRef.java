@@ -11,6 +11,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * The combination of a {@link SourceInfo} and its corresponding {@link SourceRef}.
+ *
  * @since 15.0.0
  */
 @NonNullByDefault

@@ -26,6 +26,7 @@ public interface AugmentStatement extends DataDefinitionStatement.MultipleIn<Sch
         StatusStatement.OptionalIn<SchemaNodeIdentifier>, WhenStatement.OptionalIn<SchemaNodeIdentifier> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link AugmentStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta

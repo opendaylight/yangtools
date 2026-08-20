@@ -253,6 +253,7 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
 
     /**
      * {@return a new {@link GeneratedClass.TopLevel top-level class} for the specified {@link Archetype}}
+     *
      * @param genType the generated type
      */
     // FIXME: this method should:

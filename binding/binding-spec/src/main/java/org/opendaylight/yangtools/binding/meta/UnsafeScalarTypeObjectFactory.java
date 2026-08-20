@@ -27,6 +27,7 @@ public interface UnsafeScalarTypeObjectFactory<V, T extends ScalarTypeObject<V>>
 
     /**
      * {@return a new instance of target {@link ScalarTypeObject} with specified value}
+     *
      * @param value the value
      */
     @NonNullByDefault

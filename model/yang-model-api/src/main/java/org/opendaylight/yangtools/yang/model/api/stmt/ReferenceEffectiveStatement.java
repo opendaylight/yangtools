@@ -51,6 +51,7 @@ public interface ReferenceEffectiveStatement extends EffectiveHumanTextStatement
 
         /**
          * {@return the {@code ReferenceEffectiveStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull ReferenceEffectiveStatement getReferenceStatement() {

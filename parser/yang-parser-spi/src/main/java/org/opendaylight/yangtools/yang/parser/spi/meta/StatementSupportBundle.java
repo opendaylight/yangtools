@@ -84,6 +84,7 @@ public final class StatementSupportBundle implements Immutable {
 
     /**
      * {@return a new {@link Builder} working with {@link #VERSIONS_ALL}}
+     *
      * @since 14.0.20
      */
     public static @NonNull Builder builder() {

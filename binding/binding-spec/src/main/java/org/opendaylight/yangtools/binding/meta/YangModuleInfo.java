@@ -54,6 +54,7 @@ public interface YangModuleInfo extends Immutable {
 
     /**
      * {@return the module's namespace and revision expressed as a {@link QNameModule}}
+     *
      * @since 16.0.0
      */
     default QNameModule module() {

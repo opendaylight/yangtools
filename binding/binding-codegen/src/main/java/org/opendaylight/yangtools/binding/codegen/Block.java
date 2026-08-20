@@ -171,6 +171,7 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
 
         /**
          * {@return the result of {@link #toRawString()}}
+         *
          * @deprecated use {@link #toRawString()} directly
          */
         @Override
@@ -284,6 +285,7 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
 
     /**
      * {@return the result of {@link #toRawString()}}
+     *
      * @deprecated use {@link #toRawString()} directly
      */
     @Override

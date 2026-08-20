@@ -119,6 +119,7 @@ public sealed interface BuiltInType permits DefaultBuiltInType {
 
     /**
      * {@return the {@link BuiltInType} for specified type name, or {@code null}}
+     *
      * @param simpleName the type name
      */
     static @Nullable BuiltInType forSimpleName(final String simpleName) {

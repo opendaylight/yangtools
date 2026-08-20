@@ -202,6 +202,7 @@ public abstract sealed class IRStatement extends AbstractIRObject implements Pre
      * {@inheritDoc}
      *
      * <p>Returned instance will produce a YANG text equivalent of this statement.
+     *
      * @since 15.0.0
      */
     @Override

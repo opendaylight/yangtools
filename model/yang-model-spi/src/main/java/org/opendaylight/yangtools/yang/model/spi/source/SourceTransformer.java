@@ -35,6 +35,7 @@ public interface SourceTransformer<I extends SourceRepresentation, O extends Sou
 
     /**
      * {@return an instance output SourceRepresentation}
+     *
      * @param input the input {@link SourceRepresentation}
      * @throws IOException if an I/O error occurs
      * @throws SourceSyntaxException if the input representation is not syntactically valid

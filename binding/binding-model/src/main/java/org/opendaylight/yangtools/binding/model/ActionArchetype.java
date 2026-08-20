@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 public sealed interface ActionArchetype extends OperationArchetype.OfAction permits ActionArchetypeImpl {
     /**
      * {@return an ActionArchetype}
+     *
      * @param name the archetype's {@link TypeName}}
      * @param statement the {@link ActionEffectiveStatement}
      * @param input the {@link RpcInputArchetype} of the action's input

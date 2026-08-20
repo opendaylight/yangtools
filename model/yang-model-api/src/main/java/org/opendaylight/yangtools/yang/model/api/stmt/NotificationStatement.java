@@ -25,6 +25,7 @@ public interface NotificationStatement extends DataDefinitionStatement.MultipleI
         StatusStatement.OptionalIn<QName>, TypedefStatement.MultipleIn<QName> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link IfFeatureStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta

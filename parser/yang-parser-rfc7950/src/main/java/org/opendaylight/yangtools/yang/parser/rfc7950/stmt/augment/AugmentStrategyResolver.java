@@ -46,6 +46,7 @@ enum AugmentStrategyResolver {
 
     /**
      * {@return the {@link AugmentStrategy} to use with specified statement}
+     *
      * @param stmt the statement
      */
     abstract @NonNull AugmentStrategy strategyFor(

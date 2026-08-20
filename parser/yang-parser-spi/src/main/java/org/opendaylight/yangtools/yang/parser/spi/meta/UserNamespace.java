@@ -19,6 +19,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 public sealed interface UserNamespace<K, V> extends ParserNamespace<K, V> permits UserNamespaceImpl {
     /**
      * {@return a new {@link UserNamespace} namespace with specified name}
+     *
      * @param <K> key type
      * @param <V> value type
      * @param name the name

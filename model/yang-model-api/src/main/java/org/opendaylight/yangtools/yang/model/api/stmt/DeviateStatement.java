@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface DeviateStatement extends DeclaredStatement<DeviateKind> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link DeviateStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      * @since 15.0.1
      */

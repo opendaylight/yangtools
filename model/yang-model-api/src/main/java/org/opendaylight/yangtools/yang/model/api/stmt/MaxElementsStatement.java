@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 public interface MaxElementsStatement extends DeclaredStatement<MaxElementsArgument> {
     /**
      * A {@link DeclaredStatement} that is a parent of a single {@link MaxElementsStatement}.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
@@ -49,6 +50,7 @@ public interface MaxElementsStatement extends DeclaredStatement<MaxElementsArgum
 
         /**
          * {@return the {@code MaxElementsStatement}}
+         *
          * @throws NoSuchElementException if not present
          */
         default @NonNull MaxElementsStatement getMaxElementsStatement() {

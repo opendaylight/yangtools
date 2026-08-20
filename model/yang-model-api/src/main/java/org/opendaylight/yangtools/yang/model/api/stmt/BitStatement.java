@@ -23,6 +23,7 @@ public interface BitStatement extends DescriptionStatement.OptionalIn<String>, I
         StatusStatement.OptionalIn<String> {
     /**
      * A {@link DeclaredStatement} that is a parent of multiple {@link BitStatement}s.
+     *
      * @param <A> Argument type ({@link Empty} if statement does not have argument.)
      */
     @Beta
