@@ -1,4 +1,6 @@
 module root-module {
   namespace root-module;
   prefix rm;
+
+  include error-submodule;
 }

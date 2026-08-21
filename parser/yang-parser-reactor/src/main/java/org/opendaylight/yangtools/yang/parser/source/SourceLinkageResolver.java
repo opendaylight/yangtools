@@ -892,66 +892,46 @@ public final class SourceLinkageResolver {
             final var parentName = entry.getKey();
             final var first = submodules.next();
             final var modules = modulesByName.row(parentName);
-            // we have one or more required submodules which was not claimed by a module, let's decide what to do based
+
+            // we have one or more required submodules which were not claimed by a module, let's decide what to do based
             // on required modules
+            if (!modules.isEmpty()) {
+                // there is at least one matching module and the submodule remains unincluded: this is a hard error
+                throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, first.sourceId(),
+                    newUnresolvedParentException(first, submodules, modules));
+            }
+
+            // there are no matching required modules: unlinked submodules must have been initially specified as
+            // required
             final InferenceException cause;
-            switch (modules.size()) {
-                case 0 -> {
-                    // there are no matching required modules: unlinked submodules must have been initially specified as
-                    // required
-                    if (submodules.hasNext()) {
-                        // if there is more than one such submodule, we would still be in a pickle as, as we would have
-                        // to select multiple parents to include
-                        // TODO: perhaps we could do this when the total number of matching modules in library match
-                        //       the number of submodules by bringing in all and restarting, but that requires
-                        //       the corresponding include narrowing to work
-                        final var sb = new StringBuilder("Cannot determine parent module ")
-                            .append(parentName.getLocalName()).append(" assignment among submodules ")
-                            .append(first.humanName());
-                        do {
-                            sb.append(", ").append(submodules.next().humanName());
-                        } while (submodules.hasNext());
+            if (submodules.hasNext()) {
+                // if there is more than one such submodule, we would still be in a pickle as, as we would have
+                // to select multiple parents to include
+                // TODO: perhaps we could do this when the total number of matching modules in library match
+                //       the number of submodules by bringing in all and restarting, but that requires
+                //       the corresponding include narrowing to work
+                final var sb = new StringBuilder("Cannot determine parent module ").append(parentName.getLocalName())
+                    .append(" assignment among submodules ").append(first.humanName());
+                do {
+                    sb.append(", ").append(submodules.next().humanName());
+                } while (submodules.hasNext());
 
-                        final var sourceInfo = first.info();
-                        cause = new InferenceException(sb.toString(), refOf(sourceInfo, sourceInfo.belongsTo()));
-                    } else {
-                        // a single required submodule: treat it as an import-without-revision and bring in the latest
-                        // revision from library
-                        final var fromLibrary = libSources.takeLatestModule(parentName);
-                        if (fromLibrary != null) {
-                            addRequiredModule(fromLibrary);
-                            restart = true;
-                            continue;
-                        }
+                final var sourceInfo = first.info();
+                cause = new InferenceException(sb.toString(), refOf(sourceInfo, sourceInfo.belongsTo()));
+            } else {
+                // a single required submodule: treat it as an import-without-revision and bring in the latest revision
+                // from library
+                final var fromLibrary = libSources.takeLatestModule(parentName);
+                if (fromLibrary != null) {
+                    addRequiredModule(fromLibrary);
+                    restart = true;
+                    continue;
+                }
 
-                        final var sourceInfo = first.info();
-                        cause = new InferenceException(refOf(sourceInfo, sourceInfo.belongsTo()),
-                            // FIXME: 16.0.0: "Parent module %s was not found"
-                            "Module %s from belongs-to was not found", parentName.getLocalName());
-                    }
-                }
-                case 1 -> {
-                    if (!submodules.hasNext()) {
-                        // Legacy behaviour: if there is only a single module and a single submodule, assume the linkage
-                        // is there, but warn about it.
-                        // FIXME: 16.0.0: this is not consistent with (at least) YANG 1.1: it is an error for a module
-                        //                to not include one of its submodules
-                        final var module = modules.values().iterator().next();
-                        final var versionSpecific = switch (module.yangVersion()) {
-                            case VERSION_1 -> " or some of its submodules";
-                            case VERSION_1_1 -> "";
-                        };
-                        LOG.warn("""
-                            Submodule {} has belongs-to which is not matched by an include in module {}{}: treating \
-                            leniently as if such an include were present. This will be a hard error in a future major \
-                            release.""", first.humanName(), module.humanName(), versionSpecific);
-                        first.resolveBelongsTo(module);
-                        restart = true;
-                        continue;
-                    }
-                    cause = newUnresolvedParentException(first, submodules, modules);
-                }
-                default -> cause = newUnresolvedParentException(first, submodules, modules);
+                final var sourceInfo = first.info();
+                cause = new InferenceException(refOf(sourceInfo, sourceInfo.belongsTo()),
+                    // FIXME: 16.0.0: "Parent module %s was not found"
+                    "Module %s from belongs-to was not found", parentName.getLocalName());
             }
             throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, first.sourceId(), cause);
         }
