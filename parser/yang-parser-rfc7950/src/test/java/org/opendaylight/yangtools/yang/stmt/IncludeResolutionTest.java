@@ -53,7 +53,7 @@ class IncludeResolutionTest {
     void missingIncludedSourceTest3() {
         assertNull(assertFailedSourceLinkage(() -> RFC7950Reactors.defaultReactor().newBuild()
             .addSource(sourceForResource("/semantic-statement-parser/include-arg-parsing/missing-parent.yang"))
-            .buildDeclared(), "Module foo from belongs-to was not found [at missing-parent:2:5]").getCause());
+            .buildDeclared(), "Parent module foo was not found [at missing-parent:2:5]").getCause());
     }
 
     private static InferenceException assertFailedSourceLinkage(final Callable<?> callable, final String startStr) {

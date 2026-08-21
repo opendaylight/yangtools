@@ -675,9 +675,8 @@ public final class SourceLinkageResolver {
             if (fromLibrary == null) {
                 final var sourceId = source.sourceId();
                 throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
-                    // FIXME: 16.0.0: include revision
-                    new InferenceException(refOf(sourceId, dependency), "Included submodule %s was not found",
-                        name.getLocalName()));
+                    new InferenceException(refOf(sourceId, dependency), "Required submodule %s%s was not found",
+                        name.getLocalName(), formatRevision(revision.revision())));
             }
             submodule = addRequiredSubmodule(fromLibrary);
             result = SubmoduleOrigin.LIBRARY;
@@ -853,9 +852,7 @@ public final class SourceLinkageResolver {
                     final var sourceId = source.sourceId();
                     throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
                         new YangVersionLinkageException(refOf(sourceId, dependency),
-                            "Cannot import by revision version %s module %s", depVersion,
-                            // FIXME: 16.0.0: humanName()
-                            existing.name().getLocalName()));
+                            "Cannot import by revision version %s module %s", depVersion, existing.humanName()));
                 }
                 source.resolveImport(parent, dependency, existing);
                 resolvedImports++;
@@ -930,8 +927,7 @@ public final class SourceLinkageResolver {
 
                 final var sourceInfo = first.info();
                 cause = new InferenceException(refOf(sourceInfo, sourceInfo.belongsTo()),
-                    // FIXME: 16.0.0: "Parent module %s was not found"
-                    "Module %s from belongs-to was not found", parentName.getLocalName());
+                    "Parent module %s was not found", parentName.getLocalName());
             }
             throw new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, first.sourceId(), cause);
         }
@@ -1063,9 +1059,8 @@ public final class SourceLinkageResolver {
     private static ReactorException newModuleNotFoundException(final SourceIdentifier sourceId,
             final Import dependency) {
         return new SomeModifiersUnresolvedException(ModelProcessingPhase.SOURCE_LINKAGE, sourceId,
-            new InferenceException(refOf(sourceId, dependency), "Imported module %s was not found",
-                // FIXME: 16.0.0: formatRevision(dependency.revision())
-                dependency.name().getLocalName()));
+            new InferenceException(refOf(sourceId, dependency), "Imported module %s%s was not found",
+                dependency.name().getLocalName(), formatRevision(dependency.revision())));
     }
 
     @NonNullByDefault
