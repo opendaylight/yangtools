@@ -11,10 +11,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
 
-import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Properties;
 import org.apache.maven.it.VerificationException;
 import org.apache.maven.it.Verifier;
@@ -73,7 +73,7 @@ class YangToSourcesPluginTestIT {
         vrf.verifyTextInLog("[DEBUG] yang-to-sources: Additional configuration picked up for : "
             + "org.opendaylight.yangtools.plugin.generator.api.TestFileGenerator: {c1=config}");
         vrf.verifyTextInLog("[DEBUG] yang-to-sources: YANG files marked as resources:");
-        vrf.verifyTextInLog(Joiner.on(File.separator).join("target", "generated-sources", "spi")
+        vrf.verifyTextInLog(String.join(File.separator, "target", "generated-sources", "spi")
             + " marked as resources for generator: org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl");
     }
 
@@ -123,20 +123,20 @@ class YangToSourcesPluginTestIT {
 
     static Verifier setUp(final String project, final boolean ignoreF) throws Exception {
         final var path = YangToSourcesPluginTestIT.class.getResource("/" + project + "pom.xml");
-        final var parent = new File(path.toURI()).getParentFile();
+        final var parent = Path.of(path.toURI()).getParent().toFile();
         final var verifier = new Verifier(parent.toString());
         if (ignoreF) {
             verifier.addCliOption("-fn");
         }
 
         final var parentPath = Resources.getResource(YangToSourcesPluginTestIT.class, "/test-parent/pom.xml");
-        final var parentBuildDir = new File(parentPath.toURI()).getParentFile().getParentFile().getParentFile();
-        final var parentEffectiveSettingsXML = new File(parentBuildDir, "effective-settings.xml");
-        if (parentEffectiveSettingsXML.exists()) {
+        final var parentBuildDir = Path.of(parentPath.toURI()).getParent().getParent().getParent();
+        final var parentEffectiveSettingsXML = parentBuildDir.resolve("effective-settings.xml").toAbsolutePath();
+        if (Files.isRegularFile(parentEffectiveSettingsXML)) {
             verifier.addCliOption("-gs");
-            verifier.addCliOption(parentEffectiveSettingsXML.getAbsolutePath());
+            verifier.addCliOption(parentEffectiveSettingsXML.toString());
         } else {
-            fail(parentEffectiveSettingsXML.getAbsolutePath());
+            fail(parentEffectiveSettingsXML.toString());
         }
 
         verifier.setForkJvm(true);
@@ -200,7 +200,7 @@ class YangToSourcesPluginTestIT {
 
     private static String getMavenBuildDirectory(final Verifier verifier) throws Exception {
         final var sp = new Properties();
-        try (var is = Files.newInputStream(new File(verifier.getBasedir() + "/it-project.properties").toPath())) {
+        try (var is = Files.newInputStream(Path.of(verifier.getBasedir()).resolve("it-project.properties"))) {
             sp.load(is);
         }
         return sp.getProperty("target.dir");
