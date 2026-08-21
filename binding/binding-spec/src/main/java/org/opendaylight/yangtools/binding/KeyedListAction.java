@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.binding;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import edu.umd.cs.findbugs.annotations.CheckReturnValue;
+import com.google.errorprone.annotations.CheckReturnValue;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier.WithKey;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
