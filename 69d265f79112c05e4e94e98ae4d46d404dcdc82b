@@ -20,6 +20,24 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "66e942a6_6f0d2252",
+        "filename": "parser/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/source/SourceLinker.java",
+        "patchSetId": 37
+      },
+      "lineNbr": 92,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-08-21T13:18:15Z",
+      "side": 1,
+      "message": "so YANG section 5.1 is clear on such import:\n\nA module or submodule MUST NOT include submodules from other\nmodules, and a submodule MUST NOT import its own module.",
+      "parentUuid": "eddaab07_b5ca98ff",
+      "revId": "69d265f79112c05e4e94e98ae4d46d404dcdc82b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "260de663_64d407a1",
         "filename": "parser/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/stmt/ImportResolutionBasicTest.java",
         "patchSetId": 37
