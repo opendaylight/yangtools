@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
  */
 @NonNullByDefault
 public interface MaterializedSourceRepresentation<R extends SourceRepresentation, S> extends SourceInfo.Extractor {
-    /*
-     * @{return {@link SourceIdentifier} of this source}
+    /**
+     * {@return {@link SourceIdentifier} of this source}
      */
     SourceIdentifier sourceId();
 
