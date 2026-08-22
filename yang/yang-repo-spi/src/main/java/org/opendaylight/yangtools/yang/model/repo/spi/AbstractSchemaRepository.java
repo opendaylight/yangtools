@@ -180,7 +180,9 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
         @Override
         protected void removeRegistration() {
-            listeners.remove(this);
+            synchronized (AbstractSchemaRepository.this) {
+                listeners.remove(this);
+            }
         }
     }
 
