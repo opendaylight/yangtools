@@ -40,10 +40,8 @@ final class ValueNode extends TreeNode {
 
     @Override
     MutableTreeNode toMutable(final Version nextSubtreeVersion) {
-        /**
-         * Value nodes can only we read/written/delete, which does a straight replace. That means they do not have
-         * a need to be made mutable.
-         */
+        // Value nodes can only we read/written/delete, which does a straight replace. That means they do not have
+        // a need to be made mutable.
         throw new UnsupportedOperationException("Attempted to mutate value-node " + this);
     }
 

@@ -29,9 +29,7 @@ final class OperationWithModification {
 
     void write(final NormalizedNode value) {
         modification.write(value);
-        /**
-         * Fast validation of structure, full validation on written data will be run during seal.
-         */
+        // Fast validation of structure, full validation on written data will be run during seal.
         applyOperation.quickVerifyStructure(value);
     }
 
