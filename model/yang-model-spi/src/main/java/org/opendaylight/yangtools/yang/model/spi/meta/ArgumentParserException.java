@@ -57,7 +57,7 @@ public abstract sealed class ArgumentParserException extends Exception
      * Construct an instance with specified {@code message} and as caused by a {@link ArgumentParserException}.
      *
      * @param message the message
-     * @param position the error offset, must be non-negative
+     * @param cause the cause, {@code null} if not present
      */
     ArgumentParserException(final String message, final ArgumentParserException cause) {
         this(message, cause.getPosition(), cause);
