@@ -162,18 +162,11 @@ class ModificationMetadataTreeTest extends AbstractTestModelTest {
 
 
     public DataTreeModification createEmptyModificationTree() {
-        /**
-         * Creates empty Snapshot with associated schema context.
-         */
+        // Creates empty Snapshot with associated schema context.
         final var t = new ReferenceDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
             MODEL_CONTEXT);
 
-        /**
-         *
-         * Creates Mutable Data Tree based on provided snapshot and schema
-         * context.
-         *
-         */
+        // Creates Mutable Data Tree based on provided snapshot and schema context.
         return t.takeSnapshot().newModification();
     }
 
