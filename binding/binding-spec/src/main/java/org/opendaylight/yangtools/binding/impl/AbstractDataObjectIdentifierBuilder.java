@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.binding.CaseObject;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectIdentifier;
-import org.opendaylight.yangtools.binding.DataObjectIdentifier.Builder;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.ExactDataObjectStep;
@@ -40,30 +39,32 @@ public abstract sealed class AbstractDataObjectIdentifierBuilder<T extends DataO
     }
 
     @Override
-    public final <A extends Augmentation<? super T, A>> Builder<A> augmentation(final Class<A> augmentation) {
+    public final <A extends Augmentation<? super T, A>>
+            DataObjectIdentifier.Builder<A> augmentation(final Class<A> augmentation) {
         return append(new NodeStep<>(augmentation));
     }
 
     @Override
-    public final <N extends ChildOf<? super T>> Builder<N> child(final Class<N> container) {
+    public final <N extends ChildOf<? super T>> DataObjectIdentifier.Builder<N> child(final Class<N> container) {
         return append(DataObjectStep.of(container));
     }
 
     @Override
-    public final <C extends CaseObject<? super T, ?, C>, N extends ChildOf<? super C>> Builder<N> child(
-            final Class<C> caze, final Class<N> container) {
+    public final <C extends CaseObject<? super T, ?, C>, N extends ChildOf<? super C>>
+            DataObjectIdentifier.Builder<N> child(final Class<C> caze, final Class<N> container) {
         return append(DataObjectStep.of(caze, container));
     }
 
     @Override
-    public final <N extends EntryObject<? super T, N, K>, K extends Key<N>> Builder.WithKey<N, K> child(
-            final Class<N> listItem, final K listKey) {
+    public final <N extends EntryObject<? super T, N, K>, K extends Key<N>>
+            DataObjectIdentifier.Builder.WithKey<N, K> child(final Class<N> listItem, final K listKey) {
         return append(new KeyStep<>(listItem, listKey));
     }
 
     @Override
     public final <C extends CaseObject<? super T, ?, C>, K extends Key<N>, N extends EntryObject<? super C, N, K>>
-            Builder.WithKey<N, K> child(final Class<C> caze, final Class<N> listItem, final K listKey) {
+            DataObjectIdentifier.Builder.WithKey<N, K> child(final Class<C> caze, final Class<N> listItem,
+                final K listKey) {
         return append(new KeyStep<>(listItem, requireNonNull(caze), listKey));
     }
 
@@ -73,8 +74,9 @@ public abstract sealed class AbstractDataObjectIdentifierBuilder<T extends DataO
     }
 
     @Override
-    abstract <X extends DataObject> Builder<X> append(DataObjectStep<X> step);
+    abstract <X extends DataObject> DataObjectIdentifier.Builder<X> append(DataObjectStep<X> step);
 
     @Override
-    abstract <X extends EntryObject<?, X, Y>, Y extends Key<X>> Builder.WithKey<X, Y> append(KeyStep<Y, X> step);
+    abstract <X extends EntryObject<?, X, Y>, Y extends Key<X>> DataObjectIdentifier.Builder.WithKey<X, Y> append(
+        KeyStep<Y, X> step);
 }
