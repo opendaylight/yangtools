@@ -105,9 +105,7 @@ public sealed interface SourceDependency extends Serializable
 
         @Override
         public String toString() {
-            return new StringBuilder().append("BelongsTo[name=").append(name.getLocalName())
-                .append(", prefix=").append(prefix.getLocalName())
-                .append(']').toString();
+            return "BelongsTo[name=" + name.getLocalName() + ", prefix=" + prefix.getLocalName() + "]";
         }
 
         @java.io.Serial
