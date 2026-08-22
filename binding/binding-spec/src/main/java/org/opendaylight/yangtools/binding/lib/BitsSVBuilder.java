@@ -39,10 +39,10 @@ public abstract sealed class BitsSVBuilder {
         }
     }
 
-    private static final class NonEmpty extends BitsSVBuilder implements Mutable {
+    static final class NonEmpty extends BitsSVBuilder implements Mutable {
         private final StringBuilder sb = new StringBuilder();
 
-        NonEmpty(final String bitName) {
+        private NonEmpty(final String bitName) {
             sb.append(bitName);
         }
 
