@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.validation.tool;
 
 import java.io.IOException;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
 import org.opendaylight.yangtools.dagger.yang.parser.DaggerDefaultYangParserComponent;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.spi.source.FileYangTextSource;
@@ -24,16 +25,24 @@ public final class Main {
     }
 
     public static void main(final String[] args) {
-        final var params = ParamsUtil.parseArgs(args, Params.getParser());
+        final var parser = Params.getParser();
+        final Params params = new Params();
+        try {
+            parser.parseArgs(args, params);
+        } catch (final ArgumentParserException e) {
+            parser.handleError(e);
+            System.exit(1);
+        }
+
         final var files = params.listFiles();
         if (files == null) {
             return;
         }
 
-        final var parser = DaggerDefaultYangParserComponent.create().parserFactory().createParser();
+        final var yangParser = DaggerDefaultYangParserComponent.create().parserFactory().createParser();
         for (var file : files) {
             try {
-                parser.addSource(new FileYangTextSource(file.toPath()));
+                yangParser.addSource(new FileYangTextSource(file.toPath()));
             } catch (IOException e) {
                 LOG.error("Failed to read {}", file, e);
                 return;
@@ -45,7 +54,7 @@ public final class Main {
 
         final EffectiveModelContext modelContext;
         try {
-            modelContext = parser.buildEffectiveModel();
+            modelContext = yangParser.buildEffectiveModel();
         } catch (YangParserException e) {
             LOG.error("YANG files could not be assembled", e);
             return;
