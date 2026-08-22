@@ -49,7 +49,7 @@ public record EnumTypeObjectArchetypeImpl(
      * okay and convenient for sane strings, and an escaping-based bijective mapping which works for all possible
      * Unicode strings.
      *
-     * @param assignedNames Collection of assigned names
+     * @param values Collection of assigned names and values
      * @return A BiMap keyed by assigned name, with Java identifiers as values
      */
     // FIXME: this mapping should be decided in the public factory method and we should have multiple implementations
