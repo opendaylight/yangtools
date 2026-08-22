@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import com.google.common.testing.EqualsTester;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangDataName;
@@ -34,15 +35,14 @@ class ImmutableYangDataTest {
             .build(), first.childByArg(new NodeIdentifier(FOO)));
         assertNull(first.childByArg(new NodeIdentifier(BAR)));
 
-        assertThat(first).isEqualTo(first);
-        assertThat(first).isEqualTo(ImmutableNodes.newYangDataBuilder(new YangDataName(FOO.getModule(), "a string"))
-            .setChild(ImmutableNodes.newContainerBuilder()
-                .withNodeIdentifier(new NodeIdentifier(FOO))
+        new EqualsTester()
+            .addEqualityGroup(first, ImmutableNodes.newYangDataBuilder(new YangDataName(FOO.getModule(), "a string"))
+                .setChild(ImmutableNodes.newContainerBuilder()
+                    .withNodeIdentifier(new NodeIdentifier(FOO))
+                    .build())
                 .build())
-            .build());
+            .testEquals();
 
-        assertThat(first).isNotEqualTo(null);
-        assertThat(first).isNotEqualTo("");
         assertThat(first).isNotEqualTo(ImmutableNodes.newYangDataBuilder(new YangDataName(FOO.getModule(), "different"))
             .setChild(ImmutableNodes.newContainerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(FOO))
