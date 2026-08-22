@@ -257,19 +257,16 @@ class Bug4295Test {
         modification.merge(path, rootContainerNode);
 
         switch (testScenarioNumber) {
-            case 1:
+            case 1 ->
                 /* WRITE EMPTY INNER LIST */
                 writeEmptyInnerList(modification, "2");
-                break;
-            case 2: {
+            case 2 -> {
                 /* WRITE INNER LIST ENTRY */
-                MapEntryNode innerListEntryA = createInnerListEntry("a", "i-a-2");
                 path = YangInstanceIdentifier.of(ROOT, SUB_ROOT, OUTER_LIST).node(createOuterListEntryPath("2"))
                     .node(INNER_LIST).node(createInnerListEntryPath("a"));
-                modification.write(path, innerListEntryA);
-                break;
+                modification.write(path, createInnerListEntry("a", "i-a-2"));
             }
-            case 3: {
+            case 3 -> {
                 /* WRITE INNER LIST WITH ENTRIES */
                 path = YangInstanceIdentifier.of(ROOT, SUB_ROOT, OUTER_LIST).node(createOuterListEntryPath("2"))
                     .node(INNER_LIST);
@@ -277,10 +274,10 @@ class Bug4295Test {
                     .withChild(createInnerListEntry("a", "i-a-3"))
                     .withChild(createInnerListEntry("c", "i-c"))
                     .build());
-                break;
             }
-            default:
-                break;
+            default -> {
+                // no-op
+            }
         }
 
         // COMMIT
