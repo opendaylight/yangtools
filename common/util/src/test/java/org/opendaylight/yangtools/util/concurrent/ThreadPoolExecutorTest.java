@@ -135,8 +135,7 @@ class ThreadPoolExecutorTest {
             LOG.debug("  {} - {} tasks", e.getKey().getName(), e.getValue());
         }
 
-        LOG.debug("{}", executorToTest);
-        LOG.debug("Elapsed time: {}", stopWatch);
+        LOG.debug("{}\nElapsed time: {}", executorToTest, stopWatch);
     }
 
     static class Task implements Runnable {
