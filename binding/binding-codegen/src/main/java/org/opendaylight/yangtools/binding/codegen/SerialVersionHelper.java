@@ -86,7 +86,7 @@ final class SerialVersionHelper {
 
     private static DigestFactory chooseFactory(final MessageDigest md) {
         try {
-            md.clone();
+            return new CloneableFactory((MessageDigest) md.clone());
         } catch (CloneNotSupportedException e) {
             final var provider = md.getProvider();
             final var log = LoggerFactory.getLogger(SerialVersionHelper.class);
@@ -97,8 +97,6 @@ final class SerialVersionHelper {
             }
             return new FallbackFactory(md.getAlgorithm(), provider);
         }
-
-        return new CloneableFactory(md);
     }
 
     private final ArrayList<TypeName> interfaces = new ArrayList<>();
