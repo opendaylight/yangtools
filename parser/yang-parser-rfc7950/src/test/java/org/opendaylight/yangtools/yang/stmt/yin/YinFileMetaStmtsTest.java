@@ -21,27 +21,37 @@ class YinFileMetaStmtsTest extends AbstractYinModulesTest {
         assertNotNull(testModule);
 
         assertEquals(Optional.of("IETF NETCONF (Network Configuration) Working Group"), testModule.getOrganization());
-        assertEquals(Optional.of("WG Web:   <http://tools.ietf.org/wg/netconf/>\n"
-            + "WG List:  <mailto:netconf@ietf.org>\n"
-            + "\n"
-            + "WG Chair: Mehmet Ersue\n"
-            + "        <mailto:mehmet.ersue@nsn.com>\n"
-            + "\n"
-            + "WG Chair: Bert Wijnen\n"
-            + "        <mailto:bertietf@bwijnen.net>\n"
-            + "\n"
-            + "Editor:   Mark Scott\n"
-            + "        <mailto:mark.scott@ericsson.com>\n"
-            + "\n"
-            + "Editor:   Martin Bjorklund\n"
-            + "        <mailto:mbj@tail-f.com>"), testModule.getContact());
-        assertEquals(Optional.of("NETCONF Monitoring Module.\n" + "All elements in this module are read-only.\n" + "\n"
-                + "Copyright (c) 2010 IETF Trust and the persons identified as\n" + "authors of the code. All rights "
-                + "reserved.\n" + "\n" + "Redistribution and use in source and binary forms, with or\n" +  "without "
-                + "modification, is permitted pursuant to, and subject\n" + "to the license terms contained in, the "
-                + "Simplified BSD\n" + "License set forth in Section 4.c of the IETF Trust's\n" + "Legal Provisions "
-                + "Relating to IETF Documents\n" + "(http://trustee.ietf.org/license-info).\n" + "\n" + "This version "
-                + "of this YANG module is part of RFC 6022; see\n" + "the RFC itself for full legal notices."),
+        assertEquals(Optional.of("""
+            WG Web:   <http://tools.ietf.org/wg/netconf/>
+            WG List:  <mailto:netconf@ietf.org>
+
+            WG Chair: Mehmet Ersue
+                    <mailto:mehmet.ersue@nsn.com>
+
+            WG Chair: Bert Wijnen
+                    <mailto:bertietf@bwijnen.net>
+
+            Editor:   Mark Scott
+                    <mailto:mark.scott@ericsson.com>
+
+            Editor:   Martin Bjorklund
+                    <mailto:mbj@tail-f.com>"""), testModule.getContact());
+        assertEquals(Optional.of("""
+            NETCONF Monitoring Module.
+            All elements in this module are read-only.
+
+            Copyright (c) 2010 IETF Trust and the persons identified as
+            authors of the code. All rights reserved.
+
+            Redistribution and use in source and binary forms, with or
+            without modification, is permitted pursuant to, and subject
+            to the license terms contained in, the Simplified BSD
+            License set forth in Section 4.c of the IETF Trust's
+            Legal Provisions Relating to IETF Documents
+            (http://trustee.ietf.org/license-info).
+
+            This version of this YANG module is part of RFC 6022; see
+            the RFC itself for full legal notices."""),
             testModule.getDescription());
     }
 }
