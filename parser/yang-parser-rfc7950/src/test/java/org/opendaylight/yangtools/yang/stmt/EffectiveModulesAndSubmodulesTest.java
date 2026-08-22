@@ -52,13 +52,11 @@ class EffectiveModulesAndSubmodulesTest {
         Module imported = null;
         for (final Module module : modules) {
             switch (module.getName()) {
-                case "root-module":
-                    root = module;
-                    break;
-                case "imported-module":
-                    imported = module;
-                    break;
-                default:
+                case "root-module" -> root = module;
+                case "imported-module" -> imported = module;
+                default -> {
+                    // no-op
+                }
             }
             printReferences(module, false, "");
             printChilds(module.getChildNodes(), "      ");
@@ -89,13 +87,11 @@ class EffectiveModulesAndSubmodulesTest {
         Submodule sub2 = null;
         for (var rootSubmodule : rootSubmodules) {
             switch (rootSubmodule.getName()) {
-                case "submodule-1":
-                    sub1 = rootSubmodule;
-                    break;
-                case "submodule-2":
-                    sub2 = rootSubmodule;
-                    break;
-                default:
+                case "submodule-1" -> sub1 = rootSubmodule;
+                case "submodule-2" -> sub2 = rootSubmodule;
+                default -> {
+                    // no-op
+                }
             }
         }
 
@@ -126,10 +122,10 @@ class EffectiveModulesAndSubmodulesTest {
         Submodule sub1Submodule = null;
         for (var submodule : sub1Submodules) {
             switch (submodule.getName()) {
-                case "submodule-to-submodule-1":
-                    sub1Submodule = submodule;
-                    break;
-                default:
+                case "submodule-to-submodule-1" -> sub1Submodule = submodule;
+                default -> {
+                    // no-op
+                }
             }
         }
 

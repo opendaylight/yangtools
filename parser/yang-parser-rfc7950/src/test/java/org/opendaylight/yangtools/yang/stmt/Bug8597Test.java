@@ -19,18 +19,17 @@ class Bug8597Test extends AbstractYangTest {
     void test() {
         for (var moduleImport : assertEffectiveModelDir("/bugs/bug8597").findModule("foo").orElseThrow().getImports()) {
             switch (moduleImport.getModuleName().getLocalName()) {
-                case "bar":
+                case "bar" -> {
                     assertEquals(Revision.ofNullable("1970-01-01"), moduleImport.getRevision());
                     assertEquals(Optional.of("bar-ref"), moduleImport.getReference());
                     assertEquals(Optional.of("bar-desc"), moduleImport.getDescription());
-                    break;
-                case "baz":
+                }
+                case "baz" -> {
                     assertEquals(Revision.ofNullable("2010-10-10"), moduleImport.getRevision());
                     assertEquals(Optional.of("baz-ref"), moduleImport.getReference());
                     assertEquals(Optional.of("baz-desc"), moduleImport.getDescription());
-                    break;
-                default:
-                    fail("Module 'foo' should only contains import of module 'bar' and 'baz'");
+                }
+                default -> fail("Module 'foo' should only contains import of module 'bar' and 'baz'");
             }
         }
     }
