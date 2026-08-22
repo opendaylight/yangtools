@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.spi.node.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,12 +21,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 class BuilderTest {
-    private static final BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
+    private static final NormalizedNode.BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
     private static final QName ROOT_CONTAINER = QName.create("test.namespace.builder.test", "2016-01-01",
         "root-container");
     private static final QName LIST_MAIN = QName.create(ROOT_CONTAINER, "list-ordered-by-user-with-key");
