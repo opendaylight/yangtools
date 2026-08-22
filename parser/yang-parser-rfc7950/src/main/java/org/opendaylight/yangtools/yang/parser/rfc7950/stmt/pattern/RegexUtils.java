@@ -399,35 +399,35 @@ final class RegexUtils {
         for (int i = 0; i < regex.length(); i++) {
             final char ch = regex.charAt(i);
             switch (ch) {
-                case '[':
+                case '[' -> {
                     if (!escape) {
                         bracket++;
                     }
                     escape = false;
                     result.append(ch);
-                    break;
-                case ']':
+                }
+                case ']' -> {
                     if (!escape) {
                         bracket--;
                     }
                     escape = false;
                     result.append(ch);
-                    break;
-                case '\\':
+                }
+                case '\\' -> {
                     escape = !escape;
                     result.append(ch);
-                    break;
-                case '^':
-                case '$':
+                }
+                case '^', '$' -> {
                     if (bracket == 0) {
                         result.append('\\');
                     }
                     escape = false;
                     result.append(ch);
-                    break;
-                default:
+                }
+                default -> {
                     escape = false;
                     result.append(ch);
+                }
             }
         }
         return result.toString();
