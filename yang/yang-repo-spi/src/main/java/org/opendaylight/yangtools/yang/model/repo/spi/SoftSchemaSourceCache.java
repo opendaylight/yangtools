@@ -95,14 +95,16 @@ public final class SoftSchemaSourceCache<T extends SourceRepresentation> extends
 
         // We have populated a cache entry, register the source and a cleanup action
         final var reg = register(sourceId);
-        cleanables.put(reg, CLEANER.register(source, () -> {
-            cleanables.remove(reg);
-            reg.close();
-            references.remove(sourceId, ref);
-        }));
-
-        // Ensure 'source' is still reachable here. This is needed to ensure the cleanable action does not fire before
-        // we have had a chance to insert it into the map.
-        Reference.reachabilityFence(source);
+        try {
+            cleanables.put(reg, CLEANER.register(source, () -> {
+                cleanables.remove(reg);
+                reg.close();
+                references.remove(sourceId, ref);
+            }));
+        } finally {
+            // Ensure 'source' is still reachable here. This is needed to ensure the cleanable action does not fire
+            // before we have had a chance to insert it into the map.
+            Reference.reachabilityFence(source);
+        }
     }
 }
