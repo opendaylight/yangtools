@@ -113,7 +113,7 @@ class CodeHelpersTest {
 
     @Test
     void jcTS1() {
-        final var fooValue = "fooValue".getBytes();
+        final var fooValue = new byte[] { 'f', 'o', 'o', 'V', 'a', 'l', 'u', 'e' };
 
         assertEquals("Node{foo=fooValue}", CodeHelpers.jcTS1(Node.class, "foo", "fooValue"));
         assertEquals("Node{}", CodeHelpers.jcTS1(Node.class, "foo", (Object) null));
