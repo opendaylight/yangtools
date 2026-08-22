@@ -38,7 +38,9 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DataTreeCandidateValidatorTest {
+// FIXME: remove this suppression
+@SuppressWarnings("Slf4jSignOnlyFormat")
+class DataTreeCandidateValidatorTest {
 
     private static EffectiveModelContext context;
     private static Module valModule;
@@ -78,7 +80,6 @@ public class DataTreeCandidateValidatorTest {
     private static QName leafrefLeafList;
 
     private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidateValidatorTest.class);
-    private static final String NEW_LINE = System.getProperty("line.separator");
 
     @BeforeAll
     static void init() throws DataValidationFailedException {
@@ -181,7 +182,7 @@ public class DataTreeCandidateValidatorTest {
         LOG.debug("*************************");
         LOG.debug("Before write of contributors: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
 
         final var ex = assertThrows(LeafRefDataValidationFailedException.class,
             () -> LeafRefValidation.validate(writeContributorsCandidate, rootLeafRefContext));
@@ -192,7 +193,7 @@ public class DataTreeCandidateValidatorTest {
         LOG.debug("*************************");
         LOG.debug("After write of contributors: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
     }
 
     private static void writeIntoMapEntry() throws DataValidationFailedException {
@@ -214,7 +215,7 @@ public class DataTreeCandidateValidatorTest {
         LOG.debug("*************************");
         LOG.debug("Before write into map entry (update of leader name): ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
 
         final var ex = assertThrows(LeafRefDataValidationFailedException.class,
             () -> LeafRefValidation.validate(writeContributorsCandidate, rootLeafRefContext));
@@ -225,7 +226,7 @@ public class DataTreeCandidateValidatorTest {
         LOG.debug("*************************");
         LOG.debug("After write into map entry (update of leader name): ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
     }
 
     private static void writeMapEntry() throws DataValidationFailedException {
@@ -244,7 +245,7 @@ public class DataTreeCandidateValidatorTest {
         LOG.debug("*************************");
         LOG.debug("Before map entry write: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
 
         final var ex = assertThrows(LeafRefDataValidationFailedException.class,
             () -> LeafRefValidation.validate(writeContributorsCandidate, rootLeafRefContext));
@@ -255,7 +256,7 @@ public class DataTreeCandidateValidatorTest {
         LOG.debug("*************************");
         LOG.debug("After map entry write: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
     }
 
     private static void write() throws DataValidationFailedException {
@@ -277,7 +278,7 @@ public class DataTreeCandidateValidatorTest {
         LOG.debug("*************************");
         LOG.debug("Before write: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
 
         final var ex = assertThrows(LeafRefDataValidationFailedException.class,
             () -> LeafRefValidation.validate(writeContributorsCandidate, rootLeafRefContext));
@@ -288,7 +289,7 @@ public class DataTreeCandidateValidatorTest {
         LOG.debug("*************************");
         LOG.debug("After write: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
     }
 
     private static void write2() throws DataValidationFailedException {
@@ -307,7 +308,7 @@ public class DataTreeCandidateValidatorTest {
         LOG.debug("*************************");
         LOG.debug("Before write2: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
 
         final var ex = assertThrows(LeafRefDataValidationFailedException.class,
             () -> LeafRefValidation.validate(writeContributorsCandidate, rootLeafRefContext));
@@ -318,7 +319,7 @@ public class DataTreeCandidateValidatorTest {
         LOG.debug("*************************");
         LOG.debug("After write2: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
     }
 
     private static @NonNull LeafSetNode<Object> createLeafRefLeafListNode() {
@@ -393,7 +394,7 @@ public class DataTreeCandidateValidatorTest {
         LOG.debug("*************************");
         LOG.debug("Before delete: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
 
 
         final var ex = assertThrows(LeafRefDataValidationFailedException.class,
@@ -405,7 +406,7 @@ public class DataTreeCandidateValidatorTest {
         LOG.debug("*************************");
         LOG.debug("After delete: ");
         LOG.debug("*************************");
-        LOG.debug(inMemoryDataTree.toString());
+        LOG.debug("{}", inMemoryDataTree);
     }
 
     private static ContainerNode createContributorContainer(final ContainerSchemaNode contributorCont) {
