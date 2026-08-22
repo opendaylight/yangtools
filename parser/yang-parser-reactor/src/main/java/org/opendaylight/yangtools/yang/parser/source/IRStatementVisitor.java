@@ -45,8 +45,6 @@ class IRStatementVisitor {
      * provided for actual phase, method resolves and returns valid QName for declared statement to be written.
      * This applies to any declared statement, including unknown statements.
      *
-     * @param prefixResolver collection of all relevant prefix mappings supplied for actual parsing phase
-     * @param resolver collection of all relevant statement definition mappings provided for actual parsing phase
      * @param keyword statement keyword text to parse from source
      * @param ref Source reference
      * @return valid QName for declared statement to be written, or null
