@@ -297,13 +297,15 @@ public final class LeafRefValidation {
                     return;
                 }
 
-                LOG.debug("Invalid leafref value [{}] allowed values {} by validation of leafref TARGET node: {} path "
-                        + "of invalid LEAFREF node: {} leafRef target path: {} {}", leafRefsValue,
-                        leafRefTargetNodeValues, leaf.name(), leafRefContext.getCurrentNodePath(),
-                        leafRefContext.getAbsoluteLeafRefTargetPath(), FAILED);
-                errorsMessages.add("Invalid leafref value [%s] allowed values %s by validation of leafref TARGET node: "
-                    + "%s path of invalid LEAFREF node: %s leafRef target path: %s %s".formatted(leafRefsValue,
-                        leafRefTargetNodeValues, leaf.name(), leafRefContext.getCurrentNodePath(),
+                LOG.debug("""
+                    Invalid leafref value [{}] allowed values {} by validation of leafref TARGET node: {} path of \
+                    invalid LEAFREF node: {} leafRef target path: {} {}""", leafRefsValue, leafRefTargetNodeValues,
+                    leaf.name(), leafRefContext.getCurrentNodePath(), leafRefContext.getAbsoluteLeafRefTargetPath(),
+                    FAILED);
+                errorsMessages.add("""
+                    Invalid leafref value [%s] allowed values %s by validation of leafref TARGET node: %s path of \
+                    invalid LEAFREF node: %s leafRef target path: %s %s""".formatted(
+                        leafRefsValue, leafRefTargetNodeValues, leaf.name(), leafRefContext.getCurrentNodePath(),
                         leafRefContext.getAbsoluteLeafRefTargetPath(), FAILED));
             });
         });
@@ -435,11 +437,10 @@ public final class LeafRefValidation {
         final var pathIterator = path.getPathArguments().iterator();
         while (pathIterator.hasNext()) {
             final var childPathArgument = pathIterator.next();
-            if (pathIterator.hasNext() && currentNode.isPresent()) {
-                currentNode = NormalizedNodes.getDirectChild(currentNode.orElseThrow(), childPathArgument);
-            } else {
+            if (!pathIterator.hasNext() || !currentNode.isPresent()) {
                 return currentNode;
             }
+            currentNode = NormalizedNodes.getDirectChild(currentNode.orElseThrow(), childPathArgument);
         }
         return Optional.empty();
     }
