@@ -179,6 +179,7 @@ abstract class AbstractBatchingExecutor<K, T> extends AbstractSimpleIdentifiable
             }
         }
 
+        @SuppressWarnings("GuardedBy")
         @NonNull Iterator<T> recoverItems() {
             // This violates @GuardedBy annotation, but is invoked only when the task is not started and will never
             // get started, hence this is safe.
