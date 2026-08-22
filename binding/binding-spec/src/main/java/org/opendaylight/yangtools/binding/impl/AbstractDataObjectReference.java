@@ -164,7 +164,7 @@ public abstract sealed class AbstractDataObjectReference<T extends DataObject, S
         return DataObjectReference.class;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "TypeParameterUnusedInFormals" })
     static final <T> @NonNull T getLast(final Iterable<?> steps) {
         return (@NonNull T) switch (steps) {
             case AppendIterable<?> append -> append.last();
