@@ -24,8 +24,9 @@ class ArgumentsExtractorVerifierTest {
     private List<String> mockedList;
 
     @Test
+    @SuppressWarnings("DirectInvocationOnMock")
     void test() {
-        doReturn(Boolean.TRUE).when(mockedList).add(any(String.class));
+        doReturn(true).when(mockedList).add(any(String.class));
         final var argument = "something";
         mockedList.add(argument);
         // retrieve argument
