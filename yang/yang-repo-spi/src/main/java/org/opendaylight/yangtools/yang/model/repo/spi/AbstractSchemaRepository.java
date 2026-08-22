@@ -96,12 +96,10 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
         final ListenableFuture<T> fetchSourceFuture = fetchSource(id, regs);
         // Add callback to notify cache listeners about encountered schema
-        Futures.addCallback(fetchSourceFuture, new FutureCallback<T>() {
+        Futures.addCallback(fetchSourceFuture, new FutureCallback<>() {
             @Override
             public void onSuccess(final T result) {
-                for (var listener : listeners) {
-                    listener.getInstance().schemaSourceEncountered(result);
-                }
+                sourceEncountered(result);
             }
 
             @Override
@@ -112,6 +110,12 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         }, MoreExecutors.directExecutor());
 
         return fetchSourceFuture;
+    }
+
+    private synchronized void sourceEncountered(final SourceRepresentation source) {
+        for (var listener : listeners) {
+            listener.getInstance().schemaSourceEncountered(source);
+        }
     }
 
     private synchronized void addSource(final SchemaSourceRegistration reg) {
