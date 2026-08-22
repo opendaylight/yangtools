@@ -101,6 +101,7 @@ public final class LoggingNormalizedNodeStreamWriter extends AbstractIndentingNo
     }
 
     @Override
+    @SuppressWarnings("Slf4jSignOnlyFormat")
     @SuppressFBWarnings("SLF4J_SIGN_ONLY_FORMAT")
     void scalarValue(final Object value, final String indent) {
         LOG.debug("{}({})={}", indent, value.getClass().getSimpleName(), value);
