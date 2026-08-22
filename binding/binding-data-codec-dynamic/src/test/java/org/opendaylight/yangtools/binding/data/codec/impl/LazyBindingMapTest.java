@@ -205,6 +205,7 @@ class LazyBindingMapTest extends AbstractBindingCodecTest {
     }
 
     @Test
+    @SuppressWarnings("CollectionIncompatibleType")
     void testLookupContainsKeyThrows() {
         final var list = prepareData().getTopLevelList();
         assertNotNull(list);
