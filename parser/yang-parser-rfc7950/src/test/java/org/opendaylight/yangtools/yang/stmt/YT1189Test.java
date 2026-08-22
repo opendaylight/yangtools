@@ -13,7 +13,8 @@ class YT1189Test extends AbstractYangTest {
     @Test
     void testDescendantAugment() {
         assertSourceExceptionMessage("/bugs/YT1189/foo.yang").startsWith("""
-            'cont' is not a valid augment target-node on position 1: 'c' is not '/' as required by augment-arg [at """);
+            'cont' is not a valid augment target-node on position 1: 'c' is not '/' as required by augment-arg [at \
+            """);
     }
 
     @Test

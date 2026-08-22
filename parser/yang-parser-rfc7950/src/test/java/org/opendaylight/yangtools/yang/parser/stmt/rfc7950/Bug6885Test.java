@@ -23,7 +23,7 @@ class Bug6885Test extends AbstractYangTest {
             .startsWith("""
                 leaf statement (incorrect-list-keys-test?revision=2017-02-06)a2 is a key in list statement \
                 (incorrect-list-keys-test?revision=2017-02-06)invalid-list-a: it cannot be conditional on when \
-                statement [at """)
+                statement [at\s""")
             .endsWith(":14:9]");
     }
 
@@ -33,7 +33,7 @@ class Bug6885Test extends AbstractYangTest {
             .startsWith("""
                 leaf statement (incorrect-list-keys-test1?revision=2017-02-06)b is a key in list statement \
                 (incorrect-list-keys-test1?revision=2017-02-06)invalid-list-b: it cannot be conditional on if-feature \
-                statement [at """)
+                statement [at\s""")
             .endsWith(":12:9]");
     }
 
@@ -43,7 +43,7 @@ class Bug6885Test extends AbstractYangTest {
             .startsWith("""
                 leaf statement (incorrect-list-keys-test2?revision=2017-02-06)a1 is a key in list statement \
                 (incorrect-list-keys-test2?revision=2017-02-06)invalid-list-a1: it cannot be conditional on if-feature \
-                statement [at """)
+                statement [at\s""")
             .endsWith(":11:9]");
     }
 
@@ -53,7 +53,7 @@ class Bug6885Test extends AbstractYangTest {
             .startsWith("""
                 leaf statement (incorrect-list-keys-test3?revision=2017-02-06)a2 is a key in list statement \
                 (incorrect-list-keys-test3?revision=2017-02-06)invalid-list-a2: it cannot be conditional on when \
-                statement [at """)
+                statement [at\s""")
             .endsWith("15:9]");
     }
 
@@ -63,7 +63,7 @@ class Bug6885Test extends AbstractYangTest {
             .startsWith("""
                 leaf statement (incorrect-list-keys-test4?revision=2017-02-06)a1 is a key in list statement \
                 (incorrect-list-keys-test4?revision=2017-02-06)invalid-list-b1: it cannot be conditional on if-feature \
-                statement [at """)
+                statement [at\s""")
             .endsWith("11:9]");
     }
 
@@ -73,7 +73,7 @@ class Bug6885Test extends AbstractYangTest {
             .startsWith("""
                 leaf statement (incorrect-list-keys-test5?revision=2017-02-06)a1 is a key in list statement \
                 (incorrect-list-keys-test5?revision=2017-02-06)invalid-list-a1: it cannot be conditional on if-feature \
-                statement [at """)
+                statement [at\s""")
             .endsWith(":13:9]");
     }
 }

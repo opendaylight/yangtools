@@ -73,7 +73,7 @@ class Bug5946Test extends AbstractYangTest {
     void testInvalid() {
         assertSourceExceptionMessage("/bugs/bug5946/foo-invalid.yang").startsWith("""
             '/simple-unique/l1' is not a valid unique tag on position 1: '/' is not a valid prefix nor identifier \
-            [at """);
+            [at\s""");
     }
 
     private static  @NonNull Collection<? extends @NonNull UniqueEffectiveStatement> getListConstraints(

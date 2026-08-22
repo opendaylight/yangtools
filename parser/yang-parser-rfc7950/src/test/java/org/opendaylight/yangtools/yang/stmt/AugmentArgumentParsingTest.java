@@ -52,28 +52,28 @@ class AugmentArgumentParsingTest {
     void invalidAugRel1Test() {
         assertSourceExceptionCause(assertReactorThrows(INVALID_REL1), """
             './aug1/aug11' is not a valid augment target-node on position 1: '.' is not '/' as required by augment-arg \
-            [at """);
+            [at\s""");
     }
 
     @Test
     void invalidAugRel2Test() {
         assertSourceExceptionCause(assertReactorThrows(INVALID_REL2), """
             '../aug1/aug11' is not a valid augment target-node on position 1: '.' is not '/' as required by \
-            augment-arg [at """);
+            augment-arg [at\s""");
     }
 
     @Test
     void invalidAugAbs() {
         assertSourceExceptionCause(assertReactorThrows(INVALID_ABS), """
             '//aug1/aug11/aug111' is not a valid augment target-node on position 2: '/' is not a valid prefix nor \
-            identifier [at """);
+            identifier [at\s""");
     }
 
     @Test
     void invalidAugAbsPrefixedNoImp() {
         assertSourceExceptionCause(assertReactorThrows(INVALID_ABS_PREFIXED_NO_IMP), """
             'imp:aug1/imp:aug11/imp:aug111' is not a valid augment target-node on position 1: 'i' is not '/' as \
-            required by augment-arg [at """);
+            required by augment-arg [at\s""");
     }
 
     @Test
@@ -90,7 +90,7 @@ class AugmentArgumentParsingTest {
         final var cause = assertInstanceOf(SourceException.class, ex.getCause());
         assertThat(cause.getMessage()).startsWith("""
             '/aug1/-' is not a valid augment target-node on position 7: '-' is not valid as a first character in \
-            identifier [at """);
+            identifier [at\s""");
 
         final var ase = assertInstanceOf(ArgumentSyntaxException.class, cause.getCause());
         assertEquals("'-' is not valid as a first character in identifier", ase.getMessage());
