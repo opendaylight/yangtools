@@ -29,7 +29,7 @@ public final class DataObjectIdentifierWithKey<T extends EntryObject<?, T, K>, K
     }
 
     public DataObjectIdentifierWithKey(final Void unused, final Iterable<? extends @NonNull DataObjectStep<?>> steps) {
-        super(unused, steps);
+        super(null, steps);
     }
 
     @Override
