@@ -31,7 +31,9 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DataTreeCandidateValidatorTest2 {
+//FIXME: remove this suppression
+@SuppressWarnings("Slf4jSignOnlyFormat")
+class DataTreeCandidateValidatorTest2 {
 
     private static EffectiveModelContext context;
     private static Module mainModule;

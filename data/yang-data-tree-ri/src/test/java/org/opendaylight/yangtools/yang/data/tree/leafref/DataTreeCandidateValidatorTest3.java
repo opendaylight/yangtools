@@ -31,7 +31,9 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DataTreeCandidateValidatorTest3 {
+//FIXME: remove this suppression
+@SuppressWarnings("Slf4jSignOnlyFormat")
+class DataTreeCandidateValidatorTest3 {
 
     private static EffectiveModelContext context;
     private static Module mainModule;
@@ -61,7 +63,6 @@ public class DataTreeCandidateValidatorTest3 {
     private static QName desc;
 
     private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidateValidatorTest3.class);
-    private static final String NEW_LINE = System.getProperty("line.separator");
 
     @BeforeAll
     static void init() throws DataValidationFailedException {
