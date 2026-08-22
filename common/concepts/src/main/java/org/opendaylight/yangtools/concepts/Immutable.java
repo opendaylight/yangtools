@@ -24,12 +24,12 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * {@link Object#toString()} invoked at some later point in time, possibly in a completely different thread. This is,
  * by definition, guaranteed to be safe, as {@link #toString()} is part of an object's observable state.
  *
- * {@apiNote}
+ * @apiNote
  *     This interface uses an internal modeling trick to make it impossible to implement {@link Immutable}
  *     and {@link Mutable} at the same time. Violations are expected to be flagged by {@code javac}, but we have not
  *     ascertained JVM would reject such classes.
  *
- * {@implSpec}
+ * @implSpec
  *     Implementing class must abide the {@code @Immutable} contract just as if they were annotated as such, but may
  *     be implemented with deferred materialization. When implementing such a strategy, implementations should prefer
  *     concurrent computation and with first-wins memoization with {@code getAcuire()} and {@code setRelease()} memory
