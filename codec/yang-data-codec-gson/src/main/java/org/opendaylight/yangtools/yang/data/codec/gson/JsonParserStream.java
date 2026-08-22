@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.gson.JsonIOException;
@@ -168,7 +169,8 @@ public final class JsonParserStream implements Closeable, Flushable {
         reader.setLenient(true);
         boolean isEmpty = true;
         try {
-            reader.peek();
+            // FIXME: verify just to fool ErrorProne, but we really should be doing something smarter
+            verifyNotNull(reader.peek());
             isEmpty = false;
             // FIXME: this has a special-case bypass for SchemaContext, where we end up emitting just the child while
             //        the usual of() would result in SchemaContext.NAME being the root
