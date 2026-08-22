@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.binding.CaseObject;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.DataObject;
 import org.opendaylight.yangtools.binding.DataObjectReference;
-import org.opendaylight.yangtools.binding.DataObjectReference.Builder;
 import org.opendaylight.yangtools.binding.DataObjectStep;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.ExactDataObjectStep;
@@ -29,7 +28,8 @@ import org.opendaylight.yangtools.binding.NodeStep;
 /**
  * Base implementation of {@link Builder}.
  */
-public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataObject> implements Builder<T>
+public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataObject>
+        implements DataObjectReference.Builder<T>
         permits AbstractDataObjectIdentifierBuilder, DataObjectReferenceBuilder, DataObjectReferenceBuilderWithKey {
     private final ArrayList<@NonNull DataObjectStep<?>> pathBuilder;
     private final Iterable<? extends @NonNull DataObjectStep<?>> basePath;
@@ -63,18 +63,19 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
     }
 
     @Override
-    public <A extends Augmentation<? super T, A>> Builder<A> augmentation(final Class<A> augmentation) {
+    public <A extends Augmentation<? super T, A>>
+            DataObjectReference.Builder<A> augmentation(final Class<A> augmentation) {
         return append(new NodeStep<>(augmentation));
     }
 
     @Override
-    public <N extends ChildOf<? super T>> Builder<N> child(final Class<N> container) {
+    public <N extends ChildOf<? super T>> DataObjectReference.Builder<N> child(final Class<N> container) {
         return append(DataObjectStep.of(container));
     }
 
     @Override
-    public <C extends CaseObject<? super T, ?, C>, N extends ChildOf<? super C>> Builder<N> child(final Class<C> caze,
-            final Class<N> container) {
+    public <C extends CaseObject<? super T, ?, C>, N extends ChildOf<? super C>>
+            DataObjectReference.Builder<N> child(final Class<C> caze, final Class<N> container) {
         return append(DataObjectStep.of(caze, container));
     }
 
@@ -93,7 +94,7 @@ public abstract sealed class AbstractDataObjectReferenceBuilder<T extends DataOb
     @Override
     public abstract DataObjectReference<T> build();
 
-    abstract <X extends DataObject> @NonNull Builder<X> append(@NonNull DataObjectStep<X> step);
+    abstract <X extends DataObject> DataObjectReference.@NonNull Builder<X> append(@NonNull DataObjectStep<X> step);
 
     abstract <X extends EntryObject<?, X, Y>, Y extends Key<X>> @NonNull WithKey<X, Y> append(
         @NonNull KeyStep<Y, X> step);
