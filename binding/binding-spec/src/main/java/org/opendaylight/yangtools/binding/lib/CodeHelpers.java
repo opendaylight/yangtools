@@ -465,12 +465,13 @@ public final class CodeHelpers {
     private static void checkCollectionField(final @NonNull Class<?> requiredClass, final @NonNull String fieldName,
             final @Nullable Collection<?> collection) {
         if (collection != null) {
-            try {
-                collection.forEach(item -> requiredClass.cast(requireNonNull(item)));
-            } catch (ClassCastException | NullPointerException e) {
-                throw new IllegalArgumentException(
-                    "Invalid input item for property \"" + requireNonNull(fieldName) + "\"", e);
-            }
+            collection.forEach(item -> {
+                if (!requiredClass.isInstance(item)) {
+                    final var diag = item == null ? "null" : item.getClass().getName();
+                    throw new IllegalArgumentException(
+                        "Invalid " + diag + " item for property \"" + requireNonNull(fieldName) + '"');
+                }
+            });
         }
     }
 

@@ -56,11 +56,11 @@ class CodeHelpersTest {
 
         var iae = assertThrows(IllegalArgumentException.class,
             () -> CodeHelpers.checkListFieldCast(CodeHelpersTest.class, "foo", Collections.singletonList(null)));
-        assertInstanceOf(NullPointerException.class, iae.getCause());
+        assertEquals("Invalid null item for property \"foo\"", iae.getMessage());
 
         iae = assertThrows(IllegalArgumentException.class,
             () -> CodeHelpers.checkListFieldCast(CodeHelpersTest.class, "foo", List.of(new Object())));
-        assertInstanceOf(ClassCastException.class, iae.getCause());
+        assertEquals("Invalid java.lang.Object item for property \"foo\"", iae.getMessage());
     }
 
     @Test
@@ -72,11 +72,11 @@ class CodeHelpersTest {
 
         var iae = assertThrows(IllegalArgumentException.class,
             () -> CodeHelpers.checkSetFieldCast(CodeHelpersTest.class, "foo", Collections.singleton(null)));
-        assertInstanceOf(NullPointerException.class, iae.getCause());
+        assertEquals("Invalid null item for property \"foo\"", iae.getMessage());
 
         iae = assertThrows(IllegalArgumentException.class,
             () -> CodeHelpers.checkSetFieldCast(CodeHelpersTest.class, "foo", Set.of(new Object())));
-        assertInstanceOf(ClassCastException.class, iae.getCause());
+        assertEquals("Invalid java.lang.Object item for property \"foo\"", iae.getMessage());
     }
 
     @Test
