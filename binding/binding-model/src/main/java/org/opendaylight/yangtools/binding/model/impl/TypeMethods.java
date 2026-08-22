@@ -152,8 +152,7 @@ public final class TypeMethods {
     /**
      * Implementation of {@link GetterMethod#toString()}.
      *
-     * @param archetypeClass the archetype class
-     * @param self the archetype
+     * @param self the GetterMethod
      * @return a String
      */
     @NonNullByDefault
