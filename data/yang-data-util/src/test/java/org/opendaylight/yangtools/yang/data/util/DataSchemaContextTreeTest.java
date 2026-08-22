@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class DataSchemaContextTreeTest {
@@ -49,9 +50,12 @@ class DataSchemaContextTreeTest {
 
     @Test
     void testCorrectInput() {
-        CONTEXT.findChild(YangInstanceIdentifier.of(FOO)).orElseThrow();
-        CONTEXT.findChild(YangInstanceIdentifier.of(FOO, BAR)).orElseThrow();
-        CONTEXT.findChild(YangInstanceIdentifier.of(FOO, BAR, BAZ)).orElseThrow();
+        assertEquals(new NodeIdentifier(FOO),
+            CONTEXT.findChild(YangInstanceIdentifier.of(FOO)).orElseThrow().pathStep());
+        assertEquals(new NodeIdentifier(BAR),
+            CONTEXT.findChild(YangInstanceIdentifier.of(FOO, BAR)).orElseThrow().pathStep());
+        assertEquals(new NodeIdentifier(BAZ),
+            CONTEXT.findChild(YangInstanceIdentifier.of(FOO, BAR, BAZ)).orElseThrow().pathStep());
     }
 
     @Test
