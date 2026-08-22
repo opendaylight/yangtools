@@ -51,7 +51,6 @@ class YinFileMetaStmtsTest extends AbstractYinModulesTest {
             (http://trustee.ietf.org/license-info).
 
             This version of this YANG module is part of RFC 6022; see
-            the RFC itself for full legal notices."""),
-            testModule.getDescription());
+            the RFC itself for full legal notices."""), testModule.getDescription());
     }
 }

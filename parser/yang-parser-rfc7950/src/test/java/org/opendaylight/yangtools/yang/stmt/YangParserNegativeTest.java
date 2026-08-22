@@ -34,7 +34,7 @@ class YangParserNegativeTest extends AbstractYangTest {
     void testInvalidRefine() {
         assertInferenceExceptionMessage("/negative-scenario/testfile4.yang").contains("""
             unsupported statement presence in target leaf-list while refining uses \
-            Descendant{qnames=[(urn:simple.container.demo)node]} [at """);
+            Descendant{qnames=[(urn:simple.container.demo)node]} [at\s""");
     }
 
     @Test
@@ -81,7 +81,7 @@ class YangParserNegativeTest extends AbstractYangTest {
         assertInferenceExceptionMessage(
             "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment1.yang").startsWith("""
                 Cannot add leaf statement named 'id' because augment target already contains a leaf statement with the \
-                same name (originating from """)
+                same name (originating from\s""")
             .contains("duplicity/augment1.yang:14:9) [at ").endsWith("duplicity/augment1.yang:20:9]");
     }
 
@@ -90,7 +90,7 @@ class YangParserNegativeTest extends AbstractYangTest {
         assertInferenceExceptionMessage(
             "/negative-scenario/duplicity/augment0.yang", "/negative-scenario/duplicity/augment2.yang").startsWith("""
                 Cannot add anyxml statement named 'delta' because augment target already contains a case statement \
-                with the same name (originating from """)
+                with the same name (originating from\s""")
             .contains("duplicity/augment2.yang:13:9) [at ").endsWith("duplicity/augment2.yang:17:9]");
     }
 

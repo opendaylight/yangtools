@@ -21,7 +21,7 @@ class YT1890Test extends AbstractYangTest {
         // plain augment to an implied config=true context
         assertInferenceExceptionMessage("/bugs/YT1890/foo.yang", "/bugs/YT1890/bar.yang")
             .startsWith("""
-                An augment cannot add node 'bar' because it is mandatory and in module different than target [at """)
+                An augment cannot add node 'bar' because it is mandatory and in module different than target [at\s""")
             .endsWith("/bar.yang:9:5]");
     }
 

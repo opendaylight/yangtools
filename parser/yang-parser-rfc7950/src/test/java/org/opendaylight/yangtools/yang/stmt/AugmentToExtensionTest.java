@@ -21,7 +21,7 @@ class AugmentToExtensionTest extends AbstractYangTest {
             .startsWith("""
                 Augment target \
                 'Descendant{qnames=[(uri:augment-module?revision=2014-10-07)my-extension-name-a, input]}'\
-                 not found [at """);
+                 not found [at\s""");
     }
 
     /*
