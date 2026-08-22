@@ -12,11 +12,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.regex.Pattern;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.junit.jupiter.api.AfterAll;
@@ -85,9 +83,7 @@ class XmlStreamUtilsTest {
             writer.writeEndElement();
         });
 
-        final var prefixedIdentityPattern = Pattern.compile(".*\"different:namespace\">(.*):identity.*");
-        final var matcher = prefixedIdentityPattern.matcher(xmlAsString);
-        assertTrue(matcher.matches(), "Xml: " + xmlAsString + " should match: " + prefixedIdentityPattern);
+        assertThat(xmlAsString).matches(".*\"different:namespace\">(.*):identity.*");
     }
 
     private static String createXml(final XMLStreamWriterConsumer consumer) throws XMLStreamException, IOException {
