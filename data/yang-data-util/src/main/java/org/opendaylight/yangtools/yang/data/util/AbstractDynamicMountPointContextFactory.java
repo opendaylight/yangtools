@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.util;
 import com.google.common.annotations.Beta;
 import java.io.IOException;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractSimpleIdentifiable;
@@ -42,9 +41,9 @@ public abstract class AbstractDynamicMountPointContextFactory extends AbstractSi
     public final MountPointContext createContext(final Map<ContainerName, MountPointChild> libraryContainers,
             final MountPointChild schemaMounts) throws MountPointException {
 
-        for (Entry<ContainerName, MountPointChild> entry : libraryContainers.entrySet()) {
+        for (var entry : libraryContainers.entrySet()) {
             // Context for the specific code word
-            final Optional<EffectiveModelContext> optLibContext = findSchemaForLibrary(entry.getKey());
+            final var optLibContext = findSchemaForLibrary(entry.getKey());
             if (optLibContext.isEmpty()) {
                 LOG.debug("YANG Library context for mount point {} container {} not found", getIdentifier(),
                     entry.getKey());
@@ -61,22 +60,22 @@ public abstract class AbstractDynamicMountPointContextFactory extends AbstractSi
                 throw new MountPointException("Invalid yang-library non-container " + libData);
             }
 
-            final EffectiveModelContext schemaContext = bindLibrary(entry.getKey(), libContainer);
+            final var modelContext = bindLibrary(entry.getKey(), libContainer);
             if (schemaMounts == null) {
-                return MountPointContext.of(schemaContext);
+                return MountPointContext.of(modelContext);
             }
 
             final NormalizedNode mountData;
             try {
-                mountData = schemaMounts.normalizeTo(schemaContext);
+                mountData = schemaMounts.normalizeTo(modelContext);
             } catch (IOException e) {
                 throw new MountPointException("Failed to interpret schema-mount data", e);
             }
-            if (!(mountData instanceof ContainerNode)) {
+            if (!(mountData instanceof ContainerNode mountContainer)) {
                 throw new MountPointException("Invalid schema-mount non-container " + mountData);
             }
 
-            return createMountPointContext(schemaContext, (ContainerNode) mountData);
+            return createMountPointContext(modelContext, mountContainer);
         }
 
         throw new MountPointException("Failed to interpret " + libraryContainers);
