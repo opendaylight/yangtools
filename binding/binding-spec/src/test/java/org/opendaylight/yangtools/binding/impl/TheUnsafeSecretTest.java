@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.opendaylight.yangtools.binding.impl.TheUnsafeSecret.INSTANCE;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.lib.CodeHelpers;
@@ -19,11 +18,11 @@ import org.opendaylight.yangtools.binding.lib.CodeHelpers;
 class TheUnsafeSecretTest {
     @Test
     void trivials() {
-        assertNotNull(INSTANCE);
+        assertNotNull(TheUnsafeSecret.INSTANCE);
 
         final var first = new TheUnsafeSecret();
         final var second = new TheUnsafeSecret();
-        assertNotEquals(INSTANCE, first);
+        assertNotEquals(TheUnsafeSecret.INSTANCE, first);
         assertEquals(first, first);
         assertNotEquals(first, second);
     }
@@ -32,6 +31,7 @@ class TheUnsafeSecretTest {
     void codeHelpersIntegration() {
         final var alien = new TheUnsafeSecret();
         final var ex = assertThrows(LinkageError.class, () -> CodeHelpers.verifySecret(alien));
-        assertEquals("UnsafeSecret mismatch: expecting " + INSTANCE + ", got " + alien, ex.getMessage());
+        assertEquals("UnsafeSecret mismatch: expecting " + TheUnsafeSecret.INSTANCE + ", got " + alien,
+            ex.getMessage());
     }
 }
