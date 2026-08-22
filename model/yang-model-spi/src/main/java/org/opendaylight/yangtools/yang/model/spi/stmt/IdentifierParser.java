@@ -22,8 +22,7 @@ import org.opendaylight.yangtools.yang.model.spi.meta.ArgumentSyntaxException;
  * as decoded into {@code identifier-arg} by YANG argument string handling procedures. Returned objects are quaranteed
  * to have been {@link QName#intern() interned}.
  *
- * {@apiNote This class is designed to support parsing of other ABNF productions which boil down to an
- *           {@code identifier}}
+ * @apiNote This class is designed to support parsing of other ABNF productions which boil down to an {@code identifier}
  *
  * @since 14.0.22
  */
