@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceException;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
@@ -390,22 +391,20 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
             }
 
             final var sourceEx = optSourceEx.orElseThrow();
-            // Workaround for broken logging implementations which ignore
-            // suppressed exceptions
-            final var cause = sourceEx.getCause() != null ? sourceEx.getCause() : sourceEx;
             if (LOG.isDebugEnabled()) {
                 LOG.error("Failed to parse YANG from source {}", failedSource, sourceEx);
             } else {
-                LOG.error("Failed to parse YANG from source {}: {}", failedSource, cause.getMessage());
+                logSourceError(failedSource, sourceEx);
             }
 
+            // Workaround for broken logging implementations which ignore suppressed exceptions
             final var suppressed = sourceEx.getSuppressed();
             if (suppressed.length > 0) {
                 LOG.error("{} additional errors reported:", suppressed.length);
 
                 int count = 1;
                 for (var supp : suppressed) {
-                    LOG.error("Error {}: {}", count, supp.getMessage());
+                    logSuppressedError(count, supp.getMessage());
                     count++;
                 }
             }
@@ -419,6 +418,17 @@ final class BuildGlobalContext extends AbstractNamespaceStorage implements Names
             }
         }
         return buildFailure;
+    }
+
+    @SuppressWarnings("Slf4jDoNotLogMessageOfExceptionExplicitly")
+    private static void logSourceError(final SourceSpecificContext source, final StatementSourceException ex) {
+        final var cause = ex.getCause();
+        final var toLog = cause != null ? cause : ex;
+        LOG.error("Failed to parse YANG from source {}: {}", source, toLog.getMessage());
+    }
+
+    private static void logSuppressedError(final int count, final String message) {
+        LOG.error("Error {}: {}", count, message);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
