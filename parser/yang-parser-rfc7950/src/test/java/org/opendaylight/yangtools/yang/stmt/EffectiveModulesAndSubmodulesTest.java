@@ -193,6 +193,7 @@ class EffectiveModulesAndSubmodulesTest {
         assertNotEquals(root, imported);
     }
 
+    @SuppressWarnings("Slf4jSignOnlyFormat")
     private static void printReferences(final ModuleLike module, final boolean isSubmodule, final String indent) {
         LOG.debug("{}{} {}", indent, isSubmodule ? "Submodule" : "Module", module.getName());
         for (var submodule : module.getSubmodules()) {
@@ -201,6 +202,7 @@ class EffectiveModulesAndSubmodulesTest {
         }
     }
 
+    @SuppressWarnings("Slf4jSignOnlyFormat")
     private static void printChilds(final Collection<? extends DataSchemaNode> childNodes, final String indent) {
         for (var child : childNodes) {
             LOG.debug("{}{} {}", indent, "Child", child.getQName().getLocalName());
