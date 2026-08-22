@@ -197,7 +197,6 @@ public sealed interface SourceInfo permits SourceInfo.Module, SourceInfo.Submodu
             requireNonNull(belongsTo);
             requireNonNull(revisions);
             requireNonNull(imports);
-            requireNonNull(imports);
             requireNonNull(includes);
         }
 
