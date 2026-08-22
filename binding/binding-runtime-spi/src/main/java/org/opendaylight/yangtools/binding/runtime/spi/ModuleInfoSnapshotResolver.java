@@ -137,9 +137,12 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
 
     @GuardedBy("this")
     private Registration register(final @NonNull YangModuleInfo moduleInfo) {
-        final var regInfos = flatDependencies(moduleInfo).stream()
-            .map(this::registerModuleInfo)
-            .collect(ImmutableList.toImmutableList());
+        final var infos = flatDependencies(moduleInfo);
+        final var builder = ImmutableList.<RegisteredModuleInfo>builderWithExpectedSize(infos.size());
+        for (var info : infos) {
+            builder.add(registerModuleInfo(info));
+        }
+        final var regInfos = builder.build();
 
         return new AbstractRegistration() {
             @Override
