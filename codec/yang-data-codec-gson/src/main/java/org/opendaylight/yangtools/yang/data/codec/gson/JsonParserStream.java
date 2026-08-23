@@ -51,7 +51,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Text;
 
 /**
  * This class parses JSON elements from a GSON JsonReader. It disallows multiple elements of the same name unlike the
@@ -199,21 +198,13 @@ public final class JsonParserStream implements Closeable, Flushable {
     private void traverseAnyXmlValue(final JsonReader in, final Document doc, final Element parentElement)
             throws IOException {
         switch (in.peek()) {
-            case STRING:
-            case NUMBER:
-                Text textNode = doc.createTextNode(in.nextString());
-                parentElement.appendChild(textNode);
-                break;
-            case BOOLEAN:
-                textNode = doc.createTextNode(Boolean.toString(in.nextBoolean()));
-                parentElement.appendChild(textNode);
-                break;
-            case NULL:
+            case NUMBER, STRING -> parentElement.appendChild(doc.createTextNode(in.nextString()));
+            case BOOLEAN -> parentElement.appendChild(doc.createTextNode(Boolean.toString(in.nextBoolean())));
+            case NULL -> {
                 in.nextNull();
-                textNode = doc.createTextNode("null");
-                parentElement.appendChild(textNode);
-                break;
-            case BEGIN_ARRAY:
+                parentElement.appendChild(doc.createTextNode("null"));
+            }
+            case BEGIN_ARRAY -> {
                 in.beginArray();
                 while (in.hasNext()) {
                     final var childElement = doc.createElement(ANYXML_ARRAY_ELEMENT_ID);
@@ -221,8 +212,8 @@ public final class JsonParserStream implements Closeable, Flushable {
                     traverseAnyXmlValue(in, doc, childElement);
                 }
                 in.endArray();
-                break;
-            case BEGIN_OBJECT:
+            }
+            case BEGIN_OBJECT -> {
                 in.beginObject();
                 while (in.hasNext()) {
                     final var childElement = doc.createElement(in.nextName());
@@ -230,9 +221,10 @@ public final class JsonParserStream implements Closeable, Flushable {
                     traverseAnyXmlValue(in, doc, childElement);
                 }
                 in.endObject();
-                break;
-            default:
-                break;
+            }
+            default -> {
+                // ignored
+            }
         }
     }
 
