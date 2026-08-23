@@ -374,18 +374,17 @@ public abstract sealed class XMLStreamNormalizedNodeStreamWriter<T>
                 if (namespace.isEmpty()) {
                     // Legacy attribute, which is expected to be a String
                     StreamWriterFacade.warnLegacyAttribute(localName);
-                    if (!(value instanceof String)) {
-                        if (BROKEN_ATTRIBUTES.add(localName)) {
-                            LOG.warn("""
-                                Unbound annotation {} does not have a String value, ignoring it. Please fix the \
-                                source of this annotation either by formatting it to a String or removing its \
-                                use""", localName, new Throwable("Call stack"));
-                        }
-                        LOG.debug("Ignoring annotation {} value {}", localName, value);
-                    } else {
-                        facade.writeAttribute(localName, (String) value);
+                    if (value instanceof String str) {
+                        facade.writeAttribute(localName, str);
                         continue;
                     }
+                    if (BROKEN_ATTRIBUTES.add(localName)) {
+                        LOG.warn("""
+                            Unbound annotation {} does not have a String value, ignoring it. Please fix the source \
+                            of this annotation either by formatting it to a String or removing its use""",
+                            localName, new Throwable("Call stack"));
+                    }
+                    LOG.debug("Ignoring annotation {} value {}", localName, value);
                 } else {
                     final String prefix = facade.getPrefix(qname.getNamespace(), namespace);
                     final String attrValue = encodeAnnotationValue(facade, qname, value);
