@@ -30,7 +30,7 @@ import org.eclipse.jdt.annotation.NonNull;
 public abstract class PrettyTree implements PrettyString, Supplier<String> {
     @Override
     public @NonNull String get() {
-        final var sb = new StringBuilder();
+        var sb = new StringBuilder();
         appendTo(sb, 0);
         return sb.toString();
     }
@@ -48,7 +48,7 @@ public abstract class PrettyTree implements PrettyString, Supplier<String> {
      * @throws NullPointerException if {@code sb} is null
      * @throws IllegalArgumentException if {@code depth} is negative
      */
-    protected static final void appendIndent(final @NonNull StringBuilder sb, final int depth) {
+    protected static final void appendIndent(@NonNull StringBuilder sb, int depth) {
         checkArgument(depth >= 0, "Invalid depth %s", depth);
         PrettyTreeIndent.indent(sb, depth);
     }
@@ -62,7 +62,7 @@ public abstract class PrettyTree implements PrettyString, Supplier<String> {
      * @throws IllegalArgumentException if {@code depth} is negative
      * @throws IOException if an I/O error occurs
      */
-    protected static final void appendIndent(final @NonNull Appendable appendable, final int depth) throws IOException {
+    protected static final void appendIndent(@NonNull Appendable appendable, int depth) throws IOException {
         checkArgument(depth >= 0, "Invalid depth %s", depth);
         PrettyTreeIndent.indent(appendable, depth);
     }

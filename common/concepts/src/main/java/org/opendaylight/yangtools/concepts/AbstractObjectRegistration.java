@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.NonNull;
 public abstract class AbstractObjectRegistration<T> extends AbstractRegistration implements ObjectRegistration<T> {
     private final T instance;
 
-    protected AbstractObjectRegistration(final @NonNull T instance) {
+    protected AbstractObjectRegistration(@NonNull T instance) {
         this.instance = requireNonNull(instance);
     }
 
@@ -29,7 +29,7 @@ public abstract class AbstractObjectRegistration<T> extends AbstractRegistration
     }
 
     @Override
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+    protected ToStringHelper addToStringAttributes(ToStringHelper toStringHelper) {
         return super.addToStringAttributes(toStringHelper).add("instance", instance);
     }
 }

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.concepts;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import java.io.IOException;
 import org.junit.jupiter.api.Test;
@@ -75,10 +74,10 @@ class WritableObjectsTest {
         assertRecovery(0x0000000000000008L);
     }
 
-    private static void assertRecovery(final long expected) throws IOException {
-        final ByteArrayDataOutput out = ByteStreams.newDataOutput();
+    private static void assertRecovery(long expected) throws IOException {
+        var out = ByteStreams.newDataOutput();
         WritableObjects.writeLong(out, expected);
-        final long actual = WritableObjects.readLong(ByteStreams.newDataInput(out.toByteArray()));
+        long actual = WritableObjects.readLong(ByteStreams.newDataInput(out.toByteArray()));
         assertEquals(Long.toUnsignedString(expected, 16), Long.toUnsignedString(actual, 16));
     }
 }

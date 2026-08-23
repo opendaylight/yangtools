@@ -31,10 +31,10 @@ public abstract class AbstractHierarchicalIdentifier<T extends AbstractHierarchi
     private static final long serialVersionUID = 1L;
 
     @Override
-    public final boolean contains(final T other) {
+    public final boolean contains(T other) {
         if (this != other) {
-            final var oit = other.itemIterator();
-            final var it = itemIterator();
+            var oit = other.itemIterator();
+            var it = itemIterator();
             while (it.hasNext()) {
                 if (!oit.hasNext() || !it.next().equals(oit.next())) {
                     return false;
@@ -70,7 +70,7 @@ public abstract class AbstractHierarchicalIdentifier<T extends AbstractHierarchi
     public abstract String toString();
 
     @java.io.Serial
-    private void readObject(final ObjectInputStream stream) throws IOException, ClassNotFoundException {
+    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
         throwNSE();
     }
 
@@ -80,7 +80,7 @@ public abstract class AbstractHierarchicalIdentifier<T extends AbstractHierarchi
     }
 
     @java.io.Serial
-    private void writeObject(final ObjectOutputStream stream) throws IOException {
+    private void writeObject(ObjectOutputStream stream) throws IOException {
         throwNSE();
     }
 }

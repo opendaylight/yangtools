@@ -26,7 +26,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 public abstract class AbstractDelegator<T> implements Delegator<T> {
     private final @NonNull T delegate;
 
-    protected AbstractDelegator(final T delegate) {
+    protected AbstractDelegator(T delegate) {
         this.delegate = requireNonNull(delegate);
     }
 
@@ -40,7 +40,7 @@ public abstract class AbstractDelegator<T> implements Delegator<T> {
         return addToString(MoreObjects.toStringHelper(this).omitNullValues()).toString();
     }
 
-    protected ToStringHelper addToString(final ToStringHelper helper) {
+    protected ToStringHelper addToString(ToStringHelper helper) {
         return helper.add("delegate", delegate);
     }
 }

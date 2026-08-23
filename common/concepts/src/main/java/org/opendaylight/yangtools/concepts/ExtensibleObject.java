@@ -36,8 +36,8 @@ public interface ExtensibleObject<O extends ExtensibleObject<O, E>, E extends Ob
      * @return An extension instance, or {@code null}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    default <T extends E> @Nullable T extension(final Class<T> type) {
-        final var nonnull = requireNonNull(type);
+    default <T extends E> @Nullable T extension(Class<T> type) {
+        var nonnull = requireNonNull(type);
         return supportedExtensions().stream().filter(nonnull::isInstance).findFirst().map(nonnull::cast).orElse(null);
     }
 
@@ -52,9 +52,9 @@ public interface ExtensibleObject<O extends ExtensibleObject<O, E>, E extends Ob
      * @return An extension instance, or {@code empty}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    default <T extends E> Optional<T> findExtension(final Class<T> type) {
+    default <T extends E> Optional<T> findExtension(Class<T> type) {
         // not Optional.ofNullable(to) suppress null warnings
-        final var found = extension(type);
+        var found = extension(type);
         return found == null ? Optional.empty() : Optional.of(found);
     }
 
@@ -71,8 +71,8 @@ public interface ExtensibleObject<O extends ExtensibleObject<O, E>, E extends Ob
      * @throws NullPointerException if {@code type} is {@code null}
      * @since 16.2.0
      */
-    default <T extends E> @NonNull T getExtension(final Class<T> type) {
-        final var found = extension(type);
+    default <T extends E> @NonNull T getExtension(Class<T> type) {
+        var found = extension(type);
         if (found == null) {
             throw new NoSuchElementException(type.getCanonicalName() + " is not supported by " + this);
         }

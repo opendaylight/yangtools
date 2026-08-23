@@ -13,7 +13,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @Beta
 @NonNullByDefault
 public abstract class AbstractSimpleIdentifiable<T> extends AbstractIdentifiable<T, T> {
-    protected AbstractSimpleIdentifiable(final T identifier) {
+    protected AbstractSimpleIdentifiable(T identifier) {
         super(identifier);
     }
 }
