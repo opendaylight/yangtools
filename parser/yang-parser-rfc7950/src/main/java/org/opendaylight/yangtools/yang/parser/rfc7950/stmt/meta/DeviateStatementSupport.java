@@ -162,7 +162,13 @@ public final class DeviateStatementSupport
     public void onFullDefinitionDeclared(
             final Mutable<DeviateKind, DeviateStatement, DeviateEffectiveStatement> deviateStmtCtx) {
         final var deviateKind = deviateStmtCtx.argument();
-        getSubstatementValidatorForDeviate(deviateKind).validate(deviateStmtCtx);
+        final var validator = switch (deviateKind) {
+            case ADD -> addValidator;
+            case DELETE -> deleteValidator;
+            case NOT_SUPPORTED -> NOT_SUPPORTED_VALIDATOR;
+            case REPLACE -> REPLACE_VALIDATOR;
+        };
+        validator.validate(deviateStmtCtx);
 
         final var deviationTarget = (SchemaNodeIdentifier) deviateStmtCtx.coerceParentContext().argument();
         if (!isDeviationSupported(deviateStmtCtx, deviationTarget)) {
@@ -242,15 +248,6 @@ public final class DeviateStatementSupport
     protected DeviateEffectiveStatement createEffective(final Current<DeviateKind, DeviateStatement> stmt,
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         return EffectiveStatements.createDeviate(stmt.declared(), substatements);
-    }
-
-    protected SubstatementValidator getSubstatementValidatorForDeviate(final DeviateKind deviateKind) {
-        return switch (deviateKind) {
-            case ADD -> addValidator;
-            case DELETE -> deleteValidator;
-            case NOT_SUPPORTED -> NOT_SUPPORTED_VALIDATOR;
-            case REPLACE -> REPLACE_VALIDATOR;
-        };
     }
 
     private static boolean isDeviationSupported(
