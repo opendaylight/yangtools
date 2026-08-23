@@ -29,7 +29,7 @@ public final class ObjectIdentifier implements Identifier, WritableObject {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
     private static final Pattern CHECK_OID_PATTERN = Pattern.compile("^\\d+(\\.\\d+)*$");
-    private static final Pattern SPLIT_PATTERN = Pattern.compile(".", Pattern.LITERAL);
+    private static final Pattern SPLIT_PATTERN = Pattern.compile("\\.");
 
     private final int[] subIdentifiers;
 
