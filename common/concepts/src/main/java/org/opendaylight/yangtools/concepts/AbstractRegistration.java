@@ -71,7 +71,7 @@ public abstract class AbstractRegistration implements Registration {
         return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
     }
 
-    protected ToStringHelper addToStringAttributes(final @NonNull ToStringHelper toStringHelper) {
+    protected ToStringHelper addToStringAttributes(@NonNull ToStringHelper toStringHelper) {
         return toStringHelper.add("closed", isClosed());
     }
 

@@ -30,28 +30,28 @@ class SemVerTest {
     @Test
     @SuppressWarnings("SelfComparison")
     void testSemVer() {
-        final var semVer = new SemVer(5);
+        var semVer = new SemVer(5);
         assertNotNull(semVer);
 
         assertEquals(5, semVer.major());
         assertEquals(0, semVer.minor());
         assertEquals(0, semVer.patch());
 
-        final var semVer2 = SemVer.valueOf("1.2.3");
+        var semVer2 = SemVer.valueOf("1.2.3");
         assertNotNull(semVer2);
 
         assertEquals(1, semVer2.major());
         assertEquals(2, semVer2.minor());
         assertEquals(3, semVer2.patch());
 
-        final var semVer3 = SemVer.valueOf("1");
+        var semVer3 = SemVer.valueOf("1");
         assertNotNull(semVer3);
 
         assertEquals(1, semVer3.major());
         assertEquals(0, semVer3.minor());
         assertEquals(0, semVer3.patch());
 
-        final var semVer4 = SemVer.valueOf("1.2");
+        var semVer4 = SemVer.valueOf("1.2");
         assertNotNull(semVer4);
 
         assertEquals(1, semVer4.major());
@@ -73,7 +73,7 @@ class SemVerTest {
 
     @Test
     void testSerialize() throws Exception {
-        final byte[] bytes;
+        byte[] bytes;
         try (var bos = new ByteArrayOutputStream()) {
             try (var oos = new ObjectOutputStream(bos)) {
                 oos.writeObject(new SemVer(1, 2, 3));
@@ -86,7 +86,7 @@ class SemVerTest {
 
     @Test
     void testDeserialize() throws Exception {
-        final Object value;
+        Object value;
         try (var oos = new ObjectInputStream(new ByteArrayInputStream(HEX_FORMAT.parseHex(SERIALIZED)))) {
             value = oos.readObject();
         }

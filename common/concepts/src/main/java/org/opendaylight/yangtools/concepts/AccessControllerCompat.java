@@ -27,7 +27,7 @@ public abstract sealed class AccessControllerCompat {
     // FIXME: assume this behaviour and eliminate this entire abstract once we require Java 24+
     private static final class NoAccessController extends AccessControllerCompat {
         @Override
-        <T> T privilegedGet(final Supplier<T> supplier) {
+        <T> T privilegedGet(Supplier<T> supplier) {
             return supplier.get();
         }
     }
@@ -38,7 +38,7 @@ public abstract sealed class AccessControllerCompat {
     private static final class WithAccessController extends AccessControllerCompat {
         @Override
         @SuppressWarnings({ "deprecation", "removal" })
-        <T> T privilegedGet(final Supplier<T> supplier) {
+        <T> T privilegedGet(Supplier<T> supplier) {
             return AccessController.doPrivileged((PrivilegedAction<T>) supplier::get);
         }
     }
@@ -46,7 +46,7 @@ public abstract sealed class AccessControllerCompat {
     private static final AccessControllerCompat INSTANCE;
 
     static {
-        final String str;
+        String str;
         if (Runtime.version().feature() >= 24) {
             str = ">=24";
             INSTANCE = new NoAccessController();
@@ -57,7 +57,7 @@ public abstract sealed class AccessControllerCompat {
         LoggerFactory.getLogger(AccessControllerCompat.class).debug("Assuming Java {} AccessController semantics", str);
     }
 
-    public static final <T> T get(final Supplier<T> supplier) {
+    public static final <T> T get(Supplier<T> supplier) {
         return INSTANCE.privilegedGet(supplier);
     }
 
