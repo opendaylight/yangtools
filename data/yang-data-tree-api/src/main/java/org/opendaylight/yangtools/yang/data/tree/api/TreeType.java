@@ -20,7 +20,7 @@ import com.google.common.annotations.Beta;
 @Beta
 public enum TreeType {
     /**
-     * Only {@code config true} nodes are allowed. This corresponds, but is not limited, to @{code candidate},
+     * Only {@code config true} nodes are allowed. This corresponds, but is not limited, to {@code candidate},
      * {@code startup} and {@code running} data stores defined in
      * <a href="https://www.rfc-editor.org/rfc/rfc8342#section-4.1">RFC8342 section 4.1</a> as well as {@code intended}
      * data store defined in <a href="https://www.rfc-editor.org/rfc/rfc8342#section-5">RFC8342 section 4.1</a>.
