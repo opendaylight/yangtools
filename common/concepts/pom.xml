@@ -24,6 +24,8 @@
     <properties>
         <!-- FIXME: fix these up and set maven.javadoc.failOnWarnings=true -->
         <doclint>all,-missing</doclint>
+        <odl.ep.var>ERROR</odl.ep.var>
+        <odl.ep.extra>-XepPatchChecks:Var -XepPatchLocation:IN_PLACE</odl.ep.extra>
     </properties>
 
     <dependencies>
