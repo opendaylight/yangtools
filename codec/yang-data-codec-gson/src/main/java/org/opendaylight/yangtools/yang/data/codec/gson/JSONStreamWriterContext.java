@@ -106,7 +106,6 @@ abstract class JSONStreamWriterContext {
     /**
      * Emit the end of an element.
      *
-     * @param schema Schema context
      * @param writer Output writer
      * @throws IOException when writer reports it
      */
