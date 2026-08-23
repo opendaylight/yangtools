@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceDependency.Include
  */
 @NonNullByDefault
 abstract sealed class DependencyLinker<D extends SourceDependency, T> {
-    /*
+    /**
      * Internal base class, ensuring consistent implementation behaviour.
      *
      * @param <D> dependency type
