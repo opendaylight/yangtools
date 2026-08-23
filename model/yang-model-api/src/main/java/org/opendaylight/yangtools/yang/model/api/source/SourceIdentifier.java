@@ -158,6 +158,7 @@ public record SourceIdentifier(Unqualified name, @Nullable Revision revision)
      * @param qname the {@link QName}
      * @return the {@link SourceIdentifier}
      */
+    @SuppressWarnings("InvalidParam")
     public static SourceIdentifier ofQName(final QName qname) {
         return new SourceIdentifier(qname.unbind(), qname.getModule().revision());
     }
