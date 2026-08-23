@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * Conversion constants for all scales supported by Decimal64.
  */
 @NonNullByDefault
+@SuppressWarnings("FloatingPointLiteralPrecision")
 enum Decimal64Conversion {
     SCALE_1(Byte.MIN_VALUE, Byte.MAX_VALUE, Short.MIN_VALUE, Short.MAX_VALUE, Integer.MIN_VALUE, Integer.MAX_VALUE,
             -922337203685477580L,   922337203685477580L,
