@@ -118,17 +118,18 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     }
 
     /**
-     * Template method which generates the getter method for {@code field}.
+     * Template method which generates the getter method for a field.
      *
-     * @param field generated property with data about field which is generated as the getter method
+     * @param propName the property name from which both the field and getter name are derived
+     * @param type field type
      * @return string with the getter method source code in JAVA format
      */
     // FIXME: return a Block when we can do efficient copies
     @NonNullByDefault
-    final BlockBuilder asGetterMethod(final String name, final Type type) {
+    final BlockBuilder asGetterMethod(final String propName, final Type type) {
         return newBlockBuilder()
-            .str("public ").str(importedName(type)).sp().str(getterMethodName(name)).str("()").jBlock(bb -> {
-                final var fieldName = fieldName(name);
+            .str("public ").str(importedName(type)).sp().str(getterMethodName(propName)).str("()").jBlock(bb -> {
+                final var fieldName = fieldName(propName);
                 bb.str("return ");
                 // any Java array type needs to be duplicated to prevent modification
                 if (type.isArray()) {
