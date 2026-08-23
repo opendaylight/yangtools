@@ -201,7 +201,7 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
     private abstract static class StorageAdapter<T extends SourceRepresentation> {
         private final Class<T> supportedType;
 
-        protected StorageAdapter(final Class<T> supportedType) {
+        StorageAdapter(final Class<T> supportedType) {
             this.supportedType = supportedType;
         }
 
@@ -214,7 +214,7 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
         }
 
         // FIXME: use java.nio.filePath
-        protected abstract void storeAsType(Path file, T cast);
+        abstract void storeAsType(Path file, T cast);
 
         T restore(final SourceIdentifier sourceIdentifier, final Path cachedSource) {
             checkArgument(Files.isRegularFile(cachedSource));
@@ -226,12 +226,12 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
     }
 
     private static final class YangTextStorageAdapter extends StorageAdapter<YangTextSource> {
-        protected YangTextStorageAdapter() {
+        YangTextStorageAdapter() {
             super(YangTextSource.class);
         }
 
         @Override
-        protected void storeAsType(final Path file, final YangTextSource cast) {
+        void storeAsType(final Path file, final YangTextSource cast) {
             try (var castStream = cast.asByteSource(StandardCharsets.UTF_8).openStream()) {
                 Files.copy(castStream, file, StandardCopyOption.REPLACE_EXISTING);
             } catch (final IOException e) {
@@ -281,7 +281,7 @@ public final class FilesystemSchemaSourceCache<T extends SourceRepresentation> e
             return FileVisitResult.CONTINUE;
         }
 
-        public List<SourceIdentifier> getCachedSchemas() {
+        List<SourceIdentifier> getCachedSchemas() {
             return cachedSchemas;
         }
     }
