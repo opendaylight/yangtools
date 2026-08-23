@@ -141,15 +141,13 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
     protected void checkMergeApplicable(final ModificationPath path, final NodeModification modification,
             final TreeNode currentMeta, final Version version) throws DataValidationFailedException {
         final var orig = modification.original();
-        if (orig != null && currentMeta != null) {
-            /*
-             * We need to do conflict detection only and only if the value of leaf changed before two transactions. If
-             * value of leaf is unchanged between two transactions it should not cause transaction to fail, since result
-             * of this merge leads to same data.
-             */
-            if (!orig.data().equals(currentMeta.data())) {
-                checkNotConflicting(path, orig, currentMeta);
-            }
+        /*
+         * We need to do conflict detection only and only if the value of leaf changed before two transactions. If
+         * value of leaf is unchanged between two transactions it should not cause transaction to fail, since result
+         * of this merge leads to same data.
+         */
+        if (orig != null && currentMeta != null && !orig.data().equals(currentMeta.data())) {
+            checkNotConflicting(path, orig, currentMeta);
         }
     }
 
