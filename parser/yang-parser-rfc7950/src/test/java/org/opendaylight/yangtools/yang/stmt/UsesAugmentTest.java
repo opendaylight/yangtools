@@ -97,8 +97,6 @@ class UsesAugmentTest extends AbstractYangTest {
      * |-- |-- leaf ignore (U)
      *
      * U = added by uses A = added by augment
-     *
-     * @throws Exception if exception occurs
      */
     @Test
     void testAugmentInUses() {
