@@ -78,7 +78,7 @@ jobs:
         clean install
         jacoco:report
         -Djacoco.dataFile="${GITHUB_WORKSPACE}"/target/jacoco.exec
-        org.sonarsource.scanner.maven:sonar-maven-plugin:3.9.1.2184:sonar
+        org.sonarsource.scanner.maven:sonar-maven-plugin:3.11.0.3922:sonar
       SONAR_PROJECT_KEY: "opendaylight_yangtools"
       SONAR_ORG: "opendaylight"
     secrets:
