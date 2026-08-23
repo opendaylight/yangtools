@@ -64,12 +64,8 @@ final class TestingNormalizedNodeStructuresCreator {
     private static ChoiceNode choc12Node() {
         return ImmutableNodes.newChoiceBuilder()
             .withNodeIdentifier(new NodeIdentifier(QName.create(COMPLEX_JSON, "choc12")))
-            .withChild(lf17Node())
+            .withChild(ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "lf17"), "lf17 value"))
             .build();
-    }
-
-    protected static LeafNode<?> lf17Node() {
-        return ImmutableNodes.leafNode(QName.create(COMPLEX_JSON, "lf17"), "lf17 value");
     }
 
     private static LeafNode<?> lf15_12NodeExternal() {
