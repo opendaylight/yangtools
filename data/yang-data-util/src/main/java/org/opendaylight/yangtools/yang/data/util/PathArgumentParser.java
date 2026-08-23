@@ -29,14 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-/**
- * Iterator which lazily parses {@link PathArgument} from string representation.
- *
- * <p>Note that invocation of {@link #hasNext()} or {@link #next()} may result in throwing of
- * {@link IllegalArgumentException} if underlying string representation is not correctly serialized or does not
- * represent instance identifier valid for associated schema context.
- */
-final class XpathStringParsingPathArgumentBuilder implements Mutable {
+final class PathArgumentParser implements Mutable {
     /**
      * Matcher matching WSP YANG ABNF token.
      */
@@ -64,7 +57,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
     private static final char SQUOT = '\'';
     private static final char DQUOT = '"';
 
-    private final List<PathArgument> product = new ArrayList<>();
+    private final ArrayList<PathArgument> product = new ArrayList<>();
     private final AbstractStringInstanceIdentifierCodec codec;
     private final SchemaInferenceStack stack;
     private final String data;
@@ -73,14 +66,26 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
     private QNameModule lastModule;
     private int offset;
 
-    XpathStringParsingPathArgumentBuilder(final AbstractStringInstanceIdentifierCodec codec, final String data) {
+    private PathArgumentParser(final AbstractStringInstanceIdentifierCodec codec, final String data) {
         this.codec = requireNonNull(codec);
         this.data = requireNonNull(data);
         offset = 0;
 
-        final DataSchemaContextTree tree = codec.getDataContextTree();
+        final var tree = codec.getDataContextTree();
         stack = SchemaInferenceStack.of(tree.modelContext());
         current = tree.getRoot();
+    }
+
+    /**
+     * Parse input string and return the corresponding list of {@link PathArgument}s.
+     *
+     * @param codec the code to use for {@code instance-identifier} values
+     * @param data the data to parse
+     * @return List of PathArguments
+     * @throws IllegalArgumentException if the input string is not valid
+     */
+    static @NonNull List<PathArgument> parse(final AbstractStringInstanceIdentifierCodec codec, final String data) {
+        return new PathArgumentParser(codec, data).parse();
     }
 
     /**
@@ -89,7 +94,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
      * @return List of PathArguments
      * @throws IllegalArgumentException if the input string is not valid
      */
-    @NonNull List<PathArgument> build() {
+    private @NonNull List<PathArgument> parse() {
         while (!allCharactersConsumed()) {
             product.add(computeNextArgument());
         }
@@ -187,7 +192,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
     }
 
     private @NonNull TypeDefinition<?> resolveLeafref(final QName qname, final LeafrefTypeDefinition type) {
-        final SchemaInferenceStack tmp = stack.copy();
+        final var tmp = stack.copy();
         tmp.enterDataTree(qname);
         return tmp.resolveLeafref(type);
     }
@@ -208,7 +213,7 @@ final class XpathStringParsingPathArgumentBuilder implements Mutable {
      */
     private @NonNull QName nextQName() {
         // Consume prefix or identifier
-        final String maybePrefix = nextIdentifier();
+        final var maybePrefix = nextIdentifier();
         if (!allCharactersConsumed() && COLON == currentChar()) {
             // previous token is prefix
             skipCurrentChar();

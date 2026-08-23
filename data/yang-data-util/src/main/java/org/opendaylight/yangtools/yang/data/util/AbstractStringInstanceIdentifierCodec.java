@@ -157,8 +157,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
 
     @Override
     protected final YangInstanceIdentifier deserializeImpl(final String data) {
-        return YangInstanceIdentifier.of(
-            new XpathStringParsingPathArgumentBuilder(this, requireNonNull(data)).build());
+        return YangInstanceIdentifier.of(PathArgumentParser.parse(this, requireNonNull(data)));
     }
 
     /**
