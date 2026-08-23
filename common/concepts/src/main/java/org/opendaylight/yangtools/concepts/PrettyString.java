@@ -29,7 +29,7 @@ public interface PrettyString {
      * @throws IllegalArgumentException if {@code depth} is negative
      * @throws IOException if an I/O error occurs
      */
-    default Appendable appendTo(final Appendable appendable) throws IOException {
+    default Appendable appendTo(Appendable appendable) throws IOException {
         return appendTo(appendable, 0);
     }
 
@@ -66,7 +66,7 @@ public interface PrettyString {
      * @throws NullPointerException if {@code sb} is {code null}
      * @throws IllegalArgumentException if {@code depth} is negative
      */
-    default StringBuilder appendTo(final StringBuilder sb, final int depth) {
+    default StringBuilder appendTo(StringBuilder sb, int depth) {
         try {
             appendTo((Appendable) sb, depth);
         } catch (IOException e) {

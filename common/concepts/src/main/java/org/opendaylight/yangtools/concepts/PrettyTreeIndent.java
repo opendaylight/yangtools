@@ -39,8 +39,8 @@ final class PrettyTreeIndent {
             LOG.info("Using pretty-tree-indent {}", indent);
         }
 
-        final String one = " ".repeat(indent);
-        final String[] strings = new String[INDENT_STRINGS_SIZE];
+        var one = " ".repeat(indent);
+        var strings = new String[INDENT_STRINGS_SIZE];
         for (int i = 0; i < INDENT_STRINGS_SIZE; i++) {
             strings[i] = one.repeat(i).intern();
         }
@@ -51,7 +51,7 @@ final class PrettyTreeIndent {
         // Hidden on purpose
     }
 
-    static void indent(final StringBuilder sb, final int depth) {
+    static void indent(StringBuilder sb, int depth) {
         int remaining = depth;
         while (remaining >= INDENT_STRINGS_SIZE) {
             sb.append(INDENT_STRINGS[INDENT_STRINGS_SIZE - 1]);
@@ -60,7 +60,7 @@ final class PrettyTreeIndent {
         sb.append(INDENT_STRINGS[remaining]);
     }
 
-    static void indent(final Appendable appendable, final int depth) throws IOException {
+    static void indent(Appendable appendable, int depth) throws IOException {
         int remaining = depth;
         while (remaining >= INDENT_STRINGS_SIZE) {
             appendable.append(INDENT_STRINGS[INDENT_STRINGS_SIZE - 1]);

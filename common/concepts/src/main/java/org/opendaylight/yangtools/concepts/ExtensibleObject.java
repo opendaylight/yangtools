@@ -35,12 +35,12 @@ public interface ExtensibleObject<O extends ExtensibleObject<O, E>, E extends Ob
      * @return An extension instance, or {@code null}
      * @throws NullPointerException if {@code type} is {@code null}
      */
-    default <T extends E> @Nullable T extension(final Class<T> type) {
-        final var nonnull = requireNonNull(type);
+    default <T extends E> @Nullable T extension(Class<T> type) {
+        var nonnull = requireNonNull(type);
         return supportedExtensions().stream().filter(nonnull::isInstance).findFirst().map(nonnull::cast).orElse(null);
     }
 
-    default <T extends E> Optional<T> findExtension(final Class<T> type) {
+    default <T extends E> Optional<T> findExtension(Class<T> type) {
         return Optional.ofNullable(extension(type));
     }
 

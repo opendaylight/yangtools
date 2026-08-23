@@ -33,22 +33,22 @@ public record SemVer(int major, int minor, int patch) implements Comparable<SemV
         }
     }
 
-    public SemVer(final int major) {
+    public SemVer(int major) {
         this(major, 0);
     }
 
-    public SemVer(final int major, final int minor) {
+    public SemVer(int major, int minor) {
         this(major, minor, 0);
     }
 
-    public static @NonNull SemVer valueOf(final @NonNull String str) {
-        final int minorIdx = str.indexOf('.');
+    public static @NonNull SemVer valueOf(@NonNull String str) {
+        int minorIdx = str.indexOf('.');
         if (minorIdx == -1) {
             return new SemVer(Integer.parseInt(str));
         }
 
-        final String minorStr;
-        final int patchIdx = str.indexOf('.', minorIdx + 1);
+        String minorStr;
+        int patchIdx = str.indexOf('.', minorIdx + 1);
         if (patchIdx == -1) {
             minorStr = str.substring(minorIdx + 1);
             return new SemVer(Integer.parseInt(str.substring(0, minorIdx), 10), Integer.parseInt(minorStr, 10));
@@ -60,7 +60,7 @@ public record SemVer(int major, int minor, int patch) implements Comparable<SemV
     }
 
     @Override
-    public int compareTo(final SemVer other) {
+    public int compareTo(SemVer other) {
         int cmp = Integer.compare(major, other.major);
         if (cmp == 0) {
             cmp = Integer.compare(minor, other.minor);
