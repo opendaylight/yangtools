@@ -633,7 +633,6 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
      * @return a {@link DataTreeCandidateTip}
      * @throws NullPointerException if any argument is {@code null}
      * @throws IllegalArgumentException if this modification is not sealed
-     * @throws DataValidationFailedException if modification would result in inconsistent data tree
      */
     @NonNullByDefault
     DataTreeCandidateTip prepare(final YangInstanceIdentifier path, final TreeNode current) {
