@@ -122,17 +122,11 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
 
     @Override
     public void endNode() throws IOException {
-        NodeType type = nodeTypeStack.pop();
-        switch (type) {
-            case CONTAINER:
-            case LIST_ITEM:
-            case SCALAR:
-            case ANY_XML:
-            case ANYDATA:
-                endElement();
-                break;
-            default:
-                break;
+        switch (nodeTypeStack.pop()) {
+            case ANY_XML, ANYDATA, CONTAINER, LIST_ITEM, SCALAR -> endElement();
+            default -> {
+                // no-op
+            }
         }
     }
 
