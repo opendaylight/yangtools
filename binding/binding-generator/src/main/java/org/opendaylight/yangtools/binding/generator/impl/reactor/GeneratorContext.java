@@ -59,11 +59,9 @@ abstract class GeneratorContext {
     abstract @NonNull ModuleGenerator resolveModule(@NonNull QNameModule namespace);
 
     final @NonNull IdentityGenerator resolveIdentity(final @NonNull QName name) {
-        for (Generator gen : resolveModule(name.getModule())) {
-            if (gen instanceof final IdentityGenerator idgen) {
-                if (name.equals(idgen.statement().argument())) {
-                    return idgen;
-                }
+        for (var gen : resolveModule(name.getModule())) {
+            if (gen instanceof IdentityGenerator idgen && name.equals(idgen.statement().argument())) {
+                return idgen;
             }
         }
         throw new IllegalStateException("Failed to find identity " + name);
