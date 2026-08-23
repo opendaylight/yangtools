@@ -757,8 +757,8 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
 
     /**
      * Local knowledge of {@link #refcount} values up to statement root. We use this field to prevent recursive lookups
-     * in {@link #noParentRefs(StatementContextBase)} -- once we discover a parent reference once, we keep that
-     * knowledge and update it when {@link #sweep()} is invoked.
+     * in {@link #noParentRef()} -- once we discover a parent reference once, we keep that knowledge and update it when
+     * {@link #sweep()} is invoked.
      */
     private byte parentRef = PARENTREF_UNKNOWN;
     private static final byte PARENTREF_UNKNOWN = -1;
