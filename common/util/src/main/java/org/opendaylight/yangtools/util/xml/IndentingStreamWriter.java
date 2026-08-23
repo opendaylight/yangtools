@@ -23,7 +23,7 @@ final class IndentingStreamWriter implements XMLStreamWriter {
     private static final byte MARKUP  = 2;
 
     /**
-     * Maximum stack depth allowed by {@link #MAX_NESTED_ELEMENTS}.
+     * Maximum stack depth allowed by {@link IndentedXML#MAX_NESTED_ELEMENTS}.
      */
     // FIXME: we only need this constant because we keep current state on stack. We should keep it in a field:
     //
