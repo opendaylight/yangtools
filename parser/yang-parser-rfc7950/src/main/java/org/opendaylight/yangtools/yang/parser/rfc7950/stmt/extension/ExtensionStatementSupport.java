@@ -65,9 +65,9 @@ public final class ExtensionStatementSupport
         final var argument = StmtContextUtils.findFirstDeclaredSubstatement(stmt, ArgumentStatement.DEF);
         final var yinElement = StmtContextUtils.findFirstDeclaredSubstatement(stmt, YinElementStatement.DEF);
 
-        final ArgumentDefinition<Object> argDef = argument == null ? null
-            : ArgumentDefinition.of(Object.class, argument.getArgument(),
-                yinElement == null ? false : yinElement.getArgument());
+        final var argDef = argument == null ? null
+            : ArgumentDefinition.<Object>of(Object.class, argument.getArgument(),
+                yinElement != null && yinElement.getArgument());
 
         stmt.addToNs(StatementDefinitions.NAMESPACE, stmt.argument(), new UnrecognizedStatementSupport(
             StatementDefinition.of(UnrecognizedStatement.class, UnrecognizedEffectiveStatement.class,
