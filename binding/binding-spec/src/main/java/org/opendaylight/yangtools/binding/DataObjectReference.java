@@ -97,6 +97,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
          * @return this builder
          * @throws NullPointerException if {@code container} is null
          */
+        @SuppressWarnings("InvalidParam")
         <C extends CaseObject<? super T, ?, C>, N extends ChildOf<? super C>> @NonNull Builder<N> child(Class<C> caze,
             @NonNull Class<N> container);
 
@@ -128,6 +129,7 @@ public sealed interface DataObjectReference<T extends DataObject> extends Immuta
          * @return this builder
          * @throws NullPointerException if any argument is null
          */
+        @SuppressWarnings("InvalidParam")
         <C extends CaseObject<? super T, ?, C>, K extends Key<N>, N extends EntryObject<? super C, N, K>>
             @NonNull WithKey<N, K> child(@NonNull Class<C> caze, @NonNull Class<N> listItem, @NonNull K listKey);
 
