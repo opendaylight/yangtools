@@ -20,7 +20,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 public abstract class AbstractIdentifiable<T, I extends T> implements Identifiable<T> {
     private final @NonNull I identifier;
 
-    protected AbstractIdentifiable(final I identifier) {
+    protected AbstractIdentifiable(I identifier) {
         this.identifier = requireNonNull(identifier);
     }
 
@@ -34,7 +34,7 @@ public abstract class AbstractIdentifiable<T, I extends T> implements Identifiab
         return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
     }
 
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+    protected ToStringHelper addToStringAttributes(ToStringHelper toStringHelper) {
         return toStringHelper.add("identifier", getIdentifier());
     }
 }

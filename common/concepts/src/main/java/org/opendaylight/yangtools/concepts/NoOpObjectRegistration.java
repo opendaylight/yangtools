@@ -21,11 +21,11 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 public class NoOpObjectRegistration<T> implements Immutable, ObjectRegistration<T> {
     private final T instance;
 
-    NoOpObjectRegistration(final T instance) {
+    NoOpObjectRegistration(T instance) {
         this.instance = requireNonNull(instance);
     }
 
-    public static <T> ObjectRegistration<T> of(final T instance) {
+    public static <T> ObjectRegistration<T> of(T instance) {
         return new NoOpObjectRegistration<>(instance);
     }
 

@@ -32,11 +32,11 @@ import org.eclipse.jdt.annotation.Nullable;
 @NonNullByDefault
 @Deprecated(since = "15.1.0", forRemoval = true)
 public class CheckedValue<T, E extends Exception> extends Either<T, E> {
-    protected CheckedValue(final T value) {
+    protected CheckedValue(T value) {
         super(value);
     }
 
-    protected CheckedValue(final E violation, final @Nullable Void dummy) {
+    protected CheckedValue(E violation, @Nullable Void dummy) {
         super(violation, dummy);
     }
 
@@ -49,7 +49,7 @@ public class CheckedValue<T, E extends Exception> extends Either<T, E> {
      * @return A new instance
      * @throws NullPointerException if {@code cause} is null
      */
-    public static <T, E extends Exception> CheckedValue<T, E> ofException(final E cause) {
+    public static <T, E extends Exception> CheckedValue<T, E> ofException(E cause) {
         return new CheckedValue<>(cause, null);
     }
 
@@ -62,7 +62,7 @@ public class CheckedValue<T, E extends Exception> extends Either<T, E> {
      * @return A new instance
      * @throws NullPointerException if {@code value} is null
      */
-    public static <T, E extends Exception> CheckedValue<T, E> ofValue(final T value) {
+    public static <T, E extends Exception> CheckedValue<T, E> ofValue(T value) {
         return new CheckedValue<>(value);
     }
 
@@ -76,8 +76,8 @@ public class CheckedValue<T, E extends Exception> extends Either<T, E> {
      * @param <E> Exception type
      * @return Resulting {@link CheckedValue}
      */
-    public static <T, U, E extends Exception> CheckedValue<T, E> ofVariant(final Either<T, U> variant,
-            final Function<U, E> mapper) {
+    public static <T, U, E extends Exception> CheckedValue<T, E> ofVariant(Either<T, U> variant,
+            Function<U, E> mapper) {
         requireNonNull(mapper);
         return variant.isFirst() ? new CheckedValue<>(variant.first())
                 : new CheckedValue<>(mapper.apply(variant.second()), null);
@@ -127,26 +127,26 @@ public class CheckedValue<T, E extends Exception> extends Either<T, E> {
      * @param consumer block to be executed if a value is present
      * @throws NullPointerException if value is present and {@code consumer} is null
      */
-    public final void ifPresent(final Consumer<? super T> consumer) {
+    public final void ifPresent(Consumer<? super T> consumer) {
         if (isFirst()) {
             consumer.accept(first());
         }
     }
 
     @SuppressWarnings("unchecked")
-    public <U> CheckedValue<U, E> map(final Function<? super T, U> mapper) {
+    public <U> CheckedValue<U, E> map(Function<? super T, U> mapper) {
         requireNonNull(mapper);
         return isFirst() ? new CheckedValue<>(mapper.apply(first())) : (CheckedValue<U, E>) this;
     }
 
     @SuppressWarnings("unchecked")
-    public <X extends Exception> CheckedValue<T, X> mapException(final Function<? super E, X> mapper) {
+    public <X extends Exception> CheckedValue<T, X> mapException(Function<? super E, X> mapper) {
         requireNonNull(mapper);
         return isFirst() ? (CheckedValue<T, X>) this : new CheckedValue<>(mapper.apply(second()), null);
     }
 
     @SuppressWarnings("unchecked")
-    public <U> CheckedValue<U, E> flatMap(final Function<? super T, CheckedValue<U, E>> mapper) {
+    public <U> CheckedValue<U, E> flatMap(Function<? super T, CheckedValue<U, E>> mapper) {
         requireNonNull(mapper);
         return isFirst() ? requireNonNull(mapper.apply(first())) : (CheckedValue<U, E>) this;
     }
@@ -157,7 +157,7 @@ public class CheckedValue<T, E extends Exception> extends Either<T, E> {
      * @param other Replacement value
      * @return Contained value or {code other}
      */
-    public final T orElse(final T other) {
+    public final T orElse(T other) {
         return isFirst() ? first() : other;
     }
 
@@ -168,7 +168,7 @@ public class CheckedValue<T, E extends Exception> extends Either<T, E> {
      * @return Contained value or supplier's value
      * @throws NullPointerException if {@code supplier} is null
      */
-    public final T orElseGet(final Supplier<T> supplier) {
+    public final T orElseGet(Supplier<T> supplier) {
         requireNonNull(supplier);
         return isFirst() ? first() : supplier.get();
     }
@@ -195,7 +195,7 @@ public class CheckedValue<T, E extends Exception> extends Either<T, E> {
      * @throws NullPointerException if {@code exceptionMapper} is null
      * @throws X When there is no contained value
      */
-    public final <X extends Throwable> T orElseThrow(final Function<E, X> exceptionMapper) throws X {
+    public final <X extends Throwable> T orElseThrow(Function<E, X> exceptionMapper) throws X {
         requireNonNull(exceptionMapper);
         if (isFirst()) {
             return first();
@@ -210,7 +210,7 @@ public class CheckedValue<T, E extends Exception> extends Either<T, E> {
      * @return True if this call has transitioned the future to a completed state, false otherwise.
      * @throws NullPointerException if {code future} is null
      */
-    public final boolean completeFuture(final CompletableFuture<T> future) {
+    public final boolean completeFuture(CompletableFuture<T> future) {
         return isFirst() ? future.complete(first()) : future.completeExceptionally(second());
     }
 
@@ -221,7 +221,7 @@ public class CheckedValue<T, E extends Exception> extends Either<T, E> {
      * @return True if this call has transitioned the future to a completed state, false otherwise.
      * @throws NullPointerException if {code future} is null
      */
-    public final boolean completeFuture(final SettableFuture<T> future) {
+    public final boolean completeFuture(SettableFuture<T> future) {
         return isFirst() ? future.set(first()) : future.setException(second());
     }
 
