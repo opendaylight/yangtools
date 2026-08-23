@@ -34,9 +34,9 @@ package org.opendaylight.yangtools.yang.data.codec.binfmt;
  *      | Size  | Q |1 0|
  *      +-+-+-+-+-+-+-+-+
  *      </pre>
- *      but additionally encodes number of predicates contained using {@link #SIZE_0} through {@link #SIZE_4}. If that
- *      number cannot be expressed, {@link #SIZE_1B}, {@value #SIZE_2B} and {@link #SIZE_4B} indicate number and format
- *      of additional bytes that hold number of predicates.
+ *      but additionally encodes number of predicates contained. If that number cannot be expressed, {@link #SIZE_1B},
+ *      {@value #SIZE_2B} and {@link #SIZE_4B} indicate number and format of additional bytes that hold number
+ *      of predicates.
  *
  *      <p>
  *      This is then followed by the specified number of QName/Object key/value pairs based on {@link PotassiumValue}
