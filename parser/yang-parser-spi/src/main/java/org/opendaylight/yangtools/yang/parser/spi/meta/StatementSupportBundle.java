@@ -176,10 +176,7 @@ public final class StatementSupportBundle implements Immutable {
     }
 
     public boolean hasNamespaceBehaviour(final ParserNamespace<?, ?> namespace) {
-        if (namespaceDefinitions.containsKey(namespace)) {
-            return true;
-        }
-        return parent == null ? false : parent.hasNamespaceBehaviour(namespace);
+        return namespaceDefinitions.containsKey(namespace) || parent != null && parent.hasNamespaceBehaviour(namespace);
     }
 
     public @Nullable StatementSupport<?, ?, ?> getStatementDefinition(final YangVersion version, final QName stmtName) {
