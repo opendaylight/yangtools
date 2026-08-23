@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
  * a list.
  */
 final class JSONStreamWriterListContext extends JSONStreamWriterQNameContext {
-    protected JSONStreamWriterListContext(final JSONStreamWriterContext parent, final NodeIdentifier id) {
+    JSONStreamWriterListContext(final JSONStreamWriterContext parent, final NodeIdentifier id) {
         super(requireNonNull(parent), id.getNodeType(), false);
     }
 

@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
  * container.
  */
 final class JSONStreamWriterNamedObjectContext extends JSONStreamWriterObjectContext {
-    protected JSONStreamWriterNamedObjectContext(final JSONStreamWriterContext parent, final PathArgument arg,
+    JSONStreamWriterNamedObjectContext(final JSONStreamWriterContext parent, final PathArgument arg,
             final boolean mandatory) {
         super(parent, arg, mandatory);
     }
