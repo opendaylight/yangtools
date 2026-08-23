@@ -96,8 +96,7 @@ final class PotassiumNode {
      */
     static final byte ADDR_PARENT     = 0x00;
     /**
-     * Define a new QName-based identifier constant. For {@link #NODE_AUGMENTATION} this is a set of QNames. Assign
-     * a new linear key to this constant.
+     * Define a new QName-based identifier constant and assign a new linear key to this constant.
      */
     static final byte ADDR_DEFINE     = 0x10;
     /**
