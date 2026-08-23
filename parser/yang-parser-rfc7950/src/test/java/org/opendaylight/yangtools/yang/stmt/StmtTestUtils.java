@@ -74,7 +74,7 @@ public final class StmtTestUtils {
 
     public static EffectiveModelContext parseYangSources(final YangParserConfiguration config,
             final Set<QName> supportedFeatures, final File... files)
-                throws ReactorException, IOException, SourceSyntaxException, YangSyntaxErrorException {
+                throws ReactorException, IOException, SourceSyntaxException {
         final var sources = new ArrayList<YangIRSource>(files.length);
         for (var file : files) {
             sources.add(TestUtils.assertYangSource(file.toPath()));
