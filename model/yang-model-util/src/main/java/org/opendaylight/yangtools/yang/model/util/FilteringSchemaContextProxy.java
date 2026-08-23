@@ -80,9 +80,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
                 Maps.uniqueIndex(delegate.getModules(), ModuleId.MODULE_TO_MODULE_ID::apply),
                 filteredModulesBuilder.build(), nameToModulesAll));
 
-        /**
-         * Instead of doing this on each invocation of getModules(), pre-compute it once and keep it around.
-         */
+        // Instead of doing this on each invocation of getModules(), pre-compute it once and keep it around.
         final var sortedModules = new ArrayList<>(filteredModulesBuilder.build());
         sortedModules.sort(NAME_REVISION_COMPARATOR);
         filteredModules = ImmutableSet.copyOf(sortedModules);
