@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.binding.model.TypeName;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
- * A {@link BlockFragment} appending {@link #QNAME_STATIC_FIELD_NAME}.
+ * A {@link BlockFragment} appending {@link QNAME_STATIC_FIELD_NAME}.
  */
 @NonNullByDefault
 abstract sealed class QNameConstant implements BlockFragment {

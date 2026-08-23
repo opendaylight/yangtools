@@ -444,7 +444,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
 
     /**
      * Acquire pre-validated node assuming a previous operation and node. This is a counterpart to
-     * {@link #setValidatedNode(ModificationApplyOperation, Optional, Optional)}.
+     * {@link #setValidatedNode(ModificationApplyOperation, TreeNode, TreeNode)}.
      *
      * @param op Currently-executing operation
      * @param storeMeta Currently-used tree node
