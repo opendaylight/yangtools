@@ -14,8 +14,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 // FIXME: relocate to yang-data-util, where this can have a proper test suite
 final class DuplicateFinder {
-    private final Map<NormalizedNode, DuplicateEntry> identities = new IdentityHashMap<>();
-    private final Map<NormalizedNode, DuplicateEntry> duplicates = new HashMap<>();
+    private final IdentityHashMap<NormalizedNode, DuplicateEntry> identities = new IdentityHashMap<>();
+    private final HashMap<NormalizedNode, DuplicateEntry> duplicates = new HashMap<>();
 
     private DuplicateFinder() {
         // Hidden on purpose
@@ -51,7 +51,7 @@ final class DuplicateFinder {
      * @return List of entries
      */
     static Map<NormalizedNode, DuplicateEntry> findDuplicates(final NormalizedNode node) {
-        final DuplicateFinder finder = new DuplicateFinder();
+        final var finder = new DuplicateFinder();
         finder.findDuplicates(YangInstanceIdentifier.of(), node);
         return finder.identities;
     }
