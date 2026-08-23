@@ -32,13 +32,13 @@ public class Either<T, U> implements Immutable {
     private final @Nullable U second;
 
     @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
-    protected Either(final T first) {
+    protected Either(T first) {
         this.first = requireNonNull(first);
         second = null;
     }
 
     @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
-    protected Either(final U second, final @Nullable Void dummy) {
+    protected Either(U second, @Nullable Void dummy) {
         first = null;
         this.second = requireNonNull(second);
     }
@@ -60,7 +60,7 @@ public class Either<T, U> implements Immutable {
      * @return A new instance
      * @throws NullPointerException if {@code value} is null
      */
-    public static <T, U> Either<T, U> ofFirst(final T value) {
+    public static <T, U> Either<T, U> ofFirst(T value) {
         return new Either<>(value);
     }
 
@@ -73,7 +73,7 @@ public class Either<T, U> implements Immutable {
      * @return A new instance
      * @throws NullPointerException if {@code value} is null
      */
-    public static <T, U> Either<T, U> ofSecond(final U value) {
+    public static <T, U> Either<T, U> ofSecond(U value) {
         return new Either<>(value, null);
     }
 
@@ -107,14 +107,14 @@ public class Either<T, U> implements Immutable {
     }
 
     @Override
-    public final boolean equals(final @Nullable Object obj) {
+    public final boolean equals(@Nullable Object obj) {
         if (obj == this) {
             return true;
         }
         if (obj == null || !getClass().equals(obj.getClass())) {
             return false;
         }
-        final Either<?, ?> other = (Either<?, ?>) obj;
+        Either<?, ?> other = (Either<?, ?>) obj;
         return Objects.equals(first, other.first) && Objects.equals(second, other.second);
     }
 
@@ -123,7 +123,7 @@ public class Either<T, U> implements Immutable {
         return addToString(MoreObjects.toStringHelper(this).omitNullValues()).toString();
     }
 
-    protected ToStringHelper addToString(final ToStringHelper helper) {
+    protected ToStringHelper addToString(ToStringHelper helper) {
         return helper.add("first", first).add("second", second);
     }
 }
