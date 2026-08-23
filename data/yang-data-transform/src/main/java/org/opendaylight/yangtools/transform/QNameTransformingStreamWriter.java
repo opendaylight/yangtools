@@ -143,7 +143,7 @@ public abstract class QNameTransformingStreamWriter extends ForwardingNormalized
     @Override
     public void scalarValue(final Object value) throws IOException {
         // identityref leaf nodes contain identity QName as a value - it needs to be transformed
-        super.scalarValue(value instanceof QName ? transform((QName) value) : value);
+        super.scalarValue(value instanceof QName qname ? transform(qname) : value);
     }
 
     /**
