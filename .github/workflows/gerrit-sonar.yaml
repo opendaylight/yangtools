@@ -46,7 +46,8 @@ on:
         type: string
   schedule:
     # Run weekly on Saturdays
-    - cron: "45 8 * * 6"
+    # tmp: run every hour
+    - cron: "50 * * * *"
 
 concurrency:
   # yamllint disable-line rule:line-length
