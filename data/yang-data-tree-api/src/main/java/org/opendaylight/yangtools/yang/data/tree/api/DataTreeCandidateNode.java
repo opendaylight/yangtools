@@ -45,7 +45,7 @@ public interface DataTreeCandidateNode {
      *
      * @param childName Identifier of child node
      * @return Modified child or {@code null} if the specified child has not been modified
-     * @throws NullPointerException if {@code childNamez} is {@code null}
+     * @throws NullPointerException if {@code childName} is {@code null}
      */
     @Nullable DataTreeCandidateNode modifiedChild(PathArgument childName);
 
