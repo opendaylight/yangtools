@@ -29,7 +29,7 @@ class NetconfTest {
     private static final QName FILTER = QName.create(NetconfConstants.RFC6241_MODULE, "filter");
 
     @Test
-    void testResolution() throws Exception {
+    void testResolution() {
         final var reactor = RFC7950Reactors.defaultReactorBuilder()
             .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
                 Rfc6241Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))

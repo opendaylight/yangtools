@@ -64,7 +64,7 @@ class YangToSourcesPluginTestIT {
     }
 
     @Test
-    @Disabled // FIXME depends on fix of a bug processing multiple fileGenerator definitions having same identifier
+    @Disabled("FIXME: depends on fix of a bug processing multiple fileGenerator definitions having same identifier")
     void testAdditionalConfiguration() throws Exception {
         final var vrf = setUp("test-parent/AdditionalConfig/", false);
         vrf.verifyTextInLog("""
@@ -78,7 +78,7 @@ class YangToSourcesPluginTestIT {
     }
 
     @Test
-    void testMissingYangInDep() throws Exception {
+    void testMissingYangInDep() {
         final var ex = assertThrows(VerificationException.class, () -> setUp("test-parent/MissingYangInDep/", false));
         assertThat(ex.getMessage()).contains("""
                 Caused by: org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException: Imported module \

@@ -14,7 +14,7 @@ import org.junit.jupiter.api.Test;
 
 class YangUnescapingTest extends AbstractYangTest {
     @Test
-    void stringTestUnescape() throws Exception {
+    void stringTestUnescape() {
         final var modelContext = assertEffectiveModel("/unescape/string-test.yang");
         assertEquals(1, modelContext.getModules().size());
         final var module = modelContext.getModules().iterator().next();

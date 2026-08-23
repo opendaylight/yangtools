@@ -28,13 +28,13 @@ class NodeIdentifierParserTest extends AbstractNamespaceBindingTest<QName> {
     }
 
     @Test
-    void goodParseArgument() throws Exception {
+    void goodParseArgument() {
         doReturn(FOO).when(namespaceBinding).currentModule();
         assertArgument(QName.create(FOO, "aeiou"), "aeiou");
     }
 
     @Test
-    void goodPrefixParseArgument() throws Exception {
+    void goodPrefixParseArgument() {
         doReturn(BAR).when(namespaceBinding).lookupModule(ABC);
         assertArgument(QName.create(BAR, "aeiou"), "abc:aeiou");
     }

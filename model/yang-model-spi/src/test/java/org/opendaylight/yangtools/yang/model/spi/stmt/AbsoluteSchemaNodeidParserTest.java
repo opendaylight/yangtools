@@ -31,7 +31,7 @@ class AbsoluteSchemaNodeidParserTest extends AbstractNamespaceBindingTest<Absolu
     }
 
     @Test
-    void happyParseArgument() throws Exception {
+    void happyParseArgument() {
         doReturn(FOO).when(namespaceBinding).lookupModule(Unqualified.of("abc"));
         doReturn(BAR).when(namespaceBinding).currentModule();
         assertArgument(Absolute.of(QName.create(FOO, "foolocal"), QName.create(BAR, "barlocal")),

@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 
 class YT1826Test extends AbstractBindingCodecTest {
     @Test
-    void testToNormalized() throws Exception {
+    void testToNormalized() {
         final var baz = new BazBuilder()
             .setXyzzy(new Bar(Uint32.TEN))
             .build();

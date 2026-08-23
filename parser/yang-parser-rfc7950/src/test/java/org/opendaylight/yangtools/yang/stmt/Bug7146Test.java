@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 
 class Bug7146Test {
     @Test
-    void shouldFailOnSyntaxError() throws Exception {
+    void shouldFailOnSyntaxError() {
         final var ex = assertThrows(SourceSyntaxException.class,
             () -> TestUtils.assertYangSource("/bugs/bug7146/foo.yang"));
         assertThat(ex.getMessage())
