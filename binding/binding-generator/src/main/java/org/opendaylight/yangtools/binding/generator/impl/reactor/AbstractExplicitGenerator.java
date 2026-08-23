@@ -140,9 +140,9 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
 
     /**
      * Create the externally-accessible {@link RuntimeType} view of this object. The difference between
-     * this method and {@link #createInternalRuntimeType(EffectiveStatement)} is that this method represents the view
-     * attached to {@link #statement()} and contains a separate global view of all available augmentations attached to
-     * the GeneratedType.
+     * this method and {@link #createInternalRuntimeType(AugmentResolver, EffectiveStatement)} is that this method
+     * represents the view attached to {@link #statement()} and contains a separate global view of all available
+     * augmentations attached to the Archetype.
      *
      * @param type {@link Type} associated with this object, as returned by {@link #runtimeJavaType()}
      * @return Externally-accessible RuntimeType
@@ -151,9 +151,9 @@ public abstract class AbstractExplicitGenerator<S extends EffectiveStatement<?, 
 
     /**
      * Create the internally-accessible {@link RuntimeType} view of this object, if applicable. The difference between
-     * this method and {@link #createExternalRuntimeType()} is that this represents the view attached to the specified
-     * {@code stmt}, which is supplied by the parent statement. The returned {@link RuntimeType} always reports the
-     * global view of attached augmentations as empty.
+     * this method and {@link #createExternalRuntimeType(Type)} is that this represents the view attache
+     * to the specified {@code stmt}, which is supplied by the parent statement. The returned {@link RuntimeType} always
+     * reports the global view of attached augmentations as empty.
      *
      * @param lookup context to use when looking up child statements
      * @param stmt Statement for which to create the view

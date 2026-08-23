@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 /**
- * An {@link InferenceAction} tasked with identifying when we are dealing with {@link YangDataConstants#RFC8040_SOURCE}.
+ * An {@link InferenceAction} tasked with identifying when we are dealing with {@link YangDataConstants#RFC8040_MODULE}.
  */
 final class OperationsValidateModuleAction implements InferenceAction {
     private final Prerequisite<? extends Mutable<?, ?, ?>> prereq;
