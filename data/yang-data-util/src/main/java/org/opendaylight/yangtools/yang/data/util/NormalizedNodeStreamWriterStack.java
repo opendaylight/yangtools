@@ -13,7 +13,6 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import org.eclipse.jdt.annotation.NonNull;
@@ -71,11 +70,10 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         this.dataTree = requireNonNull(dataTree);
         if (!dataTree.isEmpty()) {
             final var current = dataTree.currentStatement();
-            if (current instanceof DataTreeAwareEffectiveStatement container) {
-                root = container;
-            } else {
+            if (!(current instanceof DataTreeAwareEffectiveStatement container)) {
                 throw new IllegalArgumentException("Cannot instantiate on " + current);
             }
+            root = container;
         } else {
             root = dataTree.modelContext();
         }
@@ -158,8 +156,8 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
      */
     public static @NonNull NormalizedNodeStreamWriterStack ofOperation(final EffectiveModelContext context,
             final Absolute operation, final QName qname) {
-        final SchemaInferenceStack stack = SchemaInferenceStack.of(context, operation);
-        final EffectiveStatement<?, ?> current = stack.currentStatement();
+        final var stack = SchemaInferenceStack.of(context, operation);
+        final var current = stack.currentStatement();
         checkArgument(current instanceof RpcEffectiveStatement || current instanceof ActionEffectiveStatement,
             "Path %s resolved into non-operation %s", operation, current);
         stack.enterSchemaTree(qname);
@@ -212,16 +210,15 @@ public final class NormalizedNodeStreamWriterStack implements LeafrefResolver {
         enterDataTree(name, ListEffectiveStatement.class, "a list");
     }
 
-    public void startListItem(final PathArgument name) throws IOException {
+    public void startListItem(final PathArgument name) {
         final var parent = currentStatementOrRoot();
-        if (parent instanceof ListEffectiveStatement parentList) {
-            schemaStack.push(parentList);
-        } else {
+        if (!(parent instanceof ListEffectiveStatement parentList)) {
             throw new IllegalArgumentException("List item is not appropriate under " + parent);
         }
+        schemaStack.push(parentList);
     }
 
-    public void startLeafNode(final NodeIdentifier name) throws IOException {
+    public void startLeafNode(final NodeIdentifier name) {
         enterDataTree(name, LeafEffectiveStatement.class, "a leaf");
     }
 
