@@ -286,7 +286,7 @@ public final class CompilationTestUtils {
      *
      * @param clazz class to test
      * @param ifcName name of interface
-     * @param genericTypeName name of generic type
+     * @param genericTypeNames names of generic types
      */
     static void assertImplementsParameterizedIfc(final Class<?> clazz, final String ifcName,
             final String... genericTypeNames) {
