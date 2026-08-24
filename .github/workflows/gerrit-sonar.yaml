@@ -79,16 +79,17 @@ jobs:
         clean
         install
         jacoco:report
-        -Djacoco.dataFile=${GITHUB_WORKSPACE}/target/jacoco.exec
-        -Dmaven.javadoc.skip=true
       mvn_params: >-
+        -Djacoco.dataFile=${GITHUB_WORKSPACE}/target/jacoco.exec
         -Dodl.jacoco.aggregateFile=${GITHUB_WORKSPACE}/target/jacoco.exec
         -Dskip.karaf.featureTest=true
+        -Dmaven.javadoc.skip=true
       # The scan runs its own Maven invocation, so it needs the
       # same coverage coordinates the build was given.
       maven_args: >-
         -Dodl.jacoco.aggregateFile=${GITHUB_WORKSPACE}/target/jacoco.exec
         -Djacoco.dataFile=${GITHUB_WORKSPACE}/target/jacoco.exec
+        -Dsonar.coverage.jacoco.xmlReportPaths=${GITHUB_WORKSPACE}/target/jacoco.exec
       sonar_project_key: "opendaylight_yangtools"
       sonar_organization: "opendaylight"
     secrets:
