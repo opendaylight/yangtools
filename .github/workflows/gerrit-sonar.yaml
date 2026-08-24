@@ -80,6 +80,7 @@ jobs:
         install
         jacoco:report
         -Djacoco.dataFile=${GITHUB_WORKSPACE}/target/jacoco.exec
+        -Dmaven.javadoc.skip=true
       mvn_params: >-
         -Dodl.jacoco.aggregateFile=${GITHUB_WORKSPACE}/target/jacoco.exec
         -Dskip.karaf.featureTest=true
