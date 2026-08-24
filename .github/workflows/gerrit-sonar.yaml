@@ -82,8 +82,7 @@ jobs:
       mvn_params: >-
         -Djacoco.dataFile=${GITHUB_WORKSPACE}/target/jacoco.exec
         -Dodl.jacoco.aggregateFile=${GITHUB_WORKSPACE}/target/jacoco.exec
-        -Dskip.karaf.featureTest=true
-        -Dmaven.javadoc.skip=true
+        -Psonar-only
       # The scan runs its own Maven invocation, so it needs the
       # same coverage coordinates the build was given.
       maven_args: >-
