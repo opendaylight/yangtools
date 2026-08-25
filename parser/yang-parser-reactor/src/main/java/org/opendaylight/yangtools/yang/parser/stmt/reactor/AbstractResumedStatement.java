@@ -79,10 +79,12 @@ abstract sealed class AbstractResumedStatement<A, D extends DeclaredStatement<A>
         return existing != null ? existing : loadDeclared();
     }
 
+    @SuppressWarnings("AssignmentExpression")
     private @NonNull D loadDeclared() {
         final var phase = getCompletedPhase();
         return switch (phase) {
             case FULL_DECLARATION, EFFECTIVE_MODEL ->
+                // intentional assignment expression
                 declaredInstance = definition().statementFactory().createDeclared(this, substatementsAsDeclared());
             default -> throw new IllegalStateException("Cannot build declared instance after phase " + phase);
         };
