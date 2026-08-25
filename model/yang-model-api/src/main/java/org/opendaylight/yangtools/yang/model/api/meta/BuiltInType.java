@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
-import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -18,111 +17,119 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
  *
  * @since 15.0.0
  */
-@Beta
 @NonNullByDefault
-public sealed interface BuiltInType permits DefaultBuiltInType {
+public enum BuiltInType {
     /**
      * Well-known {@code binary} built-in type.
      */
-    BuiltInType BINARY = new DefaultBuiltInType("binary");
+    BINARY("binary"),
     /**
      * Well-known {@code bits} built-in type.
      */
-    BuiltInType BITS = new DefaultBuiltInType("bits");
+    BITS("bits"),
     /**
      * Well-known {@code boolean} built-in type.
      */
-    BuiltInType BOOLEAN = new DefaultBuiltInType("boolean");
+    BOOLEAN("boolean"),
     /**
      * Well-known {@code decimal64} built-in type.
      */
-    BuiltInType DECIMAL64 = new DefaultBuiltInType("decimal64");
+    DECIMAL64("decimal64"),
     /**
      * Well-known {@code empty} built-in type.
      */
-    BuiltInType EMPTY = new DefaultBuiltInType("empty");
+    EMPTY("empty"),
     /**
      * Well-known {@code enumeration} built-in type.
      */
-    BuiltInType ENUMERATION = new DefaultBuiltInType("enumeration");
+    ENUMERATION("enumeration"),
     /**
      * Well-known {@code identityref} built-in type.
      */
-    BuiltInType IDENTITYREF = new DefaultBuiltInType("identityref");
+    IDENTITYREF("identityref"),
     /**
      * Well-known {@code int8} built-in type.
      */
-    BuiltInType INT8 = new DefaultBuiltInType("int8");
+    INT8("int8"),
     /**
      * Well-known {@code int16} built-in type.
      */
-    BuiltInType INT16 = new DefaultBuiltInType("int16");
+    INT16("int16"),
     /**
      * Well-known {@code int32} built-in type.
      */
-    BuiltInType INT32 = new DefaultBuiltInType("int32");
+    INT32("int32"),
     /**
      * Well-known {@code int64} built-in type.
      */
-    BuiltInType INT64 = new DefaultBuiltInType("int64");
+    INT64("int64"),
     /**
      * Well-known {@code string} built-in type.
      */
-    BuiltInType STRING = new DefaultBuiltInType("string");
+    STRING("string"),
     /**
      * Well-known {@code union} built-in type.
      */
-    BuiltInType UNION = new DefaultBuiltInType("union");
+    UNION("union"),
     /**
      * Well-known {@code leafref} built-in type.
      */
-    BuiltInType LEAFREF = new DefaultBuiltInType("leafref");
+    LEAFREF("leafref"),
     /**
      * Well-known {@code instance-identifier} built-in type.
      */
-    BuiltInType INSTANCE_IDENTIFIER = new DefaultBuiltInType("instance-identifier");
+    INSTANCE_IDENTIFIER("instance-identifier"),
     /**
      * Well-known {@code uint8} built-in type.
      */
-    BuiltInType UINT8 = new DefaultBuiltInType("uint8");
+    UINT8("uint8"),
     /**
      * Well-known {@code uint16} built-in type.
      */
-    BuiltInType UINT16 = new DefaultBuiltInType("uint16");
+    UINT16("uint16"),
     /**
      * Well-known {@code uint32} built-in type.
      */
-    BuiltInType UINT32 = new DefaultBuiltInType("uint32");
+    UINT32("uint32"),
     /**
      * Well-known {@code uint64} built-in type.
      */
-    BuiltInType UINT64 = new DefaultBuiltInType("uint64");
+    UINT64("uint64");
+
+    private final ArgumentDefinition<QName> asTypeArgument;
+
+    BuiltInType(final String typeName) {
+        asTypeArgument = ArgumentDefinition.of(QName.class, YangConstants.RFC6020_YANG_MODULE, typeName);
+    }
 
     /**
      * {@return the type name bound to {@link YangConstants#RFC6020_YANG_MODULE}}
      */
-    default QName typeName() {
-        return asTypeArgument().argumentName();
+    public QName typeName() {
+        return asTypeArgument.argumentName();
     }
 
     /**
      * {@return a plain type name}
      */
-    default String simpleName() {
-        return asTypeArgument().simpleName();
+
+    public String simpleName() {
+        return asTypeArgument.simpleName();
     }
 
     /**
      * {@return the {@link ArgumentDefinition} corresponding to a reference to this type}
      */
-    ArgumentDefinition<QName> asTypeArgument();
+    public ArgumentDefinition<QName> asTypeArgument() {
+        return asTypeArgument;
+    }
 
     /**
      * {@return the {@link BuiltInType} for specified type name, or {@code null}}
      *
      * @param simpleName the type name
      */
-    static @Nullable BuiltInType forSimpleName(final String simpleName) {
+    public static @Nullable BuiltInType forSimpleName(final String simpleName) {
         return switch (simpleName) {
             case "binary" -> BINARY;
             case "bits" -> BITS;
@@ -145,5 +152,10 @@ public sealed interface BuiltInType permits DefaultBuiltInType {
             case "uint64" -> UINT64;
             default -> null;
         };
+    }
+
+    @Override
+    public String toString() {
+        return "BuiltInType{name=" + simpleName() + "}";
     }
 }
