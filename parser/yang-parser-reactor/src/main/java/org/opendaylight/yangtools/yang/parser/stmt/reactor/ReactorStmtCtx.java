@@ -944,6 +944,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
         return (refs = parentRef) != PARENTREF_UNKNOWN ? refs : loadParentRefcount();
     }
 
+    @SuppressWarnings("AssignmentExpression")
     private byte loadParentRefcount() {
         return parentRef = calculateParentRefcount();
     }
