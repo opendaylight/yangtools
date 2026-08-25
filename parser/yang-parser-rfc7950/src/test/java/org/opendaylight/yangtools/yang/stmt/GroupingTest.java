@@ -122,63 +122,63 @@ class GroupingTest extends AbstractModelTest {
         assertEquals(1, uses.size());
 
         // check uses process
-        final var data_u = assertInstanceOf(AnyxmlSchemaNode.class, destination.dataChildByName(fooQName("data")));
-        assertTrue(data_u.isAddedByUses());
+        final var dataU = assertInstanceOf(AnyxmlSchemaNode.class, destination.dataChildByName(fooQName("data")));
+        assertTrue(dataU.isAddedByUses());
 
-        final var data_g = assertInstanceOf(AnyxmlSchemaNode.class, grouping.dataChildByName(bazQName("data")));
-        assertFalse(data_g.isAddedByUses());
-        assertNotEquals(data_u, data_g);
+        final var dataG = assertInstanceOf(AnyxmlSchemaNode.class, grouping.dataChildByName(bazQName("data")));
+        assertFalse(dataG.isAddedByUses());
+        assertNotEquals(dataU, dataG);
 
-        final var how_u = assertInstanceOf(ChoiceSchemaNode.class, destination.dataChildByName(fooQName("how")));
-        assertIsAddedByUses(how_u, true);
-        assertEquals(2, how_u.getCases().size());
+        final var howU = assertInstanceOf(ChoiceSchemaNode.class, destination.dataChildByName(fooQName("how")));
+        assertIsAddedByUses(howU, true);
+        assertEquals(2, howU.getCases().size());
 
-        final var how_g = assertInstanceOf(ChoiceSchemaNode.class, grouping.dataChildByName(bazQName("how")));
-        assertIsAddedByUses(how_g, false);
-        assertEquals(2, how_g.getCases().size());
-        assertNotEquals(how_u, how_g);
+        final var howG = assertInstanceOf(ChoiceSchemaNode.class, grouping.dataChildByName(bazQName("how")));
+        assertIsAddedByUses(howG, false);
+        assertEquals(2, howG.getCases().size());
+        assertNotEquals(howU, howG);
 
-        final var address_u = assertInstanceOf(LeafSchemaNode.class, destination.dataChildByName(fooQName("address")));
-        assertEquals(Optional.of("1.2.3.4"), address_u.typeDefinition().getDefaultValue());
-        assertEquals(Optional.of("IP address of target node"), address_u.getDescription());
-        assertEquals(Optional.of("address reference added by refine"), address_u.getReference());
-        assertEquals(Optional.of(Boolean.FALSE), address_u.effectiveConfig());
-        assertTrue(address_u.isAddedByUses());
-        assertFalse(address_u.isMandatory());
+        final var addressU = assertInstanceOf(LeafSchemaNode.class, destination.dataChildByName(fooQName("address")));
+        assertEquals(Optional.of("1.2.3.4"), addressU.typeDefinition().getDefaultValue());
+        assertEquals(Optional.of("IP address of target node"), addressU.getDescription());
+        assertEquals(Optional.of("address reference added by refine"), addressU.getReference());
+        assertEquals(Optional.of(Boolean.FALSE), addressU.effectiveConfig());
+        assertTrue(addressU.isAddedByUses());
+        assertFalse(addressU.isMandatory());
 
-        final var address_g = assertInstanceOf(LeafSchemaNode.class, grouping.dataChildByName(bazQName("address")));
-        assertFalse(address_g.isAddedByUses());
-        assertEquals(Optional.empty(), address_g.typeDefinition().getDefaultValue());
-        assertEquals(Optional.of("Target IP address"), address_g.getDescription());
-        assertEquals(Optional.empty(), address_g.getReference());
-        assertEquals(Optional.empty(), address_g.effectiveConfig());
-        assertTrue(address_g.isMandatory());
-        assertNotEquals(address_u, address_g);
+        final var addressG = assertInstanceOf(LeafSchemaNode.class, grouping.dataChildByName(bazQName("address")));
+        assertFalse(addressG.isAddedByUses());
+        assertEquals(Optional.empty(), addressG.typeDefinition().getDefaultValue());
+        assertEquals(Optional.of("Target IP address"), addressG.getDescription());
+        assertEquals(Optional.empty(), addressG.getReference());
+        assertEquals(Optional.empty(), addressG.effectiveConfig());
+        assertTrue(addressG.isMandatory());
+        assertNotEquals(addressU, addressG);
 
-        final var port_u = assertInstanceOf(ContainerSchemaNode.class, destination.dataChildByName(fooQName("port")));
-        assertIsAddedByUses(port_u, true);
+        final var portU = assertInstanceOf(ContainerSchemaNode.class, destination.dataChildByName(fooQName("port")));
+        assertIsAddedByUses(portU, true);
 
-        final var port_g = assertInstanceOf(ContainerSchemaNode.class, grouping.dataChildByName(bazQName("port")));
-        assertIsAddedByUses(port_g, false);
-        assertNotEquals(port_u, port_g);
+        final var portG = assertInstanceOf(ContainerSchemaNode.class, grouping.dataChildByName(bazQName("port")));
+        assertIsAddedByUses(portG, false);
+        assertNotEquals(portU, portG);
 
-        final var addresses_u = assertInstanceOf(ListSchemaNode.class,
+        final var addressesU = assertInstanceOf(ListSchemaNode.class,
             destination.dataChildByName(fooQName("addresses")));
-        assertIsAddedByUses(addresses_u, true);
+        assertIsAddedByUses(addressesU, true);
 
-        final var addresses_g = assertInstanceOf(ListSchemaNode.class, grouping.dataChildByName(bazQName("addresses")));
-        assertIsAddedByUses(addresses_g, false);
-        assertNotEquals(addresses_u, addresses_g);
+        final var addressesG = assertInstanceOf(ListSchemaNode.class, grouping.dataChildByName(bazQName("addresses")));
+        assertIsAddedByUses(addressesG, false);
+        assertNotEquals(addressesU, addressesG);
 
         // grouping defined by 'uses'
-        final var groupings_u = destination.getGroupings();
-        assertEquals(0, groupings_u.size());
+        final var groupingsU = destination.getGroupings();
+        assertEquals(0, groupingsU.size());
 
         // grouping defined in 'grouping' node
-        final var groupings_g = grouping.getGroupings();
-        assertEquals(1, groupings_g.size());
-        final var grouping_g = groupings_g.iterator().next();
-        assertIsAddedByUses(grouping_g, false);
+        final var groupingsG = grouping.getGroupings();
+        assertEquals(1, groupingsG.size());
+        final var groupingG = groupingsG.iterator().next();
+        assertIsAddedByUses(groupingG, false);
 
         assertEquals(1, grouping.asEffectiveStatement().requireDeclared()
             .declaredSubstatements(UnrecognizedStatement.class).size());
@@ -199,35 +199,35 @@ class GroupingTest extends AbstractModelTest {
         assertEquals(1, uses.size());
 
         // check uses process
-        final var data_u = assertInstanceOf(AnyxmlSchemaNode.class, FOO.dataChildByName(fooQName("data")));
-        assertTrue(data_u.isAddedByUses());
+        final var dataU = assertInstanceOf(AnyxmlSchemaNode.class, FOO.dataChildByName(fooQName("data")));
+        assertTrue(dataU.isAddedByUses());
 
-        final var data_g = assertInstanceOf(AnyxmlSchemaNode.class, grouping.dataChildByName(bazQName("data")));
-        assertFalse(data_g.isAddedByUses());
-        assertNotEquals(data_u, data_g);
+        final var dataG = assertInstanceOf(AnyxmlSchemaNode.class, grouping.dataChildByName(bazQName("data")));
+        assertFalse(dataG.isAddedByUses());
+        assertNotEquals(dataU, dataG);
 
-        final var how_u = assertInstanceOf(ChoiceSchemaNode.class, FOO.dataChildByName(fooQName("how")));
-        assertIsAddedByUses(how_u, true);
-        assertFalse(how_u.isAugmenting());
-        final var cases_u = how_u.getCases();
-        assertEquals(2, cases_u.size());
-        final var interval = how_u.findCaseNodes("interval").iterator().next();
+        final var howU = assertInstanceOf(ChoiceSchemaNode.class, FOO.dataChildByName(fooQName("how")));
+        assertIsAddedByUses(howU, true);
+        assertFalse(howU.isAugmenting());
+        final var casesU = howU.getCases();
+        assertEquals(2, casesU.size());
+        final var interval = howU.findCaseNodes("interval").iterator().next();
         assertFalse(interval.isAugmenting());
         final var name = assertInstanceOf(LeafSchemaNode.class, interval.dataChildByName(fooQName("name")));
         assertTrue(name.isAugmenting());
         final var intervalLeaf = assertInstanceOf(LeafSchemaNode.class, interval.dataChildByName(fooQName("interval")));
         assertFalse(intervalLeaf.isAugmenting());
 
-        final var how_g = assertInstanceOf(ChoiceSchemaNode.class, grouping.dataChildByName(bazQName("how")));
-        assertIsAddedByUses(how_g, false);
-        assertNotEquals(how_u, how_g);
+        final var howG = assertInstanceOf(ChoiceSchemaNode.class, grouping.dataChildByName(bazQName("how")));
+        assertIsAddedByUses(howG, false);
+        assertNotEquals(howU, howG);
 
-        final var address_u = assertInstanceOf(LeafSchemaNode.class, FOO.dataChildByName(fooQName("address")));
-        assertEquals(Optional.empty(), address_u.typeDefinition().getDefaultValue());
-        assertEquals(Optional.of("Target IP address"), address_u.getDescription());
-        assertFalse(address_u.getReference().isPresent());
-        assertEquals(Optional.empty(), address_u.effectiveConfig());
-        assertTrue(address_u.isAddedByUses());
+        final var addressU = assertInstanceOf(LeafSchemaNode.class, FOO.dataChildByName(fooQName("address")));
+        assertEquals(Optional.empty(), addressU.typeDefinition().getDefaultValue());
+        assertEquals(Optional.of("Target IP address"), addressU.getDescription());
+        assertFalse(addressU.getReference().isPresent());
+        assertEquals(Optional.empty(), addressU.effectiveConfig());
+        assertTrue(addressU.isAddedByUses());
 
         final var address_g = assertInstanceOf(LeafSchemaNode.class, grouping.dataChildByName(bazQName("address")));
         assertFalse(address_g.isAddedByUses());
@@ -235,31 +235,31 @@ class GroupingTest extends AbstractModelTest {
         assertEquals(Optional.of("Target IP address"), address_g.getDescription());
         assertFalse(address_g.getReference().isPresent());
         assertEquals(Optional.empty(), address_g.effectiveConfig());
-        assertNotEquals(address_u, address_g);
+        assertNotEquals(addressU, address_g);
 
-        final var port_u = assertInstanceOf(ContainerSchemaNode.class, FOO.dataChildByName(fooQName("port")));
-        assertIsAddedByUses(port_u, true);
+        final var portU = assertInstanceOf(ContainerSchemaNode.class, FOO.dataChildByName(fooQName("port")));
+        assertIsAddedByUses(portU, true);
 
-        final var port_g = assertInstanceOf(ContainerSchemaNode.class, grouping.dataChildByName(bazQName("port")));
-        assertIsAddedByUses(port_g, false);
-        assertNotEquals(port_u, port_g);
+        final var portG = assertInstanceOf(ContainerSchemaNode.class, grouping.dataChildByName(bazQName("port")));
+        assertIsAddedByUses(portG, false);
+        assertNotEquals(portU, portG);
 
-        final var addresses_u = assertInstanceOf(ListSchemaNode.class, FOO.dataChildByName(fooQName("addresses")));
-        assertIsAddedByUses(addresses_u, true);
+        final var addressesU = assertInstanceOf(ListSchemaNode.class, FOO.dataChildByName(fooQName("addresses")));
+        assertIsAddedByUses(addressesU, true);
 
-        final var addresses_g = assertInstanceOf(ListSchemaNode.class, grouping.dataChildByName(bazQName("addresses")));
-        assertIsAddedByUses(addresses_g, false);
-        assertNotEquals(addresses_u, addresses_g);
+        final var addressesG = assertInstanceOf(ListSchemaNode.class, grouping.dataChildByName(bazQName("addresses")));
+        assertIsAddedByUses(addressesG, false);
+        assertNotEquals(addressesU, addressesG);
 
         // grouping defined by 'uses'
-        final var groupings_u = FOO.getGroupings();
-        assertEquals(0, groupings_u.size());
+        final var groupingsU = FOO.getGroupings();
+        assertEquals(0, groupingsU.size());
 
         // grouping defined in 'grouping' node
-        final var groupings_g = grouping.getGroupings();
-        assertEquals(1, groupings_g.size());
-        final var grouping_g = groupings_g.iterator().next();
-        assertIsAddedByUses(grouping_g, false);
+        final var groupingsG = grouping.getGroupings();
+        assertEquals(1, groupingsG.size());
+        final var groupingG = groupingsG.iterator().next();
+        assertIsAddedByUses(groupingG, false);
 
         assertEquals(1, grouping.asEffectiveStatement().requireDeclared()
             .declaredSubstatements(UnrecognizedStatement.class).size());
