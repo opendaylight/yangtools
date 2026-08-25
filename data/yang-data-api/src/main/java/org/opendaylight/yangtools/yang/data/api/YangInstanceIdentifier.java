@@ -542,8 +542,11 @@ public abstract sealed class YangInstanceIdentifier
 
         @Override
         public final int hashCode() {
-            int local;
-            return (local = hashValue) != 0 ? local : (hashValue = hashCodeImpl());
+            int local = hashValue;
+            if (local == 0) {
+                hashValue = local = hashCodeImpl();
+            }
+            return local;
         }
 
         @Override
