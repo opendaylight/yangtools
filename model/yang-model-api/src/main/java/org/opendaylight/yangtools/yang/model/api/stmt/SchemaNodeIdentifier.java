@@ -186,8 +186,11 @@ public abstract sealed class SchemaNodeIdentifier implements Immutable {
 
     @Override
     public final int hashCode() {
-        final int local;
-        return (local = hash) != 0 ? local : (hash = pathObj.hashCode());
+        int local = hash;
+        if (local == 0) {
+            hash = local = pathObj.hashCode();
+        }
+        return local;
     }
 
     @Override
