@@ -1137,6 +1137,7 @@ public final class CodeHelpers {
      * @return {@code true} if this object is equal to the reference object
      * @since 16.0.0
      */
+    @SuppressWarnings("ReferenceEquality")
     public static boolean biEQ(final @NonNull BaseIdentity thisObj, final @Nullable Object obj) {
         return thisObj == obj || biEQ(thisObj.implementedInterface(), obj);
     }
