@@ -15,7 +15,6 @@ import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.Deque;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -28,7 +27,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.DataContainerNodeBuilder;
@@ -59,10 +57,10 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
  * <p>This class is not final for purposes of customization, normal users should not need to subclass it.
  */
 public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
+    private static final NormalizedNode.BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
     private static final Interner<LeafSetEntryNode<?>> ENTRY_INTERNER = Interners.newWeakInterner();
-    private static final BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
 
-    private final Deque<NormalizedNode.Builder> builders = new ArrayDeque<>();
+    private final ArrayDeque<NormalizedNode.Builder> builders = new ArrayDeque<>();
 
     private DataSchemaNode nextSchema;
 
