@@ -5,15 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.util;
+package org.opendaylight.yangtools.yang.model.spi;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.HashSet;
 import org.junit.jupiter.api.Test;
-import org.opendaylight.yangtools.util.TopologicalSort.Node;
-import org.opendaylight.yangtools.util.TopologicalSort.NodeImpl;
+import org.opendaylight.yangtools.yang.model.spi.TopologicalSort.Node;
+import org.opendaylight.yangtools.yang.model.spi.TopologicalSort.NodeImpl;
 
 class TopologicalSortTest {
     @Test
