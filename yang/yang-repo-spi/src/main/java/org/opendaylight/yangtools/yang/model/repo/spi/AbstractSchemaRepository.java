@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFailedFluentFuture;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ArrayListMultimap;
@@ -78,7 +77,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         synchronized (this) {
             final var srcs = sources.get(id);
             if (srcs == null) {
-                return immediateFailedFluentFuture(new MissingSchemaSourceException(id,
+                return Futures.immediateFailedFuture(new MissingSchemaSourceException(id,
                     "No providers registered for source " + id));
             }
 
@@ -90,7 +89,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
         final var regs = sortedSchemaSourceRegistrations.iterator();
         if (!regs.hasNext()) {
-            return immediateFailedFluentFuture(new MissingSchemaSourceException(id,
+            return Futures.immediateFailedFuture(new MissingSchemaSourceException(id,
                 "No providers for source " + id + " representation " + representation + " available"));
         }
 

@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.dagger.yang.parser.vanilla.DaggerVanillaYangParserComponent;
-import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
@@ -94,7 +93,7 @@ class FilesystemSchemaSourceCacheIntegrationTest {
 
         final var runningId = new SourceIdentifier("running", "2012-12-12");
 
-        sharedSchemaRepository.registerSchemaSource(sourceIdentifier -> FluentFutures.immediateFluentFuture(
+        sharedSchemaRepository.registerSchemaSource(sourceIdentifier -> Futures.immediateFuture(
             new StringYangTextSource(runningId, "running", null)),
             PotentialSchemaSource.create(runningId, YangTextSource.class,
                 PotentialSchemaSource.Costs.REMOTE_IO.getValue()));
