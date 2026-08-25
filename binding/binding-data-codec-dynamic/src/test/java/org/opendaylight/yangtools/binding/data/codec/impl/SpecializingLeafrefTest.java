@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.data.codec.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -36,7 +37,7 @@ class SpecializingLeafrefTest extends AbstractBindingCodecTest {
         assertNotNull(entry);
 
         final var booleanContBinding = assertInstanceOf(BooleanCont.class, entry.getValue());
-        assertEquals(Boolean.TRUE, booleanContBinding.getIsFoo());
+        assertTrue(booleanContBinding.getIsFoo());
     }
 
     @Test

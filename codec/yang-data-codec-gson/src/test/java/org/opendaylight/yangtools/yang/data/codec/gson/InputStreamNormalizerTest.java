@@ -227,8 +227,8 @@ class InputStreamNormalizerTest {
             }"""));
         assertEquals(List.of(new NodeIdentifier(BAZ)), prefixAndNode.prefix());
         assertEquals(ImmutableNodes.newMapEntryBuilder()
-            .withNodeIdentifier(NodeIdentifierWithPredicates.of(BAZ, Map.of(ONE, Boolean.TRUE, TWO, "two")))
-            .withChild(ImmutableNodes.leafNode(ONE, Boolean.TRUE))
+            .withNodeIdentifier(NodeIdentifierWithPredicates.of(BAZ, Map.of(ONE, true, TWO, "two")))
+            .withChild(ImmutableNodes.leafNode(ONE, true))
             .withChild(ImmutableNodes.leafNode(TWO, "two"))
             .build(), prefixAndNode.result().data());
     }
@@ -268,8 +268,8 @@ class InputStreamNormalizerTest {
             }"""));
         assertEquals(List.of(new NodeIdentifier(BAZ)), prefixAndNode.prefix());
         assertEquals(ImmutableNodes.newMapEntryBuilder()
-            .withNodeIdentifier(NodeIdentifierWithPredicates.of(BAZ, Map.of(ONE, Boolean.TRUE, TWO, "two")))
-            .withChild(ImmutableNodes.leafNode(ONE, Boolean.TRUE))
+            .withNodeIdentifier(NodeIdentifierWithPredicates.of(BAZ, Map.of(ONE, true, TWO, "two")))
+            .withChild(ImmutableNodes.leafNode(ONE, true))
             .withChild(ImmutableNodes.leafNode(TWO, "two"))
             .build(), prefixAndNode.result().data());
     }
