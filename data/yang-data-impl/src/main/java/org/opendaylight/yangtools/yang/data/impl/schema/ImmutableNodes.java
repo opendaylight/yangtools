@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
@@ -34,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  */
 @Deprecated(since = "12.0.0", forRemoval = true)
 public final class ImmutableNodes {
-    private static final @NonNull BuilderFactory BUILDER_FACTORY =
+    private static final NormalizedNode.@NonNull BuilderFactory BUILDER_FACTORY =
         org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes.builderFactory();
     // FIXME: YANGTOOLS-1074: we do not want this name
     private static final NodeIdentifier SCHEMACONTEXT_NAME = NodeIdentifier.create(SchemaContext.NAME);
@@ -43,14 +42,17 @@ public final class ImmutableNodes {
         // Hidden on purpose
     }
 
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static SystemMapNode.@NonNull Builder mapNodeBuilder() {
         return BUILDER_FACTORY.newSystemMapBuilder();
     }
 
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static SystemMapNode.@NonNull Builder mapNodeBuilder(final QName name) {
         return mapNodeBuilder(NodeIdentifier.create(name));
     }
 
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static SystemMapNode.@NonNull Builder mapNodeBuilder(final NodeIdentifier name) {
         final var ret = mapNodeBuilder();
         // FIXME: use fluent once we have specialized enough
@@ -64,6 +66,7 @@ public final class ImmutableNodes {
      * @param name QName which will be used as node identifier
      * @return An unordered Map node
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static @NonNull SystemMapNode mapNode(final QName name) {
         return mapNode(NodeIdentifier.create(name));
     }
@@ -74,6 +77,7 @@ public final class ImmutableNodes {
      * @param name QName which will be used as node identifier
      * @return An unordered Map node
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static @NonNull SystemMapNode mapNode(final NodeIdentifier name) {
         return mapNodeBuilder(name).build();
     }
@@ -84,6 +88,7 @@ public final class ImmutableNodes {
      * @param name QName which will be used as node identifier
      * @return An ordered Map node
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static @NonNull UserMapNode orderedMapNode(final QName name) {
         return orderedMapNode(NodeIdentifier.create(name));
     }
@@ -94,6 +99,7 @@ public final class ImmutableNodes {
      * @param name Node identifier
      * @return An ordered Map node
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static @NonNull UserMapNode orderedMapNode(final NodeIdentifier name) {
         return BUILDER_FACTORY.newUserMapBuilder().withNodeIdentifier(name).build();
     }
@@ -106,6 +112,7 @@ public final class ImmutableNodes {
      * @param <T> Type of leaf node value
      * @return Leaf node with supplied identifier and value
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static <T> @NonNull LeafNode<T> leafNode(final NodeIdentifier name, final T value) {
         return org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes.leafNode(name, value);
     }
@@ -118,10 +125,12 @@ public final class ImmutableNodes {
      * @param <T> Type of leaf node value
      * @return Leaf node with supplied identifier and value
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static <T> @NonNull LeafNode<T> leafNode(final QName name, final T value) {
         return org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes.leafNode(name, value);
     }
 
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static MapEntryNode.@NonNull Builder mapEntryBuilder(final QName nodeName, final QName keyName,
             final Object keyValue) {
         final var ret = mapEntryBuilder();
@@ -131,10 +140,12 @@ public final class ImmutableNodes {
         return ret;
     }
 
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static MapEntryNode.@NonNull Builder mapEntryBuilder() {
         return BUILDER_FACTORY.newMapEntryBuilder();
     }
 
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static @NonNull MapEntryNode mapEntry(final QName nodeName, final QName keyName, final Object keyValue) {
         return mapEntryBuilder(nodeName, keyName, keyValue).build();
     }
@@ -145,6 +156,7 @@ public final class ImmutableNodes {
      * @param name QName which will be used as node identifier
      * @return A container node
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static @NonNull ContainerNode containerNode(final QName name) {
         return containerNode(NodeIdentifier.create(name));
     }
@@ -155,6 +167,7 @@ public final class ImmutableNodes {
      * @param name Node identifier
      * @return A container node
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static @NonNull ContainerNode containerNode(final NodeIdentifier name) {
         return BUILDER_FACTORY.newContainerBuilder().withNodeIdentifier(name).build();
     }
@@ -165,6 +178,7 @@ public final class ImmutableNodes {
      * @param name QName which will be used as node identifier
      * @return A choice node
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static @NonNull ChoiceNode choiceNode(final QName name) {
         return choiceNode(NodeIdentifier.create(name));
     }
@@ -175,6 +189,7 @@ public final class ImmutableNodes {
      * @param name Node identifier
      * @return A choice node
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static @NonNull ChoiceNode choiceNode(final NodeIdentifier name) {
         return BUILDER_FACTORY.newChoiceBuilder().withNodeIdentifier(name).build();
     }
@@ -185,6 +200,7 @@ public final class ImmutableNodes {
      * @param name QName which will be used as node identifier
      * @return An unkeyed list node
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static @NonNull UnkeyedListNode listNode(final QName name) {
         return listNode(NodeIdentifier.create(name));
     }
@@ -195,6 +211,7 @@ public final class ImmutableNodes {
      * @param name Node identifier
      * @return An unkeyed list node
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static @NonNull UnkeyedListNode listNode(final NodeIdentifier name) {
         return BUILDER_FACTORY.newUnkeyedListBuilder().withNodeIdentifier(name).build();
     }
@@ -208,6 +225,7 @@ public final class ImmutableNodes {
      * @throws NullPointerException if any argument is null
      * @throws IllegalArgumentException if the identifier cannot be converted
      */
+    @Deprecated(since = "12.0.0", forRemoval = true)
     public static @NonNull NormalizedNode fromInstanceId(final EffectiveModelContext ctx,
             final YangInstanceIdentifier id) {
         if (id.isEmpty()) {
