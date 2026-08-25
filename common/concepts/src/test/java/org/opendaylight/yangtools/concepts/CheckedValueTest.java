@@ -24,6 +24,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import org.junit.jupiter.api.Test;
 
+@Deprecated(forRemoval = true)
+@SuppressWarnings("removal")
 class CheckedValueTest {
     @Test
     void testNullValue() {

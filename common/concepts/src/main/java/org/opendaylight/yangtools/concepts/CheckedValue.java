@@ -30,6 +30,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * @deprecated Model the domain as a sealed interface with two (or more) possible subclasses and use pattern matching.
  */
 @NonNullByDefault
+@SuppressWarnings("removal")
 @Deprecated(since = "15.1.0", forRemoval = true)
 public class CheckedValue<T, E extends Exception> extends Either<T, E> {
     protected CheckedValue(T value) {
