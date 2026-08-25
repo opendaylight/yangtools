@@ -78,13 +78,12 @@ public final class UntrustedXML {
     private static final XMLInputFactory XIF;
 
     static {
-        final XMLInputFactory f = getLimited(XMLInputFactory::newInstance);
-        f.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
-        f.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.TRUE);
-        f.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
-        f.setProperty(XMLInputFactory.SUPPORT_DTD, Boolean.FALSE);
-
-        XIF = f;
+        final var xif = getLimited(XMLInputFactory::newInstance);
+        xif.setProperty(XMLInputFactory.IS_COALESCING, true);
+        xif.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
+        xif.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+        xif.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+        XIF = xif;
     }
 
     private UntrustedXML() {
