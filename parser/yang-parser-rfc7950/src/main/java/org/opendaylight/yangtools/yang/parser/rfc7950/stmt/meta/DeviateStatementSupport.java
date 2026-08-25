@@ -278,15 +278,13 @@ public final class DeviateStatementSupport
     }
 
     private static void addStatement(final StmtContext<?, ?, ?> stmtCtxToBeAdded, final Mutable<?, ?, ?> targetCtx) {
-        if (!stmtCtxToBeAdded.producesExtension()) {
-            if (stmtCtxToBeAdded.producesAnyOf(SINGLETON_STATEMENTS) || stmtCtxToBeAdded.produces(DefaultStatement.DEF)
-                    && targetCtx.produces(LeafStatement.DEF)) {
-                final var stmtToBeAdded = stmtCtxToBeAdded.publicDefinition();
-                for (var targetCtxSubstatement : targetCtx.allSubstatements()) {
-                    InferenceException.throwIf(targetCtxSubstatement.produces(stmtToBeAdded), stmtCtxToBeAdded, """
-                        Deviation cannot add substatement %s to target node %s because it is already defined in target \
-                        and can appear only once.""", stmtToBeAdded.statementName(), targetCtx.argument());
-                }
+        if (!stmtCtxToBeAdded.producesExtension() && stmtCtxToBeAdded.producesAnyOf(SINGLETON_STATEMENTS)
+            || stmtCtxToBeAdded.produces(DefaultStatement.DEF) && targetCtx.produces(LeafStatement.DEF)) {
+            final var stmtToBeAdded = stmtCtxToBeAdded.publicDefinition();
+            for (var targetCtxSubstatement : targetCtx.allSubstatements()) {
+                InferenceException.throwIf(targetCtxSubstatement.produces(stmtToBeAdded), stmtCtxToBeAdded, """
+                    Deviation cannot add substatement %s to target node %s because it is already defined in target and \
+                    can appear only once.""", stmtToBeAdded.statementName(), targetCtx.argument());
             }
         }
 
