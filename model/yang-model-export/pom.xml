@@ -55,11 +55,6 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>util</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-parser-api</artifactId>
             <scope>test</scope>
         </dependency>
