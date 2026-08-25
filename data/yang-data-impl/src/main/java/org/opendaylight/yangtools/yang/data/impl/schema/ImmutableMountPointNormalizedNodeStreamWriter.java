@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.MountPointLabel;
@@ -24,21 +23,20 @@ import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBui
 import org.opendaylight.yangtools.yang.data.api.schema.stream.ForwardingNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MountPointExtension;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedMountpoints.Builder;
 
 // FIXME: document usage of this
 @Beta
 public abstract class ImmutableMountPointNormalizedNodeStreamWriter extends ImmutableNormalizedNodeStreamWriter
         implements MountPointExtension {
     @NonNullByDefault
-    private record BuilderEntry(PathArgument identifier, Builder builder) {
+    private record BuilderEntry(PathArgument identifier, ImmutableNormalizedMountpoints.Builder builder) {
         BuilderEntry {
             requireNonNull(identifier);
             requireNonNull(builder);
         }
     }
 
-    private final Deque<BuilderEntry> builders = new ArrayDeque<>();
+    private final ArrayDeque<BuilderEntry> builders = new ArrayDeque<>();
     private final NormalizationResultHolder holder;
 
     protected ImmutableMountPointNormalizedNodeStreamWriter(final NormalizationResultHolder holder) {
