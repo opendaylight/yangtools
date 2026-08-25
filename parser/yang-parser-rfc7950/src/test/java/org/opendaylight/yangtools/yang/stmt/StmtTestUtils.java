@@ -54,7 +54,7 @@ public final class StmtTestUtils {
 
     public static EffectiveModelContext parseYangSource(final String yangSourcePath,
             final YangParserConfiguration config, final Set<QName> supportedFeatures) throws IOException,
-                ReactorException, URISyntaxException, SourceSyntaxException, YangSyntaxErrorException {
+                ReactorException, URISyntaxException, SourceSyntaxException {
         return parseYangSources(config, supportedFeatures,
             Path.of(StmtTestUtils.class.getResource(yangSourcePath).toURI()).toFile());
     }
@@ -84,8 +84,7 @@ public final class StmtTestUtils {
 
     public static EffectiveModelContext parseYangSources(final String yangSourcesDirectoryPath,
             final Set<QName> supportedFeatures, final YangParserConfiguration config)
-                throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException,
-                       SourceSyntaxException {
+                throws ReactorException, URISyntaxException, IOException, SourceSyntaxException {
         final var testSourcesDir = Path.of(StmtTestUtils.class.getResource(yangSourcesDirectoryPath).toURI()).toFile();
         return parseYangSources(config, supportedFeatures, testSourcesDir.listFiles(YANG_FILE_FILTER));
     }
