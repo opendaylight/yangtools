@@ -22,7 +22,6 @@ class YangTypes2StmtTest extends AbstractYangTest {
     private static final QNameModule TYPES2_MODULE = QNameModule.of("types2");
 
     private static final QName LF_DECIMAL = QName.create(TYPES2_MODULE, "lf-decimal");
-    private static final QName LF_MY_STRING = QName.create(TYPES2_MODULE, "lf-my-string");
     private static final QName LF_INT8 = QName.create(TYPES2_MODULE, "lf-int8");
     private static final QName LF_INT16 = QName.create(TYPES2_MODULE, "lf-int16");
     private static final QName LF_INT32 = QName.create(TYPES2_MODULE, "lf-int32");

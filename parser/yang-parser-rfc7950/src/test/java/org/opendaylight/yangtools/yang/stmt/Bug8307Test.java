@@ -41,7 +41,6 @@ class Bug8307Test {
     private static final QName MY_BAR_CONT_A = QName.create(BAR, "my-bar-cont-a");
     private static final QName MY_BAR_CONT_B = QName.create(BAR, "my-bar-cont-b");
     private static final QNameModule BAZ = QNameModule.of("baz-ns", "2017-05-16");
-    private static final QName MY_BAZ_CONT = QName.create(BAZ, "my-baz-cont");
 
     @Test
     void testDeviationsSupportedInSomeModules() throws Exception {

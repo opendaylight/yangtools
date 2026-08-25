@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
@@ -22,11 +23,11 @@ class YT1745Test extends AbstractYangTest {
     private static final QName ONE = QName.create("yt1475", "one");
     private static final QName TWO = QName.create("yt1475", "two");
     private static final QName THREE = QName.create("yt1475", "three");
-    private static final QName ARRR = QName.create("yt1475", "arrr");
 
     @Test
     void effectiveConfigInInputOutputNotification() {
         final var module = assertEffectiveModel("/bugs/yt1475.yang").findModule("yt1475").orElseThrow();
+        assertNotNull(module);
 
         final var rpc = module.getRpcs().iterator().next();
         final var input = rpc.getInput();
