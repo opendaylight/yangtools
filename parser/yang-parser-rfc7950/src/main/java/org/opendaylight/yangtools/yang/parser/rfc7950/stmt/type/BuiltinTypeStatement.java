@@ -7,38 +7,31 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.base.VerifyException;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.BuiltInType;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.spi.meta.AbstractDeclaredStatement.WithQNameArgument;
 
+@NonNullByDefault
 final class BuiltinTypeStatement extends WithQNameArgument implements TypeStatement {
-    private static final ImmutableMap<String, BuiltinTypeStatement> BUILTINS;
+    private static final Map<String, BuiltinTypeStatement> BUILTINS =
+        Stream.of(BuiltInType.BINARY, BuiltInType.BOOLEAN, BuiltInType.EMPTY, BuiltInType.INSTANCE_IDENTIFIER,
+            BuiltInType.INT8, BuiltInType.INT16, BuiltInType.INT32, BuiltInType.INT64,
+            BuiltInType.STRING,
+            BuiltInType.UINT8, BuiltInType.UINT16, BuiltInType.UINT32, BuiltInType.UINT64)
+        .map(BuiltInType::typeName)
+        .collect(Collectors.toUnmodifiableMap(QName::getLocalName, BuiltinTypeStatement::new));
 
     static {
-        final Builder<String, BuiltinTypeStatement> builder = ImmutableMap.builder();
-        putBuiltin(builder, BuiltInType.BINARY);
-        putBuiltin(builder, BuiltInType.BOOLEAN);
-        putBuiltin(builder, BuiltInType.EMPTY);
-        putBuiltin(builder, BuiltInType.INSTANCE_IDENTIFIER);
-        putBuiltin(builder, BuiltInType.INT8);
-        putBuiltin(builder, BuiltInType.INT16);
-        putBuiltin(builder, BuiltInType.INT32);
-        putBuiltin(builder, BuiltInType.INT64);
-        putBuiltin(builder, BuiltInType.STRING);
-        putBuiltin(builder, BuiltInType.UINT8);
-        putBuiltin(builder, BuiltInType.UINT16);
-        putBuiltin(builder, BuiltInType.UINT32);
-        putBuiltin(builder, BuiltInType.UINT64);
-        BUILTINS = builder.build();
-    }
-
-    private static void putBuiltin(final Builder<String, BuiltinTypeStatement> builder, final BuiltInType type) {
-        final var argument = type.typeName();
-        builder.put(argument.getLocalName(), new BuiltinTypeStatement(argument));
+        if (BUILTINS.size() != 13) {
+            throw new VerifyException("Unexpected built-ins " + BUILTINS);
+        }
     }
 
     private BuiltinTypeStatement(final QName argument) {
