@@ -18,20 +18,22 @@ import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 
 class YT1133Test extends AbstractYangTest {
     @Test
-    @SuppressWarnings("checkstyle:regexpSinglelineJava")
     void testAugmentKeys() {
-        final var stdout = System.out;
-        final var output = new ByteArrayOutputStream();
-        final EffectiveModelContext ctx;
+        final EffectiveModelContext modelContext;
 
-        try (var out = new PrintStream(output, true, StandardCharsets.UTF_8)) {
+        @SuppressWarnings("checkstyle:regexpSinglelineJava")
+        final var origOut = System.out;
+        final var baos = new ByteArrayOutputStream();
+        try (var out = new PrintStream(baos, true, StandardCharsets.UTF_8)) {
             System.setOut(out);
-            ctx = assertEffectiveModelDir("/bugs/YT1133");
-        } finally {
-            System.setOut(stdout);
+            try {
+                modelContext = assertEffectiveModelDir("/bugs/YT1133");
+            } finally {
+                System.setOut(origOut);
+            }
         }
 
-        assertEquals(2, ctx.getModules().size());
-        assertThat(output.toString()).doesNotContain("Configuration list (bar)values");
+        assertEquals(2, modelContext.getModuleStatements().size());
+        assertThat(baos.toString(StandardCharsets.UTF_8)).doesNotContain("Configuration list (bar)values");
     }
 }
