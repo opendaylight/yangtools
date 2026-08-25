@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedYangData;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedYangData.Builder;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 
 /**
@@ -35,38 +34,38 @@ final class ImmutableYangDataBuilder implements NormalizedYangData.Builder {
     }
 
     @Override
-    public Builder setChild(final AnydataNode<?> newChild) {
+    public NormalizedYangData.Builder setChild(final AnydataNode<?> newChild) {
         return setChildImpl(newChild);
     }
 
 
     @Override
-    public Builder setChild(final AnyxmlNode<?> newChild) {
+    public NormalizedYangData.Builder setChild(final AnyxmlNode<?> newChild) {
         return setChildImpl(newChild);
     }
 
     @Override
-    public Builder setChild(final ChoiceNode newChild) {
+    public NormalizedYangData.Builder setChild(final ChoiceNode newChild) {
         return setChildImpl(newChild);
     }
 
     @Override
-    public Builder setChild(final ContainerNode newChild) {
+    public NormalizedYangData.Builder setChild(final ContainerNode newChild) {
         return setChildImpl(newChild);
     }
 
     @Override
-    public @NonNull Builder setChild(final MapNode newChild) {
+    public NormalizedYangData.Builder setChild(final MapNode newChild) {
         return setChildImpl(newChild);
     }
 
     @Override
-    public Builder setChild(final UnkeyedListNode newChild) {
+    public NormalizedYangData.Builder setChild(final UnkeyedListNode newChild) {
         return setChildImpl(newChild);
     }
 
     @NonNullByDefault
-    private Builder setChildImpl(final DataContainerChild newChild) {
+    private NormalizedYangData.Builder setChildImpl(final DataContainerChild newChild) {
         child = requireNonNull(newChild);
         return this;
     }
