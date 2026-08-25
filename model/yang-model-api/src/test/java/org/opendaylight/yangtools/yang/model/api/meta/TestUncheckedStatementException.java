@@ -20,6 +20,7 @@ final class TestUncheckedStatementException extends UncheckedStatementException 
     }
 
     @Override
+    @SuppressWarnings("UnsynchronizedOverridesSynchronized")
     public @NonNull TestStatementException getCause() {
         return TestStatementException.class.cast(super.getCause());
     }

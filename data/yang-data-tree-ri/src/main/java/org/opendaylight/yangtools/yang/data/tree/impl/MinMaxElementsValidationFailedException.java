@@ -31,8 +31,9 @@ final class MinMaxElementsValidationFailedException extends SchemaValidationFail
     }
 
     @Override
+    @SuppressWarnings("UnsynchronizedOverridesSynchronized")
     public RequiredElementCountException getCause() {
-        return (RequiredElementCountException) verifyNotNull(super.getCause());
+        return RequiredElementCountException.class.cast(verifyNotNull(super.getCause()));
     }
 
     @Override

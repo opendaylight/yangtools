@@ -42,6 +42,7 @@ public abstract class UncheckedStatementException extends RuntimeException imple
     }
 
     @Override
+    @SuppressWarnings("UnsynchronizedOverridesSynchronized")
     public @NonNull StatementException getCause() {
         return StatementException.class.cast(super.getCause());
     }
