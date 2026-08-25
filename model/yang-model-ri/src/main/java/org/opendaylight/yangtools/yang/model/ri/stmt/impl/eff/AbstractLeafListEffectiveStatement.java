@@ -42,6 +42,7 @@ abstract class AbstractLeafListEffectiveStatement
     private final @NonNull Object substatements;
     private final int flags;
 
+    @SuppressWarnings("UnusedVariable")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile TypeDefinition<?> type;
 

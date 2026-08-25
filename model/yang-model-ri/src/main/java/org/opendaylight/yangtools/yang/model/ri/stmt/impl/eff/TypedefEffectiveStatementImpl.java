@@ -56,9 +56,11 @@ public final class TypedefEffectiveStatementImpl extends WithSubstatements<QName
     private final int flags;
 
     // Accessed via TYPE_DEFINITION
+    @SuppressWarnings("UnusedVariable")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile TypeDefinition<?> typeDefinition;
     // Accessed via TYPE_STATEMENT
+    @SuppressWarnings("UnusedVariable")
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile ProxyTypeEffectiveStatement typeStatement;
 
