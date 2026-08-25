@@ -24,7 +24,6 @@
     <properties>
         <!-- We are doing abhorrent things here unpacking our dependencies, which confuses analysis, just skip it -->
         <odlparent.dependency.skip>true</odlparent.dependency.skip>
-        <odlparent.modernizer.enforce>false</odlparent.modernizer.enforce>
     </properties>
 
     <dependencies>
