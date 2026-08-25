@@ -11,9 +11,8 @@ import static java.util.Objects.requireNonNull;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFailedFluentFuture;
-import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,10 +47,10 @@ class SharedEffectiveModelContextFactoryTest {
         final var transformer = SourceInfoSchemaSourceTransformer.ofYang(repository, repository, TEXT_TO_IR);
         repository.registerSchemaSourceListener(transformer);
 
-        repository.registerSchemaSource(sourceIdentifier -> immediateFluentFuture(source1),
+        repository.registerSchemaSource(sourceIdentifier -> Futures.immediateFuture(source1),
             PotentialSchemaSource.create(s1, YangTextSource.class, 1));
 
-        repository.registerSchemaSource(sourceIdentifier -> immediateFluentFuture(source2),
+        repository.registerSchemaSource(sourceIdentifier -> Futures.immediateFuture(source2),
             PotentialSchemaSource.create(s2, YangTextSource.class, 1));
     }
 
@@ -126,10 +125,9 @@ class SharedEffectiveModelContextFactoryTest {
         public ListenableFuture<YangTextSource> getSource(final SourceIdentifier sourceIdentifier) {
             if (shouldFail) {
                 shouldFail = false;
-                return immediateFailedFluentFuture(new Exception("Transient test failure."));
+                return Futures.immediateFailedFuture(new Exception("Transient test failure."));
             }
-
-            return immediateFluentFuture(schemaSource);
+            return Futures.immediateFuture(schemaSource);
         }
     }
 }

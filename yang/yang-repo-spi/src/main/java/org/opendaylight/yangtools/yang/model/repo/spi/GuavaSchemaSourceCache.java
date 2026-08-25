@@ -12,14 +12,14 @@ import com.google.common.base.FinalizablePhantomReference;
 import com.google.common.base.FinalizableReferenceQueue;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import com.google.common.util.concurrent.FluentFuture;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -64,11 +64,10 @@ public final class GuavaSchemaSourceCache<T extends SourceRepresentation> extend
     }
 
     @Override
-    public FluentFuture<? extends T> getSource(final SourceIdentifier sourceId) {
+    public ListenableFuture<? extends T> getSource(final SourceIdentifier sourceId) {
         final T present = cache.getIfPresent(sourceId);
-        return present != null ? FluentFutures.immediateFluentFuture(present)
-                : FluentFutures.immediateFailedFluentFuture(
-                    new MissingSchemaSourceException(sourceId, "Source not found"));
+        return present != null ? Futures.immediateFuture(present)
+            : Futures.immediateFailedFuture(new MissingSchemaSourceException(sourceId, "Source not found"));
     }
 
     @Override

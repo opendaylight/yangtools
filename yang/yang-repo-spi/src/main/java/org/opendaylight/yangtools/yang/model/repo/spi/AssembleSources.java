@@ -10,12 +10,12 @@ package org.opendaylight.yangtools.yang.model.repo.spi;
 import com.google.common.base.Function;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.AsyncFunction;
-import com.google.common.util.concurrent.FluentFuture;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
@@ -49,7 +49,7 @@ final class AssembleSources implements AsyncFunction<List<YangIRSource>, Effecti
     }
 
     @Override
-    public FluentFuture<EffectiveModelContext> apply(final List<YangIRSource> sources) {
+    public ListenableFuture<EffectiveModelContext> apply(final List<YangIRSource> sources) {
         final var srcs = Maps.uniqueIndex(sources, getIdentifier);
 
         final var deps = HashMap.<SourceIdentifier, SourceInfo>newHashMap(srcs.size());
@@ -60,8 +60,8 @@ final class AssembleSources implements AsyncFunction<List<YangIRSource>, Effecti
                 info = entry.getValue().extractSourceInfo();
             } catch (SourceSyntaxException e) {
                 LOG.debug("Cannot extract dependency information from {}", src, e);
-                return FluentFutures.immediateFailedFluentFuture(new SchemaResolutionException(
-                    "Failed to extract dependency information", src, e));
+                return Futures.immediateFailedFuture(
+                    new SchemaResolutionException("Failed to extract dependency information", src, e));
             }
 
             deps.put(src, info);
@@ -82,9 +82,8 @@ final class AssembleSources implements AsyncFunction<List<YangIRSource>, Effecti
         final var unresolved = res.unresolvedSources();
         if (!unresolved.isEmpty()) {
             LOG.debug("Omitting models {} due to unsatisfied imports {}", unresolved, res.unsatisfiedImports());
-            return FluentFutures.immediateFailedFluentFuture(
-                new SchemaResolutionException("Failed to resolve required models", unresolved.getFirst(),
-                    res.resolvedSources(), res.unsatisfiedImports()));
+            return Futures.immediateFailedFuture(new SchemaResolutionException("Failed to resolve required models",
+                unresolved.getFirst(), res.resolvedSources(), res.unsatisfiedImports()));
         }
 
         final var parser = parserFactory.createParser(parserConfig);
@@ -96,7 +95,7 @@ final class AssembleSources implements AsyncFunction<List<YangIRSource>, Effecti
                 parser.addSource(entry.getValue());
             } catch (IOException | YangSyntaxErrorException e) {
                 final var sourceId = entry.getKey();
-                return FluentFutures.immediateFailedFluentFuture(
+                return Futures.immediateFailedFuture(
                     new SchemaResolutionException("Failed to add source " + sourceId, sourceId, e));
             }
         }
@@ -105,10 +104,10 @@ final class AssembleSources implements AsyncFunction<List<YangIRSource>, Effecti
         try {
             schemaContext = parser.buildEffectiveModel();
         } catch (YangParserException e) {
-            return FluentFutures.immediateFailedFluentFuture(e.getCause() instanceof ReactorException re
+            return Futures.immediateFailedFuture(e.getCause() instanceof ReactorException re
                 ? new SchemaResolutionException("Failed to resolve required models", re.getSourceIdentifier(), re) : e);
         }
 
-        return FluentFutures.immediateFluentFuture(schemaContext);
+        return Futures.immediateFuture(schemaContext);
     }
 }

@@ -13,7 +13,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Verify;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.util.concurrent.FluentFuture;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import com.google.errorprone.annotations.concurrent.GuardedBy;
 import java.io.IOException;
 import java.net.URL;
@@ -32,7 +33,6 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.AbstractRegistration;
 import org.opendaylight.yangtools.concepts.Registration;
-import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationInText;
@@ -339,16 +339,16 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     }
 
     @Override
-    public synchronized @NonNull FluentFuture<YangTextSource> getSource(final SourceIdentifier sourceIdentifier) {
+    public synchronized @NonNull ListenableFuture<YangTextSource> getSource(final SourceIdentifier sourceIdentifier) {
         final var ret = texts.get(sourceIdentifier);
 
         LOG.debug("Lookup {} result {}", sourceIdentifier, ret);
         if (ret.isEmpty()) {
-            return FluentFutures.immediateFailedFluentFuture(
+            return Futures.immediateFailedFuture(
                 new MissingSchemaSourceException(sourceIdentifier, "URL for " + sourceIdentifier + " not registered"));
         }
 
-        return FluentFutures.immediateFluentFuture(ret.iterator().next());
+        return Futures.immediateFuture(ret.iterator().next());
     }
 
     /**
