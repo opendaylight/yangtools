@@ -14,7 +14,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -24,7 +23,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedMetadata.Builder;
 
 /**
  * A {@link NormalizedMetadata}-aware {@link ImmutableMetadataNormalizedNodeStreamWriter}. It advertizes the
@@ -49,20 +47,20 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
             return dataBuilder;
         }
 
-        public Builder getMetaBuilder() {
+        public ImmutableNormalizedMetadata.Builder getMetaBuilder() {
             return metaBuilder.builder;
         }
     }
 
     @NonNullByDefault
-    private record BuilderEntry(PathArgument identifier, Builder builder) {
+    private record BuilderEntry(PathArgument identifier, ImmutableNormalizedMetadata.Builder builder) {
         BuilderEntry {
             requireNonNull(identifier);
             requireNonNull(builder);
         }
     }
 
-    private final Deque<BuilderEntry> builders = new ArrayDeque<>();
+    private final ArrayDeque<BuilderEntry> builders = new ArrayDeque<>();
     private final NormalizationResultHolder holder;
 
     protected ImmutableMetadataNormalizedNodeStreamWriter(final State state) {
