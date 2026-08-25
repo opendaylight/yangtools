@@ -199,7 +199,7 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
     }
 
     final void initParent(final ReactorStmtCtx<?, ?, ?> parent) {
-        flags |= parent.flags & (IN_STRUCTURE | IN_TEMPLATE | FEATURE_INDEPENDENT);
+        flags = (byte) (flags | parent.flags & (IN_STRUCTURE | IN_TEMPLATE | FEATURE_INDEPENDENT));
     }
 
     //
