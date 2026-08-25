@@ -125,7 +125,7 @@ final class ModifierImpl implements ModelActionBuilder {
             final ModelProcessingPhase phase) {
         checkNotRegistered();
 
-        final var mod = new PhaseModificationInNamespace<C>(this, EFFECTIVE_MODEL);
+        final var mod = new PhaseModificationInNamespace<C>(this, phase);
         addReq(mod);
         addMutation(mod);
         contextImpl(context).onNamespaceItemAddedAction(namespace, key, mod);
