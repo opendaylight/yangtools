@@ -16,6 +16,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +80,8 @@ final class LeafBindingClassLoader extends BindingClassLoader {
         var local = dependencies;
 
         while (true) {
-            final var updated = ImmutableSet.builderWithExpectedSize(local.size() + newLoaders.size())
+            final var updated = ImmutableSet.<LeafBindingClassLoader>builderWithExpectedSize(
+                    local.size() + newLoaders.size())
                 .addAll(local)
                 .addAll(newLoaders)
                 .build();
@@ -89,15 +91,22 @@ final class LeafBindingClassLoader extends BindingClassLoader {
                 return;
             }
 
-            final var witness = (ImmutableSet<LeafBindingClassLoader>)
-                DEPENDENCIES.compareAndExchange(this, local, updated);
-            if (witness == local) {
+            final var witness = caeDependencies(local, updated);
+            if (witness == null) {
                 // Successful update, we are done
                 return;
             }
 
             local = witness;
         }
+    }
+
+    @SuppressWarnings("ReferenceEquality")
+    private @Nullable ImmutableSet<LeafBindingClassLoader> caeDependencies(
+            final ImmutableSet<LeafBindingClassLoader> expected, final ImmutableSet<LeafBindingClassLoader> updated) {
+        final var witness = (ImmutableSet<LeafBindingClassLoader>)
+            DEPENDENCIES.compareAndExchange(this, expected, updated);
+        return witness == expected ? null : witness;
     }
 
     @Override

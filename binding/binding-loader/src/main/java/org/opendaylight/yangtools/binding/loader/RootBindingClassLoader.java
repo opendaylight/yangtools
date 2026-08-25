@@ -77,9 +77,8 @@ final class RootBindingClassLoader extends BindingClassLoader {
                 .put(target, found)
                 .build();
 
-            final var witness = (ImmutableMap<ClassLoader, BindingClassLoader>)
-                LOADERS.compareAndExchange(this, local, updated);
-            if (witness == local) {
+            final var witness = caeLoaders(local, updated);
+            if (witness == null) {
                 LOG.debug("Using {} for {}", found, bindingClass);
                 return found;
             }
@@ -91,6 +90,15 @@ final class RootBindingClassLoader extends BindingClassLoader {
 
             local = witness;
         }
+    }
+
+    @SuppressWarnings("ReferenceEquality")
+    private @Nullable ImmutableMap<ClassLoader, BindingClassLoader> caeLoaders(
+            final ImmutableMap<ClassLoader, BindingClassLoader> expected,
+            final ImmutableMap<ClassLoader, BindingClassLoader> updated) {
+        final var witness = (ImmutableMap<ClassLoader, BindingClassLoader>)
+            LOADERS.compareAndExchange(this, expected, updated);
+        return witness == expected ? null : witness;
     }
 
     @Override
