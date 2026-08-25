@@ -75,8 +75,8 @@ abstract sealed class AbstractResumedStatement<A, D extends DeclaredStatement<A>
 
     @Override
     public final D declared() {
-        final D existing;
-        return (existing = declaredInstance) != null ? existing : loadDeclared();
+        final var existing = declaredInstance;
+        return existing != null ? existing : loadDeclared();
     }
 
     private @NonNull D loadDeclared() {
