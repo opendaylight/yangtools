@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap.Builder;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -208,7 +208,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<Unqual
 
     // Alright. this is quite ugly
     protected final void appendPrefixes(final Current<?, ?> stmt,
-            final Builder<String, ModuleEffectiveStatement> builder) {
+            final ImmutableMap.Builder<String, ModuleEffectiveStatement> builder) {
         streamEffectiveSubstatements(ImportEffectiveStatement.class)
             .map(ImportEffectiveStatement::prefixArgument)
             .forEach(pfx -> {
