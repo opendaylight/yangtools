@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.SequencedMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
@@ -49,7 +50,7 @@ public record KeyArchetypeImpl(
 
     // TODO: iteration order needs to match argument declaration order to retain compatibility, but perhaps we can
     //       relax that
-    public static LinkedHashMap<String, @Nullable GetterMethod> collectMethods(final KeyArgument keyArgument,
+    public static SequencedMap<String, @Nullable GetterMethod> collectMethods(final KeyArgument keyArgument,
             final EntryObjectArchetype entryObject) {
         final var keyToMethod = LinkedHashMap.<String, @Nullable GetterMethod>newLinkedHashMap(keyArgument.size());
         for (var qname : keyArgument) {
