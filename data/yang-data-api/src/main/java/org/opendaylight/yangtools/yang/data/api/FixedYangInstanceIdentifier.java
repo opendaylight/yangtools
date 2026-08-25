@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     static final @NonNull FixedYangInstanceIdentifier EMPTY_INSTANCE = new FixedYangInstanceIdentifier(
