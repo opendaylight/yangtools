@@ -403,6 +403,7 @@ public non-sealed class Uint32 extends Number implements YangUint<Uint32> {
      * @param obj Uint32 object
      * @return {@code true} if this object is the same as the obj argument; {@code false} otherwise.
      */
+    @SuppressWarnings("NonOverridingEquals")
     public final boolean equals(final @Nullable Uint32 obj) {
         return this == obj || obj != null && value == obj.value;
     }

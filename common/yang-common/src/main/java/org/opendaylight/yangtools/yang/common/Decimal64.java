@@ -499,6 +499,7 @@ public non-sealed class Decimal64 extends Number implements YangNumber<Decimal64
      * @param obj Decimal64 object
      * @return {@code true} if this object is the same as the obj argument; {@code false} otherwise.
      */
+    @SuppressWarnings("NonOverridingEquals")
     public final boolean equals(final @Nullable Decimal64 obj) {
         return this == obj || obj != null && equalsImpl(obj);
     }

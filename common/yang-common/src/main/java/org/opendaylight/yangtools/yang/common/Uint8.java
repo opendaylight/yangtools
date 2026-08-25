@@ -360,6 +360,7 @@ public non-sealed class Uint8 extends Number implements YangUint<Uint8> {
      * @param obj Uint8 object
      * @return {@code true} if this object is the same as the obj argument; {@code false} otherwise.
      */
+    @SuppressWarnings("NonOverridingEquals")
     public final boolean equals(final @Nullable Uint8 obj) {
         return this == obj || obj != null && value == obj.value;
     }

@@ -435,6 +435,7 @@ public non-sealed class Uint64 extends Number implements YangUint<Uint64> {
      * @param obj Uint64 object
      * @return {@code true} if this object is the same as the obj argument; {@code false} otherwise.
      */
+    @SuppressWarnings("NonOverridingEquals")
     public final boolean equals(final @Nullable Uint64 obj) {
         return this == obj || obj != null && value == obj.value;
     }

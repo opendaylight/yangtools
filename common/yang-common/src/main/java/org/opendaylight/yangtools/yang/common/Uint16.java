@@ -386,6 +386,7 @@ public non-sealed class Uint16 extends Number implements YangUint<Uint16> {
      * @param obj Uint16 object
      * @return  {@code true} if this object is the same as the obj argument; {@code false} otherwise.
      */
+    @SuppressWarnings("NonOverridingEquals")
     public final boolean equals(final @Nullable Uint16 obj) {
         return this == obj || obj != null && value == obj.value;
     }
