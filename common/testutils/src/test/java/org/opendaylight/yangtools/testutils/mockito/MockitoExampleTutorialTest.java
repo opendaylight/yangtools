@@ -40,12 +40,14 @@ class MockitoExampleTutorialTest {
     }
 
     @Test
+    @SuppressWarnings("DirectInvocationOnMock")
     void usingMockitoWithoutStubbing() {
         final var service = mock(SomeService.class);
         assertNull(service.bar("hulo"));
     }
 
     @Test
+    @SuppressWarnings("DirectInvocationOnMock")
     void usingMockitoToStubSimpleCase() {
         final var service = mock(SomeService.class);
         when(service.foobar(any())).thenReturn(123);
@@ -53,21 +55,18 @@ class MockitoExampleTutorialTest {
     }
 
     @Test
+    @SuppressWarnings("DirectInvocationOnMock")
     void usingMockitoToStubComplexCase() {
-        SomeService service = mock(SomeService.class);
-        when(service.foobar(any())).thenAnswer(invocation -> {
-            final Path file = invocation.getArgument(0);
-            return Path.of("hello.txt").equals(file) ? 123 : 0;
-        });
+        final var service = mock(SomeService.class);
+        when(service.foobar(any()))
+            .thenAnswer(invocation -> (Path.of("hello.txt").equals(invocation.getArgument(0, Path.class)) ? 123 : 0));
         assertEquals(0, service.foobar(Path.of("belo.txt")));
     }
 
     @Test
     void usingMockitoExceptionException() {
-        assertThrows(UnstubbedMethodException.class, () -> {
-            final var service = mock(SomeService.class, exception());
-            service.foo();
-        });
+        final var service = mock(SomeService.class, exception());
+        assertThrows(UnstubbedMethodException.class, () -> service.foo());
     }
 
     @Test
@@ -82,10 +81,8 @@ class MockitoExampleTutorialTest {
     @Test
     void usingMockitoToStubComplexCaseAndExceptionIfNotStubbed() {
         final var service = mock(SomeService.class, exception());
-        doAnswer(invocation -> {
-            final Path file = invocation.getArgument(0);
-            return Path.of("hello.txt").equals(file) ? 123 : 0;
-        }).when(service).foobar(any());
+        doAnswer(invocation -> (Path.of("hello.txt").equals(invocation.getArgument(0, Path.class)) ? 123 : 0))
+            .when(service).foobar(any());
         assertEquals(123, service.foobar(Path.of("hello.txt")));
         assertEquals(0, service.foobar(Path.of("belo.txt")));
     }
