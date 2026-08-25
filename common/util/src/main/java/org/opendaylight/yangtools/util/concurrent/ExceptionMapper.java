@@ -25,7 +25,10 @@ import org.eclipse.jdt.annotation.NonNull;
  *
  * @param <X> the exception type
  * @author Thomas Pantelis
+ * @deprecated This class is scheduled for removal in the next major release. Its replacement is lives in
+ * {@code mdsal-common-api}.
  */
+@Deprecated(since = "16.0.0", forRemoval = true)
 public abstract class ExceptionMapper<X extends Exception> implements Function<Exception, X> {
     private final @NonNull Class<X> exceptionType;
     private final @NonNull String opName;
@@ -36,6 +39,7 @@ public abstract class ExceptionMapper<X extends Exception> implements Function<E
      * @param opName the String prefix for exception messages.
      * @param exceptionType the exception type to which to translate.
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public ExceptionMapper(final String opName, final Class<X> exceptionType) {
         this.exceptionType = requireNonNull(exceptionType);
         this.opName = requireNonNull(opName);
@@ -44,6 +48,7 @@ public abstract class ExceptionMapper<X extends Exception> implements Function<E
     /**
      * {@return the exception class produced by this instance}
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     protected final @NonNull Class<X> getExceptionType() {
         return exceptionType;
     }
@@ -55,9 +60,11 @@ public abstract class ExceptionMapper<X extends Exception> implements Function<E
      * @param cause the cause for the new exception.
      * @return an instance of the exception type.
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     protected abstract X newWithCause(String message, Throwable cause);
 
     // FIXME: should be final
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @Override
     public X apply(final Exception input) {
         // If exception is of the specified type, return it.
