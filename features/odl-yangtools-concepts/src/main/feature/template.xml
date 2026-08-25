@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.6.0" name="odl-yangtools-concepts">
+    <repository>mvn:org.opendaylight.odlparent/odl-guava/{{versionAsInProject}}/xml/features</repository>
+    <feature name="odl-yangtools-concepts">
+        <feature version="[15,16)">odl-guava</feature>
+        <bundle>mvn:org.opendaylight.yangtools/concepts/{{versionAsInProject}}</bundle>
+    </feature>
+</features>
