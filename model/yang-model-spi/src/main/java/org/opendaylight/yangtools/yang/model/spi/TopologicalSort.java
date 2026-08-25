@@ -5,9 +5,8 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.util;
+package org.opendaylight.yangtools.yang.model.spi;
 
-import com.google.common.annotations.Beta;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -19,13 +18,9 @@ import java.util.Set;
  *
  * <p>Note this class is non-public to allow for API transition.
  */
-@Beta
-public final class TopologicalSort {
-
-    /**
-     * It isn't desirable to create instance of this class.
-     */
+final class TopologicalSort {
     private TopologicalSort() {
+        // Hidden on purpose
     }
 
     /**
@@ -35,19 +30,18 @@ public final class TopologicalSort {
      * @return Sorted {@link List} of {@link Node}s. Order: Nodes with no dependencies starting.
      * @throws IllegalStateException when cycle is present in the graph
      */
-    public static List<Node> sort(final Set<Node> nodes) {
-        List<Node> sortedNodes = new ArrayList<>(nodes.size());
-
-        Set<Node> dependentNodes = getDependentNodes(nodes);
+    static List<Node> sort(final Set<Node> nodes) {
+        final var sortedNodes = new ArrayList<Node>(nodes.size());
+        final var dependentNodes = getDependentNodes(nodes);
 
         while (!dependentNodes.isEmpty()) {
-            Node node = dependentNodes.iterator().next();
+            final var node = dependentNodes.iterator().next();
             dependentNodes.remove(node);
 
             sortedNodes.add(node);
 
-            for (Edge edge : node.getInEdges()) {
-                Node referent = edge.getFrom();
+            for (var edge : node.getInEdges()) {
+                final var referent = edge.getFrom();
                 referent.getOutEdges().remove(edge);
 
                 if (referent.getOutEdges().isEmpty()) {
@@ -91,8 +85,7 @@ public final class TopologicalSort {
     /**
      * Interface for nodes in graph that can be sorted topologically.
      */
-    @Beta
-    public interface Node {
+    interface Node {
         Set<Edge> getInEdges();
 
         Set<Edge> getOutEdges();
@@ -101,8 +94,7 @@ public final class TopologicalSort {
     /**
      * Interface for edges in graph that can be sorted topologically.
      */
-    @Beta
-    public interface Edge {
+    interface Edge {
         Node getFrom();
 
         Node getTo();
@@ -111,10 +103,9 @@ public final class TopologicalSort {
     /**
      * Basic Node implementation.
      */
-    @Beta
-    public static class NodeImpl implements Node {
-        private final Set<Edge> inEdges = new HashSet<>();
-        private final Set<Edge> outEdges = new HashSet<>();
+    static class NodeImpl implements Node {
+        private final HashSet<Edge> inEdges = new HashSet<>();
+        private final HashSet<Edge> outEdges = new HashSet<>();
 
         @Override
         public Set<Edge> getInEdges() {
@@ -127,7 +118,7 @@ public final class TopologicalSort {
         }
 
         public void addEdge(final Node to) {
-            Edge edge = new EdgeImpl(this, to);
+            final var edge = new EdgeImpl(this, to);
             outEdges.add(edge);
             to.getInEdges().add(edge);
         }
@@ -136,12 +127,11 @@ public final class TopologicalSort {
     /**
      * Basic Edge implementation.
      */
-    @Beta
-    public static class EdgeImpl implements Edge {
+    static class EdgeImpl implements Edge {
         private final Node from;
         private final Node to;
 
-        public EdgeImpl(final Node from, final Node to) {
+        EdgeImpl(final Node from, final Node to) {
             this.from = from;
             this.to = to;
         }
