@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -22,24 +23,24 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 class Bug6972Test extends AbstractYangTest {
     @Test
     void allUnitsShouldBeTheSameInstance() {
-        final var schemaContext = assertEffectiveModelDir("/bugs/bug6972");
-        assertEquals(3, schemaContext.getModules().size());
+        final var modelContext = assertEffectiveModelDir("/bugs/bug6972");
+        assertEquals(3, modelContext.getModuleStatements().size());
 
-        final Revision revision = Revision.of("2016-10-20");
-        final var foo = schemaContext.findModule("foo", revision).orElseThrow();
-        final var bar = schemaContext.findModule("bar", revision).orElseThrow();
-        final var baz = schemaContext.findModule("baz", revision).orElseThrow();
+        final var revision = Revision.of("2016-10-20");
+        assertThat(modelContext.findModule("foo", revision)).isPresent();
+        final var bar = modelContext.findModule("bar", revision).orElseThrow();
+        final var baz = modelContext.findModule("baz", revision).orElseThrow();
 
-        final QName barExportCont = QName.create("bar-ns", "bar-export", revision);
-        final QName barFooCont = QName.create("bar-ns", "bar-foo", revision);
-        final QName barFooLeaf = QName.create("bar-ns", "foo", revision);
+        final var barExportCont = QName.create("bar-ns", "bar-export", revision);
+        final var barFooCont = QName.create("bar-ns", "bar-foo", revision);
+        final var barFooLeaf = QName.create("bar-ns", "foo", revision);
 
         final var unitsBar1 = getEffectiveUnits(bar, barExportCont, barFooLeaf);
         assertSame(unitsBar1, getEffectiveUnits(bar, barFooCont, barFooLeaf));
 
-        final QName bazExportCont = QName.create("baz-ns", "baz-export", revision);
-        final QName bazFooCont = QName.create("baz-ns", "baz-foo", revision);
-        final QName bazFooLeaf = QName.create("baz-ns", "foo", revision);
+        final var bazExportCont = QName.create("baz-ns", "baz-export", revision);
+        final var bazFooCont = QName.create("baz-ns", "baz-foo", revision);
+        final var bazFooLeaf = QName.create("baz-ns", "foo", revision);
 
         assertSame(unitsBar1, getEffectiveUnits(baz, bazExportCont, bazFooLeaf));
         assertSame(unitsBar1, getEffectiveUnits(baz, bazFooCont, bazFooLeaf));
@@ -49,8 +50,6 @@ class Bug6972Test extends AbstractYangTest {
             final QName leafQName) {
         final var cont = assertInstanceOf(ContainerSchemaNode.class, module.getDataChildByName(containerQName));
         return assertInstanceOf(LeafSchemaNode.class, cont.getDataChildByName(leafQName)).asEffectiveStatement()
-            .streamEffectiveSubstatements(UnitsEffectiveStatement.class)
-            .findFirst()
-            .orElse(null);
+            .unitsStatement();
     }
 }
