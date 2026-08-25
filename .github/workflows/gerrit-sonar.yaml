@@ -79,16 +79,14 @@ jobs:
         clean
         install
         jacoco:report
+      # No coverage path overrides: odlparent already binds
+      # jacoco:prepare-agent and jacoco:report unconfigured, so each
+      # module writes target/site/jacoco/jacoco.xml -- exactly where
+      # Sonar looks by default. Passing -Djacoco.dataFile here broke
+      # that, because Maven leaves ${...} unexpanded in a -D value a
+      # plugin reads directly, so report skipped and coverage read 0%.
       mvn_params: >-
-        -Djacoco.dataFile=${GITHUB_WORKSPACE}/target/jacoco.exec
-        -Dodl.jacoco.aggregateFile=${GITHUB_WORKSPACE}/target/jacoco.exec
         -Psonar-only
-      # The scan runs its own Maven invocation, so it needs the
-      # same coverage coordinates the build was given.
-      maven_args: >-
-        -Dodl.jacoco.aggregateFile=${GITHUB_WORKSPACE}/target/jacoco.exec
-        -Djacoco.dataFile=${GITHUB_WORKSPACE}/target/jacoco.exec
-        -Dsonar.coverage.jacoco.xmlReportPaths=${GITHUB_WORKSPACE}/target/jacoco.exec
       sonar_project_key: "opendaylight_yangtools"
       sonar_organization: "opendaylight"
     secrets:
