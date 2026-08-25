@@ -960,12 +960,11 @@ public final class SchemaInferenceStack implements Mutable, LeafrefResolver {
     private void resolveChoiceSteps(final @NonNull ChoiceEffectiveStatement parent,
             final @NonNull QName nodeIdentifier) {
         for (var stmt : parent.effectiveSubstatements()) {
-            if (stmt instanceof CaseEffectiveStatement caze) {
-                if (caze.findSchemaTreeNode(nodeIdentifier).orElse(null) instanceof ChoiceEffectiveStatement found) {
-                    deque.addLast(caze);
-                    deque.addLast(found);
-                    return;
-                }
+            if (stmt instanceof CaseEffectiveStatement caze
+                && caze.findSchemaTreeNode(nodeIdentifier).orElse(null) instanceof ChoiceEffectiveStatement found) {
+                deque.addLast(caze);
+                deque.addLast(found);
+                return;
             }
         }
         throw new VerifyException("Failed to resolve " + nodeIdentifier + " in " + parent);
