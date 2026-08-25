@@ -14,10 +14,8 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.TestUtils.assertThatSystemOutput;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -250,42 +248,21 @@ class DeviationResolutionTest extends AbstractYangTest {
     }
 
     @Test
-    @SuppressWarnings("checkstyle:regexpSinglelineJava")
     void shouldLogInvalidDeviateReplaceAttempt() throws Exception {
-        final var stdout = System.out;
-        final var output = new ByteArrayOutputStream();
-
-        System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8));
-
-        TestUtils.parseYangSource(
+        assertThatSystemOutput(() -> TestUtils.parseYangSource(
             "/deviation-resolution-test/deviation-replace/foo-invalid-2.yang",
-            "/deviation-resolution-test/deviation-replace/bar-invalid-2.yang");
-
-        final var testLog = output.toString();
-        System.setOut(stdout);
-        assertThat(testLog).contains("""
+            "/deviation-resolution-test/deviation-replace/bar-invalid-2.yang")).contains("""
             Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)default in target leaf-list \
             (bar?revision=2017-01-20)my-leaf-list because a leaf-list can have multiple default statements.""");
     }
 
     @Test
-    @SuppressWarnings("checkstyle:regexpSinglelineJava")
     void shouldLogInvalidDeviateDeleteAttempt() throws Exception {
-        final PrintStream stdout = System.out;
-        final ByteArrayOutputStream output = new ByteArrayOutputStream();
-        final String testLog;
-
-        System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8));
-
-        TestUtils.parseYangSource(
+        assertThatSystemOutput(() -> TestUtils.parseYangSource(
             "/deviation-resolution-test/deviation-delete/foo-invalid.yang",
-            "/deviation-resolution-test/deviation-delete/bar-invalid.yang");
-
-        testLog = output.toString();
-        System.setOut(stdout);
-        assertThat(testLog).contains(
-            "Deviation cannot delete substatement (urn:ietf:params:xml:ns:yang:yin:1)units with argument 'seconds' in "
-                + "target node (bar?revision=2017-01-20)my-leaf because it does not exist in the target node.");
+            "/deviation-resolution-test/deviation-delete/bar-invalid.yang")).contains("""
+            Deviation cannot delete substatement (urn:ietf:params:xml:ns:yang:yin:1)units with argument 'seconds' in \
+            target node (bar?revision=2017-01-20)my-leaf because it does not exist in the target node.""");
     }
 
     @Test

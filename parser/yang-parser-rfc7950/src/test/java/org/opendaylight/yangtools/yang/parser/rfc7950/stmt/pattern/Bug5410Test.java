@@ -10,10 +10,8 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.opendaylight.yangtools.yang.stmt.TestUtils.assertThatSystemOutput;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -139,17 +137,8 @@ class Bug5410Test {
         //            List.of("^$"), List.of("^", "$", "$^", "\\", "\\^", "\\^\\", "\\^\\$"));
     }
 
-    @SuppressWarnings("checkstyle:regexpSinglelineJava")
     private static void testInvalidPattern(final String xsdRegex, final String expectedMessage) {
-        final PrintStream stdout = System.out;
-        final ByteArrayOutputStream output = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(output, true, StandardCharsets.UTF_8));
-
-        RegexUtils.getJavaRegexFromXSD(xsdRegex);
-
-        final String testLog = output.toString();
-        assertTrue(testLog.contains(expectedMessage));
-        System.setOut(stdout);
+        assertThatSystemOutput(() -> RegexUtils.getJavaRegexFromXSD(xsdRegex)).contains(expectedMessage);
     }
 
     private static boolean testMatch(final String javaRegex, final String value) {
@@ -173,7 +162,7 @@ class Bug5410Test {
 
     private static void testPattern(final String xsdRegex, final String expectedJavaRegex,
             final List<String> positiveMatches, final List<String> negativeMatches) {
-        final String javaRegexFromXSD = RegexUtils.getJavaRegexFromXSD(xsdRegex);
+        final var javaRegexFromXSD = RegexUtils.getJavaRegexFromXSD(xsdRegex);
         assertEquals(expectedJavaRegex, javaRegexFromXSD);
 
         for (var value : positiveMatches) {

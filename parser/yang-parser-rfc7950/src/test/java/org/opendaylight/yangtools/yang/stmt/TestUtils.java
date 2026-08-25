@@ -7,17 +7,25 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ServiceLoader;
 import java.util.Set;
+import org.assertj.core.api.AbstractStringAssert;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.junit.jupiter.api.function.Executable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -164,5 +172,28 @@ public final class TestUtils {
             }
         }
         return null;
+    }
+
+    /**
+     * Assert that specified {@link Executable} does not throw an exception, capturing system output during its
+     * execution.
+     *
+     * @param executable the {@link Executable}
+     * @return {@link AbstractStringAssert} on the system output
+     */
+    @NonNullByDefault
+    public static AbstractStringAssert<?> assertThatSystemOutput(final Executable executable) {
+        @SuppressWarnings("checkstyle:regexpSinglelineJava")
+        final var origOut = System.out;
+        final var baos = new ByteArrayOutputStream();
+        try (var out = new PrintStream(baos, true, StandardCharsets.UTF_8)) {
+            System.setOut(out);
+            try {
+                assertDoesNotThrow(executable);
+            } finally {
+                System.setOut(origOut);
+            }
+        }
+        return assertThat(baos.toString(StandardCharsets.UTF_8));
     }
 }
