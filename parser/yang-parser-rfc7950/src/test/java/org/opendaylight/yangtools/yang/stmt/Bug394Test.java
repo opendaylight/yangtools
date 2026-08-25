@@ -27,7 +27,7 @@ class Bug394Test extends AbstractYangTest {
     void testParseList() {
         final var context = assertEffectiveModelDir("/bugs/bug394-retest");
         final var bug394 = context.findModules("bug394").iterator().next();
-        final var bug394_ext = context.findModules("bug394-ext").iterator().next();
+        final var bug394ext = context.findModules("bug394-ext").iterator().next();
 
         final var logrecords = assertInstanceOf(ContainerSchemaNode.class,
             bug394.dataChildByName(QName.create(bug394.getQNameModule(), "logrecords")));
@@ -37,7 +37,7 @@ class Bug394Test extends AbstractYangTest {
             .declaredSubstatements(UnrecognizedStatement.class);
         assertEquals(2, nodes.size());
 
-        final var extensions = bug394_ext.getExtensionSchemaNodes().stream()
+        final var extensions = bug394ext.getExtensionSchemaNodes().stream()
             .map(ExtensionDefinition::getQName)
             .collect(Collectors.toUnmodifiableSet());
         assertEquals(3, extensions.size());
