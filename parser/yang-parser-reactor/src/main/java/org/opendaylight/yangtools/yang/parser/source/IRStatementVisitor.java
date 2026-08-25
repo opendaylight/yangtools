@@ -52,7 +52,7 @@ class IRStatementVisitor {
     @Nullable QName getValidStatementDefinition(final @NonNull IRKeyword keyword,
             final @NonNull StatementSourceReference ref) {
         return switch (keyword) {
-            case Qualified qualified -> getValidStatementDefinition(qualified, ref);
+            case Qualified qualified -> getValidStatementDefinition(qualified);
             case Unqualified unqualified -> {
                 final var def = resolver.lookupDef(YangConstants.RFC6020_YIN_NAMESPACE_STRING,
                     unqualified.identifier());
@@ -61,8 +61,7 @@ class IRStatementVisitor {
         };
     }
 
-    private @Nullable QName getValidStatementDefinition(final @NonNull Qualified keyword,
-            final @NonNull StatementSourceReference ref) {
+    private @Nullable QName getValidStatementDefinition(final @NonNull Qualified keyword) {
         final var module = source.resolvePrefix(keyword.prefix());
         if (module == null) {
             // Failed to look the namespace
