@@ -128,62 +128,62 @@ class YangParserWithContextTest {
         assertEquals(1, uses.size());
 
         // check uses process
-        final var data_u = assertInstanceOf(AnyxmlSchemaNode.class,
+        final var dataU = assertInstanceOf(AnyxmlSchemaNode.class,
             destination.dataChildByName(QName.create(testModule.getQNameModule(), "data")));
-        assertTrue(data_u.isAddedByUses());
+        assertTrue(dataU.isAddedByUses());
 
-        final var data_g = assertInstanceOf(AnyxmlSchemaNode.class,
+        final var dataG = assertInstanceOf(AnyxmlSchemaNode.class,
             grouping.dataChildByName(QName.create(contextModule.getQNameModule(), "data")));
-        assertFalse(data_g.isAddedByUses());
-        assertNotEquals(data_u, data_g);
+        assertFalse(dataG.isAddedByUses());
+        assertNotEquals(dataU, dataG);
 
-        final var how_u = assertInstanceOf(ChoiceSchemaNode.class,
+        final var howU = assertInstanceOf(ChoiceSchemaNode.class,
             destination.dataChildByName(QName.create(testModule.getQNameModule(), "how")));
-        assertTrue(how_u.isAddedByUses());
+        assertTrue(howU.isAddedByUses());
 
-        final var how_g = assertInstanceOf(ChoiceSchemaNode.class,
+        final var howG = assertInstanceOf(ChoiceSchemaNode.class,
             grouping.dataChildByName(QName.create(contextModule.getQNameModule(), "how")));
-        assertFalse(how_g.isAddedByUses());
-        assertNotEquals(how_u, how_g);
+        assertFalse(howG.isAddedByUses());
+        assertNotEquals(howU, howG);
 
-        final var address_u = assertInstanceOf(LeafSchemaNode.class,
+        final var addressU = assertInstanceOf(LeafSchemaNode.class,
             destination.dataChildByName(QName.create(testModule.getQNameModule(), "address")));
-        assertTrue(address_u.isAddedByUses());
+        assertTrue(addressU.isAddedByUses());
 
-        final var address_g = assertInstanceOf(LeafSchemaNode.class,
+        final var addressG = assertInstanceOf(LeafSchemaNode.class,
             grouping.dataChildByName(QName.create(contextModule.getQNameModule(), "address")));
-        assertFalse(address_g.isAddedByUses());
-        assertNotEquals(address_u, address_g);
+        assertFalse(addressG.isAddedByUses());
+        assertNotEquals(addressU, addressG);
 
-        final var port_u = assertInstanceOf(ContainerSchemaNode.class,
+        final var portU = assertInstanceOf(ContainerSchemaNode.class,
             destination.dataChildByName(QName.create(testModule.getQNameModule(), "port")));
-        assertTrue(port_u.isAddedByUses());
+        assertTrue(portU.isAddedByUses());
 
-        final var port_g = assertInstanceOf(ContainerSchemaNode.class,
+        final var portG = assertInstanceOf(ContainerSchemaNode.class,
             grouping.dataChildByName(QName.create(contextModule.getQNameModule(), "port")));
-        assertNotNull(port_g);
-        assertFalse(port_g.isAddedByUses());
-        assertNotEquals(port_u, port_g);
+        assertNotNull(portG);
+        assertFalse(portG.isAddedByUses());
+        assertNotEquals(portU, portG);
 
-        final var addresses_u = assertInstanceOf(ListSchemaNode.class,
+        final var addressesU = assertInstanceOf(ListSchemaNode.class,
             destination.dataChildByName(QName.create(testModule.getQNameModule(), "addresses")));
-        assertNotNull(addresses_u);
-        assertTrue(addresses_u.isAddedByUses());
+        assertNotNull(addressesU);
+        assertTrue(addressesU.isAddedByUses());
 
-        final var addresses_g = assertInstanceOf(ListSchemaNode.class,
+        final var addressesG = assertInstanceOf(ListSchemaNode.class,
             grouping.dataChildByName(QName.create(contextModule.getQNameModule(), "addresses")));
-        assertNotNull(addresses_g);
-        assertFalse(addresses_g.isAddedByUses());
-        assertNotEquals(addresses_u, addresses_g);
+        assertNotNull(addressesG);
+        assertFalse(addressesG.isAddedByUses());
+        assertNotEquals(addressesU, addressesG);
 
         // grouping defined by 'uses'
-        final var groupings_u = destination.getGroupings();
-        assertEquals(0, groupings_u.size());
+        final var groupingsU = destination.getGroupings();
+        assertEquals(0, groupingsU.size());
 
         // grouping defined in 'grouping' node
-        final var groupings_g = grouping.getGroupings();
-        assertEquals(1, groupings_g.size());
-        final var grouping_g = groupings_g.iterator().next();
+        final var groupingsG = grouping.getGroupings();
+        assertEquals(1, groupingsG.size());
+        final var grouping_g = groupingsG.iterator().next();
         assertFalse(grouping_g.isAddedByUses());
     }
 
