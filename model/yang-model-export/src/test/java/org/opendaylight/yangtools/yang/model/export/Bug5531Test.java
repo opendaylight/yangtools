@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.model.export;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -34,18 +34,18 @@ class Bug5531Test {
         assertNotNull(schema.getModules());
         assertEquals(1, schema.getModules().size());
 
-        var byteArrayOutputStream = new ByteArrayOutputStream();
-        var bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
+        final var byteArrayOutputStream = new ByteArrayOutputStream();
+        final var bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
 
         // write small module of size less than 8kB
         for (var module : schema.getModuleStatements().values()) {
             YinExportUtils.writeModuleAsYinText(module, bufferedOutputStream);
         }
 
-        String output = byteArrayOutputStream.toString();
-
         // if all changes were flushed then following conditions are satisfied
-        assertNotEquals(0, output.length());
-        assertThat(output).contains("<module").contains("</module>");
+        assertThat(byteArrayOutputStream.toString(StandardCharsets.UTF_8))
+            .isNotEmpty()
+            .contains("<module")
+            .contains("</module>");
     }
 }

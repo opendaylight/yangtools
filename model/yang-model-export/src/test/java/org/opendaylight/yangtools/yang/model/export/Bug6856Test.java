@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 class Bug6856Test {
     @Test
     void testImplicitInputAndOutputInRpc() throws Exception {
-        final var schemaContext = YangParserTestUtils.parseYang("""
+        final var modelContext = YangParserTestUtils.parseYang("""
             module foo {
               namespace foo;
               prefix foo;
@@ -28,25 +28,20 @@ class Bug6856Test {
 
               rpc foo-rpc {}
             }""");
-        assertNotNull(schemaContext);
+        final var fooModule = modelContext.findModule("foo", Revision.of("2017-02-28")).orElseThrow();
+        assertNotNull(fooModule);
 
         final var byteArrayOutputStream = new ByteArrayOutputStream();
         final var bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
-
-        final var fooModule = schemaContext.findModule("foo", Revision.of("2017-02-28")).orElseThrow();
         YinExportUtils.writeModuleAsYinText(fooModule.asEffectiveStatement(), bufferedOutputStream);
-
-        final var output = byteArrayOutputStream.toString();
-        assertNotNull(output);
-        assertFalse(output.isEmpty());
-
-        assertFalse(output.contains("<input>"));
-        assertFalse(output.contains("<output>"));
+        assertThat(byteArrayOutputStream.toString(StandardCharsets.UTF_8))
+            .isNotEmpty()
+            .doesNotContain("<input>", "<output>");
     }
 
     @Test
     void testExplicitInputAndOutputInRpc() throws Exception {
-        final var schemaContext = YangParserTestUtils.parseYang("""
+        final var modelContext = YangParserTestUtils.parseYang("""
             module bar {
               namespace bar;
               prefix bar;
@@ -65,19 +60,14 @@ class Bug6856Test {
                 }
               }
             }""");
-        assertNotNull(schemaContext);
+        final var barModule = modelContext.findModule("bar", Revision.of("2017-02-28")).orElseThrow();
+        assertNotNull(barModule);
 
         final var byteArrayOutputStream = new ByteArrayOutputStream();
         final var bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
-
-        final var barModule = schemaContext.findModule("bar", Revision.of("2017-02-28")).orElseThrow();
         YinExportUtils.writeModuleAsYinText(barModule.asEffectiveStatement(), bufferedOutputStream);
-
-        final var output = byteArrayOutputStream.toString();
-        assertNotNull(output);
-        assertFalse(output.isEmpty());
-
-        assertTrue(output.contains("<input>"));
-        assertTrue(output.contains("<output>"));
+        assertThat(byteArrayOutputStream.toString(StandardCharsets.UTF_8))
+            .isNotEmpty()
+            .contains("<input>", "<output>");
     }
 }
