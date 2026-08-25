@@ -5,14 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.util;
+package org.opendaylight.yangtools.yang.data.api;
 
 /**
  * Utility class for incrementally building object hashCode by hashing together component objects, one by one.
  *
  * @param <T> Component object type
  */
-public final class HashCodeBuilder<T> {
+final class HashCodeBuilder<T> {
     /**
      * The value 31 was chosen because it is an odd prime. If it were even and the multiplication overflowed,
      * information would be lost, as multiplication by 2 is equivalent to shifting. The advantage of using a prime is
@@ -29,7 +29,7 @@ public final class HashCodeBuilder<T> {
     /**
      * Create a new instance, with internal hash initialized to 1, equivalent of <code>HashCodeBuilder(1)</code>.
      */
-    public HashCodeBuilder() {
+    HashCodeBuilder() {
         this(1);
     }
 
@@ -38,8 +38,8 @@ public final class HashCodeBuilder<T> {
      *
      * @param seedHash Seed hash value
      */
-    public HashCodeBuilder(final int seedHash) {
-        this.currentHash = seedHash;
+    HashCodeBuilder(final int seedHash) {
+        currentHash = seedHash;
     }
 
     /**
@@ -49,7 +49,7 @@ public final class HashCodeBuilder<T> {
      * @param obj Object to be added
      * @return Combined hash code
      */
-    public static int nextHashCode(final int hashCode, final Object obj) {
+    static int nextHashCode(final int hashCode, final Object obj) {
         return PRIME * hashCode + obj.hashCode();
     }
 
@@ -58,7 +58,7 @@ public final class HashCodeBuilder<T> {
      *
      * @param obj Component object
      */
-    public void addArgument(final T obj) {
+    void addArgument(final T obj) {
         currentHash = nextHashCode(currentHash, obj);
     }
 
@@ -67,7 +67,7 @@ public final class HashCodeBuilder<T> {
      *
      * @return Current hash code
      */
-    public int build() {
+    int build() {
         return currentHash;
     }
 }
