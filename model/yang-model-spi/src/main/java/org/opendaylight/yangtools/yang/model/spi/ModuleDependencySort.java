@@ -20,15 +20,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import org.opendaylight.yangtools.util.TopologicalSort;
-import org.opendaylight.yangtools.util.TopologicalSort.Node;
-import org.opendaylight.yangtools.util.TopologicalSort.NodeImpl;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.Submodule;
+import org.opendaylight.yangtools.yang.model.spi.TopologicalSort.Node;
+import org.opendaylight.yangtools.yang.model.spi.TopologicalSort.NodeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
