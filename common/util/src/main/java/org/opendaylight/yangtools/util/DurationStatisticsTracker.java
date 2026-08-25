@@ -17,6 +17,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Abstract class that calculates and tracks time duration statistics.
@@ -102,7 +103,8 @@ public abstract class DurationStatisticsTracker {
      * @return the average duration in human-readable form.
      */
     public final String getDisplayableAverageDuration() {
-        return formatDuration(getAverageDuration(), null);
+        final var duration = getAverageDuration();
+        return formatDuration(chooseUnit((long) duration), duration, null);
     }
 
     /**
@@ -172,8 +174,7 @@ public abstract class DurationStatisticsTracker {
         return current == null ? 0L : current.timeMillis();
     }
 
-    private static String formatDuration(final double duration, final Long timeStamp) {
-        final TimeUnit unit = chooseUnit((long) duration);
+    private static String formatDuration(final TimeUnit unit, final double duration, final Long timeStamp) {
         final double value = duration / NANOSECONDS.convert(1, unit);
 
         final StringBuilder sb = new StringBuilder();
@@ -186,8 +187,12 @@ public abstract class DurationStatisticsTracker {
         return sb.toString();
     }
 
-    private static String formatDuration(final DurationWithTime current) {
-        return current == null ? formatDuration(0, null) : formatDuration(current.duration(), current.timeMillis());
+    private static String formatDuration(final @Nullable DurationWithTime current) {
+        if (current == null) {
+            return formatDuration(NANOSECONDS, 0, null);
+        }
+        final var duration = current.duration();
+        return formatDuration(chooseUnit(duration), (double) duration, current.timeMillis());
     }
 
     private static TimeUnit chooseUnit(final long nanos) {
