@@ -9,10 +9,9 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.FluentFuture;
+import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 import org.opendaylight.yangtools.yang.model.api.source.SourceRepresentation;
 
 /**
@@ -26,6 +25,7 @@ public interface SchemaSourceFilter {
      * A {@link SchemaSourceFilter} which accepts any schema source it is presented with.
      */
     @NonNull SchemaSourceFilter ALWAYS_ACCEPT = new SchemaSourceFilter() {
+        private final ListenableFuture<Boolean> future = Futures.immediateFuture(Boolean.TRUE);
         private final ImmutableList<Class<? extends SourceRepresentation>> representations =
                 ImmutableList.of(SourceRepresentation.class);
 
@@ -35,8 +35,8 @@ public interface SchemaSourceFilter {
         }
 
         @Override
-        public FluentFuture<Boolean> apply(final SourceRepresentation schemaSource) {
-            return FluentFutures.immediateTrueFluentFuture();
+        public ListenableFuture<Boolean> apply(final SourceRepresentation schemaSource) {
+            return future;
         }
     };
 
