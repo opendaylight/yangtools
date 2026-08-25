@@ -15,7 +15,7 @@ import java.lang.invoke.VarHandle;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.MountPointContext;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.codec.gson.JSONCodecFactory;
 import org.opendaylight.yangtools.yang.data.codec.gson.JSONCodecFactorySupplier;
 import org.opendaylight.yangtools.yang.data.codec.xml.XmlCodecFactory;
@@ -45,7 +45,7 @@ public final class DatabindContext {
     }
 
     private final @NonNull MountPointContext mountContext;
-    private final @NonNull BuilderFactory builderFactory;
+    private final NormalizedNode.@NonNull BuilderFactory builderFactory;
 
     @SuppressFBWarnings(value = "UUF_UNUSED_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile DataSchemaContextTree schemaTree;
@@ -55,7 +55,7 @@ public final class DatabindContext {
     private volatile XmlCodecFactory xmlCodecs;
 
     @NonNullByDefault
-    private DatabindContext(final MountPointContext mountContext, final BuilderFactory builderFactory) {
+    private DatabindContext(final MountPointContext mountContext, final NormalizedNode.BuilderFactory builderFactory) {
         this.mountContext = requireNonNull(mountContext);
         this.builderFactory = requireNonNull(builderFactory);
     }
@@ -72,7 +72,8 @@ public final class DatabindContext {
     }
 
     /**
-     * Returns a {@link DatabindContext} backed by an {@link EffectiveModelContext} and a {@link BuilderFactory}.
+     * Returns a {@link DatabindContext} backed by an {@link EffectiveModelContext} and a
+     * {@link NormalizedNode.BuilderFactory}.
      *
      * @param modelContext the model context
      * @param builderFactory the builder factory
@@ -80,7 +81,7 @@ public final class DatabindContext {
      */
     @NonNullByDefault
     public static DatabindContext ofModel(final EffectiveModelContext modelContext,
-            final BuilderFactory builderFactory) {
+            final NormalizedNode.BuilderFactory builderFactory) {
         return ofMountPoint(MountPointContext.of(modelContext), builderFactory);
     }
 
@@ -105,7 +106,7 @@ public final class DatabindContext {
      */
     @NonNullByDefault
     public static DatabindContext ofMountPoint(final MountPointContext mountContext,
-            final BuilderFactory builderFactory) {
+            final NormalizedNode.BuilderFactory builderFactory) {
         return new DatabindContext(mountContext, builderFactory);
     }
 
@@ -124,9 +125,9 @@ public final class DatabindContext {
     }
 
     /**
-     * {@return the {@link BuilderFactory}}
+     * {@return the {@link NormalizedNode.BuilderFactory}}
      */
-    public @NonNull BuilderFactory builderFactory() {
+    public NormalizedNode.@NonNull BuilderFactory builderFactory() {
         return builderFactory;
     }
 
