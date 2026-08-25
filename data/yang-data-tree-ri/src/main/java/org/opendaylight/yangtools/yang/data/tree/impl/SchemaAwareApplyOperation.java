@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.AnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyxmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.spi.node.MandatoryLeafEnforcer;
 import org.opendaylight.yangtools.yang.data.tree.api.ConflictingModificationAppliedException;
@@ -43,7 +42,8 @@ import org.slf4j.LoggerFactory;
 abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extends ModificationApplyOperation
         permits AbstractNodeContainerModificationStrategy, ListModificationStrategy, ValueNodeModificationStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
-    static final @NonNull BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
+
+    static final NormalizedNode.@NonNull BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
 
     static ModificationApplyOperation from(final DataSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) throws ExcludedDataSchemaNodeException {
