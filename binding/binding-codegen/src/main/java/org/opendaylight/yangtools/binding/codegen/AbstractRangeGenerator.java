@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.VerifyException;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -25,12 +25,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
+    // TODO: use a lazy constant instead of a holder class
+    private static final class WellKnown {
+        private static final Map<String, AbstractRangeGenerator<?>> GENERATORS = Stream.of(new ByteRangeGenerator(),
+            new ShortRangeGenerator(), new IntegerRangeGenerator(), new LongRangeGenerator(), new Uint8RangeGenerator(),
+            new Uint16RangeGenerator(), new Uint32RangeGenerator(), new Uint64RangeGenerator())
+            .collect(Collectors.toUnmodifiableMap(gen -> gen.getTypeClass().getCanonicalName(), Function.identity()));
+
+        private WellKnown() {
+            // hidden on purpose
+        }
+
+        @NonNullByDefault
+        static AbstractRangeGenerator<?> forName(final String fqcn) {
+            final var ret = GENERATORS.get(fqcn);
+            if (ret == null) {
+                throw new VerifyException("Unhandled type " + fqcn);
+            }
+            return ret;
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractRangeGenerator.class);
-    private static final Map<String, AbstractRangeGenerator<?>> GENERATORS =
-        Stream.of(new ByteRangeGenerator(), new ShortRangeGenerator(), new IntegerRangeGenerator(),
-            new LongRangeGenerator(), new Uint8RangeGenerator(), new Uint16RangeGenerator(), new Uint32RangeGenerator(),
-            new Uint64RangeGenerator())
-        .collect(Collectors.toUnmodifiableMap(gen -> gen.getTypeClass().getCanonicalName(), Function.identity()));
 
     private final @NonNull Class<T> type;
 
@@ -44,11 +60,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
         }
 
         final var javaType = TypeUtils.getBaseYangType(type);
-        return forName(javaType.canonicalName());
-    }
-
-    private static @NonNull AbstractRangeGenerator<?> forName(final String fqcn) {
-        return verifyNotNull(GENERATORS.get(fqcn), "Unhandled type %s", fqcn);
+        return WellKnown.forName(javaType.canonicalName());
     }
 
     /**
@@ -76,7 +88,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
 
         // Check if the conversion lost any precision by performing conversion the other way around
         final var gen = value instanceof Decimal64 decimal64 ? new Decimal64RangeGenerator(decimal64)
-            : forName(value.getClass().getName());
+            : WellKnown.forName(value.getClass().getName());
         final var check = gen.convert(ret);
         if (!value.equals(check)) {
             LOG.warn("Number class conversion from {} to {} truncated value {} to {}", value.getClass(), type, value,
