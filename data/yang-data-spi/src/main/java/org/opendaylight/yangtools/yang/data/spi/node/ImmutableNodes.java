@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedYangData;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
@@ -47,10 +46,10 @@ public final class ImmutableNodes {
     }
 
     /**
-     * {@return the {@link BuilderFactory} used by this utility class}.
+     * {@return the {@link NormalizedNode.BuilderFactory} used by this utility class}.
      */
     @NonNullByDefault
-    public static BuilderFactory builderFactory() {
+    public static NormalizedNode.BuilderFactory builderFactory() {
         return BUILDER_FACTORY;
     }
 
