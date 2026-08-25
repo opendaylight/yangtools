@@ -12,6 +12,7 @@ import javax.xml.stream.XMLOutputFactory;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.support.ParameterDeclarations;
 
 final class TestFactories implements ArgumentsProvider {
     /**
@@ -31,7 +32,8 @@ final class TestFactories implements ArgumentsProvider {
     }
 
     @Override
-    public Stream<? extends Arguments> provideArguments(final ExtensionContext context) throws Exception {
+    public Stream<? extends Arguments> provideArguments(final ParameterDeclarations parameters,
+            final ExtensionContext context) {
         return Stream.of(
             Arguments.of("default", DEFAULT_OUTPUT_FACTORY),
             Arguments.of("repairing", REPAIRING_OUTPUT_FACTORY));
