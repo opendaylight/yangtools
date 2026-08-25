@@ -25,9 +25,9 @@ final class TestFactories implements ArgumentsProvider {
     static final XMLOutputFactory REPAIRING_OUTPUT_FACTORY;
 
     static {
-        final var f = XMLOutputFactory.newFactory();
-        f.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
-        REPAIRING_OUTPUT_FACTORY = f;
+        final var xof = XMLOutputFactory.newFactory();
+        xof.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
+        REPAIRING_OUTPUT_FACTORY = xof;
     }
 
     @Override

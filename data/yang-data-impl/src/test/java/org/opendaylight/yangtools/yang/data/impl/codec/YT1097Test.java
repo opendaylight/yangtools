@@ -9,7 +9,9 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -30,26 +32,26 @@ class YT1097Test {
                 }
               }
             }""").findModule("yt1097").orElseThrow();
-        final var foo = module.findDataChildByName(QName.create(module.getQNameModule(), "foo")).orElseThrow();
-        assertInstanceOf(LeafSchemaNode.class, foo);
+        assertNotNull(module);
+        final var foo = assertInstanceOf(LeafSchemaNode.class,
+            module.findDataChildByName(QName.create(module.getQNameModule(), "foo")).orElseThrow());
 
-        final var codec = TypeDefinitionAwareCodec.from(((LeafSchemaNode) foo).typeDefinition());
-        assertInstanceOf(UnionStringCodec.class, codec);
-
-        assertDecoded(codec, Boolean.TRUE, "true");
-        assertDecoded(codec, Boolean.FALSE, "false");
+        final var codec = assertInstanceOf(UnionStringCodec.class, TypeDefinitionAwareCodec.from(foo.typeDefinition()));
+        assertDecoded(codec, true, "true");
+        assertDecoded(codec, false, "false");
         assertDecoded(codec, "True");
         assertDecoded(codec, "TRUE");
         assertDecoded(codec, "False");
         assertDecoded(codec, "FALSE");
     }
 
-    private static void assertDecoded(final TypeDefinitionAwareCodec<?, ?> codec, final String input) {
+    @NonNullByDefault
+    private static void assertDecoded(final UnionStringCodec codec, final String input) {
         assertDecoded(codec, input, input);
     }
 
-    private static void assertDecoded(final TypeDefinitionAwareCodec<?, ?> codec, final Object expected,
-            final String input) {
+    @NonNullByDefault
+    private static void assertDecoded(final UnionStringCodec codec, final Object expected, final String input) {
         assertEquals(expected, assertInstanceOf(expected.getClass(), codec.deserialize(input)));
     }
 }

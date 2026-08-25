@@ -165,12 +165,11 @@ class AsyncNotifyingListeningExecutorServiceTest {
         doNothing().when(mockDelegate).execute(task);
         doNothing().when(mockDelegate).shutdown();
         doReturn(taskList).when(mockDelegate).shutdownNow();
-        doReturn(Boolean.TRUE).when(mockDelegate).awaitTermination(3, TimeUnit.SECONDS);
-        doReturn(Boolean.TRUE).when(mockDelegate).isShutdown();
-        doReturn(Boolean.TRUE).when(mockDelegate).isTerminated();
+        doReturn(true).when(mockDelegate).awaitTermination(3, TimeUnit.SECONDS);
+        doReturn(true).when(mockDelegate).isShutdown();
+        doReturn(true).when(mockDelegate).isTerminated();
 
-        final var executor = new AsyncNotifyingListeningExecutorService(
-                                                                   mockDelegate, null);
+        final var executor = new AsyncNotifyingListeningExecutorService(mockDelegate, null);
 
         executor.execute(task);
         executor.shutdown();
