@@ -16,7 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Test;
 
+@Deprecated(since = "16.0.0", forRemoval = true)
 class EmptyDequeTest {
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @Test
     void testEmptyDeque() {
         final var deque = EmptyDeque.instance();
