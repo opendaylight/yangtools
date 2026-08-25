@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.spi.node;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -86,7 +85,7 @@ public final class MandatoryLeafEnforcer implements Immutable {
         }
     }
 
-    private static void findMandatoryNodes(final Builder<ImmutableList<PathArgument>> builder,
+    private static void findMandatoryNodes(final ImmutableList.Builder<ImmutableList<PathArgument>> builder,
             final YangInstanceIdentifier id, final DataNodeContainer schema, final boolean includeConfigFalse) {
         for (var child : schema.getChildNodes()) {
             if (includeConfigFalse || child.effectiveConfig().orElse(Boolean.TRUE)) {
