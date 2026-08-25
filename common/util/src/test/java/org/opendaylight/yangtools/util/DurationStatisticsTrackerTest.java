@@ -34,12 +34,9 @@ class DurationStatisticsTrackerTest {
         assertEquals(30000, tracker.getLongestDuration(), "getLongestDuration");
         assertEquals(10000, tracker.getShortestDuration(), "getShortestDuration");
 
-        verifyDisplayableString("getDisplayableAverageDuration",
-                tracker.getDisplayableAverageDuration(), "20.0");
-        verifyDisplayableString("getDisplayableLongestDuration",
-                tracker.getDisplayableLongestDuration(), "30.0");
-        verifyDisplayableString("getDisplayableShortestDuration",
-                tracker.getDisplayableShortestDuration(), "10.0");
+        verifyDisplayableString("getDisplayableAverageDuration", tracker.getDisplayableAverageDuration(), "20.0");
+        verifyDisplayableString("getDisplayableLongestDuration", tracker.getDisplayableLongestDuration(), "30.0");
+        verifyDisplayableString("getDisplayableShortestDuration", tracker.getDisplayableShortestDuration(), "10.0");
 
         tracker.addDuration(10000);
         assertEquals(3, tracker.getTotalDurations(), "getTotalDurations");
@@ -67,6 +64,6 @@ class DurationStatisticsTrackerTest {
     }
 
     private static void verifyDisplayableString(final String name, final String actual, final String expPrefix) {
-        assertThat(actual).startsWith(expPrefix);
+        assertThat(actual).describedAs(name).startsWith(expPrefix);
     }
 }
