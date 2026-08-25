@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.junit.jupiter.api.AfterAll;
@@ -95,7 +96,7 @@ class XmlStreamUtilsTest {
         writer.close();
         out.close();
 
-        return new String(out.toByteArray()).replaceAll("\\s*", "");
+        return out.toString(StandardCharsets.UTF_8).replaceAll("\\s*", "");
     }
 
     /**
@@ -119,9 +120,8 @@ class XmlStreamUtilsTest {
     /**
      * Tests relative path with double point inside path (e. g. "../../lf:interface/../lf:cont2/lf:stringleaf")
      */
-    // ignored because this isn't implemented
-    @Disabled
     @Test
+    @Disabled("ignored because this isn't implemented")
     void testLeafRefWithDoublePointInPath() {
         getTargetNodeForLeafRef(StringTypeDefinition.class, "lf-with-double-point-inside");
     }
