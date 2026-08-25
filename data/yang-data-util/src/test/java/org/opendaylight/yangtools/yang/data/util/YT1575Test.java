@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 class YT1575Test {
     @Test
-    void testMapEntryRoot() throws Exception {
+    void testMapEntryRoot() {
         final var modelContext = YangParserTestUtils.parseYang("""
             module yt1575 {
               namespace yt1575;
