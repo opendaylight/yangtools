@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
 import org.opendaylight.yangtools.yang.data.spi.node.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeFactory;
@@ -41,7 +40,7 @@ import org.osgi.service.component.annotations.Component;
 @MetaInfServices
 public final class ReferenceDataTreeFactory implements DataTreeFactory {
     // FIXME: figure out how we can plug in custom factories
-    private static final BuilderFactory BUILDERS = ImmutableNodes.builderFactory();
+    private static final NormalizedNode.BuilderFactory BUILDERS = ImmutableNodes.builderFactory();
     // FIXME: YANGTOOLS-1074: we do not want this name
     private static final @NonNull ContainerNode ROOT_CONTAINER = BUILDERS.newContainerBuilder(0)
         .withNodeIdentifier(NodeIdentifier.create(SchemaContext.NAME))
