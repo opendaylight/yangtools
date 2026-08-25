@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode.BuilderFactory;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.SystemMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
@@ -25,9 +25,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.UserLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UserMapNode;
 
 /**
- * A {@link BuilderFactory} producing builders which produce immutable in-memory normalized nodes.
+ * A {@link NormalizedNode.BuilderFactory} producing builders which produce immutable in-memory normalized nodes.
  */
-public final class ImmutableBuilderFactory implements BuilderFactory {
+public final class ImmutableBuilderFactory implements NormalizedNode.BuilderFactory {
     @Override
     public <T> AnydataNode.Builder<T> newAnydataBuilder(final Class<T> objectModel) {
         return new ImmutableAnydataNodeBuilder<>(objectModel);
