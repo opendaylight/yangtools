@@ -135,8 +135,8 @@ class Decimal64Test {
         assertParsedVariants("0002210.09", 2210, 9, 2);
 
         var parsed = assertParsedString("0.0", 0, 0, 1, false);
-        parsed = assertParsedString("+0.0", 0, 0, 1, false);
         assertEquals("0.0", parsed.toString());
+        parsed = assertParsedString("+0.0", 0, 0, 1, false);
         assertEquals("0.0", parsed.toString());
         parsed = assertParsedString("-0.0", 0, 0, 1, true);
         assertEquals("0.0", parsed.toString());
