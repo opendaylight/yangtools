@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -26,10 +27,11 @@ class AbstractImmutableNormalizedValueAttrNodeTest {
 
     @Test
     // This test is based on using different references; we're testing equals()
-    @SuppressWarnings({"RedundantStringConstructorCall", "EqualsWithItself"})
+    @SuppressWarnings("EqualsWithItself")
     void equalsByteTest() {
-        final var value = "test".getBytes();
-        final var equalValue = "test".getBytes();
+        final var value = new byte[] { 't', 'e', 's', 't' };
+        final var equalValue = value.clone();
+        assertNotSame(value, equalValue);
 
         final var leafNode = ImmutableNodes.leafNode(LEAF_QNAME, value);
         final var equalLeafNode = ImmutableNodes.leafNode(SAME_LEAF_QNAME, equalValue);
@@ -48,11 +50,10 @@ class AbstractImmutableNormalizedValueAttrNodeTest {
         assertEquals(leafNode2, equalLeafNode2);
         assertEquals(equalLeafNode2, leafNode2);
 
-        final var value3 = new byte[][] { "test".getBytes(), "test2".getBytes() };
-        final var equalValue3 = new byte[][] { "test".getBytes(), "test2".getBytes() };
+        final var value3 = new byte[][] { { 't', 'e', 's', 't' }, { 't', 'e', 's', 't', '2' } };
+        final var equalValue3 = new byte[][] { { 't', 'e', 's', 't' }, { 't', 'e', 's', 't', '2' } };
 
-        final var leafNode3 = ImmutableNodes.leafNode(LEAF_QNAME,
-                value3);
+        final var leafNode3 = ImmutableNodes.leafNode(LEAF_QNAME, value3);
         final var equalLeafNode3 = ImmutableNodes.leafNode(SAME_LEAF_QNAME, equalValue3);
 
         assertEquals(leafNode3, leafNode3);
@@ -86,7 +87,7 @@ class AbstractImmutableNormalizedValueAttrNodeTest {
         assertEquals(equalLeafNode6, leafNode6);
 
         final var value5 = "test";
-        final var equalValue5 = new String("test");
+        final var equalValue5 = new String(value5);
 
         final var leafNode5 = ImmutableNodes.leafNode(LEAF_QNAME, value5);
         final var equalLeafNode5 = ImmutableNodes.leafNode(SAME_LEAF_QNAME, equalValue5);
@@ -100,9 +101,9 @@ class AbstractImmutableNormalizedValueAttrNodeTest {
     // We're testing equals()
     @SuppressWarnings({"ObjectEqualsNull", "EqualsBetweenInconvertibleTypes"})
     void notEqualByteTest() {
-
-        final var value = "test".getBytes();
-        final var equalValue = "test".getBytes();
+        final var value = new byte[] { 't', 'e', 's', 't' };
+        final var equalValue = value.clone();
+        assertNotSame(value, equalValue);
 
         final var leafNode = ImmutableNodes.leafNode(LEAF_QNAME, value);
         final var otherLeafNode = ImmutableNodes.leafNode(OTHER_LEAF_QNAME, equalValue);
@@ -112,8 +113,8 @@ class AbstractImmutableNormalizedValueAttrNodeTest {
         assertNotEquals(leafNode, otherLeafNode);
         assertNotEquals(otherLeafNode, leafNode);
 
-        final var value1 = "test".getBytes();
-        final var otherValue1 = "test1".getBytes();
+        final var value1 = new byte[] { 't', 'e', 's', 't' };
+        final var otherValue1 = new byte[] { 't', 'e', 's', 't', '1' };
 
         final var leafNode1 = ImmutableNodes.leafNode(LEAF_QNAME, value1);
         final var otherLeafNode1 = ImmutableNodes.leafNode(SAME_LEAF_QNAME, otherValue1);
@@ -130,8 +131,8 @@ class AbstractImmutableNormalizedValueAttrNodeTest {
         assertNotEquals(leafNode2, otherLeafNode2);
         assertNotEquals(otherLeafNode2, leafNode2);
 
-        final var value3 = new byte[][] { "test".getBytes(), "test2".getBytes() };
-        final var otherValue3 = new byte[][] { "test".getBytes(), "test3".getBytes() };
+        final var value3 = new byte[][] { { 't', 'e', 's', 't' }, { 't', 'e', 's', 't', '2' } };
+        final var otherValue3 = new byte[][] { { 't', 'e', 's', 't' }, { 't', 'e', 's', 't', '3' } };
 
         final var leafNode3 = ImmutableNodes.leafNode(LEAF_QNAME, value3);
         final var otherLeafNode3 = ImmutableNodes.leafNode(SAME_LEAF_QNAME, otherValue3);
