@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.builder.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedMetadata.Builder;
 
 /**
  * A {@link NormalizedMetadata}-aware {@link ImmutableMetadataNormalizedNodeStreamWriter}. It advertizes the
@@ -49,13 +48,13 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
             return dataBuilder;
         }
 
-        public Builder getMetaBuilder() {
+        public ImmutableNormalizedMetadata.Builder getMetaBuilder() {
             return metaBuilder.builder;
         }
     }
 
     @NonNullByDefault
-    private record BuilderEntry(PathArgument identifier, Builder builder) {
+    private record BuilderEntry(PathArgument identifier, ImmutableNormalizedMetadata.Builder builder) {
         BuilderEntry {
             requireNonNull(identifier);
             requireNonNull(builder);
