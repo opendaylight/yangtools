@@ -79,16 +79,15 @@ jobs:
         clean
         install
         jacoco:report
+      # No coverage parameters here: security-workflows sets them
+      # itself, where github.workspace resolves. They cannot be set
+      # from a caller, because Maven leaves ${...} literal in a -D
+      # value a plugin reads directly. They must stay absent rather
+      # than be corrected: Maven takes the last occurrence of a
+      # repeated -D and these would come last, overriding the
+      # workflow's working values.
       mvn_params: >-
-        -Djacoco.dataFile=${GITHUB_WORKSPACE}/target/jacoco.exec
-        -Dodl.jacoco.aggregateFile=${GITHUB_WORKSPACE}/target/jacoco.exec
         -Psonar-only
-      # The scan runs its own Maven invocation, so it needs the
-      # same coverage coordinates the build was given.
-      maven_args: >-
-        -Dodl.jacoco.aggregateFile=${GITHUB_WORKSPACE}/target/jacoco.exec
-        -Djacoco.dataFile=${GITHUB_WORKSPACE}/target/jacoco.exec
-        -Dsonar.coverage.jacoco.xmlReportPaths=${GITHUB_WORKSPACE}/target/jacoco.exec
       sonar_project_key: "opendaylight_yangtools"
       sonar_organization: "opendaylight"
     secrets:
