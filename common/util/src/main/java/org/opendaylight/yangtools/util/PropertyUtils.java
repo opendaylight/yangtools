@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.util;
 
 import com.google.common.base.Strings;
@@ -16,12 +15,14 @@ import org.slf4j.LoggerFactory;
  * Provides utilities for system properties.
  *
  * @author Thomas Pantelis
+ * @deprecated This class is absolutely simplistic and not used anywhere. It will be removed in the next major release.
  */
+@Deprecated(since = "16.0.0", forRemoval = true)
 public final class PropertyUtils {
-
     private static final Logger LOG = LoggerFactory.getLogger(PropertyUtils.class);
 
     private PropertyUtils() {
+        // Hidden on purpose
     }
 
     /**
@@ -33,7 +34,8 @@ public final class PropertyUtils {
      * @param defaultValue the default value
      * @return the System property as an int or the <code>defaultValue</code> if not found.
      */
-    public static int getIntSystemProperty(String propName, int defaultValue) {
+    @Deprecated(since = "16.0.0", forRemoval = true)
+    public static int getIntSystemProperty(final String propName, final int defaultValue) {
         int propValue = defaultValue;
         String strValue = System.getProperty(propName);
         if (!Strings.isNullOrEmpty(strValue) && !strValue.trim().isEmpty()) {

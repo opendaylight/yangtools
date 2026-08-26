@@ -11,7 +11,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.junit.jupiter.api.Test;
 
+@Deprecated(since = "16.0.0", forRemoval = true)
 class PropertyUtilsTest {
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @Test
     void testGetIntSystemProperty() {
         final var testValue = PropertyUtils.getIntSystemProperty("file.separator", 1);
