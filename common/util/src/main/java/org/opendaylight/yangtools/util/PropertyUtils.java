@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.util;
 
 import com.google.common.base.Strings;
@@ -22,6 +21,7 @@ public final class PropertyUtils {
     private static final Logger LOG = LoggerFactory.getLogger(PropertyUtils.class);
 
     private PropertyUtils() {
+        // Hidden on purpose
     }
 
     /**
@@ -33,7 +33,7 @@ public final class PropertyUtils {
      * @param defaultValue the default value
      * @return the System property as an int or the <code>defaultValue</code> if not found.
      */
-    public static int getIntSystemProperty(String propName, int defaultValue) {
+    public static int getIntSystemProperty(final String propName, final int defaultValue) {
         int propValue = defaultValue;
         String strValue = System.getProperty(propName);
         if (!Strings.isNullOrEmpty(strValue) && !strValue.trim().isEmpty()) {
