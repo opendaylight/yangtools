@@ -16,7 +16,6 @@ import java.io.Serial;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 final class StackedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     @Serial
@@ -143,7 +142,7 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
 
     @Override
     int computeHashCode() {
-        return HashCodeBuilder.nextHashCode(parent.hashCode(), pathArgument);
+        return nextHashCode(parent.hashCode(), pathArgument);
     }
 
     @Override

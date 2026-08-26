@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
     static final @NonNull FixedYangInstanceIdentifier EMPTY_INSTANCE = new FixedYangInstanceIdentifier(
@@ -113,7 +112,7 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
     int computeHashCode() {
         int ret = 1;
         for (PathArgument arg : path) {
-            ret = HashCodeBuilder.nextHashCode(ret, arg);
+            ret = nextHashCode(ret, arg);
         }
         return ret;
     }

@@ -11,7 +11,9 @@ package org.opendaylight.yangtools.util;
  * Utility class for incrementally building object hashCode by hashing together component objects, one by one.
  *
  * @param <T> Component object type
+ * @deprecated This class is not used anywhere and is not really useful. It will be removed in the next major release.
  */
+@Deprecated(since = "16.0.0", forRemoval = true)
 public final class HashCodeBuilder<T> {
     /**
      * The value 31 was chosen because it is an odd prime. If it were even and the multiplication overflowed,
@@ -29,6 +31,7 @@ public final class HashCodeBuilder<T> {
     /**
      * Create a new instance, with internal hash initialized to 1, equivalent of <code>HashCodeBuilder(1)</code>.
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public HashCodeBuilder() {
         this(1);
     }
@@ -38,8 +41,9 @@ public final class HashCodeBuilder<T> {
      *
      * @param seedHash Seed hash value
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public HashCodeBuilder(final int seedHash) {
-        this.currentHash = seedHash;
+        currentHash = seedHash;
     }
 
     /**
@@ -49,6 +53,7 @@ public final class HashCodeBuilder<T> {
      * @param obj Object to be added
      * @return Combined hash code
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static int nextHashCode(final int hashCode, final Object obj) {
         return PRIME * hashCode + obj.hashCode();
     }
@@ -58,6 +63,7 @@ public final class HashCodeBuilder<T> {
      *
      * @param obj Component object
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public void addArgument(final T obj) {
         currentHash = nextHashCode(currentHash, obj);
     }
@@ -67,6 +73,7 @@ public final class HashCodeBuilder<T> {
      *
      * @return Current hash code
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public int build() {
         return currentHash;
     }

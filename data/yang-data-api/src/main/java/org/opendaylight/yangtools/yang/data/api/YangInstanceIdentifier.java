@@ -477,6 +477,10 @@ public abstract sealed class YangInstanceIdentifier
         return new YangInstanceIdentifierBuilder(origin.getPathArguments());
     }
 
+    static final int nextHashCode(final int hashCode, final Object obj) {
+        return 31 * hashCode + obj.hashCode();
+    }
+
     /**
      * Path argument / component of InstanceIdentifier. Path argument uniquely identifies node in data tree on
      * particular level.
