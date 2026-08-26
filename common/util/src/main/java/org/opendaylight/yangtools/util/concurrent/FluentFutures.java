@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.util.concurrent;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.Futures;
 import java.util.concurrent.Callable;
@@ -27,9 +26,9 @@ import org.eclipse.jdt.annotation.Nullable;
  * {@link #immediateFalseFluentFuture()}, {@link #immediateTrueFluentFuture()} and {@link #immediateNullFluentFuture()}
  * provide low-cardinality constants, which are generally useful to reduce allocations.
  *
- * @author Robert Varga
+ * @deprecated These utilities are not used in YANG Tools code. Replacements live in {@code mdsal-common-api}.
  */
-@Beta
+@Deprecated(since = "16.0.0", forRemoval = true)
 @NonNullByDefault
 @SuppressWarnings("null")
 public final class FluentFutures {
@@ -47,6 +46,7 @@ public final class FluentFutures {
      *
      * @return An immediately-cancelled FluentFuture.
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @SuppressWarnings("unchecked")
     public static <T> FluentFuture<T> immediateCancelledFluentFuture() {
         return (FluentFuture<T>) CANCELLED_FUTURE;
@@ -59,6 +59,7 @@ public final class FluentFutures {
      * @return An immediately-failed FluentFuture.
      * @throws NullPointerException if {@code cause} is null
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static <T> FluentFuture<T> immediateFailedFluentFuture(final Throwable cause) {
         return FluentFuture.from(Futures.immediateFailedFuture(requireNonNull(cause)));
     }
@@ -70,6 +71,7 @@ public final class FluentFutures {
      * @return An immediately-completed FluentFuture.
      * @throws NullPointerException if {@code result} is null
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static <T> FluentFuture<T> immediateFluentFuture(final T result) {
         return FluentFuture.from(Futures.immediateFuture(requireNonNull(result)));
     }
@@ -79,6 +81,7 @@ public final class FluentFutures {
      *
      * @return An immediately-completed FluentFuture.
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     @SuppressWarnings("unchecked")
     public static <@Nullable T> FluentFuture<T> immediateNullFluentFuture() {
         return (FluentFuture<T>) NULL_FUTURE;
@@ -91,6 +94,7 @@ public final class FluentFutures {
      * @return An immediately-completed FluentFuture reporting specified {@code result}
      * @throws NullPointerException if {@code result} is null
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static FluentFuture<Boolean> immediateBooleanFluentFuture(final Boolean result) {
         return immediateBooleanFluentFuture(result.booleanValue());
     }
@@ -101,6 +105,7 @@ public final class FluentFutures {
      * @param result boolean result
      * @return An immediately-completed FluentFuture reporting specified {@code result}
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static FluentFuture<Boolean> immediateBooleanFluentFuture(final boolean result) {
         return result ? TRUE_FUTURE : FALSE_FUTURE;
     }
@@ -110,6 +115,7 @@ public final class FluentFutures {
      *
      * @return An immediately-completed FluentFuture reporting {@link Boolean#TRUE}
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static FluentFuture<Boolean> immediateTrueFluentFuture() {
         return TRUE_FUTURE;
     }
@@ -119,6 +125,7 @@ public final class FluentFutures {
      *
      * @return An immediately-completed FluentFuture reporting {@link Boolean#TRUE}
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static FluentFuture<Boolean> immediateFalseFluentFuture() {
         return FALSE_FUTURE;
     }
@@ -132,6 +139,7 @@ public final class FluentFutures {
      * @param executor The Executor to use
      * @throws NullPointerException if any argument is {@code null}
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static <T> FluentFuture<T> submit(final Callable<T> callable, final Executor executor) {
         return FluentFuture.from(Futures.submit(callable, executor));
     }
