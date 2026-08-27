@@ -183,8 +183,8 @@ class YangParserWithContextTest {
         // grouping defined in 'grouping' node
         final var groupingsG = grouping.getGroupings();
         assertEquals(1, groupingsG.size());
-        final var grouping_g = groupingsG.iterator().next();
-        assertFalse(grouping_g.isAddedByUses());
+        final var groupingG = groupingsG.iterator().next();
+        assertFalse(groupingG.isAddedByUses());
     }
 
     @Test

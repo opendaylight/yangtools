@@ -104,8 +104,8 @@ class GroupingTest extends AbstractModelTest {
 
     @Test
     void testUses() {
-        // suffix _u = added by uses
-        // suffix _g = defined in grouping
+        // suffix U = added by uses
+        // suffix G = defined in grouping
 
         // get grouping
         final var groupings = BAZ.getGroupings();
@@ -186,8 +186,8 @@ class GroupingTest extends AbstractModelTest {
 
     @Test
     void testUsesUnderModule() {
-        // suffix _u = added by uses
-        // suffix _g = defined in grouping
+        // suffix U = added by uses
+        // suffix G = defined in grouping
 
         // get grouping
         final var groupings = BAZ.getGroupings();
@@ -229,13 +229,13 @@ class GroupingTest extends AbstractModelTest {
         assertEquals(Optional.empty(), addressU.effectiveConfig());
         assertTrue(addressU.isAddedByUses());
 
-        final var address_g = assertInstanceOf(LeafSchemaNode.class, grouping.dataChildByName(bazQName("address")));
-        assertFalse(address_g.isAddedByUses());
-        assertEquals(Optional.empty(), address_g.typeDefinition().getDefaultValue());
-        assertEquals(Optional.of("Target IP address"), address_g.getDescription());
-        assertFalse(address_g.getReference().isPresent());
-        assertEquals(Optional.empty(), address_g.effectiveConfig());
-        assertNotEquals(addressU, address_g);
+        final var addressG = assertInstanceOf(LeafSchemaNode.class, grouping.dataChildByName(bazQName("address")));
+        assertFalse(addressG.isAddedByUses());
+        assertEquals(Optional.empty(), addressG.typeDefinition().getDefaultValue());
+        assertEquals(Optional.of("Target IP address"), addressG.getDescription());
+        assertFalse(addressG.getReference().isPresent());
+        assertEquals(Optional.empty(), addressG.effectiveConfig());
+        assertNotEquals(addressU, addressG);
 
         final var portU = assertInstanceOf(ContainerSchemaNode.class, FOO.dataChildByName(fooQName("port")));
         assertIsAddedByUses(portU, true);
