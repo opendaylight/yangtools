@@ -72,10 +72,9 @@ class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
         final var cont1 = resolveCont1(jsonOutput);
         assertNotNull(cont1);
 
-        final var lf12_1 = childPrimitive(cont1, "complexjson:lf12_1", "lf12_1");
-        assertNotNull(lf12_1);
-        final var asString = lf12_1.getAsString();
-        assertEquals("lf12 value", asString);
+        final var leaf = childPrimitive(cont1, "complexjson:lf12_1", "lf12_1");
+        assertNotNull(leaf);
+        assertEquals("lf12 value", leaf.getAsString());
     }
 
     @Test
@@ -133,7 +132,6 @@ class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
         assertNotNull(cont1);
         final var lf13 = childPrimitive(cont1, "complexjson:lf13", "lf13");
         assertNotNull(lf13);
-
         assertEquals("lf13 value", lf13.getAsString());
     }
 
@@ -152,19 +150,21 @@ class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
         final var cont1 = resolveCont1(jsonOutput);
         assertNotNull(cont1);
 
-        final var lf15_21 = childPrimitive(cont1, "complexjson:lf15_21", "lf15_21");
-        assertNotNull(lf15_21);
+        final var leaf21 = childPrimitive(cont1, "complexjson:lf15_21", "lf15_21");
+        assertNotNull(leaf21);
+        assertEquals("lf15_21 value", leaf21.getAsString());
+
         final var lf13 = childPrimitive(cont1, "complexjson:lf13", "lf13");
         assertNotNull(lf13);
-        final var lf15_11 = childPrimitive(cont1, "complexjson:lf15_11", "lf15_11");
-        assertNotNull(lf15_11);
-        final var lf15_12 = childPrimitive(cont1, "complexjson:lf15_12", "lf15_12");
-        assertNotNull(lf15_12);
-
-        assertEquals("lf15_21 value", lf15_21.getAsString());
         assertEquals("lf13 value", lf13.getAsString());
-        assertTrue("one two".equals(lf15_11.getAsString()) || "two one".equals(lf15_11.getAsString()));
-        assertEquals("complexjson:ident", lf15_12.getAsString());
+
+        final var leaf11 = childPrimitive(cont1, "complexjson:lf15_11", "lf15_11");
+        assertNotNull(leaf11);
+        assertTrue("one two".equals(leaf11.getAsString()) || "two one".equals(leaf11.getAsString()));
+
+        final var leaf12 = childPrimitive(cont1, "complexjson:lf15_12", "lf15_12");
+        assertNotNull(leaf12);
+        assertEquals("complexjson:ident", leaf12.getAsString());
     }
 
     /**
@@ -182,22 +182,25 @@ class NormalizedNodeToJsonStreamTest extends AbstractComplexJsonTest {
         final var cont1 = resolveCont1(jsonOutput);
         assertNotNull(cont1);
 
-        final var lf15_11Augment = childPrimitive(cont1, "complexjson-augmentation:lf15_11");
-        assertNotNull(lf15_11Augment);
-        final var lf15_12Augment = childPrimitive(cont1, "complexjson-augmentation:lf15_12");
-        assertNotNull(lf15_12Augment);
+        final var augment11 = childPrimitive(cont1, "complexjson-augmentation:lf15_11");
+        assertNotNull(augment11);
+        assertEquals("lf15_11 value from augmentation", augment11.getAsString());
+
+        final var augment12 = childPrimitive(cont1, "complexjson-augmentation:lf15_12");
+        assertNotNull(augment12);
+        assertEquals("lf15_12 value from augmentation", augment12.getAsString());
+
         final var lf13 = childPrimitive(cont1, "complexjson:lf13", "lf13");
         assertNotNull(lf13);
-        final var lf15_11 = childPrimitive(cont1, "complexjson:lf15_11", "lf15_11");
-        assertNotNull(lf15_11);
-        final var lf15_12 = childPrimitive(cont1, "complexjson:lf15_12", "lf15_12");
-        assertNotNull(lf15_12);
-
-        assertEquals("lf15_11 value from augmentation", lf15_11Augment.getAsString());
-        assertEquals("lf15_12 value from augmentation", lf15_12Augment.getAsString());
         assertEquals("lf13 value", lf13.getAsString());
-        assertTrue("one two".equals(lf15_11.getAsString()) || "two one".equals(lf15_11.getAsString()));
-        assertEquals("complexjson:ident", lf15_12.getAsString());
+
+        final var leaf11 = childPrimitive(cont1, "complexjson:lf15_11", "lf15_11");
+        assertNotNull(leaf11);
+        assertTrue("one two".equals(leaf11.getAsString()) || "two one".equals(leaf11.getAsString()));
+
+        final var leaf12 = childPrimitive(cont1, "complexjson:lf15_12", "lf15_12");
+        assertNotNull(leaf12);
+        assertEquals("complexjson:ident", leaf12.getAsString());
     }
 
     /**
