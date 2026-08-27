@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.source.SourceSyntaxException;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.spi.source.YangIRSource;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -48,7 +47,7 @@ public final class StmtTestUtils {
     }
 
     public static EffectiveModelContext parseYangSource(final String yangSourcePath, final Set<QName> supportedFeatures)
-            throws ReactorException, URISyntaxException, IOException, YangSyntaxErrorException, SourceSyntaxException {
+            throws ReactorException, URISyntaxException, IOException, SourceSyntaxException {
         return parseYangSource(yangSourcePath, YangParserConfiguration.DEFAULT, supportedFeatures);
     }
 

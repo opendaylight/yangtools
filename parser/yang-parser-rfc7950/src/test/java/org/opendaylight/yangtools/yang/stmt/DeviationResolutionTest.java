@@ -248,7 +248,7 @@ class DeviationResolutionTest extends AbstractYangTest {
     }
 
     @Test
-    void shouldLogInvalidDeviateReplaceAttempt() throws Exception {
+    void shouldLogInvalidDeviateReplaceAttempt() {
         assertThatSystemOutput(() -> TestUtils.parseYangSource(
             "/deviation-resolution-test/deviation-replace/foo-invalid-2.yang",
             "/deviation-resolution-test/deviation-replace/bar-invalid-2.yang")).contains("""
@@ -257,7 +257,7 @@ class DeviationResolutionTest extends AbstractYangTest {
     }
 
     @Test
-    void shouldLogInvalidDeviateDeleteAttempt() throws Exception {
+    void shouldLogInvalidDeviateDeleteAttempt() {
         assertThatSystemOutput(() -> TestUtils.parseYangSource(
             "/deviation-resolution-test/deviation-delete/foo-invalid.yang",
             "/deviation-resolution-test/deviation-delete/bar-invalid.yang")).contains("""
