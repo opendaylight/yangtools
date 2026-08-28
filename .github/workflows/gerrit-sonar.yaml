@@ -60,7 +60,7 @@ jobs:
     permissions:
       contents: read
     # yamllint disable-line rule:line-length
-    uses: lfreleng-actions/security-workflows/.github/workflows/sonarqube-cloud.yaml@d42518f4ad6d71408c9f05ab2d135a9a86bcb548 # v0.3.1
+    uses: lfreleng-actions/security-workflows/.github/workflows/sonarqube-cloud.yaml@6ee08860f804e9801edc85ff610baf2cefd66b1e # v0.4.0
     with:
       # Gerrit dispatches carry a refspec and check out the change;
       # the weekly schedule leaves it empty and takes the branch.
@@ -70,6 +70,10 @@ jobs:
       ref: ${{ inputs.GERRIT_BRANCH || 'master' }}
       # Sonar reads bytecode and a coverage report, so build first.
       build_type: "maven"
+      # odlparent sets the jacoco.destFile and jacoco.dataFile
+      # properties, which reads as the project placing its own
+      # execution data, and coverage then stays per subproject.
+      jacoco_mode: "shared"
       java_version: "21"
       mvn_version: "3.9.9"
       # Pinned to the version the legacy lane used; upgrading the
