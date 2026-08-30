@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.util;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -31,9 +30,9 @@ import org.opendaylight.yangtools.concepts.Immutable;
 /**
  * Utility class for adapting a {@link Collection}s to {@link Set}s and {@link List}s.
  *
- * @author Robert Varga
+ * @deprecated This class is not used anywhere and scheduled for removal in the next major release.
  */
-@Beta
+@Deprecated(since = "16.0.0", forRemoval = true)
 @NonNullByDefault
 public final class CollectionWrappers {
     private static final class ListWrapper<E> extends AbstractList<E> implements Delegator<Collection<E>> {
@@ -118,7 +117,7 @@ public final class CollectionWrappers {
     }
 
     private CollectionWrappers() {
-
+        // Hidden on purpose
     }
 
     /**
@@ -133,6 +132,7 @@ public final class CollectionWrappers {
      * @return An effectively-immutable wrapper of the collection.
      * @throws NullPointerException if collection is null
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static <E> List<E> wrapAsList(final Collection<E> collection) {
         if (collection.isEmpty()) {
             return ImmutableList.of();
@@ -163,6 +163,7 @@ public final class CollectionWrappers {
      * @throws NullPointerException if collection is null or any of its elements is null
      * @throws IllegalArgumentException if the collection's contents do not conform to the Set contract
      */
+    @Deprecated(since = "16.0.0", forRemoval = true)
     public static <E> Set<E> wrapAsSet(final Collection<E> collection) {
         if (collection.isEmpty()) {
             return ImmutableSet.of();
