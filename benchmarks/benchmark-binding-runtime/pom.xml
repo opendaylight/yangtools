@@ -32,21 +32,21 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>16.0.0-SNAPSHOT</version>
+                <version>16.0.0</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.ietf</groupId>
                 <artifactId>ietf-artifacts</artifactId>
-                <version>3.0.0-SNAPSHOT</version>
+                <version>3.0.0</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.transportpce.models</groupId>
                 <artifactId>transportpce-models-artifacts</artifactId>
-                <version>25.0.0-SNAPSHOT</version>
+                <version>25.0.0</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
