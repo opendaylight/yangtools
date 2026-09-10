@@ -41,6 +41,7 @@ class Mdsal807Test extends BaseCompilationTest {
             package org.opendaylight.yang.gen.v1.foo.norev;
 
             import com.google.common.collect.ImmutableSet;
+            import java.lang.Object;
             import java.lang.Override;
             import java.lang.String;
             import java.util.Arrays;

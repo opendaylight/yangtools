@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
+import static org.opendaylight.yangtools.binding.codegen.TypeNames.OBJECT;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 import static org.opendaylight.yangtools.binding.contract.Naming.getPropertyName;
@@ -90,10 +91,12 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
             final var arrays = importedName(JU_ARRAYS);
             final var codeHelpers = importedName(CODEHELPERS);
             final var override = importedName(OVERRIDE);
+            final var string = importedName(STRING);
+
             bb
                 .nl()
                 .at().eol(override)
-                .str("public final String stringValue()").oB()
+                .str("public final ").str(string).str(" stringValue()").oB()
                     .str("return ").str(codeHelpers).eol(".btoSVB()");
             for (var entry : props.entrySet()) {
                 bb.str("    .bit(").jStr(entry.getValue().getName()).str(", _").str(entry.getKey()).eol(")");
@@ -108,7 +111,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
                 .cB()
                 .nl()
                 .at().eol(override)
-                .str("public final boolean equals(Object obj)").oB()
+                .str("public final boolean equals(").str(importedName(OBJECT)).str(" obj)").oB()
                     .str("return this == obj || obj instanceof ").str(archetype.simpleName()).str(" other");
             for (var propName : props.keySet()) {
                 bb
@@ -120,7 +123,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
                 .cB()
                 .nl()
                 .at().eol(override)
-                .str("public final String toString()").oB()
+                .str("public final ").str(string).str(" toString()").oB()
                     .str("return ").str(codeHelpers).str(".jcTSB(getClass())");
             for (var entry : props.entrySet()) {
                 bb
@@ -314,7 +317,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
             final Map<String, Bit> props) {
         final var simpleName = archetype.simpleName();
         bb
-            .str("public static ").str(simpleName).str(" ofStringValue(String str)").oB()
+            .str("public static ").str(simpleName).str(" ofStringValue(").str(importedName(STRING)).str(" str)").oB()
                 .str("var values = ").str(importedName(CODEHELPERS)).eol(".btoValues(str, " + VALID_NAMES_NAME + ");")
                 .str("return new ").str(simpleName).eol("(");
 

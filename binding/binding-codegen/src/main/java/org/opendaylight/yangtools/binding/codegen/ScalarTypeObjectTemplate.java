@@ -268,10 +268,11 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
 
             final var juList = javaType.getReferenceString(JU_LIST);
             final var jurPattern = javaType.getReferenceString(JUR_PATTERN);
+            final var string = javaType.getReferenceString(STRING);
 
             bb
-                .str("public static final ").str(juList).str("<String> " + PATTERN_CONSTANT_NAME + " = ").str(juList)
-                    .str(".of(");
+                .str("public static final ").str(juList).lt().str(string).str("> " + PATTERN_CONSTANT_NAME + " = ")
+                    .str(juList).str(".of(");
             var it = regExps.keySet().iterator();
             while (true) {
                 bb.jString(it.next());
@@ -289,7 +290,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
                     bb
                         .str(" " + MEMBER_PATTERN_LIST + " = ").str(jurPattern)
                             .eol(".compile(" + PATTERN_CONSTANT_NAME + ".getFirst());")
-                        .str("private static final String " + MEMBER_REGEX_LIST + " = ")
+                        .str("private static final ").str(string).str(" " + MEMBER_REGEX_LIST + " = ")
                             .jString(regExps.values().iterator().next()).eS();
                 }
                 default -> {
@@ -297,7 +298,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
                     bb
                         .str("[] " + MEMBER_PATTERN_LIST + " = ").str(javaType.getReferenceString(CODEHELPERS))
                             .eol(".compilePatterns(" + PATTERN_CONSTANT_NAME + ");")
-                         .str("private static final String[] " + MEMBER_REGEX_LIST + " = { ");
+                         .str("private static final ").str(string).str("[] " + MEMBER_REGEX_LIST + " = { ");
 
                     it = regExps.values().iterator();
                     while (true) {
@@ -493,7 +494,8 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
         if (!ScalarTypes.INSTANCE_IDENTIFIER.name().equals(valueType.name())) {
             bb
                 .nl()
-                .str("public static ").str(simpleName).str(" getDefaultInstance(final String defaultValue)").oB()
+                .str("public static ").str(simpleName).str(" getDefaultInstance(").str(importedName(STRING))
+                    .str(" defaultValue)").oB()
                     .str("return new ").str(simpleName).str("(");
             if (VALUEOF_TYPES.contains(valueType)) {
                 bb.str(importedType).str(".valueOf(defaultValue)");
