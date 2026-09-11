@@ -912,7 +912,7 @@ public final class CodeHelpers {
 
     @NonNullByDefault
     public static int jcHCN(final @Nullable Object prop0, final @Nullable Object prop1) {
-        return nonzero(sumPropHashCodes(Objects.hashCode(prop0), Objects.hashCode(prop1)));
+        return nonzero(hashProperties(prop0, prop1));
     }
 
     @NonNullByDefault
@@ -922,17 +922,29 @@ public final class CodeHelpers {
 
     @NonNullByDefault
     public static int jcHCN(final byte @Nullable [] prop0, final byte @Nullable [] prop1) {
-        return nonzero(sumPropHashCodes(Arrays.hashCode(prop0), Arrays.hashCode(prop1)));
+        return nonzero(hashProperties(prop0, prop1));
     }
 
     @NonNullByDefault
-    public static int jcHCN(final Augmentable<?> augmentable, final @Nullable Object... props) {
+    public static int jcHCA(final Augmentable<?> augmentable, final @Nullable Object... props) {
         return nonzero(hashAugmentations(augmentable) + hashProperties(props));
     }
 
     @NonNullByDefault
-    public static int jcHCN(final Augmentable<?> augmentable, final byte[] @Nullable... props) {
+    public static int jcHCA(final Augmentable<?> augmentable, final @Nullable Object prop0,
+            final @Nullable Object prop1) {
+        return nonzero(hashAugmentations(augmentable) + hashProperties(prop0, prop1));
+    }
+
+    @NonNullByDefault
+    public static int jcHCA(final Augmentable<?> augmentable, final byte[] @Nullable... props) {
         return nonzero(hashAugmentations(augmentable) + hashProperties(props));
+    }
+
+    @NonNullByDefault
+    public static int jcHCA(final Augmentable<?> augmentable, final byte @Nullable [] prop0,
+            final byte @Nullable [] prop1) {
+        return nonzero(hashAugmentations(augmentable) + hashProperties(prop0, prop1));
     }
 
     @NonNullByDefault
@@ -960,12 +972,22 @@ public final class CodeHelpers {
     }
 
     @NonNullByDefault
+    private static int hashProperties(final byte @Nullable [] prop0, final byte @Nullable [] prop1) {
+        return sumPropHashCodes(Arrays.hashCode(prop0), Arrays.hashCode(prop1));
+    }
+
+    @NonNullByDefault
     private static int hashProperties(final @Nullable Object[] props) {
         int result = 1;
         for (var prop : props) {
             result = 31 * result + Objects.hashCode(prop);
         }
         return result;
+    }
+
+    @NonNullByDefault
+    private static int hashProperties(final @Nullable Object prop0, final @Nullable Object prop1) {
+        return sumPropHashCodes(Objects.hashCode(prop0), Objects.hashCode(prop1));
     }
 
     @NonNullByDefault
