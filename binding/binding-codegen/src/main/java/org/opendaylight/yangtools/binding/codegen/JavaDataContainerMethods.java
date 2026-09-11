@@ -92,11 +92,11 @@ record JavaDataContainerMethods(
         // either all are byte[] or none are: we can use CodeHelpers.jcHCN()
         final boolean useN = binaryCount == 0 || binaryCount == size;
 
-        bb.str("return ").str(importedName(CODEHELPERS)).str(useN ? ".jcHCN(" : ".jcHC(");
-        if (augmentable) {
-            bb.eol("this,");
+        bb.str("return ").str(importedName(CODEHELPERS)).str(".jcHC");
+        if (useN) {
+            bb.eol(augmentable ? "A(this," : "N(");
         } else {
-            bb.newLine();
+            bb.eol(augmentable ? "(this," : "(");
         }
 
         final var it = methods.iterator();

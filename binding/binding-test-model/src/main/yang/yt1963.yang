@@ -1,0 +1,12 @@
+module yt1963 {
+  prefix yt1963;
+  namespace yt1963;
+
+  container cont;
+
+  augment /cont {
+    container one;
+    container two;
+    container three;
+  }
+}

@@ -84,7 +84,7 @@ public class BuilderGeneratorTest extends BaseCompilationTest {
 
                 @Override
                 default int javaHC() {
-                    return CodeHelpers.jcHCN(this,
+                    return CodeHelpers.jcHCA(this,
                         getKey1(),
                         getKey2());
                 }
