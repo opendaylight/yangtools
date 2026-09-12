@@ -11,12 +11,8 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.AugmentationTemplate.AUGMENTATION;
-import static org.opendaylight.yangtools.binding.codegen.AugmentationTemplate.augmentationOfIn;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.CLASS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.IAE;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.NPE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.SUPPRESS_WARNINGS;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstLower;
@@ -37,9 +33,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.binding.contract.Naming;
-import org.opendaylight.yangtools.binding.lib.Augmentations;
-import org.opendaylight.yangtools.binding.lib.ImmutableAugmentations;
-import org.opendaylight.yangtools.binding.lib.MutableAugmentations;
+import org.opendaylight.yangtools.binding.lib.AugmentableBuilder;
 import org.opendaylight.yangtools.binding.model.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
@@ -91,15 +85,8 @@ final class BuilderTemplate extends BaseTemplate {
         }
     }
 
-    /**
-     * The name of the field holding augmentations.
-     */
-    static final @NonNull String AUGMENTATION_FIELD = "augmentation";
-
+    private static final @NonNull TypeName AUGMENTABLE_BUILDER = TypeName.ofClass(AugmentableBuilder.class);
     private static final @NonNull TypeName GROUPING = TypeName.ofClass(Grouping.class);
-    private static final @NonNull TypeName AUGMENTATIONS = TypeName.ofClass(Augmentations.class);
-    private static final @NonNull TypeName IMMUTABLE_AUGMENTATIONS = TypeName.ofClass(ImmutableAugmentations.class);
-    private static final @NonNull TypeName MUTABLE_AUGMENTATIONS = TypeName.ofClass(MutableAugmentations.class);
 
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
@@ -156,12 +143,22 @@ final class BuilderTemplate extends BaseTemplate {
     @Override
     BlockBuilder body() {
         final var simpleName = simpleName();
+        final var targetTypeName = importedName(targetType);
 
         final var bb = newBlockBuilder()
             .blk(wrapToDocumentation(createDescription().toRawString()))
             .frg(generateDeprecatedAnnotation())
             .eol(generatedAnnotation())
-            .str("public class ").str(simpleName).oB()
+            .str("public class ").str(simpleName);
+
+        final var isAugmentable = targetType instanceof AugmentableArchetype;
+        if (isAugmentable) {
+            bb.str(" extends ").str(importedName(AUGMENTABLE_BUILDER)).lt().str(targetTypeName).cs().str(simpleName)
+                .gt();
+        }
+
+        bb
+            .oB()
             // FIXME: remove this newline
             .nl()
             .frg(builderFields())
@@ -169,14 +166,7 @@ final class BuilderTemplate extends BaseTemplate {
 //            .blk(constantsDeclarations())
             .nl();
 
-        final var isAugmentable = targetType instanceof AugmentableArchetype;
-        if (isAugmentable) {
-            bb.str("private ").str(importedName(AUGMENTATIONS)).lt().str(importedName(targetType))
-                .str("> " + AUGMENTATION_FIELD + " = ").str(importedName(IMMUTABLE_AUGMENTATIONS)).eol(".of();");
-        }
-
-        final var targetTypeName = importedName(targetType);
-        bb
+        return bb
             .nl()
             .eol("/**")
             .eol(" * Construct an empty builder.")
@@ -197,12 +187,7 @@ final class BuilderTemplate extends BaseTemplate {
             .nl()
             .blk(generateEmptyInstance())
             .nl()
-            .blk(generateGetters());
-        if (isAugmentable) {
-            bb.nl().blk(generateAugmentation());
-        }
-
-        return bb
+            .blk(generateGetters())
             .nl()
             .blk(generateSetters())
             .nl()
@@ -379,9 +364,7 @@ final class BuilderTemplate extends BaseTemplate {
         return newBlockBuilder()
             .str(simpleName()).str("(final ").str(importedName(fromType)).str(" base)").jBlock(bb -> {
                 if (targetType instanceof AugmentableArchetype) {
-                    bb
-                        .str(AUGMENTATION_FIELD + " = ").str(importedName(AUGMENTATIONS))
-                            .eol(".copyOf(base.augmentations());");
+                    bb.eol("super(base);");
                 }
 
                 switch (props) {
@@ -810,51 +793,7 @@ final class BuilderTemplate extends BaseTemplate {
         for (var getter : props.allGetters()) {
             bb.blk(generateSetter(getter));
         }
-        bb.newLine();
-        if (targetType instanceof AugmentableArchetype) {
-            final var importedTarget = importedName(targetType);
-            final var immutableAugmentations = importedName(IMMUTABLE_AUGMENTATIONS);
-            final var augmentTypeRef = augmentationOfIn(targetType, javaType());
-
-            bb
-                .eol("/**")
-                .eol(" * Add an augmentation to this builder's product.")
-                .eol(" *")
-                .eol(" * @param augmentation augmentation to be added")
-                .eol(" * @return this builder")
-                .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentation} is null")
-                .eol(" */")
-                .str("public ").str(simpleName()).str(" addAugmentation(").str(augmentTypeRef).str(" augmentation)")
-                    .oB()
-                    .str("if (this." + AUGMENTATION_FIELD + " instanceof ").str(immutableAugmentations).lt()
-                        .str(importedTarget).str("> immutable)").oB()
-                        .eol("this." + AUGMENTATION_FIELD + " = immutable.toMutable();")
-                    .cB()
-                    .eol("this." + AUGMENTATION_FIELD + ".set(augmentation);")
-                    .eol("return this;")
-                .cB()
-                .nl()
-                .eol("/**")
-                .eol("""
-                       * Remove an augmentation from this builder's product. If this builder does not track such an \
-                      augmentation""")
-                .eol(" * type, this method does nothing.")
-                .eol(" *")
-                .eol(" * @param augmentationType augmentation type to be removed")
-                .eol(" * @return this builder")
-                .eol(" */")
-                .str("public ").str(simpleName()).str(" removeAugmentation(").str(importedName(CLASS))
-                    .str("<? extends ").str(augmentTypeRef).str("> augmentationType)").oB()
-                    .str("switch (" + AUGMENTATION_FIELD + ")").oB()
-                        .str("case ").str(immutableAugmentations).lt().str(importedTarget)
-                            .eol("> immutable -> " + AUGMENTATION_FIELD + " = immutable.without(augmentationType);")
-                        .str("case ").str(importedName(MUTABLE_AUGMENTATIONS)).lt().str(importedTarget)
-                            .eol("> mutable -> mutable.unset(augmentationType);")
-                    .cB()
-                    .eol("return this;")
-                .cB();
-        }
-        return bb;
+        return bb.nl();
     }
 
     private @NonNull BlockBuilder createDescription() {
@@ -906,27 +845,6 @@ final class BuilderTemplate extends BaseTemplate {
             .eol("</ul>")
             .nl()
             .str("@see ").str(target).nl();
-    }
-
-    @NonNullByDefault
-    private BlockBuilder generateAugmentation() {
-        return newBlockBuilder()
-            .eol("/**")
-            .eol(" * Return the specified augmentation, if it is present in this builder.")
-            .eol(" *")
-            .eol(" * @param <E$$> augmentation type")
-            .eol(" * @param augmentationType augmentation type class")
-            .eol(" * @return Augmentation object from this builder, or {@code null} if not present")
-            .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentType} is {@code null}")
-            .eol(" * @deprecated This method will not be generated in a future release")
-            .eol(" */")
-            .frg(new DeprecatedAnnotation(javaType(), true))
-            .at().str(importedName(SUPPRESS_WARNINGS)).eol("(\"checkstyle:methodTypeParameterName\")")
-            .str("public <E$$ extends ").str(importedName(AUGMENTATION)).lt().str(importedName(targetType))
-                // FIXME: 17.0.0: @Nullable
-                .str(", E$$>> E$$ augmentation(").str(importedName(CLASS)).str("<E$$> augmentationType)").oB()
-                .eol("return " + AUGMENTATION_FIELD + ".lookup(augmentationType);")
-            .cB();
     }
 
     /**
