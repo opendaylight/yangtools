@@ -371,8 +371,6 @@ public class YT1812Test extends BaseCompilationTest {
                     this._foo = base.getFoo();
                 }
 
-
-
                 /**
                  * Return current value associated with the property corresponding to {@link Current#key()}.
                  *
@@ -418,7 +416,6 @@ public class YT1812Test extends BaseCompilationTest {
                     this._foo = value;
                     return this;
                 }
-
 
                 /**
                  * {@return A new {@link Current} instance}
@@ -672,8 +669,6 @@ public class YT1812Test extends BaseCompilationTest {
                     this._foo = base.getFoo();
                 }
 
-
-
                 /**
                  * Return current value associated with the property corresponding to {@link Deprecated#key()}.
                  *
@@ -719,7 +714,6 @@ public class YT1812Test extends BaseCompilationTest {
                     this._foo = value;
                     return this;
                 }
-
 
                 /**
                  * {@return A new {@link Deprecated} instance}
@@ -976,8 +970,6 @@ public class YT1812Test extends BaseCompilationTest {
                     this._foo = base.getFoo();
                 }
 
-
-
                 /**
                  * Return current value associated with the property corresponding to {@link Obsolete#key()}.
                  *
@@ -1023,7 +1015,6 @@ public class YT1812Test extends BaseCompilationTest {
                     this._foo = value;
                     return this;
                 }
-
 
                 /**
                  * {@return A new {@link Obsolete} instance}

@@ -177,14 +177,10 @@ final class BuilderTemplate extends BaseTemplate {
                 .eol(" */")
                 .indented("public ", generateCopyConstructor(targetType))
                 .nl()
-                .blk(generateMethodFieldsFrom())
-                .nl()
-                .blk(generateEmptyInstance())
-                .nl()
+                .frg(generateMethodFieldsFrom())
+                .frg(generateEmptyInstance())
                 .blk(generateGetters())
-                .nl()
                 .blk(generateSetters())
-                .nl()
                 .eol("/**")
                 .str(" * {@return A new {@link ").str(targetName).eol("} instance}")
                 .eol(" */")
@@ -305,53 +301,49 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * Generate 'fieldsFrom' method to set builder properties based on type of given argument.
      */
-    private @Nullable BlockBuilder generateMethodFieldsFrom() {
-        if (!hasImplementsFromUses(targetType)) {
-            return null;
-        }
-
-        // FIXME: this is not used anywhere: I think this is meant to suppress duplicate checks?
-        final var done = getBaseIfcs(targetType);
-
-        return newBlockBuilder()
-            .blk(generateMethodFieldsFromComment(targetType))
-            .str("public void fieldsFrom(final ").str(importedName(GROUPING)).str(" arg)").jBlock(bb -> {
-                bb.eol("boolean isValidArg = false;");
-                for (var partial : getAllIfcs(targetType)) {
-                    bb.blk(generateIfCheck(partial, done));
-                }
-                bb.str(importedName(CODEHELPERS)).str(".validValue(isValidArg, arg, ")
-                    .jStr(getAllIfcs(targetType).stream().map(this::importedName).toList().toString()).eol(");");
-            }).nl();
+    private @Nullable BlockFragment generateMethodFieldsFrom() {
+        return !hasImplementsFromUses(targetType) ? null : bb -> {
+            // FIXME: this is not used anywhere: I think this is meant to suppress duplicate checks?
+            final var done = getBaseIfcs(targetType);
+            bb
+                .blk(generateMethodFieldsFromComment(targetType))
+                .str("public void fieldsFrom(final ").str(importedName(GROUPING)).str(" arg)").oB()
+                    .eol("boolean isValidArg = false;");
+            for (var partial : getAllIfcs(targetType)) {
+                bb.blk(generateIfCheck(partial, done));
+            }
+            bb
+                .str(importedName(CODEHELPERS)).str(".validValue(isValidArg, arg, ")
+                    .jStr(getAllIfcs(targetType).stream().map(this::importedName).toList().toString()).eol(");")
+                .cB()
+                .nl();
+        };
     }
 
     /**
      * Generate EMPTY instance which is lazily initialized in empty() method.
      */
-    private @Nullable BlockBuilder generateEmptyInstance() {
-        if (!isNonPresenceContainer(targetType)) {
-            return null;
-        }
-
-        final var nonnullTarget = importedNonNull(targetType);
-        final var targetName = targetType.simpleName();
-
-        return newBlockBuilder()
-            .str("private static final class LazyEmpty").oB()
-                .str("static final ").str(nonnullTarget).str(" INSTANCE = new ").str(simpleName())
-                    .eol("().build();")
-                 .nl()
-                 .str("private LazyEmpty()").oB()
-                     .eol("// Hidden on purpose")
-                 .cB()
-            .cB()
-            .nl()
-            .eol("/**")
-            .str(" * {@return an empty {@link ").str(targetName).eol("}}")
-            .eol(" */")
-            .str("public static ").str(nonnullTarget).str(" empty()").oB()
-                .eol("return LazyEmpty.INSTANCE;")
-            .cB();
+    private @Nullable BlockFragment generateEmptyInstance() {
+        return !isNonPresenceContainer(targetType) ? null : bb -> {
+            final var nonnullTarget = importedNonNull(targetType);
+            bb
+                .str("private static final class LazyEmpty").oB()
+                    .str("static final ").str(nonnullTarget).str(" INSTANCE = new ").str(simpleName())
+                        .eol("().build();")
+                    .nl()
+                    .str("private LazyEmpty()").oB()
+                        .eol("// Hidden on purpose")
+                    .cB()
+                .cB()
+                .nl()
+                .eol("/**")
+                .str(" * {@return an empty {@link ").str(targetType.simpleName()).eol("}}")
+                .eol(" */")
+                .str("public static ").str(nonnullTarget).str(" empty()").oB()
+                    .eol("return LazyEmpty.INSTANCE;")
+                .cB()
+                .nl();
+        };
     }
 
     @NonNullByDefault
@@ -596,49 +588,45 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * {@return string with getter methods}
      */
-    private @NonNull BlockBuilder generateGetters() {
-        final var bb = newBlockBuilder();
+    private @Nullable BlockBuilder generateGetters() {
+        final var allGetters = props.allGetters();
+        final var key = props instanceof WithKey withKey ? withKey.key : null;
+        if (key == null && allGetters.isEmpty()) {
+            return null;
+        }
 
-        if (props instanceof WithKey withKey) {
+        final var targetName = importedName(targetType);
+        final var bb = newBlockBuilder();
+        if (key != null) {
             bb
                 .eol("/**")
-                .str(" * Return current value associated with the property corresponding to {@link ")
-                    .str(importedName(targetType)).eol("#key()}.")
+                .str(" * Return current value associated with the property corresponding to {@link ").str(targetName)
+                    .eol("#key()}.")
                 .eol(" *")
                 .eol(" * @return current value")
                 .eol(" * @deprecated This method will not be generated in a future release")
                 .eol(" */")
                 .frg(new DeprecatedAnnotation(javaType(), true))
-                .str("public ").str(importedName(withKey.key)).str(" key()").oB()
+                .str("public ").str(importedName(key)).str(" key()").oB()
                     .eol("return key;")
                 .cB()
                 .newLine();
         }
 
-        final var it = props.allGetters().iterator();
-        if (!it.hasNext()) {
-            return bb;
-        }
-
-        while (true) {
-            final var getter = it.next();
+        for (var getter : props.allGetters()) {
             bb
                 .eol("/**")
-                .str(" * Return current value associated with the property corresponding to {@link ")
-                    .str(importedName(targetType)).str("#").str(getter.name()).eol("()}.")
+                .str(" * Return current value associated with the property corresponding to {@link ").str(targetName)
+                    .str("#").str(getter.name()).eol("()}.")
                 .eol(" *")
                 .eol(" * @return current value")
                 .eol(" * @deprecated This method will not be generated in a future release")
                 .eol(" */")
                 .frg(new DeprecatedAnnotation(javaType(), true))
-                .blk(asGetterMethod(getter.propName(), getter.type()));
-
-            if (!it.hasNext()) {
-                return bb;
-            }
-
-            bb.newLine();
+                .blk(asGetterMethod(getter.propName(), getter.type()))
+                .newLine();
         }
+        return bb;
     }
 
     @NonNullByDefault
