@@ -11,7 +11,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import javax.annotation.processing.Generated;
@@ -36,10 +35,6 @@ final class TypeNames {
      * {@code java.lang.IllegalArgumentException} as a TypeName.
      */
     static final TypeName IAE = TypeName.ofClass(IllegalArgumentException.class);
-    /**
-     * {@code java.lang.NoSuchElementException} as a TypeName.
-     */
-    static final TypeName NSEE = TypeName.ofClass(NoSuchElementException.class);
     /**
      * {@code java.lang.Object} as a TypeName.
      */

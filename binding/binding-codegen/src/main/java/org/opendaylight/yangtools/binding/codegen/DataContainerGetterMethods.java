@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.NSEE;
 import static org.opendaylight.yangtools.binding.contract.Naming.NONNULL_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.REQUIRE_PREFIX;
 
 import com.google.common.base.CharMatcher;
+import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
  */
 @NonNullByDefault
 final class DataContainerGetterMethods implements BlockFragment {
+    private static final TypeName NSEE = TypeName.ofClass(NoSuchElementException.class);
     private static final CharMatcher WS_MATCHER = CharMatcher.anyOf("\n\t");
     private static final Pattern SPACES_PATTERN = Pattern.compile(" +");
 
