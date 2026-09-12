@@ -10,17 +10,17 @@ package org.opendaylight.yangtools.binding.lib;
 import java.io.Serializable;
 
 /**
- * A {@link Serializable} proxy for {@link EmptyAugmentations}.
+ * A {@link Serializable} proxy for {@link ImmutableAugmentations0}.
  *
  * @since 16.0.1
  */
-final class EAv1 implements Serializable {
+final class IA0 implements Serializable {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     @java.io.Serial
     @SuppressWarnings("static-method")
     Object readResolve() {
-        return EmptyAugmentations.INSTANCE;
+        return ImmutableAugmentations0.INSTANCE;
     }
 }

@@ -24,18 +24,18 @@ import org.opendaylight.yangtools.binding.DataContainer;
 /**
  * An {@link Externalizable} proxy for {@link HashAugmentations}.
  */
-final class HAv1 implements Externalizable {
+final class HA implements Externalizable {
     @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private HashAugmentations<?> augmentations;
 
     @SuppressWarnings("checkstyle:redundantModifier")
-    public HAv1() {
+    public HA() {
         // For Externalizable
     }
 
-    HAv1(final HashAugmentations<?> augmentations) {
+    HA(final HashAugmentations<?> augmentations) {
         this.augmentations = requireNonNull(augmentations);
     }
 
