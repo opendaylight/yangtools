@@ -194,7 +194,7 @@ final class BuilderTemplate extends BaseTemplate {
                 .nl()
                 .frg(generateMethodFieldsFrom())
                 .frg(generateEmptyInstance())
-                .blk(generateGetters())
+                .frg(generateGetters())
                 .blk(generateSetters())
                 .eol("/**")
                 .str(" * {@return A new {@link ").str(targetName).eol("} instance}")
@@ -582,45 +582,41 @@ final class BuilderTemplate extends BaseTemplate {
     /**
      * {@return string with getter methods}
      */
-    private @Nullable BlockBuilder generateGetters() {
+    private @Nullable BlockFragment generateGetters() {
         final var allGetters = props.allGetters();
         final var key = props instanceof WithKey withKey ? withKey.key : null;
-        if (key == null && allGetters.isEmpty()) {
-            return null;
-        }
+        return key == null && allGetters.isEmpty() ? null : bb -> {
+            final var targetName = importedName(targetType);
+            if (key != null) {
+                bb
+                    .eol("/**")
+                    .str(" * Return current value associated with the property corresponding to {@link ")
+                        .str(targetName).eol("#key()}.")
+                    .eol(" *")
+                    .eol(" * @return current value")
+                    .eol(" * @deprecated This method will not be generated in a future release")
+                    .eol(" */")
+                    .frg(new DeprecatedAnnotation(javaType(), true))
+                    .str("public ").str(importedName(key)).str(" key()").oB()
+                        .eol("return key;")
+                    .cB()
+                    .newLine();
+            }
 
-        final var targetName = importedName(targetType);
-        final var bb = newBlockBuilder();
-        if (key != null) {
-            bb
-                .eol("/**")
-                .str(" * Return current value associated with the property corresponding to {@link ").str(targetName)
-                    .eol("#key()}.")
-                .eol(" *")
-                .eol(" * @return current value")
-                .eol(" * @deprecated This method will not be generated in a future release")
-                .eol(" */")
-                .frg(new DeprecatedAnnotation(javaType(), true))
-                .str("public ").str(importedName(key)).str(" key()").oB()
-                    .eol("return key;")
-                .cB()
-                .newLine();
-        }
-
-        for (var getter : props.allGetters()) {
-            bb
-                .eol("/**")
-                .str(" * Return current value associated with the property corresponding to {@link ").str(targetName)
-                    .str("#").str(getter.name()).eol("()}.")
-                .eol(" *")
-                .eol(" * @return current value")
-                .eol(" * @deprecated This method will not be generated in a future release")
-                .eol(" */")
-                .frg(new DeprecatedAnnotation(javaType(), true))
-                .blk(asGetterMethod(getter.propName(), getter.type()))
-                .newLine();
-        }
-        return bb;
+            for (var getter : props.allGetters()) {
+                bb
+                    .eol("/**")
+                    .str(" * Return current value associated with the property corresponding to {@link ")
+                        .str(targetName).str("#").str(getter.name()).eol("()}.")
+                    .eol(" *")
+                    .eol(" * @return current value")
+                    .eol(" * @deprecated This method will not be generated in a future release")
+                    .eol(" */")
+                    .frg(new DeprecatedAnnotation(javaType(), true))
+                    .blk(asGetterMethod(getter.propName(), getter.type()))
+                    .newLine();
+            }
+        };
     }
 
     @NonNullByDefault
