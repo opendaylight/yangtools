@@ -283,7 +283,8 @@ public final class BindingMap {
      * @throws NullPointerException if any value is {@code null}, or if the {@code values} array is {@code null}
      */
     @SafeVarargs
-    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> of(final V... values) {
+    @SuppressWarnings("varargs")
+    public static final <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> of(final V... values) {
         return of(Arrays.asList(values));
     }
 
@@ -424,7 +425,9 @@ public final class BindingMap {
      * @throws NullPointerException if any value is {@code null}, or if the {@code values} array is {@code null}
      */
     @SafeVarargs
-    public static <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> ordered(final V... values) {
+    @SuppressWarnings("varargs")
+    public static final <K extends Key<V>, V extends EntryObject<?, V, K>> @NonNull Map<K, V> ordered(
+            final V... values) {
         return ordered(Arrays.asList(values));
     }
 
@@ -516,6 +519,7 @@ public final class BindingMap {
          * @throws NullPointerException if value is, or contains, {@code null}
          */
         @SafeVarargs
+        @SuppressWarnings("varargs")
         public final @NonNull Builder<K, V> addAll(final V... values) {
             return addAll(Arrays.asList(values));
         }
