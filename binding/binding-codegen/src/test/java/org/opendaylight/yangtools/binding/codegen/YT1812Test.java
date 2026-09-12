@@ -350,10 +350,8 @@ public class YT1812Test extends BaseCompilationTest {
              */
             @Generated("mdsal-binding-generator")
             public class CurrentBuilder extends AugmentableBuilder<Current, CurrentBuilder> {
-
                 private String _foo;
                 private CurrentKey key;
-
 
                 /**
                  * Construct an empty builder.
@@ -654,10 +652,8 @@ public class YT1812Test extends BaseCompilationTest {
             @SuppressWarnings("deprecation")
             @Generated("mdsal-binding-generator")
             public class DeprecatedBuilder extends AugmentableBuilder<Deprecated, DeprecatedBuilder> {
-
                 private String _foo;
                 private DeprecatedKey key;
-
 
                 /**
                  * Construct an empty builder.
@@ -961,10 +957,8 @@ public class YT1812Test extends BaseCompilationTest {
             @Deprecated(forRemoval = true)
             @Generated("mdsal-binding-generator")
             public class ObsoleteBuilder extends AugmentableBuilder<Obsolete, ObsoleteBuilder> {
-
                 private String _foo;
                 private ObsoleteKey key;
-
 
                 /**
                  * Construct an empty builder.

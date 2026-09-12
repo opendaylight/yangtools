@@ -143,7 +143,7 @@ final class BuilderTemplate extends BaseTemplate {
     @Override
     BlockBuilder body() {
         final var simpleName = simpleName();
-        final var targetTypeName = importedName(targetType);
+        final var targetName = importedName(targetType);
 
         final var bb = newBlockBuilder()
             .blk(wrapToDocumentation(createDescription().toRawString()))
@@ -153,52 +153,46 @@ final class BuilderTemplate extends BaseTemplate {
 
         final var isAugmentable = targetType instanceof AugmentableArchetype;
         if (isAugmentable) {
-            bb.str(" extends ").str(importedName(AUGMENTABLE_BUILDER)).lt().str(targetTypeName).cs().str(simpleName)
-                .gt();
+            bb.str(" extends ").str(importedName(AUGMENTABLE_BUILDER)).lt().str(targetName).cs().str(simpleName).gt();
         }
 
-        bb
-            .oB()
-            // FIXME: remove this newline
-            .nl()
-            .frg(builderFields())
-//            .nl()
-//            .blk(constantsDeclarations())
-            .nl();
-
         return bb
-            .nl()
-            .eol("/**")
-            .eol(" * Construct an empty builder.")
-            .eol(" */")
-            .str("public ").str(simpleName).str("()").oB()
-                .eol("// No-op")
-            .cB()
-            .blk(generateConstructorsFromIfcs())
-            .nl()
-            .eol("/**")
-            .str(" * Construct a builder initialized with state from specified {@link ").str(targetTypeName).eol("}.")
-            .eol(" *")
-            .str(" * @param base ").str(targetTypeName).eol(" from which the builder should be initialized")
-            .eol(" */")
-            .indented("public ", generateCopyConstructor(targetType))
-            .nl()
-            .blk(generateMethodFieldsFrom())
-            .nl()
-            .blk(generateEmptyInstance())
-            .nl()
-            .blk(generateGetters())
-            .nl()
-            .blk(generateSetters())
-            .nl()
-            .eol("/**")
-            .str(" * {@return A new {@link ").str(targetTypeName).eol("} instance}")
-            .eol(" */")
-            .str("public ").str(importedNonNull(targetType)).str(" build()").oB()
-                .str("return new ").str(importedName(implJavaType.name())).eol("(this);")
-            .cB()
-            .nl()
-            .blk(new BuilderImplTemplate(implJavaType, this).body())
+            .oB()
+                .frg(builderFields())
+                // .nl()
+                // .blk(constantsDeclarations())
+                .nl()
+                .eol("/**")
+                .eol(" * Construct an empty builder.")
+                .eol(" */")
+                .str("public ").str(simpleName).str("()").oB()
+                    .eol("// No-op")
+                .cB()
+                .blk(generateConstructorsFromIfcs())
+                .nl()
+                .eol("/**")
+                .str(" * Construct a builder initialized with state from specified {@link ").str(targetName).eol("}.")
+                .eol(" *")
+                .str(" * @param base ").str(targetName).eol(" from which the builder should be initialized")
+                .eol(" */")
+                .indented("public ", generateCopyConstructor(targetType))
+                .nl()
+                .blk(generateMethodFieldsFrom())
+                .nl()
+                .blk(generateEmptyInstance())
+                .nl()
+                .blk(generateGetters())
+                .nl()
+                .blk(generateSetters())
+                .nl()
+                .eol("/**")
+                .str(" * {@return A new {@link ").str(targetName).eol("} instance}")
+                .eol(" */")
+                .str("public ").str(importedNonNull(targetType)).str(" build()").oB()
+                    .str("return new ").str(importedName(implJavaType.name())).eol("(this);")
+                .cB()
+                .nl()
+                .blk(new BuilderImplTemplate(implJavaType, this).body())
             .cB();
     }
 
