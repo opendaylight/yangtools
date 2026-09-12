@@ -37,9 +37,13 @@ public sealed interface Augmentations<C extends Augmentable<C> & DataContainer>
     static <C extends Augmentable<C> & DataContainer> @NonNull Augmentations<C> copyOf(
             final Map<Class<? extends Augmentation<C, ?>>, Augmentation<C, ?>> map) {
         return switch (map) {
-            case HashAugmentations<C> hash -> hash.clone();
             case ImmutableAugmentations<C> immutable -> immutable;
-            default -> map.isEmpty() ? ImmutableAugmentations.of() : new HashAugmentations<>(map);
+            case HashAugmentations<C> hash -> hash.clone();
+            default -> switch (map.size()) {
+                case 0 -> ImmutableAugmentations.of();
+                case 1 -> ImmutableAugmentations.of(map.values().iterator().next());
+                default ->  new HashAugmentations<>(map);
+            };
         };
     }
 

@@ -27,22 +27,20 @@ import org.opendaylight.yangtools.binding.DataContainer;
  * @param <C> the {@link Augmentable} {@link DataContainer} type
  * @since 16.0.1
  */
-final class EmptyAugmentations<C extends DataContainer & Augmentable<C>> extends ImmutableAugmentations<C> {
-    static final @NonNull EmptyAugmentations<?> INSTANCE = new EmptyAugmentations<>();
+final class ImmutableAugmentations0<C extends DataContainer & Augmentable<C>> extends ImmutableAugmentations<C> {
+    static final @NonNull ImmutableAugmentations0<?> INSTANCE = new ImmutableAugmentations0<>();
 
-    private EmptyAugmentations() {
+    private ImmutableAugmentations0() {
         // hidden on purpose
     }
 
     @Override
-    HashAugmentations<C> withImpl(final Augmentation<C, ?> value) {
-        final var ret = new HashAugmentations<C>();
-        ret.set(value);
-        return ret;
+    ImmutableAugmentations<C> withImpl(final Augmentation<C, ?> value) {
+        return ImmutableAugmentations.of(value);
     }
 
     @Override
-    EmptyAugmentations<C> withoutImpl(final Class<? extends Augmentation<C, ?>> key) {
+    ImmutableAugmentations0<C> withoutImpl(final Class<? extends Augmentation<C, ?>> key) {
         return this;
     }
 
@@ -93,7 +91,7 @@ final class EmptyAugmentations<C extends DataContainer & Augmentable<C>> extends
     @java.io.Serial
     @SuppressWarnings("static-method")
     private Object writeReplace() {
-        return new EAv1();
+        return new IA0();
     }
 
     @java.io.Serial
@@ -115,6 +113,6 @@ final class EmptyAugmentations<C extends DataContainer & Augmentable<C>> extends
     }
 
     private static NotSerializableException nse() {
-        return new NotSerializableException(EmptyAugmentations.class.getName());
+        return new NotSerializableException(ImmutableAugmentations0.class.getName());
     }
 }
