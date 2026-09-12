@@ -32,5 +32,6 @@ public sealed interface ScalarTypeObjectRegistrar extends Mutable permits Defaul
      * @param unsafeCtor the unsafe constructor
      */
     <V, T extends ScalarTypeObject<V>> void registerUnsafeSTO(@NonNull Class<T> typeClass,
-        @NonNull Function<V, T> safeCtor, @NonNull BiFunction<UnsafeSecret, V, T> unsafeCtor);
+        @NonNull Function<@NonNull V, @NonNull T> safeCtor,
+        @NonNull BiFunction<@NonNull UnsafeSecret, @NonNull V, @NonNull T> unsafeCtor);
 }
