@@ -14,7 +14,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 import javax.annotation.processing.Generated;
-import javax.management.ConstructorParameters;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -73,11 +72,6 @@ final class TypeNames {
      * {@code javax.annotation.processing.Generated} as a TypeName.
      */
     static final TypeName GENERATED = TypeName.ofClass(Generated.class);
-
-    /**
-     * {@code javax.management.ConstructorParameters} as a TypeName.
-     */
-    static final TypeName CONSTRUCTOR_PARAMETERS = TypeName.ofClass(ConstructorParameters.class);
 
     /**
      * {@code org.eclipse.jdt.annotation.NonNull} as a TypeName.

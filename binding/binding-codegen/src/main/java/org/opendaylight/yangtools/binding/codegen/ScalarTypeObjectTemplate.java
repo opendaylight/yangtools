@@ -11,7 +11,6 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeConstants.PATTERN_CONSTANT_NAME;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.CONSTRUCTOR_PARAMETERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JUR_PATTERN;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_ARRAYS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_BASE64;
@@ -26,6 +25,7 @@ import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.
 import com.google.common.base.MoreObjects;
 import java.util.LinkedHashMap;
 import java.util.Set;
+import javax.management.ConstructorParameters;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ScalarTypeObject;
 import org.opendaylight.yangtools.binding.UnsafeSecret;
@@ -368,9 +368,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
         }
     }
 
-    /**
-     * {@code org.opendaylight.yangtools.binding.UnsafeSecret} as a TypeName.
-     */
+    private static final TypeName CONSTRUCTOR_PARAMETERS = TypeName.ofClass(ConstructorParameters.class);
     private static final TypeName UNSAFE_SECRET = TypeName.ofClass(UnsafeSecret.class);
     /**
      * All types that have a {@code valueOf(String)} static factory method suitable for directly implementing
