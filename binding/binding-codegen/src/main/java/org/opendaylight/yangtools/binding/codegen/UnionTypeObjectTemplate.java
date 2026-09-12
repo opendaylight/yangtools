@@ -420,7 +420,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         final var it = properties.iterator();
         do {
             final var tag = it.next();
-            bb.nl().blk(asGetterMethod(tag.name(), tag.type()));
+            bb.nl().frg(asGetterMethod(tag.name(), tag.type()));
         } while (it.hasNext());
         return bb;
     }

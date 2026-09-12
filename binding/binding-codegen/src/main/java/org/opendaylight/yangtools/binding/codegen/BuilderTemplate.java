@@ -613,7 +613,7 @@ final class BuilderTemplate extends BaseTemplate {
                     .eol(" * @deprecated This method will not be generated in a future release")
                     .eol(" */")
                     .frg(new DeprecatedAnnotation(javaType(), true))
-                    .blk(asGetterMethod(getter.propName(), getter.type()))
+                    .frg(asGetterMethod(getter.propName(), getter.type()))
                     .newLine();
             }
         };
