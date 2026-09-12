@@ -37,10 +37,6 @@ final class TypeNames {
      */
     static final TypeName IAE = TypeName.ofClass(IllegalArgumentException.class);
     /**
-     * {@code java.lang.NullPointerException} as a TypeName.
-     */
-    static final TypeName NPE = TypeName.ofClass(NullPointerException.class);
-    /**
      * {@code java.lang.NoSuchElementException} as a TypeName.
      */
     static final TypeName NSEE = TypeName.ofClass(NoSuchElementException.class);

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.IAE;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.NPE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.OVERRIDE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.STRING;
 
@@ -26,6 +25,7 @@ import org.opendaylight.yangtools.binding.model.TypeName;
 @NonNullByDefault
 final class EnumTypeObjectTemplate extends ArchetypeTemplate<EnumTypeObjectArchetype> {
     private static final TypeName ENUM_TYPE_OBJECT = TypeName.ofClass(EnumTypeObject.class);
+    private static final TypeName NPE = TypeName.ofClass(NullPointerException.class);
 
     private EnumTypeObjectTemplate(final GeneratedClass javaType, final EnumTypeObjectArchetype archetype,
             final DataRootArchetype root) {
