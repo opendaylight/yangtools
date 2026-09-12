@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verifyNotNull;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
 import com.google.errorprone.annotations.CheckReturnValue;
@@ -393,50 +392,6 @@ final class BlockBuilder extends Block.Builder {
         buf().append("    ").append(verifyStr(str));
         return this;
     }
-
-    // FIXME: clarify contract
-    @NonNull BlockBuilder indented(final @NonNull String prefix, final @Nullable BlockBuilder bb) {
-        if (bb != null) {
-            buf.append("    ").append(requireNonNull(prefix));
-            indented("    ", bb.buf.toString());
-        }
-        return this;
-    }
-
-    @NonNullByDefault
-    private void indented(final String indent, final String text) {
-        final var len = text.length();
-        if (len == 0) {
-            // no-op
-            return;
-        }
-
-        int begin = 0;
-        do {
-            int nl = text.indexOf('\n', begin);
-            if (nl == -1) {
-                buf.append(indent).append(text, begin, len);
-                break;
-            }
-
-            final var next = nl + 1;
-            if (begin == nl) {
-                newLine();
-            } else {
-                markNl(buf.append(indent).append(text, begin, next));
-            }
-            begin = next;
-        } while (begin < len);
-    }
-
-    // FIXME: something like, but perhaps that is part of a JavaBlockBuilder along with importedName() et al.
-    //    @CheckReturnValue
-    //    @NonNull BlockBuilder fieldName(final GeneratedProperty property) {
-    //        super.append("_");
-    //        super.append(property.getName());
-    //        return this;
-    //    }
-
 
     @Override
     Block build() {

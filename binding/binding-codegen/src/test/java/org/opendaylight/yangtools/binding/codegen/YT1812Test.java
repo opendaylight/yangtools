@@ -365,7 +365,7 @@ public class YT1812Test extends BaseCompilationTest {
                  *
                  * @param base Current from which the builder should be initialized
                  */
-                public     CurrentBuilder(final Current base) {
+                public CurrentBuilder(final Current base) {
                     super(base);
                     this.key = base.key();
                     this._foo = base.getFoo();
@@ -663,7 +663,7 @@ public class YT1812Test extends BaseCompilationTest {
                  *
                  * @param base Deprecated from which the builder should be initialized
                  */
-                public     DeprecatedBuilder(final Deprecated base) {
+                public DeprecatedBuilder(final Deprecated base) {
                     super(base);
                     this.key = base.key();
                     this._foo = base.getFoo();
@@ -964,7 +964,7 @@ public class YT1812Test extends BaseCompilationTest {
                  *
                  * @param base Obsolete from which the builder should be initialized
                  */
-                public     ObsoleteBuilder(final Obsolete base) {
+                public ObsoleteBuilder(final Obsolete base) {
                     super(base);
                     this.key = base.key();
                     this._foo = base.getFoo();

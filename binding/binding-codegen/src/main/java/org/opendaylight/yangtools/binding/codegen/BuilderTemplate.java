@@ -156,7 +156,7 @@ final class BuilderTemplate extends BaseTemplate {
             bb.str(" extends ").str(importedName(AUGMENTABLE_BUILDER)).lt().str(targetName).cs().str(simpleName).gt();
         }
 
-        return bb
+        bb
             .oB()
                 .frg(builderFields())
                 // .nl()
@@ -175,7 +175,22 @@ final class BuilderTemplate extends BaseTemplate {
                 .eol(" *")
                 .str(" * @param base ").str(targetName).eol(" from which the builder should be initialized")
                 .eol(" */")
-                .indented("public ", generateCopyConstructor(targetType))
+                .str("public ").str(simpleName).str("(final ").str(targetName).str(" base)").oB();
+        if (isAugmentable) {
+            bb.eol("super(base);");
+        }
+        switch (props) {
+            case WithKey with -> {
+                bb.eol("this.key = base.key();");
+                for (var getter : with.keyGetters) {
+                    bb.str("this.").str(getter.fieldName()).str(" = base.").str(getter.name()).eol("();");
+                }
+                appendCopyNonKeys(bb, with.implGetters);
+            }
+            case WithoutKey without -> appendCopyNonKeys(bb, without.allGetters);
+        }
+        return bb
+                .cB()
                 .nl()
                 .frg(generateMethodFieldsFrom())
                 .frg(generateEmptyInstance())
@@ -344,27 +359,6 @@ final class BuilderTemplate extends BaseTemplate {
                 .cB()
                 .nl();
         };
-    }
-
-    @NonNullByDefault
-    private BlockBuilder generateCopyConstructor(final Type fromType) {
-        return newBlockBuilder()
-            .str(simpleName()).str("(final ").str(importedName(fromType)).str(" base)").jBlock(bb -> {
-                if (targetType instanceof AugmentableArchetype) {
-                    bb.eol("super(base);");
-                }
-
-                switch (props) {
-                    case WithKey with -> {
-                        bb.eol("this.key = base.key();");
-                        for (var getter : with.keyGetters) {
-                            bb.str("this.").str(getter.fieldName()).str(" = base.").str(getter.name()).eol("();");
-                        }
-                        appendCopyNonKeys(bb, with.implGetters);
-                    }
-                    case WithoutKey without -> appendCopyNonKeys(bb, without.allGetters);
-                }
-            }).nl();
     }
 
     @NonNullByDefault
