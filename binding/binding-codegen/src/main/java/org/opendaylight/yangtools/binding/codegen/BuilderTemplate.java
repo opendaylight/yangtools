@@ -13,7 +13,6 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.IAE;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.SUPPRESS_WARNINGS;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstLower;
 import static org.opendaylight.yangtools.binding.contract.Naming.toFirstUpper;
@@ -87,6 +86,7 @@ final class BuilderTemplate extends BaseTemplate {
 
     private static final @NonNull TypeName AUGMENTABLE_BUILDER = TypeName.ofClass(AugmentableBuilder.class);
     private static final @NonNull TypeName GROUPING = TypeName.ofClass(Grouping.class);
+    private static final @NonNull TypeName SUPPRESS_WARNINGS = TypeName.ofClass(SuppressWarnings.class);
 
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default

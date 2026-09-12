@@ -48,10 +48,6 @@ final class TypeNames {
      */
     static final TypeName OVERRIDE = TypeName.ofClass(Override.class);
     /**
-     * {@code java.lang.SuppressWarnings} as a TypeName.
-     */
-    static final TypeName SUPPRESS_WARNINGS = TypeName.ofClass(SuppressWarnings.class);
-    /**
      * {@code java.lang.void} as a TypeName.
      */
     static final TypeName VOID = TypeName.ofClass(void.class);
