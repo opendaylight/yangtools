@@ -10,9 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -76,17 +74,9 @@ final class TypeNames {
      */
     static final TypeName JU_BASE64 = TypeName.ofClass(Base64.class);
     /**
-     * {@code java.util.HashMap} as a TypeName.
-     */
-    static final TypeName JU_HASHMAP = TypeName.ofClass(HashMap.class);
-    /**
      * {@code java.util.List} as a TypeName.
      */
     static final TypeName JU_LIST = TypeName.ofClass(List.class);
-    /**
-     * {@code java.util.Map} as a TypeName.
-     */
-    static final TypeName JU_MAP = TypeName.ofClass(Map.class);
     /**
      * {@code java.util.Objects} as a TypeName.
      */
