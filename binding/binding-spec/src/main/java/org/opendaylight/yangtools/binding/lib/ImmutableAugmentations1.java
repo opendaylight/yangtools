@@ -14,7 +14,7 @@ import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ObjectStreamException;
-import java.util.Objects;
+import java.util.SequencedMap;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.binding.Augmentable;
@@ -27,71 +27,99 @@ import org.opendaylight.yangtools.binding.DataContainer;
  * @param <C> the {@link Augmentable} {@link DataContainer} type
  * @since 16.0.1
  */
-final class ImmutableAugmentations0<C extends DataContainer & Augmentable<C>> extends ImmutableAugmentations<C> {
-    static final @NonNull ImmutableAugmentations0<?> INSTANCE = new ImmutableAugmentations0<>();
+final class ImmutableAugmentations1<C extends DataContainer & Augmentable<C>, A extends Augmentation<C, A>>
+        extends ImmutableAugmentations<C>
+        implements SequencedMap<Class<? extends Augmentation<C, ?>>, Augmentation<C, ?>> {
+    private final @NonNull Augmentation<C, ?> only;
 
-    private ImmutableAugmentations0() {
-        // hidden on purpose
+    ImmutableAugmentations1(final Augmentation<C, A> only) {
+        this.only = requireNonNull(only);
     }
 
     @Override
-    ImmutableAugmentations<C> withImpl(final Augmentation<C, ?> value) {
-        return ImmutableAugmentations.of(value);
+    Augmentations<C> withImpl(final Augmentation<C, ?> value) {
+        if (value.implementedInterface().equals(only.implementedInterface())) {
+            return new ImmutableAugmentations1<>(value);
+        }
+        final var ret = new HashAugmentations<C>();
+        ret.set(only);
+        ret.set(value);
+        return ret;
     }
 
     @Override
-    ImmutableAugmentations0<C> withoutImpl(final Class<? extends Augmentation<C, ?>> key) {
-        return this;
+    ImmutableAugmentations<C> withoutImpl(final Class<? extends Augmentation<C, ?>> key) {
+        return key.equals(only.implementedInterface()) ? ImmutableAugmentations.of() : this;
     }
 
     @Override
     public boolean containsKey(final Object key) {
-        requireNonNull(key);
-        return false;
+        return key.equals(only.implementedInterface());
     }
 
     @Override
     public boolean containsValue(final Object value) {
-        Objects.requireNonNull(value);
-        return false;
+        return value.equals(only);
     }
 
     @Override
     public Set<Entry<Class<? extends Augmentation<C, ?>>, Augmentation<C, ?>>> entrySet() {
-        return Set.of();
+        return Set.of(firstEntry());
     }
 
     @Override
     public Set<Class<? extends Augmentation<C, ?>>> keySet() {
-        return Set.of();
+        return Set.of(keyOf(only));
     }
 
     @Override
     public Augmentation<C, ?> get(final Object key) {
-        requireNonNull(key);
-        return null;
+        return key.equals(only.implementedInterface()) ? only : null;
     }
 
     @Override
     public Augmentation<C, ?> getOrDefault(final Object key, final Augmentation<C, ?> defaultValue) {
-        requireNonNull(key);
-        return defaultValue;
+        return key.equals(only.implementedInterface()) ? only : defaultValue;
     }
 
     @Override
     public boolean isEmpty() {
-        return true;
+        return false;
     }
 
     @Override
     public int size() {
-        return 0;
+        return 1;
+    }
+
+    @Override
+    public ImmutableAugmentations1<C, A> reversed() {
+        return this;
+    }
+
+    @Override
+    public Entry<Class<? extends Augmentation<C, ?>>, Augmentation<C, ?>> firstEntry() {
+        return entryOf(only);
+    }
+
+    @Override
+    public Entry<Class<? extends Augmentation<C, ?>>, Augmentation<C, ?>> lastEntry() {
+        return entryOf(only);
+    }
+
+    @Override
+    public Entry<Class<? extends Augmentation<C, ?>>, Augmentation<C, ?>> pollFirstEntry() {
+        throw uoe();
+    }
+
+    @Override
+    public Entry<Class<? extends Augmentation<C, ?>>, Augmentation<C, ?>> pollLastEntry() {
+        throw uoe();
     }
 
     @java.io.Serial
-    @SuppressWarnings("static-method")
     private Object writeReplace() {
-        return new IA0();
+        return new IA1(only);
     }
 
     @java.io.Serial
@@ -113,6 +141,6 @@ final class ImmutableAugmentations0<C extends DataContainer & Augmentable<C>> ex
     }
 
     private static NotSerializableException nse() {
-        return new NotSerializableException(ImmutableAugmentations0.class.getName());
+        return new NotSerializableException(ImmutableAugmentations1.class.getName());
     }
 }
