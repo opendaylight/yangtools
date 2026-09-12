@@ -47,10 +47,6 @@ final class TypeNames {
      * {@code java.lang.Override} as a TypeName.
      */
     static final TypeName OVERRIDE = TypeName.ofClass(Override.class);
-    /**
-     * {@code java.lang.void} as a TypeName.
-     */
-    static final TypeName VOID = TypeName.ofClass(void.class);
 
     /**
      * {@code java.util.Arrays} as a TypeName.
