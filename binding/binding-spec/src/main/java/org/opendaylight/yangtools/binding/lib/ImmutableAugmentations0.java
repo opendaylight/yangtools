@@ -35,13 +35,15 @@ final class ImmutableAugmentations0<C extends DataContainer & Augmentable<C>> ex
     }
 
     @Override
-    ImmutableAugmentations0<C> withoutImpl(final Class<? extends Augmentation<C, ?>> key) {
-        return this;
+    HashAugmentations<C> withImpl(final Augmentation<C, ?> value) {
+        final var ret = new HashAugmentations<C>();
+        ret.set(value);
+        return ret;
     }
 
     @Override
-    public HashAugmentations<C> toMutable() {
-        return new HashAugmentations<>();
+    ImmutableAugmentations0<C> withoutImpl(final Class<? extends Augmentation<C, ?>> key) {
+        return this;
     }
 
     @Override

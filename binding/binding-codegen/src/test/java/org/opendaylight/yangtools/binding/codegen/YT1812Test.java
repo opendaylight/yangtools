@@ -299,19 +299,13 @@ public class YT1812Test extends BaseCompilationTest {
         assertFileContent("CurrentBuilder.java", """
             package org.opendaylight.yang.gen.v1.foo.norev;
 
-            import java.lang.Class;
             import java.lang.Deprecated;
-            import java.lang.NullPointerException;
             import java.lang.Override;
             import java.lang.String;
-            import java.lang.SuppressWarnings;
             import javax.annotation.processing.Generated;
             import org.eclipse.jdt.annotation.NonNull;
-            import org.opendaylight.yangtools.binding.Augmentation;
             import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
-            import org.opendaylight.yangtools.binding.lib.Augmentations;
-            import org.opendaylight.yangtools.binding.lib.ImmutableAugmentations;
-            import org.opendaylight.yangtools.binding.lib.MutableAugmentations;
+            import org.opendaylight.yangtools.binding.lib.AugmentableBuilder;
 
             /**
              * Class that builds {@link Current} instances. Overall design of the class is that of a
@@ -355,12 +349,11 @@ public class YT1812Test extends BaseCompilationTest {
              * @see Current
              */
             @Generated("mdsal-binding-generator")
-            public class CurrentBuilder {
+            public class CurrentBuilder extends AugmentableBuilder<Current, CurrentBuilder> {
 
                 private String _foo;
                 private CurrentKey key;
 
-                private Augmentations<Current> augmentation = ImmutableAugmentations.of();
 
                 /**
                  * Construct an empty builder.
@@ -376,7 +369,7 @@ public class YT1812Test extends BaseCompilationTest {
                  * @param base Current from which the builder should be initialized
                  */
                 public     CurrentBuilder(final Current base) {
-                    augmentation = Augmentations.copyOf(base.augmentations());
+                    super(base);
                     this.key = base.key();
                     this._foo = base.getFoo();
                 }
@@ -406,21 +399,6 @@ public class YT1812Test extends BaseCompilationTest {
                 }
 
                 /**
-                 * Return the specified augmentation, if it is present in this builder.
-                 *
-                 * @param <E$$> augmentation type
-                 * @param augmentationType augmentation type class
-                 * @return Augmentation object from this builder, or {@code null} if not present
-                 * @throws NullPointerException if {@code augmentType} is {@code null}
-                 * @deprecated This method will not be generated in a future release
-                 */
-                @Deprecated(forRemoval = true)
-                @SuppressWarnings("checkstyle:methodTypeParameterName")
-                public <E$$ extends Augmentation<Current, E$$>> E$$ augmentation(Class<E$$> augmentationType) {
-                    return augmentation.lookup(augmentationType);
-                }
-
-                /**
                  * Set the key value corresponding to {@link Current#key()} to the specified
                  * value.
                  *
@@ -444,37 +422,6 @@ public class YT1812Test extends BaseCompilationTest {
                     return this;
                 }
 
-                /**
-                 * Add an augmentation to this builder's product.
-                 *
-                 * @param augmentation augmentation to be added
-                 * @return this builder
-                 * @throws NullPointerException if {@code augmentation} is null
-                 */
-                public CurrentBuilder addAugmentation(Augmentation<Current, ?> augmentation) {
-                    if (this.augmentation instanceof ImmutableAugmentations<Current> immutable) {
-                        this.augmentation = immutable.toMutable();
-                    }
-                    this.augmentation.set(augmentation);
-                    return this;
-                }
-
-                /**
-                 * Remove an augmentation from this builder's product. If this builder does not track such an \
-            augmentation
-                 * type, this method does nothing.
-                 *
-                 * @param augmentationType augmentation type to be removed
-                 * @return this builder
-                 */
-                public CurrentBuilder removeAugmentation(Class<? extends Augmentation<Current, ?>> augmentationType) {
-                    switch (augmentation) {
-                        case ImmutableAugmentations<Current> immutable -> augmentation = immutable.without(\
-            augmentationType);
-                        case MutableAugmentations<Current> mutable -> mutable.unset(augmentationType);
-                    }
-                    return this;
-                }
 
                 /**
                  * {@return A new {@link Current} instance}
@@ -488,7 +435,7 @@ public class YT1812Test extends BaseCompilationTest {
                     private final String _foo;
 
                     CurrentImpl(final CurrentBuilder base) {
-                        super(base.augmentation, extractKey(base));
+                        super(base.augmentations(), extractKey(base));
                         final var key = key();
                         this._foo = key.getFoo();
                     }
@@ -656,18 +603,13 @@ public class YT1812Test extends BaseCompilationTest {
         assertFileContent("DeprecatedBuilder.java", """
             package org.opendaylight.yang.gen.v1.foo.norev;
 
-            import java.lang.Class;
-            import java.lang.NullPointerException;
             import java.lang.Override;
             import java.lang.String;
             import java.lang.SuppressWarnings;
             import javax.annotation.processing.Generated;
             import org.eclipse.jdt.annotation.NonNull;
-            import org.opendaylight.yangtools.binding.Augmentation;
             import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
-            import org.opendaylight.yangtools.binding.lib.Augmentations;
-            import org.opendaylight.yangtools.binding.lib.ImmutableAugmentations;
-            import org.opendaylight.yangtools.binding.lib.MutableAugmentations;
+            import org.opendaylight.yangtools.binding.lib.AugmentableBuilder;
 
             /**
              * Class that builds {@link Deprecated} instances. Overall design of the class is that of a
@@ -711,12 +653,11 @@ public class YT1812Test extends BaseCompilationTest {
              */
             @SuppressWarnings("deprecation")
             @Generated("mdsal-binding-generator")
-            public class DeprecatedBuilder {
+            public class DeprecatedBuilder extends AugmentableBuilder<Deprecated, DeprecatedBuilder> {
 
                 private String _foo;
                 private DeprecatedKey key;
 
-                private Augmentations<Deprecated> augmentation = ImmutableAugmentations.of();
 
                 /**
                  * Construct an empty builder.
@@ -732,7 +673,7 @@ public class YT1812Test extends BaseCompilationTest {
                  * @param base Deprecated from which the builder should be initialized
                  */
                 public     DeprecatedBuilder(final Deprecated base) {
-                    augmentation = Augmentations.copyOf(base.augmentations());
+                    super(base);
                     this.key = base.key();
                     this._foo = base.getFoo();
                 }
@@ -762,21 +703,6 @@ public class YT1812Test extends BaseCompilationTest {
                 }
 
                 /**
-                 * Return the specified augmentation, if it is present in this builder.
-                 *
-                 * @param <E$$> augmentation type
-                 * @param augmentationType augmentation type class
-                 * @return Augmentation object from this builder, or {@code null} if not present
-                 * @throws NullPointerException if {@code augmentType} is {@code null}
-                 * @deprecated This method will not be generated in a future release
-                 */
-                @java.lang.Deprecated(forRemoval = true)
-                @SuppressWarnings("checkstyle:methodTypeParameterName")
-                public <E$$ extends Augmentation<Deprecated, E$$>> E$$ augmentation(Class<E$$> augmentationType) {
-                    return augmentation.lookup(augmentationType);
-                }
-
-                /**
                  * Set the key value corresponding to {@link Deprecated#key()} to the specified
                  * value.
                  *
@@ -800,38 +726,6 @@ public class YT1812Test extends BaseCompilationTest {
                     return this;
                 }
 
-                /**
-                 * Add an augmentation to this builder's product.
-                 *
-                 * @param augmentation augmentation to be added
-                 * @return this builder
-                 * @throws NullPointerException if {@code augmentation} is null
-                 */
-                public DeprecatedBuilder addAugmentation(Augmentation<Deprecated, ?> augmentation) {
-                    if (this.augmentation instanceof ImmutableAugmentations<Deprecated> immutable) {
-                        this.augmentation = immutable.toMutable();
-                    }
-                    this.augmentation.set(augmentation);
-                    return this;
-                }
-
-                /**
-                 * Remove an augmentation from this builder's product. If this builder does not track such an \
-            augmentation
-                 * type, this method does nothing.
-                 *
-                 * @param augmentationType augmentation type to be removed
-                 * @return this builder
-                 */
-                public DeprecatedBuilder removeAugmentation(Class<? extends Augmentation<Deprecated, ?>> \
-            augmentationType) {
-                    switch (augmentation) {
-                        case ImmutableAugmentations<Deprecated> immutable -> augmentation = immutable.without(\
-            augmentationType);
-                        case MutableAugmentations<Deprecated> mutable -> mutable.unset(augmentationType);
-                    }
-                    return this;
-                }
 
                 /**
                  * {@return A new {@link Deprecated} instance}
@@ -846,7 +740,7 @@ public class YT1812Test extends BaseCompilationTest {
                     private final String _foo;
 
                     DeprecatedImpl(final DeprecatedBuilder base) {
-                        super(base.augmentation, extractKey(base));
+                        super(base.augmentations(), extractKey(base));
                         final var key = key();
                         this._foo = key.getFoo();
                     }
@@ -1016,19 +910,13 @@ public class YT1812Test extends BaseCompilationTest {
         assertFileContent("ObsoleteBuilder.java", """
             package org.opendaylight.yang.gen.v1.foo.norev;
 
-            import java.lang.Class;
             import java.lang.Deprecated;
-            import java.lang.NullPointerException;
             import java.lang.Override;
             import java.lang.String;
-            import java.lang.SuppressWarnings;
             import javax.annotation.processing.Generated;
             import org.eclipse.jdt.annotation.NonNull;
-            import org.opendaylight.yangtools.binding.Augmentation;
             import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
-            import org.opendaylight.yangtools.binding.lib.Augmentations;
-            import org.opendaylight.yangtools.binding.lib.ImmutableAugmentations;
-            import org.opendaylight.yangtools.binding.lib.MutableAugmentations;
+            import org.opendaylight.yangtools.binding.lib.AugmentableBuilder;
 
             /**
              * Class that builds {@link Obsolete} instances. Overall design of the class is that of a
@@ -1072,12 +960,11 @@ public class YT1812Test extends BaseCompilationTest {
              */
             @Deprecated(forRemoval = true)
             @Generated("mdsal-binding-generator")
-            public class ObsoleteBuilder {
+            public class ObsoleteBuilder extends AugmentableBuilder<Obsolete, ObsoleteBuilder> {
 
                 private String _foo;
                 private ObsoleteKey key;
 
-                private Augmentations<Obsolete> augmentation = ImmutableAugmentations.of();
 
                 /**
                  * Construct an empty builder.
@@ -1093,7 +980,7 @@ public class YT1812Test extends BaseCompilationTest {
                  * @param base Obsolete from which the builder should be initialized
                  */
                 public     ObsoleteBuilder(final Obsolete base) {
-                    augmentation = Augmentations.copyOf(base.augmentations());
+                    super(base);
                     this.key = base.key();
                     this._foo = base.getFoo();
                 }
@@ -1123,21 +1010,6 @@ public class YT1812Test extends BaseCompilationTest {
                 }
 
                 /**
-                 * Return the specified augmentation, if it is present in this builder.
-                 *
-                 * @param <E$$> augmentation type
-                 * @param augmentationType augmentation type class
-                 * @return Augmentation object from this builder, or {@code null} if not present
-                 * @throws NullPointerException if {@code augmentType} is {@code null}
-                 * @deprecated This method will not be generated in a future release
-                 */
-                @Deprecated(forRemoval = true)
-                @SuppressWarnings("checkstyle:methodTypeParameterName")
-                public <E$$ extends Augmentation<Obsolete, E$$>> E$$ augmentation(Class<E$$> augmentationType) {
-                    return augmentation.lookup(augmentationType);
-                }
-
-                /**
                  * Set the key value corresponding to {@link Obsolete#key()} to the specified
                  * value.
                  *
@@ -1161,37 +1033,6 @@ public class YT1812Test extends BaseCompilationTest {
                     return this;
                 }
 
-                /**
-                 * Add an augmentation to this builder's product.
-                 *
-                 * @param augmentation augmentation to be added
-                 * @return this builder
-                 * @throws NullPointerException if {@code augmentation} is null
-                 */
-                public ObsoleteBuilder addAugmentation(Augmentation<Obsolete, ?> augmentation) {
-                    if (this.augmentation instanceof ImmutableAugmentations<Obsolete> immutable) {
-                        this.augmentation = immutable.toMutable();
-                    }
-                    this.augmentation.set(augmentation);
-                    return this;
-                }
-
-                /**
-                 * Remove an augmentation from this builder's product. If this builder does not track such an \
-            augmentation
-                 * type, this method does nothing.
-                 *
-                 * @param augmentationType augmentation type to be removed
-                 * @return this builder
-                 */
-                public ObsoleteBuilder removeAugmentation(Class<? extends Augmentation<Obsolete, ?>> augmentationType) {
-                    switch (augmentation) {
-                        case ImmutableAugmentations<Obsolete> immutable -> augmentation = immutable.without(\
-            augmentationType);
-                        case MutableAugmentations<Obsolete> mutable -> mutable.unset(augmentationType);
-                    }
-                    return this;
-                }
 
                 /**
                  * {@return A new {@link Obsolete} instance}
@@ -1206,7 +1047,7 @@ public class YT1812Test extends BaseCompilationTest {
                     private final String _foo;
 
                     ObsoleteImpl(final ObsoleteBuilder base) {
-                        super(base.augmentation, extractKey(base));
+                        super(base.augmentations(), extractKey(base));
                         final var key = key();
                         this._foo = key.getFoo();
                     }

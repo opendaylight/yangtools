@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Augmentable;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.DataContainer;
@@ -50,7 +51,7 @@ public sealed interface Augmentations<C extends Augmentable<C> & DataContainer>
      * @throws NullPointerException if type is {@code null}
      * @throws ClassCastException if type is not a subclass of {@link Augmentation}
      */
-    default <A extends Augmentation<C, A>> A lookup(final Class<A> key) {
+    default <A extends Augmentation<C, A>> @Nullable A lookup(final Class<A> key) {
         final var augmentation = get(key.asSubclass(Augmentation.class));
         if (augmentation == null) {
             return null;
@@ -60,22 +61,5 @@ public sealed interface Augmentations<C extends Augmentable<C> & DataContainer>
         } catch (ClassCastException e) {
             throw new VerifyException("Inconsistent index", e);
         }
-    }
-
-    /**
-     * Add an {@link Augmentation}, potentially replacing a previous augmentation of the same type.
-     *
-     * @param value the {@link Augmentation}
-     * @throws ClassCastException if value is not consistent with its implemented interface
-     * @throws NullPointerException if value is {@code null}
-     * @throws UnsupportedOperationException if addition is not supported
-     */
-    default void set(final Augmentation<C, ?> value) {
-        // implemented interface must be a subclass of Augmentation
-        @SuppressWarnings("unchecked")
-        final var implementedInterface = (Class<? extends Augmentation<C, ?>>)
-            value.implementedInterface().asSubclass(Augmentation.class);
-        // implemented interface must actually be implemented
-        put(implementedInterface, implementedInterface.cast(value));
     }
 }

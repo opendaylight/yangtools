@@ -39,9 +39,24 @@ public abstract sealed class ImmutableAugmentations<C extends DataContainer & Au
     }
 
     /**
-     * {@return a new mutable AugmentationMap populated with the contents of this map}
+     * Add an {@link Augmentation}, potentially replacing a previous augmentation of the same type.
+     *
+     * @param value the {@link Augmentation}
+     * @return a replacement instance
+     * @throws ClassCastException if value is not consistent with its implemented interface
+     * @throws NullPointerException if value is {@code null}
+     * @see MutableAugmentations#set(Augmentation)
      */
-    public abstract @NonNull MutableAugmentations<C> toMutable();
+    public final @NonNull Augmentations<C> with(final Augmentation<C, ?> value) {
+        // implemented interface must be a subclass of Augmentation
+        @SuppressWarnings("unchecked")
+        final var implementedInterface = (Class<? extends Augmentation<C, ?>>) value.implementedInterface()
+            .asSubclass(Augmentation.class);
+        // implemented interface must actually be implemented
+        return withImpl(implementedInterface.cast(value));
+    }
+
+    abstract @NonNull Augmentations<C> withImpl(Augmentation<C, ?> value);
 
     /**
      * Remove the {@link Augmentation} of specified type.
