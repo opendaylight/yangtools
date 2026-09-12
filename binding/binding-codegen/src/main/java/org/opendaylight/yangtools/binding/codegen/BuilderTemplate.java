@@ -168,7 +168,7 @@ final class BuilderTemplate extends BaseTemplate {
                 .str("public ").str(simpleName).str("()").oB()
                     .eol("// No-op")
                 .cB()
-                .blk(generateConstructorsFromIfcs())
+                .frg(generateConstructorsFromIfcs())
                 .nl()
                 .eol("/**")
                 .str(" * Construct a builder initialized with state from specified {@link ").str(targetName).eol("}.")
@@ -218,18 +218,19 @@ final class BuilderTemplate extends BaseTemplate {
         return null;
     }
 
-    private @Nullable BlockBuilder generateConstructorsFromIfcs() {
-        final var bb = newBlockBuilder().nl();
-        boolean first = true;
-        for (var partial : targetType.partials()) {
-            if (first) {
-                first = false;
-            } else {
-                bb.newLine();
-            }
-            bb.blk(generateConstructorFromIfc(partial));
-        }
-        return bb;
+    private @Nullable BlockFragment generateConstructorsFromIfcs() {
+        final var partials = targetType.partials();
+        return switch (partials.size()) {
+            case 0 -> null;
+            case 1 -> bb -> bb.blk(generateConstructorFromIfc(partials.getFirst()));
+            default -> bb -> {
+                final var it = partials.iterator();
+                bb.blk(generateConstructorFromIfc(it.next()));
+                while (it.hasNext()) {
+                    bb.nl().blk(generateConstructorFromIfc(it.next()));
+                }
+            };
+        };
     }
 
     /**

@@ -360,7 +360,6 @@ public class YT1812Test extends BaseCompilationTest {
                     // No-op
                 }
 
-
                 /**
                  * Construct a builder initialized with state from specified {@link Current}.
                  *
@@ -661,7 +660,6 @@ public class YT1812Test extends BaseCompilationTest {
                 public DeprecatedBuilder() {
                     // No-op
                 }
-
 
                 /**
                  * Construct a builder initialized with state from specified {@link Deprecated}.
@@ -966,7 +964,6 @@ public class YT1812Test extends BaseCompilationTest {
                 public ObsoleteBuilder() {
                     // No-op
                 }
-
 
                 /**
                  * Construct a builder initialized with state from specified {@link Obsolete}.
