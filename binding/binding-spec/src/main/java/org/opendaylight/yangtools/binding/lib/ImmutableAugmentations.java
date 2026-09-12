@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
 @Beta
 public abstract sealed class ImmutableAugmentations<C extends DataContainer & Augmentable<C>>
         extends AbstractMap<Class<? extends Augmentation<C, ?>>, Augmentation<C, ?>>
-        implements Augmentations<C>, Immutable permits ImmutableAugmentations0 {
+        implements Augmentations<C>, Immutable permits ImmutableAugmentations0, ImmutableAugmentations1 {
     /**
      * {@return an empty ImmutableAugmentations}
      *
@@ -36,6 +36,18 @@ public abstract sealed class ImmutableAugmentations<C extends DataContainer & Au
     @SuppressWarnings("unchecked")
     public static final <C extends DataContainer & Augmentable<C>> @NonNull ImmutableAugmentations<C> of() {
         return (ImmutableAugmentations<C>) ImmutableAugmentations0.INSTANCE;
+    }
+
+    /**
+     * {@return an ImmutableAugmentations containing one augmentation}
+     *
+     * @param <C> the {@link Augmentable} {@link DataContainer} type
+     * @param augmentation the augmentation
+     * @throws NullPointerException if augmentation is {@code null}
+     */
+    public static final <C extends DataContainer & Augmentable<C>> @NonNull ImmutableAugmentations<C> of(
+            final Augmentation<C, ?> augmentation) {
+        return new ImmutableAugmentations1<>(augmentation);
     }
 
     /**
@@ -74,6 +86,19 @@ public abstract sealed class ImmutableAugmentations<C extends DataContainer & Au
     }
 
     abstract @NonNull Augmentations<C> withoutImpl(Class<? extends Augmentation<C, ?>> key);
+
+    static final <C extends DataContainer & Augmentable<C>>
+            Entry<Class<? extends Augmentation<C, ?>>, Augmentation<C, ?>> entryOf(final Augmentation<C, ?> value) {
+        return Map.entry(keyOf(value), value);
+    }
+
+    static final <C extends DataContainer & Augmentable<C>> Class<? extends Augmentation<C, ?>> keyOf(
+            final Augmentation<C, ?> value) {
+        @SuppressWarnings("unchecked")
+        final var key = (@NonNull Class<? extends Augmentation<C, ?>>) value.implementedInterface()
+            .asSubclass(Augmentation.class);
+        return key;
+    }
 
     @Override
     public final void clear() {
@@ -157,7 +182,7 @@ public abstract sealed class ImmutableAugmentations<C extends DataContainer & Au
         throw uoe();
     }
 
-    private static UnsupportedOperationException uoe() {
+    static final @NonNull UnsupportedOperationException uoe() {
         return new UnsupportedOperationException();
     }
 }
