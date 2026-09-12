@@ -305,13 +305,13 @@ public class YT1812Test extends BaseCompilationTest {
             import java.lang.Override;
             import java.lang.String;
             import java.lang.SuppressWarnings;
-            import java.util.HashMap;
-            import java.util.Map;
-            import java.util.Objects;
             import javax.annotation.processing.Generated;
             import org.eclipse.jdt.annotation.NonNull;
             import org.opendaylight.yangtools.binding.Augmentation;
             import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
+            import org.opendaylight.yangtools.binding.lib.Augmentations;
+            import org.opendaylight.yangtools.binding.lib.ImmutableAugmentations;
+            import org.opendaylight.yangtools.binding.lib.MutableAugmentations;
 
             /**
              * Class that builds {@link Current} instances. Overall design of the class is that of a
@@ -360,8 +360,7 @@ public class YT1812Test extends BaseCompilationTest {
                 private String _foo;
                 private CurrentKey key;
 
-                private Map<Class<? extends Augmentation<Current, ?>>, Augmentation<Current, ?>> augmentation = \
-            Map.of();
+                private Augmentations<Current> augmentation = ImmutableAugmentations.of();
 
                 /**
                  * Construct an empty builder.
@@ -377,10 +376,7 @@ public class YT1812Test extends BaseCompilationTest {
                  * @param base Current from which the builder should be initialized
                  */
                 public     CurrentBuilder(final Current base) {
-                    final var aug = base.augmentations();
-                    if (!aug.isEmpty()) {
-                        this.augmentation = new HashMap<>(aug);
-                    }
+                    augmentation = Augmentations.copyOf(base.augmentations());
                     this.key = base.key();
                     this._foo = base.getFoo();
                 }
@@ -419,9 +415,9 @@ public class YT1812Test extends BaseCompilationTest {
                  * @deprecated This method will not be generated in a future release
                  */
                 @Deprecated(forRemoval = true)
-                @SuppressWarnings({ "unchecked", "checkstyle:methodTypeParameterName"})
-                public <E$$ extends Augmentation<Current, ?>> E$$ augmentation(Class<E$$> augmentationType) {
-                    return (E$$) augmentation.get(Objects.requireNonNull(augmentationType));
+                @SuppressWarnings("checkstyle:methodTypeParameterName")
+                public <E$$ extends Augmentation<Current, E$$>> E$$ augmentation(Class<E$$> augmentationType) {
+                    return augmentation.lookup(augmentationType);
                 }
 
                 /**
@@ -456,10 +452,10 @@ public class YT1812Test extends BaseCompilationTest {
                  * @throws NullPointerException if {@code augmentation} is null
                  */
                 public CurrentBuilder addAugmentation(Augmentation<Current, ?> augmentation) {
-                    if (!(this.augmentation instanceof HashMap)) {
-                        this.augmentation = new HashMap<>();
+                    if (this.augmentation instanceof ImmutableAugmentations<Current> immutable) {
+                        this.augmentation = immutable.toMutable();
                     }
-                    this.augmentation.put(augmentation.implementedInterface(), augmentation);
+                    this.augmentation.set(augmentation);
                     return this;
                 }
 
@@ -472,8 +468,10 @@ public class YT1812Test extends BaseCompilationTest {
                  * @return this builder
                  */
                 public CurrentBuilder removeAugmentation(Class<? extends Augmentation<Current, ?>> augmentationType) {
-                    if (this.augmentation instanceof HashMap) {
-                        this.augmentation.remove(augmentationType);
+                    switch (augmentation) {
+                        case ImmutableAugmentations<Current> immutable -> augmentation = immutable.without(\
+            augmentationType);
+                        case MutableAugmentations<Current> mutable -> mutable.unset(augmentationType);
                     }
                     return this;
                 }
@@ -663,13 +661,13 @@ public class YT1812Test extends BaseCompilationTest {
             import java.lang.Override;
             import java.lang.String;
             import java.lang.SuppressWarnings;
-            import java.util.HashMap;
-            import java.util.Map;
-            import java.util.Objects;
             import javax.annotation.processing.Generated;
             import org.eclipse.jdt.annotation.NonNull;
             import org.opendaylight.yangtools.binding.Augmentation;
             import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
+            import org.opendaylight.yangtools.binding.lib.Augmentations;
+            import org.opendaylight.yangtools.binding.lib.ImmutableAugmentations;
+            import org.opendaylight.yangtools.binding.lib.MutableAugmentations;
 
             /**
              * Class that builds {@link Deprecated} instances. Overall design of the class is that of a
@@ -718,8 +716,7 @@ public class YT1812Test extends BaseCompilationTest {
                 private String _foo;
                 private DeprecatedKey key;
 
-                private Map<Class<? extends Augmentation<Deprecated, ?>>, Augmentation<Deprecated, ?>> augmentation = \
-            Map.of();
+                private Augmentations<Deprecated> augmentation = ImmutableAugmentations.of();
 
                 /**
                  * Construct an empty builder.
@@ -735,10 +732,7 @@ public class YT1812Test extends BaseCompilationTest {
                  * @param base Deprecated from which the builder should be initialized
                  */
                 public     DeprecatedBuilder(final Deprecated base) {
-                    final var aug = base.augmentations();
-                    if (!aug.isEmpty()) {
-                        this.augmentation = new HashMap<>(aug);
-                    }
+                    augmentation = Augmentations.copyOf(base.augmentations());
                     this.key = base.key();
                     this._foo = base.getFoo();
                 }
@@ -777,9 +771,9 @@ public class YT1812Test extends BaseCompilationTest {
                  * @deprecated This method will not be generated in a future release
                  */
                 @java.lang.Deprecated(forRemoval = true)
-                @SuppressWarnings({ "unchecked", "checkstyle:methodTypeParameterName"})
-                public <E$$ extends Augmentation<Deprecated, ?>> E$$ augmentation(Class<E$$> augmentationType) {
-                    return (E$$) augmentation.get(Objects.requireNonNull(augmentationType));
+                @SuppressWarnings("checkstyle:methodTypeParameterName")
+                public <E$$ extends Augmentation<Deprecated, E$$>> E$$ augmentation(Class<E$$> augmentationType) {
+                    return augmentation.lookup(augmentationType);
                 }
 
                 /**
@@ -814,10 +808,10 @@ public class YT1812Test extends BaseCompilationTest {
                  * @throws NullPointerException if {@code augmentation} is null
                  */
                 public DeprecatedBuilder addAugmentation(Augmentation<Deprecated, ?> augmentation) {
-                    if (!(this.augmentation instanceof HashMap)) {
-                        this.augmentation = new HashMap<>();
+                    if (this.augmentation instanceof ImmutableAugmentations<Deprecated> immutable) {
+                        this.augmentation = immutable.toMutable();
                     }
-                    this.augmentation.put(augmentation.implementedInterface(), augmentation);
+                    this.augmentation.set(augmentation);
                     return this;
                 }
 
@@ -831,8 +825,10 @@ public class YT1812Test extends BaseCompilationTest {
                  */
                 public DeprecatedBuilder removeAugmentation(Class<? extends Augmentation<Deprecated, ?>> \
             augmentationType) {
-                    if (this.augmentation instanceof HashMap) {
-                        this.augmentation.remove(augmentationType);
+                    switch (augmentation) {
+                        case ImmutableAugmentations<Deprecated> immutable -> augmentation = immutable.without(\
+            augmentationType);
+                        case MutableAugmentations<Deprecated> mutable -> mutable.unset(augmentationType);
                     }
                     return this;
                 }
@@ -1026,13 +1022,13 @@ public class YT1812Test extends BaseCompilationTest {
             import java.lang.Override;
             import java.lang.String;
             import java.lang.SuppressWarnings;
-            import java.util.HashMap;
-            import java.util.Map;
-            import java.util.Objects;
             import javax.annotation.processing.Generated;
             import org.eclipse.jdt.annotation.NonNull;
             import org.opendaylight.yangtools.binding.Augmentation;
             import org.opendaylight.yangtools.binding.lib.AbstractEntryObject;
+            import org.opendaylight.yangtools.binding.lib.Augmentations;
+            import org.opendaylight.yangtools.binding.lib.ImmutableAugmentations;
+            import org.opendaylight.yangtools.binding.lib.MutableAugmentations;
 
             /**
              * Class that builds {@link Obsolete} instances. Overall design of the class is that of a
@@ -1081,8 +1077,7 @@ public class YT1812Test extends BaseCompilationTest {
                 private String _foo;
                 private ObsoleteKey key;
 
-                private Map<Class<? extends Augmentation<Obsolete, ?>>, Augmentation<Obsolete, ?>> augmentation = \
-            Map.of();
+                private Augmentations<Obsolete> augmentation = ImmutableAugmentations.of();
 
                 /**
                  * Construct an empty builder.
@@ -1098,10 +1093,7 @@ public class YT1812Test extends BaseCompilationTest {
                  * @param base Obsolete from which the builder should be initialized
                  */
                 public     ObsoleteBuilder(final Obsolete base) {
-                    final var aug = base.augmentations();
-                    if (!aug.isEmpty()) {
-                        this.augmentation = new HashMap<>(aug);
-                    }
+                    augmentation = Augmentations.copyOf(base.augmentations());
                     this.key = base.key();
                     this._foo = base.getFoo();
                 }
@@ -1140,9 +1132,9 @@ public class YT1812Test extends BaseCompilationTest {
                  * @deprecated This method will not be generated in a future release
                  */
                 @Deprecated(forRemoval = true)
-                @SuppressWarnings({ "unchecked", "checkstyle:methodTypeParameterName"})
-                public <E$$ extends Augmentation<Obsolete, ?>> E$$ augmentation(Class<E$$> augmentationType) {
-                    return (E$$) augmentation.get(Objects.requireNonNull(augmentationType));
+                @SuppressWarnings("checkstyle:methodTypeParameterName")
+                public <E$$ extends Augmentation<Obsolete, E$$>> E$$ augmentation(Class<E$$> augmentationType) {
+                    return augmentation.lookup(augmentationType);
                 }
 
                 /**
@@ -1177,10 +1169,10 @@ public class YT1812Test extends BaseCompilationTest {
                  * @throws NullPointerException if {@code augmentation} is null
                  */
                 public ObsoleteBuilder addAugmentation(Augmentation<Obsolete, ?> augmentation) {
-                    if (!(this.augmentation instanceof HashMap)) {
-                        this.augmentation = new HashMap<>();
+                    if (this.augmentation instanceof ImmutableAugmentations<Obsolete> immutable) {
+                        this.augmentation = immutable.toMutable();
                     }
-                    this.augmentation.put(augmentation.implementedInterface(), augmentation);
+                    this.augmentation.set(augmentation);
                     return this;
                 }
 
@@ -1193,8 +1185,10 @@ public class YT1812Test extends BaseCompilationTest {
                  * @return this builder
                  */
                 public ObsoleteBuilder removeAugmentation(Class<? extends Augmentation<Obsolete, ?>> augmentationType) {
-                    if (this.augmentation instanceof HashMap) {
-                        this.augmentation.remove(augmentationType);
+                    switch (augmentation) {
+                        case ImmutableAugmentations<Obsolete> immutable -> augmentation = immutable.without(\
+            augmentationType);
+                        case MutableAugmentations<Obsolete> mutable -> mutable.unset(augmentationType);
                     }
                     return this;
                 }
