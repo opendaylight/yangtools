@@ -24,24 +24,77 @@ import org.opendaylight.yangtools.binding.DataContainer;
 public abstract class AbstractAugmentable<T extends Augmentable<T> & DataContainer & JavaDataContainer<T>>
         extends AbstractDataContainer<T>
         implements Augmentable<T> {
-    private final @NonNull ImmutableMap<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> augmentations;
+    private final @NonNull Map<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> augmentations;
 
-    // FIXME: reconsider usefulness of this constructor: document it or remove it
+    /**
+     * Default constructor for empty {@link #augmentations()}.
+     */
     protected AbstractAugmentable() {
         augmentations = ImmutableMap.of();
     }
 
-    protected AbstractAugmentable(final Map<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> augmentations) {
-        this.augmentations = ImmutableMap.copyOf(augmentations);
+    /**
+     * Copy constructor from another {@link AbstractAugmentable}.
+     *
+     * @param other the other {@link AbstractAugmentable}
+     */
+    protected AbstractAugmentable(final AbstractAugmentable<T> other) {
+        augmentations = other.augmentations;
     }
 
-    protected AbstractAugmentable(
-            final ImmutableMap<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> augmentations) {
+    /**
+     * Constructor initializing {@link #augmentations} to specified {@link Augmentations}. The augmentations are
+     * defensively copied if needed.
+     *
+     * @param augmentations the {@link Augmentations}
+     */
+    protected AbstractAugmentable(final Augmentations<T> augmentations) {
+        this.augmentations = switch (augmentations) {
+            case ImmutableAugmentations<T> immutable -> immutable;
+            case MutableAugmentations<T> mutable -> ImmutableMap.copyOf(mutable);
+        };
+    }
+
+    /**
+     * Constructor initializing {@link #augmentations} to specified {@link MutableAugmentations}. The augmentations are
+     * defensively copied.
+     *
+     * @param augmentations the {@link MutableAugmentations}
+     */
+    protected AbstractAugmentable(final MutableAugmentations<T> augmentations) {
+        this(ImmutableMap.copyOf(augmentations));
+    }
+
+    /**
+     * Constructor initializing {@link #augmentations} to specified {@link ImmutableAugmentations}.
+     *
+     * @param augmentations the {@link ImmutableAugmentations}
+     */
+    protected AbstractAugmentable(final ImmutableAugmentations<T> augmentations) {
         this.augmentations = requireNonNull(augmentations);
     }
 
-    protected AbstractAugmentable(final AbstractAugmentable<T> other) {
-        this(other.augmentations);
+    /**
+     * Constructor initializing {@link #augmentations} to specified {@link Map}. The augmentations are defensively
+     * copied if needed.
+     *
+     * @param augmentations the {@link Map}
+     */
+    protected AbstractAugmentable(final Map<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> augmentations) {
+        this.augmentations = switch (augmentations) {
+            case ImmutableAugmentations<T> immutable -> immutable;
+            default -> ImmutableMap.copyOf(augmentations);
+        };
+    }
+
+    /**
+     * Constructor initializing {@link #augmentations} to specified {@link ImmutableMap}.
+     *
+     * @param augmentations the {@link ImmutableMap}
+     */
+    protected AbstractAugmentable(
+            final ImmutableMap<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> augmentations) {
+        this.augmentations = requireNonNull(augmentations);
     }
 
     @Override
@@ -51,7 +104,7 @@ public abstract class AbstractAugmentable<T extends Augmentable<T> & DataContain
     }
 
     @Override
-    public final ImmutableMap<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> augmentations() {
+    public final Map<Class<? extends Augmentation<T, ?>>, Augmentation<T, ?>> augmentations() {
         return augmentations;
     }
 }

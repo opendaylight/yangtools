@@ -46,7 +46,7 @@ final class HashAugmentations<C extends DataContainer & Augmentable<C>>
 
     @java.io.Serial
     private Object writeReplace() {
-        return new HAv1(this);
+        return new HA(this);
     }
 
     @java.io.Serial
