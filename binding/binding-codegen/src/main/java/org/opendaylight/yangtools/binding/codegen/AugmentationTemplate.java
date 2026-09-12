@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
 @NonNullByDefault
 final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype>
         implements ArchetypeTemplate.WithBuilder {
-    private static final ConcreteType AUGMENTATION = ConcreteType.ofClass(Augmentation.class);
+    static final ConcreteType AUGMENTATION = ConcreteType.ofClass(Augmentation.class);
 
     AugmentationTemplate(final DataRootArchetype root, final AugmentationArchetype archetype) {
         super(root, archetype);

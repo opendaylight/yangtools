@@ -11,13 +11,11 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.binding.codegen.AugmentationTemplate.AUGMENTATION;
 import static org.opendaylight.yangtools.binding.codegen.AugmentationTemplate.augmentationOfIn;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CLASS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.CODEHELPERS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.IAE;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_HASHMAP;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_MAP;
-import static org.opendaylight.yangtools.binding.codegen.TypeNames.JU_OBJECTS;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NPE;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.SUPPRESS_WARNINGS;
 import static org.opendaylight.yangtools.binding.contract.Naming.GETTER_PREFIX;
@@ -39,6 +37,9 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.binding.contract.Naming;
+import org.opendaylight.yangtools.binding.lib.Augmentations;
+import org.opendaylight.yangtools.binding.lib.ImmutableAugmentations;
+import org.opendaylight.yangtools.binding.lib.MutableAugmentations;
 import org.opendaylight.yangtools.binding.model.AugmentableArchetype;
 import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
@@ -96,6 +97,9 @@ final class BuilderTemplate extends BaseTemplate {
     static final @NonNull String AUGMENTATION_FIELD = "augmentation";
 
     private static final @NonNull TypeName GROUPING = TypeName.ofClass(Grouping.class);
+    private static final @NonNull TypeName AUGMENTATIONS = TypeName.ofClass(Augmentations.class);
+    private static final @NonNull TypeName IMMUTABLE_AUGMENTATIONS = TypeName.ofClass(ImmutableAugmentations.class);
+    private static final @NonNull TypeName MUTABLE_AUGMENTATIONS = TypeName.ofClass(MutableAugmentations.class);
 
     // FIXME: better description: 'targetType' in the context of BuilderImplTemplate is type returned
     //        from BindingContract.implementedInterface() -- and is expected to extend JavaContract and provide default
@@ -167,11 +171,8 @@ final class BuilderTemplate extends BaseTemplate {
 
         final var isAugmentable = targetType instanceof AugmentableArchetype;
         if (isAugmentable) {
-            final var augmentTypeRef = augmentationOfIn(targetType, javaType());
-            final var mapTypeRef = importedName(JU_MAP);
-
-            bb.str("private ").str(mapTypeRef).lt().str(importedName(CLASS)).str("<? extends ").str(augmentTypeRef)
-                .str(">, ").str(augmentTypeRef).str("> " + AUGMENTATION_FIELD + " = ").str(mapTypeRef).eol(".of();");
+            bb.str("private ").str(importedName(AUGMENTATIONS)).lt().str(importedName(targetType))
+                .str("> " + AUGMENTATION_FIELD + " = ").str(importedName(IMMUTABLE_AUGMENTATIONS)).eol(".of();");
         }
 
         final var targetTypeName = importedName(targetType);
@@ -379,10 +380,8 @@ final class BuilderTemplate extends BaseTemplate {
             .str(simpleName()).str("(final ").str(importedName(fromType)).str(" base)").jBlock(bb -> {
                 if (targetType instanceof AugmentableArchetype) {
                     bb
-                        .eol("final var aug = base.augmentations();")
-                        .str("if (!aug.isEmpty())").oB()
-                            .str("this." + AUGMENTATION_FIELD + " = new ").str(importedName(JU_HASHMAP)).eol("<>(aug);")
-                        .cB();
+                        .str(AUGMENTATION_FIELD + " = ").str(importedName(AUGMENTATIONS))
+                            .eol(".copyOf(base.augmentations());");
                 }
 
                 switch (props) {
@@ -813,8 +812,10 @@ final class BuilderTemplate extends BaseTemplate {
         }
         bb.newLine();
         if (targetType instanceof AugmentableArchetype) {
+            final var importedTarget = importedName(targetType);
+            final var immutableAugmentations = importedName(IMMUTABLE_AUGMENTATIONS);
             final var augmentTypeRef = augmentationOfIn(targetType, javaType());
-            final var hashMapRef = importedName(JU_HASHMAP);
+
             bb
                 .eol("/**")
                 .eol(" * Add an augmentation to this builder's product.")
@@ -823,12 +824,13 @@ final class BuilderTemplate extends BaseTemplate {
                 .eol(" * @return this builder")
                 .str(" * @throws ").str(importedName(NPE)).eol(" if {@code augmentation} is null")
                 .eol(" */")
-                .str("public ").str(simpleName()).str(" addAugmentation(").str(augmentTypeRef)
-                    .str(" augmentation)").oB()
-                    .str("if (!(this." + AUGMENTATION_FIELD + " instanceof ").str(hashMapRef).str("))").oB()
-                        .str("this." + AUGMENTATION_FIELD + " = new ").str(hashMapRef).eol("<>();")
+                .str("public ").str(simpleName()).str(" addAugmentation(").str(augmentTypeRef).str(" augmentation)")
+                    .oB()
+                    .str("if (this." + AUGMENTATION_FIELD + " instanceof ").str(immutableAugmentations).lt()
+                        .str(importedTarget).str("> immutable)").oB()
+                        .eol("this." + AUGMENTATION_FIELD + " = immutable.toMutable();")
                     .cB()
-                    .eol("this." + AUGMENTATION_FIELD + ".put(augmentation.implementedInterface(), augmentation);")
+                    .eol("this." + AUGMENTATION_FIELD + ".set(augmentation);")
                     .eol("return this;")
                 .cB()
                 .nl()
@@ -843,8 +845,11 @@ final class BuilderTemplate extends BaseTemplate {
                 .eol(" */")
                 .str("public ").str(simpleName()).str(" removeAugmentation(").str(importedName(CLASS))
                     .str("<? extends ").str(augmentTypeRef).str("> augmentationType)").oB()
-                    .str("if (this." + AUGMENTATION_FIELD  + " instanceof ").str(hashMapRef).str(")").oB()
-                        .eol("this." + AUGMENTATION_FIELD + ".remove(augmentationType);")
+                    .str("switch (" + AUGMENTATION_FIELD + ")").oB()
+                        .str("case ").str(immutableAugmentations).lt().str(importedTarget)
+                            .eol("> immutable -> " + AUGMENTATION_FIELD + " = immutable.without(augmentationType);")
+                        .str("case ").str(importedName(MUTABLE_AUGMENTATIONS)).lt().str(importedTarget)
+                            .eol("> mutable -> mutable.unset(augmentationType);")
                     .cB()
                     .eol("return this;")
                 .cB();
@@ -916,11 +921,11 @@ final class BuilderTemplate extends BaseTemplate {
             .eol(" * @deprecated This method will not be generated in a future release")
             .eol(" */")
             .frg(new DeprecatedAnnotation(javaType(), true))
-            .at().str(importedName(SUPPRESS_WARNINGS)).eol("({ \"unchecked\", \"checkstyle:methodTypeParameterName\"})")
-            .str("public <E$$ extends ").str(augmentationOfIn(targetType, javaType())).str("> E$$ augmentation(")
-                .str(importedName(CLASS)).str("<E$$> augmentationType)").oB()
-                .str("return (E$$) " + AUGMENTATION_FIELD + ".get(").str(importedName(JU_OBJECTS))
-                    .eol(".requireNonNull(augmentationType));")
+            .at().str(importedName(SUPPRESS_WARNINGS)).eol("(\"checkstyle:methodTypeParameterName\")")
+            .str("public <E$$ extends ").str(importedName(AUGMENTATION)).lt().str(importedName(targetType))
+                // FIXME: 17.0.0: @Nullable
+                .str(", E$$>> E$$ augmentation(").str(importedName(CLASS)).str("<E$$> augmentationType)").oB()
+                .eol("return " + AUGMENTATION_FIELD + ".lookup(augmentationType);")
             .cB();
     }
 
