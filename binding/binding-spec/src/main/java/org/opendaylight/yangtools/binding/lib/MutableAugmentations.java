@@ -23,6 +23,23 @@ import org.opendaylight.yangtools.concepts.Mutable;
 public sealed interface MutableAugmentations<C extends DataContainer & Augmentable<C>>
         extends Augmentations<C>, Mutable permits HashAugmentations {
     /**
+     * Add an {@link Augmentation}, potentially replacing a previous augmentation of the same type.
+     *
+     * @param value the {@link Augmentation}
+     * @throws ClassCastException if value is not consistent with its implemented interface
+     * @throws NullPointerException if value is {@code null}
+     * @see ImmutableAugmentations#with(Augmentation)
+     */
+    default void set(final Augmentation<C, ?> value) {
+        // implemented interface must be a subclass of Augmentation
+        @SuppressWarnings("unchecked")
+        final var implementedInterface = (Class<? extends Augmentation<C, ?>>) value.implementedInterface()
+            .asSubclass(Augmentation.class);
+        // implemented interface must actually be implemented
+        put(implementedInterface, implementedInterface.cast(value));
+    }
+
+    /**
      * Remove the {@link Augmentation} of specified type.
      *
      * @param key the {@link Augmentation} type

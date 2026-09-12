@@ -85,7 +85,7 @@ final class BuilderImplTemplate extends BaseTemplate {
             .str(simpleName).str("(final ").str(builderName).str(" base)").oB();
 
         if (targetType instanceof AugmentableArchetype) {
-            bb.str("super(base." + BuilderTemplate.AUGMENTATION_FIELD);
+            bb.str("super(base.augmentations()");
             if (props instanceof BuilderTemplate.WithKey) {
                 bb.str(", extractKey(base)");
             }
