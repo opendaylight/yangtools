@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
+import org.opendaylight.yangtools.binding.runtime.api.BindingYangTextSource;
 import org.opendaylight.yangtools.binding.runtime.api.ModuleInfoSnapshot;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -99,15 +100,15 @@ public final class ModuleInfoSnapshotBuilder {
     public @NonNull ModuleInfoSnapshot build() throws IOException, YangParserException {
         final var parser = parserFactory.createParser();
 
-        final var mappedInfos = new HashMap<SourceIdentifier, YangModuleInfo>();
+        final var sources = new HashMap<SourceIdentifier, BindingYangTextSource>();
         final var classLoaders = new HashMap<String, ClassLoader>();
         final var namespaces = new HashMap<String, QNameModule>();
 
         for (var info : moduleInfos) {
-            final var source = ModuleInfoSnapshotResolver.toYangTextSource(info);
-            mappedInfos.put(source.sourceId(), info);
+            final var source = BindingYangTextSource.of(info);
+            sources.put(source.sourceId(), source);
 
-            final String infoRoot = Naming.getRootPackageName(info.name().getModule());
+            final var infoRoot = Naming.getRootPackageName(info.name().getModule());
             classLoaders.put(infoRoot, info.getClass().getClassLoader());
             namespaces.put(infoRoot, info.name().getModule());
 
@@ -137,6 +138,6 @@ public final class ModuleInfoSnapshotBuilder {
             parser.setSupportedFeatures(featuresByModule.build());
         }
 
-        return new DefaultModuleInfoSnapshot(parser.buildEffectiveModel(), mappedInfos, classLoaders);
+        return new DefaultModuleInfoSnapshot(parser.buildEffectiveModel(), sources, classLoaders);
     }
 }

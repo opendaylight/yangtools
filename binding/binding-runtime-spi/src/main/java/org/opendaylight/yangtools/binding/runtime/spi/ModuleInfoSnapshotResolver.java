@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.binding.YangFeature;
 import org.opendaylight.yangtools.binding.contract.Naming;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.meta.YangModuleInfo;
+import org.opendaylight.yangtools.binding.runtime.api.BindingYangTextSource;
 import org.opendaylight.yangtools.binding.runtime.api.ModuleInfoSnapshot;
 import org.opendaylight.yangtools.concepts.AbstractRegistration;
 import org.opendaylight.yangtools.concepts.Mutable;
@@ -38,11 +39,9 @@ import org.opendaylight.yangtools.concepts.Registration;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.source.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.api.source.YangTextSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.spi.YangTextSchemaContextResolver;
-import org.opendaylight.yangtools.yang.model.spi.source.DelegatedYangTextSource;
 import org.opendaylight.yangtools.yang.model.spi.source.YangTextToIRSourceTransformer;
 import org.opendaylight.yangtools.yang.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.parser.api.YangSyntaxErrorException;
@@ -158,7 +157,8 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
     @GuardedBy("this")
     private RegisteredModuleInfo registerModuleInfo(final @NonNull YangModuleInfo info) {
         // First search for an existing explicit registration
-        final var sourceId = sourceIdentifierFrom(info);
+        final var newSource = BindingYangTextSource.of(info);
+        final var sourceId = newSource.sourceId();
         for (var reg : sourceToInfoReg.get(sourceId)) {
             if (info.equals(reg.info)) {
                 reg.incRef();
@@ -170,7 +170,7 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
         // Create an explicit registration
         final Registration reg;
         try {
-            reg = ctxResolver.registerSource(toYangTextSource(sourceId, info));
+            reg = ctxResolver.registerSource(newSource);
         } catch (YangSyntaxErrorException | SchemaSourceException | IOException e) {
             throw new IllegalStateException("Failed to register info " + info, e);
         }
@@ -195,30 +195,30 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
     @GuardedBy("this")
     private @NonNull ModuleInfoSnapshot updateSnapshot(final EffectiveModelContext modelContext) {
         // Alright, now let's find out which sources got captured
-        final var sources = new HashSet<SourceIdentifier>();
+        final var sourceIds = new HashSet<SourceIdentifier>();
         for (var entry : modelContext.getModuleStatements().entrySet()) {
             final var revision = entry.getKey().revision();
             final var module = entry.getValue();
 
-            sources.add(new SourceIdentifier(module.argument(), revision));
+            sourceIds.add(new SourceIdentifier(module.argument(), revision));
             module.streamEffectiveSubstatements(SubmoduleEffectiveStatement.class)
                 .map(submodule -> new SourceIdentifier(submodule.argument(), revision))
-                .forEach(sources::add);
+                .forEach(sourceIds::add);
         }
 
-        final var moduleInfos = new HashMap<SourceIdentifier, YangModuleInfo>();
+        final var sources = new HashMap<SourceIdentifier, BindingYangTextSource>();
         final var classLoaders = new HashMap<String, ClassLoader>();
-        for (var source : sources) {
-            final var regs = sourceToInfoReg.get(source);
-            checkState(!regs.isEmpty(), "No registration for %s", source);
+        for (var sourceId : sourceIds) {
+            final var regs = sourceToInfoReg.get(sourceId);
+            checkState(!regs.isEmpty(), "No registration for %s", sourceId);
 
             final var reg = regs.getFirst();
             final var info = reg.info;
-            moduleInfos.put(source, info);
+            sources.put(sourceId, BindingYangTextSource.of(info));
             classLoaders.put(Naming.getRootPackageName(info.name().getModule()), info.getClass().getClassLoader());
         }
 
-        final var next = new DefaultModuleInfoSnapshot(modelContext, moduleInfos, classLoaders);
+        final var next = new DefaultModuleInfoSnapshot(modelContext, sources, classLoaders);
         currentSnapshot = next;
         return next;
     }
@@ -230,26 +230,13 @@ public final class ModuleInfoSnapshotResolver implements Mutable {
                 continue;
             }
 
-            final var sourceId = sourceIdentifierFrom(regInfo.info);
+            final var sourceId = SourceIdentifier.ofQName(regInfo.info.name());
             if (!sourceToInfoReg.remove(sourceId, regInfo)) {
                 LOG.warn("Failed to find {} registered under {}", regInfo, sourceId);
             }
 
             regInfo.reg.close();
         }
-    }
-
-    static @NonNull YangTextSource toYangTextSource(final YangModuleInfo moduleInfo) {
-        return new DelegatedYangTextSource(sourceIdentifierFrom(moduleInfo), moduleInfo.getYangTextCharSource());
-    }
-
-    private static @NonNull YangTextSource toYangTextSource(final SourceIdentifier identifier,
-            final YangModuleInfo moduleInfo) {
-        return new DelegatedYangTextSource(identifier, moduleInfo.getYangTextCharSource());
-    }
-
-    private static SourceIdentifier sourceIdentifierFrom(final YangModuleInfo moduleInfo) {
-        return SourceIdentifier.ofQName(moduleInfo.name());
     }
 
     private static @NonNull List<@NonNull YangModuleInfo> flatDependencies(final YangModuleInfo moduleInfo) {
