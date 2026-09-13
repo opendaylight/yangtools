@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.binding.DataContainer;
  * An empty {@link ImmutableAugmentations}.
  *
  * @param <C> the {@link Augmentable} {@link DataContainer} type
- * @since 16.0.1
+ * @since 16.1.0
  */
 final class ImmutableAugmentations0<C extends DataContainer & Augmentable<C>> extends ImmutableAugmentations<C> {
     static final @NonNull ImmutableAugmentations0<?> INSTANCE = new ImmutableAugmentations0<>();

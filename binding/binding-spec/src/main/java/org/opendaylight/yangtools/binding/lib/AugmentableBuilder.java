@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
  *
  * @param <C> the {@link Augmentable} {@link DataContainer} type
  * @param <T> builder type
- * @since 16.0.1
+ * @since 16.1.0
  */
 public abstract class AugmentableBuilder<C extends DataContainer & Augmentable<C>, T extends AugmentableBuilder<C, T>>
         implements Mutable {

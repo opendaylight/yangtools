@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
  * A mutable {@link Augmentations}.
  *
  * @param <C> the {@link Augmentable} {@link DataContainer} type
- * @since 16.0.1
+ * @since 16.1.0
  */
 @Beta
 public sealed interface MutableAugmentations<C extends DataContainer & Augmentable<C>>

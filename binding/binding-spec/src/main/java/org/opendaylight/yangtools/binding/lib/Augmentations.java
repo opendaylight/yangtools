@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.binding.DataContainer;
  * A set of {@link Augmentation}s attached to an {@link Augmentable}.
  *
  * @param <C> the {@link Augmentable} {@link DataContainer} type
- * @since 16.0.1
+ * @since 16.1.0
  */
 @Beta
 public sealed interface Augmentations<C extends Augmentable<C> & DataContainer>

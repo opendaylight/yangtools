@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.binding.DataContainer;
  * {@link MutableAugmentations} implemented in terms of a {@link HashMap}.
  *
  * @param <C> the {@link Augmentable} {@link DataContainer} type
- * @since 16.0.1
+ * @since 16.1.0
  */
 final class HashAugmentations<C extends DataContainer & Augmentable<C>>
         extends HashMap<Class<? extends Augmentation<C, ?>>, Augmentation<C, ?>> implements MutableAugmentations<C> {

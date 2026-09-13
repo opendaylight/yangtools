@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.binding.Augmentation;
 /**
  * A {@link Serializable} proxy for {@link ImmutableAugmentations1}.
  *
- * @since 16.0.1
+ * @since 16.1.0
  */
 final class IA1 implements Externalizable {
     @java.io.Serial

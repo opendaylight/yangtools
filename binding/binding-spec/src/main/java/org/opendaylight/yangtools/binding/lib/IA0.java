@@ -12,7 +12,7 @@ import java.io.Serializable;
 /**
  * A {@link Serializable} proxy for {@link ImmutableAugmentations0}.
  *
- * @since 16.0.1
+ * @since 16.1.0
  */
 final class IA0 implements Serializable {
     @java.io.Serial
