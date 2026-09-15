@@ -68,10 +68,11 @@ final class UsesAugmentGenerator extends AugmentGenerator {
 
     @Override
     TargetAugmentEffectiveStatement effectiveIn(final SchemaTreeAwareEffectiveStatement<?, ?> target) {
-        verify(target instanceof SchemaTreeEffectiveStatement, "Unexpected statement %s", target);
+        if (!(target instanceof SchemaTreeEffectiveStatement<?> schemaTarget)) {
+            throw new VerifyException("Unexpected statement " + target);
+        }
         // 'uses'/'augment': our children are binding to target's namespace
-
-        final var targetNamespace = ((SchemaTreeEffectiveStatement<?>) target).argument().getModule();
+        final var targetNamespace = schemaTarget.argument().getModule();
         return effectiveIn(target, qname -> qname.bindTo(targetNamespace));
     }
 }
