@@ -17,8 +17,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 
 public final class DefaultChoiceRuntimeType extends AbstractCompositeRuntimeType<ChoiceEffectiveStatement>
         implements ChoiceRuntimeType {
-    public DefaultChoiceRuntimeType(final ChoiceInArchetype bindingType, final List<RuntimeType> children) {
-        super(bindingType, bindingType.statement(), children);
+    public DefaultChoiceRuntimeType(final ChoiceInArchetype bindingType, final ChoiceEffectiveStatement statement,
+            final List<RuntimeType> children) {
+        super(bindingType, statement, children);
     }
 
     @Override

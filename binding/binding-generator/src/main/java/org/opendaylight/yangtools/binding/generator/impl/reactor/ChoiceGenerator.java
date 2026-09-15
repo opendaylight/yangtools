@@ -69,7 +69,7 @@ final class ChoiceGenerator
                 throw new VerifyException("Unexpected augments " + augments);
             }
             children.addAll(augmentedCases);
-            return new DefaultChoiceRuntimeType(archetype, children);
+            return new DefaultChoiceRuntimeType(archetype, statement, children);
         }
     }
 
