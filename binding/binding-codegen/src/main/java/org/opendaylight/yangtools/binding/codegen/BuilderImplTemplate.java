@@ -75,6 +75,13 @@ final class BuilderImplTemplate extends BaseTemplate {
         }
         bb.str(" implements ").str(implIface).oB();
 
+        if (BuilderTemplate.isNonPresenceContainer(targetType)) {
+            bb
+                .str("static final ").str(importedNonNull(targetType)).str(" EMPTY = new ").str(simpleName).str("(new ")
+                    .str(builderName).eol("());")
+                .nl();
+        }
+
         // generate instance fields
         for (var getter : props.allGetters()) {
             bb.str("private final ").str(importedName(getter.type())).sp().str(getter.fieldName()).eS();
