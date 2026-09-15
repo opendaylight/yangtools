@@ -223,7 +223,7 @@ final class BuilderTemplate extends BaseTemplate {
             return switch (withStatus.getStatus()) {
                 case CURRENT -> null;
                 case DEPRECATED -> bb -> bb.at().str(importedName(SUPPRESS_WARNINGS)).eol("(\"deprecation\")");
-                case OBSOLETE -> new org.opendaylight.yangtools.binding.codegen.DeprecatedAnnotation(javaType(), true);
+                case OBSOLETE -> new DeprecatedAnnotation(javaType(), true);
             };
         }
         return null;
