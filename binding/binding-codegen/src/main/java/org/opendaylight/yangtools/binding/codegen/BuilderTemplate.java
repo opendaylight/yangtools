@@ -340,22 +340,12 @@ final class BuilderTemplate extends BaseTemplate {
      */
     private @Nullable BlockFragment generateEmptyInstance() {
         return !isNonPresenceContainer(targetType) ? null : bb -> {
-            final var nonnullTarget = importedNonNull(targetType);
             bb
-                .str("private static final class LazyEmpty").oB()
-                    .str("static final ").str(nonnullTarget).str(" INSTANCE = new ").str(simpleName())
-                        .eol("().build();")
-                    .nl()
-                    .str("private LazyEmpty()").oB()
-                        .eol("// Hidden on purpose")
-                    .cB()
-                .cB()
-                .nl()
                 .eol("/**")
                 .str(" * {@return an empty {@link ").str(targetType.simpleName()).eol("}}")
                 .eol(" */")
-                .str("public static ").str(nonnullTarget).str(" empty()").oB()
-                    .eol("return LazyEmpty.INSTANCE;")
+                .str("public static ").str(importedNonNull(targetType)).str(" empty()").oB()
+                    .str("return ").str(importedName(implJavaType.name())).eol(".EMPTY;")
                 .cB()
                 .nl();
         };
