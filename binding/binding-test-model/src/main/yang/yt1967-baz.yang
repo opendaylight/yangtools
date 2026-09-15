@@ -1,0 +1,18 @@
+module yt1967-baz {
+  namespace yt1967-baz;
+  prefix baz;
+
+  import yt1967-bar { prefix bar; }
+
+  container baz {
+    uses bar:bar;
+  }
+
+  augment /baz/foo/choice {
+    case baz {
+      leaf baz-leaf {
+        type int32;
+      }
+    }
+  }
+}

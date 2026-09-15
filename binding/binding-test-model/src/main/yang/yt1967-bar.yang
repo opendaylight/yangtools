@@ -1,0 +1,18 @@
+module yt1967-bar {
+  namespace yt1967-bar;
+  prefix bar;
+
+  import yt1967-foo { prefix foo; }
+
+  grouping bar {
+    uses foo:grp {
+      augment foo/choice {
+        case bar-case {
+          leaf bar-lef {
+            type string;
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+module yt1967-foo {
+  namespace yt1967-foo;
+  prefix foo;
+
+  grouping grp {
+    container foo {
+      choice choice;
+    }
+  }
+}
