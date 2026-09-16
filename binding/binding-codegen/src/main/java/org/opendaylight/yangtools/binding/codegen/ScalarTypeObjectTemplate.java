@@ -91,6 +91,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
         void appendMethods(final BlockBuilder bb, final ConcreteType valueType) {
             final var override = importedName(OVERRIDE);
             final var codeHelpers = importedName(CODEHELPERS);
+            final var typeName = importedName(archetype);
 
             bb
                 .nl()
@@ -111,7 +112,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
                 .nl()
                 .at().eol(override)
                 .str("public final boolean equals(").str(importedName(OBJECT)).str(" obj)").oB()
-                    .str("return this == obj || obj instanceof ").str(archetype.simpleName()).str(" other && ");
+                    .str("return this == obj || obj instanceof ").str(typeName).str(" other && ");
             if (valueType.isArray()) {
                 bb.str(importedName(JU_ARRAYS)).eol(".equals(_value, other._value);");
             } else {
@@ -122,7 +123,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
                 .nl()
                 .at().eol(override)
                 .str("public final ").str(importedName(STRING)).str(" toString()").oB()
-                    .str("return ").str(codeHelpers).eol(".stoTS(getClass(), _value);")
+                    .str("return ").str(codeHelpers).str(".stoTS(").str(typeName).eol(".class, _value);")
                 .cB();
         }
     }
