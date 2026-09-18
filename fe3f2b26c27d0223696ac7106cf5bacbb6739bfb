@@ -16,6 +16,23 @@
       "message": "recheck",
       "revId": "fe3f2b26c27d0223696ac7106cf5bacbb6739bfb",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "0565a469_648dd5ab",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-09-18T13:00:21Z",
+      "side": 1,
+      "message": "Run SKIP\u003dactionlint pipx run pre-commit run --all-files --show-diff-on-failure\n  SKIP\u003dactionlint pipx run pre-commit run --all-files --show-diff-on-failure\n  shell: /usr/bin/bash -e {0}\n  env:\n    pythonLocation: /opt/hostedtoolcache/Python/3.11.16/x64\n    PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib/pkgconfig\n    Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64\n    Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64\n    Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.16/x64\n    LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.16/x64/lib\ncreating virtual environment...\ninstalling pre-commit...\nAn error has occurred: InvalidConfigError: \n\u003d\u003d\u003d\u003d\u003d\u003e .pre-commit-config.yaml is not a file\nCheck the log at /home/runner/.cache/pre-commit/pre-commit.log\nError: Process completed with exit code 1.",
+      "revId": "fe3f2b26c27d0223696ac7106cf5bacbb6739bfb",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
