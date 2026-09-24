@@ -7,16 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import com.google.common.collect.Iterators;
-import java.util.Iterator;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.InstanceNotificationArchetype;
-import org.opendaylight.yangtools.binding.model.Type;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * Template for a {@link InstanceNotificationArchetype}.
@@ -24,7 +20,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
 @NonNullByDefault
 final class InstanceNotificationTemplate extends InterfaceTemplate<InstanceNotificationArchetype>
         implements ArchetypeTemplate.WithBuilder {
-    private static final ConcreteType INSTANCE_NOTIFICATION = ConcreteType.ofClass(InstanceNotification.class);
+    private static final TypeName INSTANCE_NOTIFICATION = TypeName.ofClass(InstanceNotification.class);
 
     InstanceNotificationTemplate(final DataRootArchetype root, final InstanceNotificationArchetype archetype) {
         super(root, archetype);
@@ -36,10 +32,9 @@ final class InstanceNotificationTemplate extends InterfaceTemplate<InstanceNotif
     }
 
     @Override
-    Iterator<? extends Type> extendsTypes() {
-        return Iterators.concat(
-            Iterators.singletonIterator(
-                ParameterizedType.of(INSTANCE_NOTIFICATION, archetype, TypeRef.of(archetype.parentName()))),
+    Stream<TypeReference> extendsTypes() {
+        return Stream.concat(Stream.of(
+            TypeReference.of(javaType(), INSTANCE_NOTIFICATION, archetype.name(), archetype.parentName())),
             super.extendsTypes());
     }
 

@@ -8,12 +8,11 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import com.google.common.base.VerifyException;
-import java.util.Iterator;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.model.DataContainerArchetype;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.yang.model.api.ContainerLikeCompat;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementEquivalent;
@@ -66,7 +65,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         //
         // TODO: split this out into a ExtendsKeyword, which is a BlockFragment
         // TODO: there always should be at least one interface
-        final var ifaces = extendsTypes();
+        final var ifaces = extendsTypes().iterator();
         if (ifaces.hasNext()) {
             final var first = ifaces.next();
             if (ifaces.hasNext()) {
@@ -77,7 +76,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
                 //       Perhaps it is worth the added complexity: for now this simple approach just works
                 var current = first;
                 while (true) {
-                    bb.str(importedName(current));
+                    bb.frg(current);
                     if (!ifaces.hasNext()) {
                         break;
                     }
@@ -86,7 +85,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
                     current = ifaces.next();
                 }
             } else {
-                bb.str(" extends ").str(importedName(first));
+                bb.str(" extends ").frg(first);
             }
         }
 
@@ -110,11 +109,9 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
         return contractMethods(bb).cB();
     }
 
-    // FIXME: This method forces the use of ConcreteType and ParameterizedType. Replace Type with a BlockFragment
-    //        subclass (TypeFragment?) does the equivalent of JavaFileTemplate.importedName(Type)
     @NonNullByDefault
-    Iterator<? extends Type> extendsTypes() {
-        return archetype.partials().iterator();
+    Stream<TypeReference> extendsTypes() {
+        return archetype.partials().stream().map(partial -> TypeReference.of(javaType(), partial.name()));
     }
 
     BlockFragment constants() {

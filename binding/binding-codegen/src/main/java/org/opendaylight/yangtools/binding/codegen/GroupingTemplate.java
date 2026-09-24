@@ -7,28 +7,26 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import com.google.common.collect.Iterators;
-import java.util.Iterator;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.GroupingArchetype;
-import org.opendaylight.yangtools.binding.model.Type;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * Template for {@link Grouping} specializations.
  */
 @NonNullByDefault
 final class GroupingTemplate extends InterfaceTemplate<GroupingArchetype> {
-    private static final ConcreteType GROUPING = ConcreteType.ofClass(Grouping.class);
+    private static final TypeName GROUPING = TypeName.ofClass(Grouping.class);
 
     GroupingTemplate(final DataRootArchetype root, final GroupingArchetype archetype) {
         super(root, archetype);
     }
 
     @Override
-    Iterator<? extends Type> extendsTypes() {
-        return Iterators.concat(Iterators.singletonIterator(GROUPING), super.extendsTypes());
+    Stream<TypeReference> extendsTypes() {
+        return Stream.concat(Stream.of(TypeReference.of(javaType(), GROUPING)), super.extendsTypes());
     }
 }

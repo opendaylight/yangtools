@@ -13,16 +13,12 @@ import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.INSTANCE_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
 
-import com.google.common.collect.Iterators;
-import java.util.Iterator;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 
 /**
  * Template for {@link DataRoot} specializations.
@@ -30,7 +26,7 @@ import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 @NonNullByDefault
 final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> {
     private static final TypeName ROOT_META = TypeName.ofClass(RootMeta.class);
-    private static final ConcreteType DATA_ROOT = ConcreteType.ofClass(DataRoot.class);
+    private static final TypeName DATA_ROOT = TypeName.ofClass(DataRoot.class);
 
     private DataRootTemplate(final DataRootArchetype archetype) {
         super(archetype, archetype);
@@ -42,10 +38,8 @@ final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> {
     }
 
     @Override
-    Iterator<? extends Type> extendsTypes() {
-        return Iterators.concat(
-            Iterators.singletonIterator(ParameterizedType.of(DATA_ROOT, archetype)),
-            super.extendsTypes());
+    Stream<TypeReference> extendsTypes() {
+        return Stream.concat(Stream.of(TypeReference.of(javaType(), DATA_ROOT, archetype.name())), super.extendsTypes());
     }
 
     @Override
