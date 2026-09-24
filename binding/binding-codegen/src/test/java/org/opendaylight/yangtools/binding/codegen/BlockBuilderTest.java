@@ -13,6 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.google.common.base.VerifyException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.codegen.ArgumentVerifier.StrictVerifier;
 
@@ -26,8 +27,9 @@ class BlockBuilderTest {
     }
 
     @Test
+    @SuppressWarnings("null")
     void verifyStrNullStr() {
-        assertThrows(NullPointerException.class, () -> bb.str(null));
+        assertThrows(NullPointerException.class, () -> bb.str((@NonNull String) null));
     }
 
     @Test
@@ -43,8 +45,9 @@ class BlockBuilderTest {
     }
 
     @Test
+    @SuppressWarnings("null")
     void verifyTxtNull() {
-        assertThrows(NullPointerException.class, () -> bb.txt(null));
+        assertThrows(NullPointerException.class, () -> bb.txt((@NonNull String) null));
     }
 
     @Test
