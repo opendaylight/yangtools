@@ -7,23 +7,19 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import com.google.common.collect.Iterators;
-import java.util.Iterator;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.CaseObject;
 import org.opendaylight.yangtools.binding.model.CaseObjectArchetype;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.Type;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * Template for a (non-existing) {@code CaseObject}.
  */
 @NonNullByDefault
 final class CaseObjectTemplate extends InterfaceTemplate<CaseObjectArchetype> implements ArchetypeTemplate.WithBuilder {
-    private static final ConcreteType CASE_OBJECT = ConcreteType.ofClass(CaseObject.class);
+    private static final TypeName CASE_OBJECT = TypeName.ofClass(CaseObject.class);
 
     CaseObjectTemplate(final DataRootArchetype root, final CaseObjectArchetype archetype) {
         super(root, archetype);
@@ -35,13 +31,11 @@ final class CaseObjectTemplate extends InterfaceTemplate<CaseObjectArchetype> im
     }
 
     @Override
-    Iterator<? extends Type> extendsTypes() {
-        final var choiceIn = TypeRef.of(archetype.choiceName());
-        return Iterators.concat(
-            Iterators.forArray(
-                ParameterizedType.of(CASE_OBJECT, TypeRef.of(archetype.parentName()), choiceIn, archetype),
-                choiceIn),
-            super.extendsTypes());
+    Stream<TypeReference> extendsTypes() {
+        return Stream.concat(Stream.of(
+            TypeReference.of(javaType(), CASE_OBJECT, archetype.parentName(), archetype.choiceName(), archetype.name()),
+            TypeReference.of(javaType(), archetype.choiceName())),
+            partialExtends());
     }
 
     @Override

@@ -7,17 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import com.google.common.collect.Iterators;
-import java.util.Iterator;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ContainerObject;
 import org.opendaylight.yangtools.binding.model.ContainerObjectArchetype;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.Type;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * Template for a {@link ChildOf} interface.
@@ -25,7 +21,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
 @NonNullByDefault
 final class ContainerObjectTemplate extends InterfaceTemplate<ContainerObjectArchetype>
         implements ArchetypeTemplate.WithBuilder {
-    private static final ConcreteType CONTAINER_OBJECT = ConcreteType.ofClass(ContainerObject.class);
+    private static final TypeName CONTAINER_OBJECT = TypeName.ofClass(ContainerObject.class);
 
     ContainerObjectTemplate(final DataRootArchetype root, final ContainerObjectArchetype archetype) {
         super(root, archetype);
@@ -37,11 +33,9 @@ final class ContainerObjectTemplate extends InterfaceTemplate<ContainerObjectArc
     }
 
     @Override
-    Iterator<? extends Type> extendsTypes() {
-        return Iterators.concat(
-            Iterators.singletonIterator(
-                ParameterizedType.of(CONTAINER_OBJECT, TypeRef.of(archetype.parentName()), archetype)),
-            super.extendsTypes());
+    Stream<TypeReference> extendsTypes() {
+        return Stream.concat(Stream.of(
+            TypeReference.of(javaType(),CONTAINER_OBJECT, archetype.parentName(), archetype)),partialExtends());
     }
 
     @Override
