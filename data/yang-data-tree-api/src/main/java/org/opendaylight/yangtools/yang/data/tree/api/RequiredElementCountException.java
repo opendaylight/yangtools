@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.data.tree.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.errorprone.annotations.FormatMethod;
+import com.google.errorprone.annotations.FormatString;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.ErrorSeverity;
@@ -37,8 +39,9 @@ public final class RequiredElementCountException extends DataValidationFailedExc
         this.appTag = requireNonNull(appTag);
     }
 
-    public RequiredElementCountException(final YangInstanceIdentifier path, final String appTag, final String format,
-            final Object... args) {
+    @FormatMethod
+    public RequiredElementCountException(final YangInstanceIdentifier path, final String appTag,
+            @FormatString final String format, final Object... args) {
         this(path, appTag, format.formatted(args));
     }
 

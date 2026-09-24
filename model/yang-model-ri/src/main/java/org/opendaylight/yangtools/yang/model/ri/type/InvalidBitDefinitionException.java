@@ -10,13 +10,17 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.errorprone.annotations.FormatMethod;
+import com.google.errorprone.annotations.FormatString;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 @Beta
 public class InvalidBitDefinitionException extends IllegalArgumentException {
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("serial")
     @SuppressFBWarnings("SE_BAD_FIELD")
     private final Bit offendingBit;
 
@@ -25,7 +29,8 @@ public class InvalidBitDefinitionException extends IllegalArgumentException {
         this.offendingBit = requireNonNull(offendingBit);
     }
 
-    public InvalidBitDefinitionException(final Bit offendingBit, final String format,
+    @FormatMethod
+    public InvalidBitDefinitionException(final Bit offendingBit, @FormatString final String format,
             final Object... args) {
         this(offendingBit, format.formatted(args));
     }

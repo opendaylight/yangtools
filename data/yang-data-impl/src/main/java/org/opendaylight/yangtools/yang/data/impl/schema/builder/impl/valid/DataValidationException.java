@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
 
 import com.google.common.annotations.Beta;
+import com.google.errorprone.annotations.FormatMethod;
+import com.google.errorprone.annotations.FormatString;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -47,7 +49,8 @@ public class DataValidationException extends RuntimeException {
         }
     }
 
-    public static void checkLegalData(final boolean isLegal, final String messageTemplate,
+    @FormatMethod
+    public static void checkLegalData(final boolean isLegal, @FormatString final String messageTemplate,
             final Object... messageAttrs) {
         if (!isLegal) {
             throw new DataValidationException(messageTemplate.formatted(messageAttrs));

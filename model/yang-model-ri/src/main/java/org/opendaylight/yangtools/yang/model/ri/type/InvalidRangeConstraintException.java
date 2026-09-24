@@ -10,9 +10,12 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.RangeSet;
+import com.google.errorprone.annotations.FormatMethod;
+import com.google.errorprone.annotations.FormatString;
 
 @Beta
 public class InvalidRangeConstraintException extends IllegalArgumentException {
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
     private final ImmutableRangeSet<?> offendingRangeConstraint;
@@ -22,7 +25,8 @@ public class InvalidRangeConstraintException extends IllegalArgumentException {
         offendingRangeConstraint = ImmutableRangeSet.copyOf(offendingConstraint);
     }
 
-    public InvalidRangeConstraintException(final RangeSet<?> offendingConstraint, final String format,
+    @FormatMethod
+    public InvalidRangeConstraintException(final RangeSet<?> offendingConstraint, @FormatString final String format,
             final Object... args) {
         this(offendingConstraint, format.formatted(args));
     }

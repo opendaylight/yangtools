@@ -24,6 +24,7 @@ module org.opendaylight.yangtools.databind {
     requires org.slf4j;
 
     // Annotation-only dependencies
+    requires static transitive com.google.errorprone.annotations;
     requires static transitive org.eclipse.jdt.annotation;
     requires static com.github.spotbugs.annotations;
     requires static org.osgi.annotation.bundle;

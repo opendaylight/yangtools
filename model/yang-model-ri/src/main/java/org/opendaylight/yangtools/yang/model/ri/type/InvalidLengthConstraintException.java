@@ -8,13 +8,17 @@
 package org.opendaylight.yangtools.yang.model.ri.type;
 
 import com.google.common.annotations.Beta;
+import com.google.errorprone.annotations.FormatMethod;
+import com.google.errorprone.annotations.FormatString;
 import org.eclipse.jdt.annotation.NonNull;
 
 @Beta
 public final class InvalidLengthConstraintException extends Exception {
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
-    public InvalidLengthConstraintException(final @NonNull String format, final Object... args) {
+    @FormatMethod
+    public InvalidLengthConstraintException(final @NonNull String format, @FormatString final Object... args) {
         super(format.formatted(args));
     }
 }

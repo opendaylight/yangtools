@@ -10,8 +10,9 @@ package org.opendaylight.yangtools.binding.runtime.osgi.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.io.Resources;
+import com.google.errorprone.annotations.FormatMethod;
+import com.google.errorprone.annotations.FormatString;
 import java.io.IOException;
-import java.io.Serial;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
@@ -168,10 +169,11 @@ final class YangModuleInfoScanner extends BundleTracker<Registration> {
 
     @NonNullByDefault
     private static final class ScanningException extends Exception {
-        @Serial
+        @java.io.Serial
         private static final long serialVersionUID = 1L;
 
-        ScanningException(final Exception cause, final String format, final Object... args) {
+        @FormatMethod
+        ScanningException(final Exception cause, @FormatString final String format, final Object... args) {
             super(format.formatted(args), cause);
         }
     }

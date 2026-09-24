@@ -10,13 +10,17 @@ package org.opendaylight.yangtools.yang.model.ri.type;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.errorprone.annotations.FormatMethod;
+import com.google.errorprone.annotations.FormatString;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 @Beta
 public class InvalidEnumDefinitionException extends IllegalArgumentException {
+    @java.io.Serial
     private static final long serialVersionUID = 1L;
 
+    @SuppressWarnings("serial")
     @SuppressFBWarnings("SE_BAD_FIELD")
     private final EnumPair offendingEnum;
 
@@ -25,7 +29,8 @@ public class InvalidEnumDefinitionException extends IllegalArgumentException {
         this.offendingEnum = requireNonNull(offendingEnum);
     }
 
-    public InvalidEnumDefinitionException(final EnumPair offendingEnum, final String format,
+    @FormatMethod
+    public InvalidEnumDefinitionException(final EnumPair offendingEnum, @FormatString final String format,
             final Object... args) {
         this(offendingEnum, format.formatted(args));
     }

@@ -27,6 +27,7 @@ module org.opendaylight.yangtools.yang.xpath.impl {
     // Annotations
     requires static transitive javax.inject;
     requires static com.github.spotbugs.annotations;
+    requires static com.google.errorprone.annotations;
     requires static dagger;
     requires static jakarta.inject;
     requires static java.compiler;

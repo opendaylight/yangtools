@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.databind;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.errorprone.annotations.FormatMethod;
+import com.google.errorprone.annotations.FormatString;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
@@ -44,7 +46,8 @@ public final class RequestException extends Exception {
         this(ErrorType.APPLICATION, ErrorTag.OPERATION_FAILED, requireNonNull(message));
     }
 
-    public RequestException(final String format, final Object @Nullable ... args) {
+    @FormatMethod
+    public RequestException(@FormatString final String format, final Object @Nullable ... args) {
         this(ErrorType.APPLICATION, ErrorTag.OPERATION_FAILED, format, args);
     }
 
@@ -71,7 +74,8 @@ public final class RequestException extends Exception {
             new RequestError(type, tag, new ErrorMessage(message), null, null, errorInfoOf(cause)), cause);
     }
 
-    public RequestException(final ErrorType type, final ErrorTag tag, final String format,
+    @FormatMethod
+    public RequestException(final ErrorType type, final ErrorTag tag, @FormatString final String format,
             final Object @Nullable ... args) {
         this(type, tag, format.formatted(args));
     }
@@ -94,8 +98,9 @@ public final class RequestException extends Exception {
         }
     }
 
-    public RequestException(final List<RequestError> errors, final @Nullable Throwable cause, final String format,
-            final Object... args) {
+    @FormatMethod
+    public RequestException(final List<RequestError> errors, final @Nullable Throwable cause,
+            @FormatString final String format, final Object... args) {
         this(errors, cause, format.formatted(args));
     }
 

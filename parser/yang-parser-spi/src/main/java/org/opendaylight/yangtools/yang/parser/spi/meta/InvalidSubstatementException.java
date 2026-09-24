@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import com.google.errorprone.annotations.FormatMethod;
+import com.google.errorprone.annotations.FormatString;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -27,13 +29,15 @@ public class InvalidSubstatementException extends SourceException {
         super(message, source, cause);
     }
 
-    public InvalidSubstatementException(final @NonNull CommonStmtCtx stmt, final @NonNull String format,
+    @FormatMethod
+    public InvalidSubstatementException(final @NonNull CommonStmtCtx stmt, @FormatString final @NonNull String format,
             final Object... args) {
         this(stmt.sourceReference(), format, args);
     }
 
-    public InvalidSubstatementException(final @NonNull StatementSourceReference source, final @NonNull String format,
-            final Object... args) {
+    @FormatMethod
+    public InvalidSubstatementException(final @NonNull StatementSourceReference source,
+            @FormatString final @NonNull String format, final Object... args) {
         this(format.formatted(args), source);
     }
 }

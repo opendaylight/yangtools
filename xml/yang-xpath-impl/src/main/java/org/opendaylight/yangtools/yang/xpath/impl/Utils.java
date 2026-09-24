@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.xpath.impl;
 
+import com.google.errorprone.annotations.FormatMethod;
+import com.google.errorprone.annotations.FormatString;
 import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -74,7 +76,8 @@ final class Utils {
         return YangQNameExpr.of(qname);
     }
 
-    static XPathExpressionException wrapException(final @Nullable Throwable cause, final String format,
+    @FormatMethod
+    static XPathExpressionException wrapException(final @Nullable Throwable cause, @FormatString final String format,
             final Object... args) {
         final var ret = new XPathExpressionException(format.formatted(args));
         ret.initCause(cause);

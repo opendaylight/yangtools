@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.errorprone.annotations.FormatMethod;
+import com.google.errorprone.annotations.FormatString;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectInputStream;
@@ -39,13 +41,15 @@ public class StatementSourceException extends RuntimeException implements Statem
         this.sourceRef = requireNonNull(sourceRef);
     }
 
-    public StatementSourceException(final StatementSourceReference sourceRef, final String format,
+    @FormatMethod
+    public StatementSourceException(final StatementSourceReference sourceRef, @FormatString final String format,
             final Object... args) {
         this(sourceRef, format.formatted(args));
     }
 
+    @FormatMethod
     public StatementSourceException(final StatementSourceReference sourceRef, final Throwable cause,
-            final String format, final Object... args) {
+            @FormatString final String format, final Object... args) {
         this(sourceRef, format.formatted(args), cause);
     }
 
