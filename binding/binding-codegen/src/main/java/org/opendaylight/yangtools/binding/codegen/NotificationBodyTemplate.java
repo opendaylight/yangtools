@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
@@ -26,7 +25,7 @@ final class NotificationBodyTemplate extends InterfaceTemplate<NotificationBodyA
     }
 
     @Override
-    Stream<TypeReference> extendsTypes() {
-        return Stream.concat(Stream.of(TypeReference.of(javaType(), NOTIFICATION_BODY, archetype)), partialExtends());
+    ExtendsKeyword extendsKeyword() {
+        return ExtendsKeyword.of(typeRefOf(NOTIFICATION_BODY, archetype), extendsPartials());
     }
 }

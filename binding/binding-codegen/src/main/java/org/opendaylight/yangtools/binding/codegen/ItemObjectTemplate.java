@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ItemObject;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
@@ -31,9 +30,8 @@ final class ItemObjectTemplate extends InterfaceTemplate<ItemObjectArchetype> im
     }
 
     @Override
-    Stream<TypeReference> extendsTypes() {
-        return Stream.concat(Stream.of(TypeReference.of(javaType(), ITEM_OBJECT, archetype.parentName(), archetype)),
-            partialExtends());
+    ExtendsKeyword extendsKeyword() {
+        return ExtendsKeyword.of(typeRefOf(ITEM_OBJECT, archetype.parentName(), archetype), extendsPartials());
     }
 
     @Override

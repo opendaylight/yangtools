@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.binding.codegen.TypeNames.NONNULL;
 import static org.opendaylight.yangtools.binding.codegen.TypeNames.NULLABLE;
 
 import com.google.common.base.CharMatcher;
+import java.util.List;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -39,8 +40,34 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
         this.javaType = requireNonNull(javaType);
     }
 
-    final @NonNull GeneratedClass javaType() {
+    @NonNullByDefault
+    final GeneratedClass javaType() {
         return javaType;
+    }
+
+    @NonNullByDefault
+    final TypeReference typeRefOf(final TypeName type) {
+        return new RawTypeReference(javaType, type);
+    }
+
+    @NonNullByDefault
+    final TypeReference typeRefOf(final TypeName type, final Archetype arg0) {
+        return new ParameterizedTypeReference(javaType, type, List.of(arg0.name()));
+    }
+
+    @NonNullByDefault
+    final TypeReference typeRefOf(final TypeName type, final TypeName arg0, final Archetype arg1) {
+        return new ParameterizedTypeReference(javaType, type, List.of(arg0, arg1.name()));
+    }
+
+    @NonNullByDefault
+    final TypeReference typeRefOf(final TypeName type, final TypeName arg0, final TypeName arg1) {
+        return new ParameterizedTypeReference(javaType, type, List.of(arg0, arg1));
+    }
+
+    @NonNullByDefault
+    final TypeReference typeRefOf(final TypeName type, final TypeName... args) {
+        return new ParameterizedTypeReference(javaType, type, List.of(args));
     }
 
     @Override

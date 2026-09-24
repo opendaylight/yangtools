@@ -12,7 +12,6 @@ import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
 import static org.opendaylight.yangtools.binding.contract.Naming.NAME_STATIC_FIELD_NAME;
 
-import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.YangData;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
@@ -38,8 +37,8 @@ final class YangDataTemplate extends InterfaceTemplate<YangDataArchetype> implem
     }
 
     @Override
-    Stream<TypeReference> extendsTypes() {
-        return Stream.concat(Stream.of(TypeReference.of(javaType(), YANG_DATA, archetype)), partialExtends());
+    ExtendsKeyword extendsKeyword() {
+        return ExtendsKeyword.of(typeRefOf(YANG_DATA, archetype), extendsPartials());
     }
 
     @Override

@@ -44,52 +44,7 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
             .blk(wrapToDocumentation(formatDataForJavaDoc()))
             .frg(DeprecatedAnnotation.of(javaType(), archetype.statement()))
             .eol(generatedAnnotation())
-            .str("public interface ").str(archetype.simpleName());
-
-        // We can have three shapes here to ensure reasonable separation from inner members:
-        //
-        //   interface Foo {
-        //       int VALUE = 42;
-        //
-        // or
-        //
-        //   interface Foo extends One {
-        //       int VALUE = 42;
-        //
-        // or
-        //
-        //   interface Foo
-        //       extends One,
-        //               Two {
-        //       int VALUE = 42;
-        //
-        // TODO: split this out into a ExtendsKeyword, which is a BlockFragment
-        // TODO: there always should be at least one interface
-        final var ifaces = extendsTypes().iterator();
-        if (ifaces.hasNext()) {
-            final var first = ifaces.next();
-            if (ifaces.hasNext()) {
-                bb.nl().ind("extends ");
-
-                // Note: We could try to pack multiple references into a single line, but that would require us to pick
-                //       a length limit and peek into importedName to see how long it is.
-                //       Perhaps it is worth the added complexity: for now this simple approach just works
-                var current = first;
-                while (true) {
-                    bb.frg(current);
-                    if (!ifaces.hasNext()) {
-                        break;
-                    }
-                    // space equivalent of 'extends'
-                    bb.eol(",").ind("        ");
-                    current = ifaces.next();
-                }
-            } else {
-                bb.str(" extends ").frg(first);
-            }
-        }
-
-        bb.oB();
+            .str("public interface ").str(archetype.simpleName()).frg(extendsKeyword()).oB();
 
         final var innerClasses = generateInnerClasses(root, archetype.typeObjects());
         if (innerClasses != null) {
@@ -110,11 +65,11 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
     }
 
     @NonNullByDefault
-    abstract Stream<TypeReference> extendsTypes();
+    abstract ExtendsKeyword extendsKeyword();
 
     @NonNullByDefault
-    final Stream<TypeReference> partialExtends() {
-        return archetype.partials().stream().map(partial -> TypeReference.of(javaType(), partial.name()));
+    final Stream<TypeReference> extendsPartials() {
+        return archetype.partials().stream().map(partial -> typeRefOf(partial.name()));
     }
 
     BlockFragment constants() {
