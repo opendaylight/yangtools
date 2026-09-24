@@ -17,8 +17,10 @@ import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.Archetype;
 import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.TypeName;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 
@@ -48,6 +50,16 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
 
     final @NonNull BlockBuilder newBlockBuilder() {
         return javaType.newBlockBuilder();
+    }
+
+    @NonNullByDefault
+    final String importedName(final Archetype intype) {
+        return importedName(intype.name());
+    }
+
+    @NonNullByDefault
+    final String importedName(final ConcreteType intype) {
+        return importedName(intype.name());
     }
 
     @NonNullByDefault
