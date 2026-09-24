@@ -19,7 +19,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
 import org.opendaylight.yangtools.binding.model.api.RestrictedType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
 
@@ -49,11 +48,6 @@ abstract sealed class JavaFileTemplate extends Template permits BaseTemplate {
 
     final @NonNull BlockBuilder newBlockBuilder() {
         return javaType.newBlockBuilder();
-    }
-
-    @NonNullByDefault
-    final String importedJavadocName(final Type intype) {
-        return importedName(intype instanceof ParameterizedType parameterized ? parameterized.getRawType() : intype);
     }
 
     @NonNullByDefault
