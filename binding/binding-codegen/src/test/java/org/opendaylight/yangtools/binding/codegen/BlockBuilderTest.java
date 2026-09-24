@@ -27,13 +27,7 @@ class BlockBuilderTest {
 
     @Test
     void verifyStrNullStr() {
-        assertThrows(NullPointerException.class, () -> bb.str((String) null));
-    }
-
-    @Test
-    void verifyStrNullSb() {
-        assertSame(bb, bb.str((StringBuilder) null));
-        assertEquals("", bb.toRawString());
+        assertThrows(NullPointerException.class, () -> bb.str(null));
     }
 
     @Test
