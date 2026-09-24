@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.EntryObject;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
@@ -38,10 +37,10 @@ final class EntryObjectTemplate extends InterfaceTemplate<EntryObjectArchetype>
     }
 
     @Override
-    Stream<TypeReference> extendsTypes() {
-        return Stream.concat(Stream.of(
-            TypeReference.of(javaType(), ENTRY_OBJECT, archetype.parentName(), archetype.name(), key.name())),
-            partialExtends());
+    ExtendsKeyword extendsKeyword() {
+        return ExtendsKeyword.of(
+            TypeReference.of(javaType(), ENTRY_OBJECT, archetype.parentName(), archetype.name(), key.name()),
+            extendsPartials());
     }
 
     @Override

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.RpcOutput;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
@@ -31,8 +30,8 @@ final class RpcOutputTemplate extends InterfaceTemplate<RpcOutputArchetype> impl
     }
 
     @Override
-    Stream<TypeReference> extendsTypes() {
-        return Stream.concat(Stream.of(TypeReference.of(javaType(), RPC_OUTPUT, archetype)), partialExtends());
+    ExtendsKeyword extendsKeyword() {
+        return ExtendsKeyword.of(TypeReference.of(javaType(), RPC_OUTPUT, archetype), extendsPartials());
     }
 
     @Override
