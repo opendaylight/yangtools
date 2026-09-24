@@ -155,16 +155,6 @@ final class BlockBuilder extends Block.Builder {
         return this;
     }
 
-    // FIXME: remove this method
-    @Deprecated
-    @NonNullByDefault
-    BlockBuilder str(final @Nullable StringBuilder sb) {
-        if (sb != null) {
-            strImpl(sb.toString());
-        }
-        return this;
-    }
-
     @NonNullByDefault
     private void strImpl(final String str) {
         buf().append(verifyStr(str));
