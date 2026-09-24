@@ -7,18 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import com.google.common.collect.Iterators;
-import java.util.Iterator;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.KeyArchetype;
 import org.opendaylight.yangtools.binding.model.KeyedListNotificationArchetype;
-import org.opendaylight.yangtools.binding.model.Type;
 import org.opendaylight.yangtools.binding.model.TypeName;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
 
 /**
  * Template for a {@link KeyedListNotificationArchetype}.
@@ -26,7 +21,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
 @NonNullByDefault
 final class KeyedListNotificationTemplate extends InterfaceTemplate<KeyedListNotificationArchetype>
         implements ArchetypeTemplate.WithBuilder {
-    private static final ConcreteType KEYED_LIST_NOTIFICATION = ConcreteType.ofClass(KeyedListNotification.class);
+    private static final TypeName KEYED_LIST_NOTIFICATION = TypeName.ofClass(KeyedListNotification.class);
 
     private final TypeName keyName;
 
@@ -42,12 +37,10 @@ final class KeyedListNotificationTemplate extends InterfaceTemplate<KeyedListNot
     }
 
     @Override
-    Iterator<? extends Type> extendsTypes() {
-        return Iterators.concat(
-            Iterators.singletonIterator(
-                ParameterizedType.of(KEYED_LIST_NOTIFICATION, archetype, TypeRef.of(archetype.parentName()),
-                    TypeRef.of(keyName))),
-            super.extendsTypes());
+    Stream<TypeReference> extendsTypes() {
+        return Stream.concat(Stream.of(
+            TypeReference.of(javaType(), KEYED_LIST_NOTIFICATION, archetype.name(), archetype.parentName(), keyName)),
+            partialExtends());
     }
 
     @Override

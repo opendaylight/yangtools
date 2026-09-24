@@ -7,23 +7,19 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import com.google.common.collect.Iterators;
-import java.util.Iterator;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ItemObject;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.ItemObjectArchetype;
-import org.opendaylight.yangtools.binding.model.Type;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * Template for {@link ItemObject} specializations.
  */
 @NonNullByDefault
 final class ItemObjectTemplate extends InterfaceTemplate<ItemObjectArchetype> implements ArchetypeTemplate.WithBuilder {
-    private static final ConcreteType ITEM_OBJECT = ConcreteType.ofClass(ItemObject.class);
+    private static final TypeName ITEM_OBJECT = TypeName.ofClass(ItemObject.class);
 
     ItemObjectTemplate(final DataRootArchetype root, final ItemObjectArchetype archetype) {
         super(root, archetype);
@@ -35,11 +31,9 @@ final class ItemObjectTemplate extends InterfaceTemplate<ItemObjectArchetype> im
     }
 
     @Override
-    Iterator<? extends Type> extendsTypes() {
-        return Iterators.concat(
-            Iterators.singletonIterator(
-                ParameterizedType.of(ITEM_OBJECT, TypeRef.of(archetype.parentName()), archetype)),
-            super.extendsTypes());
+    Stream<TypeReference> extendsTypes() {
+        return Stream.concat(Stream.of(TypeReference.of(javaType(), ITEM_OBJECT, archetype.parentName(), archetype)),
+            partialExtends());
     }
 
     @Override
