@@ -45,6 +45,7 @@ record BlockC(List<Block> blocks) implements Block {
     @Override
     @DoNotCall
     @Deprecated(forRemoval = true)
+    @SuppressWarnings("removal")
     public String toString() {
         return toRawString();
     }

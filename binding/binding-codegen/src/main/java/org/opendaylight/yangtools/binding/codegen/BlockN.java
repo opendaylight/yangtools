@@ -62,6 +62,7 @@ record BlockN(String str) implements Block {
     @Override
     @DoNotCall
     @Deprecated(forRemoval = true)
+    @SuppressWarnings("removal")
     public String toString() {
         return toRawString();
     }
