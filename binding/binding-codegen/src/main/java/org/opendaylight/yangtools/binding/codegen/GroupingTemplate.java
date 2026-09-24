@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Grouping;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
@@ -26,7 +25,7 @@ final class GroupingTemplate extends InterfaceTemplate<GroupingArchetype> {
     }
 
     @Override
-    Stream<TypeReference> extendsTypes() {
-        return Stream.concat(Stream.of(TypeReference.of(javaType(), GROUPING)), partialExtends());
+    ExtendsKeyword extendsKeyword() {
+        return ExtendsKeyword.of(TypeReference.of(javaType(), GROUPING), extendsPartials());
     }
 }

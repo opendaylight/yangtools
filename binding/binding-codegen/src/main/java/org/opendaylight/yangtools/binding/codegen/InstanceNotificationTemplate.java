@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.InstanceNotification;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
@@ -32,10 +31,10 @@ final class InstanceNotificationTemplate extends InterfaceTemplate<InstanceNotif
     }
 
     @Override
-    Stream<TypeReference> extendsTypes() {
-        return Stream.concat(Stream.of(
-            TypeReference.of(javaType(), INSTANCE_NOTIFICATION, archetype.name(), archetype.parentName())),
-            partialExtends());
+    ExtendsKeyword extendsKeyword() {
+        return ExtendsKeyword.of(
+            TypeReference.of(javaType(), INSTANCE_NOTIFICATION, archetype.name(), archetype.parentName()),
+            extendsPartials());
     }
 
     @Override
