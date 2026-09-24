@@ -7,31 +7,26 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import com.google.common.collect.Iterators;
-import java.util.Iterator;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.NotificationBody;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.NotificationBodyArchetype;
-import org.opendaylight.yangtools.binding.model.Type;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * Template for {@link NotificationBody} specializations.
  */
 @NonNullByDefault
 final class NotificationBodyTemplate extends InterfaceTemplate<NotificationBodyArchetype> {
-    private static final ConcreteType NOTIFICATION_BODY = ConcreteType.ofClass(NotificationBody.class);
+    private static final TypeName NOTIFICATION_BODY = TypeName.ofClass(NotificationBody.class);
 
     NotificationBodyTemplate(final DataRootArchetype root, final NotificationBodyArchetype archetype) {
         super(root, archetype);
     }
 
     @Override
-    Iterator<? extends Type> extendsTypes() {
-        return Iterators.concat(
-            Iterators.singletonIterator(ParameterizedType.of(NOTIFICATION_BODY, archetype)),
-            super.extendsTypes());
+    Stream<TypeReference> extendsTypes() {
+        return Stream.concat(Stream.of(TypeReference.of(javaType(), NOTIFICATION_BODY, archetype)), partialExtends());
     }
 }
