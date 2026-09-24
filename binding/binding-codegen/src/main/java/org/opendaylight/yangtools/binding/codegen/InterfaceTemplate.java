@@ -69,7 +69,12 @@ abstract sealed class InterfaceTemplate<T extends @NonNull DataContainerArchetyp
 
     @NonNullByDefault
     final Stream<TypeReference> extendsPartials() {
-        return archetype.partials().stream().map(partial -> typeRefOf(partial.name()));
+        final var partials = archetype.partials();
+        return switch (partials.size()) {
+            case 0 -> Stream.empty();
+            case 1 -> Stream.of(typeRefOf(partials.getFirst().name()));
+            default -> partials.stream().map(partial -> typeRefOf(partial.name()));
+        };
     }
 
     BlockFragment constants() {
