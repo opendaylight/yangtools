@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
@@ -32,9 +31,8 @@ final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype
     }
 
     @Override
-    Stream<TypeReference> extendsTypes() {
-        return Stream.concat(Stream.of(TypeReference.of(javaType(), AUGMENTATION, archetype.targetName(), archetype)),
-            partialExtends());
+    ExtendsKeyword extendsKeyword() {
+        return ExtendsKeyword.of(typeRefOf(AUGMENTATION, archetype.targetName(), archetype), extendsPartials());
     }
 
     @Override

@@ -13,7 +13,6 @@ import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.INSTANCE_FIELD_NAME;
 import static org.opendaylight.yangtools.binding.codegen.YangModuleInfoTemplate.yangModuleInfoOf;
 
-import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.DataRoot;
 import org.opendaylight.yangtools.binding.meta.RootMeta;
@@ -38,8 +37,8 @@ final class DataRootTemplate extends InterfaceTemplate<DataRootArchetype> {
     }
 
     @Override
-    Stream<TypeReference> extendsTypes() {
-        return Stream.concat(Stream.of(TypeReference.of(javaType(), DATA_ROOT, archetype)), partialExtends());
+    ExtendsKeyword extendsKeyword() {
+        return ExtendsKeyword.of(typeRefOf(DATA_ROOT, archetype), extendsPartials());
     }
 
     @Override

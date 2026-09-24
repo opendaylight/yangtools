@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.ChildOf;
 import org.opendaylight.yangtools.binding.ContainerObject;
@@ -33,9 +32,8 @@ final class ContainerObjectTemplate extends InterfaceTemplate<ContainerObjectArc
     }
 
     @Override
-    Stream<TypeReference> extendsTypes() {
-        return Stream.concat(Stream.of(
-            TypeReference.of(javaType(),CONTAINER_OBJECT, archetype.parentName(), archetype)),partialExtends());
+    ExtendsKeyword extendsKeyword() {
+        return ExtendsKeyword.of(typeRefOf(CONTAINER_OBJECT, archetype.parentName(), archetype), extendsPartials());
     }
 
     @Override

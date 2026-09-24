@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.KeyedListNotification;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
@@ -37,10 +36,9 @@ final class KeyedListNotificationTemplate extends InterfaceTemplate<KeyedListNot
     }
 
     @Override
-    Stream<TypeReference> extendsTypes() {
-        return Stream.concat(Stream.of(
-            TypeReference.of(javaType(), KEYED_LIST_NOTIFICATION, archetype.name(), archetype.parentName(), keyName)),
-            partialExtends());
+    ExtendsKeyword extendsKeyword() {
+        return ExtendsKeyword.of(typeRefOf(KEYED_LIST_NOTIFICATION, archetype.name(), archetype.parentName(), keyName),
+            extendsPartials());
     }
 
     @Override

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.CaseObject;
 import org.opendaylight.yangtools.binding.model.CaseObjectArchetype;
@@ -31,11 +30,10 @@ final class CaseObjectTemplate extends InterfaceTemplate<CaseObjectArchetype> im
     }
 
     @Override
-    Stream<TypeReference> extendsTypes() {
-        return Stream.concat(Stream.of(
-            TypeReference.of(javaType(), CASE_OBJECT, archetype.parentName(), archetype.choiceName(), archetype.name()),
-            TypeReference.of(javaType(), archetype.choiceName())),
-            partialExtends());
+    ExtendsKeyword extendsKeyword() {
+        return ExtendsKeyword.of(
+            typeRefOf(CASE_OBJECT, archetype.parentName(), archetype.choiceName(), archetype.name()),
+            typeRefOf(archetype.choiceName()), extendsPartials());
     }
 
     @Override
