@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
  */
 @Beta
 @NonNullByDefault
-public sealed interface ContainerObjectArchetype extends ChildOfArchetype, ReturnType
+public sealed interface ContainerObjectArchetype extends ChildOfArchetype
         permits ContainerObjectArchetype000, ContainerObjectArchetype0N0, ContainerObjectArchetypeN00,
                 ContainerObjectArchetypeNN0 {
     @Override

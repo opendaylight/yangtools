@@ -17,7 +17,15 @@ import org.opendaylight.yangtools.binding.model.api.ConcreteType;
  */
 @Beta
 public sealed interface ReturnType extends Type
-    permits ConcreteType, ChoiceInArchetype, ContainerObjectArchetype, EntryObjectArchetype, IdentityArchetype,
-            ItemObjectArchetype, OpaqueObjectArchetype, TypeObjectArchetype, UnknownLeafrefType {
-    // nothing else
+        permits ChildOfArchetype, ChoiceInArchetype, OpaqueObjectArchetype, ReturnType.OfLeaf {
+    /**
+     * Marker interface for {@link ReturnType}s valid in a {@link GetterMethod} generated for a {@code leaf} statement.
+     *
+     * @since 16.1.1
+     */
+    @Beta
+    sealed interface OfLeaf extends ReturnType
+        permits ConcreteType, IdentityArchetype, TypeObjectArchetype, UnknownLeafrefType {
+        // nothing else
+    }
 }
