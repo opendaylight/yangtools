@@ -53,7 +53,7 @@ import org.opendaylight.yangtools.binding.model.impl.TypeMethods;
  */
 // FIXME: clarify the above so that binding-generator deals with all the non-exported groupings as much as possible
 @NonNullByDefault
-public final class UnknownLeafrefType implements ReturnType {
+public final class UnknownLeafrefType implements ReturnType.OfLeaf {
     /**
      * The singleton instance.
      */

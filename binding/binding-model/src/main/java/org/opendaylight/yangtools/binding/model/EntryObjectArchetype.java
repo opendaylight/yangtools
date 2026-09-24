@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
  */
 @Beta
 @NonNullByDefault
-public sealed interface EntryObjectArchetype extends ChildOfArchetype.OfList, ReturnType
+public sealed interface EntryObjectArchetype extends ChildOfArchetype.OfList
         permits EntryObjectArchetype000, EntryObjectArchetype0N0, EntryObjectArchetypeN00, EntryObjectArchetypeNN0 {
     @Override
     @SuppressWarnings("rawtypes")

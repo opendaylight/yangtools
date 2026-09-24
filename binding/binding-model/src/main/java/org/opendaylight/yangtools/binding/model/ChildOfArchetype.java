@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
  * @since 16.0.0
  */
 @NonNullByDefault
-public sealed interface ChildOfArchetype extends AugmentableArchetype
+public sealed interface ChildOfArchetype extends AugmentableArchetype, ReturnType
         permits ChildOfArchetype.OfList, ContainerObjectArchetype {
     /**
      * A {@link ChildOfArchetype} for a {@code list} statement.
