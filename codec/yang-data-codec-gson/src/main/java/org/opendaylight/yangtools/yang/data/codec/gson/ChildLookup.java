@@ -32,17 +32,17 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * children once instead of once per element. A schema node's children never change, so a cached answer stays correct
  * for as long as the node exists.
  *
- * <p>The parent node is held in a {@link WeakReference}, because {@link SchemaLookupCache} uses that same node as a
+ * <p>The parent node is held in a {@link WeakReference}, because {@link ChildLookupCache} uses that same node as a
  * weak cache key: a normal (strong) reference from here would keep the node -- and therefore the cache entry -- alive
  * forever. That reference is only read when a lookup misses and has to be computed, so callers have to hold on to the
  * parent node for as long as they use this object.
  */
-final class SchemaNodeLookup {
+final class ChildLookup {
     /**
      * Identifies a child by the two things a JSON element name gives us: local name and namespace.
      */
-    private record ChildLookupKey(String localName, XMLNamespace namespace) {
-        ChildLookupKey {
+    private record ChildName(String localName, XMLNamespace namespace) {
+        ChildName {
             requireNonNull(localName);
             requireNonNull(namespace);
         }
@@ -51,12 +51,12 @@ final class SchemaNodeLookup {
     // Only successful lookups go in: element names come from the JSON document, so caching misses would let a crafted
     // input grow these maps without bound. Concurrent because one shared JSONCodecFactory serves parsers on many
     // threads.
-    private final ConcurrentHashMap<ChildLookupKey, ImmutableList<DataSchemaNode>> resolvedPaths =
+    private final ConcurrentHashMap<ChildName, ImmutableList<DataSchemaNode>> resolvedPaths =
         new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, ImmutableSet<XMLNamespace>> namespacesByName = new ConcurrentHashMap<>();
     private final WeakReference<DataSchemaNode> parent;
 
-    SchemaNodeLookup(final DataSchemaNode parent) {
+    ChildLookup(final DataSchemaNode parent) {
         this.parent = new WeakReference<>(requireNonNull(parent));
     }
 
@@ -73,7 +73,7 @@ final class SchemaNodeLookup {
      *         inside a choice. Empty if the parent has no such child.
      */
     Deque<DataSchemaNode> findSchemaNode(final String localName, final XMLNamespace namespace) {
-        final var key = new ChildLookupKey(localName, namespace);
+        final var key = new ChildName(localName, namespace);
         final var cached = resolvedPaths.get(key);
         if (cached != null) {
             return new ArrayDeque<>(cached);
@@ -111,7 +111,7 @@ final class SchemaNodeLookup {
         return raced != null ? raced : computed;
     }
 
-    // Both counts exist so that SchemaNodeLookupTest can verify that failed lookups are not cached.
+    // Both counts exist so that ChildLookupTest can verify that failed lookups are not cached.
     @VisibleForTesting
     int cachedPathCount() {
         return resolvedPaths.size();

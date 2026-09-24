@@ -285,7 +285,7 @@ public final class JsonParserStream implements Closeable, Flushable {
                 }
 
                 final var parentSchema = parent.getSchema();
-                final var lookup = codecs.schemaLookups().lookupFor(parentSchema);
+                final var lookup = codecs.childLookups().lookupFor(parentSchema);
                 while (in.hasNext()) {
                     final var jsonElementName = in.nextName();
                     final var namespaceAndName = resolveNamespace(parentSchema, lookup, jsonElementName);
@@ -368,7 +368,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         namespaces.push(namespace);
     }
 
-    private Entry<String, XMLNamespace> resolveNamespace(final DataSchemaNode parent, final SchemaNodeLookup lookup,
+    private Entry<String, XMLNamespace> resolveNamespace(final DataSchemaNode parent, final ChildLookup lookup,
             final String childName) {
         final int lastIndexOfColon = childName.lastIndexOf(':');
         final String nodeNamePart;

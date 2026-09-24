@@ -27,10 +27,10 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
- * Tests for {@link SchemaNodeLookup}, {@link SchemaLookupCache} and the way {@link JSONCodecFactory} hands that cache
+ * Tests for {@link ChildLookup}, {@link ChildLookupCache} and the way {@link JSONCodecFactory} hands that cache
  * around. These cover the contracts {@link JsonParserStream} relies on but cannot check for itself.
  */
-class SchemaNodeLookupTest {
+class ChildLookupTest {
     private static final QName TOP = QName.create("yt1899", "top");
     private static final QName FOO = QName.create(TOP, "foo");
     private static final QName BAR = QName.create(TOP, "bar");
@@ -42,8 +42,8 @@ class SchemaNodeLookupTest {
         YangParserTestUtils.parseYangResourceDirectory("/yt1899/yang");
     private static final ListSchemaNode FOO_LIST = fooList();
 
-    // Constructed directly rather than through SchemaLookupCache, so that each test method starts with an empty cache.
-    private final SchemaNodeLookup lookup = new SchemaNodeLookup(FOO_LIST);
+    // Constructed directly rather than through ChildLookupCache, so that each test method starts with an empty cache.
+    private final ChildLookup lookup = new ChildLookup(FOO_LIST);
 
     @Test
     void findSchemaNodeReturnsTheChoicePath() {
@@ -84,7 +84,7 @@ class SchemaNodeLookupTest {
     @Test
     void nonContainerParentHasNoChildren() {
         // A malformed document can drive JsonParserStream into a JSON object nested under a leaf.
-        final var leafLookup = new SchemaNodeLookup(
+        final var leafLookup = new ChildLookup(
             assertInstanceOf(LeafSchemaNode.class, FOO_LIST.dataChildByName(QName.create(TOP, "name"))));
 
         assertTrue(leafLookup.findSchemaNode("baz-leaf", NAMESPACE).isEmpty());
@@ -103,7 +103,7 @@ class SchemaNodeLookupTest {
 
     @Test
     void lookupsArePerSchemaNode() {
-        final var cache = new SchemaLookupCache();
+        final var cache = new ChildLookupCache();
 
         final var fooLookup = cache.lookupFor(FOO_LIST);
         assertSame(fooLookup, cache.lookupFor(FOO_LIST));
@@ -116,11 +116,11 @@ class SchemaNodeLookupTest {
         // factory's cache would let one cache hold schema nodes of two model contexts, so it creates an empty one.
         final var factory = JSONCodecFactorySupplier.RFC7951.createLazy(MODEL_CONTEXT);
         // The cache holds its lookups through soft references, so keep a strong one until the assertions below run.
-        final var warmed = factory.schemaLookups().lookupFor(FOO_LIST);
+        final var warmed = factory.childLookups().lookupFor(FOO_LIST);
 
         final var rebased = factory.rebaseTo(MODEL_CONTEXT);
-        assertNotSame(factory.schemaLookups(), rebased.schemaLookups());
-        assertNotSame(warmed, rebased.schemaLookups().lookupFor(FOO_LIST));
+        assertNotSame(factory.childLookups(), rebased.childLookups());
+        assertNotSame(warmed, rebased.childLookups().lookupFor(FOO_LIST));
     }
 
     private static List<QName> qnames(final Collection<DataSchemaNode> nodes) {
