@@ -7,22 +7,19 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import com.google.common.collect.Iterators;
-import java.util.Iterator;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.RpcInput;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
 import org.opendaylight.yangtools.binding.model.RpcInputArchetype;
-import org.opendaylight.yangtools.binding.model.Type;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * Template for {@link RpcInput} specializations.
  */
 @NonNullByDefault
 final class RpcInputTemplate extends InterfaceTemplate<RpcInputArchetype> implements ArchetypeTemplate.WithBuilder {
-    private static final ConcreteType RPC_INPUT = ConcreteType.ofClass(RpcInput.class);
+    private static final TypeName RPC_INPUT = TypeName.ofClass(RpcInput.class);
 
     RpcInputTemplate(final DataRootArchetype root, final RpcInputArchetype archetype) {
         super(root, archetype);
@@ -34,10 +31,8 @@ final class RpcInputTemplate extends InterfaceTemplate<RpcInputArchetype> implem
     }
 
     @Override
-    Iterator<? extends Type> extendsTypes() {
-        return Iterators.concat(
-            Iterators.singletonIterator(ParameterizedType.of(RPC_INPUT, archetype)),
-            super.extendsTypes());
+    Stream<TypeReference> extendsTypes() {
+        return Stream.concat(Stream.of(TypeReference.of(javaType(), RPC_INPUT, archetype)), partialExtends());
     }
 
     @Override

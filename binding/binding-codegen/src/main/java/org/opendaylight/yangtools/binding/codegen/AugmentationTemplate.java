@@ -7,16 +7,12 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import com.google.common.collect.Iterators;
-import java.util.Iterator;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.binding.Augmentation;
 import org.opendaylight.yangtools.binding.model.AugmentationArchetype;
 import org.opendaylight.yangtools.binding.model.DataRootArchetype;
-import org.opendaylight.yangtools.binding.model.Type;
-import org.opendaylight.yangtools.binding.model.api.ConcreteType;
-import org.opendaylight.yangtools.binding.model.api.ParameterizedType;
-import org.opendaylight.yangtools.binding.model.api.TypeRef;
+import org.opendaylight.yangtools.binding.model.TypeName;
 
 /**
  * Template for {@link Augmentation} specializations.
@@ -24,7 +20,7 @@ import org.opendaylight.yangtools.binding.model.api.TypeRef;
 @NonNullByDefault
 final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype>
         implements ArchetypeTemplate.WithBuilder {
-    private static final ConcreteType AUGMENTATION = ConcreteType.ofClass(Augmentation.class);
+    private static final TypeName AUGMENTATION = TypeName.ofClass(Augmentation.class);
 
     AugmentationTemplate(final DataRootArchetype root, final AugmentationArchetype archetype) {
         super(root, archetype);
@@ -36,11 +32,9 @@ final class AugmentationTemplate extends InterfaceTemplate<AugmentationArchetype
     }
 
     @Override
-    Iterator<? extends Type> extendsTypes() {
-        return Iterators.concat(
-            Iterators.singletonIterator(
-                ParameterizedType.of(AUGMENTATION, TypeRef.of(archetype.targetName()), archetype)),
-            super.extendsTypes());
+    Stream<TypeReference> extendsTypes() {
+        return Stream.concat(Stream.of(TypeReference.of(javaType(), AUGMENTATION, archetype.targetName(), archetype)),
+            partialExtends());
     }
 
     @Override
