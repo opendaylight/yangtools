@@ -26,6 +26,11 @@
         <dependencies>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>blk</artifactId>
+                <version>16.2.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>concepts</artifactId>
                 <version>16.2.0-SNAPSHOT</version>
             </dependency>

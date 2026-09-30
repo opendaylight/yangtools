@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.blk.Block;
 
 /**
  * A factory for creating {@link Block.Builder}s.

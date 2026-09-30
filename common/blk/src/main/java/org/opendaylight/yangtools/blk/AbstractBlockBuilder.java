@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.codegen;
+package org.opendaylight.yangtools.blk;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
@@ -14,13 +14,16 @@ import com.google.errorprone.annotations.CheckReturnValue;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.binding.codegen.Block.Builder;
 
 /**
  * Abstract base class for {@linkplain Block.Builder} implementations.
+ *
+ * @param <B> concrete subclass type
+ * @param <F> fragment type
+ * @since 16.1.1
  */
 @NonNullByDefault
-abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> implements Block.Builder {
+public abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> implements Block.Builder {
     // The idea is that we start with an empty StringBuilder and as we receive events we decide what to do next.
     // Typically this will be just a simple append, but we also need to track indentation.
     //
@@ -49,7 +52,7 @@ abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>
     /**
      * Default constructor.
      */
-    AbstractBlockBuilder() {
+    protected AbstractBlockBuilder() {
         // nothing else
     }
 
@@ -68,7 +71,7 @@ abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>
     }
 
     @Override
-    public final B raw(final Block.@Nullable Fragment<Builder> fragment) {
+    public final B raw(final Block.@Nullable Fragment<Block.Builder> fragment) {
         return frg(fragment);
     }
 

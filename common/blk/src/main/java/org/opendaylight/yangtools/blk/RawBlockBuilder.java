@@ -5,12 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.codegen;
+package org.opendaylight.yangtools.blk;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * A raw {@link BlockBuilder}.
+ * A raw {@link Block.Builder} working with {@link RawBlockFragment}s.
+ *
+ * @since 16.1.1
  */
 @NonNullByDefault
 final class RawBlockBuilder extends AbstractBlockBuilder<RawBlockBuilder> {

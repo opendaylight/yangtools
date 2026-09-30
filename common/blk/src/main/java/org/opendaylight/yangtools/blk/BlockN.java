@@ -5,7 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.codegen;
+package org.opendaylight.yangtools.blk;
+
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
 import com.google.errorprone.annotations.DoNotCall;
@@ -13,20 +15,15 @@ import java.io.IOException;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * A {@link Block} of two lines.
+ * A block of three or more lines. Stored as a string fragment without the trailing newline.
  */
 @NonNullByDefault
-record Block2(String str, int nl) implements Block {
-    // two empty lines
-    static final Block2 EMPTY = new Block2("\n", 0);
-
-    Block2 {
-        if (str.isEmpty()) {
-            throw new VerifyException("empty str");
+record BlockN(String str) implements Block {
+    BlockN {
+        if (str.length() < 2) {
+            throw new VerifyException("bad str '" + str + "'");
         }
-        if (nl < 0) {
-            throw new VerifyException("bad offset " + nl);
-        }
+        requireNonNull(str);
     }
 
     @Override
@@ -36,17 +33,24 @@ record Block2(String str, int nl) implements Block {
 
     @Override
     public void appendTo(final Block.Builder bb) {
-        if (nl == 0) {
-            bb.newLine();
-        } else {
-            bb.eol(str, 0, nl);
-        }
-        final var begin = nl + 1;
         final var end = str.length();
-        if (begin == end) {
-            bb.newLine();
-        } else {
-            bb.eol(str, begin, end);
+        int begin = 0;
+        while (true) {
+            final int nl = str.indexOf('\n', begin, end);
+            if (nl == -1) {
+                if (begin != end) {
+                    bb.eol(str, begin, end);
+                } else {
+                    bb.newLine();
+                }
+                return;
+            }
+            if (nl == begin) {
+                bb.newLine();
+            } else {
+                bb.eol(str, begin, nl);
+            }
+            begin = nl + 1;
         }
     }
 

@@ -36,6 +36,7 @@ import org.opendaylight.yangtools.binding.model.TypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.UnionTypeObjectArchetype;
 import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.binding.model.api.Restrictions;
+import org.opendaylight.yangtools.blk.Block;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;

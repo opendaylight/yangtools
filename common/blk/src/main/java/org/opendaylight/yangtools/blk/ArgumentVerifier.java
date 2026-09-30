@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.codegen;
+package org.opendaylight.yangtools.blk;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.VerifyException;
@@ -19,66 +19,18 @@ import org.slf4j.LoggerFactory;
  * An argument verification implementation. A JVM-constant implementation is selected based on the {@value #PROP_VERIFY}
  * property presence and value:
  * <ul>
- *   <li>if the property is not set, we silently default to {@link QuickVerifier}</li>
- *   <li>if the property value is {@code "quick"}, we select {@link QuickVerifier} and note that in the log</li>
- *   <li>if the property value is {@code "strict"}, we select {@link StrictVerifier} and note that in the log</li>
- *   <li>if the property value is any other string, we complain about the value and select {@link StrictVerifier}</li>
+ *   <li>if the property is not set, we silently default to {@link QuickArgumentVerifier}</li>
+ *   <li>if the property value is {@code "quick"}, we select {@link QuickArgumentVerifier} and note that in the log</li>
+ *   <li>if the property value is {@code "strict"}, we select {@link StrictAdugmentVerifier} and note that in the log
+ *   </li>
+ *   <li>if the property value is any other string, we complain about the value and select
+ *       {@link StrictAdugmentVerifier}</li>
  * </ul>
  */
 @NonNullByDefault
 @CheckReturnValue
 @VisibleForTesting
-abstract sealed class ArgumentVerifier {
-    /**
-     * The quick verifier: we just make sure there are no {@code null}s or empty strings.
-     */
-    @VisibleForTesting
-    static final class QuickVerifier extends ArgumentVerifier {
-        private QuickVerifier() {
-            // Hidden on purpose
-        }
-
-        @Override
-        void fullVerifyStr(final String arg) {
-            // No-op
-        }
-
-        @Override
-        void fullVerifyTxt(final String arg) {
-            // no-op
-        }
-    }
-
-    /**
-     * The strict verifier: we do full argument checks.
-     */
-    @VisibleForTesting
-    static final class StrictVerifier extends ArgumentVerifier {
-        private StrictVerifier() {
-            // Hidden on purpose
-        }
-
-        @Override
-        void fullVerifyStr(final String arg) {
-            final var nl = arg.indexOf('\n');
-            if (nl != -1) {
-                throw new VerifyException("newline at offset " + nl + " of '" + arg + "'");
-            }
-        }
-
-        @Override
-        void fullVerifyTxt(final String arg) {
-            final var nl = arg.lastIndexOf('\n');
-            if (nl == -1) {
-                throw new VerifyException("no newline in '" + arg + "'");
-            }
-            final var tail = nl + 1;
-            if (tail != arg.length()) {
-                throw new VerifyException("trailing text fragment " + arg.substring(tail));
-            }
-        }
-    }
-
+abstract sealed class ArgumentVerifier permits QuickArgumentVerifier, StrictAdugmentVerifier {
     /**
      * The name of the system property controlling implementation selection.
      */
@@ -96,25 +48,25 @@ abstract sealed class ArgumentVerifier {
         return switch (prop) {
             case null -> {
                 log.debug("Using quick verification");
-                yield new QuickVerifier();
+                yield new QuickArgumentVerifier();
             }
             case "quick" -> {
                 log.info("Using quick verification");
-                yield new QuickVerifier();
+                yield new QuickArgumentVerifier();
             }
             case "strict" -> {
                 log.info("Using strict verification");
-                yield new StrictVerifier();
+                yield new StrictAdugmentVerifier();
             }
             default -> {
                 log.warn("Bad {} value '{}', using strict verification", PROP_VERIFY, prop);
-                yield new StrictVerifier();
+                yield new StrictAdugmentVerifier();
             }
         };
     }
 
     /**
-     * Verify the argument to {@link BlockBuilder#str(String)}.
+     * Verify the argument to {@link Block.Builder#str(String)}.
      *
      * @param arg the argument
      * @return the argument
@@ -128,7 +80,7 @@ abstract sealed class ArgumentVerifier {
     }
 
     /**
-     * Verify the argument to {@link BlockBuilder#str(String)} that is known to be non-empty.
+     * Verify the argument to {@link Block.Builder#str(String)} that is known to be non-empty.
      *
      * @param arg the argument
      * @return the argument
@@ -141,7 +93,7 @@ abstract sealed class ArgumentVerifier {
     abstract void fullVerifyStr(String arg);
 
     /**
-     * Verify the argument to {@link BlockBuilder#txt(String)}.
+     * Verify the argument to {@link Block.Builder#txt(String)}.
      *
      * @param arg the argument
      * @return the argument
