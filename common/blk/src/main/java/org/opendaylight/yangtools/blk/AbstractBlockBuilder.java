@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.codegen;
+package org.opendaylight.yangtools.blk;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
@@ -17,10 +17,15 @@ import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Abstract base class for {@linkplain Block.Builder} implementations.
+ *
+ * @param <B> concrete subclass type
+ * @param <F> fragment type
+ * @since 16.1.1
  */
 @NonNullByDefault
-abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B, F>, F extends Block.Fragment<B, F>>
-        implements Block.Builder {
+public abstract non-sealed class AbstractBlockBuilder<
+        B extends AbstractBlockBuilder<B, F>,
+        F extends Block.Fragment<B, F>> implements Block.Builder {
     // The idea is that we start with an empty StringBuilder and as we receive events we decide what to do next.
     // Typically this will be just a simple append, but we also need to track indentation.
     //
@@ -49,7 +54,7 @@ abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B,
     /**
      * Default constructor.
      */
-    AbstractBlockBuilder() {
+    protected AbstractBlockBuilder() {
         // nothing else
     }
 
@@ -75,8 +80,12 @@ abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B,
      */
     public final B frg(final @Nullable F fragment) {
         final var self = self();
-        if (fragment != null) {
-            fragment.appendTo(self);
+        switch (fragment) {
+            case null -> {
+                // no-op
+            }
+            case RawBlockFragment raw -> raw.appendRaw(this);
+            default -> fragment.appendTo(self());
         }
         return self;
     }

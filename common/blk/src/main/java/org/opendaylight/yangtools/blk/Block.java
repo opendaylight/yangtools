@@ -5,10 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.codegen;
+package org.opendaylight.yangtools.blk;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.ArgumentVerifier.verifyNonEmpty;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
@@ -27,9 +26,11 @@ import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
  * A non-empty set of {@code '\n'}-separated lines.
+ *
+ * @since 16.1.1
  */
 @NonNullByDefault
-sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, BlockN {
+public sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, BlockN {
     /**
      * A {@link Block} comprised of a single line.
      */
@@ -180,8 +181,8 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
     }
 
     /**
-     * A fragment of domain-specific {@link Builder}. All it can do is {@link #appendTo(BlockBuilder)} itself to that
-     * builder type.
+     * A fragment of domain-specific {@link Builder}. All it can do is {@link #appendTo(Builder)} itself to that builder
+     * type.
      *
      * @param <B> the block builder type
      * @param <F> the fragment type
@@ -189,7 +190,7 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
     @FunctionalInterface
     interface Fragment<B extends Block.Builder, F extends Fragment<B, F>> {
         /**
-         * Append this fragment to a block builder.
+         * Append this fragment to the corresponding block builder.
          *
          * @param bb the block builder
          */
@@ -197,9 +198,11 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
     }
 
     /**
-     * {@return a new RawBlockBuilder}
+     * {@return a new Block.Builder}
+     *
+     * @see RawBlockBuilder
      */
-    static RawBlockBuilder builder() {
+    static Block.Builder builder() {
         return new RawBlockBuilder();
     }
 
@@ -208,7 +211,7 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
     }
 
     static Block.OfOne ofLine(final String line) {
-        return line.isEmpty() ? ofEmptyLine() : new Block1(verifyNonEmpty(line));
+        return line.isEmpty() ? ofEmptyLine() : new Block1(ArgumentVerifier.verifyNonEmpty(line));
     }
 
     static Block ofLines(final String first, final String second) {
@@ -312,7 +315,7 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
 
     private static void appendLine(final StringBuilder sb, final String line) {
         if (!line.isEmpty()) {
-            sb.append(verifyNonEmpty(line));
+            sb.append(ArgumentVerifier.verifyNonEmpty(line));
         }
         sb.append('\n');
     }

@@ -11,6 +11,8 @@ import com.google.errorprone.annotations.CheckReturnValue;
 import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.blk.AbstractBlockBuilder;
+import org.opendaylight.yangtools.blk.Block;
 
 /**
  * Default implementation of {@link Block.Builder}. Methods ending with a capital letter terminate the current line,

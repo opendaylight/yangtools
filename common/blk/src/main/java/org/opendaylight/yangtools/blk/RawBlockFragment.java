@@ -5,15 +5,27 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.codegen;
+package org.opendaylight.yangtools.blk;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * A {@link Block.Fragment} associated with {@link RawBlockBuilder}.
+ *
+ * @since 16.1.1
  */
 @NonNullByDefault
 @FunctionalInterface
-interface RawBlockFragment extends Block.Fragment<RawBlockBuilder, RawBlockFragment> {
-    // nothing else
+public interface RawBlockFragment extends Block.Fragment<RawBlockBuilder, RawBlockFragment> {
+    @Override
+    default void appendTo(final RawBlockBuilder bb) {
+        appendRaw(bb);
+    }
+
+    /**
+     * Append this fragment to a {@link Builder}.
+     *
+     * @param bb the block builder
+     */
+    void appendRaw(Block.Builder bb);
 }
