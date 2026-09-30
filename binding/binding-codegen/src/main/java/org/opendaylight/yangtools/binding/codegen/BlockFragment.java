@@ -14,7 +14,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  */
 @NonNullByDefault
 @FunctionalInterface
-interface BlockFragment extends Block.Fragment<BlockBuilder, BlockFragment> {
+interface BlockFragment extends Block.Fragment<BlockBuilder> {
     @Override
     void appendTo(BlockBuilder bb);
 }

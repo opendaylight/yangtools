@@ -14,14 +14,13 @@ import com.google.errorprone.annotations.CheckReturnValue;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.codegen.Block.Builder;
 
 /**
  * Abstract base class for {@linkplain Block.Builder} implementations.
  */
 @NonNullByDefault
-abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B, F>, F extends Block.Fragment<B, F>>
-        implements Block.Builder
-        permits BlockBuilder {
+abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> implements Block.Builder {
     // The idea is that we start with an empty StringBuilder and as we receive events we decide what to do next.
     // Typically this will be just a simple append, but we also need to track indentation.
     //
@@ -68,13 +67,18 @@ abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B, F>,
         return self();
     }
 
+    @Override
+    public final B raw(final Block.@Nullable Fragment<Builder> fragment) {
+        return frg(fragment);
+    }
+
     /**
      * Append the contents of a {@link Block.Fragment} to this instance if it is not {@code null}.
      *
      * @param fragment optional {@link Block.Fragment}
      * @return this instance
      */
-    public final B frg(final @Nullable F fragment) {
+    public final B frg(final Block.@Nullable Fragment<? super B> fragment) {
         final var self = self();
         if (fragment != null) {
             fragment.appendTo(self);
