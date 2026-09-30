@@ -51,7 +51,7 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
      *   <li>simple indentation handling</li>
      * </ul>
      */
-    abstract sealed class Builder implements Mutable permits BlockBuilder {
+    sealed interface Builder extends Mutable permits AbstractBlockBuilder {
         /**
          * Append the contents of a {@link Block} to this instance if it is not {@code null}. The there must not be any
          * content on the current line.
@@ -59,20 +59,12 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
          * @param blk optional {@link Block}
          * @return this instance
          */
-        abstract Builder blk(@Nullable Block blk);
-
-        /**
-         * Append the contents of a {@link BlockFragment} to this instance if it is not {@code null}.
-         *
-         * @param fragment optional {@link BlockFragment}
-         * @return this instance
-         */
-        abstract Builder frg(@Nullable BlockFragment fragment);
+        Builder blk(@Nullable Block blk);
 
         /**
          * Append a {@code '\n'}. This method should only used when {@link #nl()} cannot be used.
          */
-        abstract void newLine();
+        void newLine();
 
         /**
          * Append a {@code '\n'}. Short name for {@code new line}.
@@ -80,28 +72,28 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
          * @return this instance
          */
         @CheckReturnValue
-        abstract Builder nl();
+        Builder nl();
 
         /**
          * Append a {@code '>'}. Short name for {@code greater than}.
          *
          * @return this instance
          */
-        abstract Builder gt();
+        Builder gt();
 
         /**
          * Append a {@code '<'}. Short name for {@code less than}.
          *
          * @return this instance
          */
-        abstract Builder lt();
+        Builder lt();
 
         /**
          * Append a {@code ", "}. Short name for {@code comma, space}.
          *
          * @return this instance
          */
-        abstract Builder cs();
+        Builder cs();
 
         /**
          * Append a {@link String} simple string. The string has to be known to:
@@ -113,7 +105,7 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
          * @param str the {@link String}
          * @return this instance
          */
-        abstract Builder str(String str);
+        Builder str(String str);
 
         /**
          * Append a text block. The string has to be known:
@@ -127,7 +119,7 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
          * @param text the {@link String}
          * @return this instance
          */
-        abstract Builder txt(String text);
+        Builder txt(String text);
 
         /**
          * The equivalent of {@code str(content).nl()}.
@@ -135,36 +127,23 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
          * @param content the {@link String}
          * @return this instance
          */
-        abstract Builder eol(String content);
-
-        // FIXME: document/rename ?
-        abstract Builder eol(String str, int beginIndex, int endIndex);
+        Builder eol(String content);
 
         /**
          * {@return a {@link Block} capturing the current state of this builder}
          */
-        abstract Block build();
+        Block build();
 
         /**
          * {@return a {@link Block} capturing the current state of this builder, or {@code null} if this builder is
          * empty}
          */
-        abstract @Nullable Block toBlock();
+        @Nullable Block toBlock();
 
         /**
          * {@return the raw string literal equivalent of this builder's state}
          */
-        public abstract String toRawString();
-
-        @Override
-        public final int hashCode() {
-            return super.hashCode();
-        }
-
-        @Override
-        public final boolean equals(final @Nullable Object obj) {
-            return super.equals(obj);
-        }
+        String toRawString();
 
         /**
          * {@return the result of {@link #toRawString()}}
@@ -175,9 +154,7 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
         @DoNotCall
         @Deprecated(forRemoval = true)
         @InlineMe(replacement = "this.toRawString()")
-        public final String toString() {
-            return toRawString();
-        }
+        String toString();
     }
 
     /**
