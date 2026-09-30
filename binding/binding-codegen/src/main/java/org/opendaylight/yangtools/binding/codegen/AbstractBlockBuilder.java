@@ -19,9 +19,8 @@ import org.eclipse.jdt.annotation.Nullable;
  * Abstract base class for {@linkplain Block.Builder} implementations.
  */
 @NonNullByDefault
-abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B, F>, F extends Block.Fragment<B, F>>
-        implements Block.Builder
-        permits BlockBuilder {
+abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B, F>, F extends Block.Fragment<B, F>>
+        implements Block.Builder {
     // The idea is that we start with an empty StringBuilder and as we receive events we decide what to do next.
     // Typically this will be just a simple append, but we also need to track indentation.
     //

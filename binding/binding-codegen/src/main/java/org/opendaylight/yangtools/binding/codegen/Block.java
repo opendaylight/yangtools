@@ -197,10 +197,10 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
     }
 
     /**
-     * {@return a new Block.Builder}
+     * {@return a new RawBlockBuilder}
      */
-    static Block.Builder builder() {
-        return new BlockBuilder();
+    static RawBlockBuilder builder() {
+        return new RawBlockBuilder();
     }
 
     static Block.OfOne ofEmptyLine() {
