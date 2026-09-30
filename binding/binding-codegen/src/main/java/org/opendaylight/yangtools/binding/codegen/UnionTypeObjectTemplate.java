@@ -123,7 +123,17 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         final var statement = archetype.statement();
 
         final var bb = newBodyBuilder(statement, statement.typeStatement().typeDefinition(), !isInnerClass)
-            .frg(generateClassDeclaration(isInnerClass)).oB()
+            .str(isInnerClass ? "public static final " : "public ").str("class ").str(archetype.simpleName());
+
+        final var superType = archetype.superType();
+        if (superType != null) {
+            bb.str(" extends ").str(importedName(superType));
+        } else {
+            bb.str(" implements ").str(importedName(UNION_TYPE_OBJECT)).str(", java.io.Serializable");
+        }
+
+        bb
+            .oB()
                 .eol("@java.io.Serial")
                 .str("private static final long serialVersionUID = ").jLong(serialVersionUID(archetype)).eS()
                  // inner classes
@@ -153,30 +163,6 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
         }
 
         return bb.cB().nl();
-    }
-
-    /**
-     * {@return string with class declaration in JAVA format}
-     *
-     * @param isInnerClass boolean value which specify if generated class is|isn't inner
-     */
-    @NonNullByDefault
-    private BlockBuilder generateClassDeclaration(final boolean isInnerClass) {
-        final var bb = newBlockBuilder()
-            .str("public ");
-        if (isInnerClass) {
-            bb.str("static final ");
-        }
-        bb.str("class ").str(archetype.simpleName());
-
-        final var superType = archetype.superType();
-        if (superType != null) {
-            bb.str(" extends ").str(importedName(superType));
-        } else {
-            bb.str(" implements ").str(importedName(UNION_TYPE_OBJECT)).str(", java.io.Serializable");
-        }
-
-        return bb;
     }
 
     @NonNullByDefault
