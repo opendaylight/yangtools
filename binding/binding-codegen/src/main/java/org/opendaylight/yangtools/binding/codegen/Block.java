@@ -51,9 +51,9 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
      *   <li>simple indentation handling</li>
      * </ul>
      */
-    abstract sealed class Builder implements Mutable, BlockFragment permits BlockBuilder {
-        @Override
-        public abstract void appendTo(BlockBuilder bb);
+    abstract sealed class Builder implements Mutable permits AbstractBlockBuilder {
+
+        abstract void appendTo(Block.Builder bb);
 
         /**
          * Append the contents of a {@link Block} to this instance if it is not {@code null}. The there must not be any
