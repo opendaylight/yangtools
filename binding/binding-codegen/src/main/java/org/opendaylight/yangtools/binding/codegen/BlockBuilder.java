@@ -26,7 +26,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * <p>We can have some common Java language things coming in, but those should be placed here only on temporary basis
  * until they shape a separate interface for high-level access. Examples include {@code #gen(String)} family of methods.
  */
-final class BlockBuilder extends Block.Builder {
+final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
     // The idea is that we start with an empty StringBuilder and as we receive events we decide what to do next.
     // Typically this will be just a simple append, but we also need to track indentation.
     //
@@ -57,13 +57,12 @@ final class BlockBuilder extends Block.Builder {
     }
 
     @Override
-    BlockBuilder nl() {
-        newLine();
+    protected BlockBuilder self() {
         return this;
     }
 
     @Override
-    void newLine() {
+    public void newLine() {
         markNl(buf.append('\n'));
     }
 
@@ -77,20 +76,20 @@ final class BlockBuilder extends Block.Builder {
     }
 
     @Override
-    BlockBuilder gt() {
+    public BlockBuilder gt() {
         buf().append('>');
         return this;
 
     }
 
     @Override
-    BlockBuilder lt() {
+    public BlockBuilder lt() {
         buf().append('<');
         return this;
     }
 
     @Override
-    BlockBuilder cs() {
+    public BlockBuilder cs() {
         buf().append(", ");
         return this;
     }
@@ -126,7 +125,7 @@ final class BlockBuilder extends Block.Builder {
     }
 
     @Override
-    BlockBuilder str(final String str) {
+    public BlockBuilder str(final String str) {
         strImpl(str);
         return this;
     }
@@ -137,7 +136,7 @@ final class BlockBuilder extends Block.Builder {
     }
 
     @Override
-    BlockBuilder txt(final String text) {
+    public BlockBuilder txt(final String text) {
         verifyEmptyLine();
         final var verified = verifyTxt(text);
         return currentIndent == 0 ? txtFast(verified) : txtSlow(verified);
@@ -160,11 +159,11 @@ final class BlockBuilder extends Block.Builder {
     }
 
     @Override
-    BlockBuilder eol(final String content) {
+    public BlockBuilder eol(final String content) {
         return str(content).nl();
     }
 
-    @Override
+    // FIXME: document/rename ?
     BlockBuilder eol(final String str, final int beginIndex, final int endIndex) {
         return eol(str.substring(beginIndex, endIndex));
     }
@@ -309,7 +308,7 @@ final class BlockBuilder extends Block.Builder {
     }
 
     @Override
-    BlockBuilder blk(final Block blk) {
+    public BlockBuilder blk(final Block blk) {
         verifyEmptyLine();
         if (blk != null) {
             blk.appendTo(this);
@@ -373,7 +372,7 @@ final class BlockBuilder extends Block.Builder {
     }
 
     @Override
-    Block build() {
+    public Block build() {
         final var length = buf.length();
         if (length == 0) {
             throw new VerifyException("empty block");
@@ -402,7 +401,7 @@ final class BlockBuilder extends Block.Builder {
     }
 
     @Override
-    Block toBlock() {
+    public Block toBlock() {
         final var length = buf.length();
         return length == 0 ? null : build(length);
     }
