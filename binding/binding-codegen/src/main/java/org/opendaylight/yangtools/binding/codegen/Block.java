@@ -200,7 +200,7 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
     }
 
     /**
-     * A fragment of domain-specific {@link Builder}. All it can do is {@link #appendTo(BlockBuilder)} itself to that
+     * A fragment of domain-specific {@link Builder}. All it can do is {@link #appendTo(Block.Builder)} itself to that
      * builder type.
      *
      * @param <B> the block builder type
@@ -216,10 +216,10 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
     }
 
     /**
-     * {@return a new Block.Builder}
+     * {@return a new {@link Block.Builder}}
      */
     static Block.Builder builder() {
-        return new BlockBuilder();
+        return new RawBlockBuilder();
     }
 
     static Block.OfOne ofEmptyLine() {
