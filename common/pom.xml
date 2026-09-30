@@ -28,6 +28,7 @@
     </properties>
 
     <modules>
+        <module>blk</module>
         <module>concepts</module>
         <module>mockito-configuration</module>
         <module>util</module>
