@@ -57,14 +57,6 @@ final class BlockBuilder extends Block.Builder {
     }
 
     @Override
-    BlockBuilder frg(final BlockFragment fragment) {
-        if (fragment != null) {
-            fragment.appendTo(this);
-        }
-        return this;
-    }
-
-    @Override
     BlockBuilder nl() {
         newLine();
         return this;
@@ -339,6 +331,19 @@ final class BlockBuilder extends Block.Builder {
             if (blk != null) {
                 blk.appendTo(this);
             }
+        }
+        return this;
+    }
+
+    /**
+     * Append the contents of a {@link BlockFragment} to this instance if it is not {@code null}.
+     *
+     * @param fragment optional {@link BlockFragment}
+     * @return this instance
+     */
+    BlockBuilder frg(final BlockFragment fragment) {
+        if (fragment != null) {
+            fragment.appendTo(this);
         }
         return this;
     }
