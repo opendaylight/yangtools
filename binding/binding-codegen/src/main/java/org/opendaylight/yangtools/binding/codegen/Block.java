@@ -66,6 +66,14 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
         Builder blk(@Nullable Block blk);
 
         /**
+         * Append the contents of a {@link Block.Fragment} to this instance if it is not {@code null}.
+         *
+         * @param fragment optional {@link Block.Fragment}
+         * @return this instance
+         */
+        Builder raw(Block.@Nullable Fragment<Builder> fragment);
+
+        /**
          * Append a {@code '\n'}. This method should only used when {@link #nl()} cannot be used.
          */
         void newLine();
@@ -180,14 +188,13 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
     }
 
     /**
-     * A fragment of domain-specific {@link Builder}. All it can do is {@link #appendTo(BlockBuilder)} itself to that
+     * A fragment of domain-specific {@link Builder}. All it can do is {@link #appendTo(Block.Builder)} itself to that
      * builder type.
      *
      * @param <B> the block builder type
-     * @param <F> the fragment type
      */
     @FunctionalInterface
-    interface Fragment<B extends Block.Builder, F extends Fragment<B, F>> {
+    interface Fragment<B extends Block.Builder> {
         /**
          * Append this fragment to a block builder.
          *
@@ -197,10 +204,10 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
     }
 
     /**
-     * {@return a new Block.Builder}
+     * {@return a new {@link Block.Builder}}
      */
     static Block.Builder builder() {
-        return new BlockBuilder();
+        return new RawBlockBuilder();
     }
 
     static Block.OfOne ofEmptyLine() {
