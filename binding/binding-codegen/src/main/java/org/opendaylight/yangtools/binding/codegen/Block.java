@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.binding.codegen;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.binding.codegen.ArgumentVerifier.verifyNonEmpty;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import com.google.errorprone.annotations.CheckReturnValue;
 import com.google.errorprone.annotations.DoNotCall;
@@ -28,7 +29,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
  * A non-empty set of {@code '\n'}-separated lines.
  */
 @NonNullByDefault
-sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Block2, BlockC, BlockN {
+sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, BlockN {
     /**
      * A {@link Block} comprised of a single line.
      */
@@ -96,6 +97,13 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
         Builder cs();
 
         /**
+         * Append a {@code ' '}.
+         *
+         * @return this instance
+         */
+        Builder sp();
+
+        /**
          * Append a {@link String} simple string. The string has to be known to:
          * <ul>
          *    <li>to be non-empty</li>
@@ -130,6 +138,17 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
         Builder eol(String content);
 
         /**
+         * The equivalent of {@code eol(str.substring(beginIndex, endIndex))}.
+         *
+         * @param str the {@link String}
+         * @param beginIndex the beginning index, inclusive
+         * @param endIndex the ending index, exclusive
+         * @return this instance
+         */
+        @Beta
+        Builder eol(String str, int beginIndex, int endIndex);
+
+        /**
          * {@return a {@link Block} capturing the current state of this builder}
          */
         Block build();
@@ -158,9 +177,9 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
     }
 
     /**
-     * {@return a new BlockBuilder}
+     * {@return a new Block.Builder}
      */
-    static BlockBuilder builder() {
+    static Block.Builder builder() {
         return new BlockBuilder();
     }
 
@@ -235,8 +254,12 @@ sealed interface Block extends BlockFragment, Immutable permits Block.OfOne, Blo
      */
     void appendTo(Appendable out) throws IOException;
 
-    @Override
-    void appendTo(BlockBuilder bb);
+    /**
+     * Append this block to a {@link Builder}.
+     *
+     * @param bb the {@link Builder}
+     */
+    void appendTo(Block.Builder bb);
 
     /**
      * Append this block to a {@link StringBuilder}.

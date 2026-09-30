@@ -28,7 +28,7 @@ record Block1(String line) implements Block.OfOne {
     }
 
     @Override
-    public void appendTo(final BlockBuilder bb) {
+    public void appendTo(final Block.Builder bb) {
         if (line.isEmpty()) {
             bb.newLine();
         } else {

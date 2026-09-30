@@ -32,7 +32,7 @@ record BlockN(String str) implements Block {
     }
 
     @Override
-    public void appendTo(final BlockBuilder bb) {
+    public void appendTo(final Block.Builder bb) {
         final var end = str.length();
         int begin = 0;
         while (true) {

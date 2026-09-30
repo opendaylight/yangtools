@@ -35,7 +35,7 @@ record Block2(String str, int nl) implements Block {
     }
 
     @Override
-    public void appendTo(final BlockBuilder bb) {
+    public void appendTo(final Block.Builder bb) {
         if (nl == 0) {
             bb.newLine();
         } else {

@@ -184,7 +184,7 @@ final class DataContainerGetterMethods implements BlockFragment {
 
     // FIXME: use indexOf(' ') instead of StringTokenizer
     @SuppressModernizer
-    private static BlockBuilder formatReference(final String reference) {
+    private static Block.Builder formatReference(final String reference) {
         final var bb = Block.builder()
             // FIXME: use a @snippet here
             .eol("<pre>")

@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
-import com.google.common.base.VerifyException;
 import com.google.errorprone.annotations.CheckReturnValue;
 import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNull;
@@ -27,151 +24,9 @@ import org.eclipse.jdt.annotation.Nullable;
  * until they shape a separate interface for high-level access. Examples include {@code #gen(String)} family of methods.
  */
 final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
-    // The idea is that we start with an empty StringBuilder and as we receive events we decide what to do next.
-    // Typically this will be just a simple append, but we also need to track indentation.
-    //
-    // Overall, the core state should look something like:
-    //
-    //    // indent + block content
-    //    sealed interface Blk {
-    //
-    //        int indent();
-    //    }
-    //
-    //    List<Blk> blocks; // completed blocks, with optional coalescence when indent matches
-
-    // current block, containing newline-separated lines
-    private final @NonNull StringBuilder buf = new StringBuilder();
-    // offset of the start of the current line, i.e. one past the last known newline in current block
-    private int currentLine = 0;
-    // offset of the start of the second line, i.e. the one past the first newline in current block
-    private int secondLine = -1;
-
-    // current indentation we are using
-    private int currentIndent = 0;
-    // the indentation that is currently missing
-    private int needIndent = 0;
-
-    BlockBuilder() {
-        // nothing else
-    }
-
     @Override
     protected BlockBuilder self() {
         return this;
-    }
-
-    @Override
-    public BlockBuilder nl() {
-        newLine();
-        return this;
-    }
-
-    @Override
-    public void newLine() {
-        markNl(buf.append('\n'));
-    }
-
-    private void markNl(final StringBuilder sb) {
-        final var nextLine = sb.length();
-        if (secondLine == -1) {
-            secondLine = nextLine;
-        }
-        currentLine = nextLine;
-        needIndent = currentIndent;
-    }
-
-    @Override
-    public BlockBuilder gt() {
-        buf().append('>');
-        return this;
-
-    }
-
-    @Override
-    public BlockBuilder lt() {
-        buf().append('<');
-        return this;
-    }
-
-    @Override
-    public BlockBuilder cs() {
-        buf().append(", ");
-        return this;
-    }
-
-    // Prepare the buffer to receive some content
-    @NonNullByDefault
-    private StringBuilder buf() {
-        return needIndent == 0 ? buf : applyIndent();
-    }
-
-    @NonNullByDefault
-    private StringBuilder applyIndent() {
-        needIndent = 0;
-        return buf.repeat("    ", currentIndent);
-    }
-
-    @NonNullByDefault
-    private StringBuilder incrementIndent(final StringBuilder sb) {
-        if (++currentIndent < 1) {
-            // FIXME: split out to verifier
-            throw new VerifyException("indent overflow");
-        }
-        return sb;
-    }
-
-    @NonNullByDefault
-    private StringBuilder decrementIndent() {
-        if (currentIndent-- == 0) {
-            // FIXME: split out to verifier
-            throw new VerifyException("indent underflow");
-        }
-        return buf();
-    }
-
-    @Override
-    public BlockBuilder str(final String str) {
-        strImpl(str);
-        return this;
-    }
-
-    @NonNullByDefault
-    private void strImpl(final String str) {
-        buf().append(verifyStr(str));
-    }
-
-    @Override
-    public BlockBuilder txt(final String text) {
-        verifyEmptyLine();
-        final var verified = verifyTxt(text);
-        return currentIndent == 0 ? txtFast(verified) : txtSlow(verified);
-    }
-
-    @NonNullByDefault
-    private BlockBuilder txtFast(final String text) {
-        if (secondLine == -1) {
-            secondLine = buf.length() + text.indexOf('\n') + 1;
-        }
-        buf.append(text);
-        currentLine = buf.length();
-        return this;
-    }
-
-    @NonNullByDefault
-    private BlockBuilder txtSlow(final String text) {
-        new BlockN(text.substring(0, text.length() - 1)).appendTo(this);
-        return this;
-    }
-
-    @Override
-    public BlockBuilder eol(final String content) {
-        return str(content).nl();
-    }
-
-    // FIXME: document/rename ?
-    BlockBuilder eol(final String str, final int beginIndex, final int endIndex) {
-        return eol(str.substring(beginIndex, endIndex));
     }
 
     @NonNullByDefault
@@ -252,17 +107,6 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
     }
 
     /**
-     * Append a {@code ' '}.
-     *
-     * @return this instance
-     */
-    @NonNullByDefault
-    BlockBuilder sp() {
-        buf().append(' ');
-        return this;
-    }
-
-    /**
      * Open a new <a href="https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.2">Java block</a>.
      * Short name for {@code openBlock}. Emits the equivalent of <pre><code>str(" {").nl()</code></pre>.
      *
@@ -313,15 +157,6 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
         return this;
     }
 
-    @Override
-    public BlockBuilder blk(final Block blk) {
-        verifyEmptyLine();
-        if (blk != null) {
-            blk.appendTo(this);
-        }
-        return this;
-    }
-
     /**
      * Append the contents of a {@link BlockBuilder} to this instance if it is not {@code null}.
      *
@@ -329,7 +164,7 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
      * @return this instance
      */
     @NonNullByDefault
-    BlockBuilder blk(final @Nullable BlockBuilder source) {
+    BlockBuilder blk(final Block.@Nullable Builder source) {
         verifyEmptyLine();
         if (source != null) {
             final var blk = source.toBlock();
@@ -377,73 +212,12 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
         return this;
     }
 
-    @Override
-    public Block build() {
-        final var length = buf.length();
-        if (length == 0) {
-            throw new VerifyException("empty block");
-        }
-        return build(length);
-    }
-
-    @NonNullByDefault
-    private Block build(final int length) {
-        if (length != currentLine) {
-            throw new VerifyException("unterminated line " + buf.substring(currentLine));
-        }
-        if (currentIndent != 0) {
-            throw new VerifyException("leftover indentation depth " + currentIndent);
-        }
-
-        if (length == secondLine) {
-            // "\n" or "foo\n"
-            return length == 1 ? Block1.EMPTY : new Block1(buf.substring(0, length - 1));
-        }
-        final var end = length - 1;
-        // "\n\n"
-        return end == secondLine ? Block2.EMPTY
-            // everything else
-            : new BlockN(buf.substring(0, end));
-    }
-
-    @Override
-    public Block toBlock() {
-        final var length = buf.length();
-        return length == 0 ? null : build(length);
-    }
-
     // FIXME: split this out into JavadocBuilder
     String toJavadocBlock() {
-        if (buf.isEmpty())  {
+        if (isEmpty())  {
             return "";
         }
         final var bb = BaseTemplate.wrapToDocumentation(toRawString());
         return bb == null ? "" : bb.toRawString();
-    }
-
-    @Override
-    public String toRawString() {
-        return verifyNotNull(buf.toString());
-    }
-
-    private void verifyEmptyLine() {
-        if (currentLine != buf.length()) {
-            throw new VerifyException("trailing content '" + buf.substring(currentLine) + "'");
-        }
-    }
-
-    //
-    // Bridge methods to ArgumentVerifier. Kept here to keep callers as simple as possible.
-    //
-    @NonNullByDefault
-    @CheckReturnValue
-    private static String verifyStr(final String arg) {
-        return ArgumentVerifier.INSTANCE.verifyStr(arg);
-    }
-
-    @NonNullByDefault
-    @CheckReturnValue
-    private static String verifyTxt(final String arg) {
-        return ArgumentVerifier.INSTANCE.verifyTxt(arg);
     }
 }

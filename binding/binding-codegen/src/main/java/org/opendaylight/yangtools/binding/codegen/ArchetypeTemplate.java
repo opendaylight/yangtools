@@ -93,7 +93,7 @@ abstract sealed class ArchetypeTemplate<T extends Archetype> extends BaseTemplat
         return generatedAnnotation ? bb.eol(GENERATED_ANNOTATION) : bb;
     }
 
-    private @Nullable BlockBuilder javadocBlock(final ModuleEffectiveStatement module,
+    private Block.@Nullable Builder javadocBlock(final ModuleEffectiveStatement module,
             final EffectiveStatement<?, ?> stmt, final DocumentedNode node) {
         final var sb = new StringBuilder();
         final var comment = DocUtils.typeCommentOf(node);

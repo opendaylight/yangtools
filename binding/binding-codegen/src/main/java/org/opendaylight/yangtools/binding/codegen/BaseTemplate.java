@@ -225,7 +225,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
         return GETTER_PREFIX + toFirstUpper(propName);
     }
 
-    static final @Nullable BlockBuilder wrapToDocumentation(final @NonNull String text) {
+    static final Block.@Nullable Builder wrapToDocumentation(final @NonNull String text) {
         // TODO: isBlank()?
         if (text.isEmpty()) {
             return null;
@@ -237,7 +237,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     }
 
     @NonNullByDefault
-    static final void appendAsJavadoc(final BlockBuilder bb, final String text) {
+    static final void appendAsJavadoc(final Block.Builder bb, final String text) {
         bb.eol("/**");
 
         final int length = text.length();
@@ -255,7 +255,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
     }
 
     @NonNullByDefault
-    private static void appendLine(final BlockBuilder bb, final String str, final int start, final int limit) {
+    private static void appendLine(final Block.Builder bb, final String str, final int start, final int limit) {
         // do not emit obvious trailing whitespace
         int end = limit;
         while (true) {

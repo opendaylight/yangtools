@@ -27,7 +27,7 @@ record BlockC(List<Block> blocks) implements Block {
     }
 
     @Override
-    public void appendTo(final BlockBuilder bb) {
+    public void appendTo(final Block.Builder bb) {
         for (var block : blocks) {
             block.appendTo(bb);
         }
