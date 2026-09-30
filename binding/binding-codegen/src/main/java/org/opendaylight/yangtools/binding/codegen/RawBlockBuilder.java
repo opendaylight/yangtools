@@ -10,11 +10,19 @@ package org.opendaylight.yangtools.binding.codegen;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * A {@link Block.Fragment} that can be appended to a {@link BlockBuilder}.
+ * A raw {@link BlockBuilder}.
  */
 @NonNullByDefault
-@FunctionalInterface
-interface BlockFragment extends Block.Fragment<BlockBuilder> {
+final class RawBlockBuilder extends AbstractBlockBuilder<RawBlockBuilder> {
+    /**
+     * Default constructor.
+     */
+    RawBlockBuilder() {
+        // nothing else
+    }
+
     @Override
-    void appendTo(BlockBuilder bb);
+    protected RawBlockBuilder self() {
+        return this;
+    }
 }
