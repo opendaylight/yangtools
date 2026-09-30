@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.binding.codegen;
 
 import com.google.errorprone.annotations.CheckReturnValue;
 import org.apache.commons.text.StringEscapeUtils;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -23,13 +22,20 @@ import org.eclipse.jdt.annotation.Nullable;
  * <p>We can have some common Java language things coming in, but those should be placed here only on temporary basis
  * until they shape a separate interface for high-level access. Examples include {@code #gen(String)} family of methods.
  */
-final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
+@NonNullByDefault
+final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder, BlockFragment> {
+    /**
+     * Default constructor.
+     */
+    BlockBuilder() {
+        // nothing else
+    }
+
     @Override
     protected BlockBuilder self() {
         return this;
     }
 
-    @NonNullByDefault
     BlockBuilder jBlock(final BlockFragment fragment) {
         fragment.appendTo(oB());
         return cb();
@@ -41,7 +47,6 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
      * @param value the value
      * @return this instance
      */
-    @NonNullByDefault
     BlockBuilder jInt(final int value) {
         buf().append(value);
         return this;
@@ -53,7 +58,6 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
      * @param value the value
      * @return this instance
      */
-    @NonNullByDefault
     BlockBuilder jLong(final long value) {
         buf().append(value).append('L');
         return this;
@@ -68,7 +72,6 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
      * @return this instance
      * @see #jString(String)
      */
-    @NonNullByDefault
     BlockBuilder jStr(final String str) {
         if (str.isEmpty()) {
             buf().append("\"\"");
@@ -87,7 +90,6 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
      * @return this instance
      * @see #jStr(String)
      */
-    @NonNullByDefault
     BlockBuilder jString(final String str) {
         // FIXME: this is our sole dependency on commons-text: can we do something simple instead?
         return jStr(StringEscapeUtils.escapeJava(str));
@@ -101,7 +103,7 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
      * @return this instance
      */
     @CheckReturnValue
-    @NonNull BlockBuilder at() {
+    BlockBuilder at() {
         buf().append('@');
         return this;
     }
@@ -114,7 +116,6 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
      *
      * @return this instance
      */
-    @NonNullByDefault
     BlockBuilder oB() {
         markNl(incrementIndent(buf().append(" {\n")));
         return this;
@@ -127,7 +128,6 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
      *
      * @return this instance
      */
-    @NonNullByDefault
     BlockBuilder cb() {
         decrementIndent().append('}');
         return this;
@@ -140,7 +140,6 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
      *
      * @return this instance
      */
-    @NonNullByDefault
     BlockBuilder cB() {
         markNl(decrementIndent().append("}\n"));
         return this;
@@ -151,7 +150,6 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
      *
      * @return this instance
      */
-    @NonNullByDefault
     BlockBuilder eS() {
         markNl(buf().append(";\n"));
         return this;
@@ -163,7 +161,6 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
      * @param source optional {@link BlockBuilder}
      * @return this instance
      */
-    @NonNullByDefault
     BlockBuilder blk(final Block.@Nullable Builder source) {
         verifyEmptyLine();
         if (source != null) {
@@ -176,25 +173,11 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
     }
 
     /**
-     * Append the contents of a {@link BlockFragment} to this instance if it is not {@code null}.
-     *
-     * @param fragment optional {@link BlockFragment}
-     * @return this instance
-     */
-    BlockBuilder frg(final BlockFragment fragment) {
-        if (fragment != null) {
-            fragment.appendTo(this);
-        }
-        return this;
-    }
-
-    /**
      * The equivalent of {@code str("    ")}. Short name for {@code indent}.
      *
      * @return this instance
      */
     // FIXME: remove this method
-    @NonNullByDefault
     BlockBuilder ind() {
         buf().append("    ");
         return this;
@@ -206,7 +189,6 @@ final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
      * @return this instance
      */
     // FIXME: remove this method
-    @NonNullByDefault
     BlockBuilder ind(final String str) {
         buf().append("    ").append(verifyStr(str));
         return this;

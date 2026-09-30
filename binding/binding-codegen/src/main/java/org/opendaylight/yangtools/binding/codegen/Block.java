@@ -51,6 +51,9 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
      *   <li>explicit control over end-of-line</li>
      *   <li>simple indentation handling</li>
      * </ul>
+     *
+     * <p>This interface is mean to be further specialized to a domain-specific subclass of
+     * {@link AbstractBlockBuilder} and the corresponding {@link Fragment} interface.
      */
     sealed interface Builder extends Mutable permits AbstractBlockBuilder {
         /**
@@ -174,6 +177,23 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
         @Deprecated(forRemoval = true)
         @InlineMe(replacement = "this.toRawString()")
         String toString();
+    }
+
+    /**
+     * A fragment of domain-specific {@link Builder}. All it can do is {@link #appendTo(BlockBuilder)} itself to that
+     * builder type.
+     *
+     * @param <B> the block builder type
+     * @param <F> the fragment type
+     */
+    @FunctionalInterface
+    interface Fragment<B extends Block.Builder, F extends Fragment<B, F>> {
+        /**
+         * Append this fragment to a block builder.
+         *
+         * @param bb the block builder
+         */
+        void appendTo(B bb);
     }
 
     /**

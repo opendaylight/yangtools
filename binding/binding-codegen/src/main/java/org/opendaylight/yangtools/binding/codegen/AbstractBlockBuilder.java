@@ -18,7 +18,9 @@ import org.eclipse.jdt.annotation.Nullable;
 /**
  * Abstract base class for {@linkplain Block.Builder} implementations.
  */
-abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> implements Block.Builder
+@NonNullByDefault
+abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B, F>, F extends Block.Fragment<B, F>>
+        implements Block.Builder
         permits BlockBuilder {
     // The idea is that we start with an empty StringBuilder and as we receive events we decide what to do next.
     // Typically this will be just a simple append, but we also need to track indentation.
@@ -34,7 +36,7 @@ abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> im
     //    List<Blk> blocks; // completed blocks, with optional coalescence when indent matches
 
     // current block, containing newline-separated lines
-    private final @NonNull StringBuilder buf = new StringBuilder();
+    private final StringBuilder buf = new StringBuilder();
     // offset of the start of the current line, i.e. one past the last known newline in current block
     private int currentLine = 0;
     // offset of the start of the second line, i.e. the one past the first newline in current block
@@ -58,12 +60,26 @@ abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> im
     protected abstract @NonNull B self();
 
     @Override
-    public final B blk(final Block blk) {
+    public final B blk(final @Nullable Block blk) {
         verifyEmptyLine();
         if (blk != null) {
             blk.appendTo(this);
         }
         return self();
+    }
+
+    /**
+     * Append the contents of a {@link Block.Fragment} to this instance if it is not {@code null}.
+     *
+     * @param fragment optional {@link Block.Fragment}
+     * @return this instance
+     */
+    public final B frg(final @Nullable F fragment) {
+        final var self = self();
+        if (fragment != null) {
+            fragment.appendTo(self);
+        }
+        return self;
     }
 
     @Override
@@ -116,7 +132,6 @@ abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> im
         return self();
     }
 
-    @NonNullByDefault
     private void strImpl(final String str) {
         buf().append(verifyStr(str));
     }
@@ -128,7 +143,6 @@ abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> im
         return currentIndent == 0 ? txtFast(verified) : txtSlow(verified);
     }
 
-    @NonNullByDefault
     private B txtFast(final String text) {
         if (secondLine == -1) {
             secondLine = buf.length() + text.indexOf('\n') + 1;
@@ -138,7 +152,6 @@ abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> im
         return self();
     }
 
-    @NonNullByDefault
     private B txtSlow(final String text) {
         new BlockN(text.substring(0, text.length() - 1)).appendTo(this);
         return self();
@@ -164,18 +177,15 @@ abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> im
     /**
      * {@return buffer prepared to received some content}
      */
-    @NonNullByDefault
     protected final StringBuilder buf() {
         return needIndent == 0 ? buf : applyIndent();
     }
 
-    @NonNullByDefault
     private StringBuilder applyIndent() {
         needIndent = 0;
         return buf.repeat("    ", currentIndent);
     }
 
-    @NonNullByDefault
     protected final StringBuilder incrementIndent(final StringBuilder sb) {
         if (++currentIndent < 1) {
             // FIXME: split out to verifier
@@ -184,7 +194,6 @@ abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> im
         return sb;
     }
 
-    @NonNullByDefault
     protected final StringBuilder decrementIndent() {
         if (currentIndent-- == 0) {
             // FIXME: split out to verifier
@@ -202,7 +211,6 @@ abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> im
         return build(length);
     }
 
-    @NonNullByDefault
     private Block build(final int length) {
         if (length != currentLine) {
             throw new VerifyException("unterminated line " + buf.substring(currentLine));
@@ -223,7 +231,7 @@ abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> im
     }
 
     @Override
-    public final Block toBlock() {
+    public final @Nullable Block toBlock() {
         final var length = buf.length();
         return length == 0 ? null : build(length);
     }
@@ -245,6 +253,7 @@ abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> im
 
     @Override
     @Deprecated(forRemoval = true)
+    @SuppressWarnings("removal")
     public final String toString() {
         return toRawString();
     }
@@ -258,13 +267,11 @@ abstract sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> im
     //
     // Bridge methods to ArgumentVerifier. Kept here to keep callers as simple as possible.
     //
-    @NonNullByDefault
     @CheckReturnValue
     protected static final String verifyStr(final String arg) {
         return ArgumentVerifier.INSTANCE.verifyStr(arg);
     }
 
-    @NonNullByDefault
     @CheckReturnValue
     protected static final String verifyTxt(final String arg) {
         return ArgumentVerifier.INSTANCE.verifyTxt(arg);

@@ -10,15 +10,11 @@ package org.opendaylight.yangtools.binding.codegen;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * A part of a {@link Block}. All it can do is put itself into a {@link BlockBuilder}.
+ * A {@link Block.Fragment} that can be appended to a {@link BlockBuilder}.
  */
 @NonNullByDefault
 @FunctionalInterface
-interface BlockFragment {
-    /**
-     * Append this fragment to a {@link BlockBuilder}.
-     *
-     * @param bb the {@link BlockBuilder}
-     */
+interface BlockFragment extends Block.Fragment<BlockBuilder, BlockFragment> {
+    @Override
     void appendTo(BlockBuilder bb);
 }
