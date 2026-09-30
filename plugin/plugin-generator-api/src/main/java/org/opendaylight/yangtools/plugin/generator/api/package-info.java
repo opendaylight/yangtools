@@ -13,7 +13,5 @@
  * needs to be implemented for bootstrapping a particular generator. Such implementations are discovered using normal
  * discovery methods, for example they <b>should</b> always be published as {@link java.util.ServiceLoader} services.
  */
-@Export
+@org.osgi.annotation.bundle.Export
 package org.opendaylight.yangtools.plugin.generator.api;
-
-import org.osgi.annotation.bundle.Export;

@@ -5,45 +5,47 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.codegen;
-
-import static java.util.Objects.requireNonNull;
+package org.opendaylight.yangtools.blk;
 
 import com.google.errorprone.annotations.DoNotCall;
 import java.io.IOException;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import java.util.List;
 
-@NonNullByDefault
-record Block1(String line) implements Block.OfOne {
-    // one empty line
-    static final Block1 EMPTY = new Block1("");
-
-    Block1 {
-        requireNonNull(line);
+/**
+ * A block that is a concatenation of two or more blocks.
+ */
+record BlockC(List<Block> blocks) implements Block {
+    BlockC {
+        blocks = List.copyOf(blocks);
     }
 
     @Override
     public void appendTo(final Appendable out) throws IOException {
-        out.append(line).append('\n');
+        for (var block : blocks) {
+            block.appendTo(out);
+        }
     }
 
     @Override
     public void appendTo(final Block.Builder bb) {
-        if (line.isEmpty()) {
-            bb.newLine();
-        } else {
-            bb.eol(line);
+        for (var block : blocks) {
+            block.appendTo(bb);
         }
     }
 
     @Override
     public String toRawString() {
-        return line + '\n';
+        final var sb = new StringBuilder();
+        for (var block : blocks) {
+            block.appendTo(sb);
+        }
+        return sb.toString();
     }
 
     @Override
     @DoNotCall
     @Deprecated(forRemoval = true)
+    @SuppressWarnings("removal")
     public String toString() {
         return toRawString();
     }
