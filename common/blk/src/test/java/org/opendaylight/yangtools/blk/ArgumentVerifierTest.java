@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.codegen;
+package org.opendaylight.yangtools.blk;
 
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertSame;
@@ -15,8 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.opendaylight.yangtools.binding.codegen.ArgumentVerifier.QuickVerifier;
-import org.opendaylight.yangtools.binding.codegen.ArgumentVerifier.StrictVerifier;
 import org.slf4j.Logger;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,13 +25,14 @@ class ArgumentVerifierTest {
     @Test
     void nullPropSelectsFast() {
         doNothing().when(log).debug("Using quick verification");
-        assertInstanceOf(QuickVerifier.class, ArgumentVerifier.selectArgumentVerifier(log, null));
+        assertInstanceOf(QuickArgumentVerifier.class, ArgumentVerifier.selectArgumentVerifier(log, null));
     }
 
     @Test
     void falsePropSelectsQuick() {
         doNothing().when(log).info("Using quick verification");
-        final var quick = assertInstanceOf(QuickVerifier.class, ArgumentVerifier.selectArgumentVerifier(log, "quick"));
+        final var quick = assertInstanceOf(QuickArgumentVerifier.class,
+            ArgumentVerifier.selectArgumentVerifier(log, "quick"));
 
         // quick checker does not detect these conditions:
         final var strWithNl = "abc\n";
@@ -45,13 +44,13 @@ class ArgumentVerifierTest {
     @Test
     void truePropSelectsStrict() {
         doNothing().when(log).info("Using strict verification");
-        assertInstanceOf(StrictVerifier.class, ArgumentVerifier.selectArgumentVerifier(log, "strict"));
+        assertInstanceOf(StrictAdugmentVerifier.class, ArgumentVerifier.selectArgumentVerifier(log, "strict"));
     }
 
     @Test
     void malformedPropSelectsStrict() {
         doNothing().when(log)
             .warn("Bad {} value '{}', using strict verification", "odl.binding.codegen.verify", "bad value");
-        assertInstanceOf(StrictVerifier.class, ArgumentVerifier.selectArgumentVerifier(log, "bad value"));
+        assertInstanceOf(StrictAdugmentVerifier.class, ArgumentVerifier.selectArgumentVerifier(log, "bad value"));
     }
 }

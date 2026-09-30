@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.binding.codegen;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.blk.Block;
 
 /**
  * A {@link Block.Fragment} that can be appended to a {@link BlockBuilder}.

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.codegen;
+package org.opendaylight.yangtools.blk;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
@@ -17,9 +17,12 @@ import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Abstract base class for {@linkplain Block.Builder} implementations.
+ *
+ * @param <B> concrete subclass type
+ * @since 16.2.0
  */
 @NonNullByDefault
-abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> extends Block.Builder {
+public abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> extends Block.Builder {
     // The idea is that we start with an empty StringBuilder and as we receive events we decide what to do next.
     // Typically this will be just a simple append, but we also need to track indentation.
     //
@@ -48,7 +51,7 @@ abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>
     /**
      * Default constructor.
      */
-    AbstractBlockBuilder() {
+    protected AbstractBlockBuilder() {
         // nothing else
     }
 
@@ -96,6 +99,11 @@ abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>
         markNl(buf.append('\n'));
     }
 
+    /**
+     * Mark the fact that a newline was appended.
+     *
+     * @param sb the {@link StringBuilder}
+     */
     protected final void markNl(final StringBuilder sb) {
         final var nextLine = sb.length();
         if (secondLine == -1) {
@@ -189,6 +197,12 @@ abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>
         return buf.repeat("    ", currentIndent);
     }
 
+    /**
+     * Increment indentation depth.
+     *
+     * @param sb the {@link StringBuilder} to return
+     * @return the {@link StringBuilder}
+     */
     protected final StringBuilder incrementIndent(final StringBuilder sb) {
         if (++currentIndent < 1) {
             // FIXME: split out to verifier
@@ -197,6 +211,11 @@ abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>
         return sb;
     }
 
+    /**
+     * Decrement indentation depth.
+     *
+     * @return the {@link StringBuilder}
+     */
     protected final StringBuilder decrementIndent() {
         if (currentIndent-- == 0) {
             // FIXME: split out to verifier
@@ -244,20 +263,34 @@ abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>
         return verifyNotNull(buf.toString());
     }
 
+    /**
+     * Verify current line is empty.
+     *
+     * @throws VerifyException if current line is not empty
+     */
     protected final void verifyEmptyLine() {
         if (currentLine != buf.length()) {
             throw new VerifyException("trailing content '" + buf.substring(currentLine) + "'");
         }
     }
 
-    //
-    // Bridge methods to ArgumentVerifier. Kept here to keep callers as simple as possible.
-    //
+    /**
+     * Verify specified string conforms to {@link Block.Builder#str(String)} requirements.
+     *
+     * @param arg the string
+     * @return the string
+     */
     @CheckReturnValue
     protected static final String verifyStr(final String arg) {
         return ArgumentVerifier.INSTANCE.verifyStr(arg);
     }
 
+    /**
+     * Verify specified string conforms to {@link Block.Builder#txt(String)} requirements.
+     *
+     * @param arg the string
+     * @return the string
+     */
     @CheckReturnValue
     protected static final String verifyTxt(final String arg) {
         return ArgumentVerifier.INSTANCE.verifyTxt(arg);

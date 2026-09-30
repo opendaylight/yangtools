@@ -5,13 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.codegen;
+package org.opendaylight.yangtools.blk;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.google.common.base.VerifyException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
@@ -63,7 +62,7 @@ class BlockTest {
 
     @Test
     void ofLinesEmptyList() {
-        final var ex = assertThrows(VerifyException.class, () -> Block.ofLines(List.of()));
+        final var ex = assertThrows(IllegalArgumentException.class, () -> Block.ofLines(List.of()));
         assertEquals("no lines", ex.getMessage());
     }
 

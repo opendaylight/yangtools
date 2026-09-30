@@ -5,13 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.binding.codegen;
+package org.opendaylight.yangtools.blk;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.binding.codegen.ArgumentVerifier.verifyNonEmpty;
 
-import com.google.common.annotations.Beta;
-import com.google.common.base.VerifyException;
 import com.google.errorprone.annotations.CheckReturnValue;
 import com.google.errorprone.annotations.DoNotCall;
 import com.google.errorprone.annotations.InlineMe;
@@ -19,6 +16,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -27,9 +25,11 @@ import org.opendaylight.yangtools.concepts.Mutable;
 
 /**
  * A non-empty set of {@code '\n'}-separated lines.
+ *
+ * @since 16.2.0
  */
 @NonNullByDefault
-sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, BlockN {
+public sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, BlockN {
     /**
      * A {@link Block} comprised of a single line.
      */
@@ -56,6 +56,10 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
      * {@link AbstractBlockBuilder} and the corresponding {@link Fragment} interface.
      */
     abstract sealed class Builder implements Mutable permits AbstractBlockBuilder {
+        Builder() {
+            // nothing else
+        }
+
         /**
          * Append the contents of a {@link Block} to this instance if it is not {@code null}. The there must not be any
          * content on the current line.
@@ -156,7 +160,6 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
          * @param endIndex the ending index, exclusive
          * @return this instance
          */
-        @Beta
         public abstract Builder eol(String str, int beginIndex, int endIndex);
 
         /**
@@ -208,7 +211,7 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
     @FunctionalInterface
     interface Fragment<B extends Block.Builder> {
         /**
-         * Append this fragment to a block builder.
+         * Append this fragment to the corresponding block builder.
          *
          * @param bb the block builder
          */
@@ -219,23 +222,44 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
      * {@return a new {@link Block.Builder}}
      */
     static Block.Builder builder() {
-        return new RawBlockBuilder();
+        return new BlockBuilder();
     }
 
+    /**
+     * {@return a {@link Block} holding a single empty line}
+     */
     static Block.OfOne ofEmptyLine() {
         return Block1.EMPTY;
     }
 
+    /**
+     * {@return a {@link Block} holding a single line}
+     *
+     * @param line the line
+     */
     static Block.OfOne ofLine(final String line) {
-        return line.isEmpty() ? ofEmptyLine() : new Block1(verifyNonEmpty(line));
+        return line.isEmpty() ? ofEmptyLine() : new Block1(ArgumentVerifier.verifyNonEmpty(line));
     }
 
+    /**
+     * {@return a {@link Block} holding two lines}
+     *
+     * @param first the first line
+     * @param second the second line
+     */
     static Block ofLines(final String first, final String second) {
         return first.isEmpty() && second.isEmpty() ? Block2.EMPTY
             // FIXME: add verification
             : new Block2(first + '\n' + second, first.length());
     }
 
+    /**
+     * {@return a {@link Block} holding two or more lines}
+     *
+     * @param first the first line
+     * @param second the second line
+     * @param others subsequent lines
+     */
     static Block ofLines(final String first, final String second, final @NonNull String... others) {
         if (others.length == 0) {
             return ofLines(first, second);
@@ -250,13 +274,35 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
         return buildBlock(sb);
     }
 
+    /**
+     * {@return a {@link Block} holding specified lines}
+     *
+     * @param lines the lines
+     * @throws IllegalArgumentException if {@code lines} is empty
+     */
     static Block ofLines(final Iterable<String> lines) {
         return ofLines(lines.iterator());
     }
 
+    /**
+     * {@return a {@link Block} holding specified lines}
+     *
+     * @param lines the lines
+     * @throws IllegalArgumentException if {@code lines} is empty
+     */
+    static Block ofLines(final Stream<String> lines) {
+        return ofLines(lines.iterator());
+    }
+
+    /**
+     * {@return a {@link Block} holding specified lines}
+     *
+     * @param lines the lines
+     * @throws IllegalArgumentException if {@code lines} is empty
+     */
     static Block ofLines(final Iterator<String> lines) {
         if (!lines.hasNext()) {
-            throw new VerifyException("no lines");
+            throw new IllegalArgumentException("no lines");
         }
         final var first = lines.next();
         if (!lines.hasNext()) {
@@ -276,10 +322,16 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
         return buildBlock(sb);
     }
 
+    /**
+     * {@return a {@link Block} concatenating specified block}
+     *
+     * @param blocks the blocks to concatenate
+     * @throws IllegalArgumentException if {@code blocks} is empty
+     */
     static Block ofBlocks(final List<Block> blocks) {
         final var size = blocks.size();
         return switch (size) {
-            case 0 -> throw new VerifyException("no blocks)");
+            case 0 -> throw new IllegalArgumentException("empty blocks");
             case 1 -> requireNonNull(blocks.getFirst());
             default -> new BlockC(blocks);
         };
@@ -331,7 +383,7 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
 
     private static void appendLine(final StringBuilder sb, final String line) {
         if (!line.isEmpty()) {
-            sb.append(verifyNonEmpty(line));
+            sb.append(ArgumentVerifier.verifyNonEmpty(line));
         }
         sb.append('\n');
     }
