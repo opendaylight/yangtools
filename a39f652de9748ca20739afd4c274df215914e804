@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "fb3aaa73_30418665",
+        "filename": "codec/yang-data-codec-gson/src/test/resources/yt1899/yang/yt1899.yang",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-10-01T19:57:00Z",
+      "side": 1,
+      "message": "should be inlined in test itself",
+      "range": {
+        "startLine": 1,
+        "startChar": 7,
+        "endLine": 1,
+        "endChar": 13
+      },
+      "revId": "a39f652de9748ca20739afd4c274df215914e804",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "8acce6ab_f51b9cda",
         "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/codec/AbstractCodecFactory.java",
         "patchSetId": 4
