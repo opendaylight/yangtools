@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "a7c81f4f_fb258280",
+        "filename": "codec/yang-data-codec-gson/src/test/resources/yt1899/yang/yt1899.yang",
+        "patchSetId": 4
+      },
+      "lineNbr": 1,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-10-02T13:45:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fb3aaa73_30418665",
+      "range": {
+        "startLine": 1,
+        "startChar": 7,
+        "endLine": 1,
+        "endChar": 13
+      },
+      "revId": "a39f652de9748ca20739afd4c274df215914e804",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "8acce6ab_f51b9cda",
@@ -47,6 +71,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "7b2a7b3e_7a25be28",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/codec/AbstractCodecFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 120,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-10-02T13:45:56Z",
+      "side": 1,
+      "message": "Yes and no.. the parsers are in different packages, so it would have to be public. However I decided to remove it anyway and just run the check directly at each call site.",
+      "parentUuid": "8acce6ab_f51b9cda",
+      "range": {
+        "startLine": 120,
+        "startChar": 4,
+        "endLine": 120,
+        "endChar": 10
+      },
+      "revId": "a39f652de9748ca20739afd4c274df215914e804",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "d0172b98_f99da61e",
@@ -60,6 +108,30 @@
       "writtenOn": "2026-10-01T19:54:30Z",
       "side": 1,
       "message": "inferenceContext.equals(modelContext)\n\nachieves the same for much less ceremony",
+      "range": {
+        "startLine": 121,
+        "startChar": 13,
+        "endLine": 121,
+        "endChar": 66
+      },
+      "revId": "a39f652de9748ca20739afd4c274df215914e804",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7b291036_5551f070",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/codec/AbstractCodecFactory.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 121,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-10-02T13:45:56Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "d0172b98_f99da61e",
       "range": {
         "startLine": 121,
         "startChar": 13,
