@@ -12,6 +12,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.errorprone.annotations.CheckReturnValue;
 import org.apache.commons.text.StringEscapeUtils;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.blk.AbstractBlockBuilder;
+import org.opendaylight.yangtools.blk.Block;
 
 /**
  * An {@link AbstractBlockBuilder} supporting basic Java constructs.

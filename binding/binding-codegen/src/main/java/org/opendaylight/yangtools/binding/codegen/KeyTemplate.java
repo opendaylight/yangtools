@@ -65,8 +65,8 @@ final class KeyTemplate extends ArchetypeTemplate<KeyArchetype> {
             .eol(" */")
             .eol(generatedAnnotation())
             .frg(DeprecatedAnnotation.of(javaType(), archetype.entryObject().statement()))
-            .str("public final class ").str(typeName).str(" implements ")
-                .str(importedName(KEY)).lt().str(entryObject).gt().jBlock(this::classBody).nl();
+            .str("public final class ").str(typeName).str(" implements ").jRef(KEY).lt().str(entryObject).gt()
+                .jBlock(this::classBody).nl();
     }
 
     // Split out to keep indentation in check

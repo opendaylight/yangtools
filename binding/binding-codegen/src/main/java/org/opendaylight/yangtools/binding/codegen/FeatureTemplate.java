@@ -39,9 +39,9 @@ final class FeatureTemplate extends ArchetypeTemplate<FeatureArchetype> {
         final var stmt = archetype.statement();
 
         return newBodyBuilder(stmt, stmt.toSchemaNode())
-            .at().eol(importedName(NONNULL_BY_DEFAULT))
-            .str("public final class ").str(simpleName).str(" extends ").str(importedName(YANG_FEATURE)).lt()
-                .str(simpleName).cs().str(rootName).gt().jBlock(bb -> {
+            .at().jRef(NONNULL_BY_DEFAULT).nl()
+            .str("public final class ").str(simpleName).str(" extends ").jRef(YANG_FEATURE).lt().str(simpleName).cs()
+                .str(rootName).gt().jBlock(bb -> {
                     final var override = importedName(OVERRIDE);
                     final var clazz = importedName(CLASS);
 
@@ -63,7 +63,7 @@ final class FeatureTemplate extends ArchetypeTemplate<FeatureArchetype> {
                         .cB()
                         .nl()
                         .at().eol(override)
-                        .str("public ").str(importedName(QNAME)).str(" qname()").oB()
+                        .str("public ").jRef(QNAME).str(" qname()").oB()
                             .eol("return " + QNAME_STATIC_FIELD_NAME + ";")
                         .cB()
                         .nl()
