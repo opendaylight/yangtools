@@ -211,7 +211,7 @@ public final class YangModuleInfoTemplate {
             .nl()
             .eol("private final @NonNull ImmutableSet<YangModuleInfo> importedModules;")
             .nl()
-            .blk(classBody(module, CLASS_NAME, submodules))
+            .frg(classBody(module, CLASS_NAME, submodules))
             .nl()
             .eol("/**")
             .eol(" * Create an interned {@link QName} with specified {@code localName} and namespace/revision of this")
@@ -303,94 +303,92 @@ public final class YangModuleInfoTemplate {
     }
 
     @NonNullByDefault
-    private BlockBuilder classBody(final ModuleLike mod, final String className, final Set<Submodule> submodules) {
-        final var bb = new BlockBuilder()
-            .str("private ").str(className).str("()").oB();
-
-        if (!mod.getImports().isEmpty() || !submodules.isEmpty()) {
-            importedTypes = YangModuleInfoTemplate.EXT_IMPORT_STR;
-            bb.eol("Set<YangModuleInfo> set = new HashSet<>();");
-        }
-
-        for (var imp : mod.getImports()) {
-            final var name = imp.getModuleName().getLocalName();
-            final var optRrev = imp.getRevision();
-
-            final QNameModule qnameModule;
-            if (optRrev.isEmpty()) {
-                final var sorted = new TreeMap<RevisionUnion, Module>();
-                for (var m : modelContext.getModules()) {
-                    if (name.equals(m.getName())) {
-                        sorted.put(m.getQNameModule().revisionUnion(), m);
-                    }
-                }
-                qnameModule = sorted.lastEntry().getValue().getQNameModule();
-            } else {
-                qnameModule = modelContext.findModule(name, optRrev).orElseThrow().getQNameModule();
+    private BlockFragment classBody(final ModuleLike mod, final String className, final Set<Submodule> submodules) {
+        return bb -> {
+            bb.str("private ").str(className).str("()").oB();
+            if (!mod.getImports().isEmpty() || !submodules.isEmpty()) {
+                importedTypes = YangModuleInfoTemplate.EXT_IMPORT_STR;
+                bb.eol("Set<YangModuleInfo> set = new HashSet<>();");
             }
 
-            bb.str("set.add(").str(servicePackageName(qnameModule))
-                .eol('.' + CLASS_NAME + '.' + INSTANCE_FIELD_NAME + ");");
-        }
+            for (var imp : mod.getImports()) {
+                final var name = imp.getModuleName().getLocalName();
+                final var optRrev = imp.getRevision();
 
-        for (var submodule : submodules) {
-            bb.str("set.add(").str(getClassName(submodule.getName())).eol("Info." + INSTANCE_FIELD_NAME + ");");
-        }
+                final QNameModule qnameModule;
+                if (optRrev.isEmpty()) {
+                    final var sorted = new TreeMap<RevisionUnion, Module>();
+                    for (var m : modelContext.getModules()) {
+                        if (name.equals(m.getName())) {
+                            sorted.put(m.getQNameModule().revisionUnion(), m);
+                        }
+                    }
+                    qnameModule = sorted.lastEntry().getValue().getQNameModule();
+                } else {
+                    qnameModule = modelContext.findModule(name, optRrev).orElseThrow().getQNameModule();
+                }
 
-        if (mod.getImports().isEmpty() && submodules.isEmpty()) {
-            bb.eol("importedModules = ImmutableSet.of();");
-        } else {
-            bb.eol("importedModules = ImmutableSet.copyOf(set);");
-        }
+                bb.str("set.add(").str(servicePackageName(qnameModule))
+                    .eol('.' + CLASS_NAME + '.' + INSTANCE_FIELD_NAME + ");");
+            }
 
-        final var pathItems = moduleFilePathResolver.apply(mod);
-        if (pathItems.isEmpty()) {
-            throw new IllegalStateException("Module " + mod + " does not have a file path");
-        }
+            for (var submodule : submodules) {
+                bb.str("set.add(").str(getClassName(submodule.getName())).eol("Info." + INSTANCE_FIELD_NAME + ");");
+            }
 
-        bb
-            .cB()
-            .nl()
-            .eol("@Override")
-            .str("public QName name()").oB()
+            if (mod.getImports().isEmpty() && submodules.isEmpty()) {
+                bb.eol("importedModules = ImmutableSet.of();");
+            } else {
+                bb.eol("importedModules = ImmutableSet.copyOf(set);");
+            }
+
+            final var pathItems = moduleFilePathResolver.apply(mod);
+            if (pathItems.isEmpty()) {
+                throw new IllegalStateException("Module " + mod + " does not have a file path");
+            }
+
+            bb
+                .cB()
+                .nl()
+                .eol("@Override")
+                .str("public QName name()").oB()
                 .eol("return NAME;")
-            .cB()
-            .nl()
-            .eol("@Override")
-            .str("protected String resourceName()").oB()
-                .str("return \"");
-        for (var pathItem : pathItems) {
-            bb.str("/").str(pathItem);
-        }
-        bb
-            .eol("\";")
-            .cB()
-            .nl()
-            .eol("@Override")
-            .str("public ImmutableSet<YangModuleInfo> getImportedModules()").oB()
-                .eol("return importedModules;")
-            .cB();
-
-        for (var sub : submodules) {
-            final var subName = getClassName(sub.getName());
-
+                .cB()
+                .nl()
+                .eol("@Override")
+                .str("protected String resourceName()").oB()
+                    .str("return \"");
+            for (var pathItem : pathItems) {
+                bb.str("/").str(pathItem);
+            }
             bb
+                .eol("\";")
+                .cB()
                 .nl()
-                .str("private static final class ").str(subName).str("Info extends ResourceYangModuleInfo").oB()
-                    .str("private final @NonNull QName NAME = QName.create(")
-                        .jStr(sub.getQNameModule().namespace().toString()).cs();
-            sub.getRevision().ifPresent(rev -> bb.jStr(rev.toString()).cs());
-            bb
-                .jStr(sub.getName()).eol(").intern();")
-                .nl()
-                .str("static final @NonNull YangModuleInfo INSTANCE = new ").str(subName).eol("Info();")
-                .nl()
-                .eol("private final @NonNull ImmutableSet<YangModuleInfo> importedModules;")
-                .nl()
-                .blk(classBody(sub, subName + "Info", Set.of()))
+                .eol("@Override")
+                .str("public ImmutableSet<YangModuleInfo> getImportedModules()").oB()
+                    .eol("return importedModules;")
                 .cB();
-        }
 
-        return bb;
+            for (var sub : submodules) {
+                final var subName = getClassName(sub.getName());
+
+                bb
+                    .nl()
+                    .str("private static final class ").str(subName).str("Info extends ResourceYangModuleInfo").oB()
+                        .str("private final @NonNull QName NAME = QName.create(")
+                            .jStr(sub.getQNameModule().namespace().toString()).cs();
+                sub.getRevision().ifPresent(rev -> bb.jStr(rev.toString()).cs());
+                bb
+                    .jStr(sub.getName()).eol(").intern();")
+                    .nl()
+                    .str("static final @NonNull YangModuleInfo INSTANCE = new ").str(subName).eol("Info();")
+                    .nl()
+                    .eol("private final @NonNull ImmutableSet<YangModuleInfo> importedModules;")
+                    .nl()
+                    .frg(classBody(sub, subName + "Info", Set.of()))
+                    .cB();
+            }
+        };
     }
 }
