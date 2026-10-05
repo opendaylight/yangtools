@@ -24,6 +24,30 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cd057056_b973e923",
+        "filename": "codec/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/SchemaLookupCache.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 23,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-10-05T11:41:53Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "192c56ef_18e5f96f",
+      "range": {
+        "startLine": 23,
+        "startChar": 12,
+        "endLine": 23,
+        "endChar": 29
+      },
+      "revId": "f7e54630c76bc1c8ff8ecd32c5294a4eb12bba71",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "bce33fa4_2f3b317b",
@@ -37,6 +61,30 @@
       "writtenOn": "2026-10-05T10:01:26Z",
       "side": 1,
       "message": "SchemaLookupCache is effectively tied to an EffectiveModelContext in that all users also hold a reference to EffectiveModelContext.\n\nAFAICT that means DataSchemaNodes never get unreachable.",
+      "range": {
+        "startLine": 34,
+        "startChar": 9,
+        "endLine": 34,
+        "endChar": 19
+      },
+      "revId": "f7e54630c76bc1c8ff8ecd32c5294a4eb12bba71",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "0a9c9ee8_3ab1cdf6",
+        "filename": "codec/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/SchemaLookupCache.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-10-05T11:41:53Z",
+      "side": 1,
+      "message": ".weakKeys() is preferable here. Most keys are indeed reachable through the EffectiveModelContext, but not all. When the inference points at an rpc/action/notification, JsonParserStream gets its parent from DataSchemaCompat.toDataSchemaNode(), which returns a fresh OperationAsContainer/NotificationAsContainer every time (i.e. for every parseInput()/parseOutput()). With strong keys each such parse would leave an entry behind in the shared factory\u0027s cache. The weakKeys() drops them once the parser is gone. I can update the the comment to state it clearly.",
+      "parentUuid": "bce33fa4_2f3b317b",
       "range": {
         "startLine": 34,
         "startChar": 9,
