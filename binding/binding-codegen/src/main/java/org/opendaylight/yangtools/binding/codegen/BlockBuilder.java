@@ -7,8 +7,13 @@
  */
 package org.opendaylight.yangtools.binding.codegen;
 
+import static java.util.Objects.requireNonNull;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.binding.model.Archetype;
+import org.opendaylight.yangtools.binding.model.TypeName;
+import org.opendaylight.yangtools.binding.model.api.ConcreteType;
 import org.opendaylight.yangtools.blk.Block;
 
 /**
@@ -23,6 +28,15 @@ import org.opendaylight.yangtools.blk.Block;
  */
 @NonNullByDefault
 final class BlockBuilder extends AbstractJavaBlockBuilder<BlockBuilder> {
+    private final GeneratedClass javaType;
+
+    /**
+     * Default constructor.
+     */
+    BlockBuilder(final GeneratedClass javaType) {
+        this.javaType = requireNonNull(javaType);
+    }
+
     @Override
     protected BlockBuilder self() {
         return this;
@@ -43,6 +57,36 @@ final class BlockBuilder extends AbstractJavaBlockBuilder<BlockBuilder> {
             }
         }
         return this;
+    }
+
+    /**
+     * Append a reference to the specified Java type.
+     *
+     * @param type the type
+     * @return this instance
+     */
+    BlockBuilder jRef(final TypeName type) {
+        return str(javaType.getReferenceString(type));
+    }
+
+    /**
+     * Append a reference to the specified Java type.
+     *
+     * @param type the type
+     * @return this instance
+     */
+    BlockBuilder jRef(final Archetype type) {
+        return jRef(type.name());
+    }
+
+    /**
+     * Append a reference to the specified Java type.
+     *
+     * @param type the type
+     * @return this instance
+     */
+    BlockBuilder jRef(final ConcreteType type) {
+        return jRef(type.name());
     }
 
     // FIXME: split this out into JavadocBuilder

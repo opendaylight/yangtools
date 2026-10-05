@@ -53,7 +53,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
 
         @Override
         BlockFragment implFragment(final String valueType) {
-            return bb -> bb.str(" implements ").str(importedName(SCALAR_TYPE_OBJECT)).lt().str(valueType)
+            return bb -> bb.str(" implements ").jRef(SCALAR_TYPE_OBJECT).lt().str(valueType)
                 .str(">, java.io.Serializable");
         }
 
@@ -66,7 +66,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
 
         @Override
         void appendFieldInitialization(final BlockBuilder bb, final ConcreteType valueType) {
-            bb.str("this._value = ").str(importedName(CODEHELPERS)).str(".requireValue(_value");
+            bb.str("this._value = ").jRef(CODEHELPERS).str(".requireValue(_value");
             if (valueType instanceof Decimal64Type decimal64) {
                 bb.cs().jInt(decimal64.fractionDigits());
             }
@@ -96,7 +96,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
             bb
                 .nl()
                 .at().eol(override)
-                .str("public final ").str(importedName(valueType)).str(" getValue()").oB()
+                .str("public final ").jRef(valueType).str(" getValue()").oB()
                 .str("return _value");
             if (valueType.isArray()) {
                 bb.str(".clone()");
@@ -111,10 +111,10 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
                 .cB()
                 .nl()
                 .at().eol(override)
-                .str("public final boolean equals(").str(importedName(OBJECT)).str(" obj)").oB()
+                .str("public final boolean equals(").jRef(OBJECT).str(" obj)").oB()
                     .str("return this == obj || obj instanceof ").str(typeName).str(" other && ");
             if (valueType.isArray()) {
-                bb.str(importedName(JU_ARRAYS)).eol(".equals(_value, other._value);");
+                bb.jRef(JU_ARRAYS).eol(".equals(_value, other._value);");
             } else {
                 bb.eol("_value.equals(other._value);");
             }
@@ -122,7 +122,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
                 .cB()
                 .nl()
                 .at().eol(override)
-                .str("public final ").str(importedName(STRING)).str(" toString()").oB()
+                .str("public final ").jRef(STRING).str(" toString()").oB()
                     .str("return ").str(codeHelpers).str(".stoTS(").str(typeName).eol(".class, _value);")
                 .cB();
         }
@@ -139,7 +139,7 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
 
         @Override
         BlockFragment implFragment(final String valueType) {
-            return bb -> bb.str(" extends ").str(importedName(superType.name()));
+            return bb -> bb.str(" extends ").jRef(superType.name());
         }
 
         @Override
@@ -433,8 +433,8 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
 
         bb
             .nl()
-            .at().eol(importedName(NONNULL_BY_DEFAULT))
-            .at().str(importedName(CONSTRUCTOR_PARAMETERS)).eol("(\"value\")")
+            .at().jRef(NONNULL_BY_DEFAULT).nl()
+            .at().jRef(CONSTRUCTOR_PARAMETERS).eol("(\"value\")")
             .str("public ").str(archetype.simpleName()).str("(").str(importedType).str(" _value)").oB();
         appendFieldInitialization(bb, valueType);
         valueCheckers.appendInvocations(bb, javaType, "_value");
@@ -447,20 +447,20 @@ abstract sealed class ScalarTypeObjectTemplate extends ArchetypeTemplate<ScalarT
                 .nl()
                 // protected constructor taking an encapsulated Java value and an UnsafeSecret and performs
                 // initialization
-                .at().eol(importedName(NONNULL_BY_DEFAULT))
-                .str("protected ").str(simpleName).str("(").str(importedName(UNSAFE_SECRET)).str(" secret, ")
+                .at().jRef(NONNULL_BY_DEFAULT).nl()
+                .str("protected ").str(simpleName).str("(").jRef(UNSAFE_SECRET).str(" secret, ")
                     .str(importedType).str(" _value)").oB();
 
             switch (scalarType) {
                 case ROOT_RESTRICTING -> {
-                    bb.str(importedName(CODEHELPERS)).eol(".verifySecret(secret);");
+                    bb.jRef(CODEHELPERS).eol(".verifySecret(secret);");
                     appendFieldInitialization(bb, valueType);
                 }
                 case SUBCLASS_INHERITING -> bb.eol("super(secret, _value);");
                 case SUBCLASS_RESTRICTING ->
                     bb
                         .eol("super(_value);")
-                        .str(importedName(CODEHELPERS)).eol(".verifySecret(secret);");
+                        .jRef(CODEHELPERS).eol(".verifySecret(secret);");
                 default -> verify(scalarType == ScalarTypeKind.SUBCLASS);
             }
 

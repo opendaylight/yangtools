@@ -22,29 +22,27 @@ import org.opendaylight.yangtools.binding.BindingContract;
 abstract sealed class ImplementedInterfaceMethod implements BlockFragment {
     static final class Canonical extends ImplementedInterfaceMethod {
         Canonical(final ArchetypeTemplate<?> template) {
-            super(template, template.archetype.canonicalName());
+            super(template.archetype.canonicalName());
         }
     }
 
     static final class Simple extends ImplementedInterfaceMethod {
         Simple(final ArchetypeTemplate<?> template) {
-            super(template, template.archetype.simpleName());
+            super(template.archetype.simpleName());
         }
     }
 
-    private final ArchetypeTemplate<?> template;
     private final String selfRef;
 
-    private ImplementedInterfaceMethod(final ArchetypeTemplate<?> template, final String selfRef) {
-        this.template = requireNonNull(template);
+    private ImplementedInterfaceMethod(final String selfRef) {
         this.selfRef = requireNonNull(selfRef);
     }
 
     @Override
     public final void appendTo(final BlockBuilder bb) {
         bb
-            .at().eol(template.importedName(OVERRIDE))
-            .str("default ").str(template.importedName(CLASS)).lt().str(selfRef).str("> implementedInterface()").oB()
+            .at().jRef(OVERRIDE).nl()
+            .str("default ").jRef(CLASS).lt().str(selfRef).str("> implementedInterface()").oB()
                 .str("return ").str(selfRef).eol(".class;")
             .cB();
     }

@@ -388,7 +388,7 @@ final class UnionTypeObjectTemplate extends ArchetypeTemplate<@NonNull UnionType
                     bb.str("this.").str(fieldName).str(" = ");
                     // FIXME: check for ScalarTypes.BINARY instead
                     if (prop.type().isArray()) {
-                        bb.str(importedName(CODEHELPERS)).str(".copyArray(source.").str(fieldName).str(")");
+                        bb.jRef(CODEHELPERS).str(".copyArray(source.").str(fieldName).str(")");
                     } else {
                         bb.str("source.").str(fieldName);
                     }
