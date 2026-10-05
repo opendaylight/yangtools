@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "66aa1ffd_f5822a6c",
+        "filename": "codec/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONCodecFactory.java",
+        "patchSetId": 8
+      },
+      "lineNbr": 119,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-10-05T13:35:05Z",
+      "side": 1,
+      "message": "Good catch. We can instantiate it lazily. Done.",
+      "parentUuid": "31a7426a_a8467e2d",
+      "revId": "fa327f8c632bd4a60bd1d86743ec117c199b8533",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "2710db3a_bfc25578",
