@@ -168,7 +168,7 @@ public final class YangModuleInfoTemplate {
         final var submodules = new LinkedHashSet<Submodule>();
         collectSubmodules(submodules, module);
 
-        var bb = new BlockBuilder()
+        var bb = new JavaBlockBuilder()
             .eol("/**")
             .str(" * The {@link ResourceYangModuleInfo} for {@code ").str(module.getName()).eol("} module.")
             .eol(" */")
@@ -303,7 +303,8 @@ public final class YangModuleInfoTemplate {
     }
 
     @NonNullByDefault
-    private BlockFragment classBody(final ModuleLike mod, final String className, final Set<Submodule> submodules) {
+    private Block.Fragment<JavaBlockBuilder> classBody(final ModuleLike mod, final String className,
+            final Set<Submodule> submodules) {
         return bb -> {
             bb.str("private ").str(className).str("()").oB();
             if (!mod.getImports().isEmpty() || !submodules.isEmpty()) {
