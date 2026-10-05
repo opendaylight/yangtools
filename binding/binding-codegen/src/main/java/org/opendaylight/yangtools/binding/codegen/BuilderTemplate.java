@@ -213,7 +213,7 @@ final class BuilderTemplate extends BaseTemplate {
                 bb.str("private ").str(importedName(getter.type())).sp().str(getter.fieldName()).eS();
             }
             if (props instanceof WithKey with) {
-                bb.str("private ").str(importedName(with.key)).eol(" key;");
+                bb.str("private ").jRef(with.key).eol(" key;");
             }
         };
     }
@@ -222,7 +222,7 @@ final class BuilderTemplate extends BaseTemplate {
         if (targetType.statement() instanceof DocumentedNode.WithStatus withStatus) {
             return switch (withStatus.getStatus()) {
                 case CURRENT -> null;
-                case DEPRECATED -> bb -> bb.at().str(importedName(SUPPRESS_WARNINGS)).eol("(\"deprecation\")");
+                case DEPRECATED -> bb -> bb.at().jRef(SUPPRESS_WARNINGS).eol("(\"deprecation\")");
                 case OBSOLETE -> new DeprecatedAnnotation(javaType(), true);
             };
         }
@@ -322,13 +322,13 @@ final class BuilderTemplate extends BaseTemplate {
             final var done = getBaseIfcs(targetType);
             bb
                 .blk(generateMethodFieldsFromComment(targetType))
-                .str("public void fieldsFrom(final ").str(importedName(GROUPING)).str(" arg)").oB()
+                .str("public void fieldsFrom(final ").jRef(GROUPING).str(" arg)").oB()
                     .eol("boolean isValidArg = false;");
             for (var partial : getAllIfcs(targetType)) {
                 bb.blk(generateIfCheck(partial, done));
             }
             bb
-                .str(importedName(CODEHELPERS)).str(".validValue(isValidArg, arg, ")
+                .jRef(CODEHELPERS).str(".validValue(isValidArg, arg, ")
                     .jStr(getAllIfcs(targetType).stream().map(this::importedName).toList().toString()).eol(");")
                 .cB()
                 .nl();
@@ -345,7 +345,7 @@ final class BuilderTemplate extends BaseTemplate {
                 .str(" * {@return an empty {@link ").str(targetType.simpleName()).eol("}}")
                 .eol(" */")
                 .str("public static ").str(importedNonNull(targetType)).str(" empty()").oB()
-                    .str("return ").str(importedName(implJavaType.name())).eol(".EMPTY;")
+                    .str("return ").jRef(implJavaType.name()).eol(".EMPTY;")
                 .cB()
                 .nl();
         };
@@ -359,13 +359,13 @@ final class BuilderTemplate extends BaseTemplate {
             .eol(" * Set fields from given grouping argument. Valid argument is instance of one of following types:")
             .eol(" * <ul>");
         for (var impl : getAllIfcs(type)) {
-            bb.str(" *   <li>{@link ").str(importedName(impl)).eol("}</li>");
+            bb.str(" *   <li>{@link ").jRef(impl).eol("}</li>");
         }
         return bb
             .eol(" * </ul>")
             .eol(" *")
             .eol(" * @param arg grouping object")
-            .str(" * @throws ").str(importedName(IAE))
+            .str(" * @throws ").jRef(IAE)
                 .eol(" if given argument is none of valid types or has property with incompatible value")
             .eol(" */");
     }
@@ -374,7 +374,7 @@ final class BuilderTemplate extends BaseTemplate {
      * Method is used to find out if given type implements any interface from uses.
      */
     @NonNullByDefault
-    private boolean hasImplementsFromUses(final DataContainerArchetype type) {
+    private static boolean hasImplementsFromUses(final DataContainerArchetype type) {
         // FIXME: narrow down?
         return getAllIfcs(type).stream().anyMatch(ifc -> !ifc.getters().isEmpty());
     }
@@ -382,7 +382,7 @@ final class BuilderTemplate extends BaseTemplate {
     private @Nullable BlockBuilder generateIfCheck(final @NonNull DataContainerArchetype archetype,
             final List<DataContainerArchetype> done) {
         return archetype.getters().isEmpty() ? null : newBlockBuilder()
-            .str("if (arg instanceof ").str(importedName(archetype)).str(" castArg)").oB()
+            .str("if (arg instanceof ").jRef(archetype).str(" castArg)").oB()
                 .blk(printPropertySetter(archetype))
                 .eol("isValidArg = true;")
             .cB();
@@ -587,7 +587,7 @@ final class BuilderTemplate extends BaseTemplate {
                     .eol(" * @deprecated This method will not be generated in a future release")
                     .eol(" */")
                     .frg(new DeprecatedAnnotation(javaType(), true))
-                    .str("public ").str(importedName(key)).str(" key()").oB()
+                    .str("public ").jRef(key).str(" key()").oB()
                         .eol("return key;")
                     .cB()
                     .newLine();
@@ -648,8 +648,8 @@ final class BuilderTemplate extends BaseTemplate {
         return bb
             .nl()
             .eol("/**")
-            .str(" * Set the property corresponding to {@link ").str(importedName(targetType)).str("#")
-                .str(getter.name()).eol("()} to the specified")
+            .str(" * Set the property corresponding to {@link ").jRef(targetType).str("#").str(getter.name())
+                .eol("()} to the specified")
             .eol(" * value.")
             .eol(" *")
             .eol(" * @param values desired value")
@@ -711,8 +711,8 @@ final class BuilderTemplate extends BaseTemplate {
         bb
             .nl()
             .eol("/**")
-            .str(" * Set the property corresponding to {@link ").str(importedName(targetType)).str("#")
-                .str(getter.name()).eol("()} to the specified")
+            .str(" * Set the property corresponding to {@link ").jRef(targetType).str("#").str(getter.name())
+                .eol("()} to the specified")
             .eol(" * value.")
             .eol(" *")
             .eol(" * @param value desired value")
@@ -740,15 +740,13 @@ final class BuilderTemplate extends BaseTemplate {
         if (props instanceof WithKey withKey) {
             bb
                 .eol("/**")
-                .str(" * Set the key value corresponding to {@link ").str(importedName(targetType))
-                    .eol("#key()} to the specified")
+                .str(" * Set the key value corresponding to {@link ").jRef(targetType).eol("#key()} to the specified")
                 .eol(" * value.")
                 .eol(" *")
                 .eol(" * @param key desired value")
                 .eol(" * @return this builder")
                 .eol(" */")
-                .str("public ").str(simpleName()).str(" withKey(final ").str(importedName(withKey.key)).str(" key)")
-                    .oB()
+                .str("public ").str(simpleName()).str(" withKey(final ").jRef(withKey.key).str(" key)").oB()
                     .eol("this.key = key;")
                     .eol("return this;")
                 .cB();

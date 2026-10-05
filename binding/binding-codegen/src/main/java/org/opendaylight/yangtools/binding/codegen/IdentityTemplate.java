@@ -86,12 +86,12 @@ final class IdentityTemplate extends ArchetypeTemplate<IdentityArchetype> {
     private void appendInterfaces(final BlockBuilder bb) {
         final var it = archetype.baseIdentities().iterator();
         if (it.hasNext()) {
-            bb.str(importedName(it.next()));
+            bb.jRef(it.next());
             while (it.hasNext()) {
-                bb.cs().str(importedName(it.next()));
+                bb.cs().jRef(it.next());
             }
         } else {
-            bb.str(importedName(BASE_IDENTITY));
+            bb.jRef(BASE_IDENTITY);
         }
     }
 }

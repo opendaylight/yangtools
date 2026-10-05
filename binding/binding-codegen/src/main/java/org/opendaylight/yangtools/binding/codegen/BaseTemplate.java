@@ -133,7 +133,7 @@ abstract sealed class BaseTemplate extends JavaFileTemplate
                     .str("return ");
             // any Java array type needs to be duplicated to prevent modification
             if (type.isArray()) {
-                bb.str(importedName(CODEHELPERS)).str(".copyArray(").str(fieldName).eol(");");
+                bb.jRef(CODEHELPERS).str(".copyArray(").str(fieldName).eol(");");
             } else {
                 bb.str(fieldName).eS();
             }

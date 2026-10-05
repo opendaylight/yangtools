@@ -279,7 +279,7 @@ abstract sealed class GeneratedClass implements Mutable permits GeneratedClass.N
      * {@return a new {@link BlockBuilder}}
      */
     public final BlockBuilder newBlockBuilder() {
-        return new BlockBuilder();
+        return new BlockBuilder(this);
     }
 
     private String annotateReference(final String ref, final Type type, final String annotation) {

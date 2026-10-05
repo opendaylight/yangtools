@@ -17,9 +17,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.junit.jupiter.api.Test;
 import org.opendaylight.yangtools.binding.codegen.ArgumentVerifier.StrictVerifier;
 
-class BlockBuilderTest {
+class JavaBlockBuilderTest {
     // Note: behavior selected by environment variable
-    private final BlockBuilder bb = new BlockBuilder();
+    private final JavaBlockBuilder bb = new JavaBlockBuilder();
 
     @Test
     void runningWithStrict() {
