@@ -41,8 +41,7 @@ import org.opendaylight.yangtools.concepts.Mutable;
  * Java types and resolving them as best as possible. This class is NOT thread-safe.
  */
 @NonNullByDefault
-abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
-        permits GeneratedClass.Nested, GeneratedClass.TopLevel {
+abstract sealed class GeneratedClass implements Mutable permits GeneratedClass.Nested, GeneratedClass.TopLevel {
     /**
      * A class which is nested inside some other type. It defers import decisions to its enclosing type, eventually
      * arriving at a {@link TopLevelJavaGeneratedType}.
@@ -276,9 +275,10 @@ abstract sealed class GeneratedClass implements BlockBuilderFactory, Mutable
         return name;
     }
 
-    // TODO: for now just a simple BlockBuilder, but we can also do things like importedName(), so more concise
-    @Override
-    public final BlockBuilder newBlockBuilder() {
+    /**
+     * {@return a new {@link BlockBuilder}}
+     */
+    final BlockBuilder newBlockBuilder() {
         return new BlockBuilder();
     }
 
