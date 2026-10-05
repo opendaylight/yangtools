@@ -45,7 +45,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
 
         @Override
         BlockFragment implFragment() {
-            return bb -> bb.str(" implements ").str(importedName(BITS_TYPE_OBJECT)).str(", java.io.Serializable");
+            return bb -> bb.str(" implements ").jRef(BITS_TYPE_OBJECT).str(", java.io.Serializable");
         }
 
         @Override
@@ -111,7 +111,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
                 .cB()
                 .nl()
                 .at().eol(override)
-                .str("public final boolean equals(").str(importedName(OBJECT)).str(" obj)").oB()
+                .str("public final boolean equals(").jRef(OBJECT).str(" obj)").oB()
                     .str("return this == obj || obj instanceof ").str(archetype.simpleName()).str(" other");
             for (var propName : props.keySet()) {
                 bb
@@ -148,7 +148,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
 
         @Override
         BlockFragment implFragment() {
-            return bb -> bb.str(" extends ").str(importedName(superType.name()));
+            return bb -> bb.str(" extends ").jRef(superType.name());
         }
 
         @Override
@@ -184,8 +184,7 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
                 rootType = nextSuper;
             }
             bb
-                .str("public ").str(archetype.simpleName()).str("(").str(importedName(rootType.name())).str(" source)")
-                    .oB()
+                .str("public ").str(archetype.simpleName()).str("(").jRef(rootType).str(" source)").oB()
                     .eol("super(source);");
             if (override != null) {
                 // check whether any of the restricted bits are set
@@ -284,8 +283,8 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
 
     final void appendValidNamesConstant(final BlockBuilder bb, final Collection<? extends Bit> bits) {
         final var immutableSet = importedName(IMMUTABLE_SET);
-        bb.str("protected static final ").str(immutableSet).lt().str(importedName(STRING))
-            .str("> " + VALID_NAMES_NAME + " = ").str(immutableSet).str(".of(");
+        bb.str("protected static final ").str(immutableSet).lt().jRef(STRING).str("> " + VALID_NAMES_NAME + " = ")
+            .str(immutableSet).str(".of(");
 
         final var it = bits.iterator();
         while (true) {
@@ -313,12 +312,12 @@ abstract sealed class BitsTypeObjectTemplate extends ArchetypeTemplate<BitsTypeO
         bb.str(")").oB();
     }
 
-    final BlockBuilder appendOfStringValue(final BlockBuilder bb, final BitsTypeObjectArchetype archetype,
+    static final BlockBuilder appendOfStringValue(final BlockBuilder bb, final BitsTypeObjectArchetype archetype,
             final Map<String, Bit> props) {
         final var simpleName = archetype.simpleName();
         bb
-            .str("public static ").str(simpleName).str(" ofStringValue(").str(importedName(STRING)).str(" str)").oB()
-                .str("var values = ").str(importedName(CODEHELPERS)).eol(".btoValues(str, " + VALID_NAMES_NAME + ");")
+            .str("public static ").str(simpleName).str(" ofStringValue(").jRef(STRING).str(" str)").oB()
+                .str("var values = ").jRef(CODEHELPERS).eol(".btoValues(str, " + VALID_NAMES_NAME + ");")
                 .str("return new ").str(simpleName).eol("(");
 
         // values are ordered by position, the constructor arguments are alpha-sorted, so we need to account for that

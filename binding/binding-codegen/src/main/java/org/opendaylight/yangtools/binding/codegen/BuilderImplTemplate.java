@@ -66,12 +66,12 @@ final class BuilderImplTemplate extends BaseTemplate {
             .frg(DeprecatedAnnotation.of(javaType(), targetType.statement()))
             .str("private static final class ").str(simpleName).str(" extends ");
         if (props instanceof BuilderTemplate.WithKey with) {
-            bb.str(importedName(ABSTRACT_ENTRY_OBJECT)).lt().str(importedName(with.parentName())).cs().str(implIface)
-                .cs().str(importedName(with.key())).gt();
+            bb.jRef(ABSTRACT_ENTRY_OBJECT).lt().str(importedName(with.parentName())).cs().str(implIface).cs()
+                .jRef(with.key()).gt();
         } else if (targetType instanceof AugmentableArchetype) {
-            bb.str(importedName(ABSTRACT_AUGMENTABLE)).lt().str(implIface).gt();
+            bb.jRef(ABSTRACT_AUGMENTABLE).lt().str(implIface).gt();
         } else {
-            bb.str(importedName(ABSTRACT_DATA_CONTAINER)).lt().str(implIface).gt();
+            bb.jRef(ABSTRACT_DATA_CONTAINER).lt().str(implIface).gt();
         }
         bb.str(" implements ").str(implIface).oB();
 
@@ -187,13 +187,14 @@ final class BuilderImplTemplate extends BaseTemplate {
         return bb.cB();
     }
 
-    private void appendCopyNonKeys(final BlockBuilder bb, final List<GetterShape> getters) {
+    private static void appendCopyNonKeys(final BlockBuilder bb, final List<GetterShape> getters) {
         for (var getter : getters) {
-            bb.str("this.").str(getter.fieldName()).str(" = ");
+            final var fieldName = getter.fieldName();
+            bb.str("this.").str(fieldName).str(" = ");
             if (getter.method().statement() instanceof ListEffectiveStatement) {
-                bb.str(importedName(CODEHELPERS)).str(".emptyToNull(base.").str(getter.fieldName()).eol(");");
+                bb.jRef(CODEHELPERS).str(".emptyToNull(base.").str(fieldName).eol(");");
             } else {
-                bb.str("base.").str(getter.fieldName()).eS();
+                bb.str("base.").str(fieldName).eS();
             }
         }
     }
