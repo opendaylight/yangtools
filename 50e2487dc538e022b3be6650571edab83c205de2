@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "8ad8adf7_5d0a380a",
+        "filename": "codec/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/ChildLookupCache.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 38,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-10-07T16:39:22Z",
+      "side": 1,
+      "message": "this is policy and needs to be configurable\n\noverall I think the design  here should follow what we do for codecs -- i.e. have multiple providers supplying different levels of caching, including pre-computed",
+      "range": {
+        "startLine": 38,
+        "startChar": 26,
+        "endLine": 38,
+        "endChar": 38
+      },
+      "revId": "50e2487dc538e022b3be6650571edab83c205de2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
