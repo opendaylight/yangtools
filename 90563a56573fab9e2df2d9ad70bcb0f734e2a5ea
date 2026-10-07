@@ -39,6 +39,29 @@
       },
       "revId": "90563a56573fab9e2df2d9ad70bcb0f734e2a5ea",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "f38ed18f_6ce04d51",
+        "filename": "codec/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 314,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-10-07T16:46:00Z",
+      "side": 1,
+      "message": "the hand-off here is quite bad, especially for the case of a single step -- which is actually the common case\n\nwe have just created a mutable object from cached state simply to hold a single element -- only for the purposes to routing the call to a private method.",
+      "range": {
+        "startLine": 314,
+        "startChar": 29,
+        "endLine": 314,
+        "endChar": 58
+      },
+      "revId": "90563a56573fab9e2df2d9ad70bcb0f734e2a5ea",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
