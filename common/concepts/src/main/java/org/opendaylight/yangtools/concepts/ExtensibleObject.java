@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -40,8 +41,42 @@ public interface ExtensibleObject<O extends ExtensibleObject<O, E>, E extends Ob
         return supportedExtensions().stream().filter(nonnull::isInstance).findFirst().map(nonnull::cast).orElse(null);
     }
 
+    /**
+     * Return an extension interface, if currently available.
+     *
+     * @implSpec
+     *     Default implementation defers to {@link #extension(Class)} and wraps in an {@link Optional}.
+     *
+     * @param <T> Extension type
+     * @param type Extension type class
+     * @return An extension instance, or {@code empty}
+     * @throws NullPointerException if {@code type} is {@code null}
+     */
     default <T extends E> Optional<T> findExtension(final Class<T> type) {
-        return Optional.ofNullable(extension(type));
+        // not Optional.ofNullable(to) suppress null warnings
+        final var found = extension(type);
+        return found == null ? Optional.empty() : Optional.of(found);
+    }
+
+    /**
+     * Return an extension interface, if currently available.
+     *
+     * @implSpec
+     *     Default implementation defers to {@link #extension(Class)} and wraps in an {@link Optional}.
+     *
+     * @param <T> Extension type
+     * @param type Extension type class
+     * @return An extension instance
+     * @throws NoSuchElementException if the extension is not available
+     * @throws NullPointerException if {@code type} is {@code null}
+     * @since 16.2.0
+     */
+    default <T extends E> @NonNull T getExtension(final Class<T> type) {
+        final var found = extension(type);
+        if (found == null) {
+            throw new NoSuchElementException(type.getCanonicalName() + " is not supported by " + this);
+        }
+        return found;
     }
 
     /**
