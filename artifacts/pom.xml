@@ -26,6 +26,11 @@
         <dependencies>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>codec-api</artifactId>
+                <version>16.1.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>concepts</artifactId>
                 <version>16.1.1-SNAPSHOT</version>
             </dependency>

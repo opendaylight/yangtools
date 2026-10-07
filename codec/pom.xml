@@ -28,6 +28,7 @@
     </properties>
 
     <modules>
+        <module>codec-api</module>
         <module>yang-data-codec-binfmt</module>
         <module>yang-data-codec-gson</module>
         <module>yang-data-codec-xml</module>
