@@ -56,6 +56,13 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  NEXUS_IQ_SERVER: https://nexus-iq.wl.linuxfoundation.org
+  # Must match the JJB gerrit-maven-clm application id, which is built from
+  # nexus-iq-namespace + project-name (see jjb/releng-templates-java.yaml).
+  NEXUS_IQ_NAMESPACE: odl-
+  NEXUS_IQ_STAGE: release
+
 jobs:
   notify:
     runs-on: ubuntu-latest
@@ -101,9 +108,8 @@ jobs:
         with:
           maven-version: "3.9.5"
 
-      - name: Run Maven Nexus IQ Scan
+      - name: Maven build and CLM module index
         env:
-          NEXUS_IQ_PASSWORD: ${{ secrets.NEXUS_IQ_PASSWORD }}
           MAVEN_OPTS: "--add-opens=java.base/java.util=ALL-UNNAMED"
         run: |
           # yamllint disable rule:line-length
@@ -112,6 +118,34 @@ jobs:
             -Dmaven.repo.local=/tmp/r \
             -Dorg.ops4j.pax.url.mvn.localRepository=/tmp/r \
             -DaltDeploymentRepository=staging::default::file:"${GITHUB_WORKSPACE}"/m2repo
+
+      - name: Obtain Nexus IQ application ID
+        env:
+          GERRIT_PROJECT: ${{ inputs.GERRIT_PROJECT || github.event.repository.name }}
+        run: |
+          REPO_DASHED="${GERRIT_PROJECT//\//-}"
+          echo "APPLICATION_ID=${NEXUS_IQ_NAMESPACE}${REPO_DASHED}" >> "$GITHUB_ENV"
+
+      - name: Nexus IQ policy evaluation
+        # yamllint disable-line rule:line-length
+        uses: sonatype-nexus-community/iq-github-action@8d2038fbbcb37dc613c28d160843dd0981a7fce8 # v2.1.0
+        with:
+          serverUrl: ${{ env.NEXUS_IQ_SERVER }}
+          username: ${{ secrets.CLM_USER }}
+          password: ${{ secrets.CLM_PASSWORD }}
+          applicationId: ${{ env.APPLICATION_ID }}
+          stage: ${{ env.NEXUS_IQ_STAGE }}
+          target: "/"
+          writePolicyEvaluationJson: "true"
+
+      - name: Upload policy evaluation report
+        if: ${{ always() }}
+        # yamllint disable-line rule:line-length
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: sonatype-lifecycle-policy-eval
+          path: sonatype-lifecycle-policy-eval.json
+          if-no-files-found: warn
 
   report-status:
     if: ${{ always() && github.event_name == 'workflow_dispatch' }}
