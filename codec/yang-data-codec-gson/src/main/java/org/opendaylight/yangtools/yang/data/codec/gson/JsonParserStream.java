@@ -28,18 +28,24 @@ import java.util.Map.Entry;
 import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema.ChildReusePolicy;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Choice;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.ListLike;
 import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.MultipleEntryDataWithSchema;
-import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -65,6 +71,7 @@ public final class JsonParserStream implements Closeable, Flushable {
     private final NormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
     private final DataSchemaNode parentNode;
+    private final @Nullable DataSchemaContext parentContext;
 
     private final SchemaInferenceStack stack;
 
@@ -93,6 +100,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         } else {
             parentNode = stack.modelContext();
         }
+        parentContext = codecs.dataContextTree().childByInference(stack.toInference());
     }
 
     /**
@@ -184,7 +192,8 @@ public final class JsonParserStream implements Closeable, Flushable {
             // FIXME: this has a special-case bypass for SchemaContext, where we end up emitting just the child while
             //        the usual of() would result in SchemaContext.NAME being the root
             final var compositeNodeDataWithSchema = new CompositeNodeDataWithSchema<>(parentNode);
-            read(reader, compositeNodeDataWithSchema);
+            // If the parent is a list - the parent's children are the children of the entries
+            read(reader, compositeNodeDataWithSchema, entryContext(parentContext));
             compositeNodeDataWithSchema.write(writer);
 
             return this;
@@ -248,7 +257,8 @@ public final class JsonParserStream implements Closeable, Flushable {
         parent.setValue(new DOMSource(doc.getDocumentElement()));
     }
 
-    private void read(final JsonReader in, AbstractNodeDataWithSchema<?> parent) throws IOException {
+    private void read(final JsonReader in, AbstractNodeDataWithSchema<?> parent,
+            @Nullable DataSchemaContext context) throws IOException {
         switch (in.peek()) {
             case STRING:
             case NUMBER:
@@ -265,9 +275,9 @@ public final class JsonParserStream implements Closeable, Flushable {
                 in.beginArray();
                 while (in.hasNext()) {
                     if (parent instanceof LeafNodeDataWithSchema) {
-                        read(in, parent);
+                        read(in, parent, context);
                     } else {
-                        read(in, newArrayEntry(parent));
+                        read(in, newArrayEntry(parent), entryContext(context));
                     }
                 }
                 in.endArray();
@@ -284,11 +294,15 @@ public final class JsonParserStream implements Closeable, Flushable {
                  */
                 if (isArray(parent)) {
                     parent = newArrayEntry(parent);
+                    context = entryContext(context);
                 }
+
+                final var parentSchema = parent.getSchema();
+                // Anything but a container or a list entry has no children to look up
+                final var composite = context instanceof Composite found ? found : null;
                 while (in.hasNext()) {
                     final var jsonElementName = in.nextName();
-                    final var parentSchema = parent.getSchema();
-                    final var namespaceAndName = resolveNamespace(jsonElementName, parentSchema);
+                    final var namespaceAndName = resolveNamespace(jsonElementName, parentSchema, composite);
                     final var localName = namespaceAndName.getKey();
                     final var namespace = namespaceAndName.getValue();
                     if (lenient && (localName == null || namespace == null)) {
@@ -302,22 +316,20 @@ public final class JsonParserStream implements Closeable, Flushable {
                         throw new JsonSyntaxException("Duplicate name " + jsonElementName + " in JSON input.");
                     }
 
-                    final var childDataSchemaNodes = ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema,
-                        localName, getCurrentNamespace().namespace());
-                    if (childDataSchemaNodes.isEmpty()) {
+                    final var qname = composite == null ? null : childQName(namespace, localName);
+                    final var child = qname == null ? null
+                        : ((CompositeNodeDataWithSchema<?>) parent).addChild(composite, qname, ChildReusePolicy.NOOP);
+                    if (child == null) {
                         throw new IllegalStateException(
                             "Schema for node with name %s and namespace %s does not exist at %s".formatted(
-                                localName, getCurrentNamespace().namespace(), parentSchema));
+                                localName, namespace.namespace(), parentSchema));
                     }
 
-                    final var qname = childDataSchemaNodes.peekLast().getQName();
-                    final var newChild = ((CompositeNodeDataWithSchema<?>) parent)
-                            .addChild(childDataSchemaNodes, ChildReusePolicy.NOOP);
-                    if (newChild instanceof AnyXmlNodeDataWithSchema anyxml) {
+                    if (child.data() instanceof AnyXmlNodeDataWithSchema anyxml) {
                         readAnyXmlValue(in, anyxml, jsonElementName);
                     } else {
                         stack.enterDataTree(qname);
-                        read(in, newChild);
+                        read(in, child.data(), child.context());
                         stack.exit();
                     }
                     removeNamespace();
@@ -327,6 +339,26 @@ public final class JsonParserStream implements Closeable, Flushable {
             default:
                 break;
         }
+    }
+
+    // A list or leaf-list context stands for the whole list: each of its entries has a context of its own
+    private static @Nullable DataSchemaContext entryContext(final @Nullable DataSchemaContext context) {
+        return context instanceof ListLike list ? list.entry() : context;
+    }
+
+    // Returns null if localName is not a valid YANG identifier, so no schema node can have it
+    private static @Nullable QName childQName(final QNameModule module, final String localName) {
+        final var unqualified = Unqualified.tryLocalName(localName);
+        return unqualified == null ? null : unqualified.bindTo(module);
+    }
+
+    // A choice's own name is found as well, but it never names an element: only names found inside the choice count
+    private static boolean hasDataChild(final Composite composite, final QName qname) {
+        var child = composite.childByQName(qname);
+        while (child instanceof Choice choice) {
+            child = choice.childByQName(qname);
+        }
+        return child != null;
     }
 
     private static boolean isArray(final AbstractNodeDataWithSchema<?> parent) {
@@ -369,7 +401,8 @@ public final class JsonParserStream implements Closeable, Flushable {
         namespaces.push(namespace);
     }
 
-    private Entry<String, QNameModule> resolveNamespace(final String childName, final DataSchemaNode dataSchemaNode) {
+    private Entry<String, QNameModule> resolveNamespace(final String childName, final DataSchemaNode dataSchemaNode,
+            final @Nullable Composite composite) {
         final int lastIndexOfColon = childName.lastIndexOf(':');
         final String nodeNamePart;
         QNameModule namespace;
@@ -385,10 +418,17 @@ public final class JsonParserStream implements Closeable, Flushable {
         }
 
         if (namespace == null) {
+            // Usually the child is in the parent's namespace, which is a single lookup. Only otherwise do we scan the
+            // children for any namespace holding such a name.
+            final var current = getCurrentNamespace();
+            final var currentQName = composite == null || current == null ? null
+                : childQName(current, nodeNamePart);
+            if (currentQName != null && hasDataChild(composite, currentQName)) {
+                return new SimpleImmutableEntry<>(nodeNamePart, current);
+            }
+
             final var potentialUris = resolveAllPotentialNamespaces(nodeNamePart, dataSchemaNode);
-            if (potentialUris.contains(getCurrentNamespace())) {
-                namespace = getCurrentNamespace();
-            } else if (potentialUris.size() == 1) {
+            if (potentialUris.size() == 1) {
                 namespace = potentialUris.iterator().next();
             } else if (potentialUris.size() > 1) {
                 throw new IllegalStateException("Choose suitable module name for element " + nodeNamePart + ":"
