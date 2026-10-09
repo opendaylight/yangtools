@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.ListLike;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -20,13 +21,18 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * representation of these nodes is similar to JSON encoding and therefore we have two {@link DataSchemaContext} levels
  * backed by a single {@link DataSchemaNode}.
  */
-abstract sealed class AbstractListLikeContext extends AbstractPathMixinContext
+public abstract sealed class AbstractListLikeContext extends AbstractPathMixinContext implements ListLike
         permits LeafListContext, ListContext, MapContext {
     private final AbstractContext child;
 
     AbstractListLikeContext(final DataSchemaNode schema, final AbstractContext child) {
         super(schema);
         this.child = requireNonNull(child);
+    }
+
+    @Override
+    public final AbstractContext entry() {
+        return child;
     }
 
     @Override

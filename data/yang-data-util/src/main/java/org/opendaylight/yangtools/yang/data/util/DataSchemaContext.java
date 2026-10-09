@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.SimpleValue;
 import org.opendaylight.yangtools.yang.data.util.context.AbstractCompositeContext;
 import org.opendaylight.yangtools.yang.data.util.context.AbstractContext;
+import org.opendaylight.yangtools.yang.data.util.context.AbstractListLikeContext;
 import org.opendaylight.yangtools.yang.data.util.context.AbstractPathMixinContext;
 import org.opendaylight.yangtools.yang.data.util.context.AbstractValueContext;
 import org.opendaylight.yangtools.yang.data.util.context.ChoiceContext;
@@ -139,7 +140,7 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
      *
      * <p>This trait is important for XML codec, but also for JSON encoding of {@link YangInstanceIdentifier}.
      */
-    sealed interface PathMixin extends Composite permits AbstractPathMixinContext, Choice {
+    sealed interface PathMixin extends Composite permits AbstractPathMixinContext, Choice, ListLike {
         /**
          * The mixed-in {@link NodeIdentifier}.
          *
@@ -166,6 +167,18 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
          * @throws IllegalArgumentException if {@code child} is not a child of this choice
          */
         @NonNull CaseSchemaNode caseOf(DataSchemaContext child);
+    }
+
+    /**
+     * A {@link PathMixin} standing for a whole {@code list} or {@code leaf-list}, backed by a {@link ListSchemaNode} or
+     * a {@link LeafListSchemaNode}. In RFC7950 encodings each entry of the list is an element of its own, and each
+     * entry has a context of its own, too: {@link #entry()}.
+     */
+    sealed interface ListLike extends PathMixin permits AbstractListLikeContext {
+        /**
+         * {@return the context of each entry of this list}
+         */
+        @NonNull DataSchemaContext entry();
     }
 
     /**
