@@ -17,6 +17,14 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
+/**
+ * Schema lookups for parsers.
+ *
+ * @deprecated Use {@link DataSchemaContext.Composite#childByQName(org.opendaylight.yangtools.yang.common.QName)} and
+ *             {@link CompositeNodeDataWithSchema#addChild(DataSchemaContext.Composite,
+ *             org.opendaylight.yangtools.yang.common.QName, CompositeNodeDataWithSchema.ChildReusePolicy)} instead.
+ */
+@Deprecated(since = "16.1.1", forRemoval = true)
 public final class ParserStreamUtils {
     private ParserStreamUtils() {
         // Hidden on purpose
