@@ -29,7 +29,7 @@ import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
@@ -61,7 +61,7 @@ public final class JsonParserStream implements Closeable, Flushable {
     static final String ANYXML_ARRAY_ELEMENT_ID = "array-element";
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonParserStream.class);
-    private final Deque<XMLNamespace> namespaces = new ArrayDeque<>();
+    private final Deque<QNameModule> namespaces = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
     private final DataSchemaNode parentNode;
@@ -241,7 +241,7 @@ public final class JsonParserStream implements Closeable, Flushable {
     private void readAnyXmlValue(final JsonReader in, final AnyXmlNodeDataWithSchema parent,
             final String anyXmlObjectName) throws IOException {
         final var doc = UntrustedXML.newDocumentBuilder().newDocument();
-        final var rootElement = doc.createElementNS(getCurrentNamespace().toString(), anyXmlObjectName);
+        final var rootElement = doc.createElementNS(getCurrentNamespace().namespace().toString(), anyXmlObjectName);
         doc.appendChild(rootElement);
         traverseAnyXmlValue(in, doc, rootElement);
 
@@ -303,11 +303,11 @@ public final class JsonParserStream implements Closeable, Flushable {
                     }
 
                     final var childDataSchemaNodes = ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema,
-                        localName, getCurrentNamespace());
+                        localName, getCurrentNamespace().namespace());
                     if (childDataSchemaNodes.isEmpty()) {
                         throw new IllegalStateException(
                             "Schema for node with name %s and namespace %s does not exist at %s".formatted(
-                                localName, getCurrentNamespace(), parentSchema));
+                                localName, getCurrentNamespace().namespace(), parentSchema));
                     }
 
                     final var qname = childDataSchemaNodes.peekLast().getQName();
@@ -365,20 +365,20 @@ public final class JsonParserStream implements Closeable, Flushable {
         namespaces.pop();
     }
 
-    private void addNamespace(final XMLNamespace namespace) {
+    private void addNamespace(final QNameModule namespace) {
         namespaces.push(namespace);
     }
 
-    private Entry<String, XMLNamespace> resolveNamespace(final String childName, final DataSchemaNode dataSchemaNode) {
+    private Entry<String, QNameModule> resolveNamespace(final String childName, final DataSchemaNode dataSchemaNode) {
         final int lastIndexOfColon = childName.lastIndexOf(':');
         final String nodeNamePart;
-        XMLNamespace namespace;
+        QNameModule namespace;
         if (lastIndexOfColon != -1) {
             final var moduleNamePart = childName.substring(0, lastIndexOfColon);
             nodeNamePart = childName.substring(lastIndexOfColon + 1);
 
             final var m = codecs.modelContext().findModuleStatements(moduleNamePart).iterator();
-            namespace = m.hasNext() ? m.next().localQNameModule().namespace() : null;
+            namespace = m.hasNext() ? m.next().localQNameModule() : null;
         } else {
             nodeNamePart = childName;
             namespace = null;
@@ -402,27 +402,27 @@ public final class JsonParserStream implements Closeable, Flushable {
         return new SimpleImmutableEntry<>(nodeNamePart, namespace);
     }
 
-    private String toModuleNames(final Set<XMLNamespace> potentialUris) {
+    private String toModuleNames(final Set<QNameModule> potentialUris) {
         final var sb = new StringBuilder();
         for (var potentialUri : potentialUris) {
             sb.append('\n');
             // FIXME how to get information about revision from JSON input? currently first available is used.
-            sb.append(codecs.modelContext().findModuleStatements(potentialUri).iterator().next()
+            sb.append(codecs.modelContext().findModuleStatements(potentialUri.namespace()).iterator().next()
                 .argument().getLocalName());
         }
         return sb.toString();
     }
 
-    private Set<XMLNamespace> resolveAllPotentialNamespaces(final String elementName,
+    private Set<QNameModule> resolveAllPotentialNamespaces(final String elementName,
             final DataSchemaNode dataSchemaNode) {
-        final var potentialUris = new HashSet<XMLNamespace>();
+        final var potentialUris = new HashSet<QNameModule>();
         final var choices = new HashSet<ChoiceSchemaNode>();
         if (dataSchemaNode instanceof DataNodeContainer container) {
             for (var childSchemaNode : container.getChildNodes()) {
                 if (childSchemaNode instanceof ChoiceSchemaNode choice) {
                     choices.add(choice);
                 } else if (childSchemaNode.getQName().getLocalName().equals(elementName)) {
-                    potentialUris.add(childSchemaNode.getQName().getNamespace());
+                    potentialUris.add(childSchemaNode.getQName().getModule());
                 }
             }
 
@@ -435,7 +435,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         return potentialUris;
     }
 
-    private XMLNamespace getCurrentNamespace() {
+    private QNameModule getCurrentNamespace() {
         return namespaces.peek();
     }
 
