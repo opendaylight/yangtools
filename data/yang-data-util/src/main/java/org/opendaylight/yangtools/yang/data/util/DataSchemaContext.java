@@ -30,6 +30,8 @@ import org.opendaylight.yangtools.yang.data.util.context.AbstractCompositeContex
 import org.opendaylight.yangtools.yang.data.util.context.AbstractContext;
 import org.opendaylight.yangtools.yang.data.util.context.AbstractPathMixinContext;
 import org.opendaylight.yangtools.yang.data.util.context.AbstractValueContext;
+import org.opendaylight.yangtools.yang.data.util.context.ChoiceContext;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -137,7 +139,7 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
      *
      * <p>This trait is important for XML codec, but also for JSON encoding of {@link YangInstanceIdentifier}.
      */
-    sealed interface PathMixin extends Composite permits AbstractPathMixinContext {
+    sealed interface PathMixin extends Composite permits AbstractPathMixinContext, Choice {
         /**
          * The mixed-in {@link NodeIdentifier}.
          *
@@ -146,6 +148,24 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
         default @NonNull NodeIdentifier mixinPathStep() {
             return getPathStep();
         }
+    }
+
+    /**
+     * A {@link PathMixin} backed by a {@link ChoiceSchemaNode}. Neither the choice nor its cases appear in RFC7950
+     * encodings: the children of the cases appear directly inside the choice's parent. {@link #childByQName(QName)}
+     * therefore looks through all cases at once, and {@link #caseOf(DataSchemaContext)} tells which case a child came
+     * from.
+     */
+    sealed interface Choice extends PathMixin permits ChoiceContext {
+        /**
+         * Return the case holding a child of this choice.
+         *
+         * @param child a child returned by {@link #childByQName(QName)} or {@link #childByArg(PathArgument)}
+         * @return the {@link CaseSchemaNode} holding {@code child}
+         * @throws NullPointerException if {@code child} is {@code null}
+         * @throws IllegalArgumentException if {@code child} is not a child of this choice
+         */
+        @NonNull CaseSchemaNode caseOf(DataSchemaContext child);
     }
 
     /**

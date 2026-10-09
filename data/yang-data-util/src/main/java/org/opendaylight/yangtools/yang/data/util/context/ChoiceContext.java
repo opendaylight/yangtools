@@ -15,17 +15,20 @@ import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Choice;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
-final class ChoiceContext extends AbstractPathMixinContext {
+public final class ChoiceContext extends AbstractPathMixinContext implements Choice {
     private final ImmutableMap<NodeIdentifier, AbstractContext> byArg;
     private final ImmutableMap<QName, AbstractContext> byQName;
-    private final ImmutableMap<AbstractContext, QName> childToCase;
+    private final ImmutableMap<AbstractContext, CaseSchemaNode> childToCase;
 
     ChoiceContext(final ChoiceSchemaNode schema) {
         super(schema);
-        final var childToCaseBuilder = ImmutableMap.<AbstractContext, QName>builder();
+        final var childToCaseBuilder = ImmutableMap.<AbstractContext, CaseSchemaNode>builder();
         final var byQNameBuilder = ImmutableMap.<QName, AbstractContext>builder();
         final var byArgBuilder = ImmutableMap.<NodeIdentifier, AbstractContext>builder();
 
@@ -33,7 +36,7 @@ final class ChoiceContext extends AbstractPathMixinContext {
             for (var cazeChild : caze.getChildNodes()) {
                 final var childOp = AbstractContext.of(cazeChild);
                 byArgBuilder.put(childOp.getPathStep(), childOp);
-                childToCaseBuilder.put(childOp, caze.getQName());
+                childToCaseBuilder.put(childOp, caze);
                 for (QName qname : childOp.qnameIdentifiers()) {
                     byQNameBuilder.put(qname, childOp);
                 }
@@ -53,6 +56,15 @@ final class ChoiceContext extends AbstractPathMixinContext {
     @Override
     public AbstractContext childByQName(final QName child) {
         return byQName.get(requireNonNull(child));
+    }
+
+    @Override
+    public CaseSchemaNode caseOf(final DataSchemaContext child) {
+        final var caze = childToCase.get(requireNonNull(child));
+        if (caze == null) {
+            throw new IllegalArgumentException(child + " is not a child of " + this);
+        }
+        return caze;
     }
 
     @Override
@@ -78,8 +90,8 @@ final class ChoiceContext extends AbstractPathMixinContext {
     private AbstractContext pushToStack(final SchemaInferenceStack stack, final AbstractContext child) {
         requireNonNull(stack);
         if (child != null) {
-            final var caseName = verifyNotNull(childToCase.get(child), "No case statement for %s in %s", child, this);
-            stack.enterSchemaTree(caseName);
+            final var caze = verifyNotNull(childToCase.get(child), "No case statement for %s in %s", child, this);
+            stack.enterSchemaTree(caze.getQName());
             child.pushToStack(stack);
         }
         return child;
