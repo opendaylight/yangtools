@@ -50,15 +50,21 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
  */
 public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     private final @NonNull InstanceIdentifierXmlCodec instanceIdentifierCodec;
+    private final @NonNull DataSchemaContextTree schemaTree;
     private final @NonNull MountPointContext mountCtx;
     private final @Nullable PreferredPrefixes pref;
 
     private XmlCodecFactory(final DataSchemaContextTree schemaTree, final MountPointContext mountCtx,
             final boolean modelPrefixes) {
         super(schemaTree.modelContext(), new SharedCodecCache<>());
+        this.schemaTree = schemaTree;
         this.mountCtx = requireNonNull(mountCtx);
         pref = modelPrefixes ? new PreferredPrefixes.Shared(modelContext()) : null;
         instanceIdentifierCodec = new InstanceIdentifierXmlCodec(this, pref);
+    }
+
+    @NonNull DataSchemaContextTree schemaTree() {
+        return schemaTree;
     }
 
     @NonNull MountPointContext mountPointContext() {

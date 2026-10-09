@@ -1,0 +1,34 @@
+module yt1899 {
+  namespace yt1899;
+  prefix yt1899;
+
+  container top {
+    list foo {
+      key name;
+
+      leaf name {
+        type string;
+      }
+
+      choice bar {
+        case baz {
+          leaf baz-leaf {
+            type string;
+          }
+        }
+      }
+    }
+
+    leaf other {
+      type string;
+    }
+  }
+
+  rpc thud {
+    input {
+      leaf in {
+        type string;
+      }
+    }
+  }
+}
