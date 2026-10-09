@@ -31,4 +31,12 @@ module yt1899 {
       }
     }
   }
+
+  rpc thud {
+    input {
+      leaf in {
+        type string;
+      }
+    }
+  }
 }

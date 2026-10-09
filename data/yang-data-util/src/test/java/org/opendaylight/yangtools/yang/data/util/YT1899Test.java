@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.util;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -20,11 +21,14 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema.ChildReusePolicy;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
+import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * Tests for looking up children through {@link DataSchemaContext}s, as parsers do: adding a child with
- * {@link CompositeNodeDataWithSchema#addChild(Composite, QName, ChildReusePolicy)}.
+ * {@link CompositeNodeDataWithSchema#addChild(Composite, QName, ChildReusePolicy)}, and finding where a parser starts
+ * with {@link DataSchemaContextTree#childByInference(EffectiveStatementInference)}.
  */
 class YT1899Test {
     private static final QName TOP = QName.create("yt1899", "top");
@@ -36,6 +40,8 @@ class YT1899Test {
     private static final QName INNER = QName.create(TOP, "inner");
     private static final QName INNER_LEAF = QName.create(TOP, "inner-leaf");
     private static final QName SECOND_LEAF = QName.create(TOP, "second-leaf");
+    private static final QName THUD = QName.create(TOP, "thud");
+    private static final QName INPUT = QName.create(TOP, "input");
 
     private static EffectiveModelContext MODEL_CONTEXT;
     private static DataSchemaContextTree TREE;
@@ -95,6 +101,81 @@ class YT1899Test {
         assertNull(top.addChild(topContext(), OUTER, ChildReusePolicy.NOOP));
         assertNull(top.addChild(topContext(), INNER, ChildReusePolicy.NOOP));
         assertEquals(0, top.childSizeHint());
+    }
+
+    @Test
+    void emptyInferenceIsTheRoot() {
+        assertSame(TREE.getRoot(), TREE.childByInference(SchemaInferenceStack.of(MODEL_CONTEXT).toInference()));
+    }
+
+    @Test
+    void dataTreeInferenceIsShared() {
+        final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
+        stack.enterDataTree(TOP);
+        assertSame(topContext(), TREE.childByInference(stack.toInference()));
+    }
+
+    @Test
+    void inferenceThroughChoiceAndCase() {
+        final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
+        stack.enterSchemaTree(TOP);
+        stack.enterChoice(OUTER);
+        // A choice holds no data nodes of its own
+        assertNull(TREE.childByInference(stack.toInference()));
+
+        stack.enterSchemaTree(FIRST);
+        stack.enterSchemaTree(FIRST_LEAF);
+        final var leaf = TREE.childByInference(stack.toInference());
+        assertNotNull(leaf);
+        assertEquals(FIRST_LEAF, leaf.dataSchemaNode().getQName());
+    }
+
+    @Test
+    void inferenceEndingAtCase() {
+        final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
+        stack.enterSchemaTree(TOP);
+        stack.enterChoice(OUTER);
+        stack.enterSchemaTree(FIRST);
+        final var first = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
+        assertEquals(FIRST, first.dataSchemaNode().getQName());
+        // A case is not part of the tree, so each call creates its context anew
+        assertNotSame(first, TREE.childByInference(stack.toInference()));
+
+        // Its own children and those of a choice inside it are known, but not those of other cases
+        final var firstLeaf = first.childByQName(FIRST_LEAF);
+        assertNotNull(firstLeaf);
+        assertEquals(FIRST_LEAF, firstLeaf.dataSchemaNode().getQName());
+        assertInstanceOf(DataSchemaContext.Choice.class, first.childByQName(INNER_LEAF));
+        assertNull(first.childByQName(SECOND_LEAF));
+
+        // Adding a child does not add the choice and case where the data starts
+        final var data = CompositeNodeDataWithSchema.of(first.dataSchemaNode());
+        final var child = data.addChild(first, FIRST_LEAF, ChildReusePolicy.NOOP);
+        assertNotNull(child);
+        assertInstanceOf(LeafNodeDataWithSchema.class, child.data());
+        assertNull(data.addChild(first, SECOND_LEAF, ChildReusePolicy.NOOP));
+        assertEquals(1, data.childSizeHint());
+    }
+
+    @Test
+    void rpcInferenceIsNotShared() {
+        final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
+        stack.enterSchemaTree(THUD);
+        final var rpc = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
+        assertNotSame(rpc, TREE.childByInference(stack.toInference()));
+
+        stack.enterSchemaTree(INPUT);
+        final var input = TREE.childByInference(stack.toInference());
+        assertNotNull(input);
+        assertEquals(INPUT, input.dataSchemaNode().getQName());
+    }
+
+    @Test
+    void foreignInferenceIsRejected() {
+        // Parsing the same model again gives a different model context
+        final var other = YangParserTestUtils.parseYangResourceDirectory("/yt1899/yang");
+        final var inference = SchemaInferenceStack.of(other).toInference();
+        assertThrows(IllegalArgumentException.class, () -> TREE.childByInference(inference));
     }
 
     private static CompositeNodeDataWithSchema<?> newTop() {
