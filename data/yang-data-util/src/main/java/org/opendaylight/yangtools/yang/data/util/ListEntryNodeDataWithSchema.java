@@ -11,9 +11,9 @@ import com.google.common.base.VerifyException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.ImmutableMapTemplate;
+import org.opendaylight.yangtools.util.UnmodifiableMapPhase;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  */
 public abstract sealed class ListEntryNodeDataWithSchema extends AbstractMountPointDataWithSchema<ListSchemaNode> {
     private static final class Keyed extends ListEntryNodeDataWithSchema {
-        private final Map<QName, SimpleNodeDataWithSchema<?>> keyValues = new HashMap<>();
+        private final HashMap<QName, SimpleNodeDataWithSchema<?>> keyValues = new HashMap<>();
         // This template results in Maps in schema definition order
         private final ImmutableMapTemplate<QName> predicateTemplate;
 
@@ -39,18 +39,17 @@ public abstract sealed class ListEntryNodeDataWithSchema extends AbstractMountPo
         }
 
         @Override
-        void addChild(final AbstractNodeDataWithSchema<?> newChild) {
-            if (newChild.getSchema() instanceof LeafSchemaNode leaf) {
-                final var childName = leaf.getQName();
-                if (predicateTemplate.keySet().contains(childName)) {
-                    if (newChild instanceof SimpleNodeDataWithSchema<?> simpleChild) {
-                        keyValues.put(childName, simpleChild);
-                    } else {
-                        throw new VerifyException("Unexpected child " + newChild);
+        AbstractNodeDataWithSchema<?> whenAddingChild(final AbstractNodeDataWithSchema<?> child) {
+            if (child.getSchema() instanceof LeafSchemaNode leaf) {
+                final var qname = leaf.getQName();
+                if (predicateTemplate.keySet().contains(qname)) {
+                    if (!(child instanceof SimpleNodeDataWithSchema<?> simpleChild)) {
+                        throw new VerifyException("Unexpected child " + child);
                     }
+                    keyValues.put(qname, simpleChild);
                 }
             }
-            super.addChild(newChild);
+            return child;
         }
 
         @Override
@@ -60,7 +59,7 @@ public abstract sealed class ListEntryNodeDataWithSchema extends AbstractMountPo
             writer.nextDataSchemaNode(schema);
 
             final var nodeType = schema.getQName();
-            final Map<QName, Object> predicates;
+            final UnmodifiableMapPhase<QName, Object> predicates;
             try {
                 predicates = predicateTemplate.instantiateTransformed(keyValues, (key, node) -> node.getValue());
             } catch (IllegalArgumentException e) {

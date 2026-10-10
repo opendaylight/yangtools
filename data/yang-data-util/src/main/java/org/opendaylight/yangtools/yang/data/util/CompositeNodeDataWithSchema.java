@@ -8,17 +8,22 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree.Step;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -81,8 +86,9 @@ public sealed class CompositeNodeDataWithSchema<T extends DataSchemaNode> extend
             }
         };
 
-        AbstractNodeDataWithSchema<?> appendChild(final Collection<AbstractNodeDataWithSchema<?>> view,
-                final AbstractNodeDataWithSchema<?> newChild) {
+        @NonNull AbstractNodeDataWithSchema<?> appendChild(
+                final @NonNull Collection<AbstractNodeDataWithSchema<?>> view,
+                final @NonNull AbstractNodeDataWithSchema<?> newChild) {
             view.add(newChild);
             return newChild;
         }
@@ -108,7 +114,8 @@ public sealed class CompositeNodeDataWithSchema<T extends DataSchemaNode> extend
         super(schema);
     }
 
-    public static @NonNull CompositeNodeDataWithSchema<?> of(final DataSchemaNode schema) {
+    @NonNullByDefault
+    public static CompositeNodeDataWithSchema<?> of(final DataSchemaNode schema) {
         return switch (schema) {
             case ContainerLike containerLike -> new ContainerNodeDataWithSchema(containerLike);
             case LeafListSchemaNode leafList -> new LeafListNodeDataWithSchema(leafList);
@@ -117,8 +124,42 @@ public sealed class CompositeNodeDataWithSchema<T extends DataSchemaNode> extend
         };
     }
 
-    void addChild(final AbstractNodeDataWithSchema<?> newChild) {
-        children.add(newChild);
+    final @Nullable AbstractNodeDataWithSchema<?> tryChild(final DataSchemaContext.@NonNull Composite parentContext,
+            final @NonNull QName child, final @NonNull ChildReusePolicy policy) {
+        final var step = parentContext.stepTo(child);
+        return step == null ? null : enterChild(this, step, child, policy);
+    }
+
+    @NonNullByDefault
+    private static AbstractNodeDataWithSchema<?> enterChild(final CompositeNodeDataWithSchema<?> first, final Step step,
+            final QName child, final ChildReusePolicy policy) {
+        var prev = first;
+        var next = prev.enterChild(step, child, policy);
+
+
+        var next = switch (step) {
+            case Step.Exact exact -> AbstractNodeDataWithSchema.of(exact.child().dataSchemaNode());
+            case Step.InCase inCase -> AbstractNodeDataWithSchema.of(inCase.child().dataSchemaNode());
+            case Step.OfEntry ofEntry -> AbstractNodeDataWithSchema.of(ofEntry.child().dataSchemaNode());
+        };
+    }
+
+    @NonNullByDefault
+    AbstractNodeDataWithSchema<?> enterChild(final Step step, final QName child, final ChildReusePolicy policy) {
+        if (step instanceof Step.Exact(var childContext)) {
+            return addChild(childContext.dataSchemaNode(), policy);
+        }
+        throw new VerifyException("Unexpected step " + step);
+    }
+
+    @NonNullByDefault
+    AbstractNodeDataWithSchema<?> whenAddingChild(final AbstractNodeDataWithSchema<?> child) {
+        return requireNonNull(child);
+    }
+
+    @NonNullByDefault
+    final void addChild(final AbstractNodeDataWithSchema<?> child) {
+        children.add(whenAddingChild(child));
     }
 
     public final AbstractNodeDataWithSchema<?> addChild(final Deque<DataSchemaNode> schemas,
@@ -153,9 +194,10 @@ public sealed class CompositeNodeDataWithSchema<T extends DataSchemaNode> extend
         return caseNodeDataWithSchema.addChild(schemas, policy);
     }
 
+    @NonNullByDefault
     private AbstractNodeDataWithSchema<?> addChild(final DataSchemaNode schema, final ChildReusePolicy policy) {
-        AbstractNodeDataWithSchema<?> newChild = addSimpleChild(schema, policy);
-        return newChild == null ? addCompositeChild(schema, policy) : newChild;
+        final var simple = addSimpleChild(schema, policy);
+        return simple != null ? simple : addCompositeChild(schema, policy);
     }
 
     private AbstractNodeDataWithSchema<?> addSimpleChild(final DataSchemaNode schema, final ChildReusePolicy policy) {
@@ -194,10 +236,12 @@ public sealed class CompositeNodeDataWithSchema<T extends DataSchemaNode> extend
         return null;
     }
 
+    @NonNullByDefault
     AbstractNodeDataWithSchema<?> addCompositeChild(final DataSchemaNode schema, final ChildReusePolicy policy) {
         return addCompositeChild(of(schema), policy);
     }
 
+    @NonNullByDefault
     final AbstractNodeDataWithSchema<?> addCompositeChild(final CompositeNodeDataWithSchema<?> newChild,
             final ChildReusePolicy policy) {
         return policy.appendChild(children, newChild);
