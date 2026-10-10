@@ -1,0 +1,44 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "74f69ec6_393e9707",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/CompositeNodeDataWithSchema.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 140,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-10-10T07:11:06Z",
+      "side": 1,
+      "message": "So \u0027qname\u0027 is a data node identifier and we are traversing one or more schema nodes to reach it -- the equivalent of SchemaInferenceStack.enter{Choice,DataTree}.",
+      "revId": "ba60b8fe1000532b7a8d715918fcc61298334c9d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "776aef4e_9bfad49d",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/CompositeNodeDataWithSchema.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 152,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-10-10T07:11:06Z",
+      "side": 1,
+      "message": "ah, so this is where the argument to caseOf() comes from\n\nwe should have a different method, say context.enterChild() which interacts cleanly with what we are doing here",
+      "range": {
+        "startLine": 152,
+        "startChar": 35,
+        "endLine": 152,
+        "endChar": 47
+      },
+      "revId": "ba60b8fe1000532b7a8d715918fcc61298334c9d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
