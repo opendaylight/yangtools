@@ -51,8 +51,8 @@ final class ChoiceContext extends AbstractPathMixinContext {
     }
 
     @Override
-    public AbstractContext childByQName(final QName child) {
-        return byQName.get(requireNonNull(child));
+    public AbstractContext childByQName(final QName qname) {
+        return byQName.get(requireNonNull(qname));
     }
 
     @Override
@@ -61,13 +61,13 @@ final class ChoiceContext extends AbstractPathMixinContext {
     }
 
     @Override
-    public AbstractContext enterChild(final SchemaInferenceStack stack, final QName qname) {
-        return pushToStack(stack, childByQName(qname));
+    public AbstractContext enterChild(final SchemaInferenceStack stack, final PathArgument child) {
+        return pushToStack(stack, childByArg(child));
     }
 
     @Override
-    public AbstractContext enterChild(final SchemaInferenceStack stack, final PathArgument arg) {
-        return pushToStack(stack, childByArg(arg));
+    public AbstractContext enterChild(final SchemaInferenceStack stack, final QName child) {
+        return pushToStack(stack, childByQName(child));
     }
 
     @Override

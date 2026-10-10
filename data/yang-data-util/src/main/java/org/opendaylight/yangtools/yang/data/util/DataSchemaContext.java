@@ -98,19 +98,6 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
 
         /**
          * Attempt to enter a child {@link DataSchemaContext} towards the {@link DataSchemaNode} child identified by
-         * specified {@code data tree} {@link QName}, adjusting provided {@code stack} with inference steps
-         * corresponding to the transition to the returned node. The stack is expected to be correctly pointing at this
-         * node's schema, otherwise the results of this method are undefined.
-         *
-         * @param stack {@link SchemaInferenceStack} to update
-         * @param child Child QName
-         * @return A DataSchemaContextNode on the path towards the specified child
-         * @throws NullPointerException if any argument is {@code null}
-         */
-        @Nullable DataSchemaContext enterChild(SchemaInferenceStack stack, QName child);
-
-        /**
-         * Attempt to enter a child {@link DataSchemaContext} towards the {@link DataSchemaNode} child identified by
          * specified {@link PathArgument}, adjusting provided {@code stack} with inference steps corresponding to
          * the transition to the returned node. The stack is expected to be correctly pointing at this node's schema,
          * otherwise the results of this method are undefined.
@@ -121,6 +108,19 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
          * @throws NullPointerException if any argument is {@code null}
          */
         @Nullable DataSchemaContext enterChild(SchemaInferenceStack stack, PathArgument child);
+
+        /**
+         * Attempt to enter a child {@link DataSchemaContext} towards the {@link DataSchemaNode} child identified by
+         * specified {@code data tree} {@link QName}, adjusting provided {@code stack} with inference steps
+         * corresponding to the transition to the returned node. The stack is expected to be correctly pointing at this
+         * node's schema, otherwise the results of this method are undefined.
+         *
+         * @param stack {@link SchemaInferenceStack} to update
+         * @param child Child QName
+         * @return A DataSchemaContextNode on the path towards the specified child
+         * @throws NullPointerException if any argument is {@code null}
+         */
+        @Nullable DataSchemaContext enterChild(SchemaInferenceStack stack, QName child);
     }
 
     /**

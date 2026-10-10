@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.util.context;
 
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext;
@@ -22,31 +23,31 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  */
 abstract sealed class AbstractListLikeContext extends AbstractPathMixinContext
         permits LeafListContext, ListContext, MapContext {
-    private final AbstractContext child;
+    private final @NonNull AbstractContext childContext;
 
-    AbstractListLikeContext(final DataSchemaNode schema, final AbstractContext child) {
+    AbstractListLikeContext(final DataSchemaNode schema, final AbstractContext childContext) {
         super(schema);
-        this.child = requireNonNull(child);
-    }
-
-    @Override
-    public final AbstractContext childByQName(final QName qname) {
-        return qname.equals(dataSchemaNode.getQName()) ? child : null;
+        this.childContext = requireNonNull(childContext);
     }
 
     @Override
     public abstract AbstractContext childByArg(PathArgument arg);
 
+    @Override
+    public final AbstractContext childByQName(final QName qname) {
+        return qname.equals(dataSchemaNode.getQName()) ? childContext : null;
+    }
+
     // Stack is already pointing to the corresponding statement, now we are just working with the child
     @Override
-    public final AbstractContext enterChild(final SchemaInferenceStack stack, final QName qname) {
+    public final AbstractContext enterChild(final SchemaInferenceStack stack, final QName child) {
         requireNonNull(stack);
-        return childByQName(qname);
+        return childByQName(child);
     }
 
     @Override
-    public final AbstractContext enterChild(final SchemaInferenceStack stack, final PathArgument arg) {
+    public final AbstractContext enterChild(final SchemaInferenceStack stack, final PathArgument child) {
         requireNonNull(stack);
-        return childByArg(arg);
+        return childByArg(child);
     }
 }

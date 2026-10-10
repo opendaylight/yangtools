@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.util.context;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -67,23 +66,18 @@ public abstract sealed class AbstractContext implements DataSchemaContext
         stack.enterSchemaTree(dataSchemaNode.getQName());
     }
 
-    static AbstractContext fromSchemaAndQNameChecked(final DataNodeContainer schema, final QName child) {
-        return lenientOf(findChildSchemaNode(schema, child));
+    static final @Nullable DataSchemaNode childByName(final DataNodeContainer parent, final QName child) {
+        final var childSchema = parent.dataChildByName(child);
+        return childSchema != null ? childSchema : choiceByName(parent, child);
     }
 
-    private static DataSchemaNode findChildSchemaNode(final DataNodeContainer parent, final QName child) {
-        final var potential = parent.dataChildByName(child);
-        return potential == null ? findChoice(Iterables.filter(parent.getChildNodes(), ChoiceSchemaNode.class), child)
-                : potential;
-    }
-
-    // FIXME: this looks like it should be a Predicate on a stream with findFirst()
-    private static ChoiceSchemaNode findChoice(final Iterable<ChoiceSchemaNode> choices, final QName child) {
-        for (var choice : choices) {
-            // FIXME: this looks weird: what are we looking for again?
-            for (var caze : choice.getCases()) {
-                if (findChildSchemaNode(caze, child) != null) {
-                    return choice;
+    private static @Nullable ChoiceSchemaNode choiceByName(final DataNodeContainer parent, final QName child) {
+        for (var dataChild : parent.getChildNodes()) {
+            if (dataChild instanceof ChoiceSchemaNode choice) {
+                for (var inCase : choice.getCases()) {
+                    if (childByName(inCase, child) != null) {
+                        return choice;
+                    }
                 }
             }
         }
@@ -98,27 +92,11 @@ public abstract sealed class AbstractContext implements DataSchemaContext
             case ContainerLike containerLike -> new ContainerContext(containerLike);
             case LeafSchemaNode leaf -> new LeafContext(leaf);
             case LeafListSchemaNode leafList -> new LeafListContext(leafList);
-            case ListSchemaNode list -> fromListSchemaNode(list);
+            case ListSchemaNode list -> {
+                final var keyDefinition = list.getKeyDefinition();
+                yield keyDefinition.isEmpty() ? new ListContext(list) : new MapContext(list);
+            }
             default -> throw new IllegalStateException("Unhandled schema " + schema);
         };
-    }
-
-    // FIXME: do we tolerate null argument? do we tolerate unknown subclasses?
-    private static @Nullable AbstractContext lenientOf(final @Nullable DataSchemaNode schema) {
-        return switch (schema) {
-            case AnydataSchemaNode anydata -> new OpaqueContext(anydata);
-            case AnyxmlSchemaNode anyxml -> new OpaqueContext(anyxml);
-            case ChoiceSchemaNode choice -> new ChoiceContext(choice);
-            case ContainerLike containerLike -> new ContainerContext(containerLike);
-            case LeafSchemaNode leaf -> new LeafContext(leaf);
-            case LeafListSchemaNode leafList -> new LeafListContext(leafList);
-            case ListSchemaNode list -> fromListSchemaNode(list);
-            case null, default -> null;
-        };
-    }
-
-    private static @NonNull AbstractContext fromListSchemaNode(final ListSchemaNode potential) {
-        final var keyDefinition = potential.getKeyDefinition();
-        return keyDefinition.isEmpty() ? new ListContext(potential) : new MapContext(potential);
     }
 }
