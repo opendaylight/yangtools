@@ -9,7 +9,8 @@ package org.opendaylight.yangtools.yang.data.util.context;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -52,8 +53,8 @@ public abstract sealed class AbstractContext implements DataSchemaContext
         return pathStep;
     }
 
-    ImmutableSet<QName> qnameIdentifiers() {
-        return ImmutableSet.of(dataSchemaNode.getQName());
+    Collection<@NonNull QName> qnameIdentifiers() {
+        return List.of(dataSchemaNode.getQName());
     }
 
     /**
