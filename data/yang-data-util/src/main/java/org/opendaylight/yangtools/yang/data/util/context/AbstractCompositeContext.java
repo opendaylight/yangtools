@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree.Step;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
@@ -78,5 +79,11 @@ public abstract sealed class AbstractCompositeContext extends AbstractContext im
             child.pushToStack(stack);
         }
         return child;
+    }
+
+    @Override
+    public final Step.Exact stepTo(final QName child) {
+        final var childContext = childByQName(child);
+        return childContext == null ? null : new Step.Exact(childContext);
     }
 }
