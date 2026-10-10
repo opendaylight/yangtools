@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import static com.google.common.base.Verify.verify;
-
+import com.google.common.base.VerifyException;
 import java.io.IOException;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree.Step;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -26,15 +28,29 @@ final class ChoiceNodeDataWithSchema extends CompositeNodeDataWithSchema<ChoiceS
         super(schema);
     }
 
+    @Override
+    AbstractNodeDataWithSchema<?> enterChild(final Step step, final QName child, final ChildReusePolicy policy) {
+        if (step instanceof Step.InCase(var childContext, var inCase)) {
+            final var caseChild = new CaseNodeDataWithSchema(inCase.toDataSchemaNode());
+            addCompositeChild(caseChild, policy);
+            return caseChild.addCompositeChild(childContext.dataSchemaNode(), policy);
+        }
+        throw new VerifyException("Unexpected step " + step);
+    }
+
+
     // FIXME: 7.0.0: this should be impossible to hit
     @Override
     CaseNodeDataWithSchema addCompositeChild(final DataSchemaNode schema, final ChildReusePolicy policy) {
-        verify(schema instanceof CaseSchemaNode, "Unexpected schema %s", schema);
-        return addCompositeChild((CaseSchemaNode) schema, policy);
+        if (schema instanceof CaseSchemaNode caseSchema) {
+            return addCompositeChild(caseSchema, policy);
+        }
+        throw new VerifyException("Unexpected schema " + schema);
     }
 
+    @NonNullByDefault
     CaseNodeDataWithSchema addCompositeChild(final CaseSchemaNode schema, final ChildReusePolicy policy) {
-        CaseNodeDataWithSchema newChild = new CaseNodeDataWithSchema(schema);
+        var newChild = new CaseNodeDataWithSchema(schema);
         caseNodeDataWithSchema = newChild;
         addCompositeChild(newChild, policy);
         return newChild;
