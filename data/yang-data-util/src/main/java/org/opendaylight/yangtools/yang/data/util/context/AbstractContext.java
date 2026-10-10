@@ -9,9 +9,10 @@ package org.opendaylight.yangtools.yang.data.util.context;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
+import java.util.Collection;
+import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -53,8 +54,8 @@ public abstract sealed class AbstractContext implements DataSchemaContext
         return pathStep;
     }
 
-    ImmutableSet<QName> qnameIdentifiers() {
-        return ImmutableSet.of(dataSchemaNode.getQName());
+    Collection<@NonNull QName> qnameIdentifiers() {
+        return List.of(dataSchemaNode.getQName());
     }
 
     /**
@@ -68,22 +69,24 @@ public abstract sealed class AbstractContext implements DataSchemaContext
     }
 
     static AbstractContext fromSchemaAndQNameChecked(final DataNodeContainer schema, final QName child) {
-        return lenientOf(findChildSchemaNode(schema, child));
+        return lenientOf(findChildSchemaNode(requireNonNull(schema), requireNonNull(child)));
     }
 
-    private static DataSchemaNode findChildSchemaNode(final DataNodeContainer parent, final QName child) {
+    @NonNullByDefault
+    private static @Nullable DataSchemaNode findChildSchemaNode(final DataNodeContainer parent, final QName child) {
         final var potential = parent.dataChildByName(child);
-        return potential == null ? findChoice(Iterables.filter(parent.getChildNodes(), ChoiceSchemaNode.class), child)
-                : potential;
+        return potential != null ? potential : choiceChildByName(parent, child);
     }
 
-    // FIXME: this looks like it should be a Predicate on a stream with findFirst()
-    private static ChoiceSchemaNode findChoice(final Iterable<ChoiceSchemaNode> choices, final QName child) {
-        for (var choice : choices) {
-            // FIXME: this looks weird: what are we looking for again?
-            for (var caze : choice.getCases()) {
-                if (findChildSchemaNode(caze, child) != null) {
-                    return choice;
+    // returns the next choice node to take towards the specified data tree child
+    private static @Nullable ChoiceSchemaNode choiceChildByName(final @NonNull DataNodeContainer parent,
+            final @NonNull QName child) {
+        for (var childNode : parent.getChildNodes()) {
+            if (childNode instanceof ChoiceSchemaNode choice) {
+                for (var caze : choice.getCases()) {
+                    if (findChildSchemaNode(caze, child) != null) {
+                        return choice;
+                    }
                 }
             }
         }
