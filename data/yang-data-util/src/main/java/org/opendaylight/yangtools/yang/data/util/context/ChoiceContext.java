@@ -7,51 +7,62 @@
  */
 package org.opendaylight.yangtools.yang.data.util.context;
 
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree.Step;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class ChoiceContext extends AbstractPathMixinContext {
-    private final ImmutableMap<NodeIdentifier, AbstractContext> byArg;
-    private final ImmutableMap<QName, AbstractContext> byQName;
-    private final ImmutableMap<AbstractContext, QName> childToCase;
+    private final ImmutableMap<NodeIdentifier, Step.InCase> byArg;
+    private final ImmutableMap<QName, Step.InCase> byQName;
 
     ChoiceContext(final ChoiceSchemaNode schema) {
         super(schema);
-        final var childToCaseBuilder = ImmutableMap.<AbstractContext, QName>builder();
-        final var byQNameBuilder = ImmutableMap.<QName, AbstractContext>builder();
-        final var byArgBuilder = ImmutableMap.<NodeIdentifier, AbstractContext>builder();
+        final var byQNameBuilder = ImmutableMap.<QName, Step.InCase>builder();
+        final var byArgBuilder = ImmutableMap.<NodeIdentifier, Step.InCase>builder();
 
         for (var caze : schema.getCases()) {
             for (var cazeChild : caze.getChildNodes()) {
-                final var childOp = AbstractContext.of(cazeChild);
-                byArgBuilder.put(childOp.getPathStep(), childOp);
-                childToCaseBuilder.put(childOp, caze.getQName());
-                for (QName qname : childOp.qnameIdentifiers()) {
-                    byQNameBuilder.put(qname, childOp);
+                final var childContext = AbstractContext.of(cazeChild);
+                final var step = new Step.InCase(childContext, caze.asEffectiveStatement());
+
+                byArgBuilder.put(childContext.getPathStep(), step);
+                for (var qname : childContext.qnameIdentifiers()) {
+                    byQNameBuilder.put(qname, step);
                 }
             }
         }
 
-        childToCase = childToCaseBuilder.build();
         byQName = byQNameBuilder.build();
         byArg = byArgBuilder.build();
     }
 
     @Override
     public AbstractContext childByArg(final PathArgument arg) {
-        return byArg.get(requireNonNull(arg));
+        return childIn(byArg, arg);
     }
 
     @Override
     public AbstractContext childByQName(final QName child) {
+        return childIn(byQName, child);
+    }
+
+    private static <K> @Nullable AbstractContext childIn(final ImmutableMap<? extends K, Step.InCase> map,
+            final K key) {
+        final var step = map.get(requireNonNull(key));
+        return step == null ? null : (AbstractContext) step.child();
+    }
+
+    @Override
+    public Step.InCase stepTo(final QName child) {
         return byQName.get(requireNonNull(child));
     }
 
@@ -61,27 +72,34 @@ final class ChoiceContext extends AbstractPathMixinContext {
     }
 
     @Override
-    public AbstractContext enterChild(final SchemaInferenceStack stack, final QName child) {
-        return pushToStack(stack, childByQName(child));
+    public AbstractContext enterChild(final SchemaInferenceStack stack, final PathArgument child) {
+        return enterChild(stack, byArg, child);
     }
 
     @Override
-    public AbstractContext enterChild(final SchemaInferenceStack stack, final PathArgument arg) {
-        return pushToStack(stack, childByArg(arg));
+    public AbstractContext enterChild(final SchemaInferenceStack stack, final QName child) {
+        return enterChild(stack, byQName, child);
+    }
+
+    // split out to enforce order of argument checks
+    private static <K> @Nullable AbstractContext enterChild(final SchemaInferenceStack stack,
+            final ImmutableMap<? extends K, Step.InCase> map, final K key) {
+        requireNonNull(stack);
+        final var step = map.get(requireNonNull(key));
+        return step == null ? null : enterChild(stack, step);
+    }
+
+    // split out happy path
+    @NonNullByDefault
+    private static AbstractContext enterChild(final SchemaInferenceStack stack, final Step.InCase step) {
+        final var child = (AbstractContext) step.child();
+        stack.enterSchemaTree(step.inCase().argument());
+        child.pushToStack(stack);
+        return child;
     }
 
     @Override
     void pushToStack(final SchemaInferenceStack stack) {
         stack.enterChoice(dataSchemaNode.getQName());
-    }
-
-    private AbstractContext pushToStack(final SchemaInferenceStack stack, final AbstractContext child) {
-        requireNonNull(stack);
-        if (child != null) {
-            final var caseName = verifyNotNull(childToCase.get(child), "No case statement for %s in %s", child, this);
-            stack.enterSchemaTree(caseName);
-            child.pushToStack(stack);
-        }
-        return child;
     }
 }

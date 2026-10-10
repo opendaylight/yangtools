@@ -13,6 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree.Step;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -49,5 +50,10 @@ abstract sealed class AbstractListLikeContext extends AbstractPathMixinContext
     public final AbstractContext enterChild(final SchemaInferenceStack stack, final PathArgument child) {
         requireNonNull(stack);
         return childByArg(child);
+    }
+
+    @Override
+    public final Step.OfEntry stepTo(final QName child) {
+        return child.equals(dataSchemaNode.getQName()) ? new Step.OfEntry(childContext) : null;
     }
 }
