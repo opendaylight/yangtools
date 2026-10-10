@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -84,7 +85,8 @@ public abstract sealed class AbstractContext implements DataSchemaContext
         return null;
     }
 
-    public static @NonNull AbstractContext of(final @NonNull DataSchemaNode schema) {
+    @NonNullByDefault
+    public static AbstractContext of(final DataSchemaNode schema) {
         return switch (schema) {
             case AnydataSchemaNode anydata -> new OpaqueContext(anydata);
             case AnyxmlSchemaNode anyxml -> new OpaqueContext(anyxml);
