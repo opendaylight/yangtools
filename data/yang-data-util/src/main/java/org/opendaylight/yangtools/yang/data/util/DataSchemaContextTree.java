@@ -15,6 +15,7 @@ import com.google.common.cache.LoadingCache;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.CheckedValue;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
@@ -32,10 +33,11 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * schema and data has differences, the mapping is not trivial -- which is where this class comes in.
  */
 public final class DataSchemaContextTree {
-    public record NodeAndStack(@NonNull DataSchemaContext node, @NonNull SchemaInferenceStack stack) {
-        public NodeAndStack(final @NonNull DataSchemaContext node, final @NonNull SchemaInferenceStack stack) {
-            this.node = requireNonNull(node);
-            this.stack = requireNonNull(stack);
+    @NonNullByDefault
+    public record NodeAndStack(DataSchemaContext node, SchemaInferenceStack stack) {
+        public NodeAndStack {
+            requireNonNull(node);
+            requireNonNull(stack);
         }
     }
 
