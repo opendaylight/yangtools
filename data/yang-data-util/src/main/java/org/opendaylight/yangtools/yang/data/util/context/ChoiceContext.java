@@ -9,8 +9,11 @@ package org.opendaylight.yangtools.yang.data.util.context;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.SequencedCollection;
+import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -21,43 +24,85 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 final class ChoiceContext extends AbstractPathMixinContext {
-    private final ImmutableMap<NodeIdentifier, Step.InCase> byArg;
-    private final ImmutableMap<QName, Step.InCase> byQName;
+    @NonNullByDefault
+    private final Map<NodeIdentifier, Step.@Nullable InCase> byArg;
+    @NonNullByDefault
+    private final Map<QName, Step.@Nullable InCase> byQName;
 
     ChoiceContext(final ChoiceSchemaNode schema) {
         super(schema);
-        final var byQNameBuilder = ImmutableMap.<QName, Step.InCase>builder();
-        final var byArgBuilder = ImmutableMap.<NodeIdentifier, Step.InCase>builder();
 
+        @NonNullByDefault
+        final var argList = new ArrayList<Map.Entry<NodeIdentifier, Step.InCase>>();
+        @NonNullByDefault
+        final var qnameList = new ArrayList<Map.Entry<QName, Step.InCase>>();
         for (var caze : schema.getCases()) {
             for (var cazeChild : caze.getChildNodes()) {
-                final var childContext = AbstractContext.of(cazeChild);
-                final var step = new Step.InCase(childContext, caze.asEffectiveStatement());
+                final var child = AbstractContext.of(cazeChild);
+                final var step = new Step.InCase(child, caze.asEffectiveStatement());
 
-                byArgBuilder.put(childContext.getPathStep(), step);
-                for (var qname : childContext.qnameIdentifiers()) {
-                    byQNameBuilder.put(qname, step);
+                // 1..1 NodeIdentifier -> Step mapping
+                argList.add(entryOf(step, child.getPathStep()));
+
+                // 0..N QName -> Step mappings
+                final var qnames = child.qnameIdentifiers();
+                final var toAdd = qnames.size();
+                switch (toAdd) {
+                    case 0 -> {
+                        // no-op
+                    }
+                    case 1 -> qnameList.add(entryOf(step,
+                        qnames instanceof SequencedCollection<QName> sc ? sc.getFirst() : qnames.iterator().next()));
+                    default -> {
+                        qnameList.ensureCapacity(qnameList.size() + toAdd);
+                        for (var qname : qnames) {
+                            qnameList.add(entryOf(step, qname));
+                        }
+                    }
                 }
             }
         }
 
-        byQName = byQNameBuilder.build();
-        byArg = byArgBuilder.build();
+        byArg = mapOf(argList);
+        byQName = mapOf(qnameList);
+    }
+
+    @NonNullByDefault
+    @SuppressWarnings("null")
+    private static <K> Map.Entry<K, Step.InCase> entryOf(final Step.InCase value, final K key) {
+        return Map.entry(key, value);
+    }
+
+    @NonNullByDefault
+    @SuppressWarnings("null")
+    private static <K, V> Map<K, @Nullable V> mapOf(final ArrayList<Map.Entry<K, V>> list) {
+        return switch (list.size()) {
+            case 0 -> Map.of();
+            case 1 -> mapOf1(list.getFirst());
+            default -> mapOfN(list);
+        };
+    }
+
+    private static <K, V> Map<K, @Nullable V> mapOf1(final Map.@NonNull Entry<K, V> entry) {
+        return Map.of(entry.getKey(), entry.getValue());
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <K, V> Map<K, @Nullable V> mapOfN(final @NonNull ArrayList<Map.@NonNull Entry<K, V>> list) {
+        return Map.ofEntries(list.toArray(Map.Entry[]::new));
     }
 
     @Override
     public AbstractContext childByArg(final PathArgument arg) {
-        return childIn(byArg, arg);
+        return child(byArg.get(arg));
     }
 
     @Override
     public AbstractContext childByQName(final QName child) {
-        return childIn(byQName, child);
+        return child(byQName.get(child));
     }
 
-    private static <K> @Nullable AbstractContext childIn(final ImmutableMap<? extends K, Step.InCase> map,
-            final K key) {
-        final var step = map.get(requireNonNull(key));
+    private static <K> @Nullable AbstractContext child(final Step.@Nullable InCase step) {
         return step == null ? null : (AbstractContext) step.child();
     }
 
@@ -67,31 +112,28 @@ final class ChoiceContext extends AbstractPathMixinContext {
     }
 
     @Override
-    ImmutableSet<QName> qnameIdentifiers() {
+    Set<@NonNull QName> qnameIdentifiers() {
         return byQName.keySet();
     }
 
     @Override
     public AbstractContext enterChild(final SchemaInferenceStack stack, final PathArgument child) {
-        return enterChild(stack, byArg, child);
+        return enterChild(stack, byArg.get(child));
     }
 
     @Override
     public AbstractContext enterChild(final SchemaInferenceStack stack, final QName child) {
-        return enterChild(stack, byQName, child);
+        return enterChild(stack, byQName.get(child));
     }
 
     // split out to enforce order of argument checks
     private static <K> @Nullable AbstractContext enterChild(final SchemaInferenceStack stack,
-            final ImmutableMap<? extends K, Step.InCase> map, final K key) {
+            final Step.@Nullable InCase step) {
         requireNonNull(stack);
-        final var step = map.get(requireNonNull(key));
-        return step == null ? null : enterChild(stack, step);
-    }
+        if (step == null) {
+            return null;
+        }
 
-    // split out happy path
-    @NonNullByDefault
-    private static AbstractContext enterChild(final SchemaInferenceStack stack, final Step.InCase step) {
         final var child = (AbstractContext) step.child();
         stack.enterSchemaTree(step.inCase().argument());
         child.pushToStack(stack);
