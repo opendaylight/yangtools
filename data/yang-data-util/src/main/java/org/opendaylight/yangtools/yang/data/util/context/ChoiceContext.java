@@ -61,8 +61,8 @@ final class ChoiceContext extends AbstractPathMixinContext {
     }
 
     @Override
-    public AbstractContext enterChild(final SchemaInferenceStack stack, final QName qname) {
-        return pushToStack(stack, childByQName(qname));
+    public AbstractContext enterChild(final SchemaInferenceStack stack, final QName child) {
+        return pushToStack(stack, childByQName(child));
     }
 
     @Override
