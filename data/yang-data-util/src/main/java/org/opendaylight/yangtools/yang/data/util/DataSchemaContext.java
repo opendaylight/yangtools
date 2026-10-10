@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ValueNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.SimpleValue;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree.Step;
 import org.opendaylight.yangtools.yang.data.util.context.AbstractCompositeContext;
 import org.opendaylight.yangtools.yang.data.util.context.AbstractContext;
 import org.opendaylight.yangtools.yang.data.util.context.AbstractPathMixinContext;
@@ -121,6 +122,15 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
          * @throws NullPointerException if any argument is {@code null}
          */
         @Nullable DataSchemaContext enterChild(SchemaInferenceStack stack, PathArgument child);
+
+        /**
+         * {@return the next {@link Step} towards the {@link DataSchemaNode} child identified by specified
+         * {@code data tree} {@link QName}, or {@code null} if no such child exists}
+         *
+         * @param child Child QName
+         * @throws NullPointerException if {@code child} is {@code null}
+         */
+        @Nullable Step stepTo(QName child);
     }
 
     /**
@@ -146,6 +156,9 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
         default @NonNull NodeIdentifier mixinPathStep() {
             return getPathStep();
         }
+
+        @Override
+        Step.@Nullable Mixin stepTo(QName child);
     }
 
     /**

@@ -9,9 +9,11 @@ package org.opendaylight.yangtools.yang.data.util.context;
 
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree.Step;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
@@ -22,16 +24,16 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  */
 abstract sealed class AbstractListLikeContext extends AbstractPathMixinContext
         permits LeafListContext, ListContext, MapContext {
-    private final AbstractContext child;
+    private final @NonNull AbstractContext childContext;
 
-    AbstractListLikeContext(final DataSchemaNode schema, final AbstractContext child) {
+    AbstractListLikeContext(final DataSchemaNode schema, final AbstractContext childContext) {
         super(schema);
-        this.child = requireNonNull(child);
+        this.childContext = requireNonNull(childContext);
     }
 
     @Override
     public final AbstractContext childByQName(final QName qname) {
-        return qname.equals(dataSchemaNode.getQName()) ? child : null;
+        return qname.equals(dataSchemaNode.getQName()) ? childContext : null;
     }
 
     @Override
@@ -48,5 +50,10 @@ abstract sealed class AbstractListLikeContext extends AbstractPathMixinContext
     public final AbstractContext enterChild(final SchemaInferenceStack stack, final PathArgument arg) {
         requireNonNull(stack);
         return childByArg(arg);
+    }
+
+    @Override
+    public final Step.OfEntry stepTo(final QName child) {
+        return child.equals(dataSchemaNode.getQName()) ? new Step.OfEntry(childContext) : null;
     }
 }
