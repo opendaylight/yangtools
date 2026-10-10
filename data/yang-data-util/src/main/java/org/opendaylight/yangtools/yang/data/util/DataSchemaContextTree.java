@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.eclipse.jdt.annotation.NonNull;
@@ -19,13 +20,19 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.CheckedValue;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
+import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
 import org.opendaylight.yangtools.yang.data.util.context.ContainerContext;
 import org.opendaylight.yangtools.yang.data.util.context.YangDataContext;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
@@ -33,11 +40,87 @@ import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
  * schema and data has differences, the mapping is not trivial -- which is where this class comes in.
  */
 public final class DataSchemaContextTree {
+    /**
+     * The result of a {@link DataSchemaContextTree#stepTo(Unqualified, Unqualified)} or
+     * {@link DataSchemaContextTree#stepTo(XMLNamespace, Unqualified)}.
+     *
+     * @param child resolved data child name
+     * @param step the step
+     * @since 16.2.0
+     */
+    @NonNullByDefault
+    public record ChildAndStep(QName child, Step.Exact step) {
+        public ChildAndStep {
+            requireNonNull(child);
+            requireNonNull(step);
+        }
+    }
+
     @NonNullByDefault
     public record NodeAndStack(DataSchemaContext node, SchemaInferenceStack stack) {
         public NodeAndStack {
             requireNonNull(node);
             requireNonNull(stack);
+        }
+    }
+
+    /**
+     * A step towards the {@code data tree} {@link DataSchemaNode} child.
+     *
+     * @since 16.2.0
+     */
+    // TODO: JEP-401: as close as possible to 'abstract value record'
+    @NonNullByDefault
+    public sealed interface Step {
+        /**
+         * {@return the child {@link DataSchemaContext}}
+         */
+        DataSchemaContext child();
+
+        /**
+         * A {@link Step} exactly matching a {@code schema tree} child.
+         *
+         * @param child child {@link DataSchemaContext}
+         * @since 16.2.0
+         */
+        record Exact(DataSchemaContext child) implements Step {
+            public Exact {
+                requireNonNull(child);
+            }
+        }
+
+        /**
+         * A {@link Step} from a {@code choice} to a {@code data tree} child of a {@code case}. .
+         *
+         * @param child child {@link DataSchemaContext}
+         * @since 16.2.0
+         */
+        record InCase(DataSchemaContext child, CaseEffectiveStatement inCase) implements Mixin {
+            public InCase {
+                requireNonNull(child);
+                requireNonNull(inCase);
+            }
+        }
+
+        /**
+         * A {@link Step} matching a child entry of a {@code leaf-list} or a {@code list}.
+         *
+         * @param child child {@link DataSchemaContext}
+         * @since 16.2.0
+         */
+        record OfEntry(DataSchemaContext child) implements Mixin {
+            public OfEntry {
+                requireNonNull(child);
+            }
+        }
+
+        /**
+         * A {@link Step} originating from a {@link DataSchemaContext.PathMixin}.
+         *
+         * @since 16.2.0
+         */
+        sealed interface Mixin extends Step {
+            // nothing else
         }
     }
 
@@ -70,6 +153,54 @@ public final class DataSchemaContextTree {
      */
     public @NonNull EffectiveModelContext modelContext() {
         return modelContext;
+    }
+
+    /**
+     * {@return the next {@link Step} towards the specified child node, or {@code null} if no such node exists}
+     *
+     * @param child data tree child name
+     * @since 16.2.0
+     */
+    @NonNullByDefault
+    public Step.@Nullable Exact stepTo(final QName child) {
+        return root.stepTo(child);
+    }
+
+    /**
+     * {@return the {@link ChildAndStep} towards the specified child node, or {@code null} if no such node exists}
+     *
+     * @param moduleName the module name
+     * @param localName data tree child local name
+     * @since 16.2.0
+     */
+    @NonNullByDefault
+    public @Nullable ChildAndStep stepTo(final Unqualified moduleName, final Unqualified localName) {
+        return stepToNewest(modelContext.findModuleStatements(moduleName.getLocalName()), localName);
+    }
+
+    /**
+     * {@return the next {@link ChildAndStep} towards the specified child node, or {@code null} if no such node exists}
+     *
+     * @param namespace the namespace
+     * @param localName data tree child local name
+     * @since 16.2.0
+     */
+    @NonNullByDefault
+    public @Nullable ChildAndStep stepTo(final XMLNamespace namespace, final Unqualified localName) {
+        return stepToNewest(modelContext.findModuleStatements(namespace), localName);
+    }
+
+    private @Nullable ChildAndStep stepToNewest(final @NonNull Collection<@NonNull ModuleEffectiveStatement> modules,
+            final @NonNull Unqualified localName) {
+        // note: modules are expected to be sorted newest revision first, so plain iteration is fine
+        for (var module : modules) {
+            final var child = localName.bindTo(module.localQNameModule());
+            final var step = root.stepTo(child);
+            if (step != null) {
+                return new ChildAndStep(child, step);
+            }
+        }
+        return null;
     }
 
     /**
