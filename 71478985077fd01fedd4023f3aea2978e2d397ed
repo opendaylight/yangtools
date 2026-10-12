@@ -22,6 +22,30 @@
       },
       "revId": "71478985077fd01fedd4023f3aea2978e2d397ed",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "fe2dc4b1_0b541a17",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/DataSchemaContextTree.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 177,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-10-12T12:02:37Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "8d9c0ce9_c7fb3776",
+      "range": {
+        "startLine": 177,
+        "startChar": 34,
+        "endLine": 177,
+        "endChar": 40
+      },
+      "revId": "71478985077fd01fedd4023f3aea2978e2d397ed",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
