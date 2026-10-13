@@ -53,6 +53,7 @@ public final class MustStatementSupport
     @Override
     public QualifiedBound parseArgumentValue(final CommonStmtCtx stmt, final IdentifierBinding binding,
             final String rawArgument) {
+        // TODO: we should be able to perform partial type binding
         return xpathSupport.parseXPath(stmt, binding.yangNamespaceContext(), rawArgument);
     }
 
