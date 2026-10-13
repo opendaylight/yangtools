@@ -517,6 +517,9 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
      * @throws SourceException when an error occurred in source parsing
      */
     final boolean tryToCompletePhase(final byte executionOrder) {
+        if (executionOrder == ExecutionOrder.NULL) {
+            throw new VerifyException("null execution order");
+        }
         return executionOrder() >= executionOrder || doTryToCompletePhase(executionOrder);
     }
 
