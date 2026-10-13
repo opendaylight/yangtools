@@ -48,8 +48,7 @@ public final class FeatureStatementSupport
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<QName, FeatureStatement, FeatureEffectiveStatement> stmt) {
-        super.onFullDefinitionDeclared(stmt);
+    public void onStatementAdded(final Mutable<QName, FeatureStatement, FeatureEffectiveStatement> stmt) {
         stmt.addToNs(ParserNamespaces.FEATURE, stmt.getArgument(), stmt);
 
         // Do not build effective statement if supported features does not include this feature
