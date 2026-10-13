@@ -42,8 +42,9 @@ public sealed interface DataObjectIdentifier<T extends DataObject>
          * @param <T> type of {@link EntryObject} held in the last step.
          * @param <K> {@link Key} type
          */
-        non-sealed interface WithKey<T extends EntryObject<?, T, K>, K extends Key<T>>
-                extends Builder<T>, DataObjectReference.Builder.WithKey<T, K> {
+        sealed interface WithKey<T extends EntryObject<?, T, K>, K extends Key<T>>
+                extends Builder<T>, DataObjectReference.Builder.WithKey<T, K>
+                permits DataObjectIdentifierBuilderWithKey {
             @Override
             DataObjectIdentifier.WithKey<T, K> build();
 
