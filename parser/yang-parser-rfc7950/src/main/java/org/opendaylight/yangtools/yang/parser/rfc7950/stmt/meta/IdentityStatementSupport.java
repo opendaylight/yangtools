@@ -70,7 +70,7 @@ public final class IdentityStatementSupport
     }
 
     @Override
-    public void onStatementDefinitionDeclared(
+    public void onStatementAdded(
             final Mutable<QName, IdentityStatement, IdentityEffectiveStatement> stmt) {
         final var qname = stmt.getArgument();
         final var prev = stmt.namespaceItem(ParserNamespaces.IDENTITY, qname);

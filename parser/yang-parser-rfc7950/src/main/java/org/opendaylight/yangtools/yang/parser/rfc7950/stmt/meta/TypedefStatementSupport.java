@@ -63,6 +63,7 @@ public final class TypedefStatementSupport extends
         super(TypedefStatement.DEF, StatementPolicy.exactReplica(), config, SUBSTATEMENT_VALIDATOR);
     }
 
+    // TODO: onStatementDefinitionDeclared() ?
     @Override
     public void onFullDefinitionDeclared(final Mutable<QName, TypedefStatement, TypedefEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
