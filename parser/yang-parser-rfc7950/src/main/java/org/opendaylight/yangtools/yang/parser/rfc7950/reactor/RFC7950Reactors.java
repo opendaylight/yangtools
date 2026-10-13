@@ -147,58 +147,85 @@ public final class RFC7950Reactors {
             .build();
     }
 
-    private static StatementSupportBundle stmtDefBundle(final StatementSupportBundle linkageBundle,
+    /**
+     * Return the {@link StatementSupportBundle} for {@link ModelProcessingPhase#STATEMENT_DEFINITION}. This consists
+     * of pretty-much all statements.
+     *
+     * @param sourceLinkageBundle the result of {@link #sourceLinkageBundle(YangParserConfiguration)}
+     * @param config the {@link YangParserConfiguration}
+     * @return a {@link StatementSupportBundle}
+     */
+    private static StatementSupportBundle statementDefinitionBundle(final StatementSupportBundle sourceLinkageBundle,
             final YangParserConfiguration config) {
-        return StatementSupportBundle.builderDerivedFrom(linkageBundle)
-            .addSupport(NamespaceBehaviours.SCHEMA_TREE)
-            .addSupport(StatementDefinitions.BEHAVIOUR)
-            .addSupport(new ActionStatementSupport(config), VERSION_1_1)
-            .addSupport(new ArgumentStatementSupport(config))
-            .addSupport(new BaseStatementSupport(config))
-            .addSupport(BaseTypeNamespace.BEHAVIOUR)
-            .addSupport(BitStatementSupport.rfc6020Instance(config), BitStatementSupport.rfc7950Instance(config))
-            .addSupport(new ContactStatementSupport(config))
-            .addSupport(
-                ContainerStatementSupport.rfc6020Instance(config),
-                ContainerStatementSupport.rfc7950Instance(config))
+        return StatementSupportBundle.builderDerivedFrom(sourceLinkageBundle)
+            // FIXME: YANGTOOLS-1840: argument depends on 'type' resolution: move to fullDeclarationBundle
             .addSupport(new DefaultStatementSupport(config))
-            .addSupport(new DescriptionStatementSupport(config))
-            .addSupport(EnumStatementSupport.rfc6020Instance(config), EnumStatementSupport.rfc7950Instance(config))
-            .addSupport(new ExtensionStatementSupport(config))
+            .addSupport(new RangeStatementSupport(config))
+
+            // projection of 'extension' namespace
             .addSupport(NamespaceBehaviours.EXTENSION)
-            .addSupport(new FractionDigitsStatementSupport(config))
-            .addSupport(
-                GroupingStatementSupport.rfc6020Instance(config),
-                GroupingStatementSupport.rfc7950Instance(config))
+            .addSupport(StatementDefinitions.BEHAVIOUR)
+            .addSupport(new ArgumentStatementSupport(config))
+            .addSupport(new ExtensionStatementSupport(config))
+            .addSupport(new YinElementStatementSupport(config))
+
+            // projection of 'identity' namespace
+            .addSupport(NamespaceBehaviours.IDENTITY)
+            .addSupport(new BaseStatementSupport(config))
             .addSupport(
                 IdentityStatementSupport.rfc6020Instance(config),
                 IdentityStatementSupport.rfc7950Instance(config))
-            .addSupport(NamespaceBehaviours.IDENTITY)
-            .addSupport(InputStatementSupport.rfc6020Instance(config), InputStatementSupport.rfc7950Instance(config))
-            .addSupport(new KeyStatementSupport(config))
-            .addSupport(new LengthStatementSupport(config))
-            .addSupport(ListStatementSupport.rfc6020Instance(config), ListStatementSupport.rfc7950Instance(config))
-            .addSupport(new ModifierStatementSupport(config), VERSION_1_1)
+
+            // projection of 'feature' namespace
+            .addSupport(NamespaceBehaviours.FEATURE)
+            .addSupport(new FeatureStatementSupport(config))
             .addSupport(
-                new NotificationStatementRFC6020Support(config),
-                new NotificationStatementRFC7950Support(config))
-            .addSupport(new OrganizationStatementSupport(config))
-            .addSupport(OutputStatementSupport.rfc6020Instance(config), OutputStatementSupport.rfc7950Instance(config))
-            .addSupport(new PathStatementSupport(config))
+                IfFeatureStatementSupport.rfc6020Instance(config),
+                IfFeatureStatementSupport.rfc7950Instance(config))
+
+            // The notion of 'typedef' and 'type' which can be linked. We bring almost all possible sub-statements to
+            // the party, except the two statements whose argument we want to project in type-safe manner:
+            // - 'range', where the Number instances need to match the base type
+            // - 'default', where we need to accurately provide values for things that may be used as literals
+            .addSupport(NamespaceBehaviours.TYPE)
+            .addSupport(BitStatementSupport.rfc6020Instance(config), BitStatementSupport.rfc7950Instance(config))
+            .addSupport(EnumStatementSupport.rfc6020Instance(config), EnumStatementSupport.rfc7950Instance(config))
+            .addSupport(new ErrorMessageStatementSupport(config))
+            .addSupport(new ErrorAppTagStatementSupport(config))
+            .addSupport(new FractionDigitsStatementSupport(config))
+            .addSupport(new LengthStatementSupport(config))
+            .addSupport(new ModifierStatementSupport(config), VERSION_1_1)
             .addSupport(
                 PatternStatementSupport.rfc6020Instance(config),
                 PatternStatementSupport.rfc7950Instance(config))
-            .addSupport(new RangeStatementSupport(config))
-            .addSupport(new ReferenceStatementSupport(config))
+            .addSupport(new PathStatementSupport(config))
+            .addSupport(new PositionStatementSupport(config))
             .addSupport(new RequireInstanceStatementSupport(config))
-            .addSupport(new RpcStatementSupport(config))
-            .addSupport(new StatusStatementSupport(config))
             .addSupport(new TypeStatementRFC6020Support(config), new TypeStatementRFC7950Support(config))
             .addSupport(new TypedefStatementSupport(config))
-            .addSupport(NamespaceBehaviours.TYPE)
+            .addSupport(new ValueStatementSupport(config))
+
+            // schema nodes, their namespaces and their structural constraints
+            .addSupport(NamespaceBehaviours.SCHEMA_TREE)
+            .addSupport(new ActionStatementSupport(config), VERSION_1_1)
+            .addSupport(
+                ContainerStatementSupport.rfc6020Instance(config),
+                ContainerStatementSupport.rfc7950Instance(config))
+            .addSupport(
+                GroupingStatementSupport.rfc6020Instance(config),
+                GroupingStatementSupport.rfc7950Instance(config))
+            .addSupport(InputStatementSupport.rfc6020Instance(config), InputStatementSupport.rfc7950Instance(config))
+            .addSupport(new KeyStatementSupport(config))
+            .addSupport(ListStatementSupport.rfc6020Instance(config), ListStatementSupport.rfc7950Instance(config))
+            .addSupport(
+                new NotificationStatementRFC6020Support(config),
+                new NotificationStatementRFC7950Support(config))
+            .addSupport(OutputStatementSupport.rfc6020Instance(config), OutputStatementSupport.rfc7950Instance(config))
+            .addSupport(new RpcStatementSupport(config))
             .addSupport(new UniqueStatementSupport(config))
-            .addSupport(new UnitsStatementSupport(config))
-            .addSupport(new YinElementStatementSupport(config))
+
+            // documentation and similar cosmetic details
+            .addSupport(new StatusStatementSupport(config))
             .build();
     }
 
@@ -206,43 +233,41 @@ public final class RFC7950Reactors {
     private static StatementSupportBundle fullDeclarationBundle(final StatementSupportBundle stmtDefBundle,
             final XPathSupport xpathSupport, final YangParserConfiguration config) {
         return StatementSupportBundle.builderDerivedFrom(stmtDefBundle)
-            .addSupport(new LeafStatementSupport(config))
-            .addSupport(new ConfigStatementSupport(config))
-            .addSupport(new DeviationStatementSupport(config))
-            .addSupport(
-                DeviateStatementSupport.rfc6020Instance(config),
-                DeviateStatementSupport.rfc7950Instance(config))
-            .addSupport(ChoiceStatementSupport.rfc6020Instance(config), ChoiceStatementSupport.rfc7950Instance(config))
-            .addSupport(CaseStatementSupport.rfc6020Instance(config), CaseStatementSupport.rfc7950Instance(config))
-            .addSupport(new MustStatementSupport(xpathSupport, config))
-            .addSupport(new MandatoryStatementSupport(config))
-            .addSupport(new AnyxmlStatementSupport(config))
+            .addSupport(BaseTypeNamespace.BEHAVIOUR)
+            // FIXME: YANGTOOLS-1840: move most of these to
             .addSupport(new AnydataStatementSupport(config), VERSION_1_1)
-            .addSupport(NamespaceBehaviours.FEATURE)
-            .addSupport(
-                IfFeatureStatementSupport.rfc6020Instance(config),
-                IfFeatureStatementSupport.rfc7950Instance(config))
-            .addSupport(NamespaceBehaviours.GROUPING)
-            .addSupport(SourceGroupingNamespace.BEHAVIOUR)
-            .addSupport(new UsesStatementSupport(config))
-            .addSupport(new ErrorMessageStatementSupport(config))
-            .addSupport(new ErrorAppTagStatementSupport(config))
-            .addSupport(
-                LeafListStatementSupport.rfc6020Instance(config),
-                LeafListStatementSupport.rfc7950Instance(config))
-            .addSupport(new PresenceStatementSupport(config))
-            .addSupport(new MaxElementsStatementSupport(config))
-            .addSupport(new MinElementsStatementSupport(config))
-            .addSupport(new OrderedByStatementSupport(config))
-            .addSupport(new WhenStatementSupport(xpathSupport, config))
+            .addSupport(new AnyxmlStatementSupport(config))
             .addSupport(AugmentImplicitHandlingNamespace.BEHAVIOUR)
             .addSupport(
                 AugmentStatementSupport.rfc6020Instance(config),
                 AugmentStatementSupport.rfc7950Instance(config))
+            .addSupport(CaseStatementSupport.rfc6020Instance(config), CaseStatementSupport.rfc7950Instance(config))
+            .addSupport(ChoiceStatementSupport.rfc6020Instance(config), ChoiceStatementSupport.rfc7950Instance(config))
+            .addSupport(new ConfigStatementSupport(config))
+            .addSupport(new ContactStatementSupport(config))
+            .addSupport(new DescriptionStatementSupport(config))
+            .addSupport(new DeviationStatementSupport(config))
+            .addSupport(
+                DeviateStatementSupport.rfc6020Instance(config),
+                DeviateStatementSupport.rfc7950Instance(config))
+            .addSupport(new LeafStatementSupport(config))
+            .addSupport(
+                LeafListStatementSupport.rfc6020Instance(config),
+                LeafListStatementSupport.rfc7950Instance(config))
+            .addSupport(new MandatoryStatementSupport(config))
+            .addSupport(new MaxElementsStatementSupport(config))
+            .addSupport(new MinElementsStatementSupport(config))
+            .addSupport(new MustStatementSupport(xpathSupport, config))
+            .addSupport(new OrderedByStatementSupport(config))
+            .addSupport(new OrganizationStatementSupport(config))
+            .addSupport(new PresenceStatementSupport(config))
+            .addSupport(new ReferenceStatementSupport(config))
             .addSupport(RefineStatementSupport.rfc6020Instance(config), RefineStatementSupport.rfc7950Instance(config))
-            .addSupport(new FeatureStatementSupport(config))
-            .addSupport(new PositionStatementSupport(config))
-            .addSupport(new ValueStatementSupport(config))
+            .addSupport(new UnitsStatementSupport(config))
+            .addSupport(NamespaceBehaviours.GROUPING)
+            .addSupport(SourceGroupingNamespace.BEHAVIOUR)
+            .addSupport(new UsesStatementSupport(config))
+            .addSupport(new WhenStatementSupport(xpathSupport, config))
             .build();
     }
 
@@ -321,7 +346,7 @@ public final class RFC7950Reactors {
     private static @NonNull CustomCrossSourceStatementReactorBuilder vanillaReactorBuilder(
             final @NonNull XPathSupport xpathSupport, final YangParserConfiguration config) {
         final var linkageBundle = sourceLinkageBundle(config);
-        final var stmtDefBundle = stmtDefBundle(linkageBundle, config);
+        final var stmtDefBundle = statementDefinitionBundle(linkageBundle, config);
         final var fullDeclarationBundle = fullDeclarationBundle(stmtDefBundle, xpathSupport, config);
 
         return new CustomCrossSourceStatementReactorBuilder(StatementSupportBundle.VERSIONS_ALL)
