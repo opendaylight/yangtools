@@ -11,6 +11,7 @@ import static org.opendaylight.yangtools.yang.common.YangVersion.VERSION_1_1;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.rfc6020.parser.PathStatementSupport;
 import org.opendaylight.yangtools.rfc7950.parser.IfFeatureStatementSupport;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -88,6 +89,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses.SourceGroupingNa
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses.UsesStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceBehaviours;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
@@ -100,6 +102,9 @@ import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
  */
 @Beta
 public final class RFC7950Reactors {
+    /**
+     * The {@link StatementSupportBundle} corresponding to the configuration supplied by reactor configuration.
+     */
     private static final StatementSupportBundle INIT_BUNDLE =
         StatementSupportBundle.builder(StatementSupportBundle.VERSIONS_ALL)
             .addSupport(ValidationBundles.BEHAVIOUR)
@@ -111,16 +116,34 @@ public final class RFC7950Reactors {
         // Hidden on purpose
     }
 
-    private static StatementSupportBundle linkageBundle(final YangParserConfiguration config) {
+    /**
+     * Return the {@link StatementSupportBundle} for {@link ModelProcessingPhase#SOURCE_LINKAGE}. This consists of
+     * {@link ReactorNamespace}s populated by reactor and the statements that must have informed that process.
+     *
+     * @param config the {@link YangParserConfiguration}
+     * @return a {@link StatementSupportBundle}
+     */
+    @NonNullByDefault
+    private static StatementSupportBundle sourceLinkageBundle(final YangParserConfiguration config) {
         return StatementSupportBundle.builderDerivedFrom(INIT_BUNDLE)
-            .addSupport(ModuleStatementSupport.rfc6020Instance(config), ModuleStatementSupport.rfc7950Instance(config))
-            .addSupport(
-                SubmoduleStatementSupport.rfc6020Instance(config),
-                SubmoduleStatementSupport.rfc7950Instance(config))
             .addSupport(NamespaceBehaviours.IMPORTED_MODULE)
             .addSupport(NamespaceBehaviours.INCLUDED_SUBMODULE)
             .addSupport(NamespaceBehaviours.MODULE)
             .addSupport(NamespaceBehaviours.NAMESPACE_TO_MODULE)
+            .addSupport(new BelongsToStatementSupport(config))
+            .addSupport(ImportStatementSupport.rfc6020Instance(config), ImportStatementSupport.rfc7950Instance(config))
+            .addSupport(
+                IncludeStatementSupport.rfc6020Instance(config),
+                IncludeStatementSupport.rfc7950Instance(config))
+            .addSupport(ModuleStatementSupport.rfc6020Instance(config), ModuleStatementSupport.rfc7950Instance(config))
+            .addSupport(new NamespaceStatementSupport(config))
+            .addSupport(new PrefixStatementSupport(config))
+            .addSupport(new RevisionStatementSupport(config))
+            .addSupport(new RevisionDateStatementSupport(config))
+            .addSupport(
+                SubmoduleStatementSupport.rfc6020Instance(config),
+                SubmoduleStatementSupport.rfc7950Instance(config))
+            .addSupport(new YangVersionStatementSupport(config))
             .build();
     }
 
@@ -133,7 +156,6 @@ public final class RFC7950Reactors {
             .addSupport(new ArgumentStatementSupport(config))
             .addSupport(new BaseStatementSupport(config))
             .addSupport(BaseTypeNamespace.BEHAVIOUR)
-            .addSupport(new BelongsToStatementSupport(config))
             .addSupport(BitStatementSupport.rfc6020Instance(config), BitStatementSupport.rfc7950Instance(config))
             .addSupport(new ContactStatementSupport(config))
             .addSupport(
@@ -152,16 +174,11 @@ public final class RFC7950Reactors {
                 IdentityStatementSupport.rfc6020Instance(config),
                 IdentityStatementSupport.rfc7950Instance(config))
             .addSupport(NamespaceBehaviours.IDENTITY)
-            .addSupport(ImportStatementSupport.rfc6020Instance(config), ImportStatementSupport.rfc7950Instance(config))
-            .addSupport(
-                IncludeStatementSupport.rfc6020Instance(config),
-                IncludeStatementSupport.rfc7950Instance(config))
             .addSupport(InputStatementSupport.rfc6020Instance(config), InputStatementSupport.rfc7950Instance(config))
             .addSupport(new KeyStatementSupport(config))
             .addSupport(new LengthStatementSupport(config))
             .addSupport(ListStatementSupport.rfc6020Instance(config), ListStatementSupport.rfc7950Instance(config))
             .addSupport(new ModifierStatementSupport(config), VERSION_1_1)
-            .addSupport(new NamespaceStatementSupport(config))
             .addSupport(
                 new NotificationStatementRFC6020Support(config),
                 new NotificationStatementRFC7950Support(config))
@@ -171,12 +188,9 @@ public final class RFC7950Reactors {
             .addSupport(
                 PatternStatementSupport.rfc6020Instance(config),
                 PatternStatementSupport.rfc7950Instance(config))
-            .addSupport(new PrefixStatementSupport(config))
             .addSupport(new RangeStatementSupport(config))
             .addSupport(new ReferenceStatementSupport(config))
             .addSupport(new RequireInstanceStatementSupport(config))
-            .addSupport(new RevisionStatementSupport(config))
-            .addSupport(new RevisionDateStatementSupport(config))
             .addSupport(new RpcStatementSupport(config))
             .addSupport(new StatusStatementSupport(config))
             .addSupport(new TypeStatementRFC6020Support(config), new TypeStatementRFC7950Support(config))
@@ -184,7 +198,6 @@ public final class RFC7950Reactors {
             .addSupport(NamespaceBehaviours.TYPE)
             .addSupport(new UniqueStatementSupport(config))
             .addSupport(new UnitsStatementSupport(config))
-            .addSupport(new YangVersionStatementSupport(config))
             .addSupport(new YinElementStatementSupport(config))
             .build();
     }
@@ -263,7 +276,7 @@ public final class RFC7950Reactors {
 
     private static @NonNull CustomCrossSourceStatementReactorBuilder vanillaReactorBuilder(
             final @NonNull XPathSupport xpathSupport, final YangParserConfiguration config) {
-        final var linkageBundle = linkageBundle(config);
+        final var linkageBundle = sourceLinkageBundle(config);
         final var stmtDefBundle = stmtDefBundle(linkageBundle, config);
         final var fullDeclarationBundle = fullDeclarationBundle(stmtDefBundle, xpathSupport, config);
 
