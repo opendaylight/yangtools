@@ -67,33 +67,31 @@ public final class TypedefStatementSupport extends
     public void onFullDefinitionDeclared(final Mutable<QName, TypedefStatement, TypedefEffectiveStatement> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        final Mutable<?, ?, ?> parent = stmt.getParentContext();
-        if (parent != null) {
-            // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
-            // declarations and parent declarations which have already been declared.
-            checkConflict(parent, stmt);
-            parent.addToNs(ParserNamespaces.TYPE, stmt.getArgument(), stmt);
+        final var parent = stmt.coerceParentContext();
+        // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
+        // declarations and parent declarations which have already been declared.
+        checkConflict(parent, stmt);
+        parent.addToNs(ParserNamespaces.TYPE, stmt.getArgument(), stmt);
 
-            final StmtContext<?, ?, ?> grandParent = parent.getParentContext();
-            if (grandParent != null) {
-                // Shadowing check: make sure grandparent does not see a conflicting definition. This is required to
-                // ensure that a typedef in child scope does not shadow a typedef in parent scope which occurs later in
-                // the text. For that check we need the full declaration of our model.
+        final var grandParent = parent.getParentContext();
+        if (grandParent != null) {
+            // Shadowing check: make sure grandparent does not see a conflicting definition. This is required to
+            // ensure that a typedef in child scope does not shadow a typedef in parent scope which occurs later in
+            // the text. For that check we need the full declaration of our model.
 
-                final ModelActionBuilder action = stmt.newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
-                action.requiresCtx(grandParent.getRoot(), ModelProcessingPhase.FULL_DECLARATION);
-                action.apply(new InferenceAction() {
-                    @Override
-                    public void apply(final InferenceContext ctx) {
-                        checkConflict(grandParent, stmt);
-                    }
+            final ModelActionBuilder action = stmt.newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
+            action.requiresCtx(grandParent.getRoot(), ModelProcessingPhase.FULL_DECLARATION);
+            action.apply(new InferenceAction() {
+                @Override
+                public void apply(final InferenceContext ctx) {
+                    checkConflict(grandParent, stmt);
+                }
 
-                    @Override
-                    public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                        // No-op
-                    }
-                });
-            }
+                @Override
+                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                    // No-op
+                }
+            });
         }
     }
 
