@@ -520,7 +520,18 @@ abstract sealed class ReactorStmtCtx<A, D extends DeclaredStatement<A>, E extend
         if (executionOrder == ExecutionOrder.NULL) {
             throw new VerifyException("null execution order");
         }
-        return executionOrder() >= executionOrder || doTryToCompletePhase(executionOrder);
+        final var currentOrder = executionOrder();
+        return currentOrder >= executionOrder || tryToCompletePhase(currentOrder, executionOrder);
+    }
+
+    final boolean tryToCompletePhase(final byte currentOrder, final byte targetOrder) {
+        byte next = (byte) (currentOrder + 1);
+        do {
+            if (!doTryToCompletePhase(next)) {
+                return false;
+            }
+        } while (++next <= targetOrder);
+        return true;
     }
 
     abstract boolean doTryToCompletePhase(byte targetOrder);
