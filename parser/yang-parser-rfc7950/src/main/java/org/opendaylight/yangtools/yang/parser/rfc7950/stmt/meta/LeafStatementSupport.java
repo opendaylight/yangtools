@@ -44,8 +44,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.UndeclaredCurrent;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -68,12 +66,6 @@ public final class LeafStatementSupport
 
     public LeafStatementSupport(final YangParserConfiguration config) {
         super(LeafStatement.DEF, instantiatedPolicy(), config, SUBSTATEMENT_VALIDATOR);
-    }
-
-    @Override
-    public void onFullDefinitionDeclared(final Mutable<QName, LeafStatement, LeafEffectiveStatement> ctx) {
-        super.onFullDefinitionDeclared(ctx);
-        StmtContextUtils.validateIfFeatureAndWhenOnListKeys(ctx);
     }
 
     @Override
