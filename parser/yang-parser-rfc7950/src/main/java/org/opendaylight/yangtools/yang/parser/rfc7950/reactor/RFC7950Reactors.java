@@ -209,7 +209,15 @@ public final class RFC7950Reactors {
             .addSupport(new ValueStatementSupport(config))
             .addSupport(NamespaceBehaviours.TYPE)
 
-            // FIXME: can the rest go to full declaration?
+            .build();
+    }
+
+    @NonNullByDefault
+    private static StatementSupportBundle fullDeclarationBundle(final StatementSupportBundle stmtDefBundle,
+            final XPathSupport xpathSupport, final YangParserConfiguration config) {
+        return StatementSupportBundle.builderDerivedFrom(stmtDefBundle)
+            .addSupport(BaseTypeNamespace.BEHAVIOUR)
+
             .addSupport(NamespaceBehaviours.SCHEMA_TREE)
             .addSupport(new ActionStatementSupport(config), VERSION_1_1)
             .addSupport(
@@ -228,14 +236,7 @@ public final class RFC7950Reactors {
             .addSupport(new RpcStatementSupport(config))
             .addSupport(new StatusStatementSupport(config))
             .addSupport(new UniqueStatementSupport(config))
-            .build();
-    }
 
-    @NonNullByDefault
-    private static StatementSupportBundle fullDeclarationBundle(final StatementSupportBundle stmtDefBundle,
-            final XPathSupport xpathSupport, final YangParserConfiguration config) {
-        return StatementSupportBundle.builderDerivedFrom(stmtDefBundle)
-            .addSupport(BaseTypeNamespace.BEHAVIOUR)
             .addSupport(new AnydataStatementSupport(config), VERSION_1_1)
             .addSupport(new AnyxmlStatementSupport(config))
             .addSupport(AugmentImplicitHandlingNamespace.BEHAVIOUR)
