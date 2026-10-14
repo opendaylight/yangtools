@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.HashSet;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Ordering;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -29,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
@@ -58,7 +56,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractSchemaTreeStateme
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.QNameWithFlagsEffectiveStatementState;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -158,21 +155,7 @@ public final class ListStatementSupport
             final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
         final var keyStmt = findFirstStatement(substatements, KeyEffectiveStatement.class);
         final KeyArgument keyArgument;
-        if (keyStmt != null) {
-            keyArgument = keyStmt.argument();
-            final var possibleLeafQNamesForKey = new HashSet<QName>();
-            for (var effectiveStatement : substatements) {
-                if (effectiveStatement instanceof LeafEffectiveStatement leaf) {
-                    possibleLeafQNamesForKey.add(leaf.argument());
-                }
-            }
-            for (var keyQName : keyArgument) {
-                if (!possibleLeafQNamesForKey.contains(keyQName)) {
-                    throw new InferenceException(stmt, "Key '%s' misses node '%s' in list '%s'",
-                        keyStmt.requireDeclared().rawArgument(), keyQName.getLocalName(), stmt.argument());
-                }
-            }
-        } else {
+        if (keyStmt == null) {
             keyArgument = null;
             if (warnForUnkeyedLists && Boolean.TRUE.equals(stmt.effectiveConfig())) {
                 // FIXME: This is not easily testable and assumes the context of the calling thread, whereas logging
@@ -185,6 +168,8 @@ public final class ListStatementSupport
                     While this is fine with OpenDaylight, it can cause interoperability issues with other systems \
                     [defined at {}]""", stmt.argument(), stmt.sourceReference());
             }
+        } else {
+            keyArgument = keyStmt.argument();
         }
 
         final int flags = computeFlags(stmt, substatements);

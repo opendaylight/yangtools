@@ -170,6 +170,7 @@ public final class StmtContextUtils {
         if (parent == null) {
             return;
         }
+
         final var listCtx = parent.asDeclaring(ListStatement.DEF);
         if (listCtx == null) {
             return;
@@ -202,24 +203,22 @@ public final class StmtContextUtils {
     private static void validateIfFeatureOnLeaf(final StmtContext<QName, ListStatement, ?> listCtx,
             final KeyArgument keyArg, final StmtContext<QName, LeafStatement, ?> leafCtx) {
         // check if the leaf is part of the argument
-        if (!keyArg.contains(leafCtx.getArgument())) {
-            return;
+        if (keyArg.contains(leafCtx.getArgument())) {
+            inferUnconditionalLeaf(listCtx, leafCtx);
         }
+    }
 
+    public static void inferUnconditionalLeaf(final StmtContext<QName, ListStatement, ?> listCtx,
+            final StmtContext<QName, LeafStatement, ?> leafCtx) {
         // collect all offending statements
         final var it = leafCtx.allSubstatementsStream()
             .filter(stmt -> stmt.producesAnyOf(IfFeatureStatement.DEF, WhenStatement.DEF))
-            .toList()
             .iterator();
-
-        // check if we are happy
-        if (!it.hasNext()) {
-            return;
+        if (it.hasNext()) {
+            final var ex = reportConditionalLeaf(listCtx, leafCtx, it.next());
+            it.forEachRemaining(stmt -> ex.addSuppressed(reportConditionalLeaf(listCtx, leafCtx, stmt)));
+            throw ex;
         }
-
-        final var ex = reportConditionalLeaf(listCtx, leafCtx, it.next());
-        it.forEachRemaining(stmt -> ex.addSuppressed(reportConditionalLeaf(listCtx, leafCtx, stmt)));
-        throw ex;
     }
 
     private static @NonNull SourceException reportConditionalLeaf(final StmtContext<QName, ListStatement, ?> listCtx,
