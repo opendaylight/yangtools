@@ -18,8 +18,7 @@ class ListKeysTest extends AbstractYangTest {
     @Test
     void incorrectListKeysTest1() {
         assertInferenceExceptionMessage("/list-keys-test/incorrect-list-keys-test.yang")
-            .startsWith(
-                "Key 'test1_key1 test1_key2' misses node 'test1_key2' in list '(incorrect-list-keys-test)test1' [at ")
+            .startsWith("Key 'test1_key1 test1_key2' component 'test1_key2' refers to a child list [at ")
             .endsWith(":6:5]");
     }
 
@@ -34,14 +33,14 @@ class ListKeysTest extends AbstractYangTest {
     @Test
     void incorrectListKeysTest3() {
         assertInferenceExceptionMessage("/list-keys-test/incorrect-list-keys-test3.yang")
-            .startsWith("Key 'grp_list' misses node 'grp_list' in list '(incorrect-list-keys-test3)test1' [at ")
+            .startsWith("Key 'grp_list' component 'grp_list' refers to a child list [at ")
             .endsWith(":17:5]");
     }
 
     @Test
     void incorrectListKeysTest4()  {
         assertInferenceExceptionMessage("/list-keys-test/incorrect-list-keys-test4.yang")
-            .startsWith("Key 'grp_leaf' misses node 'grp_leaf' in list '(incorrect-list-keys-test4)test1' [at ")
+            .startsWith("Key 'grp_leaf' component 'grp_leaf' refers to a child list [at ")
             .endsWith(":11:5]");
     }
 }
