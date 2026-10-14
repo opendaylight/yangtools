@@ -11,26 +11,38 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CommonStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -60,6 +72,44 @@ public final class KeyStatementSupport
             // Identity comparison is sufficient because adaptArgumentValue() is careful about reuse.
             (copy, current, substatements) -> copy.getArgument() == current.getArgument()),
             config, SUBSTATEMENT_VALIDATOR);
+    }
+
+    @Override
+    public void onFullDefinitionDeclared(final Mutable<KeyArgument, KeyStatement, KeyEffectiveStatement> stmt) {
+        super.onFullDefinitionDeclared(stmt);
+
+        final var list = stmt.coerceParentContext().asDeclaring(ListStatement.DEF);
+        if (list == null) {
+            return;
+        }
+
+        for (var qname : stmt.getArgument().asList()) {
+            final var action = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+            final var req = action.requiresCtx(list, ParserNamespaces.schemaTree(), qname,
+                ModelProcessingPhase.EFFECTIVE_MODEL);
+            action.apply(new InferenceAction() {
+                @Override
+                public void apply(final InferenceContext ctx) {
+                    final var child = req.resolve(ctx);
+                    final var leaf = child.asDeclaring(LeafStatement.DEF);
+                    if (leaf == null) {
+                        throw new InferenceException(stmt, "Key '%s' component '%s' refers to a child %s",
+                            stmt.getRawArgument(), qname.getLocalName(), child.publicDefinition().humanName());
+                    }
+
+                    // RFC7950 forbids use of 'if-feature' and 'when' on list keys
+                    if (list.sourceVersion() != YangVersion.VERSION_1) {
+                        StmtContextUtils.inferUnconditionalLeaf(list, leaf);
+                    }
+                }
+
+                @Override
+                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                    throw new InferenceException(stmt, "Key '%s' misses node '%s' in list '%s'",
+                        stmt.getRawArgument(), qname.getLocalName(), list.argument());
+                }
+            });
+        }
     }
 
     @Override
