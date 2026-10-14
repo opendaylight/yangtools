@@ -199,7 +199,7 @@ public final class StmtContextUtils {
         }
     }
 
-    private static void validateIfFeatureOnLeaf(final StmtContext<QName, ListStatement, ?> listCtx,
+    public static void validateIfFeatureOnLeaf(final StmtContext<QName, ListStatement, ?> listCtx,
             final KeyArgument keyArg, final StmtContext<QName, LeafStatement, ?> leafCtx) {
         // check if the leaf is part of the argument
         if (!keyArg.contains(leafCtx.getArgument())) {
@@ -209,7 +209,6 @@ public final class StmtContextUtils {
         // collect all offending statements
         final var it = leafCtx.allSubstatementsStream()
             .filter(stmt -> stmt.producesAnyOf(IfFeatureStatement.DEF, WhenStatement.DEF))
-            .toList()
             .iterator();
 
         // check if we are happy
