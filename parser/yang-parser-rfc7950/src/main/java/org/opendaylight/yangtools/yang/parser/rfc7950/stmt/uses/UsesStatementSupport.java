@@ -50,7 +50,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundles;
@@ -94,7 +93,6 @@ public final class UsesStatementSupport
         final var targetNodePre = usesAction.mutatesEffectiveCtx(usesNode.getParentContext());
 
         usesAction.apply(new InferenceAction() {
-
             @Override
             public void apply(final InferenceContext ctx) {
                 final var targetNodeStmtCtx = targetNodePre.resolve(ctx);
@@ -109,7 +107,6 @@ public final class UsesStatementSupport
                     }
                 }
 
-                StmtContextUtils.validateIfFeatureAndWhenOnListKeys(usesNode);
                 usesNode.addToNs(SourceGroupingNamespace.INSTANCE, Empty.value(), sourceGrpStmtCtx);
             }
 
