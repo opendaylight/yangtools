@@ -25,11 +25,18 @@ import org.opendaylight.yangtools.yang.common.YangDataName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.PathMixin;
 import org.opendaylight.yangtools.yang.data.util.context.ContainerContext;
 import org.opendaylight.yangtools.yang.data.util.context.YangDataContext;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
+import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DataTreeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 /**
@@ -227,6 +234,91 @@ public final class DataSchemaContextTree {
         }
 
         return CheckedValue.ofValue(new NodeAndStack(node, stack));
+    }
+
+    /**
+     * Find the context of the node an {@link EffectiveStatementInference} points to. An empty inference points to
+     * {@link #getRoot()}.
+     *
+     * <p>Nodes in the data tree and in a {@code yang-data} come from this tree, so lookups through them are shared by
+     * every user of this tree. An {@code rpc}, {@code action}, {@code notification} or {@code grouping} is not part of
+     * the data tree: the contexts at and below it are created for this call only.
+     *
+     * @param inference the inference, which has to come from this tree's model context
+     * @return the context, or {@code null} if the inference ends at a {@code choice}, a {@code case} or a
+     *         {@code grouping}, or passes through a statement that has no context
+     * @throws NullPointerException if {@code inference} is {@code null}
+     * @throws IllegalArgumentException if {@code inference} comes from a different model context
+     */
+    public @Nullable DataSchemaContext childByInference(final @NonNull EffectiveStatementInference inference) {
+        if (!modelContext.equals(inference.modelContext())) {
+            throw new IllegalArgumentException("Mismatched inference: expecting model context " + modelContext
+                + ", got " + inference.modelContext());
+        }
+
+        DataSchemaContext current = root;
+        // Set while the inference stands at a choice or a case, so we know where it ended
+        EffectiveStatement<?, ?> lastChoiceOrCase = null;
+        // Set after a grouping, until the first data node inside it
+        boolean inGrouping = false;
+        for (var stmt : inference.statementPath()) {
+            lastChoiceOrCase = null;
+            switch (stmt) {
+                case DataTreeEffectiveStatement<?> data -> {
+                    if (inGrouping && data instanceof DataSchemaNode schema) {
+                        // A grouping is not part of the data tree, so nothing below it is shared: start a context of
+                        // our own at its first data node
+                        current = DataSchemaContext.of(schema);
+                        inGrouping = false;
+                    } else {
+                        current = childOf(current, data.argument());
+                    }
+                }
+                // A choice and its case have no context in the tree: the next child is found by its name alone
+                case ChoiceEffectiveStatement choice -> lastChoiceOrCase = choice;
+                case CaseEffectiveStatement caze -> lastChoiceOrCase = caze;
+                case YangDataEffectiveStatement yangDataStmt -> current = childYangData(yangDataStmt.argument());
+                case DataSchemaCompat<?, ?> compat -> current = DataSchemaContext.of(compat.toDataSchemaNode());
+                case GroupingEffectiveStatement grouping -> inGrouping = true;
+                default -> current = null;
+            }
+            if (current == null) {
+                return null;
+            }
+        }
+
+        if (inGrouping) {
+            // A grouping has no context of its own, so data cannot start there
+            return null;
+        }
+        return switch (lastChoiceOrCase) {
+            case null -> current;
+            // Neither a choice nor a case has a context in the tree, so data cannot start there
+            default -> null;
+        };
+    }
+
+    private static @Nullable DataSchemaContext childOf(final DataSchemaContext parent, final QName qname) {
+        // A list or leaf-list context stands for the whole list: its entries have a context of their own
+        final var current = parent instanceof PathMixin list
+            && list.stepTowards(list.dataSchemaNode().getQName()) instanceof Step.ToEntry entry
+                ? entry.child() : parent;
+        if (!(current instanceof Composite composite)) {
+            return null;
+        }
+
+        // A child inside a choice is found through the choice and then through its case
+        Step step = composite.stepTowards(qname);
+        while (step != null && step.child() instanceof PathMixin mixin) {
+            final var next = mixin.stepTowards(qname);
+            if (next instanceof Step.ToEntry) {
+                // A list or leaf-list: its own name is what we were looking for
+                break;
+            }
+            // Into the case, or null if the name is the choice's own name, which is never a data node
+            step = next;
+        }
+        return step == null ? null : step.child();
     }
 
     public DataSchemaContext.@NonNull Composite getRoot() {
