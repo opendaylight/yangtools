@@ -10,21 +10,17 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.UnrecognizedEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -35,7 +31,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -49,7 +44,7 @@ public final class ExtensionStatementSupport
             .addOptional(StatusStatement.DEF)
             .build();
 
-    private final YangParserConfiguration config;
+    private final @NonNull YangParserConfiguration config;
 
     public ExtensionStatementSupport(final YangParserConfiguration config) {
         super(ExtensionStatement.DEF, StatementPolicy.reject(), config, SUBSTATEMENT_VALIDATOR);
@@ -67,22 +62,15 @@ public final class ExtensionStatementSupport
         stmt.addToNs(ParserNamespaces.EXTENSION, name, stmt);
 
         // FIXME: 17.0.0: setUnsupported() if there is no corresponding reactor support, mirroring how we project
-        //                supported features
+        //                supported features. That has impact on SchemaContext.getExtensions(): we probably want to
+        //                deprecate ExtensionDefinition as such as the first step towards full SchemaNode deprecation
     }
 
     @Override
     public void onStatementDefinitionDeclared(
             final Mutable<QName, ExtensionStatement, ExtensionEffectiveStatement> stmt) {
-        final var argument = StmtContextUtils.findFirstDeclaredSubstatement(stmt, ArgumentStatement.DEF);
-        final var yinElement = StmtContextUtils.findFirstDeclaredSubstatement(stmt, YinElementStatement.DEF);
-        final var argDef = argument == null ? null
-            : ArgumentDefinition.<Object>of(Object.class, argument.getArgument(),
-                yinElement != null && yinElement.getArgument());
-
-        stmt.addToNs(StatementDefinitions.NAMESPACE, stmt.getArgument(), new UnrecognizedStatementSupport(
-            StatementDefinition.of(UnrecognizedStatement.class, UnrecognizedEffectiveStatement.class,
-                stmt.getArgument(), argDef),
-            config));
+        stmt.addToNs(StatementDefinitions.NAMESPACE, stmt.getArgument(),
+            UnrecognizedStatementSupport.ofExtension(stmt, config));
     }
 
     @Override

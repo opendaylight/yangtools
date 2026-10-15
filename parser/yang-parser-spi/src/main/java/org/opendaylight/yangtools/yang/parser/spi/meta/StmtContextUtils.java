@@ -58,6 +58,7 @@ public final class StmtContextUtils {
         return declaring == null ? null : declaring.getArgument();
     }
 
+    @Deprecated(since = "16.2.0", forRemoval = true)
     public static <A, D extends DeclaredStatement<A>> @Nullable StmtContext<A, D, ?> findFirstDeclaredSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final StatementDefinition<A, D, ?> def) {
         for (var subStmtContext : stmtContext.declaredSubstatements()) {
