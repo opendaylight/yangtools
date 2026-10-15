@@ -28,18 +28,24 @@ import java.util.Map.Entry;
 import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
-import org.opendaylight.yangtools.yang.common.XMLNamespace;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema.ChildReusePolicy;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.PathMixin;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree.Step;
 import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.MultipleEntryDataWithSchema;
-import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -61,10 +67,11 @@ public final class JsonParserStream implements Closeable, Flushable {
     static final String ANYXML_ARRAY_ELEMENT_ID = "array-element";
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonParserStream.class);
-    private final Deque<XMLNamespace> namespaces = new ArrayDeque<>();
+    private final Deque<QNameModule> namespaces = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
     private final DataSchemaNode parentNode;
+    private final @Nullable DataSchemaContext parentContext;
 
     private final SchemaInferenceStack stack;
 
@@ -93,6 +100,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         } else {
             parentNode = stack.modelContext();
         }
+        parentContext = codecs.dataContextTree().childByInference(stack.toInference());
     }
 
     /**
@@ -184,7 +192,8 @@ public final class JsonParserStream implements Closeable, Flushable {
             // FIXME: this has a special-case bypass for SchemaContext, where we end up emitting just the child while
             //        the usual of() would result in SchemaContext.NAME being the root
             final var compositeNodeDataWithSchema = new CompositeNodeDataWithSchema<>(parentNode);
-            read(reader, compositeNodeDataWithSchema);
+            // If the parent is a list - the parent's children are the children of the entries
+            read(reader, compositeNodeDataWithSchema, entryContext(parentContext));
             compositeNodeDataWithSchema.write(writer);
 
             return this;
@@ -241,14 +250,15 @@ public final class JsonParserStream implements Closeable, Flushable {
     private void readAnyXmlValue(final JsonReader in, final AnyXmlNodeDataWithSchema parent,
             final String anyXmlObjectName) throws IOException {
         final var doc = UntrustedXML.newDocumentBuilder().newDocument();
-        final var rootElement = doc.createElementNS(getCurrentNamespace().toString(), anyXmlObjectName);
+        final var rootElement = doc.createElementNS(getCurrentNamespace().namespace().toString(), anyXmlObjectName);
         doc.appendChild(rootElement);
         traverseAnyXmlValue(in, doc, rootElement);
 
         parent.setValue(new DOMSource(doc.getDocumentElement()));
     }
 
-    private void read(final JsonReader in, AbstractNodeDataWithSchema<?> parent) throws IOException {
+    private void read(final JsonReader in, AbstractNodeDataWithSchema<?> parent,
+            @Nullable DataSchemaContext context) throws IOException {
         switch (in.peek()) {
             case STRING:
             case NUMBER:
@@ -265,9 +275,9 @@ public final class JsonParserStream implements Closeable, Flushable {
                 in.beginArray();
                 while (in.hasNext()) {
                     if (parent instanceof LeafNodeDataWithSchema) {
-                        read(in, parent);
+                        read(in, parent, context);
                     } else {
-                        read(in, newArrayEntry(parent));
+                        read(in, newArrayEntry(parent), entryContext(context));
                     }
                 }
                 in.endArray();
@@ -284,11 +294,15 @@ public final class JsonParserStream implements Closeable, Flushable {
                  */
                 if (isArray(parent)) {
                     parent = newArrayEntry(parent);
+                    context = entryContext(context);
                 }
+
+                final var parentSchema = parent.getSchema();
+                // Anything but a container or a list entry has no children to look up
+                final var composite = context instanceof Composite found ? found : null;
                 while (in.hasNext()) {
                     final var jsonElementName = in.nextName();
-                    final var parentSchema = parent.getSchema();
-                    final var namespaceAndName = resolveNamespace(jsonElementName, parentSchema);
+                    final var namespaceAndName = resolveNamespace(jsonElementName, parentSchema, composite);
                     final var localName = namespaceAndName.getKey();
                     final var namespace = namespaceAndName.getValue();
                     if (lenient && (localName == null || namespace == null)) {
@@ -302,22 +316,20 @@ public final class JsonParserStream implements Closeable, Flushable {
                         throw new JsonSyntaxException("Duplicate name " + jsonElementName + " in JSON input.");
                     }
 
-                    final var childDataSchemaNodes = ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema,
-                        localName, getCurrentNamespace());
-                    if (childDataSchemaNodes.isEmpty()) {
+                    final var qname = composite == null ? null : childQName(namespace, localName);
+                    final var child = qname == null ? null
+                        : ((CompositeNodeDataWithSchema<?>) parent).addChild(composite, qname, ChildReusePolicy.NOOP);
+                    if (child == null) {
                         throw new IllegalStateException(
                             "Schema for node with name %s and namespace %s does not exist at %s".formatted(
-                                localName, getCurrentNamespace(), parentSchema));
+                                localName, namespace.namespace(), parentSchema));
                     }
 
-                    final var qname = childDataSchemaNodes.peekLast().getQName();
-                    final var newChild = ((CompositeNodeDataWithSchema<?>) parent)
-                            .addChild(childDataSchemaNodes, ChildReusePolicy.NOOP);
-                    if (newChild instanceof AnyXmlNodeDataWithSchema anyxml) {
+                    if (child.data() instanceof AnyXmlNodeDataWithSchema anyxml) {
                         readAnyXmlValue(in, anyxml, jsonElementName);
                     } else {
                         stack.enterDataTree(qname);
-                        read(in, newChild);
+                        read(in, child.data(), child.context());
                         stack.exit();
                     }
                     removeNamespace();
@@ -327,6 +339,34 @@ public final class JsonParserStream implements Closeable, Flushable {
             default:
                 break;
         }
+    }
+
+    // A list or leaf-list context stands for the whole list: each of its entries has a context of its own
+    private static @Nullable DataSchemaContext entryContext(final @Nullable DataSchemaContext context) {
+        return context instanceof PathMixin list
+            && list.stepTowards(list.dataSchemaNode().getQName()) instanceof Step.ToEntry entry
+                ? entry.child() : context;
+    }
+
+    // Returns null if localName is not a valid YANG identifier, so no schema node can have it
+    private static @Nullable QName childQName(final QNameModule module, final String localName) {
+        final var unqualified = Unqualified.tryLocalName(localName);
+        return unqualified == null ? null : unqualified.bindTo(module);
+    }
+
+    // A choice's own name is found as well, but it never names an element: only names found inside the choice count
+    private static boolean hasDataChild(final Composite composite, final QName qname) {
+        Step step = composite.stepTowards(qname);
+        while (step != null && step.child() instanceof PathMixin mixin) {
+            final var next = mixin.stepTowards(qname);
+            if (next instanceof Step.ToEntry) {
+                // A list or leaf-list: its own name is what we were looking for
+                break;
+            }
+            // Into the case, or null if the name is the choice's own name
+            step = next;
+        }
+        return step != null;
     }
 
     private static boolean isArray(final AbstractNodeDataWithSchema<?> parent) {
@@ -365,30 +405,38 @@ public final class JsonParserStream implements Closeable, Flushable {
         namespaces.pop();
     }
 
-    private void addNamespace(final XMLNamespace namespace) {
+    private void addNamespace(final QNameModule namespace) {
         namespaces.push(namespace);
     }
 
-    private Entry<String, XMLNamespace> resolveNamespace(final String childName, final DataSchemaNode dataSchemaNode) {
+    private Entry<String, QNameModule> resolveNamespace(final String childName, final DataSchemaNode dataSchemaNode,
+            final @Nullable Composite composite) {
         final int lastIndexOfColon = childName.lastIndexOf(':');
         final String nodeNamePart;
-        XMLNamespace namespace;
+        QNameModule namespace;
         if (lastIndexOfColon != -1) {
             final var moduleNamePart = childName.substring(0, lastIndexOfColon);
             nodeNamePart = childName.substring(lastIndexOfColon + 1);
 
             final var m = codecs.modelContext().findModuleStatements(moduleNamePart).iterator();
-            namespace = m.hasNext() ? m.next().localQNameModule().namespace() : null;
+            namespace = m.hasNext() ? m.next().localQNameModule() : null;
         } else {
             nodeNamePart = childName;
             namespace = null;
         }
 
         if (namespace == null) {
+            // Usually the child is in the parent's namespace, which is a single lookup. Only otherwise do we scan the
+            // children for any namespace holding such a name.
+            final var current = getCurrentNamespace();
+            final var currentQName = composite == null || current == null ? null
+                : childQName(current, nodeNamePart);
+            if (currentQName != null && hasDataChild(composite, currentQName)) {
+                return new SimpleImmutableEntry<>(nodeNamePart, current);
+            }
+
             final var potentialUris = resolveAllPotentialNamespaces(nodeNamePart, dataSchemaNode);
-            if (potentialUris.contains(getCurrentNamespace())) {
-                namespace = getCurrentNamespace();
-            } else if (potentialUris.size() == 1) {
+            if (potentialUris.size() == 1) {
                 namespace = potentialUris.iterator().next();
             } else if (potentialUris.size() > 1) {
                 throw new IllegalStateException("Choose suitable module name for element " + nodeNamePart + ":"
@@ -402,27 +450,27 @@ public final class JsonParserStream implements Closeable, Flushable {
         return new SimpleImmutableEntry<>(nodeNamePart, namespace);
     }
 
-    private String toModuleNames(final Set<XMLNamespace> potentialUris) {
+    private String toModuleNames(final Set<QNameModule> potentialUris) {
         final var sb = new StringBuilder();
         for (var potentialUri : potentialUris) {
             sb.append('\n');
             // FIXME how to get information about revision from JSON input? currently first available is used.
-            sb.append(codecs.modelContext().findModuleStatements(potentialUri).iterator().next()
+            sb.append(codecs.modelContext().findModuleStatements(potentialUri.namespace()).iterator().next()
                 .argument().getLocalName());
         }
         return sb.toString();
     }
 
-    private Set<XMLNamespace> resolveAllPotentialNamespaces(final String elementName,
+    private Set<QNameModule> resolveAllPotentialNamespaces(final String elementName,
             final DataSchemaNode dataSchemaNode) {
-        final var potentialUris = new HashSet<XMLNamespace>();
+        final var potentialUris = new HashSet<QNameModule>();
         final var choices = new HashSet<ChoiceSchemaNode>();
         if (dataSchemaNode instanceof DataNodeContainer container) {
             for (var childSchemaNode : container.getChildNodes()) {
                 if (childSchemaNode instanceof ChoiceSchemaNode choice) {
                     choices.add(choice);
                 } else if (childSchemaNode.getQName().getLocalName().equals(elementName)) {
-                    potentialUris.add(childSchemaNode.getQName().getNamespace());
+                    potentialUris.add(childSchemaNode.getQName().getModule());
                 }
             }
 
@@ -435,7 +483,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         return potentialUris;
     }
 
-    private XMLNamespace getCurrentNamespace() {
+    private QNameModule getCurrentNamespace() {
         return namespaces.peek();
     }
 

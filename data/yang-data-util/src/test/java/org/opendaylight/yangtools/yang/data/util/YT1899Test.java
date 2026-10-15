@@ -189,6 +189,33 @@ class YT1899Test {
     }
 
     @Test
+    void inferenceEndingAtCase() {
+        final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
+        stack.enterSchemaTree(TOP);
+        stack.enterChoice(OUTER);
+        stack.enterSchemaTree(FIRST);
+        final var first = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
+        assertEquals(FIRST, first.dataSchemaNode().getQName());
+        // A case is not part of the tree, so each call creates its context anew
+        assertNotSame(first, TREE.childByInference(stack.toInference()));
+
+        // Its own children and those of a choice inside it are known, but not those of other cases
+        final var firstLeaf = first.childByQName(FIRST_LEAF);
+        assertNotNull(firstLeaf);
+        assertEquals(FIRST_LEAF, firstLeaf.dataSchemaNode().getQName());
+        assertInstanceOf(DataSchemaContext.PathMixin.class, first.childByQName(INNER_LEAF));
+        assertNull(first.childByQName(SECOND_LEAF));
+
+        // Adding a child does not add the choice and case where the data starts
+        final var data = CompositeNodeDataWithSchema.of(first.dataSchemaNode());
+        final var child = data.addChild(first, FIRST_LEAF, ChildReusePolicy.NOOP);
+        assertNotNull(child);
+        assertInstanceOf(LeafNodeDataWithSchema.class, child.data());
+        assertNull(data.addChild(first, SECOND_LEAF, ChildReusePolicy.NOOP));
+        assertEquals(1, data.childSizeHint());
+    }
+
+    @Test
     void rpcInferenceIsNotShared() {
         final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
         stack.enterSchemaTree(THUD);
@@ -241,7 +268,9 @@ class YT1899Test {
         stack.enterChoice(GRP_CHOICE);
         assertNull(TREE.childByInference(stack.toInference()));
         stack.enterSchemaTree(GRP_CASE);
-        assertNull(TREE.childByInference(stack.toInference()));
+        // Like a case in the data tree, a case inside a grouping gets a context of its own
+        final var caze = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
+        assertEquals(GRP_CASE, caze.dataSchemaNode().getQName());
 
         stack.enterSchemaTree(GRP_CASE_LEAF);
         final var leaf = TREE.childByInference(stack.toInference());

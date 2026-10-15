@@ -116,6 +116,7 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
         }
     }
 
+    private final @NonNull DataSchemaContextTree dataContextTree;
     private final @NonNull InstanceIdentifierJSONCodec iidCodec;
 
     @SuppressFBWarnings(value = "MC_OVERRIDABLE_METHOD_CALL_IN_CONSTRUCTOR",
@@ -124,7 +125,15 @@ public abstract sealed class JSONCodecFactory extends AbstractInputStreamNormali
             final @NonNull CodecCache<JSONCodec<?>> cache,
             final BiFunction<DataSchemaContextTree, JSONCodecFactory, @NonNull InstanceIdentifierJSONCodec> iidCodec) {
         super(dataContextTree.modelContext(), cache);
+        this.dataContextTree = dataContextTree;
         this.iidCodec = verifyNotNull(iidCodec.apply(dataContextTree, this));
+    }
+
+    /**
+     * {@return the {@link DataSchemaContextTree} of this factory's model context}
+     */
+    final @NonNull DataSchemaContextTree dataContextTree() {
+        return dataContextTree;
     }
 
     @Override

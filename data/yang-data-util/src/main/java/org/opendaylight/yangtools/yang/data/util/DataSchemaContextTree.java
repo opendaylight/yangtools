@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.PathMixin;
+import org.opendaylight.yangtools.yang.data.util.context.CaseContext;
 import org.opendaylight.yangtools.yang.data.util.context.ContainerContext;
 import org.opendaylight.yangtools.yang.data.util.context.YangDataContext;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -242,11 +243,12 @@ public final class DataSchemaContextTree {
      *
      * <p>Nodes in the data tree and in a {@code yang-data} come from this tree, so lookups through them are shared by
      * every user of this tree. An {@code rpc}, {@code action}, {@code notification} or {@code grouping} is not part of
-     * the data tree: the contexts at and below it are created for this call only.
+     * the data tree: the contexts at and below it are created for this call only. The same holds for an inference
+     * ending at a {@code case}: its context holds only that case's children and is created for this call only.
      *
      * @param inference the inference, which has to come from this tree's model context
-     * @return the context, or {@code null} if the inference ends at a {@code choice}, a {@code case} or a
-     *         {@code grouping}, or passes through a statement that has no context
+     * @return the context, or {@code null} if the inference ends at a {@code choice} or a {@code grouping}, or passes
+     *         through a statement that has no context
      * @throws NullPointerException if {@code inference} is {@code null}
      * @throws IllegalArgumentException if {@code inference} comes from a different model context
      */
@@ -287,13 +289,12 @@ public final class DataSchemaContextTree {
             }
         }
 
-        if (inGrouping) {
-            // A grouping has no context of its own, so data cannot start there
-            return null;
-        }
         return switch (lastChoiceOrCase) {
-            case null -> current;
-            // Neither a choice nor a case has a context in the tree, so data cannot start there
+            // A grouping has no context of its own, so data cannot start there
+            case null -> inGrouping ? null : current;
+            // Ending at a case means the data holds just that case's children, so give them a context of their own
+            case CaseEffectiveStatement caze -> new CaseContext(caze.toDataSchemaNode());
+            // A choice holds only cases, never data nodes, so data cannot start there
             default -> null;
         };
     }
