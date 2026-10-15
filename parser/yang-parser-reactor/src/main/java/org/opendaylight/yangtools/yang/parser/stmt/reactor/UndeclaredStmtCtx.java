@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.UndeclaredCurrent;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -113,6 +114,15 @@ sealed class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
     @Override
     void dropDeclaredSubstatements() {
         // No-op
+    }
+
+    @Override
+    void finishChildrenDeclaration(final ModelProcessingPhase phase) {
+        for (var stmt : effectiveSubstatements()) {
+            if (stmt instanceof OriginalStmtCtx original) {
+                original.declarationFinished(phase);
+            }
+        }
     }
 
     @Override
