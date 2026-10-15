@@ -189,7 +189,9 @@ public sealed class CompositeNodeDataWithSchema<T extends DataSchemaNode> extend
      *                the case, followed by the child. This method empties it.
      * @param policy what to do if such a child already exists
      * @return the added child
+     * @deprecated Use {@link #addChild(DataSchemaContext.Composite, QName, ChildReusePolicy)} instead.
      */
+    @Deprecated(since = "16.2.0", forRemoval = true)
     public final AbstractNodeDataWithSchema<?> addChild(final Deque<DataSchemaNode> schemas,
             final ChildReusePolicy policy) {
         checkArgument(!schemas.isEmpty(), "Expecting at least one schema");
