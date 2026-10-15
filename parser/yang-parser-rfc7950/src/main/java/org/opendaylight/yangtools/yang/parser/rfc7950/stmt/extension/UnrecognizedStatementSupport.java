@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -18,6 +19,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.UnrecognizedEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.UnrecognizedStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
@@ -28,6 +33,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.IdentifierBinding;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.OverrideChildStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 final class UnrecognizedStatementSupport
@@ -42,6 +48,25 @@ final class UnrecognizedStatementSupport
         // Nevertheless it may be of interest for various hacks to understand there was an extension involved.
         super(publicDefinition, StatementPolicy.exactReplica(), config, null);
         this.config = requireNonNull(config);
+    }
+
+    static @NonNull UnrecognizedStatementSupport ofExtension(
+            final @NonNull StmtContext<QName, ExtensionStatement, ExtensionEffectiveStatement> stmt,
+            final @NonNull YangParserConfiguration config) {
+        final ArgumentDefinition<Object> publicDefinition;
+        final var argument = stmt.firstDeclaredSubstatement(ArgumentStatement.DEF);
+        if (argument != null) {
+            final var yinElement = stmt.firstDeclaredSubstatement(YinElementStatement.DEF);
+            publicDefinition = ArgumentDefinition.<Object>of(Object.class, argument.getArgument(),
+                yinElement != null && yinElement.getArgument());
+        } else {
+            publicDefinition = null;
+        }
+
+        return new UnrecognizedStatementSupport(
+            StatementDefinition.of(UnrecognizedStatement.class, UnrecognizedEffectiveStatement.class,
+                stmt.getArgument(), publicDefinition),
+            config);
     }
 
     @Override

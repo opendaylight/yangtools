@@ -58,15 +58,10 @@ public final class StmtContextUtils {
         return declaring == null ? null : declaring.getArgument();
     }
 
+    @Deprecated(since = "16.2.0", forRemoval = true)
     public static <A, D extends DeclaredStatement<A>> @Nullable StmtContext<A, D, ?> findFirstDeclaredSubstatement(
             final StmtContext<?, ?, ?> stmtContext, final StatementDefinition<A, D, ?> def) {
-        for (var subStmtContext : stmtContext.declaredSubstatements()) {
-            final var declaring = subStmtContext.asDeclaring(def);
-            if (declaring != null) {
-                return declaring;
-            }
-        }
-        return null;
+        return stmtContext.firstDeclaredSubstatement(requireNonNull(def));
     }
 
     /**
@@ -178,7 +173,7 @@ public final class StmtContextUtils {
         if (listCtx == null) {
             return;
         }
-        final var keyCtx = findFirstDeclaredSubstatement(listCtx, KeyStatement.DEF);
+        final var keyCtx = listCtx.firstDeclaredSubstatement(KeyStatement.DEF);
         if (keyCtx == null) {
             return;
         }
