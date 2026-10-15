@@ -1,0 +1,8 @@
+module duplicate-feature {
+  namespace foo;
+  prefix de;
+
+  feature bar;
+
+  feature bar;
+}
