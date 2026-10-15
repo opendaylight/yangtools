@@ -1,0 +1,21 @@
+module yt1899-rev {
+  namespace yt1899-rev;
+  prefix rev;
+
+  revision 2020-01-01;
+  revision 2019-01-01;
+
+  container new {
+    leaf new-leaf {
+      type string;
+    }
+  }
+
+  choice renamed {
+    case renamed-case {
+      leaf renamed-case-leaf {
+        type string;
+      }
+    }
+  }
+}

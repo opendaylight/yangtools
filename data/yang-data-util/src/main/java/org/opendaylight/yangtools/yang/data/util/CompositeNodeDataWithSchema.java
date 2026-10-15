@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.VerifyException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,8 +19,11 @@ import java.util.Deque;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter.MetadataExtension;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.PathMixin;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree.Step;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -99,6 +104,19 @@ public sealed class CompositeNodeDataWithSchema<T extends DataSchemaNode> extend
     }
 
     /**
+     * A child added by {@link #addChild(DataSchemaContext.Composite, QName, ChildReusePolicy)}.
+     *
+     * @param data the added child
+     * @param context the context describing the child, from which its own children can be looked up
+     */
+    public record Child(@NonNull AbstractNodeDataWithSchema<?> data, @NonNull DataSchemaContext context) {
+        public Child {
+            requireNonNull(data);
+            requireNonNull(context);
+        }
+    }
+
+    /**
      * remaining data nodes (which aren't added via augment). Every of one them should have the same QName.
      */
     private final List<AbstractNodeDataWithSchema<?>> children = new ArrayList<>();
@@ -121,6 +139,57 @@ public sealed class CompositeNodeDataWithSchema<T extends DataSchemaNode> extend
         children.add(newChild);
     }
 
+    /**
+     * Add the child with the specified name. If the child sits inside a choice, the choice and the case are added as
+     * well, or reused if an earlier child already added them.
+     *
+     * @param context the context describing this node
+     * @param qname the child's name
+     * @param policy what to do if such a child already exists
+     * @return the added child, or {@code null} if this node has no child with that name
+     * @throws NullPointerException if any argument is {@code null}
+     * @throws IllegalArgumentException if an earlier child came from a different case of the same choice
+     */
+    public final @Nullable Child addChild(final DataSchemaContext.Composite context, final QName qname,
+            final ChildReusePolicy policy) {
+        requireNonNull(policy);
+        Step step = context.stepTowards(qname);
+        if (step == null) {
+            return null;
+        }
+
+        // A choice and its case have no element of their own: the child's element sits directly inside ours. Step
+        // through each choice on the way, adding its data node and the right case's data node. A list or leaf-list is
+        // not stepped through: its own name is the element we are adding, its entries come later.
+        CompositeNodeDataWithSchema<?> parent = this;
+        while (step.child() instanceof PathMixin mixin && mixin.dataSchemaNode() instanceof ChoiceSchemaNode choice) {
+            switch (mixin.stepTowards(qname)) {
+                case null -> {
+                    // The name is the choice's own name. A choice never has an element of its own, so there is no
+                    // such child. This always happens at the first choice, before anything was added.
+                    return null;
+                }
+                case Step.ThroughCase through -> {
+                    parent = parent.enterCase(choice, through.inCase().toDataSchemaNode());
+                    step = through;
+                }
+                case Step.ToEntry entry ->
+                    throw new VerifyException("Choice %s stepped to entry %s".formatted(choice, entry));
+            }
+        }
+
+        final var childContext = step.child();
+        return new Child(parent.addChild(childContext.dataSchemaNode(), policy), childContext);
+    }
+
+    /**
+     * Add a child, going through any choice and case on the way.
+     *
+     * @param schemas the path to the child: just the child itself, or for each choice on the way the choice and then
+     *                the case, followed by the child. This method empties it.
+     * @param policy what to do if such a child already exists
+     * @return the added child
+     */
     public final AbstractNodeDataWithSchema<?> addChild(final Deque<DataSchemaNode> schemas,
             final ChildReusePolicy policy) {
         checkArgument(!schemas.isEmpty(), "Expecting at least one schema");
@@ -143,19 +212,24 @@ public sealed class CompositeNodeDataWithSchema<T extends DataSchemaNode> extend
             caseCandidate.getClass());
         final CaseSchemaNode caseNode = (CaseSchemaNode) caseCandidate;
 
-        CompositeNodeDataWithSchema<?> caseNodeDataWithSchema = findChoice(children, choiceCandidate, caseCandidate);
-        if (caseNodeDataWithSchema == null) {
-            ChoiceNodeDataWithSchema choiceNodeDataWithSchema = new ChoiceNodeDataWithSchema(choiceNode);
-            children.add(choiceNodeDataWithSchema);
-            caseNodeDataWithSchema = choiceNodeDataWithSchema.addCompositeChild(caseNode, ChildReusePolicy.NOOP);
-        }
-
-        return caseNodeDataWithSchema.addChild(schemas, policy);
+        return enterCase(choiceNode, caseNode).addChild(schemas, policy);
     }
 
     private AbstractNodeDataWithSchema<?> addChild(final DataSchemaNode schema, final ChildReusePolicy policy) {
         AbstractNodeDataWithSchema<?> newChild = addSimpleChild(schema, policy);
         return newChild == null ? addCompositeChild(schema, policy) : newChild;
+    }
+
+    // Returns the data node of a case, adding it and its choice if they are not here yet
+    private CompositeNodeDataWithSchema<?> enterCase(final ChoiceSchemaNode choice, final CaseSchemaNode caze) {
+        final var existing = findChoice(children, choice, caze);
+        if (existing != null) {
+            return existing;
+        }
+
+        final var choiceData = new ChoiceNodeDataWithSchema(choice);
+        children.add(choiceData);
+        return choiceData.addCompositeChild(caze, ChildReusePolicy.NOOP);
     }
 
     private AbstractNodeDataWithSchema<?> addSimpleChild(final DataSchemaNode schema, final ChildReusePolicy policy) {

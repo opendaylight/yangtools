@@ -20,10 +20,10 @@ import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -39,12 +39,14 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement;
 import org.opendaylight.yangtools.rfc8528.model.api.MountPointEffectiveStatement;
 import org.opendaylight.yangtools.rfc8528.model.api.SchemaMountConstants;
 import org.opendaylight.yangtools.yang.common.AnnotationName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -56,9 +58,14 @@ import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnydataNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema.Child;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema.ChildReusePolicy;
 import org.opendaylight.yangtools.yang.data.util.ContainerNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.PathMixin;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree.Step;
 import org.opendaylight.yangtools.yang.data.util.LeafListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
@@ -66,7 +73,6 @@ import org.opendaylight.yangtools.yang.data.util.ListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.MountPointData;
 import org.opendaylight.yangtools.yang.data.util.MultipleEntryDataWithSchema;
-import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.model.api.AnydataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyxmlSchemaNode;
@@ -80,6 +86,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DataSchemaCompat;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Absolute;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 import org.slf4j.Logger;
@@ -131,14 +138,15 @@ public final class XmlParserStream implements Closeable, Flushable {
         TRANSFORMER_FACTORY = fa;
     }
 
-    // Cache of nsUri Strings to QNameModules, as resolved in context
-    private final Map<String, Optional<QNameModule>> resolvedNamespaces = new HashMap<>();
+    // Cache of nsUri Strings to the QNameModules of every revision in context, newest first
+    private final Map<String, List<QNameModule>> namespaceRevisions = new HashMap<>();
     // Cache of nsUri Strings to QNameModules, as inferred from document
     private final Map<String, QNameModule> rawNamespaces = new HashMap<>();
     private final NormalizedNodeStreamWriter writer;
     private final SchemaInferenceStack stack;
     private final XmlCodecFactory codecs;
     private final DataSchemaNode parentNode;
+    private final @Nullable DataSchemaContext parentContext;
     private final boolean strictParsing;
 
     private XmlParserStream(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
@@ -153,6 +161,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                 .formatted(toIdentityString(codecs.modelContext()), toIdentityString(inferenceContext)));
         }
         parentNode = stack.isEmpty() ? stack.modelContext() : coerceAsParent(stack.currentStatement());
+        parentContext = codecs.schemaTree().childByInference(stack.toInference());
     }
 
     private static DataSchemaNode coerceAsParent(final EffectiveStatement<?, ?> stmt) {
@@ -327,7 +336,7 @@ public final class XmlParserStream implements Closeable, Flushable {
         if (reader.hasNext()) {
             reader.nextTag();
             final var nodeDataWithSchema = AbstractNodeDataWithSchema.of(parentNode);
-            read(reader, nodeDataWithSchema, reader.getLocalName());
+            read(reader, nodeDataWithSchema, parentContext, reader.getLocalName());
             nodeDataWithSchema.write(writer);
         }
 
@@ -420,8 +429,8 @@ public final class XmlParserStream implements Closeable, Flushable {
         return (Document) result.getNode();
     }
 
-    private void read(final XMLStreamReader in, final AbstractNodeDataWithSchema<?> parent, final String rootElement)
-            throws XMLStreamException {
+    private void read(final XMLStreamReader in, final AbstractNodeDataWithSchema<?> parent,
+            final @Nullable DataSchemaContext context, final String rootElement) throws XMLStreamException {
         if (!in.hasNext()) {
             return;
         }
@@ -449,7 +458,7 @@ public final class XmlParserStream implements Closeable, Flushable {
             // aggregate current and subsequent nodes having same localName and namespace
             // into set of entries belonging to current parent node
             while (localName.equals(in.getLocalName()) && namespaceURI.equals(in.getNamespaceURI())) {
-                read(in, newEntryNode(parent), rootElement);
+                read(in, newEntryNode(parent), entryContext(context), rootElement);
                 if (in.getEventType() == XMLStreamConstants.END_DOCUMENT
                         || in.getEventType() == XMLStreamConstants.END_ELEMENT) {
                     break;
@@ -524,22 +533,17 @@ public final class XmlParserStream implements Closeable, Flushable {
                             e);
                     }
 
-                    final var childDataSchemaNodes = ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema,
-                        xmlElementName, nsUri);
-                    if (!childDataSchemaNodes.isEmpty()) {
-                        final boolean elementList = isElementList(childDataSchemaNodes);
-                        if (!added && !elementList) {
+                    final var child = addChild(parent, context, elementNS, xmlElementName);
+                    if (child != null) {
+                        if (!added && !isElementList(child.context())) {
                             throw new XMLStreamException(
                                 "Duplicate element \"%s\" in namespace \"%s\" with parent \"%s\" in XML input"
                                     .formatted(xmlElementName, elementNS, parentSchema), in.getLocation());
                         }
 
                         // We have a match, proceed with it
-                        final var qname = childDataSchemaNodes.peekLast().getQName();
-                        final var child = ((CompositeNodeDataWithSchema<?>) parent).addChild(childDataSchemaNodes,
-                            elementList ? ChildReusePolicy.REUSE : ChildReusePolicy.NOOP);
-                        stack.enterDataTree(qname);
-                        read(in, child, rootElement);
+                        stack.enterDataTree(child.context().dataSchemaNode().getQName());
+                        read(in, child.data(), child.context(), rootElement);
                         stack.exit();
                         continue;
                     }
@@ -605,9 +609,41 @@ public final class XmlParserStream implements Closeable, Flushable {
 
     // Return true if schema represents a construct which uses multiple sibling elements to represent its content. The
     // siblings MAY be interleaved as per RFC7950.
-    private static boolean isElementList(final Deque<DataSchemaNode> childDataSchemaNodes) {
-        final DataSchemaNode last = childDataSchemaNodes.getLast();
-        return last instanceof ListSchemaNode || last instanceof LeafListSchemaNode;
+    private static boolean isElementList(final DataSchemaContext context) {
+        final var schema = context.dataSchemaNode();
+        return schema instanceof ListSchemaNode || schema instanceof LeafListSchemaNode;
+    }
+
+    // Returns null if this node has no child with that name: the node has no children, the namespace belongs to no
+    // module, or the name is not a valid YANG identifier. The model may hold several revisions of the namespace's
+    // module: the newest one which has such a child wins. A revision without it adds nothing.
+    private @Nullable Child addChild(final AbstractNodeDataWithSchema<?> parent,
+            final @Nullable DataSchemaContext context, final String namespace, final String localName) {
+        if (!(context instanceof Composite composite)) {
+            return null;
+        }
+        final var unqualified = Unqualified.tryLocalName(localName);
+        if (unqualified == null) {
+            return null;
+        }
+        for (var module : namespaceRevisions(namespace)) {
+            // REUSE lets the elements of a list or leaf-list be interleaved with other elements, as RFC7950 allows:
+            // each one is added to the list created by the first. Any other element must appear only once, which the
+            // caller checks.
+            final var child = ((CompositeNodeDataWithSchema<?>) parent).addChild(composite,
+                unqualified.bindTo(module), ChildReusePolicy.REUSE);
+            if (child != null) {
+                return child;
+            }
+        }
+        return null;
+    }
+
+    // A list or leaf-list context stands for the whole list: each of its entries has a context of its own
+    private static @Nullable DataSchemaContext entryContext(final @Nullable DataSchemaContext context) {
+        return context instanceof PathMixin list
+            && list.stepTowards(list.dataSchemaNode().getQName()) instanceof Step.ToEntry entry
+                ? entry.child() : context;
     }
 
     private static void addMountPointChild(final MountPointData mount, final XMLNamespace namespace,
@@ -719,10 +755,14 @@ public final class XmlParserStream implements Closeable, Flushable {
     }
 
     private Optional<QNameModule> resolveXmlNamespace(final String xmlNamespace) {
-        return resolvedNamespaces.computeIfAbsent(xmlNamespace, nsUri -> {
-            final var it = codecs.modelContext().findModuleStatements(XMLNamespace.of(nsUri)).iterator();
-            return it.hasNext() ? Optional.of(it.next().localQNameModule()) : Optional.empty();
-        });
+        return namespaceRevisions(xmlNamespace).stream().findFirst();
+    }
+
+    private List<QNameModule> namespaceRevisions(final String xmlNamespace) {
+        return namespaceRevisions.computeIfAbsent(xmlNamespace,
+            nsUri -> codecs.modelContext().findModuleStatements(XMLNamespace.of(nsUri)).stream()
+                .map(ModuleEffectiveStatement::localQNameModule)
+                .toList());
     }
 
     private QNameModule rawXmlNamespace(final String xmlNamespace) {

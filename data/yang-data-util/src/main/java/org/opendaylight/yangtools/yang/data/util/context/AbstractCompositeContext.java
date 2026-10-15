@@ -49,7 +49,12 @@ public abstract sealed class AbstractCompositeContext extends AbstractContext im
 
     private @Nullable AbstractContext childFromSchema(final @NonNull QName child) {
         final var childSchema = childByName(container, child);
-        return childSchema == null ? null : loadChildFromSchema(childSchema);
+        if (childSchema == null) {
+            return null;
+        }
+        // A choice is also found by its own name, but is cached only under the names inside it
+        final var existing = byArg.get(NodeIdentifier.create(childSchema.getQName()));
+        return existing != null ? existing : loadChildFromSchema(childSchema);
     }
 
     @NonNullByDefault

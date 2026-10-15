@@ -1,0 +1,51 @@
+module yt1899 {
+  yang-version 1.1;
+  namespace yt1899;
+  prefix yt1899;
+
+  container top {
+    list foo {
+      key name;
+
+      leaf name {
+        type string;
+      }
+
+      choice bar {
+        case baz {
+          leaf baz-leaf {
+            type string;
+          }
+        }
+      }
+    }
+
+    leaf other {
+      type string;
+    }
+  }
+
+  grouping grp {
+    container grp-cont {
+      leaf grp-leaf {
+        type string;
+      }
+    }
+
+    action grp-act {
+      input {
+        leaf grp-act-in {
+          type string;
+        }
+      }
+    }
+  }
+
+  rpc thud {
+    input {
+      leaf in {
+        type string;
+      }
+    }
+  }
+}
