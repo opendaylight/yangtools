@@ -32,6 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class FeatureStatementSupport
         extends AbstractQNameStatementSupport<FeatureStatement, FeatureEffectiveStatement> {
@@ -48,10 +49,17 @@ public final class FeatureStatementSupport
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<QName, FeatureStatement, FeatureEffectiveStatement> stmt) {
-        super.onFullDefinitionDeclared(stmt);
-        stmt.addToNs(ParserNamespaces.FEATURE, stmt.getArgument(), stmt);
+    public void onStatementAdded(final Mutable<QName, FeatureStatement, FeatureEffectiveStatement> stmt) {
+        final var name = stmt.getArgument();
+        final var prev = stmt.namespaceItem(ParserNamespaces.FEATURE, name);
+        if (prev != null) {
+            throw new SourceException(stmt, "");
+        }
+        stmt.addToNs(ParserNamespaces.FEATURE, name, stmt);
+    }
 
+    @Override
+    public void onStatementDefinitionDeclared(final Mutable<QName, FeatureStatement, FeatureEffectiveStatement> stmt) {
         // Do not build effective statement if supported features does not include this feature
         final var supportedFeatures = stmt.namespaceItem(ParserNamespaces.SUPPORTED_FEATURES, Empty.value());
         if (supportedFeatures != null && !supportedFeatures.contains(stmt.getArgument())) {
