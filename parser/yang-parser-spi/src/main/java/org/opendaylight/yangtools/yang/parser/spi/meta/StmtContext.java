@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import com.google.common.collect.Iterables;
@@ -99,6 +101,29 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
      * @return Collection of declared substatements
      */
     @NonNull Collection<? extends @NonNull StmtContext<?, ?, ?>> declaredSubstatements();
+
+    /**
+     * {@return the first among {@link #declaredSubstatements()} matching specified {@link StatementDefinition}, or
+     * {@code null} if none matched.
+     *
+     * @param <X> Substatement argument type
+     * @param <Y> Substatement declared statement representation
+     * @param <Z> Substatement effective statement representation
+     * @param def the {@link StatementDefinition}
+     * @see #asDeclaring(StatementDefinition)
+     * @since 16.2.0
+     */
+    default <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            @Nullable StmtContext<X, Y, Z> firstDeclaredSubstatement(final @NonNull StatementDefinition<X, Y, Z> def) {
+        requireNonNull(def);
+        for (var stmt : declaredSubstatements()) {
+            final var ret = stmt.asDeclaring(def);
+            if (ret != null) {
+                return ret;
+            }
+        }
+        return null;
+    }
 
     /**
      * Return effective substatements. These are the statements which are added as this statement's substatements
