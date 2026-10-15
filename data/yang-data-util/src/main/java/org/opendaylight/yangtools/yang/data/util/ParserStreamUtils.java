@@ -11,12 +11,21 @@ package org.opendaylight.yangtools.yang.data.util;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
+/**
+ * Schema lookups for parsers.
+ *
+ * @deprecated Use {@link DataSchemaContextTree#dataStep(DataSchemaContext.Composite, QName)} to find a child through
+ *             any choice and case, and {@link CompositeNodeDataWithSchema#addChild(DataSchemaContext.Composite, QName,
+ *             CompositeNodeDataWithSchema.ChildReusePolicy)} to add it.
+ */
+@Deprecated(since = "16.2.0", forRemoval = true)
 public final class ParserStreamUtils {
     private ParserStreamUtils() {
         // Hidden on purpose
