@@ -1,0 +1,8 @@
+module duplicate-extension {
+  namespace foo;
+  prefix de;
+
+  extension bar;
+
+  extension bar;
+}
