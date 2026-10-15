@@ -1,0 +1,22 @@
+module yt1899-aug {
+  namespace yt1899-aug;
+  prefix yt1899-aug;
+
+  import yt1899 {
+    prefix yt1899;
+  }
+
+  augment /yt1899:top/yt1899:foo {
+    leaf aug-leaf {
+      type string;
+    }
+  }
+
+  augment /yt1899:top/yt1899:foo/yt1899:bar {
+    case aug-case {
+      leaf aug-case-leaf {
+        type string;
+      }
+    }
+  }
+}

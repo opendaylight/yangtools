@@ -1,0 +1,18 @@
+module yt1899-rev {
+  namespace yt1899-rev;
+  prefix yt1899-rev;
+
+  revision 2020-01-01;
+
+  container both {
+    leaf both-leaf {
+      type string;
+    }
+  }
+
+  container old {
+    leaf old-leaf {
+      type string;
+    }
+  }
+}
