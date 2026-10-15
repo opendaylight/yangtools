@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaInferenceStack;
 
 public abstract sealed class AbstractCompositeContext extends AbstractContext implements Composite
-        permits ListItemContext, ContainerContext, YangDataContext {
+        permits CaseContext, ListItemContext, ContainerContext, YangDataContext {
     // FIXME: CAS-to-immutable once fully instantiated
     private final ConcurrentHashMap<PathArgument, AbstractContext> byArg = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<QName, AbstractContext> byQName = new ConcurrentHashMap<>();
