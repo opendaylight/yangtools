@@ -9,26 +9,15 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.VerifyException;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Empty;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureSet;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -39,31 +28,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class StmtContextUtils {
     private StmtContextUtils() {
         // Hidden on purpose
-    }
-
-    @Deprecated(since = "16.2.0", forRemoval = true)
-    public static <A, D extends DeclaredStatement<A>> @Nullable A firstAttributeOf(
-            final Iterable<? extends @NonNull StmtContext<?, ?, ?>> contexts, final Class<D> declaredType) {
-        for (var ctx : contexts) {
-            final var declaring = ctx.tryDeclaring(declaredType);
-            if (declaring != null) {
-                return declaring.getArgument();
-            }
-        }
-        return null;
-    }
-
-    @Deprecated(since = "16.2.0", forRemoval = true)
-    public static <A, D extends DeclaredStatement<A>> @Nullable A firstAttributeOf(final StmtContext<?, ?, ?> ctx,
-            final Class<D> declaredType) {
-        final var declaring = ctx.tryDeclaring(declaredType);
-        return declaring == null ? null : declaring.getArgument();
-    }
-
-    @Deprecated(since = "16.2.0", forRemoval = true)
-    public static <A, D extends DeclaredStatement<A>> @Nullable StmtContext<A, D, ?> findFirstDeclaredSubstatement(
-            final StmtContext<?, ?, ?> stmtContext, final StatementDefinition<A, D, ?> def) {
-        return stmtContext.firstDeclaredSubstatement(requireNonNull(def));
     }
 
     /**
@@ -148,92 +112,5 @@ public final class StmtContextUtils {
                 }
             });
         }
-    }
-
-    /**
-     * Validates the specified statement context with regards to if-feature and when statement on list keys.
-     * The context can either be a leaf which is defined directly in the substatements of a keyed list or a uses
-     * statement defined in a keyed list (a uses statement may add leaves into the list).
-     *
-     * <p>If one of the list keys contains an if-feature or a when statement in YANG 1.1 model, an exception is thrown.
-     *
-     * @param ctx statement context to be validated
-     * @deprecated This method is not used anywhere and will be removed in the next major version.
-     */
-    @Deprecated(since = "16.2.0", forRemoval = true)
-    public static void validateIfFeatureAndWhenOnListKeys(final StmtContext<?, ?, ?> ctx) {
-        // Preliminary checks
-        if (YangVersion.VERSION_1_1 != ctx.sourceVersion()) {
-            return;
-        }
-        final var parent = ctx.getParentContext();
-        if (parent == null) {
-            return;
-        }
-
-        final var listCtx = parent.asDeclaring(ListStatement.DEF);
-        if (listCtx == null) {
-            return;
-        }
-        final var keyCtx = listCtx.firstDeclaredSubstatement(KeyStatement.DEF);
-        if (keyCtx == null) {
-            return;
-        }
-        final var keyArg = keyCtx.argument();
-
-        // deal with the case of a single leaf
-        final var leafCtx = ctx.asDeclaring(LeafStatement.DEF);
-        if (leafCtx != null) {
-            validateIfFeatureOnLeaf(listCtx, keyArg, leafCtx);
-            return;
-        }
-
-        // otherwise deal with the case of a uses statement
-        final var usesCtx = ctx.asDeclaring(UsesStatement.DEF);
-        if (usesCtx != null) {
-            for (var subStmtContext : listCtx.effectiveSubstatements()) {
-                final var declaring = subStmtContext.asDeclaring(LeafStatement.DEF);
-                if (declaring != null) {
-                    validateIfFeatureOnLeaf(listCtx, keyArg, declaring);
-                }
-            }
-        }
-    }
-
-    private static void validateIfFeatureOnLeaf(final StmtContext<QName, ListStatement, ?> listCtx,
-            final KeyArgument keyArg, final StmtContext<QName, LeafStatement, ?> leafCtx) {
-        // check if the leaf is part of the argument
-        if (keyArg.contains(leafCtx.getArgument())) {
-            inferUnconditionalLeaf(listCtx, leafCtx);
-        }
-    }
-
-    /**
-     * Make sure specified leaf statement is not conditional as implied by it being a key component.
-     *
-     * @param listCtx the list context
-     * @param leafCtx the leaf context
-     * @since 16.2.0
-     */
-    // FIXME: 17.0.0: move to the sole caller
-    @Beta
-    public static void inferUnconditionalLeaf(final StmtContext<QName, ListStatement, ?> listCtx,
-            final StmtContext<QName, LeafStatement, ?> leafCtx) {
-        // collect all offending statements
-        final var it = leafCtx.allSubstatementsStream()
-            .filter(stmt -> stmt.producesAnyOf(IfFeatureStatement.DEF, WhenStatement.DEF))
-            .iterator();
-        if (it.hasNext()) {
-            final var ex = reportConditionalLeaf(listCtx, leafCtx, it.next());
-            it.forEachRemaining(stmt -> ex.addSuppressed(reportConditionalLeaf(listCtx, leafCtx, stmt)));
-            throw ex;
-        }
-    }
-
-    private static @NonNull SourceException reportConditionalLeaf(final StmtContext<QName, ListStatement, ?> listCtx,
-            final StmtContext<QName, LeafStatement, ?> leafCtx, final StmtContext<?, ?, ?> offender) {
-        return new SourceException(leafCtx,
-            "leaf statement %s is a key in list statement %s: it cannot be conditional on %s statement",
-            leafCtx.argument(), listCtx.argument(), offender.publicDefinition().humanName());
     }
 }

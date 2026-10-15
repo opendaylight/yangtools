@@ -14,17 +14,20 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -42,7 +45,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -99,8 +101,23 @@ public final class KeyStatementSupport
 
                     // RFC7950 forbids use of 'if-feature' and 'when' on list keys
                     if (list.sourceVersion() != YangVersion.VERSION_1) {
-                        StmtContextUtils.inferUnconditionalLeaf(list, leaf);
+                        final var it = leaf.allSubstatementsStream()
+                            .filter(stmt -> stmt.producesAnyOf(IfFeatureStatement.DEF, WhenStatement.DEF))
+                            .iterator();
+                        if (it.hasNext()) {
+                            final var ex = newSourceException(list, leaf, it.next());
+                            it.forEachRemaining(stmt -> ex.addSuppressed(newSourceException(list, leaf, stmt)));
+                            throw ex;
+                        }
                     }
+                }
+
+                private static @NonNull SourceException newSourceException(
+                        final StmtContext<QName, ListStatement, ?> list,
+                        final StmtContext<QName, LeafStatement, ?> leaf, final CommonStmtCtx conditional) {
+                    return new SourceException(leaf,
+                        "leaf statement %s is a key in list statement %s: it cannot be conditional on %s statement",
+                        leaf.argument(), list.argument(), conditional.publicDefinition().humanName());
                 }
 
                 @Override
