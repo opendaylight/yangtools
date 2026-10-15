@@ -63,4 +63,12 @@ class ExtensionStmtTest extends AbstractYangTest {
 
         assertEquals("key:value", extensionUse.argument());
     }
+
+    @Test
+    void textDuplicateExtension() {
+        assertSourceExceptionMessage("/duplicate-extension.yang")
+            .startsWith("Extension keyword collision: '(foo)bar' already declared at ")
+            .contains(":5:3 [at ")
+            .endsWith(":7:3]");
+    }
 }
