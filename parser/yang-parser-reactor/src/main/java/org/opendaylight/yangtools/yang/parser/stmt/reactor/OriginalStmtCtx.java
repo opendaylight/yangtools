@@ -185,9 +185,14 @@ abstract sealed class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E exten
 
     abstract void dropDeclaredSubstatements();
 
-    void declarationFinished(final ModelProcessingPhase phase) {
+    @NonNullByDefault
+    final void declarationFinished(final ModelProcessingPhase phase) {
+        finishChildrenDeclaration(phase);
         finishDeclaration(phase);
     }
+
+    @NonNullByDefault
+    abstract void finishChildrenDeclaration(ModelProcessingPhase phase);
 
     /**
      * Ends declared section of current node for the specified phase.

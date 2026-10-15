@@ -338,12 +338,7 @@ abstract sealed class AbstractResumedStatement<A, D extends DeclaredStatement<A>
     }
 
     @Override
-    final void declarationFinished(final ModelProcessingPhase phase) {
-        finishChildrenDeclaration(phase);
-        finishDeclaration(phase);
-    }
-
-    private void finishChildrenDeclaration(final ModelProcessingPhase phase) {
+    final void finishChildrenDeclaration(final ModelProcessingPhase phase) {
         checkState(isFullyDefined());
         substatements.forEach(stmt -> stmt.declarationFinished(phase));
     }
