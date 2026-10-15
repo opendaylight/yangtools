@@ -206,6 +206,8 @@ public final class RFC7950Reactors {
             .addSupport(new ActionStatementSupport(config), VERSION_1_1)
             .addSupport(new AnydataStatementSupport(config), VERSION_1_1)
             .addSupport(new AnyxmlStatementSupport(config))
+            .addSupport(CaseStatementSupport.rfc6020Instance(config), CaseStatementSupport.rfc7950Instance(config))
+            .addSupport(ChoiceStatementSupport.rfc6020Instance(config), ChoiceStatementSupport.rfc7950Instance(config))
             .addSupport(new ConfigStatementSupport(config))
             .addSupport(
                 ContainerStatementSupport.rfc6020Instance(config),
@@ -257,9 +259,9 @@ public final class RFC7950Reactors {
     }
 
     @NonNullByDefault
-    private static StatementSupportBundle fullDeclarationBundle(final StatementSupportBundle stmtDefBundle,
+    private static StatementSupportBundle fullDeclarationBundle(final StatementSupportBundle statementDefinitionBundle,
             final XPathSupport xpathSupport, final YangParserConfiguration config) {
-        return StatementSupportBundle.builderDerivedFrom(stmtDefBundle)
+        return StatementSupportBundle.builderDerivedFrom(statementDefinitionBundle)
             // statement argument representation requires type information
             .addSupport(new DefaultStatementSupport(config))
             .addSupport(new MustStatementSupport(xpathSupport, config))
@@ -270,10 +272,6 @@ public final class RFC7950Reactors {
             .addSupport(AugmentImplicitHandlingNamespace.BEHAVIOUR)
             .addSupport(BaseTypeNamespace.BEHAVIOUR)
             .addSupport(SourceGroupingNamespace.BEHAVIOUR)
-
-            // FIXME: YANGTOOLS-1840: move these to statementDefinitionBundle()
-            .addSupport(CaseStatementSupport.rfc6020Instance(config), CaseStatementSupport.rfc7950Instance(config))
-            .addSupport(ChoiceStatementSupport.rfc6020Instance(config), ChoiceStatementSupport.rfc7950Instance(config))
             .build();
     }
 
