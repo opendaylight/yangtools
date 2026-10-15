@@ -44,6 +44,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -101,39 +102,47 @@ public final class GroupingStatementSupport
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<QName, GroupingStatement, GroupingEffectiveStatement> stmt) {
-        super.onFullDefinitionDeclared(stmt);
-
+    public void onStatementDefinitionDeclared(
+            final Mutable<QName, GroupingStatement, GroupingEffectiveStatement> stmt) {
+        // FIXME: coerceParentContext()
         final var parent = stmt.getParentContext();
         if (parent == null) {
             // No parent ... which is weird, but there is nothing more to do
             return;
         }
 
-        // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
-        // declarations and parent declarations which have already been declared.
+        // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling declarations
+        // and parent declarations which have already been declared.
         checkConflict(parent, stmt);
         parent.addToNs(ParserNamespaces.GROUPING, stmt.getArgument(), stmt);
 
+        // Shadowing check: make sure grandparent does not see a conflicting definition. This is required to ensure that
+        // a grouping in child scope does not shadow a grouping in parent scope which occurs later in the text. For that
+        // check we need the full declaration of our model.
         final var grandParent = parent.getParentContext();
-        if (grandParent != null) {
-            // Shadowing check: make sure grandparent does not see a conflicting definition. This is required to
-            // ensure that a grouping in child scope does not shadow a grouping in parent scope which occurs later
-            // in the text. For that check we need the full declaration of our model.
-            final var action = stmt.newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
-            action.requiresCtx(grandParent.getRoot(), ModelProcessingPhase.FULL_DECLARATION);
-            action.apply(new InferenceAction() {
-                @Override
-                public void apply(final InferenceContext ctx) {
-                    checkConflict(grandParent, stmt);
-                }
-
-                @Override
-                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                    // No-op
-                }
-            });
+        if (grandParent == null) {
+            return;
         }
+
+        final var action = stmt.newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
+        action.requiresCtx(grandParent.getRoot(), ModelProcessingPhase.FULL_DECLARATION);
+        action.apply(new InferenceAction() {
+            @Override
+            public void apply(final InferenceContext ctx) {
+                checkConflict(grandParent, stmt);
+            }
+
+            @Override
+            public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                // No-op
+            }
+        });
+    }
+
+    private static void checkConflict(final NamespaceStmtCtx parent, final StmtContext<QName, ?, ?> stmt) {
+        final var arg = stmt.getArgument();
+        final var existing = parent.namespaceItem(ParserNamespaces.GROUPING, arg);
+        SourceException.throwIf(existing != null, stmt, "Duplicate name for grouping %s", arg);
     }
 
     @Override
@@ -157,11 +166,5 @@ public final class GroupingStatementSupport
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
-    }
-
-    private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
-        final var arg = stmt.getArgument();
-        final var existing = parent.namespaceItem(ParserNamespaces.GROUPING, arg);
-        SourceException.throwIf(existing != null, stmt, "Duplicate name for grouping %s", arg);
     }
 }
