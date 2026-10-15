@@ -12,11 +12,13 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -101,6 +103,26 @@ abstract sealed class OriginalStmtCtx<A, D extends DeclaredStatement<A>, E exten
     @Override
     final void addEffectiveSubstatementsImpl(final Collection<? extends Mutable<?, ?, ?>> statements) {
         effective = addEffectiveSubstatementsImpl(effective, statements);
+    }
+
+    @NonNullByDefault
+    final void setFirstEffectiveSubstatement(final ReactorStmtCtx<?, ?, ?> substatement) {
+        final var phase = getRoot().getSourceContext().inProgressPhase();
+        switch (phase) {
+            case STATEMENT_DEFINITION, FULL_DECLARATION -> {
+                verifyCanAddEffectiveStatement();
+                if (!effective.isEmpty()) {
+                    throw new VerifyException("not first substatement at: " + sourceReference());
+                }
+
+                ensureCompletedExecution(substatement);
+                effective = new ArrayList<>(1);
+                effective.add(substatement);
+                afterAddEffectiveSubstatement(substatement);
+            }
+            default -> throw new IllegalStateException(
+                "Effective statement cannot be added in phase %s at: %s".formatted(phase, sourceReference()));
+        }
     }
 
     @Override
