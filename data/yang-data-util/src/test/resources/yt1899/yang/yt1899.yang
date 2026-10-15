@@ -1,0 +1,97 @@
+module yt1899 {
+  yang-version 1.1;
+  namespace yt1899;
+  prefix yt1899;
+
+  container top {
+    grouping top-grp {
+      container top-grp-cont {
+        leaf top-grp-leaf {
+          type string;
+        }
+      }
+    }
+
+    leaf other {
+      type string;
+    }
+
+    choice outer {
+      case first {
+        leaf first-leaf {
+          type string;
+        }
+
+        leaf first-other {
+          type string;
+        }
+
+        choice inner {
+          leaf inner-leaf {
+            type string;
+          }
+        }
+      }
+
+      case second {
+        leaf second-leaf {
+          type string;
+        }
+
+        list second-list {
+          key id;
+
+          leaf id {
+            type string;
+          }
+        }
+      }
+    }
+  }
+
+  grouping grp {
+    container grp-cont {
+      leaf grp-leaf {
+        type string;
+      }
+    }
+
+    list grp-list {
+      key grp-list-id;
+
+      leaf grp-list-id {
+        type string;
+      }
+    }
+
+    action grp-act {
+      input {
+        leaf grp-act-in {
+          type string;
+        }
+      }
+    }
+
+    notification grp-notif {
+      leaf grp-notif-leaf {
+        type string;
+      }
+    }
+
+    choice grp-choice {
+      case grp-case {
+        leaf grp-case-leaf {
+          type string;
+        }
+      }
+    }
+  }
+
+  rpc thud {
+    input {
+      leaf in {
+        type string;
+      }
+    }
+  }
+}
