@@ -51,7 +51,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.RootStmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -243,7 +242,17 @@ abstract sealed class AugmentStrategy {
 
         private static <A, D extends DeclaredStatement<A>> @Nullable A firstSubstatementAttributeOf(
                 final StmtContext<?, ?, ?> ctx, final StatementDefinition<A, D, ?> def) {
-            return StmtContextUtils.firstAttributeOf(ctx.allSubstatements(), def.declaredRepresentation());
+            final var declared = ctx.firstDeclaredSubstatement(def);
+            if (declared != null) {
+                return declared.getArgument();
+            }
+            for (var stmt : ctx.effectiveSubstatements()) {
+                final var effective = stmt.asDeclaring(def);
+                if (effective != null) {
+                    return effective.getArgument();
+                }
+            }
+            return null;
         }
     }
 

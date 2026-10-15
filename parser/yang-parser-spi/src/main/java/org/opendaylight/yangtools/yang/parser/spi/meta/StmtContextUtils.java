@@ -41,6 +41,7 @@ public final class StmtContextUtils {
         // Hidden on purpose
     }
 
+    @Deprecated(since = "16.2.0", forRemoval = true)
     public static <A, D extends DeclaredStatement<A>> @Nullable A firstAttributeOf(
             final Iterable<? extends @NonNull StmtContext<?, ?, ?>> contexts, final Class<D> declaredType) {
         for (var ctx : contexts) {
@@ -52,6 +53,7 @@ public final class StmtContextUtils {
         return null;
     }
 
+    @Deprecated(since = "16.2.0", forRemoval = true)
     public static <A, D extends DeclaredStatement<A>> @Nullable A firstAttributeOf(final StmtContext<?, ?, ?> ctx,
             final Class<D> declaredType) {
         final var declaring = ctx.tryDeclaring(declaredType);
