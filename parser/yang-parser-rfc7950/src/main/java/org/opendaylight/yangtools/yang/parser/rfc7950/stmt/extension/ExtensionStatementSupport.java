@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitions;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class ExtensionStatementSupport
         extends AbstractQNameStatementSupport<ExtensionStatement, ExtensionEffectiveStatement> {
@@ -56,20 +57,26 @@ public final class ExtensionStatementSupport
     }
 
     @Override
+    public void onStatementAdded(final Mutable<QName, ExtensionStatement, ExtensionEffectiveStatement> stmt) {
+        final var keyword = stmt.getArgument();
+        final var prev = stmt.namespaceItem(ParserNamespaces.EXTENSION, keyword);
+        if (prev != null) {
+            throw new SourceException(stmt,
+                "Extension keyword collision: '%s' already declared at %s", keyword, prev.sourceReference());
+        }
+        stmt.addToNs(ParserNamespaces.EXTENSION, keyword, stmt);
+    }
+
+    @Override
     public void onStatementDefinitionDeclared(
             final Mutable<QName, ExtensionStatement, ExtensionEffectiveStatement> stmt) {
-        super.onStatementDefinitionDeclared(stmt);
-
-        stmt.addToNs(ParserNamespaces.EXTENSION, stmt.getArgument(), stmt);
-
         final var argument = StmtContextUtils.findFirstDeclaredSubstatement(stmt, ArgumentStatement.DEF);
         final var yinElement = StmtContextUtils.findFirstDeclaredSubstatement(stmt, YinElementStatement.DEF);
-
         final var argDef = argument == null ? null
             : ArgumentDefinition.<Object>of(Object.class, argument.getArgument(),
                 yinElement != null && yinElement.getArgument());
 
-        stmt.addToNs(StatementDefinitions.NAMESPACE, stmt.argument(), new UnrecognizedStatementSupport(
+        stmt.addToNs(StatementDefinitions.NAMESPACE, stmt.getArgument(), new UnrecognizedStatementSupport(
             StatementDefinition.of(UnrecognizedStatement.class, UnrecognizedEffectiveStatement.class,
                 stmt.getArgument(), argDef),
             config));
