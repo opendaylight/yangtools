@@ -1,0 +1,14 @@
+{
+  "yt1899:top" : {
+    "foo" : [
+      {
+        "name" : "one",
+        "baz-leaf" : "first"
+      },
+      {
+        "name" : "two",
+        "baz-leaf" : "second"
+      }
+    ]
+  }
+}
