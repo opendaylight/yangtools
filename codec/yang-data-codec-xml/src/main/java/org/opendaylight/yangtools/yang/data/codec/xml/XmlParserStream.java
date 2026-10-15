@@ -63,9 +63,7 @@ import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema.Chi
 import org.opendaylight.yangtools.yang.data.util.ContainerNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.PathMixin;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree.Step;
 import org.opendaylight.yangtools.yang.data.util.LeafListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
@@ -458,7 +456,7 @@ public final class XmlParserStream implements Closeable, Flushable {
             // aggregate current and subsequent nodes having same localName and namespace
             // into set of entries belonging to current parent node
             while (localName.equals(in.getLocalName()) && namespaceURI.equals(in.getNamespaceURI())) {
-                read(in, newEntryNode(parent), entryContext(context), rootElement);
+                read(in, newEntryNode(parent), DataSchemaContextTree.entryOf(context), rootElement);
                 if (in.getEventType() == XMLStreamConstants.END_DOCUMENT
                         || in.getEventType() == XMLStreamConstants.END_ELEMENT) {
                     break;
@@ -637,13 +635,6 @@ public final class XmlParserStream implements Closeable, Flushable {
             }
         }
         return null;
-    }
-
-    // A list or leaf-list context stands for the whole list: each of its entries has a context of its own
-    private static @Nullable DataSchemaContext entryContext(final @Nullable DataSchemaContext context) {
-        return context instanceof PathMixin list
-            && list.stepTowards(list.dataSchemaNode().getQName()) instanceof Step.ToEntry entry
-                ? entry.child() : context;
     }
 
     private static void addMountPointChild(final MountPointData mount, final XMLNamespace namespace,

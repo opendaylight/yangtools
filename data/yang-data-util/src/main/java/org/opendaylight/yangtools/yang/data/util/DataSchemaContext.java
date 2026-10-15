@@ -197,7 +197,9 @@ public sealed interface DataSchemaContext permits AbstractContext, Composite, Si
 
     /**
      * Return the fixed {@link YangInstanceIdentifier} step, if available. This method returns {@code null} for contexts
-     * like {@link MapEntryNode} and {@link LeafSetEntryNode}, where the step depends on the actual node value.
+     * like {@link MapEntryNode} and {@link LeafSetEntryNode}, where the step depends on the actual node value. It also
+     * returns {@code null} for the context of a {@code case}, which {@link DataSchemaContextTree#childByInference}
+     * returns when data starts at a case: a case never appears in a path to data.
      *
      * @return A {@link NodeIdentifier}, or {@code null}
      */

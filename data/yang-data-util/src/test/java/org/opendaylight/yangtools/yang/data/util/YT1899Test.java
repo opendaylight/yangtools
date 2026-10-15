@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 class YT1899Test {
     private static final QName TOP = QName.create("yt1899", "top");
     private static final QName OTHER = QName.create(TOP, "other");
+    private static final QName TOP_LEAF_LIST = QName.create(TOP, "top-leaf-list");
     private static final QName OUTER = QName.create(TOP, "outer");
     private static final QName FIRST = QName.create(TOP, "first");
     private static final QName FIRST_LEAF = QName.create(TOP, "first-leaf");
@@ -45,6 +46,7 @@ class YT1899Test {
     private static final QName SECOND_LEAF = QName.create(TOP, "second-leaf");
     private static final QName SECOND_LIST = QName.create(TOP, "second-list");
     private static final QName SECOND_LIST_ID = QName.create(TOP, "id");
+    private static final QName SECOND_LEAF_LIST = QName.create(TOP, "second-leaf-list");
     private static final QName THUD = QName.create(TOP, "thud");
     private static final QName INPUT = QName.create(TOP, "input");
     private static final QName GRP = QName.create(TOP, "grp");
@@ -149,6 +151,38 @@ class YT1899Test {
     }
 
     @Test
+    void dataStepThroughChoices() {
+        // A leaf inside a choice inside another choice: the step leads to the leaf itself
+        final var inner = DataSchemaContextTree.dataStep(topContext(), INNER_LEAF);
+        assertNotNull(inner);
+        assertEquals(INNER_LEAF, inner.child().dataSchemaNode().getQName());
+
+        // A list inside a choice: the step stops at the list, not at its entry
+        final var list = DataSchemaContextTree.dataStep(topContext(), SECOND_LIST);
+        assertNotNull(list);
+        assertInstanceOf(DataSchemaContext.PathMixin.class, list.child());
+        assertEquals(SECOND_LIST, list.child().dataSchemaNode().getQName());
+
+        // The name of a choice is not the name of a data node, at any depth
+        assertNull(DataSchemaContextTree.dataStep(topContext(), OUTER));
+        assertNull(DataSchemaContextTree.dataStep(topContext(), INNER));
+    }
+
+    @Test
+    void entryOfList() {
+        final var step = DataSchemaContextTree.dataStep(topContext(), SECOND_LIST);
+        assertNotNull(step);
+        final var list = step.child();
+        final var entry = assertInstanceOf(Composite.class, DataSchemaContextTree.entryOf(list));
+        assertNotSame(list, entry);
+        assertEquals(SECOND_LIST, entry.dataSchemaNode().getQName());
+
+        // Anything else is returned as it is
+        assertSame(topContext(), DataSchemaContextTree.entryOf(topContext()));
+        assertNull(DataSchemaContextTree.entryOf(null));
+    }
+
+    @Test
     void choiceNameReusesContext() {
         // Asking for a choice by its own name must not replace the choice context cached under its children's names
         final var choice = assertInstanceOf(Step.Simple.class, topContext().stepTowards(FIRST_LEAF)).child();
@@ -200,6 +234,56 @@ class YT1899Test {
         final var leaf = TREE.childByInference(stack.toInference());
         assertNotNull(leaf);
         assertEquals(SECOND_LIST_ID, leaf.dataSchemaNode().getQName());
+    }
+
+    @Test
+    void inferenceToLeafList() {
+        // A leaf-list gives the context of its values
+        final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
+        stack.enterSchemaTree(TOP);
+        stack.enterSchemaTree(TOP_LEAF_LIST);
+        final var item = assertInstanceOf(DataSchemaContext.SimpleValue.class,
+            TREE.childByInference(stack.toInference()));
+        assertEquals(TOP_LEAF_LIST, item.dataSchemaNode().getQName());
+    }
+
+    @Test
+    void inferenceToLeafListInsideChoice() {
+        final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
+        stack.enterSchemaTree(TOP);
+        stack.enterChoice(OUTER);
+        stack.enterSchemaTree(SECOND);
+        stack.enterSchemaTree(SECOND_LEAF_LIST);
+        final var item = assertInstanceOf(DataSchemaContext.SimpleValue.class,
+            TREE.childByInference(stack.toInference()));
+        assertEquals(SECOND_LEAF_LIST, item.dataSchemaNode().getQName());
+    }
+
+    @Test
+    void inferenceEndingAtCase() {
+        final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
+        stack.enterSchemaTree(TOP);
+        stack.enterChoice(OUTER);
+        stack.enterSchemaTree(FIRST);
+        final var first = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
+        assertEquals(FIRST, first.dataSchemaNode().getQName());
+        // A case is not part of the tree, so each call creates its context anew
+        assertNotSame(first, TREE.childByInference(stack.toInference()));
+
+        // Its own children and those of a choice inside it are known, but not those of other cases
+        final var firstLeaf = first.childByQName(FIRST_LEAF);
+        assertNotNull(firstLeaf);
+        assertEquals(FIRST_LEAF, firstLeaf.dataSchemaNode().getQName());
+        assertInstanceOf(DataSchemaContext.PathMixin.class, first.childByQName(INNER_LEAF));
+        assertNull(first.childByQName(SECOND_LEAF));
+
+        // Adding a child does not add the choice and case where the data starts
+        final var data = CompositeNodeDataWithSchema.of(first.dataSchemaNode());
+        final var child = data.addChild(first, FIRST_LEAF, ChildReusePolicy.NOOP);
+        assertNotNull(child);
+        assertInstanceOf(LeafNodeDataWithSchema.class, child.data());
+        assertNull(data.addChild(first, SECOND_LEAF, ChildReusePolicy.NOOP));
+        assertEquals(1, data.childSizeHint());
     }
 
     @Test
@@ -299,7 +383,9 @@ class YT1899Test {
         stack.enterChoice(GRP_CHOICE);
         assertNull(TREE.childByInference(stack.toInference()));
         stack.enterSchemaTree(GRP_CASE);
-        assertNull(TREE.childByInference(stack.toInference()));
+        // Like a case in the data tree, a case inside a grouping gets a context of its own
+        final var caze = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
+        assertEquals(GRP_CASE, caze.dataSchemaNode().getQName());
 
         stack.enterSchemaTree(GRP_CASE_LEAF);
         final var leaf = TREE.childByInference(stack.toInference());

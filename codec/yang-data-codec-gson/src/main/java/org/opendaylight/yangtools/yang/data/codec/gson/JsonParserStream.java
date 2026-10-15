@@ -22,24 +22,33 @@ import java.io.Flushable;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.common.XMLNamespace;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.CompositeNodeDataWithSchema.ChildReusePolicy;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.MultipleEntryDataWithSchema;
-import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -61,10 +70,12 @@ public final class JsonParserStream implements Closeable, Flushable {
     static final String ANYXML_ARRAY_ELEMENT_ID = "array-element";
 
     private static final Logger LOG = LoggerFactory.getLogger(JsonParserStream.class);
-    private final Deque<XMLNamespace> namespaces = new ArrayDeque<>();
+    // The module of each JSON member we are inside of, innermost first
+    private final Deque<QNameModule> modules = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
     private final DataSchemaNode parentNode;
+    private final @Nullable DataSchemaContext parentContext;
 
     private final SchemaInferenceStack stack;
 
@@ -93,6 +104,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         } else {
             parentNode = stack.modelContext();
         }
+        parentContext = codecs.dataContextTree().childByInference(stack.toInference());
     }
 
     /**
@@ -184,7 +196,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             // FIXME: this has a special-case bypass for SchemaContext, where we end up emitting just the child while
             //        the usual of() would result in SchemaContext.NAME being the root
             final var compositeNodeDataWithSchema = new CompositeNodeDataWithSchema<>(parentNode);
-            read(reader, compositeNodeDataWithSchema);
+            read(reader, compositeNodeDataWithSchema, parentContext);
             compositeNodeDataWithSchema.write(writer);
 
             return this;
@@ -241,14 +253,15 @@ public final class JsonParserStream implements Closeable, Flushable {
     private void readAnyXmlValue(final JsonReader in, final AnyXmlNodeDataWithSchema parent,
             final String anyXmlObjectName) throws IOException {
         final var doc = UntrustedXML.newDocumentBuilder().newDocument();
-        final var rootElement = doc.createElementNS(getCurrentNamespace().toString(), anyXmlObjectName);
+        final var rootElement = doc.createElementNS(getCurrentModule().namespace().toString(), anyXmlObjectName);
         doc.appendChild(rootElement);
         traverseAnyXmlValue(in, doc, rootElement);
 
         parent.setValue(new DOMSource(doc.getDocumentElement()));
     }
 
-    private void read(final JsonReader in, AbstractNodeDataWithSchema<?> parent) throws IOException {
+    private void read(final JsonReader in, AbstractNodeDataWithSchema<?> parent,
+            @Nullable DataSchemaContext context) throws IOException {
         switch (in.peek()) {
             case STRING:
             case NUMBER:
@@ -265,9 +278,9 @@ public final class JsonParserStream implements Closeable, Flushable {
                 in.beginArray();
                 while (in.hasNext()) {
                     if (parent instanceof LeafNodeDataWithSchema) {
-                        read(in, parent);
+                        read(in, parent, context);
                     } else {
-                        read(in, newArrayEntry(parent));
+                        read(in, newArrayEntry(parent), DataSchemaContextTree.entryOf(context));
                     }
                 }
                 in.endArray();
@@ -284,49 +297,64 @@ public final class JsonParserStream implements Closeable, Flushable {
                  */
                 if (isArray(parent)) {
                     parent = newArrayEntry(parent);
+                    context = DataSchemaContextTree.entryOf(context);
                 }
+
+                final var parentSchema = parent.getSchema();
+                // Anything but a container or a list entry has no children to look up
+                final var composite = context instanceof Composite found ? found : null;
                 while (in.hasNext()) {
                     final var jsonElementName = in.nextName();
-                    final var parentSchema = parent.getSchema();
-                    final var namespaceAndName = resolveNamespace(jsonElementName, parentSchema);
-                    final var localName = namespaceAndName.getKey();
-                    final var namespace = namespaceAndName.getValue();
-                    if (lenient && (localName == null || namespace == null)) {
+                    final var nameAndModule = resolveModule(jsonElementName, parentSchema, composite);
+                    final var localName = nameAndModule.getKey();
+                    final var module = nameAndModule.getValue();
+                    if (lenient && (localName == null || module == null)) {
                         LOG.debug("Schema node with name {} was not found under {}", localName,
                             parentSchema.getQName());
                         in.skipValue();
                         continue;
                     }
-                    addNamespace(namespace);
+                    addModule(module);
                     if (!namesakes.add(jsonElementName)) {
                         throw new JsonSyntaxException("Duplicate name " + jsonElementName + " in JSON input.");
                     }
 
-                    final var childDataSchemaNodes = ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema,
-                        localName, getCurrentNamespace());
-                    if (childDataSchemaNodes.isEmpty()) {
+                    final var qname = composite == null ? null : childQName(module, localName);
+                    final var child = qname == null ? null
+                        : ((CompositeNodeDataWithSchema<?>) parent).addChild(composite, qname, ChildReusePolicy.NOOP);
+                    if (child == null) {
                         throw new IllegalStateException(
                             "Schema for node with name %s and namespace %s does not exist at %s".formatted(
-                                localName, getCurrentNamespace(), parentSchema));
+                                localName, module.namespace(), parentSchema));
                     }
 
-                    final var qname = childDataSchemaNodes.peekLast().getQName();
-                    final var newChild = ((CompositeNodeDataWithSchema<?>) parent)
-                            .addChild(childDataSchemaNodes, ChildReusePolicy.NOOP);
-                    if (newChild instanceof AnyXmlNodeDataWithSchema anyxml) {
+                    if (child.data() instanceof AnyXmlNodeDataWithSchema anyxml) {
                         readAnyXmlValue(in, anyxml, jsonElementName);
                     } else {
                         stack.enterDataTree(qname);
-                        read(in, newChild);
+                        read(in, child.data(), child.context());
                         stack.exit();
                     }
-                    removeNamespace();
+                    removeModule();
                 }
                 in.endObject();
                 return;
             default:
                 break;
         }
+    }
+
+    // Returns null if localName is not a valid YANG identifier, so no schema node can have it
+    private static @Nullable QName childQName(final QNameModule module, final String localName) {
+        final var unqualified = Unqualified.tryLocalName(localName);
+        return unqualified == null ? null : unqualified.bindTo(module);
+    }
+
+    // Returns true if the composite has a data node with this name in this module. The name of a choice does not
+    // count, as it never names a JSON member.
+    private static boolean hasDataChild(final Composite composite, final QNameModule module, final String localName) {
+        final var qname = childQName(module, localName);
+        return qname != null && DataSchemaContextTree.dataStep(composite, qname) != null;
     }
 
     private static boolean isArray(final AbstractNodeDataWithSchema<?> parent) {
@@ -361,82 +389,116 @@ public final class JsonParserStream implements Closeable, Flushable {
         throw new IllegalArgumentException("Unexpected node " + node);
     }
 
-    private void removeNamespace() {
-        namespaces.pop();
+    private void removeModule() {
+        modules.pop();
     }
 
-    private void addNamespace(final XMLNamespace namespace) {
-        namespaces.push(namespace);
+    private void addModule(final QNameModule module) {
+        modules.push(module);
     }
 
-    private Entry<String, XMLNamespace> resolveNamespace(final String childName, final DataSchemaNode dataSchemaNode) {
+    private Entry<String, QNameModule> resolveModule(final String childName, final DataSchemaNode dataSchemaNode,
+            final @Nullable Composite composite) {
         final int lastIndexOfColon = childName.lastIndexOf(':');
         final String nodeNamePart;
-        XMLNamespace namespace;
+        QNameModule module;
         if (lastIndexOfColon != -1) {
             final var moduleNamePart = childName.substring(0, lastIndexOfColon);
             nodeNamePart = childName.substring(lastIndexOfColon + 1);
-
-            final var m = codecs.modelContext().findModuleStatements(moduleNamePart).iterator();
-            namespace = m.hasNext() ? m.next().localQNameModule().namespace() : null;
+            module = resolvePrefix(moduleNamePart, nodeNamePart, composite);
         } else {
             nodeNamePart = childName;
-            namespace = null;
+            module = null;
         }
 
-        if (namespace == null) {
-            final var potentialUris = resolveAllPotentialNamespaces(nodeNamePart, dataSchemaNode);
-            if (potentialUris.contains(getCurrentNamespace())) {
-                namespace = getCurrentNamespace();
-            } else if (potentialUris.size() == 1) {
-                namespace = potentialUris.iterator().next();
-            } else if (potentialUris.size() > 1) {
-                throw new IllegalStateException("Choose suitable module name for element " + nodeNamePart + ":"
-                        + toModuleNames(potentialUris));
-            } else if (potentialUris.isEmpty() && !lenient) {
-                throw new IllegalStateException("Schema node with name " + nodeNamePart + " was not found under "
-                        + dataSchemaNode.getQName() + ".");
+        if (module == null) {
+            // Usually the child is in the parent's module, which is a single lookup. Only otherwise do we scan the
+            // children for any module holding such a name.
+            final var current = getCurrentModule();
+            if (composite != null && current != null && hasDataChild(composite, current, nodeNamePart)) {
+                return new SimpleImmutableEntry<>(nodeNamePart, current);
+            }
+
+            final var potentialModules = resolveAllPotentialModules(nodeNamePart, dataSchemaNode);
+            if (potentialModules.size() == 1) {
+                module = potentialModules.iterator().next();
+            } else if (potentialModules.size() > 1) {
+                throw new IllegalStateException("Choose suitable module name for element %s:%s"
+                    .formatted(nodeNamePart, toModuleNames(potentialModules)));
+            } else if (potentialModules.isEmpty() && !lenient) {
+                throw new IllegalStateException("Schema node with name %s was not found under %s."
+                    .formatted(nodeNamePart, dataSchemaNode.getQName()));
             }
         }
 
-        return new SimpleImmutableEntry<>(nodeNamePart, namespace);
+        return new SimpleImmutableEntry<>(nodeNamePart, module);
     }
 
-    private String toModuleNames(final Set<XMLNamespace> potentialUris) {
+    // A JSON prefix is a module name without a revision, but the model may hold several revisions of that module. They
+    // come newest first: we take the newest one, unless only an older one has a child with this name.
+    private @Nullable QNameModule resolvePrefix(final String moduleName, final String localName,
+            final @Nullable Composite composite) {
+        final var it = codecs.modelContext().findModuleStatements(moduleName).iterator();
+        if (!it.hasNext()) {
+            return null;
+        }
+        final var newest = it.next().localQNameModule();
+        // With a single revision there is nothing to choose from, so we do not look up the child here
+        if (composite != null && it.hasNext() && !hasDataChild(composite, newest, localName)) {
+            while (it.hasNext()) {
+                final var older = it.next().localQNameModule();
+                if (hasDataChild(composite, older, localName)) {
+                    return older;
+                }
+            }
+        }
+        return newest;
+    }
+
+    private String toModuleNames(final Collection<QNameModule> potentialModules) {
         final var sb = new StringBuilder();
-        for (var potentialUri : potentialUris) {
+        for (var potentialModule : potentialModules) {
             sb.append('\n');
             // FIXME how to get information about revision from JSON input? currently first available is used.
-            sb.append(codecs.modelContext().findModuleStatements(potentialUri).iterator().next()
+            sb.append(codecs.modelContext().findModuleStatements(potentialModule.namespace()).iterator().next()
                 .argument().getLocalName());
         }
         return sb.toString();
     }
 
-    private Set<XMLNamespace> resolveAllPotentialNamespaces(final String elementName,
+    private static Collection<QNameModule> resolveAllPotentialModules(final String elementName,
             final DataSchemaNode dataSchemaNode) {
-        final var potentialUris = new HashSet<XMLNamespace>();
+        // Several revisions of one module share a namespace and so look the same in JSON: count them once, keeping the
+        // newest revision
+        final var byNamespace = new HashMap<XMLNamespace, QNameModule>();
+        collectPotentialModules(elementName, dataSchemaNode, byNamespace);
+        return byNamespace.values();
+    }
+
+    private static void collectPotentialModules(final String elementName, final DataSchemaNode dataSchemaNode,
+            final Map<XMLNamespace, QNameModule> byNamespace) {
         final var choices = new HashSet<ChoiceSchemaNode>();
         if (dataSchemaNode instanceof DataNodeContainer container) {
             for (var childSchemaNode : container.getChildNodes()) {
                 if (childSchemaNode instanceof ChoiceSchemaNode choice) {
                     choices.add(choice);
                 } else if (childSchemaNode.getQName().getLocalName().equals(elementName)) {
-                    potentialUris.add(childSchemaNode.getQName().getNamespace());
+                    final var module = childSchemaNode.getQName().getModule();
+                    byNamespace.merge(module.namespace(), module,
+                        (prev, next) -> Revision.compare(prev.revision(), next.revision()) >= 0 ? prev : next);
                 }
             }
 
             for (var choiceNode : choices) {
                 for (var concreteCase : choiceNode.getCases()) {
-                    potentialUris.addAll(resolveAllPotentialNamespaces(elementName, concreteCase));
+                    collectPotentialModules(elementName, concreteCase, byNamespace);
                 }
             }
         }
-        return potentialUris;
     }
 
-    private XMLNamespace getCurrentNamespace() {
-        return namespaces.peek();
+    private QNameModule getCurrentModule() {
+        return modules.peek();
     }
 
     @Override

@@ -26,8 +26,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.Composite;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContext.PathMixin;
+import org.opendaylight.yangtools.yang.data.util.context.CaseContext;
 import org.opendaylight.yangtools.yang.data.util.context.ContainerContext;
 import org.opendaylight.yangtools.yang.data.util.context.YangDataContext;
+import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.EffectiveStatementInference;
@@ -243,11 +245,12 @@ public final class DataSchemaContextTree {
      *
      * <p>Nodes in the data tree and in a {@code yang-data} come from this tree, so lookups through them are shared by
      * every user of this tree. An {@code rpc}, {@code action}, {@code notification} or {@code grouping} is not part of
-     * the data tree: the contexts at and below it are created for this call only.
+     * the data tree: the contexts at and below it are created for this call only. The same holds for an inference
+     * ending at a {@code case}: its context holds only that case's children and is created for this call only.
      *
      * @param inference the inference, which has to come from this tree's model context
-     * @return the context, or {@code null} if the inference ends at a {@code choice}, a {@code case} or a
-     *         {@code grouping}, or passes through a statement that has no context
+     * @return the context, or {@code null} if the inference ends at a {@code choice} or a {@code grouping}, or passes
+     *         through a statement that has no context
      * @throws NullPointerException if {@code inference} is {@code null}
      * @throws IllegalArgumentException if {@code inference} comes from a different model context
      */
@@ -258,26 +261,27 @@ public final class DataSchemaContextTree {
         }
 
         DataSchemaContext current = root;
-        // Set while the inference stands at a choice or a case, so we know where it ended
-        EffectiveStatement<?, ?> lastChoiceOrCase = null;
+        // Set while the inference stands at a choice, a case or a grouping, none of which has a context in the tree, so
+        // we know where it ended
+        EffectiveStatement<?, ?> lastWithoutContext = null;
         // Set after a grouping, until the first data node inside it
         boolean inGrouping = false;
         for (var stmt : inference.statementPath()) {
-            lastChoiceOrCase = null;
+            lastWithoutContext = null;
             switch (stmt) {
                 case DataTreeEffectiveStatement<?> data -> {
                     if (inGrouping && data instanceof DataSchemaNode schema) {
                         // A grouping is not part of the data tree, so nothing below it is shared: start a context of
                         // our own at its first data node
-                        current = dataNode(DataSchemaContext.of(schema), schema.getQName());
+                        current = entryOf(DataSchemaContext.of(schema));
                         inGrouping = false;
                     } else {
                         current = childOf(current, data.argument());
                     }
                 }
                 // A choice and its case have no context in the tree: the next child is found by its name alone
-                case ChoiceEffectiveStatement choice -> lastChoiceOrCase = choice;
-                case CaseEffectiveStatement caze -> lastChoiceOrCase = caze;
+                case ChoiceEffectiveStatement choice -> lastWithoutContext = choice;
+                case CaseEffectiveStatement caze -> lastWithoutContext = caze;
                 case YangDataEffectiveStatement yangDataStmt -> current = childYangData(yangDataStmt.argument());
                 // An rpc, action or notification is not part of the data tree, so nothing at or below it is shared:
                 // start a context of our own. This also ends a grouping it sits in.
@@ -285,7 +289,10 @@ public final class DataSchemaContextTree {
                     current = DataSchemaContext.of(compat.toDataSchemaNode());
                     inGrouping = false;
                 }
-                case GroupingEffectiveStatement grouping -> inGrouping = true;
+                case GroupingEffectiveStatement grouping -> {
+                    lastWithoutContext = grouping;
+                    inGrouping = true;
+                }
                 default -> {
                     return null;
                 }
@@ -295,32 +302,56 @@ public final class DataSchemaContextTree {
             }
         }
 
-        if (inGrouping) {
-            // A grouping has no context of its own, so data cannot start there
-            return null;
-        }
-        // Neither a choice nor a case has a context in the tree, so data cannot start there
-        return lastChoiceOrCase == null ? current : null;
+        return switch (lastWithoutContext) {
+            case null -> current;
+            // Ending at a case means the data holds just that case's children, so give them a context of their own
+            case CaseEffectiveStatement caze -> new CaseContext(caze.toDataSchemaNode());
+            // A choice holds only cases, never data nodes, and a grouping has no context of its own, so data cannot
+            // start at either
+            default -> null;
+        };
     }
 
     private static @Nullable DataSchemaContext childOf(final DataSchemaContext parent, final QName qname) {
-        final var step = parent instanceof Composite composite ? composite.stepTowards(qname) : null;
-        return step == null ? null : dataNode(step.child(), qname);
+        final var step = parent instanceof Composite composite ? dataStep(composite, qname) : null;
+        // The data below a list or a leaf-list belongs to its entries
+        return step == null ? null : entryOf(step.child());
     }
 
-    // A choice, a list and a leaf-list stand in front of the node itself: step through them until we reach it. For a
-    // list or a leaf-list this is the context of its entries.
-    private static @Nullable DataSchemaContext dataNode(final DataSchemaContext context, final QName qname) {
-        var current = context;
-        while (current instanceof PathMixin mixin) {
+    /**
+     * Return the context of a single entry when given the context of a {@code list} or a {@code leaf-list}. Such a
+     * context stands for the whole list, while the children found in data belong to each of its entries.
+     *
+     * @param context a context, or {@code null}
+     * @return the context of an entry for a list or a leaf-list, otherwise {@code context} itself
+     */
+    public static @Nullable DataSchemaContext entryOf(final @Nullable DataSchemaContext context) {
+        return context instanceof PathMixin list
+            && list.stepTowards(list.dataSchemaNode().getQName()) instanceof Step.ToEntry entry
+                ? entry.child() : context;
+    }
+
+    /**
+     * Find the step towards the data node with the specified name. A {@code choice} and its {@code case} never appear
+     * in data, so a name inside a choice is found by stepping into the choice and then through the right case. The
+     * name of a choice itself never names a data node, so it is not found.
+     *
+     * @param parent the context to look in. For a {@code list} or a {@code leaf-list} this has to be the context of one
+     *               entry, as returned by {@link #entryOf(DataSchemaContext)}, because the children belong to the
+     *               entries.
+     * @param qname the name of the data node
+     * @return the step whose child is the data node, or {@code null} if {@code parent} has no data node of that name
+     * @throws NullPointerException if any argument is {@code null}
+     */
+    public static @Nullable Step dataStep(final @NonNull Composite parent, final @NonNull QName qname) {
+        var step = parent.stepTowards(qname);
+        // Step through each choice and its case. Stop at the data node, which may be a list or a leaf-list.
+        while (step != null && step.child() instanceof PathMixin mixin
+                && mixin.dataSchemaNode() instanceof ChoiceSchemaNode) {
             // Null if the name is the choice's own name, which is never a data node
-            final var step = mixin.stepTowards(qname);
-            if (step == null) {
-                return null;
-            }
-            current = step.child();
+            step = mixin.stepTowards(qname);
         }
-        return qname.equals(current.dataSchemaNode().getQName()) ? current : null;
+        return step;
     }
 
     public DataSchemaContext.@NonNull Composite getRoot() {

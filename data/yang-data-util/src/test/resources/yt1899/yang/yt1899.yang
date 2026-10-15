@@ -16,6 +16,10 @@ module yt1899 {
       type string;
     }
 
+    leaf-list top-leaf-list {
+      type string;
+    }
+
     choice outer {
       case first {
         leaf first-leaf {
@@ -35,6 +39,10 @@ module yt1899 {
 
       case second {
         leaf second-leaf {
+          type string;
+        }
+
+        leaf-list second-leaf-list {
           type string;
         }
 
