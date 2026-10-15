@@ -42,10 +42,10 @@ public enum ModelProcessingPhase {
      * <a href="https://www.rfc-editor.org/info/rfc7950/#section-6.2.1">RFC7950 section 6.2.1</a>:
      * <ul>
      *   <li>{@link ParserNamespaces.EXTENSION}</li>
+     *   <li>{@link ParserNamespaces.FEATURE}</li>
      * </ul>
      */
     // FIXME: YANGTOOLS-1840: document the following namespaces as frozen:
-    //        - ParserNamespaces.FEATURE
     //        - ParserNamespaces.GROUPING
     //        - ParserNamespaces.IDENTITY
     //        - ParserNamespaces.TYPE

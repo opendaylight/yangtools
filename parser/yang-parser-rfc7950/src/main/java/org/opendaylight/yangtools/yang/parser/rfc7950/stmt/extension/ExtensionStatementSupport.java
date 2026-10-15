@@ -71,12 +71,9 @@ public final class ExtensionStatementSupport
         }
 
         final var name = stmt.getArgument();
-        final var prev = stmt.namespaceItem(ParserNamespaces.EXTENSION, name);
-        if (prev != null) {
-            throw new SourceException(stmt,
-                "Extension name collision: '%s' already declared at %s", name, prev.sourceReference());
-        }
-        stmt.addToNs(ParserNamespaces.EXTENSION, name, stmt);
+        stmt.putToNs(ParserNamespaces.EXTENSION, name, stmt, (prev, next) ->
+            new SourceException(next,
+                "Extension name collision: '%s' already declared at %s", next.getArgument(), prev.sourceReference()));
         stmt.addToNs(StatementDefinitions.NAMESPACE, name, UnrecognizedStatementSupport.ofExtension(stmt, config));
     }
 

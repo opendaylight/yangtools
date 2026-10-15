@@ -18,9 +18,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -32,6 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class FeatureStatementSupport
         extends AbstractQNameStatementSupport<FeatureStatement, FeatureEffectiveStatement> {
@@ -48,14 +51,23 @@ public final class FeatureStatementSupport
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<QName, FeatureStatement, FeatureEffectiveStatement> stmt) {
-        super.onFullDefinitionDeclared(stmt);
-        stmt.addToNs(ParserNamespaces.FEATURE, stmt.getArgument(), stmt);
-
-        // Do not build effective statement if supported features does not include this feature
-        final var supportedFeatures = stmt.namespaceItem(ParserNamespaces.SUPPORTED_FEATURES, Empty.value());
-        if (supportedFeatures != null && !supportedFeatures.contains(stmt.getArgument())) {
+    public void onStatementAdded(final Mutable<QName, FeatureStatement, FeatureEffectiveStatement> stmt) {
+        // Do not build effective statement if the set of supported features does not include this feature
+        final var featureSet = stmt.namespaceItem(ParserNamespaces.SUPPORTED_FEATURES, Empty.value());
+        if (featureSet != null && !featureSet.contains(stmt.getArgument())) {
             stmt.setUnsupported();
+        }
+    }
+
+    @Override
+    public void onStatementDefinitionDeclared(final Mutable<QName, FeatureStatement, FeatureEffectiveStatement> stmt) {
+        // RFC7950 section 6.2.1:
+        //        o  All feature names defined in a module and its submodules share the
+        //           same feature identifier namespace.
+        if (stmt.coerceParentContext().producesAnyOf(ModuleStatement.DEF, SubmoduleStatement.DEF)) {
+            stmt.putToNs(ParserNamespaces.FEATURE, stmt.getArgument(), stmt, (prev, next) ->
+                new SourceException(next, "Feature name collision: '%s' already declared at %s", next.getArgument(),
+                    prev.sourceReference()));
         }
     }
 

@@ -123,6 +123,10 @@ public final class ParserNamespaces {
         StmtContext<Unqualified, SubmoduleStatement, SubmoduleEffectiveStatement>> INCLUDED_SUBMODULE =
             ReactorNamespace.of("included-submodule");
 
+    /**
+     * A {@link ReactorNamespace} exposing an optional {@link FeatureSet}. If present, the set of supported features
+     * is constrained to that set. If absent, the set of supported features is not constrained.
+     */
     public static final @NonNull ReactorNamespace<Empty, FeatureSet> SUPPORTED_FEATURES =
         ReactorNamespace.of("supportedFeatures");
 
