@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -92,6 +93,11 @@ sealed class UndeclaredStmtCtx<A, D extends DeclaredStatement<A>, E extends Effe
     private static <T> T verifySupport(final T support) {
         verify(support instanceof UndeclaredStatementFactory, "Unexpected statement support %s", support);
         return support;
+    }
+
+    @NonNullByDefault
+    void setCauseStatement(final OriginalStmtCtx<?, ?, ?> cause) {
+        setFirstEffectiveSubstatement(cause);
     }
 
     @Override

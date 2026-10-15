@@ -327,8 +327,8 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     final List<ReactorStmtCtx<?, ?, ?>> addEffectiveSubstatement(final List<ReactorStmtCtx<?, ?, ?>> effective,
             final Mutable<?, ?, ?> substatement) {
-        final ReactorStmtCtx<?, ?, ?> stmt = verifyStatement(substatement);
-        final List<ReactorStmtCtx<?, ?, ?>> resized = beforeAddEffectiveStatement(effective, 1);
+        final var stmt = verifyStatement(substatement);
+        final var resized = beforeAddEffectiveStatement(effective, 1);
         ensureCompletedExecution(stmt);
         resized.add(stmt);
         return resized;
@@ -395,13 +395,18 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         throw new VerifyException("Unexpected statement " + stmt);
     }
 
-    private List<ReactorStmtCtx<?, ?, ?>> beforeAddEffectiveStatement(final List<ReactorStmtCtx<?, ?, ?>> effective,
-            final int toAdd) {
+    final void verifyCanAddEffectiveStatement() {
         // We cannot allow statement to be further mutated.
         // TODO: we really want to say 'not NULL and not at or after EFFECTIVE_MODEL here. This will matter if we have
         //       a phase after EFFECTIVE_MODEL
-        verify(executionOrder != ExecutionOrder.EFFECTIVE_MODEL, "Cannot modify finished statement at %s",
-            sourceReference());
+        if (executionOrder == ExecutionOrder.EFFECTIVE_MODEL) {
+            throw new VerifyException("Cannot modify finished statement at " + sourceReference());
+        }
+    }
+
+    private List<ReactorStmtCtx<?, ?, ?>> beforeAddEffectiveStatement(final List<ReactorStmtCtx<?, ?, ?>> effective,
+            final int toAdd) {
+        verifyCanAddEffectiveStatement();
         return beforeAddEffectiveStatementUnsafe(effective, toAdd);
     }
 

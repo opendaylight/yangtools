@@ -241,7 +241,7 @@ abstract sealed class AbstractResumedStatement<A, D extends DeclaredStatement<A>
             implicitDeclared = true;
             final var parent = createUndeclared(offset, implicitParent, ref, argument);
             ret = new SubstatementContext<>(parent, def, ref, argument);
-            parent.addEffectiveSubstatement(ret);
+            parent.setCauseStatement(ret);
         } else {
             ret = new SubstatementContext<>(this, def, ref, argument);
             substatements = substatements.put(offset, ret);
@@ -259,7 +259,7 @@ abstract sealed class AbstractResumedStatement<A, D extends DeclaredStatement<A>
         if (implicitParent != null) {
             final var parent = createUndeclared(offset, implicitParent, ref, argument);
             ret = new ImplicitStmtCtx<>(parent, support, argument);
-            parent.addEffectiveSubstatement(ret);
+            parent.setCauseStatement(ret);
         } else {
             ret = new ImplicitStmtCtx<>(this, support, argument);
             substatements = substatements.put(offset, ret);
