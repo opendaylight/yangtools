@@ -65,7 +65,7 @@ class ExtensionStmtTest extends AbstractYangTest {
     }
 
     @Test
-    void textDuplicateExtension() {
+    void testDuplicateExtension() {
         assertSourceExceptionMessage("/duplicate-extension.yang")
             .startsWith("Extension name collision: '(foo)bar' already declared at ")
             .containsOnlyOnce(":5:3 [at ")
