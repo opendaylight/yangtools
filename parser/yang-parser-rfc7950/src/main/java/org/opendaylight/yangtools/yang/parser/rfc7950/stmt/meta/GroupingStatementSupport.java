@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -112,8 +113,8 @@ public final class GroupingStatementSupport
 
         // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
         // declarations and parent declarations which have already been declared.
-        checkConflict(parent, stmt);
-        parent.addToNs(ParserNamespaces.GROUPING, stmt.getArgument(), stmt);
+        parent.putToNs(ParserNamespaces.GROUPING, stmt.getArgument(), stmt,
+            GroupingStatementSupport::newSourceException);
 
         final var grandParent = parent.getParentContext();
         if (grandParent != null) {
@@ -125,7 +126,10 @@ public final class GroupingStatementSupport
             action.apply(new InferenceAction() {
                 @Override
                 public void apply(final InferenceContext ctx) {
-                    checkConflict(grandParent, stmt);
+                    final var prev = grandParent.namespaceItem(ParserNamespaces.GROUPING, stmt.getArgument());
+                    if (prev != null) {
+                        throw newSourceException(prev, stmt);
+                    }
                 }
 
                 @Override
@@ -134,6 +138,13 @@ public final class GroupingStatementSupport
                 }
             });
         }
+    }
+
+    @NonNullByDefault
+    private static SourceException newSourceException(final StmtContext<?, ?, ?> prev,
+            final StmtContext<?, ?, ?> next) {
+        // TODO: improve the message with coordinates of conflict
+        return new SourceException(next, "Duplicate name for grouping %s", next.getArgument());
     }
 
     @Override
@@ -157,11 +168,5 @@ public final class GroupingStatementSupport
         } catch (SubstatementIndexingException e) {
             throw new SourceException(e.getMessage(), stmt, e);
         }
-    }
-
-    private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
-        final var arg = stmt.getArgument();
-        final var existing = parent.namespaceItem(ParserNamespaces.GROUPING, arg);
-        SourceException.throwIf(existing != null, stmt, "Duplicate name for grouping %s", arg);
     }
 }
