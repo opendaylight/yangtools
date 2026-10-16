@@ -260,16 +260,8 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
          * @throws NamespaceNotAvailableException when the namespace is not available.
          * @throws X when the namespace already contains a value
          */
-        default <K, V, X extends Exception> void putToNs(
-                final @NonNull UserNamespace<K, V> type, final @NonNull K key, final @NonNull V value,
-                final @NonNull BiFunction<@NonNull V, @NonNull V, @NonNull X> exceptionSupplier) throws X {
-            requireNonNull(exceptionSupplier);
-            final var prev = namespaceItem(type, key);
-            if (prev != null) {
-                throw exceptionSupplier.apply(prev, value);
-            }
-            addToNs(type, key, value);
-        }
+        <K, V, X extends Exception> void putToNs(@NonNull UserNamespace<K, V> type, @NonNull K key, @NonNull V value,
+                @NonNull BiFunction<@NonNull V, @NonNull V, @NonNull X> exceptionSupplier) throws X;
 
         @Override
         RootStmtContext.Mutable<?, ?, ?> getRoot();

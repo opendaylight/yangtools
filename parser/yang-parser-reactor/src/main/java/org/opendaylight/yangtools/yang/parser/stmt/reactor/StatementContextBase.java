@@ -26,6 +26,7 @@ import java.util.EnumMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -264,7 +265,17 @@ abstract sealed class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public final <K, V> void addToNs(final UserNamespace<K, V> type, final K key, final V value) {
-        addToNamespace(type, key, value);
+        accessNamespace(type).valueTo(this, key, value);
+    }
+
+    @Override
+    public final <K, V, X extends Exception> void putToNs(final UserNamespace<K, V> type, final K key, final V value,
+            final BiFunction<V, V, @NonNull X> exceptionSupplier) throws X {
+        final var prev = accessNamespace(type).valueToOnce(this, key, value);
+        requireNonNull(exceptionSupplier);
+        if (prev != null) {
+            throw exceptionSupplier.apply(prev, value);
+        }
     }
 
     static final Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements(

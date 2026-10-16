@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.stream.Stream;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -160,6 +161,13 @@ final class ReplicaStatementContext<A, D extends DeclaredStatement<A>, E extends
     @Override
     @Deprecated
     public <K, V> void addToNs(final UserNamespace<K, V> type, final K key, final V value) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    @Deprecated
+    public <K, V, X extends Exception> void putToNs(final UserNamespace<K, V> type, final K key, final V value,
+            final BiFunction<V, V, X> exceptionSupplier) throws X {
         throw new UnsupportedOperationException();
     }
 
