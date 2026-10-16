@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 
 // FIXME: YANGTOOLS-1150: this should go into yang-reactor-api
 public enum ModelProcessingPhase {
@@ -36,9 +37,14 @@ public enum ModelProcessingPhase {
     /**
      * Early statement declaration phase. This phase processes all statements with the exception of {@code default},
      * {@code must}, {@code range} and {@code when} statements.
+     *
+     * <p>Following namespaces are completely populated at the end of statement declaration as per
+     * <a href="https://www.rfc-editor.org/info/rfc7950/#section-6.2.1">RFC7950 section 6.2.1</a>:
+     * <ul>
+     *   <li>{@link ParserNamespaces.EXTENSION}</li>
+     * </ul>
      */
     // FIXME: YANGTOOLS-1840: document the following namespaces as frozen:
-    //        - ParserNamespaces.EXTENSION
     //        - ParserNamespaces.FEATURE
     //        - ParserNamespaces.GROUPING
     //        - ParserNamespaces.IDENTITY

@@ -19,8 +19,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -53,14 +55,6 @@ public final class ExtensionStatementSupport
 
     @Override
     public void onStatementAdded(final Mutable<QName, ExtensionStatement, ExtensionEffectiveStatement> stmt) {
-        final var name = stmt.getArgument();
-        final var prev = stmt.namespaceItem(ParserNamespaces.EXTENSION, name);
-        if (prev != null) {
-            throw new SourceException(stmt,
-                "Extension name collision: '%s' already declared at %s", name, prev.sourceReference());
-        }
-        stmt.addToNs(ParserNamespaces.EXTENSION, name, stmt);
-
         // FIXME: 17.0.0: setUnsupported() if there is no corresponding reactor support, mirroring how we project
         //                supported features. That has impact on SchemaContext.getExtensions(): we probably want
         //                to deprecate ExtensionDefinition as such as the first step towards full SchemaNode deprecation
@@ -69,8 +63,21 @@ public final class ExtensionStatementSupport
     @Override
     public void onStatementDefinitionDeclared(
             final Mutable<QName, ExtensionStatement, ExtensionEffectiveStatement> stmt) {
-        stmt.addToNs(StatementDefinitions.NAMESPACE, stmt.getArgument(),
-            UnrecognizedStatementSupport.ofExtension(stmt, config));
+        // RFC7950 section 6.2.1:
+        //        o  All extension names defined in a module and its submodules share
+        //           the same extension identifier namespace.
+        if (!stmt.coerceParentContext().producesAnyOf(ModuleStatement.DEF, SubmoduleStatement.DEF)) {
+            return;
+        }
+
+        final var name = stmt.getArgument();
+        final var prev = stmt.namespaceItem(ParserNamespaces.EXTENSION, name);
+        if (prev != null) {
+            throw new SourceException(stmt,
+                "Extension name collision: '%s' already declared at %s", name, prev.sourceReference());
+        }
+        stmt.addToNs(ParserNamespaces.EXTENSION, name, stmt);
+        stmt.addToNs(StatementDefinitions.NAMESPACE, name, UnrecognizedStatementSupport.ofExtension(stmt, config));
     }
 
     @Override
