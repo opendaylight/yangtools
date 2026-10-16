@@ -38,9 +38,9 @@ import org.opendaylight.yangtools.yang.source.ir.dagger.YangIRSourceModule;
 
 class YT1729Test {
     private static final @NonNull CrossSourceStatementReactor REACTOR = RFC7950Reactors.defaultReactorBuilder()
-        .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+        .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION,
             Rfc6241Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
-        .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+        .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION,
             Rfc6536Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
         .build();
 

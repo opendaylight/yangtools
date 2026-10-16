@@ -31,7 +31,7 @@ class NetconfTest {
     @Test
     void testResolution() {
         final var reactor = RFC7950Reactors.defaultReactorBuilder()
-            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+            .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION,
                 Rfc6241Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
         final var context = assertDoesNotThrow(() -> reactor.newBuild(YangIRSourceModule.provideTextToIR())

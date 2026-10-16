@@ -39,7 +39,7 @@ class IetfYangSmiv2ExtensionPluginTest {
     @Test
     void testExtensions() throws Exception {
         final var reactor = RFC7950Reactors.defaultReactorBuilder()
-            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+            .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION,
                 Rfc6643Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
         final var context = reactor.newBuild(YangIRSourceModule.provideTextToIR())

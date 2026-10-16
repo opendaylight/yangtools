@@ -75,7 +75,7 @@ public final class DefaultYangLibResolver implements YangLibResolver {
         this.textToDOM = requireNonNull(textToDOM);
         final var builder = RFC7950Reactors.defaultReactorBuilder(xpathFactory, YangParserConfiguration.DEFAULT);
         for (var extension : extensions) {
-            builder.addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+            builder.addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION,
                 extension.configureBundle(YangParserConfiguration.DEFAULT));
         }
         reactor = builder.build();

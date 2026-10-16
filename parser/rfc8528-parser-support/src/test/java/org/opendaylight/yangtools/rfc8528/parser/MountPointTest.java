@@ -34,7 +34,7 @@ class MountPointTest {
     @Test
     void testMountPointResolution() throws Exception {
         final var reactor = RFC7950Reactors.vanillaReactorBuilder()
-            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+            .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION,
                 Rfc8528Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
 
