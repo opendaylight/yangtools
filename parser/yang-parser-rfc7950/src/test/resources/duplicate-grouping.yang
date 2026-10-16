@@ -1,0 +1,10 @@
+module duplicate-grouping {
+  namespace foo;
+  prefix di;
+
+  grouping bar;
+
+  container bar {
+    grouping bar;
+  }
+}

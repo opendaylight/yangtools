@@ -434,6 +434,13 @@ class GroupingTest extends AbstractModelTest {
         assertEquals(leaf.typeDefinition().getQName(), impType.getQName());
     }
 
+    @Test
+    void testDuplicateGrouping() {
+        assertSourceExceptionMessage("/duplicate-grouping.yang")
+            .startsWith("Duplicate name for grouping (foo)bar [at ")
+            .endsWith(":8:5]");
+    }
+
     private static void assertIsAddedByUses(final GroupingDefinition node, final boolean expected) {
         assertEquals(expected, node.isAddedByUses());
         for (var child : node.getChildNodes()) {
