@@ -124,6 +124,10 @@ public final class DataSchemaContextTree {
 
     // FIXME: ImmutableMap with compare-and-swap updates
     private final @NonNull ConcurrentHashMap<YangDataName, YangDataContext> yangData = new ConcurrentHashMap<>();
+    // Contexts of the rpcs, actions and notifications, of the first data nodes inside groupings, and of the cases an
+    // inference can end at, keyed by their statement. None of them is reachable from the root.
+    private final @NonNull ConcurrentHashMap<DataSchemaCompat<?, ?>, DataSchemaContext> roots =
+        new ConcurrentHashMap<>();
     private final @NonNull EffectiveModelContext modelContext;
     private final @NonNull ContainerContext root;
 
@@ -243,10 +247,10 @@ public final class DataSchemaContextTree {
      * {@link #getRoot()}. An inference pointing to a {@code list} or a {@code leaf-list} gives the context of its
      * entries.
      *
-     * <p>Nodes in the data tree and in a {@code yang-data} come from this tree, so lookups through them are shared by
-     * every user of this tree. An {@code rpc}, {@code action}, {@code notification} or {@code grouping} is not part of
-     * the data tree: the contexts at and below it are created for this call only. The same holds for an inference
-     * ending at a {@code case}: its context holds only that case's children and is created for this call only.
+     * <p>Contexts come from this tree, so lookups through them are shared by every user of this tree. A
+     * {@code yang-data}, {@code rpc}, {@code action} or {@code notification}, the first data node inside a
+     * {@code grouping}, and a {@code case} an inference ends at are not reachable from the root. Each of them starts a
+     * context of its own, which this tree also keeps. The context of a {@code case} holds only that case's children.
      *
      * @param inference the inference, which has to come from this tree's model context
      * @return the context, or {@code null} if the inference ends at a {@code choice} or a {@code grouping}, or passes
@@ -270,10 +274,9 @@ public final class DataSchemaContextTree {
             lastWithoutContext = null;
             switch (stmt) {
                 case DataTreeEffectiveStatement<?> data -> {
-                    if (inGrouping && data instanceof DataSchemaNode schema) {
-                        // A grouping is not part of the data tree, so nothing below it is shared: start a context of
-                        // our own at its first data node
-                        current = entryOf(DataSchemaContext.of(schema));
+                    if (inGrouping && data instanceof DataSchemaCompat<?, ?> compat) {
+                        // A grouping is not part of the data tree: its first data node starts a context of its own
+                        current = entryOf(rootAt(compat));
                         inGrouping = false;
                     } else {
                         current = childOf(current, data.argument());
@@ -283,10 +286,10 @@ public final class DataSchemaContextTree {
                 case ChoiceEffectiveStatement choice -> lastWithoutContext = choice;
                 case CaseEffectiveStatement caze -> lastWithoutContext = caze;
                 case YangDataEffectiveStatement yangDataStmt -> current = childYangData(yangDataStmt.argument());
-                // An rpc, action or notification is not part of the data tree, so nothing at or below it is shared:
-                // start a context of our own. This also ends a grouping it sits in.
+                // An rpc, action or notification is not part of the data tree: it starts a context of its own. This
+                // also ends a grouping it sits in.
                 case DataSchemaCompat<?, ?> compat -> {
-                    current = DataSchemaContext.of(compat.toDataSchemaNode());
+                    current = rootAt(compat);
                     inGrouping = false;
                 }
                 case GroupingEffectiveStatement grouping -> {
@@ -305,11 +308,26 @@ public final class DataSchemaContextTree {
         return switch (lastWithoutContext) {
             case null -> current;
             // Ending at a case means the data holds just that case's children, so give them a context of their own
-            case CaseEffectiveStatement caze -> new CaseContext(caze.toDataSchemaNode());
+            case CaseEffectiveStatement caze -> rootAt(caze);
             // A choice holds only cases, never data nodes, and a grouping has no context of its own, so data cannot
             // start at either
             default -> null;
         };
+    }
+
+    // Returns the context starting at a statement which cannot be reached from the root, creating it on first use
+    private @NonNull DataSchemaContext rootAt(final DataSchemaCompat<?, ?> stmt) {
+        final var existing = roots.get(stmt);
+        return existing != null ? existing : loadRoot(stmt);
+    }
+
+    // Split out to aid inlining
+    private @NonNull DataSchemaContext loadRoot(final DataSchemaCompat<?, ?> stmt) {
+        // A case is never a child in the tree, so its context is of a kind only created here
+        final var created = stmt instanceof CaseEffectiveStatement caze ? new CaseContext(caze.toDataSchemaNode())
+            : DataSchemaContext.of(stmt.toDataSchemaNode());
+        final var raced = roots.putIfAbsent(stmt, created);
+        return raced != null ? raced : created;
     }
 
     private static @Nullable DataSchemaContext childOf(final DataSchemaContext parent, final QName qname) {

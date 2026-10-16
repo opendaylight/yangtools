@@ -49,6 +49,11 @@ class YT1899Test {
     private static final QName SECOND_LEAF_LIST = QName.create(TOP, "second-leaf-list");
     private static final QName THUD = QName.create(TOP, "thud");
     private static final QName INPUT = QName.create(TOP, "input");
+    private static final QName ITEMS = QName.create(TOP, "items");
+    private static final QName ACT = QName.create(TOP, "act");
+    private static final QName ARG = QName.create(TOP, "arg");
+    private static final QName PING = QName.create(TOP, "ping");
+    private static final QName MSG = QName.create(TOP, "msg");
     private static final QName GRP = QName.create(TOP, "grp");
     private static final QName GRP_CONT = QName.create(TOP, "grp-cont");
     private static final QName GRP_LEAF = QName.create(TOP, "grp-leaf");
@@ -267,8 +272,8 @@ class YT1899Test {
         stack.enterSchemaTree(FIRST);
         final var first = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
         assertEquals(FIRST, first.dataSchemaNode().getQName());
-        // A case is not part of the tree, so each call creates its context anew
-        assertNotSame(first, TREE.childByInference(stack.toInference()));
+        // A case is not part of the tree, but its context is kept like the other roots
+        assertSame(first, TREE.childByInference(stack.toInference()));
 
         // Its own children and those of a choice inside it are known, but not those of other cases
         final var firstLeaf = first.childByQName(FIRST_LEAF);
@@ -287,20 +292,47 @@ class YT1899Test {
     }
 
     @Test
-    void rpcInferenceIsNotShared() {
+    void rpcInferenceIsShared() {
         final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
         stack.enterSchemaTree(THUD);
         final var rpc = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
-        assertNotSame(rpc, TREE.childByInference(stack.toInference()));
+        assertSame(rpc, TREE.childByInference(stack.toInference()));
 
         stack.enterSchemaTree(INPUT);
         final var input = TREE.childByInference(stack.toInference());
         assertNotNull(input);
         assertEquals(INPUT, input.dataSchemaNode().getQName());
+        assertSame(input, TREE.childByInference(stack.toInference()));
     }
 
     @Test
-    void groupingInferenceIsNotShared() {
+    void actionInferenceIsShared() {
+        // The action sits in a list entry, so the inference passes through the list first
+        final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
+        stack.enterDataTree(ITEMS);
+        stack.enterSchemaTree(ACT);
+        final var action = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
+        assertEquals(ACT, action.dataSchemaNode().getQName());
+        assertSame(action, TREE.childByInference(stack.toInference()));
+
+        stack.enterSchemaTree(INPUT);
+        final var input = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
+        assertSame(input, TREE.childByInference(stack.toInference()));
+        assertNotNull(input.childByQName(ARG));
+    }
+
+    @Test
+    void notificationInferenceIsShared() {
+        final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
+        stack.enterSchemaTree(PING);
+        final var notification = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
+        assertEquals(PING, notification.dataSchemaNode().getQName());
+        assertSame(notification, TREE.childByInference(stack.toInference()));
+        assertNotNull(notification.childByQName(MSG));
+    }
+
+    @Test
+    void groupingInferenceIsShared() {
         final var stack = SchemaInferenceStack.of(MODEL_CONTEXT);
         stack.enterGrouping(GRP);
         // A grouping holds no data nodes of its own
@@ -309,7 +341,7 @@ class YT1899Test {
         stack.enterDataTree(GRP_CONT);
         final var cont = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
         assertEquals(GRP_CONT, cont.dataSchemaNode().getQName());
-        assertNotSame(cont, TREE.childByInference(stack.toInference()));
+        assertSame(cont, TREE.childByInference(stack.toInference()));
         assertNotNull(cont.childByQName(GRP_LEAF));
 
         stack.enterDataTree(GRP_LEAF);
@@ -326,6 +358,7 @@ class YT1899Test {
         final var entry = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
         assertFalse(entry instanceof DataSchemaContext.PathMixin);
         assertEquals(GRP_LIST, entry.dataSchemaNode().getQName());
+        assertSame(entry, TREE.childByInference(stack.toInference()));
 
         stack.enterDataTree(GRP_LIST_ID);
         final var leaf = TREE.childByInference(stack.toInference());
@@ -341,6 +374,7 @@ class YT1899Test {
         // An action is not a data node, but data can start there
         final var action = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
         assertEquals(GRP_ACT, action.dataSchemaNode().getQName());
+        assertSame(action, TREE.childByInference(stack.toInference()));
 
         stack.enterSchemaTree(INPUT);
         final var input = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
@@ -355,6 +389,7 @@ class YT1899Test {
         stack.enterSchemaTree(GRP_NOTIF);
         final var notif = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
         assertEquals(GRP_NOTIF, notif.dataSchemaNode().getQName());
+        assertSame(notif, TREE.childByInference(stack.toInference()));
 
         stack.enterSchemaTree(GRP_NOTIF_LEAF);
         final var leaf = TREE.childByInference(stack.toInference());
@@ -373,6 +408,7 @@ class YT1899Test {
         stack.enterDataTree(TOP_GRP_CONT);
         final var cont = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
         assertEquals(TOP_GRP_CONT, cont.dataSchemaNode().getQName());
+        assertSame(cont, TREE.childByInference(stack.toInference()));
         assertNotNull(cont.childByQName(TOP_GRP_LEAF));
     }
 
@@ -386,6 +422,7 @@ class YT1899Test {
         // Like a case in the data tree, a case inside a grouping gets a context of its own
         final var caze = assertInstanceOf(Composite.class, TREE.childByInference(stack.toInference()));
         assertEquals(GRP_CASE, caze.dataSchemaNode().getQName());
+        assertSame(caze, TREE.childByInference(stack.toInference()));
 
         stack.enterSchemaTree(GRP_CASE_LEAF);
         final var leaf = TREE.childByInference(stack.toInference());

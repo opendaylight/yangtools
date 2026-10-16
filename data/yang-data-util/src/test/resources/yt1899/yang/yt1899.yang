@@ -95,6 +95,28 @@ module yt1899 {
     }
   }
 
+  list items {
+    key id;
+
+    leaf id {
+      type string;
+    }
+
+    action act {
+      input {
+        leaf arg {
+          type string;
+        }
+      }
+    }
+  }
+
+  notification ping {
+    leaf msg {
+      type string;
+    }
+  }
+
   rpc thud {
     input {
       leaf in {
