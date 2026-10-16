@@ -23,9 +23,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatementDecorators;
 import org.opendaylight.yangtools.yang.model.ri.stmt.DeclaredStatements;
 import org.opendaylight.yangtools.yang.model.ri.stmt.EffectiveStatements;
@@ -72,10 +74,14 @@ public final class IdentityStatementSupport
     @Override
     public void onStatementDefinitionDeclared(
             final Mutable<QName, IdentityStatement, IdentityEffectiveStatement> stmt) {
-        final var qname = stmt.getArgument();
-        final var prev = stmt.namespaceItem(ParserNamespaces.IDENTITY, qname);
-        SourceException.throwIf(prev != null, stmt, "Duplicate identity definition %s", qname);
-        stmt.addToNs(ParserNamespaces.IDENTITY, qname, stmt);
+        // RFC7950 section 6.2.1:
+        //        o  All identity names defined in a module and its submodules share
+        //           the same identity identifier namespace.
+        if (stmt.coerceParentContext().producesAnyOf(ModuleStatement.DEF, SubmoduleStatement.DEF)) {
+            stmt.putToNs(ParserNamespaces.IDENTITY, stmt.getArgument(), stmt,
+                // TODO: more details about the conflict
+                (prev, next) -> new SourceException(next, "Duplicate identity definition %s", next.getArgument()));
+        }
     }
 
     @Override
