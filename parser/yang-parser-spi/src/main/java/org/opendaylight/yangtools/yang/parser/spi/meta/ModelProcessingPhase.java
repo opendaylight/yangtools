@@ -12,49 +12,48 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 
 // FIXME: YANGTOOLS-1150: this should go into yang-reactor-api
 public enum ModelProcessingPhase {
-    INIT(),
-
     /**
-     * Cross-source relationship resolution phase.
-     *
-     * <p>In this phase of processing only statements which affects cross-source relationship (e.g. imports / includes)
-     * are processed.
+     * Internal reactor initialization. Invisible to users.
+     */
+    // FIXME: remove this constant?
+    INIT,
+    /**
+     * Cross-source relationship resolution phase. This phase processes only statements which affect cross-source
+     * relationships, such as {@code import}, {@code include}, {@code revision} and similar.
      *
      * <p>At end of this phase all source related contexts should be bind to their imports and includes to allow
-     * visibility of custom defined statements in subsequent phases. Most notably all
-     * {@link ReactorNamespace#of(String)} namespaces are initialized.
+     * visibility of custom defined statements in subsequent phases. Most notably all {@link ReactorNamespace}s are
+     * initialized.
      */
     SOURCE_LINKAGE(INIT, ExecutionOrder.SOURCE_LINKAGE),
-    // FIXME: YANGTOOLS-1840: this phase should include all statements except TypeStatement and DefaultStatement
-    // FIXME: document the following namespaces as frozen:
+    /**
+     * Early statement declaration phase. This phase processes all statements with the exception of {@code default},
+     * {@code must}, {@code range} and {@code when} statements.
+     */
+    // FIXME: YANGTOOLS-1840: document the following namespaces as frozen:
     //        - ParserNamespaces.EXTENSION
     //        - ParserNamespaces.FEATURE
     //        - ParserNamespaces.GROUPING
     //        - ParserNamespaces.IDENTITY
     //        - ParserNamespaces.TYPE
     STATEMENT_DEFINITION(SOURCE_LINKAGE, ExecutionOrder.STATEMENT_DEFINITION),
-
-    // FIXME: YANGTOOLS-1840: this phase should add TypeStatatementSupport
-    //        The idea is to replace wiring around getSupportSpecificForArgument() so that it has a QName rather than
-    //        a String. That way we can discern type reference it is:
-    //          - static (e.g. 'type uint32')
-    //          - dynamic (e.g. 'type decimal64')
-    //          - typedef namespace (e.g. 'type foo', 'type foo:bar')
-    //        This way we can create check the target exists and a FULL_DECLARATION dependency as part of
-    //        onStatementAdded() -- and have it change return type from void to 'StatementSupport<A, D, E>'.
-    // TYPE_LINKAGE,
-
-    // FIXME: YANGTOOLS-1762: this phase should add DefaultStatementSupport
-    //        The idea is that by the time parseArgument() is called we know everything else, most notably all sibling
-    //        'type' statements have been linked and we can therefore parse the argument onto its correct type, e.g.
-    //        uint32, instance-identifier, uinion, etc.
-
-    // FIXME: add documentation
+    /**
+     * Late statement declaration phase. This phase processes all statements and establishes all consistency invariants
+     * required to create {@link ModuleStatement} and {@link SubmoduleStatement} for each reactor source.
+     */
+    // FIXME: document established namespaces
     FULL_DECLARATION(STATEMENT_DEFINITION, ExecutionOrder.FULL_DECLARATION),
-    // FIXME: add documentation
+    /**
+     * Final statement processing phase. All inter-statement relationships are established and applied -- so that
+     * {@link ModuleEffectiveStatement} and {@link SubmoduleEffectiveStatement} can be created for each reactor source.
+     */
     EFFECTIVE_MODEL(FULL_DECLARATION, ExecutionOrder.EFFECTIVE_MODEL);
 
     /**
