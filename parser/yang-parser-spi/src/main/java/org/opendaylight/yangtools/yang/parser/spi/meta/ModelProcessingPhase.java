@@ -43,11 +43,11 @@ public enum ModelProcessingPhase {
      * <ul>
      *   <li>{@link ParserNamespaces#EXTENSION}</li>
      *   <li>{@link ParserNamespaces#FEATURE}</li>
+     *   <li>{@link ParserNamespaces#IDENTITY}</li>
      * </ul>
      */
     // FIXME: YANGTOOLS-1840: document the following namespaces as frozen:
     //        - ParserNamespaces.GROUPING
-    //        - ParserNamespaces.IDENTITY
     //        - ParserNamespaces.TYPE
     STATEMENT_DEFINITION(SOURCE_LINKAGE, ExecutionOrder.STATEMENT_DEFINITION),
     /**
