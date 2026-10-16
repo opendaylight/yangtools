@@ -72,6 +72,8 @@ class IdentityStmtTest extends AbstractYangTest {
     @Test
     void duplicateIdentityTest() {
         assertSourceExceptionMessage("/identity/duplicate-identity-test.yang")
-            .startsWith("Duplicate identity definition ");
+            .startsWith(
+                "Duplicate identity definition (urn:opendaylight.org/duplicate-identity-test)first-identity [at ")
+            .endsWith(":9:5]");
     }
 }
