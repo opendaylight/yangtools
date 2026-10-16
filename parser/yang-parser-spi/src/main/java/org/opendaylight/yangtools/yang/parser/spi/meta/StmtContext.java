@@ -19,6 +19,7 @@ import java.util.function.BiFunction;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -269,6 +270,12 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
                 throw exceptionSupplier.apply(prev, value);
             }
             addToNs(type, key, value);
+        }
+
+        default <V, X extends Exception> void putToNs(final @NonNull UserNamespace<Empty, V> type,
+                final @NonNull V value, final @NonNull BiFunction<@NonNull V, @NonNull V, @NonNull X> exceptionSupplier)
+                    throws X {
+            putToNs(type, Empty.value(), value, exceptionSupplier);
         }
 
         @Override
