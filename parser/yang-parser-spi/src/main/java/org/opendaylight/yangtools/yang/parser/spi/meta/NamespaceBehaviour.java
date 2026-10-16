@@ -12,9 +12,11 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.VerifyException;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage.Level;
 
@@ -40,6 +42,13 @@ public abstract class NamespaceBehaviour<K, V> {
      */
     public final @NonNull ParserNamespace<K, V> namespace() {
         return namespace;
+    }
+
+    public final @NonNull UserNamespace<K, V> userNamespace() {
+        if (namespace instanceof UserNamespace<K, V> user) {
+            return user;
+        }
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -156,8 +165,25 @@ public abstract class NamespaceBehaviour<K, V> {
      * @param storage namespace storage
      * @param key type parameter
      * @param value type parameter
+     * @deprecated Use operateions on storage obtained from
+     *             {@link #getLocalStorage(NamespaceStorage.Global, NamespaceStorage)} instead
      */
-    public abstract void addTo(NamespaceStorage.Global global, NamespaceStorage storage, K key, V value);
+    @Deprecated(since = "16.0.0", forRemoval = true)
+    @NonNullByDefault
+    public final void addTo(final NamespaceStorage.Global global, final NamespaceStorage storage, final K key,
+            final V value) {
+        final var userNamespace = userNamespace();
+        getLocalStorage(global, storage).putToLocalStorage(userNamespace, key, value);
+    }
+
+    /**
+     * {@return the local {@link NamespaceStorage} for this behaviour}
+     * @param global global namespace storage
+     * @param storage namespace storage
+     * @since 16.2.0
+     */
+    @NonNullByDefault
+    public abstract NamespaceStorage getLocalStorage(NamespaceStorage.Global global, NamespaceStorage storage);
 
     protected final V getFromLocalStorage(final NamespaceStorage storage, final K key) {
         return storage.getFromLocalStorage(namespace, key);
@@ -165,13 +191,6 @@ public abstract class NamespaceBehaviour<K, V> {
 
     protected final Map<K, V> getAllFromLocalStorage(final NamespaceStorage storage) {
         return storage.getAllFromLocalStorage(namespace);
-    }
-
-    protected final void addToStorage(final NamespaceStorage storage, final K key, final V value) {
-        if (!(namespace instanceof UserNamespace<K, V> user)) {
-            throw new UnsupportedOperationException();
-        }
-        storage.putToLocalStorage(user, key, value);
     }
 
     @Override
@@ -190,21 +209,13 @@ public abstract class NamespaceBehaviour<K, V> {
 
         @Override
         public final V getFrom(final NamespaceStorage.Global global, final NamespaceStorage storage, final K key) {
-            return getFromLocalStorage(findStorage(global, storage), key);
+            return getFromLocalStorage(getLocalStorage(global, storage), key);
         }
 
         @Override
         public final Map<K, V> getAllFrom(final NamespaceStorage.Global global, final NamespaceStorage storage) {
-            return getAllFromLocalStorage(findStorage(global, storage));
+            return getAllFromLocalStorage(getLocalStorage(global, storage));
         }
-
-        @Override
-        public final void addTo(final NamespaceStorage.Global global, final NamespaceStorage storage, final K key,
-                final V value) {
-            addToStorage(findStorage(global, storage), key, value);
-        }
-
-        abstract NamespaceStorage findStorage(NamespaceStorage.Global global, NamespaceStorage storage);
     }
 
     private static final class Global<K, V> extends AbstractSpecific<K, V> {
@@ -213,7 +224,8 @@ public abstract class NamespaceBehaviour<K, V> {
         }
 
         @Override
-        NamespaceStorage.Global findStorage(final NamespaceStorage.Global global, final NamespaceStorage storage) {
+        public NamespaceStorage.Global getLocalStorage(final NamespaceStorage.Global global,
+                final NamespaceStorage storage) {
             return global;
         }
     }
@@ -224,12 +236,19 @@ public abstract class NamespaceBehaviour<K, V> {
         }
 
         @Override
-        NamespaceStorage findStorage(final NamespaceStorage.Global global, final NamespaceStorage storage) {
+        public NamespaceStorage getLocalStorage(final NamespaceStorage.Global global, final NamespaceStorage storage) {
             var current = storage;
-            while (current != null && current.level() != Level.SOURCE) {
-                current = current.getParentStorage();
+            while (true) {
+                final var level = current.level();
+                if (level == Level.SOURCE) {
+                    return current;
+                }
+                final var parent = current.getParentStorage();
+                if (parent == null) {
+                    throw new VerifyException(Level.SOURCE + " is not accessible via " + level + " from " + storage);
+                }
+                current = parent;
             }
-            return current;
         }
 
         @Override
@@ -244,7 +263,7 @@ public abstract class NamespaceBehaviour<K, V> {
         }
 
         @Override
-        NamespaceStorage findStorage(final NamespaceStorage.Global global, final NamespaceStorage storage) {
+        public NamespaceStorage getLocalStorage(final NamespaceStorage.Global global, final NamespaceStorage storage) {
             return storage;
         }
     }
@@ -281,9 +300,8 @@ public abstract class NamespaceBehaviour<K, V> {
         }
 
         @Override
-        public void addTo(final NamespaceStorage.Global global, final NamespaceStorage storage, final K key,
-                final V value) {
-            addToStorage(storage, key, value);
+        public NamespaceStorage getLocalStorage(final NamespaceStorage.Global global, final NamespaceStorage storage) {
+            return storage;
         }
     }
 }

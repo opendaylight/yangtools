@@ -90,6 +90,12 @@ final class SourceSpecificContext implements Mutable, NamespaceStorage.Accessibl
         }
 
         @Override
+        StatementSupport<?, ?, ?> valueToOnce(final NamespaceStorage storage, final QName key,
+                final StatementSupport<?, ?, ?> value) {
+            throw uoe();
+        }
+
+        @Override
         Map<QName, StatementSupport<?, ?, ?>> allFrom(final NamespaceStorage storage) {
             throw uoe();
         }

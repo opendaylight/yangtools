@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.errorprone.annotations.CheckReturnValue;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
@@ -44,6 +45,9 @@ abstract class NamespaceAccess<K, V> {
     abstract @Nullable V valueFrom(@NonNull NamespaceStorage storage, K key);
 
     abstract void valueTo(@NonNull NamespaceStorage storage, K key, V value);
+
+    @CheckReturnValue
+    abstract @Nullable V valueToOnce(@NonNull NamespaceStorage storage, K key, V value);
 
     abstract @Nullable Map<K, V> allFrom(@NonNull NamespaceStorage storage);
 

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi;
 
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaTreeAwareEffectiveStatement;
@@ -16,8 +17,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.OnDemandSchemaTreeStorage;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
  * {@link NamespaceBehaviour} handling {@link ParserNamespaces#schemaTree()}.
@@ -54,19 +53,20 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
         return null;
     }
 
-    @Override
-    public void addTo(final NamespaceStorage.Global global, final NamespaceStorage storage, final QName key,
-            final StmtContext<QName, D, E> value) {
-        if (!(namespace() instanceof UserNamespace<QName, StmtContext<QName, D, E>> user)) {
-            throw new UnsupportedOperationException();
-        }
+//    @Override
+//    public void addTo(final NamespaceStorage.Global global, final NamespaceStorage storage, final QName key,
+//            final StmtContext<QName, D, E> value) {
+//        final var prev = getLocalStorage(global, storage).putToLocalStorageIfAbsent(namespace, key, value);
+//        if (prev != null) {
+//            throw new SourceException(value,
+//                "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared at %s",
+//                value.getRoot().rawArgument(), key, prev.argument(), prev.sourceReference());
+//        }
+//    }
 
-        final var prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(user, key, value);
-        if (prev != null) {
-            throw new SourceException(value,
-                "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared at %s",
-                value.getRoot().rawArgument(), key, prev.argument(), prev.sourceReference());
-        }
+    @Override
+    public NamespaceStorage getLocalStorage(final NamespaceStorage.Global global, final NamespaceStorage storage) {
+        return globalOrStatementSpecific(storage);
     }
 
     private static <D extends DeclaredStatement<QName>, E extends SchemaTreeEffectiveStatement<D>>
@@ -74,6 +74,7 @@ final class SchemaTreeNamespaceBehaviour<D extends DeclaredStatement<QName>, E e
         return storage instanceof OnDemandSchemaTreeStorage ondemand ? ondemand.requestSchemaTreeChild(key) : null;
     }
 
+    @NonNullByDefault
     private static NamespaceStorage globalOrStatementSpecific(final NamespaceStorage storage) {
         var current = storage;
         while (true) {

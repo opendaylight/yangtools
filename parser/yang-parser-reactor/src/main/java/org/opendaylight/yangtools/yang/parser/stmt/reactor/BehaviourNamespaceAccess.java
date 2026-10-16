@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceStorage;
@@ -51,8 +52,24 @@ final class BehaviourNamespaceAccess<K, V> extends NamespaceAccess<K, V> {
 
     @Override
     void valueTo(final NamespaceStorage storage, final K key, final V value) {
-        behaviour.addTo(globalStorage, storage, key, value);
+        final var namespace = behaviour.userNamespace();
+        behaviour.getLocalStorage(globalStorage, storage).putToLocalStorage(namespace, key, value);
+        onValueAdded(storage, key, value);
+    }
 
+    @Override
+    V valueToOnce(final NamespaceStorage storage, final K key, final V value) {
+        final var namespace = behaviour.userNamespace();
+        final var prev = behaviour.getLocalStorage(globalStorage, storage)
+            .putToLocalStorageIfAbsent(namespace, key, value);
+        if (prev == null) {
+            onValueAdded(storage, key, value);
+        }
+        return prev;
+    }
+
+    @NonNullByDefault
+    private void onValueAdded(final NamespaceStorage storage, final K key, final V value) {
         if (keyListeners != null) {
             final var listeners = keyListeners.get(key);
             if (!listeners.isEmpty()) {

@@ -78,10 +78,6 @@ abstract sealed class AbstractNamespaceStorage implements NamespaceStorage permi
         return local;
     }
 
-    final <K, V> void addToNamespace(final UserNamespace<K, V> type, final K key, final V value) {
-        accessNamespace(type).valueTo(this, key, value);
-    }
-
     @Override
     public <K, V> V getFromLocalStorage(final ParserNamespace<K, V> type, final K key) {
         final var localNamespace = getLocalNamespace(type);
