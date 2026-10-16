@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -38,20 +36,21 @@ import org.opendaylight.yangtools.yang.model.spi.meta.SubstatementIndexingExcept
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
+// RFC7950 section 6.2.1:
+//        o  All grouping names defined within a parent node or at the top
+//           level of the module or its submodules share the same grouping
+//           identifier namespace.  This namespace is scoped to all descendant
+//           nodes of the parent node or module.  This means that any
+//           descendant node may use that grouping, and it MUST NOT define a
+//           grouping with the same name.
 public final class GroupingStatementSupport
-        extends AbstractQNameStatementSupport<@NonNull GroupingStatement, GroupingEffectiveStatement> {
+        extends NestedNamespaceStatementSupport<GroupingStatement, GroupingEffectiveStatement> {
     private static final SubstatementValidator RFC6020_VALIDATOR =
         SubstatementValidator.builder(GroupingStatement.DEF)
             .addAny(AnyxmlStatement.DEF)
@@ -86,11 +85,12 @@ public final class GroupingStatementSupport
             .addAny(UsesStatement.DEF)
             .build();
 
-    GroupingStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
+    private GroupingStatementSupport(final YangParserConfiguration config, final SubstatementValidator validator) {
         super(GroupingStatement.DEF, StatementPolicy.copyDeclared(
             (copy, current, substatements) ->
                 copy.history().isAddedByUses() == current.history().isAddedByUses()
-                && copy.getArgument().equals(current.getArgument())), SubtreePolicy.template(), config, validator);
+                && copy.getArgument().equals(current.getArgument())), SubtreePolicy.template(), config, validator,
+            ParserNamespaces.GROUPING);
     }
 
     public static @NonNull GroupingStatementSupport rfc6020Instance(final YangParserConfiguration config) {
@@ -102,47 +102,7 @@ public final class GroupingStatementSupport
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<QName, GroupingStatement, GroupingEffectiveStatement> stmt) {
-        super.onFullDefinitionDeclared(stmt);
-
-        final var parent = stmt.getParentContext();
-        if (parent == null) {
-            // No parent ... which is weird, but there is nothing more to do
-            return;
-        }
-
-        // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
-        // declarations and parent declarations which have already been declared.
-        parent.putToNs(ParserNamespaces.GROUPING, stmt.getArgument(), stmt,
-            GroupingStatementSupport::newSourceException);
-
-        final var grandParent = parent.getParentContext();
-        if (grandParent != null) {
-            // Shadowing check: make sure grandparent does not see a conflicting definition. This is required to
-            // ensure that a grouping in child scope does not shadow a grouping in parent scope which occurs later
-            // in the text. For that check we need the full declaration of our model.
-            final var action = stmt.newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
-            action.requiresCtx(grandParent.getRoot(), ModelProcessingPhase.FULL_DECLARATION);
-            action.apply(new InferenceAction() {
-                @Override
-                public void apply(final InferenceContext ctx) {
-                    final var prev = grandParent.namespaceItem(ParserNamespaces.GROUPING, stmt.getArgument());
-                    if (prev != null) {
-                        throw newSourceException(prev, stmt);
-                    }
-                }
-
-                @Override
-                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                    // No-op
-                }
-            });
-        }
-    }
-
-    @NonNullByDefault
-    private static SourceException newSourceException(final StmtContext<?, ?, ?> prev,
-            final StmtContext<?, ?, ?> next) {
+    SourceException newSourceException(final StmtContext<?, ?, ?> prev, final StmtContext<?, ?, ?> next) {
         // TODO: improve the message with coordinates of conflict
         return new SourceException(next, "Duplicate name for grouping %s", next.getArgument());
     }
