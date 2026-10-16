@@ -77,7 +77,7 @@ public final class DefaultYangParserFactory implements YangParserFactory {
         reactorFactory = config -> {
             final var builder = RFC7950Reactors.defaultReactorBuilder(xpathFactory, config);
             for (var extension : extensions) {
-                builder.addAllSupports(ModelProcessingPhase.FULL_DECLARATION, extension.configureBundle(config));
+                builder.addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION, extension.configureBundle(config));
             }
             return builder.build();
         };

@@ -35,7 +35,7 @@ abstract class AbstractYangDataTest {
     @BeforeAll
     static void createReactor() {
         REACTOR = RFC7950Reactors.vanillaReactorBuilder()
-            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+            .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION,
                 Rfc8040Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
     }
