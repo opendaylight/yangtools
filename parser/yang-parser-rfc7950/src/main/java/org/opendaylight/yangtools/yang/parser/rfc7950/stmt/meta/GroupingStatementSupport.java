@@ -102,42 +102,71 @@ public final class GroupingStatementSupport
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<QName, GroupingStatement, GroupingEffectiveStatement> stmt) {
-        super.onFullDefinitionDeclared(stmt);
+    public void onStatementDefinitionDeclared(
+            final Mutable<QName, GroupingStatement, GroupingEffectiveStatement> stmt) {
+        // RFC7950 section 6.2.1:
+        //        o  All grouping names defined within a parent node or at the top
+        //           level of the module or its submodules share the same grouping
+        //           identifier namespace.  This namespace is scoped to all descendant
+        //           nodes of the parent node or module.  This means that any
+        //           descendant node may use that grouping, and it MUST NOT define a
+        //           grouping with the same name.
 
-        final var parent = stmt.getParentContext();
-        if (parent == null) {
-            // No parent ... which is weird, but there is nothing more to do
-            return;
-        }
+        // As per RFC7950, section 5.5:
+        //    Scoped definitions MUST NOT shadow definitions at a higher scope.  A
+        //    type or grouping cannot be defined if a higher level in the statement
+        //    hierarchy has a definition with a matching identifier
+        final var parent = stmt.coerceParentContext();
 
-        // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
-        // declarations and parent declarations which have already been declared.
+        // Considering this model:
+        //
+        //   module foo {
+        //     container bar {
+        //       grouping bar { ... }
+        //
+        //       container baz {
+        //         grouping bar { ... }
+        //         grouping baz { ... }
+        //       }
+        //     }
+        //
+        //     grouping foo { ... }
+        //     grouping baz { ... }
+        //  }
+        //
+        // There are two distinct patterns in which an overlap occurs:
+        // - foo has a higher scope definition BEFORE the lower scope definition is encountered
+        // - baz has a higher scope definition AFTER the lower scope definition is encountered
+
+        // namespace behaviour and storage operations deal with the first case
         parent.putToNs(ParserNamespaces.GROUPING, stmt.getArgument(), stmt,
             GroupingStatementSupport::newSourceException);
 
-        final var grandParent = parent.getParentContext();
-        if (grandParent != null) {
-            // Shadowing check: make sure grandparent does not see a conflicting definition. This is required to
-            // ensure that a grouping in child scope does not shadow a grouping in parent scope which occurs later
-            // in the text. For that check we need the full declaration of our model.
-            final var action = stmt.newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
-            action.requiresCtx(grandParent.getRoot(), ModelProcessingPhase.FULL_DECLARATION);
-            action.apply(new InferenceAction() {
-                @Override
-                public void apply(final InferenceContext ctx) {
-                    final var prev = grandParent.namespaceItem(ParserNamespaces.GROUPING, stmt.getArgument());
-                    if (prev != null) {
-                        throw newSourceException(prev, stmt);
-                    }
-                }
-
-                @Override
-                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                    // No-op
-                }
-            });
+        final var higherScope = parent.getParentContext();
+        if (higherScope == null) {
+            // i.e. parent is a top level statement, so stmt is a top-level grouping exported from the defining module
+            return;
         }
+
+        // Once this statement's root completes STATEMENT_DEFININITION, higher scope should not have a competing
+        // definition. Root completion implies all substatements have been processed and therefore all higher scopes
+        // have been populated.
+        final var action = stmt.newInferenceAction(ModelProcessingPhase.STATEMENT_DEFINITION);
+        action.requiresCtx(higherScope.getRoot(), ModelProcessingPhase.STATEMENT_DEFINITION);
+        action.apply(new InferenceAction() {
+            @Override
+            public void apply(final InferenceContext ctx) {
+                final var prev = higherScope.namespaceItem(ParserNamespaces.GROUPING, stmt.getArgument());
+                if (prev != null) {
+                    throw newSourceException(prev, stmt);
+                }
+            }
+
+            @Override
+            public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                // No-op
+            }
+        });
     }
 
     @NonNullByDefault
