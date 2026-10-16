@@ -102,42 +102,39 @@ public final class GroupingStatementSupport
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<QName, GroupingStatement, GroupingEffectiveStatement> stmt) {
-        super.onFullDefinitionDeclared(stmt);
-
-        final var parent = stmt.getParentContext();
-        if (parent == null) {
-            // No parent ... which is weird, but there is nothing more to do
-            return;
-        }
-
+    public void onStatementDefinitionDeclared(
+            final Mutable<QName, GroupingStatement, GroupingEffectiveStatement> stmt) {
+        final var parent = stmt.coerceParentContext();
         // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
         // declarations and parent declarations which have already been declared.
         parent.putToNs(ParserNamespaces.GROUPING, stmt.getArgument(), stmt,
             GroupingStatementSupport::newSourceException);
 
         final var grandParent = parent.getParentContext();
-        if (grandParent != null) {
-            // Shadowing check: make sure grandparent does not see a conflicting definition. This is required to
-            // ensure that a grouping in child scope does not shadow a grouping in parent scope which occurs later
-            // in the text. For that check we need the full declaration of our model.
-            final var action = stmt.newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
-            action.requiresCtx(grandParent.getRoot(), ModelProcessingPhase.FULL_DECLARATION);
-            action.apply(new InferenceAction() {
-                @Override
-                public void apply(final InferenceContext ctx) {
-                    final var prev = grandParent.namespaceItem(ParserNamespaces.GROUPING, stmt.getArgument());
-                    if (prev != null) {
-                        throw newSourceException(prev, stmt);
-                    }
-                }
-
-                @Override
-                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                    // No-op
-                }
-            });
+        if (grandParent == null) {
+            // i.e. parent is a top level statement, so stmt is a top-level grouping exported from the defining module
+            return;
         }
+
+        // Shadowing check: make sure grandparent does not see a conflicting definition. This is required to
+        // ensure that a grouping in child scope does not shadow a grouping in parent scope which occurs later
+        // in the text. For that check we need the full declaration of our model.
+        final var action = stmt.newInferenceAction(ModelProcessingPhase.STATEMENT_DEFINITION);
+        final var gpReq = action.requiresCtx(grandParent, ModelProcessingPhase.STATEMENT_DEFINITION);
+        action.apply(new InferenceAction() {
+            @Override
+            public void apply(final InferenceContext ctx) {
+                final var prev = gpReq.resolve(ctx).namespaceItem(ParserNamespaces.GROUPING, stmt.getArgument());
+                if (prev != null) {
+                    throw newSourceException(prev, stmt);
+                }
+            }
+
+            @Override
+            public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                // No-op
+            }
+        });
     }
 
     @NonNullByDefault
