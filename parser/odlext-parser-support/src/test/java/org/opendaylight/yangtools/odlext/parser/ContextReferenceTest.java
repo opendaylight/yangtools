@@ -35,7 +35,7 @@ class ContextReferenceTest {
     @Test
     void test() throws Exception {
         final var reactor = RFC7950Reactors.vanillaReactorBuilder()
-            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+            .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION,
                 YangExtModule.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
 

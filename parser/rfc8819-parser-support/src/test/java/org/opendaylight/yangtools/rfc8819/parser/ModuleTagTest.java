@@ -35,7 +35,7 @@ class ModuleTagTest {
     @BeforeAll
     static void createReactor() {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
-            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+            .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION,
                 Rfc8819Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
     }

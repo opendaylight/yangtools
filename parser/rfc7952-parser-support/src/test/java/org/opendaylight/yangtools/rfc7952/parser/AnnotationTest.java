@@ -31,7 +31,7 @@ class AnnotationTest {
     @Test
     void testAnnotationResolution() throws Exception {
         final var reactor = RFC7950Reactors.vanillaReactorBuilder()
-            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+            .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION,
                 Rfc7952Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
         final var context = reactor.newBuild(YangIRSourceModule.provideTextToIR())

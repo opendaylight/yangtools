@@ -112,7 +112,7 @@ class YT1746Test extends AbstractYangDataTest {
             }"""));
 
         final var ex = assertThrows(SomeModifiersUnresolvedException.class, builder::buildEffective);
-        assertEquals(ModelProcessingPhase.FULL_DECLARATION, ex.getPhase());
+        assertEquals(ModelProcessingPhase.STATEMENT_DEFINITION, ex.getPhase());
         final var cause = assertInstanceOf(SourceException.class, ex.getCause());
         assertEquals("Action (yt1746)baz is defined within another structure [at <UNKNOWN>:10:7]", cause.getMessage());
     }

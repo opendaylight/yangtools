@@ -30,7 +30,7 @@ class NACMTest {
     @Test
     void testResolution() throws Exception {
         final var reactor = RFC7950Reactors.defaultReactorBuilder()
-            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION,
+            .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION,
                 Rfc6536Module.provideParserExtension().configureBundle(YangParserConfiguration.DEFAULT))
             .build();
 
