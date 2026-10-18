@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 abstract sealed class NestedNamespaceStatementSupport<
         D extends DeclaredStatement<QName>,
         E extends EffectiveStatement<QName, D>> extends AbstractQNameStatementSupport<D, E>
-        permits GroupingStatementSupport {
+        permits GroupingStatementSupport, TypedefStatementSupport {
     private final @NonNull UserNamespace<QName, StmtContext<QName, D, E>> namespace;
 
     NestedNamespaceStatementSupport(final StatementDefinition<QName, D, E> publicDefinition,
