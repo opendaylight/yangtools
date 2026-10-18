@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
-import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
@@ -93,7 +92,7 @@ abstract sealed class NestedNamespaceStatementSupport<
         action.apply(new InferenceAction() {
             @Override
             public void apply(final InferenceContext ctx) {
-                final var prev = higherScope.namespaceItem(ParserNamespaces.GROUPING, stmt.getArgument());
+                final var prev = higherScope.namespaceItem(namespace, stmt.getArgument());
                 if (prev != null) {
                     throw newSourceException(prev, stmt);
                 }
