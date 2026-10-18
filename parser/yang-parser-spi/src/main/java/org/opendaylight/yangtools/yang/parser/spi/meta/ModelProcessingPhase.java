@@ -45,10 +45,9 @@ public enum ModelProcessingPhase {
      *   <li>{@link ParserNamespaces#FEATURE}</li>
      *   <li>{@link ParserNamespaces#GROUPING}</li>
      *   <li>{@link ParserNamespaces#IDENTITY}</li>
+     *   <li>{@link ParserNamespaces#TYPE}</li>
      * </ul>
      */
-    // FIXME: YANGTOOLS-1840: document the following namespaces as frozen:
-    //        - ParserNamespaces.TYPE
     STATEMENT_DEFINITION(SOURCE_LINKAGE, ExecutionOrder.STATEMENT_DEFINITION),
     /**
      * Late statement declaration phase. This phase processes all statements and establishes all consistency invariants

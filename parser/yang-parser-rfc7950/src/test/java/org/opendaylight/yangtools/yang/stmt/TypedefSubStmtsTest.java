@@ -26,4 +26,11 @@ class TypedefSubStmtsTest extends AbstractYangTest {
         assertEquals(Optional.of("24-hour-clock"), typedef.getUnits());
         assertEquals("1am", typedef.getDefaultValue().map(Object::toString).orElseThrow());
     }
+
+    @Test
+    void testDuplicateTypedef() {
+        assertSourceExceptionMessage("/duplicate-typedef.yang")
+            .startsWith("Duplicate name for typedef (foo)baz [at ")
+            .endsWith(":7:7]");
+    }
 }

@@ -1,0 +1,16 @@
+module duplicate-typedef {
+  namespace foo;
+  prefix dt;
+
+  container bar {
+    container baz {
+      typedef baz {
+        type string;
+      }
+    }
+  }
+
+  typedef baz {
+    type string;
+  }
+}

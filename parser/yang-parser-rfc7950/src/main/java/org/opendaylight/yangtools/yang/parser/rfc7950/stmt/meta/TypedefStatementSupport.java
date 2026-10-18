@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.meta;
 import static com.google.common.base.Preconditions.checkState;
 
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclarationReference;
@@ -34,21 +33,21 @@ import org.opendaylight.yangtools.yang.model.spi.meta.EffectiveStatementMixins.E
 import org.opendaylight.yangtools.yang.parser.api.YangParserConfiguration;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.ParserNamespaces;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.BoundStmtCtx;
 import org.opendaylight.yangtools.yang.parser.spi.meta.EffectiveStmtCtx.Current;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public final class TypedefStatementSupport extends
-        AbstractQNameStatementSupport<TypedefStatement, TypedefEffectiveStatement> {
+// RFC7950 section 6.2.1:
+//        o  All derived type names defined within a parent node or at the top
+//           level of the module or its submodules share the same type
+//           identifier namespace.  This namespace is scoped to all descendant
+//           nodes of the parent node or module.  This means that any
+//           descendant node may use that typedef, and it MUST NOT define a
+//           typedef with the same name.
+public final class TypedefStatementSupport
+        extends NestedNamespaceStatementSupport<TypedefStatement, TypedefEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
         SubstatementValidator.builder(TypedefStatement.DEF)
             .addOptional(DefaultStatement.DEF)
@@ -60,39 +59,14 @@ public final class TypedefStatementSupport extends
             .build();
 
     public TypedefStatementSupport(final YangParserConfiguration config) {
-        super(TypedefStatement.DEF, StatementPolicy.exactReplica(), config, SUBSTATEMENT_VALIDATOR);
+        super(TypedefStatement.DEF, StatementPolicy.exactReplica(), SubtreePolicy.normal(), config,
+            SUBSTATEMENT_VALIDATOR, ParserNamespaces.TYPE);
     }
 
     @Override
-    public void onFullDefinitionDeclared(final Mutable<QName, TypedefStatement, TypedefEffectiveStatement> stmt) {
-        super.onFullDefinitionDeclared(stmt);
-
-        final var parent = stmt.coerceParentContext();
-        // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
-        // declarations and parent declarations which have already been declared.
-        checkConflict(parent, stmt);
-        parent.addToNs(ParserNamespaces.TYPE, stmt.getArgument(), stmt);
-
-        final var grandParent = parent.getParentContext();
-        if (grandParent != null) {
-            // Shadowing check: make sure grandparent does not see a conflicting definition. This is required to
-            // ensure that a typedef in child scope does not shadow a typedef in parent scope which occurs later in
-            // the text. For that check we need the full declaration of our model.
-
-            final ModelActionBuilder action = stmt.newInferenceAction(ModelProcessingPhase.FULL_DECLARATION);
-            action.requiresCtx(grandParent.getRoot(), ModelProcessingPhase.FULL_DECLARATION);
-            action.apply(new InferenceAction() {
-                @Override
-                public void apply(final InferenceContext ctx) {
-                    checkConflict(grandParent, stmt);
-                }
-
-                @Override
-                public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                    // No-op
-                }
-            });
-        }
+    SourceException newSourceException(final StmtContext<?, ?, ?> prev, final StmtContext<?, ?, ?> next) {
+        // TODO: improve the message with coordinates of conflict
+        return new SourceException(next, "Duplicate name for typedef %s", next.getArgument());
     }
 
     @Override
@@ -120,13 +94,6 @@ public final class TypedefStatementSupport extends
             "Typedef '%s' has default value '%s' marked with an if-feature statement.", stmt.argument(), dflt);
 
         return EffectiveStatements.createTypedef(declared, computeFlags(substatements), substatements);
-    }
-
-    private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
-        final var arg = stmt.getArgument();
-        final var existing = parent.namespaceItem(ParserNamespaces.TYPE, arg);
-        // RFC7950 sections 5.5 and 6.2.1: identifiers must not be shadowed
-        SourceException.throwIf(existing != null, stmt, "Duplicate name for typedef %s", arg);
     }
 
     private static int computeFlags(final ImmutableList<? extends EffectiveStatement<?, ?>> substatements) {
