@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * Abstract base class for {@linkplain Block.Builder} implementations.
  */
 @NonNullByDefault
-abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> implements Block.Builder {
+abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>> extends Block.Builder {
     // The idea is that we start with an empty StringBuilder and as we receive events we decide what to do next.
     // Typically this will be just a simple append, but we also need to track indentation.
     //
@@ -242,23 +242,6 @@ abstract non-sealed class AbstractBlockBuilder<B extends AbstractBlockBuilder<B>
     @Override
     public final String toRawString() {
         return verifyNotNull(buf.toString());
-    }
-
-    @Override
-    public final int hashCode() {
-        return super.hashCode();
-    }
-
-    @Override
-    public final boolean equals(final @Nullable Object obj) {
-        return super.equals(obj);
-    }
-
-    @Override
-    @Deprecated(forRemoval = true)
-    @SuppressWarnings("removal")
-    public final String toString() {
-        return toRawString();
     }
 
     protected final void verifyEmptyLine() {
