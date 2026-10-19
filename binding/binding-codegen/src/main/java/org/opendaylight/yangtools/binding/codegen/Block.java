@@ -55,7 +55,7 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
      * <p>This interface is mean to be further specialized to a domain-specific subclass of
      * {@link AbstractBlockBuilder} and the corresponding {@link Fragment} interface.
      */
-    sealed interface Builder extends Mutable permits AbstractBlockBuilder {
+    abstract sealed class Builder implements Mutable permits AbstractBlockBuilder {
         /**
          * Append the contents of a {@link Block} to this instance if it is not {@code null}. The there must not be any
          * content on the current line.
@@ -63,12 +63,12 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
          * @param blk optional {@link Block}
          * @return this instance
          */
-        Builder blk(@Nullable Block blk);
+        public abstract Builder blk(@Nullable Block blk);
 
         /**
          * Append a {@code '\n'}. This method should only used when {@link #nl()} cannot be used.
          */
-        void newLine();
+        public abstract void newLine();
 
         /**
          * Append a {@code '\n'}. Short name for {@code new line}.
@@ -76,35 +76,35 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
          * @return this instance
          */
         @CheckReturnValue
-        Builder nl();
+        public abstract Builder nl();
 
         /**
          * Append a {@code '>'}. Short name for {@code greater than}.
          *
          * @return this instance
          */
-        Builder gt();
+        public abstract Builder gt();
 
         /**
          * Append a {@code '<'}. Short name for {@code less than}.
          *
          * @return this instance
          */
-        Builder lt();
+        public abstract Builder lt();
 
         /**
          * Append a {@code ", "}. Short name for {@code comma, space}.
          *
          * @return this instance
          */
-        Builder cs();
+        public abstract Builder cs();
 
         /**
          * Append a {@code ' '}.
          *
          * @return this instance
          */
-        Builder sp();
+        public abstract Builder sp();
 
         /**
          * Append a {@link String} simple string. The string has to be known to:
@@ -116,7 +116,7 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
          * @param str the {@link String}
          * @return this instance
          */
-        Builder str(String str);
+        public abstract Builder str(String str);
 
         /**
          * Append a text block. The string has to be known:
@@ -130,7 +130,7 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
          * @param text the {@link String}
          * @return this instance
          */
-        Builder txt(String text);
+        public abstract Builder txt(String text);
 
         /**
          * The equivalent of {@code str(content).nl()}.
@@ -138,7 +138,7 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
          * @param content the {@link String}
          * @return this instance
          */
-        Builder eol(String content);
+        public abstract Builder eol(String content);
 
         /**
          * The equivalent of {@code eol(str.substring(beginIndex, endIndex))}.
@@ -149,23 +149,33 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
          * @return this instance
          */
         @Beta
-        Builder eol(String str, int beginIndex, int endIndex);
+        public abstract Builder eol(String str, int beginIndex, int endIndex);
 
         /**
          * {@return a {@link Block} capturing the current state of this builder}
          */
-        Block build();
+        public abstract Block build();
 
         /**
          * {@return a {@link Block} capturing the current state of this builder, or {@code null} if this builder is
          * empty}
          */
-        @Nullable Block toBlock();
+        public abstract @Nullable Block toBlock();
 
         /**
          * {@return the raw string literal equivalent of this builder's state}
          */
-        String toRawString();
+        public abstract String toRawString();
+
+        @Override
+        public final int hashCode() {
+            return super.hashCode();
+        }
+
+        @Override
+        public final boolean equals(final @Nullable Object obj) {
+            return super.equals(obj);
+        }
 
         /**
          * {@return the result of {@link #toRawString()}}
@@ -176,7 +186,9 @@ sealed interface Block extends Immutable permits Block.OfOne, Block2, BlockC, Bl
         @DoNotCall
         @Deprecated(forRemoval = true)
         @InlineMe(replacement = "this.toRawString()")
-        String toString();
+        public final String toString() {
+            return toRawString();
+        }
     }
 
     /**
