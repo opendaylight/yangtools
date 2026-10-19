@@ -23,7 +23,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * until they shape a separate interface for high-level access. Examples include {@code #gen(String)} family of methods.
  */
 @NonNullByDefault
-final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder, BlockFragment> {
+final class BlockBuilder extends AbstractBlockBuilder<BlockBuilder> {
     /**
      * Default constructor.
      */
