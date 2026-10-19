@@ -156,7 +156,7 @@ public final class RFC7950Reactors {
      * @return a {@link StatementSupportBundle}
      */
     private static StatementSupportBundle statementDefinitionBundle(final StatementSupportBundle sourceLinkageBundle,
-            final YangParserConfiguration config) {
+            final XPathSupport xpathSupport, final YangParserConfiguration config) {
         return StatementSupportBundle.builderDerivedFrom(sourceLinkageBundle)
             // extension namespace
             .addSupport(NamespaceBehaviours.EXTENSION)
@@ -222,6 +222,7 @@ public final class RFC7950Reactors {
             .addSupport(new MandatoryStatementSupport(config))
             .addSupport(new MaxElementsStatementSupport(config))
             .addSupport(new MinElementsStatementSupport(config))
+            .addSupport(new MustStatementSupport(xpathSupport, config))
             .addSupport(
                 new NotificationStatementRFC6020Support(config),
                 new NotificationStatementRFC7950Support(config))
@@ -230,6 +231,7 @@ public final class RFC7950Reactors {
             .addSupport(new PresenceStatementSupport(config))
             .addSupport(new RpcStatementSupport(config))
             .addSupport(new UniqueStatementSupport(config))
+            .addSupport(new WhenStatementSupport(xpathSupport, config))
 
             // augment, grouping, refine, uses
             .addSupport(NamespaceBehaviours.GROUPING)
@@ -260,13 +262,11 @@ public final class RFC7950Reactors {
 
     @NonNullByDefault
     private static StatementSupportBundle fullDeclarationBundle(final StatementSupportBundle statementDefinitionBundle,
-            final XPathSupport xpathSupport, final YangParserConfiguration config) {
+            final YangParserConfiguration config) {
         return StatementSupportBundle.builderDerivedFrom(statementDefinitionBundle)
             // statement argument representation requires type information
             .addSupport(new DefaultStatementSupport(config))
-            .addSupport(new MustStatementSupport(xpathSupport, config))
             .addSupport(new RangeStatementSupport(config))
-            .addSupport(new WhenStatementSupport(xpathSupport, config))
 
             // namespaces projected from FULL_DECLARATION to EFFECTIVE_MODEL
             .addSupport(AugmentImplicitHandlingNamespace.BEHAVIOUR)
@@ -350,25 +350,24 @@ public final class RFC7950Reactors {
     private static @NonNull CustomCrossSourceStatementReactorBuilder vanillaReactorBuilder(
             final @NonNull XPathSupport xpathSupport, final YangParserConfiguration config) {
         final var linkageBundle = sourceLinkageBundle(config);
-        final var stmtDefBundle = statementDefinitionBundle(linkageBundle, config);
-        final var fullDeclarationBundle = fullDeclarationBundle(stmtDefBundle, xpathSupport, config);
+        final var stmtDefBundle = statementDefinitionBundle(linkageBundle, xpathSupport, config);
+        final var fullDeclarationBundle = fullDeclarationBundle(stmtDefBundle, config);
 
         return new CustomCrossSourceStatementReactorBuilder(StatementSupportBundle.VERSIONS_ALL)
-                .addAllSupports(ModelProcessingPhase.INIT, INIT_BUNDLE)
-                .addAllSupports(ModelProcessingPhase.SOURCE_LINKAGE, linkageBundle)
-                .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION, stmtDefBundle)
-                .addAllSupports(ModelProcessingPhase.FULL_DECLARATION, fullDeclarationBundle)
-                .addAllSupports(ModelProcessingPhase.EFFECTIVE_MODEL, fullDeclarationBundle)
-                .addValidationBundle(ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS,
-                    YangValidationBundles.SUPPORTED_REFINE_SUBSTATEMENTS)
-                .addValidationBundle(ValidationBundleType.SUPPORTED_AUGMENT_TARGETS,
-                    YangValidationBundles.SUPPORTED_AUGMENT_TARGETS)
+            .addAllSupports(ModelProcessingPhase.INIT, INIT_BUNDLE)
+            .addAllSupports(ModelProcessingPhase.SOURCE_LINKAGE, linkageBundle)
+            .addAllSupports(ModelProcessingPhase.STATEMENT_DEFINITION, stmtDefBundle)
+            .addAllSupports(ModelProcessingPhase.FULL_DECLARATION, fullDeclarationBundle)
+            .addAllSupports(ModelProcessingPhase.EFFECTIVE_MODEL, fullDeclarationBundle)
+            .addValidationBundle(ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS,
+                YangValidationBundles.SUPPORTED_REFINE_SUBSTATEMENTS)
+            .addValidationBundle(ValidationBundleType.SUPPORTED_AUGMENT_TARGETS,
+                YangValidationBundles.SUPPORTED_AUGMENT_TARGETS)
 
-                // FIXME: 7.0.0: we do not seem to need this validation bundle
-                .addValidationBundle(ValidationBundleType.SUPPORTED_CASE_SHORTHANDS,
-                    YangValidationBundles.SUPPORTED_CASE_SHORTHANDS)
+            // FIXME: 7.0.0: we do not seem to need this validation bundle
+            .addValidationBundle(ValidationBundleType.SUPPORTED_CASE_SHORTHANDS,
+                YangValidationBundles.SUPPORTED_CASE_SHORTHANDS)
 
-                .addValidationBundle(ValidationBundleType.SUPPORTED_DATA_NODES,
-                    YangValidationBundles.SUPPORTED_DATA_NODES);
+            .addValidationBundle(ValidationBundleType.SUPPORTED_DATA_NODES, YangValidationBundles.SUPPORTED_DATA_NODES);
     }
 }

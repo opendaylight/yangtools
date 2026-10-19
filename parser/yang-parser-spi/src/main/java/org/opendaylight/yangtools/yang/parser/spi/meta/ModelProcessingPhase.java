@@ -36,7 +36,7 @@ public enum ModelProcessingPhase {
     SOURCE_LINKAGE(INIT, ExecutionOrder.SOURCE_LINKAGE),
     /**
      * Early statement declaration phase. This phase processes all statements with the exception of {@code default},
-     * {@code must}, {@code range} and {@code when} statements.
+     * and {@code range} statements.
      *
      * <p>Following namespaces are completely populated at the end of statement declaration as per
      * <a href="https://www.rfc-editor.org/info/rfc7950/#section-6.2.1">RFC7950 section 6.2.1</a>:
