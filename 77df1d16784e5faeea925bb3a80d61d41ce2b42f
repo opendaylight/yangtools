@@ -1,0 +1,119 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5429dabb_27a10fe9",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/DataSchemaContextTree.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 256,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-10-19T19:01:22Z",
+      "side": 1,
+      "message": "does this fit on a single line?\nI so, offset it. If not, use String.formatted()",
+      "range": {
+        "startLine": 255,
+        "startChar": 47,
+        "endLine": 256,
+        "endChar": 53
+      },
+      "revId": "77df1d16784e5faeea925bb3a80d61d41ce2b42f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "7601343d_75c938b7",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/DataSchemaContextTree.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 281,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-10-19T19:01:22Z",
+      "side": 1,
+      "message": "this deserves a comment",
+      "range": {
+        "startLine": 281,
+        "startChar": 20,
+        "endLine": 281,
+        "endChar": 51
+      },
+      "revId": "77df1d16784e5faeea925bb3a80d61d41ce2b42f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "242efd57_114f774e",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/DataSchemaContextTree.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 283,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-10-19T19:01:22Z",
+      "side": 1,
+      "message": "direct return",
+      "range": {
+        "startLine": 283,
+        "startChar": 27,
+        "endLine": 283,
+        "endChar": 41
+      },
+      "revId": "77df1d16784e5faeea925bb3a80d61d41ce2b42f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "2c764e61_141b6aa3",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/DataSchemaContextTree.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 294,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-10-19T19:01:22Z",
+      "side": 1,
+      "message": "simple ?:",
+      "range": {
+        "startLine": 294,
+        "startChar": 15,
+        "endLine": 294,
+        "endChar": 42
+      },
+      "revId": "77df1d16784e5faeea925bb3a80d61d41ce2b42f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "561706f9_93201971",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/DataSchemaContextTree.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 301,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-10-19T19:01:22Z",
+      "side": 1,
+      "message": "so the logic here is quite strange:\n\nwe first check for parent being a mixin and unmask it if it is a list.\nthen we check if current is a Composite and make a another step.\n\nPathMixin extends Composite. by statements this breaks down like:\n- list/leaf-list/choice are PathMixin\n- container/input/output/anydata (...) are Composite\n\nWhat I would expect here is:\n- if not Composite return null\n- make a step, examine its potential outcomes\n- until the next child is a non-mixin whose QName matches qname",
+      "range": {
+        "startLine": 301,
+        "startChar": 47,
+        "endLine": 301,
+        "endChar": 54
+      },
+      "revId": "77df1d16784e5faeea925bb3a80d61d41ce2b42f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
