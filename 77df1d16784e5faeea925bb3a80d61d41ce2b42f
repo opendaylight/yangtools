@@ -3,6 +3,29 @@
     {
       "unresolved": true,
       "key": {
+        "uuid": "ba75141d_404abd37",
+        "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/CompositeNodeDataWithSchema.java",
+        "patchSetId": 3
+      },
+      "lineNbr": 165,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2026-10-19T19:02:33Z",
+      "side": 1,
+      "message": "switch expression",
+      "range": {
+        "startLine": 165,
+        "startChar": 16,
+        "endLine": 165,
+        "endChar": 20
+      },
+      "revId": "77df1d16784e5faeea925bb3a80d61d41ce2b42f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
         "uuid": "5429dabb_27a10fe9",
         "filename": "data/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/DataSchemaContextTree.java",
         "patchSetId": 3
