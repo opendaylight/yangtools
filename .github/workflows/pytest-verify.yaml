@@ -1,0 +1,114 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 The Linux Foundation
+
+name: Gerrit Composed PyTest Verify
+
+# yamllint disable-line rule:truthy
+on:
+  workflow_dispatch:
+    inputs:
+      GERRIT_BRANCH:
+        description: "Branch that change is against"
+        required: true
+        type: string
+      GERRIT_CHANGE_ID:
+        description: "The ID for the change"
+        required: true
+        type: string
+      GERRIT_CHANGE_NUMBER:
+        description: "The Gerrit number"
+        required: true
+        type: string
+      GERRIT_CHANGE_URL:
+        description: "URL to the change"
+        required: true
+        type: string
+      GERRIT_EVENT_TYPE:
+        description: "Type of Gerrit event"
+        required: true
+        type: string
+      GERRIT_PATCHSET_NUMBER:
+        description: "The patch number for the change"
+        required: true
+        type: string
+      GERRIT_PATCHSET_REVISION:
+        description: "The revision sha"
+        required: true
+        type: string
+      GERRIT_PROJECT:
+        description: "Project in Gerrit"
+        required: true
+        type: string
+      GERRIT_REFSPEC:
+        description: "Gerrit refspec of change"
+        required: true
+        type: string
+
+concurrency:
+  # yamllint disable-line rule:line-length
+  group: gerrit-verify-pytest-${{ github.workflow }}-${{ github.event.inputs.GERRIT_BRANCH }}-${{ github.event.inputs.GERRIT_CHANGE_ID || github.run_id }}-${{ github.event.inputs.GERRIT_REFSPEC }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  pytest-verify:
+    permissions:
+      contents: read
+      id-token: write
+    # yamllint disable-line rule:line-length
+    uses: lfit/releng-reusable-workflows/.github/workflows/compose-maven-verify.yaml@e3bb02dd0d2e5027cde63732fe00f591d6ecec03 # v0.11.0
+    with:
+      GERRIT_BRANCH: ${{ inputs.GERRIT_BRANCH }}
+      GERRIT_CHANGE_ID: ${{ inputs.GERRIT_CHANGE_ID }}
+      GERRIT_CHANGE_NUMBER: ${{ inputs.GERRIT_CHANGE_NUMBER }}
+      GERRIT_CHANGE_URL: ${{ inputs.GERRIT_CHANGE_URL }}
+      GERRIT_EVENT_TYPE: ${{ inputs.GERRIT_EVENT_TYPE }}
+      GERRIT_PATCHSET_NUMBER: ${{ inputs.GERRIT_PATCHSET_NUMBER }}
+      GERRIT_PATCHSET_REVISION: ${{ inputs.GERRIT_PATCHSET_REVISION }}
+      GERRIT_PROJECT: ${{ inputs.GERRIT_PROJECT }}
+      GERRIT_REFSPEC: ${{ inputs.GERRIT_REFSPEC }}
+      JDK_VERSION: "21"
+      MVN_VERSION: "3.9.6"
+      MVN_PROFILES: "q,integration-tests"
+      MVN_PHASES: "clean verify"
+      # yamllint disable rule:line-length
+      MVN_OPTS: >-
+        -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        -Dmaven.repo.local=/tmp/r -Dorg.ops4j.pax.url.mvn.localRepository=/tmp/r
+        -DaltDeploymentRepository=staging::default::file:"${GITHUB_WORKSPACE}"/m2repo
+      # yamllint enable rule:line-length
+      ENV_VARS: ${{ toJSON(vars) }}
+      ARCHIVE_ARTIFACTS: |
+        tests/allure-report/index.html
+        tests/history/history.jsonl
+      PRE_BUILD_SCRIPT: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+
+        # The reusable workflow's setup-python step puts Python 3.8 first on
+        # PATH, but the PyTest suite needs Python >= 3.12. Use the runner's
+        # system interpreter instead, which ubuntu-latest keeps current, and
+        # put a venv with tox ahead on PATH so Maven's exec-maven-plugin
+        # (which just runs the bare `tox` executable, see pom.xml) picks it
+        # up later, and tox builds its env from it too.
+        /usr/bin/python3 -c 'import sys; sys.exit(sys.version_info < (3, 12))' || {
+          echo "Python >= 3.12 required, /usr/bin/python3 is $(/usr/bin/python3 --version)" >&2
+          exit 1
+        }
+
+        /usr/bin/python3 -m venv "$HOME/.pytest-venv"
+        "$HOME/.pytest-venv/bin/python" -m pip install --upgrade pip tox==4.65.5
+
+        echo "$HOME/.pytest-venv/bin" >> "$GITHUB_PATH"
+        "$HOME/.pytest-venv/bin/tox" -c tests --version
+
+        # Allure 3 turns the pytest results into a single-file HTML report
+        # (tests/allurerc.mjs), run from tox's commands_post so failed runs
+        # get a report too. Node.js is preinstalled on GitHub-hosted runners.
+        npm install --global --prefix "$HOME/.allure" allure@3.20.1
+
+        echo "$HOME/.allure/bin" >> "$GITHUB_PATH"
+        "$HOME/.allure/bin/allure" --version
