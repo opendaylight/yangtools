@@ -1,0 +1,215 @@
+---
+# SPDX-License-Identifier: Apache-2.0
+# SPDX-FileCopyrightText: 2026 The Linux Foundation
+
+name: Gerrit Composed PyTest
+
+# yamllint disable-line rule:truthy
+on:
+  workflow_dispatch:
+    inputs:
+      # Run as is, this tests the latest merged code. To test a pending
+      # change, set GERRIT_REFSPEC to its refspec; the other fields only
+      # describe the run.
+      GERRIT_BRANCH:
+        description: "Branch that change is against"
+        required: true
+        default: "master"
+        type: string
+      GERRIT_CHANGE_ID:
+        description: "The ID for the change"
+        required: false
+        default: ""
+        type: string
+      GERRIT_CHANGE_NUMBER:
+        description: "The Gerrit number"
+        required: false
+        default: ""
+        type: string
+      GERRIT_CHANGE_URL:
+        description: "URL to the change"
+        required: false
+        default: ""
+        type: string
+      GERRIT_EVENT_TYPE:
+        description: "Type of Gerrit event"
+        required: false
+        default: "manual"
+        type: string
+      GERRIT_PATCHSET_NUMBER:
+        description: "The patch number for the change"
+        required: false
+        default: ""
+        type: string
+      GERRIT_PATCHSET_REVISION:
+        description: "The revision sha"
+        required: false
+        default: ""
+        type: string
+      GERRIT_PROJECT:
+        description: "Project in Gerrit"
+        required: true
+        default: "yangtools"
+        type: string
+      GERRIT_REFSPEC:
+        description: >-
+          Gerrit refspec of change, e.g. refs/changes/78/127078/3.
+          The default "master" tests the latest merged code.
+        required: true
+        default: "master"
+        type: string
+      TOX_ARGS:
+        description: >-
+          Arguments for tox, e.g. -- -m "performance". Empty uses the
+          tox.args default of the integration-tests profile in pom.xml.
+        required: false
+        default: ""
+        type: string
+
+concurrency:
+  # yamllint disable-line rule:line-length
+  group: gerrit-verify-pytest-${{ github.workflow }}-${{ github.event.inputs.GERRIT_BRANCH }}-${{ github.event.inputs.GERRIT_CHANGE_ID || github.run_id }}-${{ github.event.inputs.GERRIT_REFSPEC }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  pytest:
+    permissions:
+      contents: read
+      id-token: write
+    # yamllint disable-line rule:line-length
+    uses: lfit/releng-reusable-workflows/.github/workflows/compose-maven-verify.yaml@e3bb02dd0d2e5027cde63732fe00f591d6ecec03 # v0.11.0
+    with:
+      GERRIT_BRANCH: ${{ inputs.GERRIT_BRANCH }}
+      GERRIT_CHANGE_ID: ${{ inputs.GERRIT_CHANGE_ID || github.run_id }}
+      GERRIT_CHANGE_NUMBER: ${{ inputs.GERRIT_CHANGE_NUMBER }}
+      GERRIT_CHANGE_URL: ${{ inputs.GERRIT_CHANGE_URL }}
+      GERRIT_EVENT_TYPE: ${{ inputs.GERRIT_EVENT_TYPE }}
+      GERRIT_PATCHSET_NUMBER: ${{ inputs.GERRIT_PATCHSET_NUMBER }}
+      GERRIT_PATCHSET_REVISION: ${{ inputs.GERRIT_PATCHSET_REVISION }}
+      GERRIT_PROJECT: ${{ inputs.GERRIT_PROJECT }}
+      GERRIT_REFSPEC: ${{ inputs.GERRIT_REFSPEC }}
+      JDK_VERSION: "21"
+      MVN_VERSION: "3.9.6"
+      MVN_PROFILES: "q,integration-tests"
+      MVN_PHASES: "clean verify"
+      # yamllint disable rule:line-length
+      MVN_OPTS: >-
+        -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+        -Dmaven.repo.local=/tmp/r -Dorg.ops4j.pax.url.mvn.localRepository=/tmp/r
+        -DaltDeploymentRepository=staging::default::file:"${GITHUB_WORKSPACE}"/m2repo
+      # yamllint enable rule:line-length
+      ENV_VARS: ${{ toJSON(vars) }}
+      # For now every run extends the Allure trend data (history.jsonl,
+      # restored from the previous run below). Once this workflow runs on a
+      # schedule, only the scheduled runs should extend it, so that the trend
+      # follows one test selection on master; the verify job this is later
+      # folded into will not use the history at all.
+      ARCHIVE_ARTIFACTS: |
+        tests/allure-report/allure-report.html
+        tests/history/history.jsonl
+      PRE_BUILD_SCRIPT: |
+        #!/usr/bin/env bash
+        set -euo pipefail
+
+        # Hand TOX_ARGS to Maven through the environment (the tox-args-env
+        # profile in pom.xml), where spaces and quotes survive;
+        # maven-build-action splits MVN_PARAMS at whitespace.
+        tox_args=$(cat <<'TOX_ARGS_EOF'
+        ${{ inputs.TOX_ARGS }}
+        TOX_ARGS_EOF
+        )
+        if [ -n "${tox_args}" ]; then
+          printf 'TOX_ARGS=%s\n' "${tox_args//$'\n'/ }" >> "$GITHUB_ENV"
+        fi
+
+        # The reusable workflow's setup-python step puts Python 3.8 first on
+        # PATH, but the PyTest suite needs Python >= 3.11. Use the runner's
+        # system interpreter instead, which ubuntu-latest keeps current, and
+        # put a venv with tox ahead on PATH so Maven's exec-maven-plugin
+        # (which just runs the bare `tox` executable, see pom.xml) picks it
+        # up later, and tox builds its env from it too.
+        /usr/bin/python3 -c 'import sys; sys.exit(sys.version_info < (3, 11))' || {
+          echo "Python >= 3.11 required, /usr/bin/python3 is $(/usr/bin/python3 --version)" >&2
+          exit 1
+        }
+
+        /usr/bin/python3 -m venv "$HOME/.pytest-venv"
+        "$HOME/.pytest-venv/bin/python" -m pip install pip==26.2.2
+        "$HOME/.pytest-venv/bin/python" -m pip install tox==4.65.5
+
+        echo "$HOME/.pytest-venv/bin" >> "$GITHUB_PATH"
+        "$HOME/.pytest-venv/bin/tox" -c tests --version
+
+        # Allure 3 turns the pytest results into a single-file HTML report
+        # (tests/allurerc.mjs), run from tox's commands_post so failed runs
+        # get a report too. Node.js is preinstalled on GitHub-hosted runners.
+        npm install --global --prefix "$HOME/.allure" allure@3.20.1
+
+        echo "$HOME/.allure/bin" >> "$GITHUB_PATH"
+        "$HOME/.allure/bin/allure" --version
+
+        # Allure trend data (historyPath in tests/allurerc.mjs): start from the
+        # history.jsonl of the newest earlier run that published one, so Allure
+        # appends this run to it. With a schedule, restrict this to scheduled
+        # runs (event=schedule in the run list below). Without the log server
+        # or the run list, the history starts afresh.
+        base="${{ vars.LOG_BASE_URL }}"
+        workflow="${GITHUB_WORKFLOW_REF%@*}"
+        workflow="${workflow##*/}"
+        logs="${base%/}/logs/gha/${GITHUB_REPOSITORY##*/}/${workflow%.*}"
+        api="${GITHUB_API_URL}/repos/${GITHUB_REPOSITORY}/actions/workflows"
+        if [ -z "${base}" ]; then
+          echo "No LOG_BASE_URL, Allure history starts afresh"
+        # Anonymous API call; this works because the repository is public.
+        elif ids=$(curl -fsSL "${api}/${workflow}/runs?status=completed&per_page=100" \
+            | jq -r '.workflow_runs[].id'); then
+          mkdir -p tests/history
+          found=""
+          for id in ${ids}; do
+            # A line Allure cannot parse would make it fail without a
+            # report, so a damaged file is skipped like a missing one.
+            if curl -fsSL --compressed -o tests/history/history.tmp \
+                "${logs}/${id}/tests/history/history.jsonl" \
+                && jq -e . tests/history/history.tmp > /dev/null; then
+              mv tests/history/history.tmp tests/history/history.jsonl
+              found="${id}"
+              break
+            fi
+          done
+          rm -f tests/history/history.tmp
+          if [ -n "${found}" ]; then
+            echo "Allure history restored from run ${found}"
+          else
+            echo "No earlier Allure history found, starting afresh"
+          fi
+        else
+          echo "::warning::Could not list earlier runs, Allure history starts afresh"
+        fi
+
+  # Puts a link to the Allure report of the PyTest integration tests on the
+  # run's Summary page: straight to the report on the log server, or to the
+  # build-logs artifact when the logs were not published to S3. In
+  # gerrit-verify.yaml this becomes a step of the vote job instead.
+  pytest-report:
+    needs: pytest
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Link Allure report
+        continue-on-error: true
+        env:
+          LOG_URL: ${{ needs.pytest.outputs.LOG_URL }}
+        run: |
+          report="${LOG_URL}tests/allure-report/allure-report.html"
+          run="${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          if [ -n "${LOG_URL}" ] && curl -fsSI -o /dev/null "${report}"; then
+            line="### [📊 Allure report](${report})"
+          elif [ -n "${LOG_URL}" ]; then
+            line="### ⚠️ Allure report not found at ${report}"
+          else
+            line="### 📦 Allure report: \`build-logs\` artifact of [this run](${run}#artifacts)"
+          fi
+          echo "${line}" >> "$GITHUB_STEP_SUMMARY"
