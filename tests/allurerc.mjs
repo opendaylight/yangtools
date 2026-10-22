@@ -5,7 +5,12 @@ export default {
   output: "./allure-report",
   // Trend data: each run appends to this file, so restoring it from the
   // previous run before tests start gives the report its trend charts.
-  historyPath: "./history/history.jsonl",
+  // CI points ALLURE_HISTORY_PATH elsewhere when it could not restore the
+  // earlier history, so that a fresh file is not published in its place.
+  historyPath: process.env.ALLURE_HISTORY_PATH ?? "./history/history.jsonl",
+  // Keep the newest 100 runs, so the file and the report embedding its
+  // trend data do not grow without bound.
+  historyLimit: 100,
   plugins: {
     awesome: {
       options: {
