@@ -249,7 +249,8 @@ final class BuilderTemplate extends BaseTemplate {
      */
     private @NonNull BlockBuilder generateConstructorFromIfc(final @NonNull DataContainerArchetype archetype) {
         final var bb = newBlockBuilder();
-        if (!archetype.getters().isEmpty()) {
+        final var getters = archetype.getters();
+        if (!getters.isEmpty()) {
             final var typeName = importedName(archetype);
             bb
                 .eol("/**")
@@ -257,8 +258,14 @@ final class BuilderTemplate extends BaseTemplate {
                 .eol(" *")
                 .str(" * @param arg ").str(typeName).eol(" from which the builder should be initialized")
                 .eol(" */")
-                .str("public ").str(simpleName()).str("(").str(typeName).str(" arg)").oB()
-                    .blk(printConstructorPropertySetter(archetype))
+                .str("public ").str(simpleName()).str("(").str(typeName).str(" arg)").oB();
+            for (var getter : getters) {
+                printPropertySetter(bb, getter, "arg");
+            }
+            for (var partial : archetype.partials()) {
+                bb.blk(printConstructorPropertySetter(partial, getSpecifiedGetters(archetype)));
+            }
+            bb
                 .cB()
                 .newLine();
         }
@@ -268,25 +275,12 @@ final class BuilderTemplate extends BaseTemplate {
         return bb;
     }
 
-    // FIXME: inline into caller
-    private @Nullable BlockBuilder printConstructorPropertySetter(final DataContainerArchetype implementedIfc) {
-        final var bb = newBlockBuilder();
-        for (var getter : implementedIfc.getters()) {
-            bb.eol(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
-        }
-
-        for (var partial : implementedIfc.partials()) {
-            bb.blk(printConstructorPropertySetter(partial, getSpecifiedGetters(implementedIfc)));
-        }
-        return bb;
-    }
-
     private @Nullable BlockBuilder printConstructorPropertySetter(final DataContainerArchetype.Partial implementedIfc,
             final Set<GetterMethod> alreadySetProperties) {
         final var bb = newBlockBuilder();
         for (var getter : implementedIfc.getters()) {
             if (getterBySuffix(alreadySetProperties, getter.suffix()) == null) {
-                bb.eol(printPropertySetter(getter, "arg", propertyNameFromGetter(getter)));
+                printPropertySetter(bb, getter, "arg");
             }
         }
 
@@ -381,56 +375,46 @@ final class BuilderTemplate extends BaseTemplate {
 
     private @Nullable BlockBuilder generateIfCheck(final @NonNull DataContainerArchetype archetype,
             final List<DataContainerArchetype> done) {
-        return archetype.getters().isEmpty() ? null : newBlockBuilder()
-            .str("if (arg instanceof ").str(importedName(archetype)).str(" castArg)").oB()
-                .blk(printPropertySetter(archetype))
-                .eol("isValidArg = true;")
-            .cB();
+        final var getters = archetype.getters();
+        return getters.isEmpty() ? null : newBlockBuilder()
+            .str("if (arg instanceof ").str(importedName(archetype)).str(" castArg)").jBlock(bb -> {
+                for (var getter : getters) {
+                    if (!hasOverrideAnnotation(getter)) {
+                        printPropertySetter(bb, getter, "castArg");
+                    }
+                }
+                bb.eol("isValidArg = true;");
+            });
     }
 
-    private @Nullable BlockBuilder printPropertySetter(final Type implementedIfc) {
-        // FIXME: narrow down?
-        if (!(implementedIfc instanceof DataContainerArchetype ifc)) {
-            return null;
-        }
-
-        final var bb = newBlockBuilder();
-        for (var getter : ifc.getters()) {
-            if (!hasOverrideAnnotation(getter)) {
-                bb.eol(printPropertySetter(getter, "castArg", propertyNameFromGetter(getter)));
-            }
-        }
-        return bb;
-    }
-
-    // FIXME: return BlockBuilder
     @NonNullByDefault
-    private String printPropertySetter(final GetterMethod getter, final String receiver, final String propertyName) {
+    private BlockBuilder printPropertySetter(final BlockBuilder bb, final GetterMethod getter, final String receiver) {
+        final var propertyName = propertyNameFromGetter(getter);
+        bb.str("this._").str(propertyName).str(" = ");
+
         final var suffix = getter.suffix();
         final var ownGetter = findGetter(suffix);
         final var ownGetterType = ownGetter.returnType();
         if (strictTypeEquals(getter.returnType(), ownGetterType)) {
-            return "this._" + propertyName + " = " + receiver + "." + GETTER_PREFIX + suffix + "();";
+            return bb.str(receiver).str("." + GETTER_PREFIX).str(suffix).eol("();");
         }
-        if (ownGetterType instanceof ParameterizedType parameterized) {
-            final var itemType = parameterized.getActualTypeArguments().getFirst();
-            if (parameterized instanceof UserLeafList) {
-                return printPropertySetter(suffix, receiver, propertyName, "checkListFieldCast",
-                    importedName(itemType));
-            }
-            if (parameterized instanceof SystemLeafList) {
-                return printPropertySetter(suffix, receiver, propertyName, "checkSetFieldCast",
-                    importedName(itemType));
-            }
-        }
-        return printPropertySetter(suffix, receiver, propertyName, "checkFieldCast", importedName(ownGetterType));
+
+        return switch (ownGetterType) {
+            case UserLeafList ordered -> checkGetter(bb, receiver, propertyName, suffix, "checkListFieldCast",
+                ordered.getActualTypeArguments().getFirst());
+            case SystemLeafList unordered -> checkGetter(bb, receiver, propertyName, suffix, "checkSetFieldCast",
+                unordered.getActualTypeArguments().getFirst());
+            default -> checkGetter(bb, receiver, propertyName, suffix, "checkFieldCast", ownGetterType);
+        };
     }
 
     @NonNullByDefault
-    private String printPropertySetter(final String suffix, final String receiver, final String propertyName,
-            final String checkerName, final String className) {
-        return "this._" + propertyName + " = " + importedName(CODEHELPERS) + "." + checkerName + "("
-            + className + ".class, \"" + propertyName + "\", " + receiver + '.' + GETTER_PREFIX + suffix + "());";
+    private BlockBuilder checkGetter(final BlockBuilder bb, final String receiver, final String propertyName,
+            final String suffix, final String checkMethod, final Type type) {
+        return bb.str(importedName(CODEHELPERS)).str(".").str(checkMethod).str("(")
+            .str(importedName(type)).str(".class").cs()
+            .jStr(propertyName).cs()
+            .str(receiver).str("." + GETTER_PREFIX).str(suffix).eol("());");
     }
 
     @NonNullByDefault
