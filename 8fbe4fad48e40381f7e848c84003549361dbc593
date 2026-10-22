@@ -16,6 +16,24 @@
       "message": "Please add @Nullable here, because peek() returns null if the deque is empty.",
       "revId": "8fbe4fad48e40381f7e848c84003549361dbc593",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "7e32e41f_8f1d7ed2",
+        "filename": "codec/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JsonParserStream.java",
+        "patchSetId": 5
+      },
+      "lineNbr": 500,
+      "author": {
+        "id": 8449
+      },
+      "writtenOn": "2026-10-22T12:49:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6bc88c47_b83d4b3c",
+      "revId": "8fbe4fad48e40381f7e848c84003549361dbc593",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
