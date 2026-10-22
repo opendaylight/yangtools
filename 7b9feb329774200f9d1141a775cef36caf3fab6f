@@ -1,0 +1,106 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3097f232_9b1aa3cb",
+        "filename": ".github/workflows/pytest-verify.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-10-22T11:40:58Z",
+      "side": 1,
+      "message": "The refspec in our concurrency group keeps parallel runs apart, but compose-maven-verify has its own group (branch plus GERRIT_CHANGE_ID, falling back to run_id), and with this \"manual\" default two dispatches for different refspecs land in the same inner group and the second cancels the first. Could the default be empty, passing inputs.GERRIT_CHANGE_ID || github.run_id to the reusable workflow?",
+      "revId": "7b9feb329774200f9d1141a775cef36caf3fab6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5ee6db6f_8343484d",
+        "filename": ".github/workflows/pytest-verify.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-10-22T11:40:58Z",
+      "side": 1,
+      "message": "Am I right that nothing restores the previous history.jsonl before allure generate runs? allurerc.mjs says the trend charts depend on that, and each run publishes under its own run ID, so this file will always hold a single entry. Should we drop it from ARCHIVE_ARTIFACTS until a restore step exists?",
+      "revId": "7b9feb329774200f9d1141a775cef36caf3fab6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ba0d3ae7_afb1cf5a",
+        "filename": ".github/workflows/pytest-verify.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-10-22T11:40:58Z",
+      "side": 1,
+      "message": "What \"needs\" Python 3.12? The highest dependency seems to come from tox:4.64.5 which needs Python 3.11",
+      "revId": "7b9feb329774200f9d1141a775cef36caf3fab6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "a6aeda7c_3e8e69b1",
+        "filename": ".github/workflows/pytest-verify.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-10-22T11:40:58Z",
+      "side": 1,
+      "message": "pip is not pinned - that can cause problems",
+      "revId": "7b9feb329774200f9d1141a775cef36caf3fab6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "66715cc2_18cfe919",
+        "filename": ".github/workflows/pytest-verify.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-10-22T11:40:58Z",
+      "side": 1,
+      "message": "Unauthenticated GitHub API calls are rate-limited to 60 per hour per IP address. What will happen when the limit is hit? What will be logged?",
+      "revId": "7b9feb329774200f9d1141a775cef36caf3fab6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ce779fed_7c8db350",
+        "filename": ".github/workflows/pytest-verify.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-10-22T11:40:58Z",
+      "side": 1,
+      "message": "This won\u0027t work, right? In the artifact fallback, log-publish-action gzips every .html file in place whatever the destination. So allure-report.html inside the build-logs zip is gzip-data and does not open in a browser. Could we get compression skipped for the artifact destination upstream, or at least say in this summary line that the file has to be gunzipped first?",
+      "revId": "7b9feb329774200f9d1141a775cef36caf3fab6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
