@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "af765125_30a17b5a",
+        "filename": ".github/workflows/pytest-verify.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 22,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-10-23T10:41:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3097f232_9b1aa3cb",
+      "revId": "7b9feb329774200f9d1141a775cef36caf3fab6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "5ee6db6f_8343484d",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-10-22T11:40:58Z",
       "side": 1,
       "message": "Am I right that nothing restores the previous history.jsonl before allure generate runs? allurerc.mjs says the trend charts depend on that, and each run publishes under its own run ID, so this file will always hold a single entry. Should we drop it from ARCHIVE_ARTIFACTS until a restore step exists?",
+      "revId": "7b9feb329774200f9d1141a775cef36caf3fab6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "bea72609_4c3c45b3",
+        "filename": ".github/workflows/pytest-verify.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 100,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-10-23T10:41:03Z",
+      "side": 1,
+      "message": "Yes, I have added part in the pre build script to download the history trends files. In the future I am planning to use it only for tests which would be run regularly outside verify job, using cron, like long running pefromance tests.",
+      "parentUuid": "5ee6db6f_8343484d",
       "revId": "7b9feb329774200f9d1141a775cef36caf3fab6f",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -52,6 +88,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "8d5ab3aa_41cab7f4",
+        "filename": ".github/workflows/pytest-verify.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 106,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-10-23T10:41:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "ba0d3ae7_afb1cf5a",
+      "revId": "7b9feb329774200f9d1141a775cef36caf3fab6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "a6aeda7c_3e8e69b1",
@@ -65,6 +119,24 @@
       "writtenOn": "2026-10-22T11:40:58Z",
       "side": 1,
       "message": "pip is not pinned - that can cause problems",
+      "revId": "7b9feb329774200f9d1141a775cef36caf3fab6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4e6a87bb_cdbbe4bc",
+        "filename": ".github/workflows/pytest-verify.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 117,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-10-23T10:41:03Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "a6aeda7c_3e8e69b1",
       "revId": "7b9feb329774200f9d1141a775cef36caf3fab6f",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -86,6 +158,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "93accab9_9937d2a6",
+        "filename": ".github/workflows/pytest-verify.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 151,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-10-23T10:41:03Z",
+      "side": 1,
+      "message": "I have removed the Github API call from here so it would not be a problem for this case. Only it would call once for the trend history, it should be single call and but I believe, that each run should be on a different VM.",
+      "parentUuid": "66715cc2_18cfe919",
+      "revId": "7b9feb329774200f9d1141a775cef36caf3fab6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ce779fed_7c8db350",
@@ -99,6 +189,24 @@
       "writtenOn": "2026-10-22T11:40:58Z",
       "side": 1,
       "message": "This won\u0027t work, right? In the artifact fallback, log-publish-action gzips every .html file in place whatever the destination. So allure-report.html inside the build-logs zip is gzip-data and does not open in a browser. Could we get compression skipped for the artifact destination upstream, or at least say in this summary line that the file has to be gunzipped first?",
+      "revId": "7b9feb329774200f9d1141a775cef36caf3fab6f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "dacf37cf_f6df9737",
+        "filename": ".github/workflows/pytest-verify.yaml",
+        "patchSetId": 6
+      },
+      "lineNbr": 157,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-10-23T10:41:03Z",
+      "side": 1,
+      "message": "log-publish-action gzips in place and keeps the original names on purpose, so links within reports keep working on the log server (served with Content-Encoding: gzip). I\u0027d rather honour that, so I took your second option: the summary now says the file is gzipped and how to unpack it.",
+      "parentUuid": "ce779fed_7c8db350",
       "revId": "7b9feb329774200f9d1141a775cef36caf3fab6f",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
