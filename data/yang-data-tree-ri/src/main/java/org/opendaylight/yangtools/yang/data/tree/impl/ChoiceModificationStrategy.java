@@ -7,14 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.tree.impl;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
-
+import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -105,53 +103,62 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> impleme
         enforceCases(writtenValue);
     }
 
-    private void enforceCases(final TreeNode tree) {
+    @NonNullByDefault
+    private TreeNode enforceCases(final TreeNode tree) {
         enforceCases(tree.data());
+        return tree;
     }
 
     private void enforceCases(final NormalizedNode normalizedNode) {
-        verify(normalizedNode instanceof ChoiceNode);
-        final var choice = (ChoiceNode) normalizedNode;
-        if (!choice.isEmpty()) {
-            final var firstChild = choice.body().iterator().next();
-            final var enforcer = verifyNotNull(caseEnforcers.get(firstChild.name()),
-                "Case enforcer cannot be null. Most probably, child node %s of choice node %s does not belong "
-                + "in current tree type.", firstChild.name(), normalizedNode.name());
+        if (!(normalizedNode instanceof ChoiceNode choice)) {
+            throw new VerifyException("Unexpected " + normalizedNode.contract().getCanonicalName());
+        }
+        if (choice.isEmpty()) {
+            // FIXME: empty choice: these should not be allowed
+            return;
+        }
+        final var firstChild = choice.body().iterator().next().name();
+        final var enforcer = caseEnforcers.get(firstChild);
+        if (enforcer == null) {
+            throw new VerifyException("""
+                Case enforcer cannot be null. Most probably, child node %s of choice node %s does not belong in \
+                current tree type.""".formatted(firstChild, choice.name()));
+        }
 
-            // Make sure no leaves from other cases are present
-            for (var other : verifyNotNull(exclusions.get(enforcer))) {
-                for (var id : other.getChildIdentifiers()) {
-                    final var child = choice.childByArg(id);
-                    checkArgument(child == null,
-                        "Child %s (from case %s) implies non-presence of child %s (from case %s), which is %s",
-                        firstChild.name(), enforcer, id, other, child);
+        // Make sure no leaves from other cases are present
+        final var exclusion = exclusions.get(enforcer);
+        if (exclusion == null) {
+            throw new VerifyException("no exclusion for " + enforcer);
+        }
+
+        for (var other : exclusion) {
+            for (var otherChild : other.getChildIdentifiers()) {
+                final var child = choice.childByArg(otherChild);
+                if (child != null) {
+                    throw new IllegalArgumentException(
+                        "Child %s (from case %s) implies non-presence of child %s (from case %s), which is %s"
+                        .formatted(firstChild, enforcer, otherChild, other, child.contract().getCanonicalName()));
                 }
             }
-
-            // Make sure all mandatory children are present
-            enforcer.enforceOnChoice(choice);
         }
+
+        // Make sure all mandatory children are present
+        enforcer.enforceOnChoice(choice);
     }
 
     @Override
     protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        final var ret = super.applyMerge(modification, currentMeta, version);
-        enforceCases(ret);
-        return ret;
+        return enforceCases(super.applyMerge(modification, currentMeta, version));
     }
 
     @Override
     protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode newValue,
             final TreeNode currentMeta, final Version version) {
-        final var ret = super.applyWrite(modification, newValue, currentMeta, version);
-        enforceCases(ret);
-        return ret;
+        return enforceCases(super.applyWrite(modification, newValue, currentMeta, version));
     }
 
     @Override
     protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
-        final var ret = super.applyTouch(modification, currentMeta, version);
-        enforceCases(ret);
-        return ret;
+        return enforceCases(super.applyTouch(modification, currentMeta, version));
     }
 }
