@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -30,8 +31,8 @@ final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountCons
         this.matcher = requireNonNull(matcher);
     }
 
-    static <T extends DataSchemaNode & ElementCountConstraintAware> ModificationApplyOperation from(
-            final SchemaAwareApplyOperation<T> delegate) {
+    static <T extends DataSchemaNode & ElementCountConstraintAware> @NonNull ModificationApplyOperation from(
+            final @NonNull SchemaAwareApplyOperation<T> delegate) {
         final var matcher = delegate.getSchema().elementCountMatcher();
         return matcher == null ? delegate : new MinMaxElementsValidation<>(delegate, matcher);
     }

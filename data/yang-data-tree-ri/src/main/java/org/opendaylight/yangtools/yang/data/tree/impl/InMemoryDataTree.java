@@ -13,9 +13,8 @@ import com.google.common.base.MoreObjects;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTree;
 import org.opendaylight.yangtools.yang.data.tree.api.DataTreeCandidate;
@@ -53,7 +52,6 @@ public final class InMemoryDataTree extends AbstractDataTreeTip implements DataT
     /**
      * Current data store state generation. All accesses need to go through {@link #STATE}
      */
-    @SuppressWarnings("unused")
     @SuppressFBWarnings(value = "URF_UNREAD_FIELD", justification = "https://github.com/spotbugs/spotbugs/issues/2749")
     private volatile DataTreeState state;
 
@@ -76,23 +74,21 @@ public final class InMemoryDataTree extends AbstractDataTreeTip implements DataT
         state = DataTreeState.createInitial(rootNode).withSchemaContext(schemaContext, getOperation(rootSchemaNode));
     }
 
+    @NonNullByDefault
     private ModificationApplyOperation getOperation(final DataSchemaNode rootSchemaNode) {
-        if (rootSchemaNode instanceof ContainerLike rootContainerLike && maskMandatory) {
-            return new ContainerModificationStrategy(rootContainerLike, treeConfig);
-        }
-        if (rootSchemaNode instanceof ListSchemaNode rootList) {
-            final PathArgument arg = treeConfig.getRootPath().getLastPathArgument();
-            if (arg instanceof NodeIdentifierWithPredicates) {
-                return maskMandatory ? new MapEntryModificationStrategy(rootList, treeConfig)
-                        : MapEntryModificationStrategy.of(rootList, treeConfig);
+        return switch (rootSchemaNode) {
+            case ContainerLike root when maskMandatory -> new ContainerModificationStrategy(root, treeConfig);
+            case ListSchemaNode root when !root.getKeyDefinition().isEmpty() -> maskMandatory
+                ? new MapEntryModificationStrategy(root, treeConfig)
+                : MapEntryModificationStrategy.of(root, treeConfig);
+            default -> {
+                try {
+                    yield SchemaAwareApplyOperation.from(rootSchemaNode, treeConfig);
+                } catch (ExcludedDataSchemaNodeException e) {
+                    throw new IllegalArgumentException("Root node does not belong current data tree", e);
+                }
             }
-        }
-
-        try {
-            return SchemaAwareApplyOperation.from(rootSchemaNode, treeConfig);
-        } catch (ExcludedDataSchemaNodeException e) {
-            throw new IllegalArgumentException("Root node does not belong current data tree", e);
-        }
+        };
     }
 
     @Override

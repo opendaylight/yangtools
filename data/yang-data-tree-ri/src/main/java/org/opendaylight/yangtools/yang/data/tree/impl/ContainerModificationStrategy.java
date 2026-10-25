@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.tree.impl;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DistinctNodeContainer;
@@ -113,6 +114,7 @@ sealed class ContainerModificationStrategy extends DataNodeContainerModification
         super(SUPPORT, schemaNode, treeConfig);
     }
 
+    @NonNullByDefault
     static ContainerModificationStrategy of(final ContainerSchemaNode schema, final DataTreeConfiguration treeConfig) {
         if (schema.isPresenceContainer()) {
             final var enforcer = enforcerFor(schema, treeConfig);

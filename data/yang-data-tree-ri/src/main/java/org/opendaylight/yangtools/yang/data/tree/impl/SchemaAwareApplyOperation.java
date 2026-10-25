@@ -45,8 +45,9 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
 
     static final NormalizedNode.@NonNull BuilderFactory BUILDER_FACTORY = ImmutableNodes.builderFactory();
 
-    static ModificationApplyOperation from(final DataSchemaNode schemaNode,
-            final DataTreeConfiguration treeConfig) throws ExcludedDataSchemaNodeException {
+    @NonNullByDefault
+    static ModificationApplyOperation from(final DataSchemaNode schemaNode, final DataTreeConfiguration treeConfig)
+            throws ExcludedDataSchemaNodeException {
         if (!belongsToTree(treeConfig.getTreeType(), schemaNode)) {
             throw new ExcludedDataSchemaNodeException(schemaNode + " does not belong to configuration tree");
         }
@@ -71,13 +72,13 @@ abstract sealed class SchemaAwareApplyOperation<T extends DataSchemaNode> extend
         }
     }
 
+    @NonNullByDefault
     private static ModificationApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
-        final var keyDefinition = schemaNode.getKeyDefinition();
-        final var strategy = keyDefinition == null || keyDefinition.isEmpty()
-            ? new ListModificationStrategy(schemaNode, treeConfig)
-                : MapModificationStrategy.of(schemaNode, treeConfig);
-        return UniqueValidation.of(schemaNode, treeConfig, MinMaxElementsValidation.from(strategy));
+        return UniqueValidation.of(schemaNode, treeConfig,
+            MinMaxElementsValidation.from(schemaNode.getKeyDefinition().isEmpty()
+                ? new ListModificationStrategy(schemaNode, treeConfig)
+                : MapModificationStrategy.of(schemaNode, treeConfig)));
     }
 
     protected static final void checkNotConflicting(final ModificationPath path, final @NonNull TreeNode original,
