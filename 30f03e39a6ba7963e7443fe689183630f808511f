@@ -1,0 +1,55 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "53a9045a_7d6d6b69",
+        "filename": ".github/workflows/pytest.yaml",
+        "patchSetId": 9
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-10-26T12:32:53Z",
+      "side": 1,
+      "message": "Is the GERRIT_REFSPEC suffix doing what we want? With GERRIT_CHANGE_ID empty, run_id already makes the group unique. With it set, compose-maven-verify\u0027s own group (branch plus github.event.inputs.GERRIT_CHANGE_ID, no refspec) still makes a second patch-set run cancel the first. Could we drop the suffix to match gerrit-verify.yaml, or document that side-by-side runs need an empty change ID?",
+      "revId": "30f03e39a6ba7963e7443fe689183630f808511f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "ffdebe7c_9060c9a9",
+        "filename": ".github/workflows/pytest.yaml",
+        "patchSetId": 9
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-10-26T12:32:53Z",
+      "side": 1,
+      "message": "If this anonymous call fails once, the run starts a fresh history.jsonl and publishes it, and every later run restores that one-entry file, so the earlier trend is dropped for good.",
+      "revId": "30f03e39a6ba7963e7443fe689183630f808511f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3b5b4c5b_f9e1b758",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-10-26T12:32:53Z",
+      "side": 1,
+      "message": "Reword commit message, since this commit does not \"add pythest-verify.yaml\"",
+      "revId": "30f03e39a6ba7963e7443fe689183630f808511f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
