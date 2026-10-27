@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "bcaacdc4_43b11519",
+        "filename": ".github/workflows/pytest.yaml",
+        "patchSetId": 9
+      },
+      "lineNbr": 71,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-10-27T09:32:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "53a9045a_7d6d6b69",
+      "revId": "30f03e39a6ba7963e7443fe689183630f808511f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "ffdebe7c_9060c9a9",
@@ -35,6 +53,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "4ed11310_699aa1f7",
+        "filename": ".github/workflows/pytest.yaml",
+        "patchSetId": 9
+      },
+      "lineNbr": 173,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-10-27T09:32:40Z",
+      "side": 1,
+      "message": "Thank you for pointing this out, fixed it. If the earlier history can\u0027t be read, the run now doesn\u0027t publish its own history, so the existing trend stays the latest one. A missing (404) or damaged history file still just falls back to the next older run.",
+      "parentUuid": "ffdebe7c_9060c9a9",
+      "revId": "30f03e39a6ba7963e7443fe689183630f808511f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "3b5b4c5b_f9e1b758",
@@ -48,6 +84,24 @@
       "writtenOn": "2026-10-26T12:32:53Z",
       "side": 1,
       "message": "Reword commit message, since this commit does not \"add pythest-verify.yaml\"",
+      "revId": "30f03e39a6ba7963e7443fe689183630f808511f",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9461e18c_22f29bbd",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 9
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-10-27T09:32:40Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "3b5b4c5b_f9e1b758",
       "revId": "30f03e39a6ba7963e7443fe689183630f808511f",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
