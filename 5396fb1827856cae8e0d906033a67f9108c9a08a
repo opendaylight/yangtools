@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "aa4c1958_da49911e",
+        "filename": ".github/workflows/pytest.yaml",
+        "patchSetId": 11
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 8144
+      },
+      "writtenOn": "2026-10-29T09:23:33Z",
+      "side": 1,
+      "message": "we are not LF",
+      "revId": "5396fb1827856cae8e0d906033a67f9108c9a08a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
