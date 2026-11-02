@@ -58,7 +58,7 @@ permissions:
 
 jobs:
   notify:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.event_name == 'workflow_dispatch' }}
     steps:
       - name: Notify job start
@@ -77,7 +77,7 @@ jobs:
         run: sleep 10s
 
   run-maven-clm:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ always() && (needs.notify.result == 'success' || github.event_name == 'schedule') }}
     needs: [notify]
     steps:
@@ -116,7 +116,7 @@ jobs:
   report-status:
     if: ${{ always() && github.event_name == 'workflow_dispatch' }}
     needs: [notify, run-maven-clm]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Get workflow conclusion
         # yamllint disable-line rule:line-length
