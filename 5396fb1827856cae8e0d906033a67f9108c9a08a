@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "62cb93d5_5bb6db5b",
+        "filename": ".github/workflows/pytest.yaml",
+        "patchSetId": 11
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-11-02T19:25:05Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "aa4c1958_da49911e",
+      "revId": "5396fb1827856cae8e0d906033a67f9108c9a08a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "dae7dc80_46427446",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-10-29T09:37:00Z",
       "side": 1,
       "message": "doe we even need those required: false?",
+      "revId": "5396fb1827856cae8e0d906033a67f9108c9a08a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "43520d57_f009e34c",
+        "filename": ".github/workflows/pytest.yaml",
+        "patchSetId": 11
+      },
+      "lineNbr": 24,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-11-02T19:25:05Z",
+      "side": 1,
+      "message": "No we do not need them here. Mainly we would still need to keep GERRIT_REFSPEC to be able to run specific gerrit patch.",
+      "parentUuid": "dae7dc80_46427446",
       "revId": "5396fb1827856cae8e0d906033a67f9108c9a08a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
