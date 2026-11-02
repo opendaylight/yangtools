@@ -23,6 +23,7 @@ OPENCONFIG_REPO_COMMIT_TAG = "v5.3.0"
 
 @pytest.fixture(scope='session')
 def fixture_models_repos():
+    shell("Hello from custom PyTest change.")
     shell(("rm -rf target src", "mkdir -p ./src/main/yang"))
 
     # Only "standard" is used by any test, and it's a small fraction of
