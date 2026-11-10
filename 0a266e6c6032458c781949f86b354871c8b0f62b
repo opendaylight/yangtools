@@ -16,6 +16,23 @@
       "message": "recheck",
       "revId": "0a266e6c6032458c781949f86b354871c8b0f62b",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "d9776c0a_109fa804",
+        "filename": "pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 99,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-11-10T09:13:41Z",
+      "side": 1,
+      "message": "When TOX_ARGS is set, both this profile and tox-args-env define tox.args, and tox-args-env wins only because it is declared later in the file. If the two are ever reordered, CI would silently run the whole suite. Could we move this empty default into the top-level \u003cproperties\u003e, where any active profile overrides it regardless of order?",
+      "revId": "0a266e6c6032458c781949f86b354871c8b0f62b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
