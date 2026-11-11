@@ -16,6 +16,24 @@
       "message": "This pastes the input into the script text, so a value dispatched through the API with a line break and a TOX_ARGS_EOF (or EOF) line ends the heredoc and runs the rest as shell, in a job that holds id-token: write for the log bucket. Could we reject multi-line values first, in a small job that reads the input through env: and that pytest needs:?",
       "revId": "797dfd72999d95e941ca7249c6a9a694dd50c7ee",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "4713679c_c4791804",
+        "filename": ".github/workflows/pytest.yaml",
+        "patchSetId": 14
+      },
+      "lineNbr": 95,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-11-11T10:56:08Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "23da7e32_fe1ad94c",
+      "revId": "797dfd72999d95e941ca7249c6a9a694dd50c7ee",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
   ]
 }
