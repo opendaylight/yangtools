@@ -18,6 +18,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "956cf5e9_9c006d08",
+        "filename": ".github/workflows/pytest.yaml",
+        "patchSetId": 15
+      },
+      "lineNbr": 33,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-11-24T09:11:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "f36c96a5_2657d337",
+      "revId": "22c38fd90721e032adfa40cb3b1a897ef8f4832c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "7b5d88f7_5477775a",
@@ -31,6 +49,24 @@
       "writtenOn": "2026-11-19T12:37:31Z",
       "side": 1,
       "message": "The group ignores TOX_ARGS, so dispatching a second subset of the same refspec (say -k etsi, then -k ietf) cancels the first run without a report. Could we append ${{ github.event.inputs.TOX_ARGS }} to the group, or drop cancel-in-progress for these manual runs?",
+      "revId": "22c38fd90721e032adfa40cb3b1a897ef8f4832c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "68bc943e_99ec2eb4",
+        "filename": ".github/workflows/pytest.yaml",
+        "patchSetId": 15
+      },
+      "lineNbr": 43,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-11-24T09:11:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "7b5d88f7_5477775a",
       "revId": "22c38fd90721e032adfa40cb3b1a897ef8f4832c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -52,6 +88,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "cf445fb5_7a7562a3",
+        "filename": ".github/workflows/pytest.yaml",
+        "patchSetId": 15
+      },
+      "lineNbr": 70,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-11-24T09:11:39Z",
+      "side": 1,
+      "message": "Added a note. This workflow is only run manually for now. How to publish logs from gerrit-verify.yaml without id-token: write in the build job will be decided when the two are merged.",
+      "parentUuid": "e2bd029f_19b2aa92",
+      "revId": "22c38fd90721e032adfa40cb3b1a897ef8f4832c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "fccc0643_1eeb322b",
@@ -65,6 +119,24 @@
       "writtenOn": "2026-11-19T12:37:31Z",
       "side": 1,
       "message": "There is no \"event\u003dschedule\" below",
+      "revId": "22c38fd90721e032adfa40cb3b1a897ef8f4832c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "b869497c_cfcbcf13",
+        "filename": ".github/workflows/pytest.yaml",
+        "patchSetId": 15
+      },
+      "lineNbr": 145,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-11-24T09:11:39Z",
+      "side": 1,
+      "message": "Mention in the comment that `event\u003dschedule` will be added..",
+      "parentUuid": "fccc0643_1eeb322b",
       "revId": "22c38fd90721e032adfa40cb3b1a897ef8f4832c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
@@ -86,6 +158,24 @@
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     },
     {
+      "unresolved": false,
+      "key": {
+        "uuid": "10eb864f_3ec9bea5",
+        "filename": ".github/workflows/pytest.yaml",
+        "patchSetId": 15
+      },
+      "lineNbr": 160,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-11-24T09:11:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "abb47d01_07f11ba4",
+      "revId": "22c38fd90721e032adfa40cb3b1a897ef8f4832c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
       "unresolved": true,
       "key": {
         "uuid": "1b3129fc_cf9b8371",
@@ -99,6 +189,24 @@
       "writtenOn": "2026-11-19T12:37:31Z",
       "side": 1,
       "message": "The trailing || true drops curl\u0027s exit status, so a download cut off after the 200 status is taken as success: cut at a line break, jq accepts it and the trend silently loses its newest runs. Cut mid-line, an older history is restored instead. Could we keep the status, e.g. || code\u003d\"000 (curl exit $?)\", so a broken transfer ends in the \"failed\" branch like any other unreadable response?",
+      "revId": "22c38fd90721e032adfa40cb3b1a897ef8f4832c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    },
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "64886ae6_4179688b",
+        "filename": ".github/workflows/pytest.yaml",
+        "patchSetId": 15
+      },
+      "lineNbr": 171,
+      "author": {
+        "id": 8907
+      },
+      "writtenOn": "2026-11-24T09:11:39Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "1b3129fc_cf9b8371",
       "revId": "22c38fd90721e032adfa40cb3b1a897ef8f4832c",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
     }
