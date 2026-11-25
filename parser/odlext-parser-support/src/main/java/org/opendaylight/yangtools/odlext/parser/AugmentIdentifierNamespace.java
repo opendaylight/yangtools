@@ -10,17 +10,15 @@ package org.opendaylight.yangtools.odlext.parser;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AugmentIdentifierStatement;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.UnresolvedQName.Unqualified;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
 
 final class AugmentIdentifierNamespace {
-    static final @NonNull UserNamespace<
-        Empty,
+    static final UserNamespace.@NonNull Singleton<
         StmtContext<Unqualified, AugmentIdentifierStatement, AugmentIdentifierEffectiveStatement>> INSTANCE =
-        UserNamespace.of("augment-identifier");
+        UserNamespace.singleton("augment-identifier");
     static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private AugmentIdentifierNamespace() {

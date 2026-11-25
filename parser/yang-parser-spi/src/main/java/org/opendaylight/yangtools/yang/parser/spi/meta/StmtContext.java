@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -271,15 +272,30 @@ public non-sealed interface StmtContext<A, D extends DeclaredStatement<A>, E ext
          * @throws NamespaceNotAvailableException when the namespace is not available.
          * @throws X when the namespace already contains a value
          */
-        default <K, V, X extends Exception> void putToNs(
-                final @NonNull UserNamespace<K, V> type, final @NonNull K key, final @NonNull V value,
-                final @NonNull BiFunction<@NonNull V, @NonNull V, @NonNull X> exceptionSupplier) throws X {
+        @NonNullByDefault
+        default <K, V, X extends Exception> void putToNs(final UserNamespace<K, V> type, final @NonNull K key,
+                final @NonNull V value, final BiFunction<@NonNull V, @NonNull V, @NonNull X> exceptionSupplier)
+                    throws X {
             requireNonNull(exceptionSupplier);
             final var prev = namespaceItem(type, key);
             if (prev != null) {
                 throw exceptionSupplier.apply(prev, value);
             }
             addToNs(type, key, value);
+        }
+
+        @NonNullByDefault
+        default <V, X extends Exception> void putToNs(final UserNamespace.Singleton<V> type, final @NonNull V value,
+                final BiFunction<@NonNull V, @NonNull V, @NonNull X> exceptionSupplier) throws X {
+            putToNs(type, Empty.value(), value, exceptionSupplier);
+        }
+
+        @NonNullByDefault
+        default <Q, R extends DeclaredStatement<Q>, S extends EffectiveStatement<Q, R>, X extends Exception>
+                void putToNs(final UserNamespace.ArgumentToStatement<Q, R, S> type, final StmtContext<Q, R, S> stmt,
+                    final BiFunction<StmtContext<Q, R, S>, StmtContext<Q, R, S>, @NonNull X> exceptionSupplier)
+                        throws X {
+            putToNs(type, stmt.getArgument(), stmt, exceptionSupplier);
         }
 
         @Override

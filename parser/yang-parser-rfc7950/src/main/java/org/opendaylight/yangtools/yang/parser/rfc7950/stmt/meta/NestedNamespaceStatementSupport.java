@@ -35,14 +35,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  */
 abstract sealed class NestedNamespaceStatementSupport<
         D extends DeclaredStatement<QName>,
-        E extends EffectiveStatement<QName, D>> extends AbstractQNameStatementSupport<D, E>
+        E extends EffectiveStatement<QName, @NonNull D>> extends AbstractQNameStatementSupport<D, E>
         permits GroupingStatementSupport, TypedefStatementSupport {
-    private final @NonNull UserNamespace<QName, StmtContext<QName, D, E>> namespace;
+    private final UserNamespace.@NonNull ArgumentToStatement<QName, @NonNull D, @NonNull E> namespace;
 
     NestedNamespaceStatementSupport(final StatementDefinition<QName, D, E> publicDefinition,
             final StatementPolicy<QName, D> policy, final SubtreePolicy subtreePolicy,
             final YangParserConfiguration config, final SubstatementValidator validator,
-            final UserNamespace<QName, StmtContext<QName, D, E>> namespace) {
+            final UserNamespace.ArgumentToStatement<QName, @NonNull D, @NonNull E> namespace) {
         super(publicDefinition, policy, subtreePolicy, config, validator);
         this.namespace = requireNonNull(namespace);
     }
@@ -76,7 +76,7 @@ abstract sealed class NestedNamespaceStatementSupport<
         // - baz has a higher scope definition AFTER the lower scope definition is encountered
 
         // namespace behaviour and storage operations deal with the first case
-        parent.putToNs(namespace, stmt.getArgument(), stmt, this::newSourceException);
+        parent.putToNs(namespace, stmt, this::newSourceException);
 
         final var higherScope = parent.getParentContext();
         if (higherScope == null) {

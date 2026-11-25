@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
@@ -17,8 +16,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
 
 public final class SourceGroupingNamespace {
-    static final @NonNull UserNamespace<Empty, StmtContext<QName, GroupingStatement, GroupingEffectiveStatement>>
-        INSTANCE = UserNamespace.of("sourceGrouping");
+    static final UserNamespace.@NonNull Singleton<StmtContext<QName, GroupingStatement, GroupingEffectiveStatement>>
+        INSTANCE = UserNamespace.singleton("sourceGrouping");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private SourceGroupingNamespace() {

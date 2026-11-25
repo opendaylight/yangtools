@@ -7,29 +7,27 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import com.google.common.base.MoreObjects;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
-record ReactorNamespaceImpl<K, V>(@NonNull String name) implements ReactorNamespace<K, V> {
-    ReactorNamespaceImpl {
-        if (name.isBlank()) {
-            throw new IllegalArgumentException("blank name");
-        }
+@NonNullByDefault
+record ReactorNamespaceKV<K, V>(String name) implements ReactorNamespace<K, V> {
+    ReactorNamespaceKV {
+        ParserNamespaceMethods.checkName(name);
     }
 
     @Override
     public int hashCode() {
-        return System.identityHashCode(this);
+        return ParserNamespaceMethods.hashCodeImpl(this);
     }
 
     @Override
     public boolean equals(final @Nullable Object obj) {
-        return this == obj;
+        return ParserNamespaceMethods.equalsImpl(this, obj);
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(ReactorNamespace.class).add("name", name).toString();
+        return ParserNamespaceMethods.reactorToString(name);
     }
 }

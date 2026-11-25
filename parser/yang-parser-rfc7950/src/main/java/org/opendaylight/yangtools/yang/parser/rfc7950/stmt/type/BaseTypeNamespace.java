@@ -8,12 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
 
 public final class BaseTypeNamespace {
-    static final @NonNull UserNamespace<Empty, Object> INSTANCE = UserNamespace.of("baseType");
+    static final UserNamespace.@NonNull Singleton<Object> INSTANCE = UserNamespace.singleton("baseType");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private BaseTypeNamespace() {

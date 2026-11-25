@@ -49,17 +49,18 @@ public final class ParserNamespaces {
      * identifier namespace, where each extension is identified by a QName formed from the defining module's QNameModule
      * and the identifier specified in extension statement's argument.
      */
-    public static final @NonNull UserNamespace<QName,
-        StmtContext<QName, ExtensionStatement, ExtensionEffectiveStatement>> EXTENSION =
-            UserNamespace.of("extension");
+    public static final UserNamespace.@NonNull ArgumentToStatement<QName,
+        @NonNull ExtensionStatement, @NonNull ExtensionEffectiveStatement> EXTENSION =
+            UserNamespace.stmtContextByArgument("extension");
 
     /**
      * Feature namespace. All feature names defined in a module and its submodules share the same feature identifier
      * namespace. Each feature is identified by a QName formed from the defining module's QNameModule and the feature
      * name.
      */
-    public static final @NonNull UserNamespace<QName,
-        StmtContext<QName, FeatureStatement, FeatureEffectiveStatement>> FEATURE = UserNamespace.of("feature");
+    public static final UserNamespace.@NonNull ArgumentToStatement<QName,
+        @NonNull FeatureStatement, @NonNull FeatureEffectiveStatement> FEATURE =
+            UserNamespace.stmtContextByArgument("feature");
 
     /**
      * Grouping namespace. * All grouping names defined within a parent node or at the top level of the module
@@ -69,17 +70,17 @@ public final class ParserNamespaces {
      * <p>This means that any descendant node may use that grouping, and it MUST NOT define a grouping with the same
      * name.
      */
-    public static final @NonNull UserNamespace<QName,
-        StmtContext<QName, GroupingStatement, GroupingEffectiveStatement>> GROUPING =
-            UserNamespace.of("grouping");
+    public static final UserNamespace.@NonNull ArgumentToStatement<QName,
+        @NonNull GroupingStatement, @NonNull GroupingEffectiveStatement> GROUPING =
+            UserNamespace.stmtContextByArgument("grouping");
 
     /**
      * Identity namespace. All identity names defined in a module and its submodules share the same identity identifier
      * namespace.
      */
-    public static final @NonNull UserNamespace<QName,
-        StmtContext<QName, IdentityStatement, IdentityEffectiveStatement>> IDENTITY =
-            UserNamespace.of("identity");
+    public static final UserNamespace.@NonNull ArgumentToStatement<QName,
+        @NonNull IdentityStatement, @NonNull IdentityEffectiveStatement> IDENTITY =
+            UserNamespace.stmtContextByArgument("identity");
 
     /**
      * Module namespace. All modules known to the reactor are populated to this namespace. Each module is identified
@@ -99,8 +100,9 @@ public final class ParserNamespaces {
      * <p>This namespace includes all type definitions implied by the language in which the current statement resides
      * (e.g. RFC6020/RFC7950 for YANG 1.0/1.1).
      */
-    public static final @NonNull UserNamespace<QName,
-        StmtContext<QName, TypedefStatement, TypedefEffectiveStatement>> TYPE = UserNamespace.of("typedef");
+    public static final UserNamespace.@NonNull ArgumentToStatement<QName,
+        @NonNull TypedefStatement, @NonNull TypedefEffectiveStatement> TYPE =
+            UserNamespace.stmtContextByArgument("typedef");
 
     /**
      * A derived namespace allowing lookup of modules based on their {@link QNameModule}.

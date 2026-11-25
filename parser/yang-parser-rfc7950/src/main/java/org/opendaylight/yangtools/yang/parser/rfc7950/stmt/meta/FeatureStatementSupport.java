@@ -65,7 +65,7 @@ public final class FeatureStatementSupport
         //        o  All feature names defined in a module and its submodules share the
         //           same feature identifier namespace.
         if (stmt.coerceParentContext().producesAnyOf(ModuleStatement.DEF, SubmoduleStatement.DEF)) {
-            stmt.putToNs(ParserNamespaces.FEATURE, stmt.getArgument(), stmt, (prev, next) ->
+            stmt.putToNs(ParserNamespaces.FEATURE, stmt, (prev, next) ->
                 new SourceException(next, "Feature name collision: '%s' already declared at %s", next.getArgument(),
                     prev.sourceReference()));
         }

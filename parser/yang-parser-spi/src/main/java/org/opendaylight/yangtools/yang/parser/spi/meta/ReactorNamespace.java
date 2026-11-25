@@ -16,7 +16,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * @param <V> value type
  */
 @NonNullByDefault
-public sealed interface ReactorNamespace<K, V> extends ParserNamespace<K, V> permits ReactorNamespaceImpl {
+public sealed interface ReactorNamespace<K, V> extends ParserNamespace<K, V> permits ReactorNamespaceKV {
     /**
      * {@return a new {@link ReactorNamespace} namespace with specified name}
      *
@@ -25,6 +25,6 @@ public sealed interface ReactorNamespace<K, V> extends ParserNamespace<K, V> per
      * @param name the name
      */
     static <K, V> ReactorNamespace<K, V> of(final String name) {
-        return new ReactorNamespaceImpl<>(name);
+        return new ReactorNamespaceKV<>(name);
     }
 }

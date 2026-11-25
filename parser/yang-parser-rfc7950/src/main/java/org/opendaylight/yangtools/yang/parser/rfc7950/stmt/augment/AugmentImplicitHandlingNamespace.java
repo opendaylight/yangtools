@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
@@ -18,8 +17,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.UserNamespace;
  * the effective augment has correct implicit statements created.
  */
 public final class AugmentImplicitHandlingNamespace {
-    static final @NonNull UserNamespace<Empty, Mutable<?, ?, ?>> INSTANCE =
-        UserNamespace.of("augment-implicit-handling");
+    static final UserNamespace.@NonNull Singleton<Mutable<?, ?, ?>> INSTANCE =
+        UserNamespace.singleton("augment-implicit-handling");
     public static final @NonNull NamespaceBehaviour<?, ?> BEHAVIOUR = NamespaceBehaviour.statementLocal(INSTANCE);
 
     private AugmentImplicitHandlingNamespace() {
