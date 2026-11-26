@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "3ebe5313_d232f3cb",
+        "filename": ".github/workflows/pytest.yaml",
+        "patchSetId": 17
+      },
+      "lineNbr": 149,
+      "author": {
+        "id": 8324
+      },
+      "writtenOn": "2026-11-26T11:19:24Z",
+      "side": 1,
+      "message": "This poses a security risk. Only allure itself is pinned. Its transitive deps (glob ^13, adm-zip ^0.6, …) and tox\u0027s (virtualenv\u003e\u003d21.1, packaging\u003e\u003d26, …) resolve fresh on every run, in a job holding id-token: write for the log bucket role. Could we lock them, e.g. a committed package-lock.json with npm ci --ignore-scripts and a hashed tox requirements file with --require-hashes, like log-publish-action does for boto3?",
+      "revId": "04e2cf11291a9ff1626650f01bd55391bc451340",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81"
+    }
+  ]
+}
