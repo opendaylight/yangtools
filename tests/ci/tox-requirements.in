@@ -1,0 +1,6 @@
+# tox for the PyTest workflow (.github/workflows/pytest.yaml), with pip
+# itself. Regenerate tox-requirements.txt after changing this:
+#   uv pip compile --generate-hashes --universal --python-version 3.11 \
+#     tests/ci/tox-requirements.in -o tests/ci/tox-requirements.txt
+pip==26.2.2
+tox==4.65.5
