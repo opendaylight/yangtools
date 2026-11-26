@@ -1,0 +1,10 @@
+# Direct dependencies of the PyTest suite, installed by tox (tox.ini).
+# Regenerate the hashed requirements.txt after changing this:
+#   uv pip compile --generate-hashes --universal --python-version 3.11 \
+#     tests/requirements.in -o tests/requirements.txt
+allure-pytest==2.14.3
+iniconfig==2.1.0
+packaging==25.0
+pluggy==1.6.0
+Pygments==2.19.1
+pytest==8.4.0
