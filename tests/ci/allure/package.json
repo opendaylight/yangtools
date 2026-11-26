@@ -1,0 +1,8 @@
+{
+  "name": "yangtools-pytest-allure",
+  "private": true,
+  "description": "Allure 3 CLI for .github/workflows/pytest.yaml, installed with npm ci from package-lock.json",
+  "dependencies": {
+    "allure": "3.20.1"
+  }
+}

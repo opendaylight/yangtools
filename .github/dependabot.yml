@@ -21,3 +21,44 @@ updates:
       actions-deps:
         patterns:
           - "*"
+
+  # Locked tools of the PyTest workflow (.github/workflows/pytest.yaml).
+  - package-ecosystem: "pip"
+    directory: "/tests/ci"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "CI(pip)"
+    cooldown:
+      default-days: 7
+    groups:
+      pytest-tox-deps:
+        patterns:
+          - "*"
+
+  - package-ecosystem: "npm"
+    directory: "/tests/ci/allure"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "CI(npm)"
+    cooldown:
+      default-days: 7
+    groups:
+      pytest-allure-deps:
+        patterns:
+          - "*"
+
+  # Dependencies of the PyTest suite (tests/tox.ini).
+  - package-ecosystem: "pip"
+    directory: "/tests"
+    schedule:
+      interval: "weekly"
+    commit-message:
+      prefix: "CI(pip)"
+    cooldown:
+      default-days: 7
+    groups:
+      pytest-deps:
+        patterns:
+          - "*"
